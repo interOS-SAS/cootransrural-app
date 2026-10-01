@@ -1,0 +1,265 @@
+/* Diseño C «Noche Neón» — app del conductor (cabina / tablero). */
+@import url('comun.css');
+
+/* ---------------- HUD superior ---------------- */
+.c-hud { position: absolute; z-index: 12; left: 0; right: 0; top: 0; padding: calc(var(--c-seg-arriba) + 12px) 12px 0; pointer-events: none; }
+.c-hud > * { pointer-events: auto; }
+.c-hud:empty { display: none; }
+.c-hud-barra { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 8px 6px 6px; border-radius: 28px; }
+.c-hud-perfil { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 8px 0 0; border: 0; background: none; text-align: left; min-width: 0; }
+.c-hud-perfil > span { display: grid; min-width: 0; }
+.c-hud-perfil strong { font-size: 16px; font-weight: 800; letter-spacing: .01em; }
+.c-hud-perfil small { font-size: 12.5px; color: var(--c-texto-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.c-hud-chips { display: grid; gap: 4px; justify-items: end; }
+.c-hud-chips .c-conexion { height: 26px; font-size: 12px; padding: 0 10px; background: rgba(255, 255, 255, .05); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.c-chip-gps { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; color: #FFF1A6; background: rgba(255, 225, 77, .1); box-shadow: inset 0 0 0 1px rgba(255, 225, 77, .4); }
+.c-chip-gps .c-ico { width: 14px; height: 14px; }
+.c-chip-gps[data-real="true"] { color: #C7F9E5; background: rgba(52, 211, 153, .1); box-shadow: inset 0 0 0 1px rgba(52, 211, 153, .5); }
+
+.c-hud-viaje { padding: 12px 16px 14px; border-radius: 28px; display: grid; gap: 4px; }
+.c-hud-fila { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.c-hud-fase { display: inline-flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #BDF4FB; min-width: 0; }
+.c-hud-fase span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.c-hud-fila > .c-hud-fase { flex: 1 1 auto; }
+.c-hud-derecha { min-width: 0; }
+.c-hud-led { width: 10px; height: 10px; border-radius: 50%; background: var(--c-cian); box-shadow: 0 0 12px var(--c-cian); flex: none; animation: c-parpadeo 1.4s ease-in-out infinite; }
+.c-hud-numeros { display: flex; align-items: center; justify-content: space-around; padding-top: 4px; }
+.c-hud-numeros > div { display: flex; align-items: baseline; gap: 6px; }
+.c-hud-numeros strong { font-size: 50px; font-weight: 800; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.c-hud-numeros > div:first-child strong { color: var(--c-texto); text-shadow: 0 0 22px rgba(34, 211, 238, .45); }
+.c-hud-numeros > div:last-child strong { color: var(--c-amarillo); text-shadow: 0 0 24px rgba(255, 225, 77, .55); }
+.c-hud-numeros small { font-size: 17px; font-weight: 600; color: var(--c-texto-2); }
+.c-hud-derecha { display: inline-flex; align-items: center; gap: 10px; flex: none; }
+.c-hud-espera { font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--c-amarillo); text-shadow: 0 0 12px rgba(255, 225, 77, .6); }
+/* Durante el viaje los avisos salen debajo del HUD para no tapar los números */
+.c-conductor[data-vista^="viaje"] .c-avisos { top: var(--c-atrib-arriba, 140px); }
+.c-hud-sep { width: 1px; height: 42px; background: linear-gradient(transparent, rgba(255, 255, 255, .3), transparent); }
+
+/* ---------------- Mapa: zonas de demanda ---------------- */
+.c-app .c-zona { animation: c-zona-pulso 3.2s ease-in-out infinite; }
+.c-app .c-zona-media { animation-delay: 1.6s; }
+.c-app:not(.c-en-linea) .c-zona { opacity: .45; }
+@keyframes c-zona-pulso { 50% { fill-opacity: .2; stroke-opacity: 1; } }
+.c-app .c-zona-etiqueta { background: none; border: 0; }
+.c-app .c-zona-etiqueta span { display: inline-grid; transform: translate(-50%, calc(-100% - 26px)); white-space: nowrap; text-align: center; padding: 5px 10px; border-radius: 12px; font: 700 12px/1.15 var(--c-fuente); color: #fff; background: rgba(7, 9, 13, .72); box-shadow: inset 0 0 0 1px var(--zona), 0 0 16px color-mix(in srgb, var(--zona) 45%, transparent); }
+.c-app .c-zona-etiqueta b { font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--zona); }
+.c-app:not([data-vista="tab-tablero"]) .c-zona-etiqueta { display: none; }
+/* Durante el viaje las zonas de demanda estorban: se ocultan */
+.c-app[data-vista^="viaje"] .c-zona { display: none; }
+
+/* ---------------- Tablero ---------------- */
+.c-demanda { position: absolute; z-index: 11; left: 14px; top: calc(var(--c-seg-arriba) + 88px); display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: 999px; font-size: 13px; color: var(--c-texto-2); box-shadow: 0 8px 24px rgba(0, 0, 0, .4) !important; }
+.c-demanda strong { color: var(--c-texto); }
+.c-demanda { transition: opacity .25s ease; }
+.c-con-solicitud .c-demanda { opacity: 0; }
+.c-demanda-punto { width: 8px; height: 8px; border-radius: 50%; background: var(--c-magenta); box-shadow: 0 0 10px var(--c-magenta); animation: c-parpadeo 1.4s ease-in-out infinite; }
+.c-tablero {
+  position: absolute; left: 12px; right: 12px; bottom: calc(var(--c-seg-abajo) + 96px);
+  padding: 18px; border-radius: 30px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px;
+  max-height: calc(100% - var(--c-seg-arriba) - 220px); overflow-y: auto; scrollbar-width: none;
+}
+.c-tablero-fila { display: flex; align-items: center; gap: 16px; }
+.c-anillo-hoy { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: var(--c-texto-3); font-weight: 700; }
+.c-anillo-valor-texto { display: block; font-size: 23px; font-weight: 800; letter-spacing: -.02em; margin: 4px 0 3px; }
+.c-anillo-valor-texto.c-grande { font-size: 34px; }
+.c-anillo-meta { display: block; font-size: 11.5px; color: var(--c-texto-2); max-width: 104px; margin: 0 auto; line-height: 1.2; }
+.c-ganancias-anillo .c-anillo-meta { max-width: 150px; font-size: 13px; }
+.c-tablero-datos { flex: 1; display: grid; gap: 8px; }
+.c-tablero-datos > div { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 8px 12px; border-radius: 14px; background: rgba(255, 255, 255, .045); }
+.c-tablero-datos strong { font-size: 19px; font-weight: 800; order: 2; white-space: nowrap; }
+.c-tablero-datos small { font-size: 12.5px; color: var(--c-texto-2); }
+.c-tablero-control { display: flex; align-items: center; gap: 16px; padding: 10px 14px 10px 10px; border-radius: 24px; background: rgba(255, 255, 255, .04); border: 1px solid var(--c-borde); }
+.c-encendido {
+  position: relative; width: 80px; height: 80px; flex: none; border-radius: 50%; border: 0; display: grid; place-items: center;
+  color: var(--c-amarillo); background: radial-gradient(circle at 35% 30%, #1E2533, #0B0E15);
+  box-shadow: inset 0 0 0 2px rgba(255, 225, 77, .55), 0 0 22px rgba(255, 225, 77, .25), 0 10px 24px rgba(0, 0, 0, .5);
+  transition: background .3s, color .3s, box-shadow .3s, transform .15s;
+}
+.c-encendido .c-ico { width: 36px; height: 36px; stroke-width: 2.4; filter: drop-shadow(0 0 8px rgba(255, 225, 77, .8)); }
+.c-encendido:active { transform: scale(.94); }
+.c-encendido[aria-pressed="true"] { color: #04222A; background: radial-gradient(circle at 35% 30%, #A5F3FC, var(--c-cian)); box-shadow: 0 0 0 4px rgba(34, 211, 238, .25), 0 0 40px rgba(34, 211, 238, .75); }
+.c-encendido[aria-pressed="true"] .c-ico { filter: none; }
+.c-encendido[aria-pressed="true"]::after { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 2px solid var(--c-cian); animation: c-halo 1.8s ease-out infinite; }
+.c-encendido-texto { display: grid; gap: 2px; min-width: 0; }
+.c-encendido-texto strong { font-size: 19px; font-weight: 800; }
+.c-en-linea .c-encendido-texto strong { color: #BDF4FB; text-shadow: 0 0 14px rgba(34, 211, 238, .5); }
+.c-encendido-texto small { font-size: 14px; color: var(--c-texto-2); }
+.c-cargando-boton { position: relative; color: transparent !important; }
+.c-cargando-boton::after { content: ''; position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 2.5px solid rgba(255, 255, 255, .2); border-top-color: var(--c-cian); animation: c-girar .8s linear infinite; }
+
+/* ---------------- Panel inferior del viaje ---------------- */
+.c-panel {
+  position: absolute; left: 12px; right: 12px; bottom: calc(var(--c-seg-abajo) + 12px);
+  max-height: calc(100% - var(--c-seg-arriba) - 150px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
+  padding: 18px; border-radius: 30px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px;
+}
+.c-panel::-webkit-scrollbar { display: none; }
+.c-pasajero-fila { display: flex; align-items: center; gap: 12px; }
+.c-pasajero-datos { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.c-pasajero-datos strong { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.c-nombre-pasajero { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c-pasajero-datos strong .c-etiqueta { flex: none; }
+.c-pasajero-datos strong .c-etiqueta { font-size: 10px; height: 20px; padding: 0 7px; }
+.c-pasajero-datos > span { display: flex; align-items: center; gap: 5px; font-size: 14px; color: var(--c-texto-2); }
+.c-tarifa-mini { display: grid; text-align: right; }
+.c-tarifa-mini small { font-size: 11px; color: var(--c-texto-3); text-transform: uppercase; letter-spacing: .1em; font-weight: 700; }
+.c-tarifa-mini strong { font-size: 21px; font-weight: 800; color: var(--c-amarillo); text-shadow: 0 0 16px rgba(255, 225, 77, .45); }
+.c-trayecto-punto > div > span { font-size: 13px; color: var(--c-texto-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c-nota-pasajero { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 16px; font-size: 14.5px; color: var(--c-texto-2); background: rgba(255, 255, 255, .045); border: 1px dashed var(--c-borde-2); }
+.c-nota-pasajero .c-ico { width: 18px; height: 18px; color: var(--c-cian); }
+.c-mensaje-pasajero { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 18px; background: rgba(34, 211, 238, .08); box-shadow: inset 0 0 0 1px rgba(34, 211, 238, .45), 0 0 20px rgba(34, 211, 238, .12); animation: c-aparecer .35s ease both; }
+.c-mensaje-ico { width: 40px; height: 40px; border-radius: 14px; flex: none; display: grid; place-items: center; background: var(--c-cian); color: #04222A; }
+.c-mensaje-pasajero small { font-size: 11.5px; color: #BDF4FB; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; }
+.c-mensaje-pasajero p { font-size: 15px; }
+.c-btn-llegue.c-resaltado, .c-btn-terminar.c-resaltado { animation: c-resaltar 1.1s ease-in-out infinite; }
+@keyframes c-resaltar { 50% { box-shadow: 0 0 0 5px rgba(255, 225, 77, .4), 0 0 50px rgba(255, 225, 77, .8); filter: brightness(1.08); } }
+.c-esperando { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14.5px; color: var(--c-texto-2); }
+.c-codigo-panel { display: grid; gap: 10px; justify-items: center; text-align: center; }
+.c-codigo-panel h2 { font-size: 22px; font-weight: 800; }
+.c-codigo-panel .c-muted { font-size: 14.5px; }
+.c-codigo-panel .c-error { justify-content: center; text-align: left; }
+.c-pista { display: flex; gap: 9px; align-items: center; padding: 10px 13px; border-radius: 16px; font-size: 14px; color: #FFF4BF; background: rgba(255, 225, 77, .07); box-shadow: inset 0 0 0 1px rgba(255, 225, 77, .35); }
+.c-pista .c-ico { width: 18px; height: 18px; color: var(--c-amarillo); }
+.c-pista strong { color: var(--c-amarillo); letter-spacing: .12em; }
+.c-fila-discreta { justify-content: space-between; }
+.c-fila-discreta .c-boton-texto { font-size: 14px; }
+.c-destino-grande { display: flex; gap: 14px; align-items: flex-start; }
+.c-destino-grande .c-punto { margin-top: 8px; }
+.c-destino-grande > div { display: grid; min-width: 0; }
+.c-destino-grande small { font-size: 12px; color: var(--c-texto-3); text-transform: uppercase; letter-spacing: .1em; font-weight: 700; }
+.c-destino-grande strong { font-size: 23px; font-weight: 800; line-height: 1.15; }
+.c-destino-grande span { font-size: 14px; color: var(--c-texto-2); }
+.c-viaje-datos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.c-viaje-datos > div { display: grid; padding: 10px 12px; border-radius: 16px; background: rgba(255, 255, 255, .045); min-width: 0; }
+.c-viaje-datos small { font-size: 11.5px; color: var(--c-texto-3); text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+.c-viaje-datos strong { font-size: 16.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Cobro */
+.c-panel-cobro { max-height: calc(100% - var(--c-seg-arriba) - 110px); }
+.c-panel-cobro > .c-desplazable { justify-items: center; text-align: center; gap: 12px; }
+.c-cobro-cabeza { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; font-size: 14px; }
+.c-qr-neon {
+  width: min(232px, 64%); padding: 14px; border-radius: 26px; background: #fff;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, .7), 0 0 40px rgba(34, 211, 238, .55), 0 0 90px rgba(255, 77, 157, .3);
+  animation: c-qr-brillo 2.6s ease-in-out infinite;
+}
+.c-qr-neon svg { display: block; width: 100%; height: auto; }
+@keyframes c-qr-brillo { 50% { box-shadow: 0 0 0 3px rgba(255, 225, 77, .8), 0 0 50px rgba(255, 225, 77, .5), 0 0 100px rgba(34, 211, 238, .3); } }
+.c-total-cobro { font-size: 46px; }
+.c-cobro-ayuda { font-size: 14px; color: var(--c-texto-2); max-width: 300px; }
+.c-pago-ok-grande { width: 100%; }
+.c-pago-valor { display: block; font-size: 26px; font-weight: 800; color: var(--c-amarillo); text-shadow: 0 0 16px rgba(255, 225, 77, .45); line-height: 1.1; }
+.c-panel-titulo { text-align: center; font-size: 20px; font-weight: 700; }
+
+/* ---------------- Solicitud entrante ---------------- */
+.c-capa-solicitud { position: absolute; inset: 0; z-index: 60; pointer-events: none; }
+.c-capa-solicitud:empty { display: none; }
+.c-solicitud-fondo { position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 12px 12px calc(var(--c-seg-abajo) + 12px); background: linear-gradient(180deg, rgba(3, 4, 7, .1), rgba(3, 4, 7, .7) 55%); pointer-events: auto; animation: c-aparecer-fondo .25s ease both; }
+@keyframes c-aparecer-fondo { from { opacity: 0; } }
+.c-solicitud { background: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .02)), #0C1018 !important; width: 100%; max-height: 100%; border-radius: 30px; animation: c-subir .45s cubic-bezier(.2, .9, .3, 1.15) both; box-shadow: 0 30px 80px rgba(0, 0, 0, .7), 0 0 60px rgba(255, 77, 157, .2) !important; }
+@keyframes c-subir { from { transform: translateY(60px); opacity: 0; } }
+.c-solicitud-cabeza { display: flex; align-items: center; gap: 14px; }
+.c-cuenta { font-size: 34px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.c-cuenta-u { display: block; font-size: 11px; color: var(--c-texto-3); letter-spacing: .1em; }
+.c-anillo.c-urgente .c-cuenta { color: var(--c-magenta); text-shadow: 0 0 14px rgba(255, 77, 157, .7); }
+.c-anillo.c-urgente { animation: c-latido .8s ease-in-out infinite; }
+.c-solicitud-quien { min-width: 0; display: grid; gap: 4px; }
+.c-solicitud-etiquetas { display: flex; flex-wrap: wrap; gap: 6px; }
+.c-solicitud-etiquetas .c-ico { width: 13px; height: 13px; }
+.c-solicitud-quien h2 { font-size: 25px; font-weight: 800; line-height: 1.1; }
+.c-solicitud-quien p { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; font-size: 14.5px; color: var(--c-texto-2); }
+.c-solicitud-tarifa { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border-radius: 20px; background: rgba(255, 225, 77, .06); box-shadow: inset 0 0 0 1px rgba(255, 225, 77, .35); }
+.c-solicitud-tarifa > strong { font-size: 36px; font-weight: 800; color: var(--c-amarillo); text-shadow: 0 0 22px rgba(255, 225, 77, .5); letter-spacing: -.02em; }
+.c-solicitud-tarifa > div { display: grid; justify-items: end; gap: 4px; }
+.c-solicitud-tarifa small { font-size: 13px; color: var(--c-texto-2); }
+.c-chip-pago { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 11px; border-radius: 999px; font-size: 13px; font-weight: 700; color: #BDF4FB; background: rgba(34, 211, 238, .1); box-shadow: inset 0 0 0 1px rgba(34, 211, 238, .5); }
+.c-chip-pago .c-ico { width: 15px; height: 15px; }
+.c-solicitud-botones { display: grid; grid-template-columns: 1fr 1.7fr; gap: 10px; }
+.c-solicitud-botones .c-boton { min-height: 60px; }
+
+/* ---------------- Ingreso ---------------- */
+.c-capa-ingreso { position: absolute; inset: 0; z-index: 40; overflow-y: auto; overscroll-behavior: contain; background: radial-gradient(80% 45% at 50% 18%, rgba(255, 77, 157, .14), transparent 70%), radial-gradient(70% 40% at 0% 70%, rgba(34, 211, 238, .12), transparent 70%), var(--c-fondo); }
+.c-ingreso { min-height: 100%; display: flex; flex-direction: column; padding-bottom: calc(var(--c-seg-abajo) + 12px); }
+.c-ingreso-arte { position: relative; height: 252px; flex: none; margin-top: calc(var(--c-seg-arriba) + 6px); }
+.c-ingreso-tablero { position: absolute; left: 50%; top: 4px; transform: translateX(-50%); opacity: .9; }
+.c-ingreso-tablero .c-anillo-valor { animation: c-ingreso-anillo 2.4s cubic-bezier(.4, .1, .2, 1) both; }
+@keyframes c-ingreso-anillo { from { stroke-dashoffset: 700; } }
+.c-ingreso-tablero::after { content: ''; position: absolute; inset: 30px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 225, 77, .14), transparent 70%); }
+.c-ingreso-taxi { position: absolute; left: 50%; bottom: 0; width: 88%; max-width: 360px; transform: translateX(-50%); }
+.c-ingreso-texto { padding: 4px 22px 0; display: grid; gap: 10px; }
+.c-ingreso-texto h1 { font-size: 34px; font-weight: 800; letter-spacing: -.025em; line-height: 1.05; }
+.c-ingreso-texto h1 em { font-style: normal; color: var(--c-amarillo); text-shadow: 0 0 24px rgba(255, 225, 77, .5); }
+.c-ingreso-form { margin: 18px 14px 0; padding: 18px; border-radius: 28px; display: grid; gap: 14px; }
+.c-input-prefijo > span .c-ico { width: 20px; height: 20px; color: var(--c-cian); }
+.c-input-pin { letter-spacing: .5em; font-size: 22px; font-weight: 800; }
+.c-ingreso-pasajero { align-self: center; margin-top: 10px; }
+
+/* ---------------- Secciones ---------------- */
+.c-ganancias-anillo { display: grid; place-items: center; margin: 4px 0 14px; }
+.c-metas-titulo { text-align: center; font-size: 12px; font-weight: 700; color: var(--c-texto-3); text-transform: uppercase; letter-spacing: .12em; margin-bottom: 8px !important; }
+.c-metas { margin-bottom: 16px; }
+.c-metas button { font-size: 15px; }
+.c-reparto { display: grid; gap: 8px; }
+.c-reparto-fila { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.c-reparto-fila span { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; color: var(--c-texto-2); }
+.c-reparto-fila span small { color: var(--c-texto-3); }
+.c-reparto-fila .c-ico { width: 18px; height: 18px; }
+.c-reparto-fila:first-child .c-ico { color: var(--c-cian); }
+.c-reparto-fila:nth-child(3) .c-ico { color: var(--c-amarillo); }
+.c-reparto-fila strong { font-size: 18px; font-weight: 800; }
+.c-barra { height: 10px; border-radius: 999px; background: rgba(255, 255, 255, .07); overflow: hidden; margin-bottom: 6px; }
+.c-barra span { display: block; height: 100%; min-width: 4px; border-radius: inherit; transition: width .8s cubic-bezier(.2, .9, .3, 1); }
+.c-barra-qr { background: var(--c-cian); box-shadow: 0 0 12px rgba(34, 211, 238, .7); }
+.c-barra-efectivo { background: var(--c-amarillo); box-shadow: 0 0 12px rgba(255, 225, 77, .7); }
+.c-reparto-nota { font-size: 13px; }
+.c-mi-taxi { position: relative; padding: 14px 16px 16px; border-radius: 28px; display: grid; gap: 10px; margin-bottom: 18px; background: radial-gradient(70% 70% at 80% 0%, rgba(255, 225, 77, .14), transparent 70%), radial-gradient(60% 60% at 0% 100%, rgba(34, 211, 238, .14), transparent 70%), rgba(13, 17, 26, .85); }
+.c-mi-taxi-arte { padding: 0 8px; }
+.c-mi-taxi-datos { display: flex; align-items: center; gap: 14px; }
+.c-mi-taxi-datos > div { display: grid; }
+.c-mi-taxi-datos strong { font-size: 21px; font-weight: 800; }
+.c-mi-taxi-datos small { font-size: 14px; color: var(--c-texto-2); }
+.c-semaforo-mini { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+.c-semaforo-mini[data-estado="ok"], .c-leyenda-semaforo i[data-estado="ok"] { background: var(--c-verde); box-shadow: 0 0 10px var(--c-verde); }
+.c-semaforo-mini[data-estado="pronto"], .c-leyenda-semaforo i[data-estado="pronto"] { background: var(--c-amarillo); box-shadow: 0 0 10px var(--c-amarillo); }
+.c-semaforo-mini[data-estado="vencido"], .c-leyenda-semaforo i[data-estado="vencido"] { background: var(--c-magenta); box-shadow: 0 0 10px var(--c-magenta); }
+.c-leyenda-semaforo { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--c-texto-2); margin-bottom: 14px; }
+.c-leyenda-semaforo span { display: inline-flex; align-items: center; gap: 7px; }
+.c-leyenda-semaforo i { width: 10px; height: 10px; border-radius: 50%; }
+.c-documento { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 22px; background: rgba(255, 255, 255, .045); border: 1px solid var(--c-borde); --luz: var(--c-verde); }
+.c-documento[data-estado="pronto"] { --luz: var(--c-amarillo); border-color: rgba(255, 225, 77, .4); }
+.c-documento[data-estado="vencido"] { --luz: var(--c-magenta); border-color: rgba(255, 77, 157, .5); }
+.c-semaforo { width: 28px; padding: 5px; border-radius: 12px; background: #05070A; display: grid; gap: 4px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); flex: none; }
+.c-semaforo i { width: 18px; height: 18px; border-radius: 50%; opacity: .16; }
+.c-semaforo i[data-luz="vencido"] { background: var(--c-magenta); }
+.c-semaforo i[data-luz="pronto"] { background: var(--c-amarillo); }
+.c-semaforo i[data-luz="ok"] { background: var(--c-verde); }
+.c-documento[data-estado="vencido"] i[data-luz="vencido"], .c-documento[data-estado="pronto"] i[data-luz="pronto"], .c-documento[data-estado="ok"] i[data-luz="ok"] { opacity: 1; box-shadow: 0 0 12px var(--luz); }
+.c-documento-texto { flex: 1; min-width: 0; display: grid; }
+.c-documento-texto strong { font-size: 16px; font-weight: 700; }
+.c-documento-texto small { font-size: 13px; color: var(--c-texto-3); }
+.c-documento-texto span { font-size: 13.5px; color: var(--c-texto-2); margin-top: 2px; }
+.c-documento-detalle { font-style: normal; font-size: 13px; font-weight: 600; color: var(--luz); }
+.c-documento-estado { align-self: flex-start; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; color: var(--luz); white-space: nowrap; background: color-mix(in srgb, var(--luz) 12%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--luz) 50%, transparent); }
+
+/* ---------------- Pantallas bajitas ---------------- */
+@media (max-height: 760px) {
+  .c-hud-numeros strong { font-size: 40px; }
+  .c-tablero { gap: 12px; padding: 14px; }
+  .c-tablero .c-anillo { --tam: 128px !important; }
+  .c-anillo-valor-texto { font-size: 20px; }
+  .c-encendido { width: 68px; height: 68px; }
+  .c-panel { padding: 15px; gap: 11px; }
+  .c-qr-neon { width: min(200px, 56%); }
+  .c-total-cobro { font-size: 38px; }
+  .c-ingreso-arte { height: 200px; }
+  .c-ingreso-tablero .c-anillo { --tam: 180px !important; }
+}
+@media (max-width: 370px) {
+  .c-hud-numeros strong { font-size: 42px; }
+  .c-solicitud-tarifa > strong { font-size: 30px; }
+  .c-tablero-datos strong { font-size: 17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .c-encendido[aria-pressed="true"]::after { display: none; }
+  .c-app .c-zona { animation: none !important; }
+}

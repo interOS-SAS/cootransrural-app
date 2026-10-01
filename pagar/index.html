@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pago de prueba · Cootransrural</title>
+  <meta name="description" content="Pago con código QR de prueba de Cootransrural. No se mueve dinero.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#FFC107">
+  <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../fuentes/fuentes.css">
+  <link rel="stylesheet" href="../web/paginas.css">
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-alerta" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-candado" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  </svg>
+
+  <div class="franja-prueba" role="note">MODO PRUEBA — no se mueve dinero<small>Demostración del pago con QR de Cootransrural</small></div>
+
+  <main class="pago">
+    <div class="pago-tarjeta" id="tarjeta" aria-live="polite">
+      <div class="procesando"><div class="anillo"></div><b>Cargando el cobro…</b></div>
+    </div>
+    <p class="pago-nota">¿Prefieres pagar en efectivo? Díselo al conductor.</p>
+    <p class="pago-nota"><a href="../">Cootransrural</a> · <a href="../privacidad/">Privacidad</a></p>
+  </main>
+
+  <noscript><p style="text-align:center;padding:20px">Para ver el pago de prueba activa JavaScript.</p></noscript>
+  <script type="module" src="../web/pagar.js"></script>
+</body>
+</html>

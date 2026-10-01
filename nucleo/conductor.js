@@ -102,6 +102,8 @@ class ControladorConductor extends Emisor {
     if (!this.ingresado) throw new Error('Primero hay que ingresar');
     this.#cambiar({ conectado: true });
     this.#anunciar();
+    // Pide las solicitudes que ya estaban buscando antes de conectarse.
+    this.bus.publicar('consulta_solicitudes', {});
     clearInterval(this.relojPresencia);
     this.relojPresencia = setInterval(() => this.#anunciar(), TIEMPOS.presencia);
     this.#avisar({ titulo: 'Estás en línea', cuerpo: 'Te llegarán las solicitudes cercanas.', tipo: 'exito' });
@@ -326,7 +328,8 @@ class ControladorConductor extends Emisor {
   #registrarPago(pago) {
     const v = this.estado.viaje;
     if (!v || v.fase !== 'cobrando') return;
-    if (!v.simulado) this.bus.publicar('pago_confirmado', { viajeId: v.id, conductorId: this.perfil.id, metodo: pago.metodo, valor: pago.valor, billetera: pago.billetera || null, ref: pago.ref || null });
+    // También en viajes simulados: la página pagar/ espera esta confirmación.
+    this.bus.publicar('pago_confirmado', { viajeId: v.id, conductorId: this.perfil.id, metodo: pago.metodo, valor: pago.valor, billetera: pago.billetera || null, ref: pago.ref || null });
     this.#faseViaje('calificar', { pago: { ...pago, hora: Date.now() } });
     this.#avisar({
       titulo: pago.metodo === 'qr' ? 'Pago recibido por QR (prueba)' : 'Pago en efectivo registrado',

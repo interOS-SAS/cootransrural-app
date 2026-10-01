@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Privacidad y términos (borrador) · Cootransrural</title>
+  <meta name="description" content="Política de privacidad y términos de uso de la demostración de la app de Cootransrural. Borrador para revisión de la cooperativa.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0A5C33">
+  <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32.png">
+  <link rel="stylesheet" href="../fuentes/fuentes.css">
+  <link rel="stylesheet" href="../web/paginas.css">
+</head>
+<body>
+  <main class="documento">
+    <div class="doc-barra">
+      <a href="../"><img src="../img/icono-192.png" alt="" width="38" height="38">Cootransrural</a>
+      <span class="borrador">Borrador</span>
+    </div>
+
+    <h1>Política de privacidad y términos de uso de la app</h1>
+    <p class="fecha">Versión de demostración · borrador del 1 de octubre de 2026</p>
+    <p class="aviso-borrador"><b>BORRADOR PARA REVISIÓN DE LA COOPERATIVA.</b> Este texto describe cómo funciona la demostración de la app y debe ser revisado y aprobado por Cootransrural (y por su asesor jurídico) antes de publicar la app en las tiendas o de usarla con pasajeros reales.</p>
+
+    <nav class="indice" aria-label="Contenido">
+      <ol>
+        <li><a href="#responsable">Quién es el responsable</a></li>
+        <li><a href="#datos">Qué datos usa la app</a></li>
+        <li><a href="#celular">Dónde se guardan</a></li>
+        <li><a href="#ubicacion">Tu ubicación</a></li>
+        <li><a href="#prueba">Modo prueba y relés públicos</a></li>
+        <li><a href="#pagos">Pagos de prueba</a></li>
+        <li><a href="#terceros">Servicios de terceros</a></li>
+        <li><a href="#derechos">Tus derechos (Ley 1581 de 2012)</a></li>
+        <li><a href="#terminos">Términos de uso de la demostración</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ol>
+    </nav>
+
+    <section id="responsable">
+      <h2>1. Quién es el responsable</h2>
+      <p>El responsable del tratamiento de los datos es la <b>Cooperativa de Transportadores Rurales de El Rosal Ltda. (Cootransrural)</b>, con oficina en la Carrera 8 No. 12-38, Barrio San Carlos, El Rosal, Cundinamarca. Teléfono 320 904 2977, correo <a href="mailto:recepcion@cootransrural.com">recepcion@cootransrural.com</a>.</p>
+    </section>
+
+    <section id="datos">
+      <h2>2. Qué datos usa la app</h2>
+      <ul>
+        <li><b>Registro del pasajero:</b> nombre y celular (obligatorios), y si quieres, correo y un contacto de emergencia.</li>
+        <li><b>Registro del conductor:</b> número de móvil y un PIN de 4 dígitos.</li>
+        <li><b>Datos del viaje:</b> punto de recogida, destino, ruta, tarifa, código de abordaje, forma de pago y calificaciones.</li>
+        <li><b>Preferencias:</b> diseño elegido, lugares guardados (casa, trabajo), búsquedas recientes y ajustes de sonido.</li>
+      </ul>
+      <p>La app no pide ni guarda documentos de identidad, datos de tarjetas ni claves bancarias.</p>
+    </section>
+
+    <section id="celular">
+      <h2>3. Dónde se guardan: solo en tu celular</h2>
+      <p>En esta demostración <b>no hay un servidor de la cooperativa</b>. Tu registro, tu historial de viajes y tus ajustes se guardan únicamente en el almacenamiento del navegador de tu celular. Si borras los datos del navegador o tocas el botón de abajo, esa información desaparece y la cooperativa no conserva una copia.</p>
+      <div class="caja-borrar">
+        <p><b>Borrar mis datos de este celular.</b> Elimina el registro, el historial, los lugares guardados y los ajustes de la app en este navegador.</p>
+        <button class="boton" id="borrar" type="button">Borrar mis datos</button>
+        <p id="borrado" role="status" hidden style="margin:12px 0 0;font-weight:700;color:var(--verde)"></p>
+      </div>
+    </section>
+
+    <section id="ubicacion">
+      <h2>4. Tu ubicación</h2>
+      <p>La app te pide permiso para usar el GPS <b>solo para prestar el servicio</b>: ubicar tu punto de recogida, calcular la ruta y la tarifa, y mostrarle al conductor dónde estás. A su vez, la posición del conductor se le muestra al pasajero solo mientras dura el servicio. La ubicación no se usa para publicidad ni se vende a nadie. Puedes negar el permiso y escribir la dirección a mano, o quitarlo cuando quieras desde los ajustes de tu celular.</p>
+    </section>
+
+    <section id="prueba">
+      <h2>5. Modo prueba: los mensajes pasan por relés públicos</h2>
+      <p>Para que un pasajero y un conductor se encuentren desde celulares distintos, la demostración envía los mensajes del viaje (solicitud, aceptación, ubicación, cobro y calificación) a través de <b>relés MQTT públicos y gratuitos</b>, que no pertenecen a la cooperativa. Cualquier persona que conozca la «sala» de la demostración podría ver esos mensajes.</p>
+      <p><b>Por eso, en modo prueba no escribas datos sensibles</b> (direcciones privadas exactas, documentos, datos médicos o de pago). Usa nombres y lugares de prueba cuando enseñes la app. Antes de salir a producción, la cooperativa deberá usar un servidor propio y protegido.</p>
+    </section>
+
+    <section id="pagos">
+      <h2>6. Pagos de prueba</h2>
+      <p>El pago con código QR de esta versión es <b>únicamente una demostración</b>: no se conecta con Bre-B, Nequi, DaviPlata, Bancolombia ni con ningún banco, y <b>no se mueve dinero</b>. Los comprobantes que muestra no tienen valor. El pago real del viaje, por ahora, se hace directamente al conductor. Los nombres de las billeteras se muestran solo como referencia y pertenecen a sus respectivos dueños.</p>
+    </section>
+
+    <section id="terceros">
+      <h2>7. Servicios de terceros</h2>
+      <ul>
+        <li><b>Mapas:</b> teselas de OpenStreetMap y CARTO.</li>
+        <li><b>Búsqueda de direcciones:</b> Nominatim (OpenStreetMap).</li>
+        <li><b>Cálculo de rutas:</b> OSRM.</li>
+        <li><b>WhatsApp:</b> solo cuando tú eliges compartir tu viaje o escribirle a la central.</li>
+      </ul>
+      <p>Estos servicios reciben las coordenadas o el texto que se consulta, de acuerdo con sus propias políticas de privacidad.</p>
+    </section>
+
+    <section id="derechos">
+      <h2>8. Tus derechos (Ley 1581 de 2012)</h2>
+      <p>De acuerdo con la Ley Estatutaria 1581 de 2012 de protección de datos personales de Colombia y el Decreto 1377 de 2013 (compilado en el Decreto 1074 de 2015), como titular de tus datos tienes derecho a:</p>
+      <ul>
+        <li>Conocer, actualizar y rectificar tus datos.</li>
+        <li>Pedir prueba de la autorización que diste para tratarlos.</li>
+        <li>Saber para qué se han usado.</li>
+        <li>Revocar la autorización o pedir que se borren, cuando no exista un deber legal de conservarlos.</li>
+        <li>Presentar quejas ante la Superintendencia de Industria y Comercio (SIC).</li>
+        <li>Acceder gratis a tus datos.</li>
+      </ul>
+      <p>Al registrarte en la app autorizas el uso de tus datos para las finalidades descritas aquí: prestar el servicio de transporte, comunicarte con el conductor y la central, y mejorar el servicio.</p>
+    </section>
+
+    <section id="terminos">
+      <h2>9. Términos de uso de la demostración</h2>
+      <ul>
+        <li>Esta versión es una <b>demostración</b> para enseñar la app a la cooperativa y a los usuarios.</li>
+        <li>Las <b>tarifas y rutas son valores de ejemplo</b>, sujetos a confirmación de la cooperativa.</li>
+        <li>Si ningún conductor real acepta el servicio, la app muestra un <b>conductor simulado</b> con datos inventados, para que se vea el recorrido completo.</li>
+        <li>Para pedir un taxi real en este momento, llama o escribe a la central: <a href="tel:+573209042977">320 904 2977</a>.</li>
+        <li>En caso de emergencia, comunícate con la <b>línea 123</b>.</li>
+        <li>Úsala con respeto: el pasajero y el conductor se califican mutuamente para cuidar la convivencia.</li>
+      </ul>
+    </section>
+
+    <section id="contacto">
+      <h2>10. Contacto</h2>
+      <p>Para consultas, reclamos o para ejercer tus derechos sobre tus datos, escríbenos a <a href="mailto:recepcion@cootransrural.com">recepcion@cootransrural.com</a> o visítanos en la Carrera 8 No. 12-38, Barrio San Carlos, El Rosal. Responderemos dentro de los plazos de ley (10 días hábiles para consultas y 15 días hábiles para reclamos).</p>
+      <p><a href="../">Volver a la página de Cootransrural</a></p>
+    </section>
+  </main>
+
+  <script>
+    // Borra todo lo que la app guarda en este navegador (claves que empiezan por «ct.»).
+    document.getElementById('borrar').addEventListener('click', () => {
+      if (!confirm('¿Borrar tu registro, tu historial y tus ajustes de la app en este celular?')) return;
+      const claves = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('ct.')) claves.push(k);
+      }
+      claves.forEach((k) => localStorage.removeItem(k));
+      const aviso = document.getElementById('borrado');
+      aviso.hidden = false;
+      aviso.textContent = claves.length ? `Listo: se borraron ${claves.length} datos de la app en este celular.` : 'No había datos de la app guardados en este celular.';
+    });
+  </script>
+</body>
+</html>

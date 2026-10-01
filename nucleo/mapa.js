@@ -1,6 +1,6 @@
 // Mapa (Leaflet + teselas de OpenStreetMap/CARTO) con los elementos de la app:
 // punto de recogida, destino, ruta, taxis y selección de punto arrastrando el mapa.
-import { CENTRO, CAPAS_MAPA, urlDelSitio } from './config.js';
+import { CENTRO, CAPAS_MAPA, MAPBOX, urlDelSitio } from './config.js';
 
 let cargaLeaflet = null;
 export function cargarLeaflet() {
@@ -60,12 +60,65 @@ export async function crearMapa(elemento, opciones = {}) {
     zoom,
     zoomControl: false,
     attributionControl: true,
+    keyboard: false,
     tap: true,
   });
   if (controles) L.control.zoom({ position: 'topright' }).addTo(mapa);
-  const definicion = CAPAS_MAPA[capa] || CAPAS_MAPA.claro;
-  let teselas = L.tileLayer(definicion.url, { attribution: definicion.atribucion, maxZoom: 19, subdomains: 'abcd', detectRetina: false }).addTo(mapa);
   mapa.attributionControl.setPrefix('<a href="https://leafletjs.com">Leaflet</a>');
+
+  let teselas = null;
+  let logo = null;
+  const ponerCapa = (nombre) => {
+    teselas?.remove();
+    logo?.remove();
+    logo = null;
+    elemento.dataset.capa = nombre;
+    elemento.classList.remove('ct-mapa-respaldo');
+    const estilo = MAPBOX.token && MAPBOX.estilos[nombre];
+    if (estilo) {
+      teselas = L.tileLayer(`https://api.mapbox.com/styles/v1/${estilo}/tiles/512/{z}/{x}/{y}{r}?access_token=${MAPBOX.token}`, {
+        tileSize: 512,
+        zoomOffset: -1,
+        maxZoom: 20,
+        attribution: '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> <a href="https://www.mapbox.com/map-feedback/" target="_blank" rel="noopener"><strong>Mejorar este mapa</strong></a>',
+      }).addTo(mapa);
+      logo = L.control({ position: 'bottomleft' });
+      logo.onAdd = () => {
+        const a = L.DomUtil.create('a', 'ct-mapbox-logo');
+        a.href = 'https://www.mapbox.com/';
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.setAttribute('aria-label', 'Mapbox');
+        a.innerHTML = `<img src="${urlDelSitio('vendor/mapbox-logo.svg')}" alt="Mapbox" width="88" height="23">`;
+        return a;
+      };
+      logo.addTo(mapa);
+      // Si Mapbox no responde (sin red, token vencido o restringido), se pasa a OpenStreetMap.
+      let errores = 0;
+      let cargadas = 0;
+      teselas.on('tileload', () => (cargadas += 1));
+      teselas.on('tileerror', () => {
+        errores += 1;
+        if (errores >= 4 && cargadas < 2) {
+          console.warn('[mapa] Mapbox no respondió; se usa OpenStreetMap');
+          ponerRespaldo(nombre);
+        }
+      });
+    } else {
+      ponerRespaldo(nombre);
+    }
+  };
+  const ponerRespaldo = (nombre) => {
+    teselas?.remove();
+    logo?.remove();
+    logo = null;
+    const d = CAPAS_MAPA.osm;
+    teselas = L.tileLayer(d.url, { attribution: d.atribucion, maxZoom: 19 }).addTo(mapa);
+    elemento.dataset.capa = nombre;
+    // Con un estilo oscuro, el respaldo se oscurece con CSS (ver ESTILOS).
+    if (nombre !== 'osm') elemento.classList.add('ct-mapa-respaldo');
+  };
+  ponerCapa(capa);
 
   const icono = (html, tam, ancla, clase = '') => L.divIcon({ html, className: `ct-marcador ${clase}`, iconSize: tam, iconAnchor: ancla });
   const iconoOrigen = icono(svgPin(colorOrigen, 'A'), [36, 48], [18, 46], 'ct-origen');
@@ -84,15 +137,13 @@ export async function crearMapa(elemento, opciones = {}) {
     mapa,
 
     cambiarCapa(nombre) {
-      const d = CAPAS_MAPA[nombre] || CAPAS_MAPA.claro;
-      mapa.removeLayer(teselas);
-      teselas = L.tileLayer(d.url, { attribution: d.atribucion, maxZoom: 19, subdomains: 'abcd' }).addTo(mapa);
+      ponerCapa(nombre);
     },
 
     ponerOrigen(p) {
       if (!p) return api.quitarOrigen();
       if (origen) origen.setLatLng([p.lat, p.lng]);
-      else origen = L.marker([p.lat, p.lng], { icon: iconoOrigen, zIndexOffset: 500 }).addTo(mapa);
+      else origen = L.marker([p.lat, p.lng], { icon: iconoOrigen, zIndexOffset: 500, keyboard: false, interactive: false }).addTo(mapa);
     },
     quitarOrigen() {
       origen?.remove();
@@ -102,7 +153,7 @@ export async function crearMapa(elemento, opciones = {}) {
     ponerDestino(p) {
       if (!p) return api.quitarDestino();
       if (destino) destino.setLatLng([p.lat, p.lng]);
-      else destino = L.marker([p.lat, p.lng], { icon: iconoDestino, zIndexOffset: 500 }).addTo(mapa);
+      else destino = L.marker([p.lat, p.lng], { icon: iconoDestino, zIndexOffset: 500, keyboard: false, interactive: false }).addTo(mapa);
     },
     quitarDestino() {
       destino?.remove();
@@ -116,6 +167,7 @@ export async function crearMapa(elemento, opciones = {}) {
         yo = L.marker([p.lat, p.lng], {
           icon: L.divIcon({ html: '<span class="ct-yo-punto"></span>', className: 'ct-yo', iconSize: [22, 22], iconAnchor: [11, 11] }),
           interactive: false,
+          keyboard: false,
           zIndexOffset: 400,
         }).addTo(mapa);
         if (p.precision) yoPrecision = L.circle([p.lat, p.lng], { radius: p.precision, color: '#2563eb', weight: 1, opacity: 0.3, fillOpacity: 0.08, interactive: false }).addTo(mapa);
@@ -125,10 +177,10 @@ export async function crearMapa(elemento, opciones = {}) {
       }
     },
 
-    ponerRuta(coords, { color = colorRuta, grosor = 5, discontinua = false } = {}) {
+    ponerRuta(coords, { color = colorRuta, grosor = 5, discontinua = false, colorSombra = opciones.colorSombra || '#ffffff' } = {}) {
       api.quitarRuta();
       if (!coords?.length) return;
-      rutaSombra = L.polyline(coords, { color: '#ffffff', weight: grosor + 4, opacity: 0.85, interactive: false }).addTo(mapa);
+      rutaSombra = L.polyline(coords, { color: colorSombra, weight: grosor + 4, opacity: 0.85, interactive: false }).addTo(mapa);
       ruta = L.polyline(coords, { color, weight: grosor, opacity: 0.95, dashArray: discontinua ? '2 10' : null, lineCap: 'round', interactive: false }).addTo(mapa);
     },
     quitarRuta() {
@@ -147,6 +199,7 @@ export async function crearMapa(elemento, opciones = {}) {
           icon: L.divIcon({ html, className: 'ct-marcador ct-taxi-marcador', iconSize: [tam, tam], iconAnchor: [tam / 2, tam / 2] }),
           zIndexOffset: destacado ? 900 : 300,
           interactive: false,
+          keyboard: false,
         }).addTo(mapa);
         t._ctHtml = html;
         taxis.set(id, t);
@@ -173,14 +226,14 @@ export async function crearMapa(elemento, opciones = {}) {
       for (const id of [...taxis.keys()]) if (id !== excepto) api.quitarTaxi(id);
     },
 
-    centrar(p, z) {
-      mapa.setView([p.lat, p.lng], z ?? mapa.getZoom(), { animate: true });
+    centrar(p, z, { animar = true } = {}) {
+      mapa.setView([p.lat, p.lng], z ?? mapa.getZoom(), { animate: animar });
     },
-    ajustar(puntos, { margen = [60, 60], margenAbajo = 0, maxZoom = 17 } = {}) {
+    ajustar(puntos, { margen = [60, 60], margenAbajo = 0, maxZoom = 17, animar = true } = {}) {
       const validos = puntos.filter(Boolean).map((p) => (Array.isArray(p) ? p : [p.lat, p.lng]));
       if (validos.length === 0) return;
-      if (validos.length === 1) return mapa.setView(validos[0], Math.min(mapa.getZoom(), maxZoom), { animate: true });
-      mapa.fitBounds(L.latLngBounds(validos), { paddingTopLeft: margen, paddingBottomRight: [margen[0], margen[1] + margenAbajo], maxZoom, animate: true });
+      if (validos.length === 1) return mapa.setView(validos[0], Math.min(mapa.getZoom(), maxZoom), { animate: animar });
+      mapa.fitBounds(L.latLngBounds(validos), { paddingTopLeft: margen, paddingBottomRight: [margen[0], margen[1] + margenAbajo], maxZoom, animate: animar });
     },
     centro() {
       const c = mapa.getCenter();
@@ -218,6 +271,10 @@ const ESTILOS = `
 .ct-yo{background:none;border:0}
 .ct-yo-punto{display:block;width:18px;height:18px;margin:2px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 0 0 6px rgba(37,99,235,.25),0 2px 6px rgba(0,0,0,.3)}
 .ct-origen svg,.ct-destino svg{filter:drop-shadow(0 4px 4px rgba(0,0,0,.3))}
+.leaflet-container img.leaflet-tile{mix-blend-mode:normal}
+.ct-mapbox-logo{display:block;width:88px;height:23px;margin:0 0 4px 6px!important;opacity:.9}
+.ct-mapbox-logo img{display:block;width:88px;height:23px}
+.ct-mapa-respaldo[data-capa="oscuro"] .leaflet-tile-pane,.ct-mapa-respaldo[data-capa="noche"] .leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) brightness(.92) contrast(1.08) saturate(.55)}
 `;
 if (!document.getElementById('ct-estilos-mapa')) {
   const s = document.createElement('style');

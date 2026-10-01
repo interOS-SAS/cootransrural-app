@@ -14,7 +14,7 @@ import { avisar } from './avisos.js';
 import { TaxisAmbiente, ConductorSimulado } from './simulador.js';
 import { leerCobro, urlPago } from './qr.js';
 import * as perfil from './perfil.js';
-import { Emisor, uid, codigoNumerico, hashCorto, distanciaKm, pesos, minutosTexto, primerNombre, enlaceMapa } from './util.js';
+import { Emisor, uid, codigoNumerico, hashCorto, distanciaKm, pesos, minutosTexto, primerNombre, enlaceMapa, fechaTexto, horaTexto } from './util.js';
 
 export const FASES = ['inicio', 'buscando', 'asignado', 'llego', 'en_viaje', 'pagar', 'calificar'];
 
@@ -61,6 +61,10 @@ class ControladorPasajero extends Emisor {
     for (const tipo of ['presencia', 'aceptacion', 'ubicacion', 'estado', 'cobro', 'cancelacion', 'calificacion', 'pago_confirmado']) {
       this.bus.on(tipo, (datos, msj) => this.#manejar(tipo, datos, msj));
     }
+    // Un conductor que se conecta tarde pide las solicitudes que siguen buscando.
+    this.bus.on('consulta_solicitudes', () => {
+      if (this.estado.fase === 'buscando' && this.estado.viaje && !this.estado.viaje.simulado) this.#publicarSolicitud();
+    });
     // Retomar un viaje en curso si se recargó la página.
     const guardado = JSON.parse(sessionStorage.getItem('ct.viaje.pasajero') || 'null');
     if (guardado && Date.now() - guardado.guardado < 30 * 60 * 1000 && guardado.fase !== 'inicio') {
@@ -124,7 +128,8 @@ class ControladorPasajero extends Emisor {
     if (programadoPara && new Date(programadoPara) - Date.now() > 30 * 60 * 1000) {
       const prog = { id: uid('pr'), origen, destino, metodoPago, nota, fecha: new Date(programadoPara).getTime(), tarifa, creado: Date.now() };
       perfil.guardarProgramado(prog);
-      this.#avisar({ titulo: 'Viaje programado', cuerpo: `Te recogemos el ${new Date(programadoPara).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })}. ${tarifa.descuento ? `Ahorras ${pesos(tarifa.descuento)}.` : ''}`, tipo: 'exito' });
+      const cuando = `${fechaTexto(programadoPara)}, ${horaTexto(programadoPara)}`;
+      this.#avisar({ titulo: 'Viaje programado', cuerpo: `Te recogemos el ${cuando}${tarifa.descuento ? ` · Ahorras ${pesos(tarifa.descuento)}` : ''}`, tipo: 'exito' });
       this.#cambiar({});
       return { programado: prog };
     }
@@ -297,7 +302,7 @@ class ControladorPasajero extends Emisor {
         clearTimeout(this.temporizadorBusqueda);
         if (!msj.simulado) this.bus.publicar('asignacion', { viajeId: viaje.id, conductorId: d.conductor.id });
         const eta = d.etaMin ?? null;
-        this.#cambiar({ fase: 'asignado', conductor: d.conductor, posConductor: d.pos, rutaConductor: d.ruta || null, etaMin: eta });
+        this.#cambiar({ fase: 'asignado', conductor: d.conductor, posConductor: d.pos, rutaConductor: d.ruta || null, etaMin: eta, asignadoEn: Date.now() });
         this.#avisar({
           titulo: '¡Tu taxi va en camino!',
           cuerpo: `Móvil ${d.conductor.movil} · ${d.conductor.placa} · ${primerNombre(d.conductor.nombre)}${eta ? ` llega en ${minutosTexto(eta)}` : ''}`,
@@ -311,7 +316,9 @@ class ControladorPasajero extends Emisor {
         if (fase === 'asignado') {
           const km = distanciaKm(d.pos, viaje.origen);
           cambios.etaMin = d.etaMin ?? (km * 1.3 / 25) * 60;
-          if (km < 0.3 && !this.avisosDados.has('cerca')) {
+          if (km < 0.3) cambios.etaMin = Math.min(cambios.etaMin, 1);
+          const desdeAsignacion = Date.now() - (this.estado.asignadoEn || 0);
+          if (km < 0.3 && desdeAsignacion > 10000 && !this.avisosDados.has('cerca')) {
             this.avisosDados.add('cerca');
             this.#avisar({ titulo: 'Tu taxi está llegando', cuerpo: `El móvil ${conductor.movil} está a menos de 1 minuto. Alístate.`, tipo: 'info' });
           }

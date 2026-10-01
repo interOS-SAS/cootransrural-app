@@ -239,7 +239,8 @@ export async function crearSolicitudSimulada(posConductor) {
   let destino;
   if (Math.random() < 0.25) {
     // A veces un viaje intermunicipal.
-    destino = LUGARES.find((l) => l.id === elegir(['madrid', 'facatativa', 'subachoque', 'funza', 'mosquera']));
+    const id = elegir(['madrid', 'facatativa', 'subachoque', 'funza', 'mosquera']);
+    destino = LUGARES.find((l) => l.id === id);
   } else {
     [destino] = puntosCerca(origen, 1, 2.2);
   }
@@ -272,7 +273,8 @@ export class PasajeroSimulado {
   async alCobrar(valor) {
     await esperar(4000);
     if (!this.activo) return;
-    this.entregar('pago', { viajeId: this.viaje.id, metodo: this.viaje.metodoPago, valor, billetera: this.viaje.metodoPago === 'qr' ? elegir(['Nequi', 'Bre-B', 'DaviPlata', 'Bancolombia']) : null, ref: uid('PG').toUpperCase().slice(0, 10) });
+    const qr = this.viaje.metodoPago === 'qr';
+    this.entregar('pago', { viajeId: this.viaje.id, metodo: this.viaje.metodoPago, valor, billetera: qr ? elegir(['Bre-B', 'Bre-B', 'Nequi', 'DaviPlata', 'Bancolombia']) : null, ref: qr ? uid('PG').toUpperCase().slice(0, 10) : null });
   }
 
   async alCalificar() {

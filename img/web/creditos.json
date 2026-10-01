@@ -1,0 +1,108 @@
+{
+  "descripcion": "Imágenes de la web de Cootransrural (demo de la app de taxis). Generadas con IA en Canva (create-design + export-design) o retocadas a partir de fotos reales de la flota. Sin textos, sin logotipos de marcas y sin placas legibles.",
+  "fecha": "2026-10-01",
+  "imagenes": [
+    {
+      "archivo": "hero.jpg",
+      "origen": "canva-generada",
+      "disenoCanva": "DAHWuhsIAw4",
+      "enlaceCanva": "https://canva.link/xlra3wv91xvt5k3",
+      "proporcion": "16:9",
+      "dimensiones": "1920x1080",
+      "retoques": "Emblema genérico de la parrilla difuminado; la placa ya venía en blanco.",
+      "alt": "Taxi amarillo recorriendo una calle empedrada de un pueblo colonial de la Sabana, con casas blancas de balcones de madera y montañas verdes al atardecer."
+    },
+    {
+      "archivo": "pasajera.jpg",
+      "origen": "canva-generada",
+      "disenoCanva": "DAHWuu-2r7c",
+      "enlaceCanva": "https://canva.link/510kcvji14z886h",
+      "proporcion": "4:5",
+      "dimensiones": "1440x1800",
+      "retoques": "Recorte de 3:4 a 4:5.",
+      "alt": "Mujer joven sonríe mirando su celular en la acera de un pueblo colombiano mientras se acerca un taxi amarillo."
+    },
+    {
+      "archivo": "conductor.jpg",
+      "origen": "canva-generada",
+      "disenoCanva": "DAHWugh_hWA",
+      "enlaceCanva": "https://canva.link/9mf2q95j9ahjon2",
+      "proporcion": "4:5",
+      "dimensiones": "1440x1800",
+      "retoques": "Recorte de 3:4 a 4:5.",
+      "alt": "Conductor sonriente con chaqueta azul oscuro, apoyado en la puerta abierta de su taxi amarillo."
+    },
+    {
+      "archivo": "sticker-taxi.jpg",
+      "origen": "canva-generada + QR compuesto",
+      "disenoCanva": "DAHWuskBSOQ",
+      "enlaceCanva": "https://canva.link/yfnyqpnb8oo7j5o",
+      "proporcion": "4:3",
+      "dimensiones": "1920x1440",
+      "retoques": "El QR de la IA salió borroso: se limpió el sticker con un degradado tomado de la misma foto y se dibujó un QR real y nítido (vendor/qrcode.mjs). Recorte de 16:9 a 4:3.",
+      "qr": "https://cootransrural.com (se verificó la lectura con jsQR, incluso reducida al 25 %)",
+      "alt": "Sticker blanco con código QR pegado en el vidrio trasero de un taxi amarillo."
+    },
+    {
+      "archivo": "nevera.jpg",
+      "origen": "canva-generada + QR compuesto",
+      "disenoCanva": "DAHWutQ4P3o",
+      "enlaceCanva": "https://canva.link/ltnnhjopl3qb8cn",
+      "proporcion": "4:3",
+      "dimensiones": "1920x1440",
+      "retoques": "El QR de la IA salió borroso: se puso encima, en perspectiva, un panel blanco con un QR real y nítido, conservando el marco amarillo y verde original del imán. Recorte de 16:9 a 4:3.",
+      "qr": "https://cootransrural.com (se verificó la lectura con jsQR, incluso reducida al 30 %)",
+      "alt": "Imán amarillo y verde con código QR en la puerta de una nevera, en una cocina luminosa con frutas tropicales."
+    },
+    {
+      "archivo": "sabana.jpg",
+      "origen": "canva-generada",
+      "disenoCanva": "DAHWuo3gi8k",
+      "enlaceCanva": "https://canva.link/893ncdx3rx59sl3",
+      "proporcion": "16:9",
+      "dimensiones": "1920x1080",
+      "retoques": "Ninguno.",
+      "alt": "Vista aérea de la Sabana: campos verdes, invernaderos de flores y una carretera por la que va un taxi amarillo, con montañas al fondo."
+    },
+    {
+      "archivo": "noche.jpg",
+      "origen": "canva-generada",
+      "disenoCanva": "DAHWuk9NF0Y",
+      "enlaceCanva": "https://canva.link/4p6bmfl6gvabcnn",
+      "proporcion": "16:9",
+      "dimensiones": "1920x1080",
+      "retoques": "Emblema genérico de la parrilla difuminado.",
+      "alt": "Taxi amarillo con las luces encendidas, de noche, en una calle empedrada de un pueblo colonial iluminada por faroles."
+    },
+    {
+      "archivo": "flota-1.jpg",
+      "origen": "foto real retocada",
+      "fuente": "img/fotos/flota-frente.jpg",
+      "proporcion": "16:9",
+      "dimensiones": "1600x900",
+      "retoques": "Placas difuminadas, recorte que quita los letreros de la tienda y el cielo, reducción de ruido, contraste, saturación, balance cálido, nitidez y viñeta suave.",
+      "alt": "Tres taxis Kia Picanto amarillos de la flota de Cootransrural estacionados frente a la sede en El Rosal."
+    },
+    {
+      "archivo": "flota-2.jpg",
+      "origen": "foto real retocada",
+      "fuente": "img/fotos/taxi-conductor.jpg",
+      "proporcion": "4:3",
+      "dimensiones": "1600x1200",
+      "retoques": "Placa difuminada, recorte, reducción de ruido, ampliación (la original es de 680x510), color, nitidez y viñeta suave.",
+      "nota": "La original es de baja resolución: mejor mostrarla a 800 px de ancho o menos. Ya no se usa en la web (01-oct): se veía ampliada y borrosa.",
+      "alt": "Taxi Kia Picanto amarillo con su conductor frente a la sede de Cootransrural Ltda."
+    },
+    {
+      "archivo": "flota-plaza.jpg",
+      "origen": "canva-generada",
+      "disenoCanva": "DAHWu4_GvfE",
+      "enlaceCanva": "https://canva.link/ma043e2ekqdsqln",
+      "proporcion": "16:9",
+      "dimensiones": "1600x900",
+      "retoques": "Emblemas genéricos de las parrillas difuminados (canvas de Chromium); las placas ya venían en blanco. Reducida de 1920x1080.",
+      "uso": "Banda grande «52 taxis Kia Picanto» en Nosotros (reemplaza a flota-2.jpg, que se veía ampliada y borrosa).",
+      "alt": "Taxis amarillos en fila frente a la iglesia y el parque principal de un pueblo de la Sabana, con las montañas al fondo."
+    }
+  ]
+}

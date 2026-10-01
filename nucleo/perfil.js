@@ -137,9 +137,10 @@ export function agregarAlHistorialConductor(viaje) {
 
 // Resumen del día para el conductor.
 export function resumenDelDia(ahora = new Date()) {
-  const inicio = new Date(ahora);
-  inicio.setHours(0, 0, 0, 0);
-  const hoy = historialConductor().filter((v) => v.fin >= inicio.getTime() && v.estado === 'finalizado');
+  // Medianoche de hoy en Colombia (UTC−5, sin horario de verano).
+  const enBogota = new Date(new Date(ahora).getTime() - 5 * 3600 * 1000);
+  const inicio = Date.UTC(enBogota.getUTCFullYear(), enBogota.getUTCMonth(), enBogota.getUTCDate()) + 5 * 3600 * 1000;
+  const hoy = historialConductor().filter((v) => v.fin >= inicio && v.estado === 'finalizado');
   const ganado = hoy.reduce((s, v) => s + (v.valor || 0), 0);
   const conCalificacion = hoy.filter((v) => v.calificacionRecibida);
   const promedio = conCalificacion.length ? conCalificacion.reduce((s, v) => s + v.calificacionRecibida, 0) / conCalificacion.length : null;

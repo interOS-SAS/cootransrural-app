@@ -61,19 +61,23 @@ export const SERVICIOS = {
   osrm: 'https://router.project-osrm.org',
 };
 
+// Mapas de Mapbox (token público de Oscar; restringirlo por URL en mapbox.com).
+// Cada diseño usa un estilo: 'claro' (calles), 'suave' (claro y limpio),
+// 'oscuro' (navegación nocturna), 'navegacion' (navegación de día).
+// Si Mapbox falla, el mapa pasa solo a OpenStreetMap.
+export const MAPBOX = {
+  token: '', // pendiente: GitHub bloquea el token público hasta que se autorice
+  estilos: {
+    claro: 'mapbox/streets-v12',
+    suave: 'mapbox/light-v11',
+    oscuro: 'mapbox/navigation-night-v1',
+    navegacion: 'mapbox/navigation-day-v1',
+    noche: 'mapbox/dark-v11',
+  },
+};
+
+// Respaldo sin llave (y la capa 'osm' explícita).
 export const CAPAS_MAPA = {
-  claro: {
-    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-    atribucion: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  },
-  suave: {
-    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-    atribucion: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  },
-  oscuro: {
-    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    atribucion: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  },
   osm: {
     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     atribucion: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',

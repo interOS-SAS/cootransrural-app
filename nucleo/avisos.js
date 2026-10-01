@@ -66,6 +66,8 @@ export function sonar(tipo = 'info') {
 }
 
 export function vibrar(patron = [120]) {
+  // Chrome no deja vibrar antes del primer toque (y lo reporta como error).
+  if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
   try {
     navigator.vibrate?.(patron);
   } catch {

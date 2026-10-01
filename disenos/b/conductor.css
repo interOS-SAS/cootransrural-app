@@ -1,0 +1,1583 @@
+/* Diseño B «Verde Rosal» — app del conductor: alto contraste y botones enormes. */
+@import url('./comun.css');
+
+/* ================================================================ */
+/* INGRESO                                                           */
+/* ================================================================ */
+.vb-ingreso {
+  background: var(--vb-crema);
+}
+
+.vb-ingreso-cab {
+  position: relative;
+  height: min(42vh, 310px);
+  min-height: 236px;
+  padding: calc(var(--vb-arriba) + 14px) 18px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  color: #fff;
+  border-bottom: 5px solid var(--vb-oro);
+  overflow: hidden;
+}
+
+.vb-ingreso-cab .vb-foto {
+  background: var(--vb-rosas), linear-gradient(165deg, #10804A 0%, var(--vb-verde) 40%, var(--vb-verde-prof) 100%);
+}
+
+/* Velo verde abajo para que la marca se lea sobre la foto (la cara queda libre). */
+.vb-ingreso-cab::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgba(4, 38, 20, .92) 0%, rgba(4, 38, 20, .6) 30%, rgba(4, 38, 20, 0) 58%);
+}
+
+.vb-ingreso-cab:has(.sin-foto)::after {
+  display: none;
+}
+
+.vb-ingreso-marca {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.vb-ingreso-marca b {
+  display: block;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+}
+
+.vb-ingreso-marca span {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 10px;
+  border-radius: 8px;
+  background: var(--vb-oro);
+  color: var(--vb-texto);
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.vb-ingreso-chip {
+  position: absolute;
+  z-index: 2;
+  left: 14px;
+  top: calc(var(--vb-arriba) + 14px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 12px;
+  background: var(--vb-oro);
+  color: var(--vb-texto);
+  font-size: 16px;
+  font-weight: 800;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .3);
+}
+
+.vb-ingreso-chip b {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+
+.vb-ingreso-cab:has(.sin-foto) .vb-ingreso-chip {
+  display: none;
+}
+
+.vb-ingreso-taxi {
+  position: absolute;
+  left: -6px;
+  right: -6px;
+  bottom: -14px;
+}
+
+.vb-ingreso-taxi svg {
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, .25));
+}
+
+.vb-ingreso-form {
+  padding: 22px 20px calc(26px + var(--vb-abajo));
+}
+
+.vb-ingreso-form h1 {
+  margin: 0 0 16px;
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--vb-verde-prof);
+  letter-spacing: -.01em;
+}
+
+.vb-campo-movil {
+  display: flex;
+}
+
+.vb-campo-movil input {
+  border-radius: 0 14px 14px 0;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  min-height: 64px;
+}
+
+.vb-campo-movil .vb-prefijo {
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  background: var(--vb-oro);
+  border-color: var(--vb-oro);
+}
+
+.vb-ingreso-form .vb-casillas {
+  justify-content: start;
+  margin: 4px 0 0;
+}
+
+.vb-pista {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--vb-oro-claro);
+  border: 2px dashed var(--vb-oro);
+  color: #4D3A00;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.vb-pista .vb-ic {
+  flex: none;
+}
+
+.vb-pista b {
+  color: var(--vb-texto);
+  font-weight: 900;
+}
+
+.vb-pista.centro,
+.vb-error.centro {
+  justify-content: center;
+  text-align: center;
+}
+
+/* ================================================================ */
+/* CABECERA Y MAPA                                                   */
+/* ================================================================ */
+.vb-c-servicios,
+.vb-c-viaje {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--vb-crema);
+}
+
+.vb-c-mapa {
+  position: relative;
+  flex: 0 0 40%;
+  min-height: 210px;
+}
+
+.vb-c-viaje .vb-c-mapa {
+  flex-basis: 42%;
+}
+
+.vb-c-servicios.con-solicitudes .vb-c-mapa {
+  flex-basis: 17%;
+  min-height: 128px;
+}
+
+.vb-c-servicios.con-solicitudes [data-estado-conexion],
+.vb-c-servicios.con-solicitudes .vb-c-simular,
+.vb-c-servicios.con-solicitudes [data-resumen],
+.vb-c-servicios.con-solicitudes .vb-c-centrar {
+  display: none;
+}
+
+.vb-c-servicios.con-solicitudes .vb-c-cab {
+  padding-bottom: 10px;
+}
+
+.vb-c-viaje.fase-en_origen .vb-c-mapa {
+  flex-basis: 26%;
+  min-height: 150px;
+}
+
+.vb-c-cab {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: calc(var(--vb-arriba) + 10px) 10px 26px;
+  background: linear-gradient(180deg, rgba(7, 61, 34, .92) 0%, rgba(7, 61, 34, .75) 60%, rgba(7, 61, 34, 0) 100%);
+  color: #fff;
+  pointer-events: none;
+}
+
+.vb-c-cab > * {
+  pointer-events: auto;
+}
+
+.vb-c-yo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.vb-c-yo > div > b {
+  display: block;
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vb-c-yo > div > span {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  opacity: .9;
+}
+
+.vb-c-movil {
+  flex: none;
+  display: grid;
+  place-items: center;
+  min-width: 58px;
+  padding: 4px 8px 5px;
+  border-radius: 12px;
+  background: var(--vb-oro);
+  color: var(--vb-texto);
+  line-height: 1;
+  box-shadow: 0 3px 0 var(--vb-oro-osc);
+}
+
+.vb-c-movil small {
+  font-size: 10.5px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.vb-c-movil b {
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.vb-c-movil.chico {
+  min-width: 52px;
+  box-shadow: 0 3px 0 var(--vb-oro-osc), var(--vb-sombra);
+}
+
+.vb-c-movil.chico b {
+  font-size: 20px;
+}
+
+.vb-c-chips {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.vb-c-gps {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--vb-oro-claro);
+  color: #5A4300;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.vb-c-gps.real {
+  background: var(--vb-verde-claro);
+  color: var(--vb-verde-osc);
+}
+
+.vb-c-centrar {
+  right: 12px;
+  bottom: 38px;
+  width: 52px;
+  padding: 0;
+  justify-content: center;
+}
+
+.vb-c-cab-viaje {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(var(--vb-arriba) + 10px) 10px 0;
+  pointer-events: none;
+}
+
+.vb-c-paso {
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--vb-verde-prof);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 900;
+  box-shadow: var(--vb-sombra);
+}
+
+.vb-c-cab-viaje .vb-prueba {
+  margin-left: auto;
+}
+
+/* ================================================================ */
+/* PANEL                                                             */
+/* ================================================================ */
+.vb-c-panel {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  min-height: 0;
+  margin-top: -26px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 10px 16px 20px;
+  border-radius: 28px 28px 0 0;
+  background: var(--vb-crema);
+  box-shadow: 0 -10px 30px rgba(7, 61, 34, .2);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.vb-c-panel > * {
+  flex-shrink: 0;
+}
+
+.vb-c-estado {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 24px;
+}
+
+.vb-c-estado.apagado {
+  background: #fff;
+  border: 2px solid var(--vb-borde);
+}
+
+.vb-c-estado.encendido {
+  background: var(--vb-rosas), linear-gradient(140deg, var(--vb-verde), var(--vb-verde-prof));
+  color: #fff;
+}
+
+.vb-c-estado-txt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.vb-c-estado-txt b {
+  display: block;
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.vb-c-estado-txt small {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  opacity: .9;
+}
+
+.vb-c-punto {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #A9A08C;
+  box-shadow: 0 0 0 6px rgba(169, 160, 140, .25);
+}
+
+.encendido .vb-c-punto {
+  background: #4ADE80;
+  animation: vbLatidoVerde 1.6s ease-out infinite;
+}
+
+.vb-c-conectar {
+  min-height: 72px;
+  font-size: 24px;
+}
+
+.vb-c-desconectar {
+  justify-self: start;
+  min-height: 52px;
+  font-size: 17px;
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+  border-color: rgba(255, 255, 255, .6);
+}
+
+.vb-c-simular {
+  font-size: 19px;
+}
+
+.vb-c-resumen {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px 14px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid var(--vb-borde);
+}
+
+.vb-c-resumen h2 {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--vb-texto-3);
+}
+
+.vb-c-resumen > div {
+  text-align: center;
+  padding: 4px 2px;
+}
+
+.vb-c-resumen > div + div {
+  border-left: 1px dashed var(--vb-borde);
+}
+
+.vb-c-resumen > div b {
+  display: block;
+  font-size: 21px;
+  font-weight: 900;
+  color: var(--vb-verde-prof);
+  white-space: nowrap;
+}
+
+.vb-c-resumen > div span {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--vb-texto-3);
+}
+
+/* ---------------- solicitudes ---------------- */
+.vb-c-solicitudes {
+  display: grid;
+  gap: 12px;
+}
+
+.vb-c-solicitudes:empty {
+  display: none;
+}
+
+.vb-c-sol-titulo {
+  margin: 2px 0 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--vb-verde-prof);
+}
+
+.vb-solicitud {
+  position: relative;
+  padding: 16px 14px 14px;
+  border-radius: 24px;
+  background: #fff;
+  border: 4px solid var(--vb-oro);
+  box-shadow: 0 0 0 0 rgba(242, 183, 5, .6), 0 14px 30px rgba(91, 70, 20, .2);
+  animation: vbLatidoOro 1.6s ease-out infinite, vbEntraArriba .4s ease;
+  overflow: hidden;
+}
+
+.vb-solicitud.urgente {
+  border-color: var(--vb-rojo);
+  animation: vbLatidoRojo 1s ease-out infinite;
+}
+
+.vb-cuenta {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: var(--vb-crema-2);
+}
+
+.vb-cuenta i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--vb-verde);
+  transition: width .25s linear;
+}
+
+.urgente .vb-cuenta i {
+  background: var(--vb-rojo);
+}
+
+.vb-solicitud-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.vb-solicitud .vb-punto-ruta {
+  padding: 5px 0;
+}
+
+.vb-solicitud-tit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #7A5A00;
+}
+
+.vb-solicitud-seg {
+  min-width: 64px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--vb-verde-prof);
+  color: #fff;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.vb-solicitud-seg b {
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.urgente .vb-solicitud-seg {
+  background: var(--vb-rojo);
+}
+
+.vb-solicitud-pasajero {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vb-solicitud-quien {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.vb-solicitud-quien b {
+  flex: 1 0 100%;
+  font-size: 21px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.vb-sol-cal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--vb-texto-2);
+}
+
+.vb-sol-cal .vb-ic {
+  color: var(--vb-oro);
+}
+
+.vb-solicitud-valor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 16px;
+  background: var(--vb-crema);
+  border: 1.5px dashed var(--vb-borde);
+}
+
+.vb-solicitud-valor > b {
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--vb-verde-prof);
+  letter-spacing: -.02em;
+}
+
+.vb-chip-pago {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--vb-oro-claro);
+  color: #5A4300;
+  font-size: 14.5px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.vb-chip-pago.qr {
+  background: var(--vb-verde-claro);
+  color: var(--vb-verde-osc);
+}
+
+.vb-solicitud-cifras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 4px;
+}
+
+.vb-solicitud-cifras > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--vb-verde-suave);
+  color: var(--vb-verde-osc);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.vb-c-nota {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--vb-oro-claro);
+  font-size: 16px;
+  font-weight: 700;
+  font-style: italic;
+  color: #4D3A00;
+}
+
+.vb-c-nota .vb-ic {
+  flex: none;
+}
+
+.vb-solicitud-botones {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.vb-c-aceptar {
+  min-height: 68px;
+  font-size: 24px;
+}
+
+.vb-c-rechazar {
+  min-height: 68px;
+  border-color: #B9AF98;
+  color: var(--vb-texto-2);
+}
+
+/* ================================================================ */
+/* VIAJE                                                             */
+/* ================================================================ */
+.vb-c-titulo small {
+  font-size: 14.5px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--vb-verde);
+}
+
+.vb-c-titulo h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 900;
+  color: var(--vb-verde-prof);
+}
+
+.vb-c-cifras {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.vb-c-cifras > div {
+  padding: 12px 14px;
+  border-radius: 20px;
+  background: var(--vb-verde-prof);
+  color: #fff;
+}
+
+.vb-c-cifras > div:last-child {
+  background: #fff;
+  color: var(--vb-texto);
+  border: 2px solid var(--vb-borde);
+}
+
+.vb-c-cifras b {
+  display: block;
+  font-size: 32px;
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -.02em;
+}
+
+.vb-c-cifras span {
+  font-size: 15px;
+  font-weight: 800;
+  opacity: .85;
+}
+
+.vb-c-pasajero {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid var(--vb-borde);
+}
+
+.vb-c-pasajero > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.vb-c-pasajero b {
+  display: block;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.vb-c-pasajero > div > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vb-texto-2);
+}
+
+.vb-c-pasajero > div > span .vb-ic {
+  color: var(--vb-oro);
+}
+
+.vb-c-tarifa {
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  color: var(--vb-verde-prof) !important;
+}
+
+.vb-c-punto-tarjeta {
+  padding: 8px 14px;
+}
+
+.vb-c-acciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
+  gap: 8px;
+}
+
+.vb-c-mensaje {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: var(--vb-oro);
+  color: var(--vb-texto);
+  font-size: 17px;
+  font-weight: 800;
+  animation: vbEntraArriba .4s ease;
+}
+
+.vb-c-mensaje .vb-ic {
+  flex: none;
+}
+
+.vb-c-espera {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  text-align: center;
+}
+
+.vb-c-espera h1 {
+  margin: 6px 0 0;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--vb-verde-prof);
+}
+
+.vb-c-espera p {
+  margin: 0;
+  color: var(--vb-texto-2);
+}
+
+.vb-c-girando {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 3px solid rgba(11, 107, 58, .25);
+  border-top-color: var(--vb-verde);
+  animation: vbGira .9s linear infinite;
+}
+
+.vb-c-girando.grande {
+  width: 52px;
+  height: 52px;
+  border-width: 5px;
+}
+
+.vb-c-viaje.fase-en_origen .vb-casillas {
+  margin: 4px 0;
+}
+
+.vb-c-viaje.fase-en_origen .vb-sub {
+  margin: -6px 0 0;
+}
+
+/* ---------------- botón principal ---------------- */
+.vb-c-barra {
+  flex: none;
+  position: relative;
+  z-index: 6;
+  padding: 12px 14px calc(12px + var(--vb-abajo));
+  background: #fff;
+  border-top: 1px solid var(--vb-borde);
+  box-shadow: 0 -8px 24px rgba(30, 42, 34, .1);
+}
+
+.vb-c-principal {
+  min-height: 76px;
+  font-size: 26px;
+  border-radius: 22px;
+  background: var(--vb-verde);
+  color: #fff;
+  box-shadow: 0 5px 0 var(--vb-verde-prof), 0 10px 22px rgba(11, 107, 58, .3);
+}
+
+.vb-c-principal.fase-en_viaje {
+  background: var(--vb-rojo);
+  box-shadow: 0 5px 0 var(--vb-rojo-osc), 0 10px 22px rgba(166, 31, 31, .3);
+}
+
+.vb-c-principal.fase-hacia_origen.resaltado,
+.vb-c-principal.fase-en_viaje.resaltado {
+  background: var(--vb-oro);
+  color: var(--vb-texto);
+  box-shadow: 0 5px 0 var(--vb-oro-osc);
+  animation: vbLatidoOro 1.1s ease-out infinite;
+}
+
+.vb-c-principal.espera {
+  background: var(--vb-crema-2);
+  color: var(--vb-texto-2);
+  box-shadow: none;
+  font-size: 20px;
+  opacity: 1;
+}
+
+
+/* ================================================================ */
+/* COBRO                                                             */
+/* ================================================================ */
+.vb-c-cobro {
+  padding: 0 16px calc(24px + var(--vb-abajo));
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.vb-c-cobro > * {
+  flex-shrink: 0;
+}
+
+.vb-c-cobro-cab {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 -16px;
+  padding: calc(var(--vb-arriba) + 18px) 18px 70px;
+  color: #fff;
+  background: var(--vb-rosas), linear-gradient(160deg, #10804A, var(--vb-verde-prof));
+}
+
+.vb-c-cobro-cab small {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--vb-oro-texto);
+}
+
+.vb-c-cobro-cab h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.vb-c-qr-tarjeta {
+  margin-top: -62px;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 16px 16px 12px;
+  border-radius: 28px;
+  background: #fff;
+  border: 6px solid var(--vb-verde);
+  box-shadow: 0 0 0 4px #fff, 0 18px 40px rgba(7, 61, 34, .3);
+  text-align: center;
+}
+
+.vb-c-qr-etq {
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--vb-texto-3);
+}
+
+.vb-c-valor {
+  font-size: 58px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -.03em;
+  color: var(--vb-verde-prof);
+}
+
+.vb-c-qr {
+  width: min(250px, 78%);
+  aspect-ratio: 1;
+  margin: 6px 0 2px;
+}
+
+.vb-c-qr svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.vb-c-qr-ayuda {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vb-texto-2);
+  text-align: left;
+}
+
+.vb-c-qr-ayuda .vb-ic {
+  flex: none;
+  color: var(--vb-verde);
+}
+
+.vb-c-qr-pie {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 2px dashed var(--vb-borde);
+  width: 100%;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--vb-verde-osc);
+}
+
+.vb-c-metodo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: var(--vb-verde-suave);
+  border: 1.5px solid #CFE5D6;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.vb-c-metodo .vb-ic {
+  flex: none;
+  color: var(--vb-verde);
+}
+
+.vb-c-esperando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0;
+  font-weight: 800;
+  color: var(--vb-texto-2);
+}
+
+/* ================================================================ */
+/* CALIFICAR                                                         */
+/* ================================================================ */
+.vb-c-calificar-pantalla {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.vb-c-calificar {
+  flex: 1;
+  min-height: 0;
+  padding: calc(var(--vb-arriba) + 16px) 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.vb-c-calificar > * {
+  flex-shrink: 0;
+}
+
+.vb-c-pago-ok {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 22px;
+  color: #fff;
+  background: var(--vb-rosas), linear-gradient(140deg, var(--vb-verde), var(--vb-verde-prof));
+}
+
+.vb-c-pago-ok > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.vb-c-pago-ok .vb-recibo-ok-ic {
+  width: 56px;
+  height: 56px;
+  background: var(--vb-oro);
+  color: var(--vb-texto);
+}
+
+.vb-c-pago-ok b {
+  display: block;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.vb-c-pago-ok span {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: .9;
+  overflow-wrap: anywhere;
+}
+
+.vb-c-pago-ok .vb-c-pago-valor {
+  font-size: 34px;
+  font-weight: 900;
+  opacity: 1;
+  line-height: 1.1;
+}
+
+.vb-c-pago-ok .vb-prueba {
+  align-self: flex-start;
+  opacity: 1;
+}
+
+/* ================================================================ */
+/* GANANCIAS, DOCUMENTOS Y PERFIL                                    */
+/* ================================================================ */
+.vb-c-ganancias,
+.vb-c-documentos,
+.vb-c-perfil {
+  padding: 0 16px calc(24px + var(--vb-abajo));
+}
+
+.vb-c-total {
+  display: grid;
+  gap: 2px;
+  padding: 18px;
+  border-radius: 24px;
+  background: #fff;
+  border: 3px solid var(--vb-oro);
+  box-shadow: var(--vb-sombra);
+}
+
+.vb-c-total > span {
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--vb-texto-3);
+}
+
+.vb-c-total > b {
+  font-size: 52px;
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -.03em;
+  color: var(--vb-verde-prof);
+}
+
+.vb-c-total-cifras {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 2px dashed var(--vb-borde);
+}
+
+.vb-c-total-cifras b {
+  display: block;
+  font-size: 17px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.vb-c-total-cifras small {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--vb-texto-3);
+}
+
+.vb-c-metodos {
+  margin-top: 12px;
+}
+
+.vb-c-metodos h2 {
+  margin: 0 0 10px;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.vb-c-barra-metodos {
+  height: 18px;
+  border-radius: 999px;
+  background: var(--vb-oro);
+  overflow: hidden;
+}
+
+.vb-c-barra-metodos i {
+  display: block;
+  height: 100%;
+  background: var(--vb-verde);
+}
+
+.vb-c-metodos-fila {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 15.5px;
+  font-weight: 700;
+}
+
+.vb-c-metodos-fila i {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  margin-right: 4px;
+  vertical-align: -1px;
+}
+
+.vb-c-metodos-fila i.qr {
+  background: var(--vb-verde);
+}
+
+.vb-c-metodos-fila i.ef {
+  background: var(--vb-oro);
+}
+
+.vb-c-doc-resumen {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 22px;
+}
+
+.vb-c-doc-resumen.ok {
+  background: var(--vb-verde);
+  color: #fff;
+}
+
+.vb-c-doc-resumen.aviso {
+  background: var(--vb-oro);
+  color: var(--vb-texto);
+}
+
+.vb-c-doc-resumen .vb-ic {
+  flex: none;
+}
+
+.vb-c-doc-resumen b {
+  display: block;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.vb-c-doc-resumen span {
+  font-size: 15.5px;
+  font-weight: 700;
+}
+
+.vb-c-semaforo-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 14px 2px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--vb-texto-2);
+}
+
+.vb-c-semaforo-leyenda i {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: -1px;
+}
+
+.vb-c-semaforo-leyenda i.verde,
+.vb-documento.verde .vb-semaforo .v {
+  background: #22A55A;
+}
+
+.vb-c-semaforo-leyenda i.amarillo,
+.vb-documento.amarillo .vb-semaforo .a {
+  background: var(--vb-oro);
+}
+
+.vb-c-semaforo-leyenda i.rojo,
+.vb-documento.rojo .vb-semaforo .r {
+  background: var(--vb-rojo);
+}
+
+.vb-documento {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  padding: 14px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid var(--vb-borde);
+  border-left: 7px solid #22A55A;
+}
+
+.vb-documento.amarillo {
+  border-left-color: var(--vb-oro);
+}
+
+.vb-documento.rojo {
+  border-left-color: var(--vb-rojo);
+}
+
+.vb-documento > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.vb-documento > div > b {
+  display: block;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.vb-documento small {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--vb-texto-3);
+}
+
+.vb-documento > div > span {
+  display: block;
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vb-texto-2);
+}
+
+.vb-semaforo {
+  flex: none;
+  display: grid;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 12px;
+  background: #24302A;
+}
+
+.vb-semaforo i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #48524C;
+}
+
+.vb-doc-estado {
+  flex: none;
+  text-align: right;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.vb-documento.verde .vb-doc-estado {
+  color: #17793F;
+}
+
+.vb-documento.amarillo .vb-doc-estado {
+  color: #7A5A00;
+}
+
+.vb-documento.rojo .vb-doc-estado {
+  color: var(--vb-rojo-osc);
+}
+
+.vb-doc-estado small {
+  font-weight: 700;
+}
+
+.vb-c-mi-taxi {
+  border-radius: 26px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--vb-borde);
+  box-shadow: var(--vb-sombra);
+}
+
+.vb-c-mi-taxi-ilus {
+  padding: 16px 12px 0;
+  background: linear-gradient(180deg, #FFF3CC 0%, #FBF8F1 70%);
+  border-bottom: 3px solid var(--vb-oro);
+}
+
+.vb-c-mi-taxi-datos {
+  padding: 14px 16px 6px;
+}
+
+.vb-c-yo.grande > div > b {
+  font-size: 21px;
+  white-space: normal;
+}
+
+.vb-c-yo.grande > div > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14.5px;
+  color: var(--vb-texto-2);
+  opacity: 1;
+}
+
+.vb-c-yo.grande > div > span .vb-ic {
+  color: var(--vb-oro);
+}
+
+.vb-c-mi-taxi dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 12px;
+  margin: 12px 0 0;
+}
+
+.vb-c-mi-taxi dl > div {
+  padding: 10px 0;
+  border-top: 1px dashed var(--vb-borde);
+}
+
+.vb-c-mi-taxi dt {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--vb-texto-3);
+}
+
+.vb-c-mi-taxi dd {
+  margin: 2px 0 0;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.vb-c-movil-dd {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 10px;
+  background: var(--vb-oro);
+  font-size: 24px !important;
+}
+
+.vb-c-subtitulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 10px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.vb-c-perfil .vb-menu {
+  margin-top: 18px;
+}
+
+/* Pantallas bajitas */
+@media (max-height: 760px) {
+  .vb-c-mapa {
+    flex-basis: 34%;
+    min-height: 180px;
+  }
+  .vb-c-principal {
+    min-height: 66px;
+    font-size: 23px;
+  }
+  .vb-c-valor {
+    font-size: 48px;
+  }
+  .vb-c-qr {
+    width: min(210px, 70%);
+  }
+  .vb-c-cifras b {
+    font-size: 27px;
+  }
+}
+
+@media (max-width: 370px) {
+  .vb-solicitud-pasajero b {
+    font-size: 19px;
+  }
+  .vb-solicitud-valor > b {
+    font-size: 24px;
+  }
+  .vb-c-aceptar {
+    font-size: 21px;
+  }
+  .vb-c-resumen > div b {
+    font-size: 18px;
+  }
+}
+
+/* ================================================================ */
+/* AJUSTES DE LA REVISIÓN                                            */
+/* ================================================================ */
+/* Al llegar se reemplaza «1 min · 0 m» por un aviso claro. */
+.vb-c-llegaste {
+  display: none;
+}
+
+.vb-c-cifras.llego > div {
+  display: none;
+}
+
+.vb-c-cifras.llego > .vb-c-llegaste {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--vb-oro);
+  color: var(--vb-texto);
+  animation: vbEntraTexto .35s ease;
+}
+
+.vb-c-cifras.llego > .vb-c-llegaste b {
+  font-size: 24px;
+  letter-spacing: -.01em;
+}
+
+/* PIN: las 4 casillas ocupan todo el ancho, como el campo del móvil. */
+.vb-ingreso-form .vb-casillas {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  justify-content: stretch;
+}
+
+/* «★ 4,6 · Paga en efectivo»: la estrella sigue al texto si este parte de renglón. */
+.vb-c-pasajero > div > span {
+  display: block;
+}
+
+.vb-c-pasajero > div > span .vb-ic {
+  display: inline-block;
+  vertical-align: -2px;
+  margin-right: 2px;
+}
+
+/* «Cobra el viaje» en un solo renglón también a 360 px. */
+.vb-c-cobro-cab > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.vb-c-cobro-cab h1 {
+  white-space: nowrap;
+  font-size: clamp(25px, 7.4vw, 30px);
+}
+
+.vb-c-cobro-cab .vb-prueba {
+  flex: none;
+}
+
+/* Sin foto (sin conexión): la marca arriba y el taxi ilustrado abajo. */
+.vb-ingreso-cab:has(.sin-foto) {
+  justify-content: flex-start;
+}
+
+/* Cobro con la tarjeta QR Bre-B de prueba (núcleo): ya no es un cuadro fijo. */
+.vb-c-qr-tarjeta { min-width: 0; max-width: 100%; box-sizing: border-box; }
+.vb-c-qr:has(.ct-breb) { width: min(300px, 100%); aspect-ratio: auto; }
+.vb-c-qr .ct-breb { box-shadow: none; border: 1px solid var(--vb-borde); }
+.vb-c-qr .ct-breb-valor { display: none; } /* el valor ya se ve en grande arriba */
+.vb-c-qr-ayuda { min-width: 0; }
