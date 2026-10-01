@@ -2,7 +2,7 @@
 // Ajustes y la lista de avisos.
 import { el, esc, icono, abrirPanel, chipPrueba, decimal, placa, franjaCuadros } from './ui.js';
 import { ilustracionVacia, taxiLateral } from './ilustraciones.js';
-import { bloqueDiseno, bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio } from './ajustes-comunes.js';
+import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio } from './ajustes-comunes.js';
 import * as EM from './empresa.js';
 
 // Colores validados para las dos categorías (QR / efectivo) sobre fondo claro.
@@ -205,7 +205,6 @@ export function abrirAjustesConductor({ N, app, c, avisos, diseno, cambiarMunici
         bloqueSonidoYAvisos(N),
         bloqueConexion(N, { simulacion: false }),
         bloqueSala(N, app),
-        bloqueDiseno(N, diseno),
         bloqueInstalar(N, app),
         bloqueAcerca(N, { que: 'App de conductores' }),
       );

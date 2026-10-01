@@ -239,6 +239,10 @@ a { color: inherit; }
 .disenos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; align-items: start; }
 .disenos figure { margin: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .disenos .telefono { width: 33.5mm; }
+/* Un solo diseño (A): pasajero y conductor, un poco más grandes. */
+.disenos-dos { grid-template-columns: repeat(2, 1fr); }
+.disenos-dos .telefono { width: 40mm; }
+.disenos-dos figcaption span { max-width: 52mm; }
 .telefono-vacio {
   display: grid; place-items: center; aspect-ratio: 390 / 844; border-radius: 5.6mm;
   background: var(--verde-tinte); color: var(--verde-osc); font-family: var(--titulo); font-weight: 700; font-size: 9pt;

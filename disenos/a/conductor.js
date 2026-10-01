@@ -11,6 +11,9 @@ import * as EM from './empresa.js';
 import { taxiLateral } from './ilustraciones.js';
 import { abrirGanancias, abrirHistorial, abrirDocumentos, abrirMiTaxi, abrirAjustesConductor, abrirAvisosConductor } from './conductor-secciones.js';
 
+// Foto de portada del ingreso (generada para la web, sin marcas: ver img/web/creditos.json).
+const FOTO_CONDUCTOR = new URL('./img/conductor.jpg', import.meta.url).href;
+
 const PASOS = ['Recoger', 'Llegué', 'Viaje', 'Cobrar'];
 const PASO_DE_FASE = { confirmando: 0, hacia_origen: 0, en_origen: 1, en_viaje: 2, cobrando: 3, calificar: 3 };
 
@@ -222,11 +225,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
   /* ---------------- ingreso ---------------- */
   function mostrarIngreso() {
     const capa = el(`<div class="a-ingreso" role="dialog" aria-modal="true" aria-label="Ingreso de conductores">
-      <div class="a-ingreso-arte">
+      <div class="a-ingreso-arte a-ingreso-con-foto">
         ${franjaCuadros()}
-        <div class="a-marca a-marca-clara${EM.EN_TAXICUN ? ' a-marca-tc' : ''}">${EM.encabezadoMarca({ tam: 38, detalle: EM.EN_TAXICUN ? `App de conductores · ${EM.PUEBLO}` : 'App de conductores' })}</div>
         <div class="a-ingreso-taxi" aria-hidden="true">${taxiLateral({ ancho: 270, movil: EM.MOVIL_DEMO })}</div>
         <div class="a-ingreso-carretera" aria-hidden="true"></div>
+        <!-- Portada: foto de un conductor (si no carga, queda el taxi dibujado). -->
+        <img class="a-ingreso-foto" src="${FOTO_CONDUCTOR}" alt="" decoding="async">
+        <span class="a-ingreso-chip" aria-hidden="true">${icono('auto', { tam: 20 })} Móvil <b>${esc(EM.MOVIL_DEMO)}</b></span>
+        <div class="a-marca a-marca-clara${EM.EN_TAXICUN ? ' a-marca-tc' : ''}">${EM.encabezadoMarca({ tam: 46, detalle: EM.EN_TAXICUN ? `App del conductor · ${EM.PUEBLO}` : 'App del conductor' })}</div>
       </div>
       <form class="a-ingreso-form" novalidate>
         <h1>Empieza tu turno</h1>
@@ -245,6 +251,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
       </form>
     </div>`);
     app.append(capa);
+    const foto = capa.querySelector('.a-ingreso-foto');
+    const fotoLista = () => capa.querySelector('.a-ingreso-arte').classList.add('a-foto-lista');
+    if (foto.complete && foto.naturalWidth) fotoLista();
+    else foto.addEventListener('load', fotoLista, { once: true });
+    foto.addEventListener('error', () => foto.remove(), { once: true });
     capa.querySelector('[data-cambiar-municipio]')?.addEventListener('click', cambiarMunicipio);
     const f = $(capa, 'form');
     const pin = casillasCodigo({ etiqueta: 'PIN', secreto: true });

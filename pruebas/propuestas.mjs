@@ -8,7 +8,7 @@
 //  - la propuesta es de TaxiCun (desarrollada por interOS): título, logo en la portada y en
 //    las cabeceras, panel «Una sola app para Cundinamarca» y pies «desarrollada por interOS»,
 //  - los QR de la página decodifican (jsQR) a SU dirección: demo, TaxiCun (pasajero y
-//    conductor con ?e=<id>), stickers y vitrina,
+//    conductor con ?e=<id>), stickers y descargar,
 //  - las cifras de los planes cuadran (1,9 %, $900 al día = $27.000 al mes y la flota de su ficha),
 //  - lugares, rutas y móvil de la demo salen de su ficha,
 //  - el PDF existe, tiene entre 4 y 6 páginas tamaño carta, pesa menos de 4 MB, su texto
@@ -194,7 +194,7 @@ for (const ficha of fichas) {
   ok(r.cabezas.length === r.hojas - 1 && r.cabezas.every((c) => c.logo === 'TaxiCun' && c.texto.includes(`Propuesta para ${E.nombre}`)), `${nombre}: logo de TaxiCun en las ${r.cabezas.length} cabeceras`);
   ok(r.pies.length === r.hojas - 1 && r.pies.every((x) => x === 'TaxiCun · desarrollada por interOS'), `${nombre}: pies «TaxiCun · desarrollada por interOS»`);
   ok(!r.logosRotos, `${nombre}: los logos de TaxiCun cargan (img/taxicun/)`);
-  ok(/Una sola app para Cundinamarca/.test(r.panel) && r.panel.includes(`Al abrir TaxiCun en ${E.pueblo}`) && r.panel.includes(E.nombre) && /la misma app le sirve allá/.test(r.panel) && /el diseño que ustedes elijan/.test(r.panel),
+  ok(/Una sola app para Cundinamarca/.test(r.panel) && r.panel.includes(`Al abrir TaxiCun en ${E.pueblo}`) && r.panel.includes(E.nombre) && /la misma app le sirve allá/.test(r.panel) && r.panel.includes('con su nombre y sus colores'),
     `${nombre}: explica la app única por GPS («${r.panel.slice(0, 120)}…»)`);
   ok(r.visible.includes(FECHA), `${nombre}: fecha «${FECHA}»`);
   ok(r.visible.includes(`Preparada por interOS para ${E.nombre}`), `${nombre}: «Preparada por interOS para ${E.nombre}»`);
@@ -241,7 +241,7 @@ for (const ficha of fichas) {
   // QR de la página
   const esperadas = {
     portada: urlPublica, contacto: urlPublica, web: urlPublica, app: `${URL_PUBLICA}taxicun/?e=${id}`,
-    conductor: `${URL_PUBLICA}taxicun/conductor/?e=${id}`, stickers: urlPublica + 'stickers/', vitrina: urlPublica + 'disenos/',
+    conductor: `${URL_PUBLICA}taxicun/conductor/?e=${id}`, stickers: urlPublica + 'stickers/', descargar: urlPublica + 'descargar/',
   };
   for (const qr of r.qrs) {
     const leido = await pagina.evaluate(async (svg) => {

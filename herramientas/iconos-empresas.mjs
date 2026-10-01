@@ -207,14 +207,14 @@ for (const ficha of fichas) {
       geolocation: { latitude: ficha.CENTRO.lat, longitude: ficha.CENTRO.lng }, permissions: ['geolocation'], locale: 'es-CO', timezoneId: 'America/Bogota' });
     await ctx.addInitScript(() => localStorage.setItem('ct.envivo', 'no'));
     const p = await ctx.newPage();
-    for (const d of ['a', 'b', 'c']) {
-      // La app es TaxiCun: la captura es TaxiCun con esta cooperativa y ese diseño.
-      await p.goto(`${URL_CAPTURAS}taxicun/?e=${ficha.id}&d=${d}&sala=captura-${ficha.id}-${d}`, { waitUntil: 'load' });
+    // TaxiCun tiene un solo diseño (A): el pasajero y el ingreso del conductor (con la foto de portada).
+    for (const [archivo, ruta] of [['disenos-a.jpg', 'taxicun/'], ['conductor-a.jpg', 'taxicun/conductor/']]) {
+      await p.goto(`${URL_CAPTURAS}${ruta}?e=${ficha.id}&d=a&sala=captura-${ficha.id}`, { waitUntil: 'load' });
       await p.waitForSelector('#carga', { state: 'detached', timeout: 15000 }).catch(() => {});
       await p.waitForTimeout(3500);
-      await p.screenshot({ path: join(dir, `disenos-${d}.jpg`), type: 'jpeg', quality: 80 });
+      await p.screenshot({ path: join(dir, archivo), type: 'jpeg', quality: 80 });
     }
-    console.log('  capturas: disenos-a.jpg, disenos-b.jpg, disenos-c.jpg');
+    console.log('  capturas: disenos-a.jpg (pasajero), conductor-a.jpg (conductor)');
     await ctx.close();
   }
 }

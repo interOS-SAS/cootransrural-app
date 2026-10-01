@@ -2,7 +2,7 @@
 // Promociones, Ajustes, Ayuda y la lista de avisos.
 import { esc, icono, abrirPanel, modal, chipPrueba, franjaCuadros } from './ui.js';
 import { ilustracionVacia, sellosFidelidad } from './ilustraciones.js';
-import { bloqueDiseno, bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio } from './ajustes-comunes.js';
+import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio } from './ajustes-comunes.js';
 import * as EM from './empresa.js';
 
 const ESTADOS = {
@@ -179,7 +179,6 @@ export function abrirAjustes({ N, app, diseno, cambiarMunicipio }) {
     construir(cuerpo) {
       cuerpo.append(
         bloqueMunicipio(N, { alCambiar: cambiarMunicipio }),
-        bloqueDiseno(N, diseno),
         bloqueSonidoYAvisos(N),
         bloqueConexion(N, { simulacion: true }),
         bloqueSala(N, app),

@@ -174,14 +174,13 @@ export function disenoPorHora(fecha = new Date()) {
   return h >= 18 || h < 6 ? 'c' : 'a';
 }
 
-// Lo que se eligió: 'a' | 'b' | 'c' | 'auto'. Primero ?d=, luego lo que el usuario
-// escogió en Ajustes y, si no, lo de la cooperativa (ficha); por defecto, «auto».
+// TaxiCun tiene un solo diseño, el A (Ámbar). Los otros (B, C y «auto», A de día y C
+// de noche) solo se abren si la URL los pide (?d=) o si la ficha de la cooperativa
+// dice otro. Lo que se haya guardado antes en Ajustes ya no cuenta.
 export function disenoPreferido() {
   const p = new URLSearchParams(location.search).get('d');
   if (p && /^([abc]|auto)$/.test(p)) return p;
-  const guardado = localStorage.getItem(k('diseno'));
-  if (/^([abc]|auto)$/.test(guardado || '')) return guardado;
-  return /^([abc]|auto)$/.test(FICHA.diseno || '') ? FICHA.diseno : 'auto';
+  return /^([abc]|auto)$/.test(FICHA.diseno || '') ? FICHA.diseno : 'a';
 }
 
 // El diseño que se abre ahora: el preferido o, en «auto», el de la hora.

@@ -770,6 +770,9 @@ def derivados(ficha):
     for d in 'abc':
         propia = f'empresas/{fid}/disenos-{d}.jpg'
         capturas[d] = f'web/disenos/{d}.jpg' if es_principal else (propia if archivo_existe(propia) else '')
+    # App del conductor (diseño A, pantalla de ingreso con la foto de portada).
+    propia = f'empresas/{fid}/conductor-a.jpg'
+    capturas['conductor'] = 'web/disenos/conductor-a.jpg' if es_principal else (propia if archivo_existe(propia) else '')
     p['capturas'] = capturas
     p['disenos'] = nombres_disenos(ficha)
 
@@ -1161,7 +1164,7 @@ def datos_propuesta(ficha, p):
         {'clave': 'app', 'icono': 'i-cel', 'titulo': 'TaxiCun · pasajero', 'texto': 'Un viaje completo con un conductor de prueba.', 'url': p['url_taxicun']},
         {'clave': 'conductor', 'icono': 'i-volante', 'titulo': 'TaxiCun · conductor', 'texto': f'Demo: móvil {movil}, PIN 1234.', 'url': p['url_taxicun_conductor']},
         {'clave': 'stickers', 'icono': 'i-qr', 'titulo': 'Stickers QR', 'texto': 'Taxi, nevera, afiche y tarjeta, listos para imprimir.', 'url': URL_PUBLICA + p['stickers_ruta']},
-        {'clave': 'vitrina', 'icono': 'i-capas', 'titulo': 'Vitrina de diseños', 'texto': 'Los tres diseños lado a lado.', 'url': base + 'disenos/'},
+        {'clave': 'descargar', 'icono': 'i-descargar', 'titulo': 'Descargar TaxiCun', 'texto': 'La página que abre el QR de los stickers.', 'url': base + 'descargar/'},
     ]
     for e in enlaces:
         e['corta'] = e['url'].replace('https://', '')
@@ -1243,7 +1246,7 @@ def datos_propuesta(ficha, p):
             for q in (ficha.get('competencia') or {}).get('quejas') or []),
         'positivas_txt': ', '.join(f'«{html.escape(x)}»' for x in (ficha.get('competencia') or {}).get('positivas') or []),
         'cifras': [x for x in (
-            {'valor': '3', 'texto': 'diseños de TaxiCun para elegir'},
+            {'valor': '2', 'texto': 'apps: pasajero y conductor'},
             {'valor': str(n_locales), 'texto': f'lugares de {pueblo} ya cargados'} if n_locales else None,
             {'valor': str(n_rutas), 'texto': 'destinos con tarifa'} if n_rutas else None,
             {'valor': '7', 'texto': 'días o menos para tenerla'},
@@ -1383,7 +1386,7 @@ def escribir_indice(lista):
             'pueblo': E.get('pueblo') or '',
             'municipio': E.get('municipio') or '',
             'estado': f.get('estado') or 'propuesta',
-            'diseno': f.get('diseno') or 'auto',
+            'diseno': f.get('diseno') or 'a',
             'centro': f.get('CENTRO'),
             # Distancia máxima (km) desde el centro del pueblo para escogerla por GPS.
             'radioKm': f.get('radioKm') or 9,

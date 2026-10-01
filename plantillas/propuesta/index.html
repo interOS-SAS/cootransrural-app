@@ -86,7 +86,7 @@
         <p class="portada-lead">{{#si colores_oficiales}}TaxiCun, la app de taxis de Cundinamarca, con el nombre, los colores y los conductores de {{EMPRESA.nombre}} en {{EMPRESA.pueblo}}.{{/si}}{{#no colores_oficiales}}TaxiCun, la app de taxis de Cundinamarca, con el nombre de {{EMPRESA.nombre}} en {{EMPRESA.pueblo}} y, al salir, sus colores y sus conductores.{{/no}} La demo ya está hecha: la pueden probar hoy.</p>
       </div>
       <div class="portada-telefonos" aria-hidden="true">
-{{#si capturas.c}}        <span class="telefono telefono-atras"><img src="{{RAIZ}}{{capturas.c}}" alt=""></span>
+{{#si capturas.conductor}}        <span class="telefono telefono-atras"><img src="{{RAIZ}}{{capturas.conductor}}" alt=""></span>
 {{/si}}{{#si capturas.a}}        <span class="telefono telefono-frente"><img src="{{RAIZ}}{{capturas.a}}" alt=""></span>
 {{/si}}      </div>
       <div class="portada-abajo">
@@ -174,7 +174,7 @@
         <div class="titular">
           <span class="antetitulo">Su demo ya está lista</span>
           <h2 id="t-demo">{{#si colores_oficiales}}Así se ve TaxiCun con los colores de {{EMPRESA.nombre}}{{/si}}{{#no colores_oficiales}}Así se vería TaxiCun para {{EMPRESA.nombre}} (colores propuestos){{/no}}</h2>
-          <p class="lead">Tres diseños que hacen lo mismo; solo cambia cómo se ven. TaxiCun abre el Ámbar (A) de día y el Neón (C) de noche, la {{tipo}} puede dejar uno solo y cada pasajero lo cambia en su celular.</p>
+          <p class="lead">Dos apps con la misma marca: la del pasajero, para pedir el taxi, y la del conductor, para recibir y atender los servicios. Moderna, sencilla y con botones grandes, fáciles de tocar en la calle.</p>
         </div>
 
         <div class="demo-fila">
@@ -182,25 +182,21 @@
           <span class="tc-logo" role="img" aria-label="TaxiCun"><img src="{{RAIZ}}img/taxicun/icono.svg" alt="" width="40" height="40"><b aria-hidden="true">Taxi<span>Cun</span></b></span>
           <h3 id="t-taxicun">Una sola app para Cundinamarca</h3>
           <ul>
-            <li><svg class="ic"><use href="#i-pin"/></svg><span>Al abrir TaxiCun en {{EMPRESA.pueblo}}, el GPS muestra a {{EMPRESA.nombre}}, con el diseño que ustedes elijan.</span></li>
+            <li><svg class="ic"><use href="#i-pin"/></svg><span>Al abrir TaxiCun en {{EMPRESA.pueblo}}, el GPS muestra a {{EMPRESA.nombre}}, con su nombre y sus colores.</span></li>
             <li><svg class="ic"><use href="#i-mapa"/></svg><span>Si el pasajero viaja {{taxicun_otros}} con TaxiCun, la misma app le sirve allá.</span></li>
             <li><svg class="ic"><use href="#i-qr"/></svg><span>Los stickers QR abren TaxiCun directo con {{EMPRESA.nombre}} y el móvil del taxi.</span></li>
             <li><svg class="ic"><use href="#i-tienda"/></svg><span>TaxiCun saldrá en Google Play y App Store como una sola app: el pasajero la descarga una vez.</span></li>
           </ul>
           <p class="tc-panel-pie">Desarrollada por {{proveedor.nombre}}</p>
         </aside>
-        <div class="disenos">
+        <div class="disenos disenos-dos">
           <figure>
-            <span class="telefono">{{#si capturas.a}}<img src="{{RAIZ}}{{capturas.a}}" alt="Pantalla de TaxiCun con {{EMPRESA.nombre}}, diseño {{disenos.a.nombre}}">{{/si}}{{#no capturas.a}}<span class="telefono-vacio">Diseño A<br>en la demo</span>{{/no}}</span>
-            <figcaption><b><i>A</i>{{disenos.a.nombre}}</b><span>{{disenos.a.texto_vitrina}}</span></figcaption>
+            <span class="telefono">{{#si capturas.a}}<img src="{{RAIZ}}{{capturas.a}}" alt="TaxiCun para pasajeros con {{EMPRESA.nombre}}">{{/si}}{{#no capturas.a}}<span class="telefono-vacio">App del pasajero<br>en la demo</span>{{/no}}</span>
+            <figcaption><b>Para el pasajero</b><span>Pide con su ubicación, ve los taxis libres y sigue el suyo en el mapa.</span></figcaption>
           </figure>
           <figure>
-            <span class="telefono">{{#si capturas.b}}<img src="{{RAIZ}}{{capturas.b}}" alt="Pantalla de TaxiCun con {{EMPRESA.nombre}}, diseño {{disenos.b.nombre}}">{{/si}}{{#no capturas.b}}<span class="telefono-vacio">Diseño B<br>en la demo</span>{{/no}}</span>
-            <figcaption><b><i>B</i>{{disenos.b.nombre}}</b><span>{{disenos.b.texto_vitrina}}</span></figcaption>
-          </figure>
-          <figure>
-            <span class="telefono">{{#si capturas.c}}<img src="{{RAIZ}}{{capturas.c}}" alt="Pantalla de TaxiCun con {{EMPRESA.nombre}}, diseño {{disenos.c.nombre}}">{{/si}}{{#no capturas.c}}<span class="telefono-vacio">Diseño C<br>en la demo</span>{{/no}}</span>
-            <figcaption><b><i>C</i>{{disenos.c.nombre}}</b><span>{{disenos.c.texto_vitrina}}</span></figcaption>
+            <span class="telefono">{{#si capturas.conductor}}<img src="{{RAIZ}}{{capturas.conductor}}" alt="TaxiCun para conductores con {{EMPRESA.nombre}}">{{/si}}{{#no capturas.conductor}}<span class="telefono-vacio">App del conductor<br>en la demo</span>{{/no}}</span>
+            <figcaption><b>Para el conductor</b><span>Recibe los servicios, llega con Waze o Google Maps y cobra con QR.</span></figcaption>
           </figure>
         </div>
         </div>

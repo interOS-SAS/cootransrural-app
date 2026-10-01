@@ -294,7 +294,8 @@ for (const ficha of fichas) {
     // La app es TaxiCun: los botones llevan a taxicun/?e=<id>.
     const tcApp = `${BASE}taxicun/?e=${ficha.id}`;
     ok([d.tc.barra, d.tc.pedir, d.tc.descargar, d.tc.abrir].every((u) => u === tcApp), `${nombre}: «Pedir taxi», «Descargar TaxiCun» y «Abrir TaxiCun» → taxicun/?e=${ficha.id}`);
-    ok(d.tc.probar.length === 3 && d.tc.probar.every((u, i) => u === `${tcApp}&d=${'abc'[i]}`), `${nombre}: «Probar» cada diseño abre TaxiCun con ?d=a|b|c`);
+    // TaxiCun tiene un solo diseño (A): la web ya no ofrece «Probar» cada diseño.
+    ok(d.tc.probar.length === 0, `${nombre}: sin «Probar» por diseño (TaxiCun tiene un solo diseño)`);
     ok(d.tc.conductor.length >= 1 && d.tc.conductor.every((u) => u === `${BASE}taxicun/conductor/?e=${ficha.id}`), `${nombre}: «TaxiCun para conductores» → taxicun/conductor/?e=${ficha.id}`);
     ok(!d.tc.viejos.length, `${nombre}: ningún enlace a la app vieja (app/, conductor/)${d.tc.viejos.length ? ': ' + d.tc.viejos.join(', ') : ''}`);
     // (el antetítulo va en mayúsculas por CSS: se compara sin distinguir mayúsculas)

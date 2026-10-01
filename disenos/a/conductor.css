@@ -210,6 +210,18 @@
 .a-ingreso-taxi { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); animation: a-taxi-llega 1.1s var(--a-facil) both; }
 @keyframes a-taxi-llega { from { transform: translateX(-160%); } to { transform: translateX(-50%); } }
 .a-ingreso-carretera { position: absolute; left: 0; right: 0; bottom: 20px; height: 5px; background: repeating-linear-gradient(90deg, rgba(255, 255, 255, .4) 0 28px, transparent 28px 54px); }
+.a-ingreso-con-foto { height: calc(var(--a-sup) + 300px); border-bottom: 5px solid var(--a-amarillo, #FFC107); }
+.a-ingreso-foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 62% 28%; opacity: 0; transition: opacity .5s ease; }
+.a-ingreso-con-foto::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .5s; background: linear-gradient(0deg, rgba(18, 18, 18, .9) 0%, rgba(18, 18, 18, .55) 30%, rgba(18, 18, 18, 0) 58%); }
+.a-foto-lista .a-ingreso-foto, .a-foto-lista::after { opacity: 1; }
+.a-foto-lista .a-ingreso-taxi, .a-foto-lista .a-ingreso-carretera, .a-foto-lista > .a-cuadros { visibility: hidden; }
+@media (prefers-reduced-motion: no-preference) { .a-foto-lista .a-ingreso-foto { animation: a-acercar-foto 10s ease-out both; } }
+@keyframes a-acercar-foto { from { transform: scale(1.07); } to { transform: scale(1); } }
+.a-ingreso-chip { position: absolute; z-index: 2; left: 16px; top: calc(var(--a-sup) + 14px); display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 14px; background: var(--a-amarillo, #FFC107); color: #121212; font: 700 16px/1 var(--a-ft); box-shadow: 0 6px 16px rgba(0, 0, 0, .25); }
+.a-ingreso-chip b { font-size: 20px; font-weight: 900; letter-spacing: .02em; }
+.a-ingreso-con-foto .a-marca-clara { position: absolute; z-index: 2; left: 0; right: 0; bottom: 18px; padding: 0 20px; }
+.a-ingreso-con-foto .a-marca-clara strong { font-size: 22px; }
+.a-ingreso-con-foto .a-marca-clara small { display: inline-block; margin-top: 4px; padding: 3px 10px; border-radius: 8px; background: var(--a-amarillo, #FFC107); color: #121212; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; font-size: 11.5px; }
 .a-ingreso-form { padding: 22px 22px calc(24px + var(--a-inf)); display: flex; flex-direction: column; gap: 14px; }
 .a-ingreso-form h1 { font: 800 29px/1.12 var(--a-ft); margin: 0; letter-spacing: -.03em; }
 .a-ingreso .a-casillas { justify-content: flex-start; }

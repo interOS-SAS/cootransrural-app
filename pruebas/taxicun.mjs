@@ -31,7 +31,11 @@ const disenoPorHora = () => {
   const h = Number(new Intl.DateTimeFormat('en-US', { timeZone: 'America/Bogota', hour: 'numeric', hourCycle: 'h23' }).format(new Date()));
   return h >= 18 || h < 6 ? 'c' : 'a';
 };
-const disenoDe = (id) => (/^[abc]$/.test(ficha(id).diseno || '') ? ficha(id).diseno : disenoPorHora());
+// TaxiCun tiene un solo diseño (A) salvo que la ficha diga otro («auto»: A de día y C de noche).
+const disenoDe = (id) => {
+  const d = ficha(id).diseno || 'a';
+  return /^[abc]$/.test(d) ? d : d === 'auto' ? disenoPorHora() : 'a';
+};
 const nombreDe = (id) => ficha(id).EMPRESA.nombreCorto || ficha(id).EMPRESA.nombre;
 
 const LUGAR = {
@@ -406,11 +410,11 @@ for (const d of ['a', 'c']) {
   revisarPantalla(rc, `conductor de Tenjo, diseño ${d.toUpperCase()}`, 'tenjo');
   await revisarEnlaces(p, 'tenjo', `conductor de Tenjo, diseño ${d.toUpperCase()}`);
   await foto(p, `i-tenjo-conductor-diseno-${d}`);
-  // El diseño que la persona escoge en Ajustes es solo para esa cooperativa.
+  // Un diseño guardado antes en Ajustes ya no cuenta: manda el de la cooperativa.
   await p.evaluate(() => localStorage.setItem('ct.tenjo.diseno', 'b'));
   await p.goto(`${BASE}taxicun/?e=tenjo`);
   const ra = await esperarTaxiCun(p);
-  ok(ra.diseno === 'b', `si la persona escogió B en Ajustes, Tenjo abre con B (${ra.diseno})`);
+  ok(ra.diseno === d, `un diseño viejo guardado en Ajustes no cambia el de Tenjo (${ra.diseno})`);
   await p.goto(`${BASE}taxicun/?e=madrid`);
   const rm = await esperarTaxiCun(p);
   ok(rm.diseno === disenoDe('madrid'), `…y Madrid sigue con el suyo (${rm.diseno})`);

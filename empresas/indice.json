@@ -9,7 +9,7 @@
    "pueblo": "El Rosal",
    "municipio": "El Rosal, Cundinamarca",
    "estado": "cliente",
-   "diseno": "auto",
+   "diseno": "a",
    "centro": {
     "lat": 4.85257,
     "lng": -74.26059
@@ -27,7 +27,7 @@
    "pueblo": "Facatativá",
    "municipio": "Facatativá, Cundinamarca",
    "estado": "propuesta",
-   "diseno": "auto",
+   "diseno": "a",
    "centro": {
     "lat": 4.809728,
     "lng": -74.354184
@@ -45,7 +45,7 @@
    "pueblo": "La Vega",
    "municipio": "La Vega, Cundinamarca",
    "estado": "propuesta",
-   "diseno": "auto",
+   "diseno": "a",
    "centro": {
     "lat": 4.999712,
     "lng": -74.339522
@@ -63,7 +63,7 @@
    "pueblo": "Madrid",
    "municipio": "Madrid, Cundinamarca",
    "estado": "propuesta",
-   "diseno": "auto",
+   "diseno": "a",
    "centro": {
     "lat": 4.730613,
     "lng": -74.264037
@@ -81,7 +81,7 @@
    "pueblo": "Subachoque",
    "municipio": "Subachoque, Cundinamarca",
    "estado": "cliente",
-   "diseno": "auto",
+   "diseno": "a",
    "centro": {
     "lat": 4.927969,
     "lng": -74.173964
@@ -99,7 +99,7 @@
    "pueblo": "Tabio",
    "municipio": "Tabio, Cundinamarca",
    "estado": "propuesta",
-   "diseno": "auto",
+   "diseno": "a",
    "centro": {
     "lat": 4.916396,
     "lng": -74.099095
@@ -117,7 +117,7 @@
    "pueblo": "Tenjo",
    "municipio": "Tenjo, Cundinamarca",
    "estado": "propuesta",
-   "diseno": "auto",
+   "diseno": "a",
    "centro": {
     "lat": 4.871304,
     "lng": -74.147325
@@ -135,7 +135,7 @@
    "pueblo": "Tenjo",
    "municipio": "Tenjo, Cundinamarca",
    "estado": "propuesta",
-   "diseno": "auto",
+   "diseno": "a",
    "centro": {
     "lat": 4.871304,
     "lng": -74.147325
@@ -153,7 +153,7 @@
    "pueblo": "Villeta",
    "municipio": "Villeta, Cundinamarca",
    "estado": "propuesta",
-   "diseno": "auto",
+   "diseno": "a",
    "centro": {
     "lat": 5.011258,
     "lng": -74.47023
