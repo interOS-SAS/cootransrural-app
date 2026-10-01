@@ -3,21 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Cootransrural · Pide tu taxi</title>
-  <meta name="description" content="Pide tu taxi de Cootransrural en El Rosal con tu ubicación, sigue el móvil en el mapa y paga con QR.">
-  <meta name="theme-color" content="#0A5C33">
+  <title>Cooptranstermales · Pide tu taxi</title>
+  <meta name="description" content="Pide tu taxi de Cooptranstermales en Tabio con tu ubicación, sigue el móvil en el mapa y paga con QR.">
+  <meta name="theme-color" content="#0E6E6E">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Cootransrural">
+  <meta name="apple-mobile-web-app-title" content="Cooptranstermales">
   <link rel="manifest" href="manifest.webmanifest">
-  <script>window.CT_EMPRESA = 'cootransrural';</script>
-  <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32.png">
-  <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
-  <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
+  <script>window.CT_EMPRESA = 'tabio';</script>
+  <link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../../img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../../fuentes/fuentes.css?v=d7cb94cf69">
   <style>
-    html,body{margin:0;height:100%;background:#0A5C33}
-    #carga{position:fixed;inset:0;display:grid;place-items:center;background:#0A5C33;color:#fff;font:600 16px/1.4 system-ui,sans-serif;z-index:9999;transition:opacity .35s}
+    html,body{margin:0;height:100%;background:#0E6E6E}
+    #carga{position:fixed;inset:0;display:grid;place-items:center;background:#0E6E6E;color:#fff;font:600 16px/1.4 system-ui,sans-serif;z-index:9999;transition:opacity .35s}
     #carga img{width:96px;height:96px;border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:latido 1.4s ease-in-out infinite}
     #carga p{margin:16px 0 0;text-align:center;opacity:.85}
     @keyframes latido{50%{transform:scale(1.06)}}
@@ -25,11 +25,11 @@
   </style>
 </head>
 <body>
-  <div id="carga"><div style="text-align:center"><img src="../img/icono-192.png" alt=""><p>Cootransrural<br><small>Más que transporte, confianza</small></p></div></div>
+  <div id="carga"><div style="text-align:center"><img src="../../img/icono-192.png" alt=""><p>Cooptranstermales<br><small>Taxis de Tabio, tierra de termales</small></p></div></div>
   <div id="app"></div>
   <noscript>Para usar la app de Cootransrural activa JavaScript.</noscript>
   <script type="module">
-    import * as N from '../nucleo/index.js';
+    import * as N from '../../nucleo/index.js';
     const VERSION_DISENOS = 'b959f9a331';
     const raiz = document.getElementById('app');
     const parametros = new URLSearchParams(location.search);
@@ -39,10 +39,10 @@
     if (parametros.get('vitrina')) document.documentElement.dataset.vitrina = '1';
     const css = document.createElement('link');
     css.rel = 'stylesheet';
-    css.href = `../disenos/${d}/pasajero.css?v=${VERSION_DISENOS}`;
+    css.href = `../../disenos/${d}/pasajero.css?v=${VERSION_DISENOS}`;
     document.head.appendChild(css);
     try {
-      const { montar } = await import(`../disenos/${d}/pasajero.js?v=${VERSION_DISENOS}`);
+      const { montar } = await import(`../../disenos/${d}/pasajero.js?v=${VERSION_DISENOS}`);
       await montar(raiz, { N, diseno: d, vitrina: Boolean(parametros.get('vitrina')) });
     } catch (e) {
       console.error(e);

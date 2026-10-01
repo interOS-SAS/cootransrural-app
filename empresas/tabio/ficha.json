@@ -1,0 +1,656 @@
+{
+  "id": "tabio",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cooptranstermales",
+    "nombreCorto": "Cooptranstermales",
+    "razonSocial": "Cooperativa Multiactiva de Transportadores Ltda. (Cooptranstermales)",
+    "lema": "Taxis de Tabio, tierra de termales",
+    "municipio": "Tabio, Cundinamarca",
+    "pueblo": "Tabio",
+    "telefono": "3143519920",
+    "telefonoVisible": "314 351 9920",
+    "whatsapp": "573143519920",
+    "correo": "",
+    "direccion": "Calle 7 # 5-00, Tabio, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "TAB",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo"
+  },
+  "colores": {
+    "primario": "#0E6E6E",
+    "primario2": "#13898A",
+    "oscuro": "#06393A",
+    "acento": "#FFC107",
+    "rojo": "#D84315"
+  },
+  "CENTRO": {
+    "lat": 4.916396,
+    "lng": -74.099095
+  },
+  "ZONA": {
+    "sur": 4.6,
+    "norte": 5.24,
+    "oeste": -74.42,
+    "este": -73.78
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "tenjo",
+      "destino": "Tenjo",
+      "valor": 18000,
+      "km": 8,
+      "min": 10,
+      "radioKm": 4
+    },
+    {
+      "id": "chia",
+      "destino": "Chía",
+      "valor": 20000,
+      "km": 10,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "cajica",
+      "destino": "Cajicá",
+      "valor": 22000,
+      "km": 11,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "subachoque",
+      "destino": "Subachoque",
+      "valor": 28000,
+      "km": 14,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "cota",
+      "destino": "Cota",
+      "valor": 31000,
+      "km": 17,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "zipaquira",
+      "destino": "Zipaquirá",
+      "valor": 39000,
+      "km": 22,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 48000,
+      "km": 28,
+      "min": 45,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 62000,
+      "km": 38,
+      "min": 55,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Tabio",
+      "cat": "centro",
+      "lat": 4.916391,
+      "lng": -74.099053
+    },
+    {
+      "id": "inspeccion-de-policia",
+      "nombre": "Inspección de Policía",
+      "detalle": "Tabio",
+      "cat": "centro",
+      "lat": 4.916495,
+      "lng": -74.099456
+    },
+    {
+      "id": "postres-antojos-santa-gema",
+      "nombre": "Postres Antojos Santa Gema",
+      "detalle": "Tabio",
+      "cat": "comida",
+      "lat": 4.916004,
+      "lng": -74.099242
+    },
+    {
+      "id": "alcaldia",
+      "nombre": "Alcaldía",
+      "detalle": "Tabio",
+      "cat": "centro",
+      "lat": 4.916524,
+      "lng": -74.099502
+    },
+    {
+      "id": "italica",
+      "nombre": "Italica",
+      "detalle": "Tabio",
+      "cat": "comida",
+      "lat": 4.916778,
+      "lng": -74.098821
+    },
+    {
+      "id": "oasis",
+      "nombre": "Oasis",
+      "detalle": "Tabio",
+      "cat": "comida",
+      "lat": 4.9166,
+      "lng": -74.098472
+    },
+    {
+      "id": "polideportivo",
+      "nombre": "Polideportivo",
+      "detalle": "Tabio",
+      "cat": "centro",
+      "lat": 4.916697,
+      "lng": -74.099695
+    },
+    {
+      "id": "alcaldia-municipal",
+      "nombre": "Alcaldía Municipal",
+      "detalle": "Tabio",
+      "cat": "centro",
+      "lat": 4.91682,
+      "lng": -74.098559
+    },
+    {
+      "id": "catedral",
+      "nombre": "Catedral",
+      "detalle": "Tabio",
+      "cat": "centro",
+      "lat": 4.915909,
+      "lng": -74.098561
+    },
+    {
+      "id": "la-estancia",
+      "nombre": "La Estancia",
+      "detalle": "Tabio",
+      "cat": "comida",
+      "lat": 4.916717,
+      "lng": -74.098385
+    },
+    {
+      "id": "los-andes",
+      "nombre": "Los Andes",
+      "detalle": "Tabio",
+      "cat": "comercio",
+      "lat": 4.9169,
+      "lng": -74.098228
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Tabio",
+      "cat": "comercio",
+      "lat": 4.915849,
+      "lng": -74.098152
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Tabio",
+      "cat": "comercio",
+      "lat": 4.915916,
+      "lng": -74.098108
+    },
+    {
+      "id": "alegria-de-vivir",
+      "nombre": "Alegria de Vivir",
+      "detalle": "Tabio",
+      "cat": "educacion",
+      "lat": 4.915523,
+      "lng": -74.098282
+    },
+    {
+      "id": "restaurante-el-girasol",
+      "nombre": "Restaurante El Girasol",
+      "detalle": "Tabio",
+      "cat": "comida",
+      "lat": 4.917301,
+      "lng": -74.098125
+    },
+    {
+      "id": "hospital-nuestra-senora-del-carmen-de-ta",
+      "nombre": "Hospital Nuestra Señora del Carmen de Tabio",
+      "detalle": "Tabio",
+      "cat": "salud",
+      "lat": 4.914707,
+      "lng": -74.099627
+    },
+    {
+      "id": "gimnasio-moderno-santa-barbara",
+      "nombre": "Gimnasio Moderno Santa Bárbara",
+      "detalle": "Tabio",
+      "cat": "educacion",
+      "lat": 4.914571,
+      "lng": -74.099293
+    },
+    {
+      "id": "colegio-san-francisco-de-asis",
+      "nombre": "Colegio San Francisco de Asís",
+      "detalle": "Tabio",
+      "cat": "educacion",
+      "lat": 4.918464,
+      "lng": -74.098731
+    },
+    {
+      "id": "plaza-artesanos",
+      "nombre": "Plaza artesanos",
+      "detalle": "Tabio",
+      "cat": "turismo",
+      "lat": 4.918974,
+      "lng": -74.099253
+    },
+    {
+      "id": "santa-barbara",
+      "nombre": "Santa Barbara",
+      "detalle": "Tabio",
+      "cat": "centro",
+      "lat": 4.919345,
+      "lng": -74.097014
+    },
+    {
+      "id": "colegio-departamental",
+      "nombre": "Colegio Departamental",
+      "detalle": "Tabio",
+      "cat": "educacion",
+      "lat": 4.920367,
+      "lng": -74.099079
+    },
+    {
+      "id": "colegio-jose-de-san-martin-sede-camilo-t",
+      "nombre": "Colegio José de San Martin - Sede Camilo Torres",
+      "detalle": "Tabio",
+      "cat": "educacion",
+      "lat": 4.918766,
+      "lng": -74.095313
+    },
+    {
+      "id": "jardin-botanico",
+      "nombre": "Jardin Botanico",
+      "detalle": "Tabio",
+      "cat": "centro",
+      "lat": 4.920972,
+      "lng": -74.100528
+    },
+    {
+      "id": "liceo-san-jorge",
+      "nombre": "Liceo San Jorge",
+      "detalle": "Tabio",
+      "cat": "educacion",
+      "lat": 4.915187,
+      "lng": -74.10408
+    },
+    {
+      "id": "centro-de-integracion-ciudadana",
+      "nombre": "Centro de Integración Ciudadana",
+      "detalle": "Tabio",
+      "cat": "centro",
+      "lat": 4.919627,
+      "lng": -74.094919
+    },
+    {
+      "id": "coliseo-municipal",
+      "nombre": "Coliseo Municipal",
+      "detalle": "Tabio",
+      "cat": "centro",
+      "lat": 4.922301,
+      "lng": -74.099617
+    },
+    {
+      "id": "el-hato",
+      "nombre": "El Hato",
+      "detalle": "Tabio",
+      "cat": "barrio",
+      "lat": 4.919048,
+      "lng": -74.092081
+    },
+    {
+      "id": "balnearios-tabio-termales",
+      "nombre": "balnearios.Tabio termales",
+      "detalle": "Tabio",
+      "cat": "turismo",
+      "lat": 4.922847,
+      "lng": -74.105169
+    },
+    {
+      "id": "parcelacion-termales",
+      "nombre": "Parcelación Termales",
+      "detalle": "Tabio",
+      "cat": "barrio",
+      "lat": 4.908707,
+      "lng": -74.104253
+    },
+    {
+      "id": "chicu",
+      "nombre": "Chicu",
+      "detalle": "Tabio",
+      "cat": "vereda",
+      "lat": 4.906575,
+      "lng": -74.097093
+    },
+    {
+      "id": "reserva-de-san-jose",
+      "nombre": "Reserva de San José",
+      "detalle": "Tabio",
+      "cat": "barrio",
+      "lat": 4.907349,
+      "lng": -74.104811
+    },
+    {
+      "id": "el-salitre",
+      "nombre": "El Salitre",
+      "detalle": "Tabio",
+      "cat": "vereda",
+      "lat": 4.926592,
+      "lng": -74.102534
+    },
+    {
+      "id": "villa-olga",
+      "nombre": "Villa Olga",
+      "detalle": "Tabio · a 1,2 km",
+      "cat": "barrio",
+      "lat": 4.906863,
+      "lng": -74.104721
+    },
+    {
+      "id": "palo-verde",
+      "nombre": "Palo Verde",
+      "detalle": "Vereda de Tabio",
+      "cat": "vereda",
+      "lat": 4.904249,
+      "lng": -74.098345
+    },
+    {
+      "id": "el-centro",
+      "nombre": "El Centro",
+      "detalle": "Vereda de Tabio",
+      "cat": "vereda",
+      "lat": 4.927213,
+      "lng": -74.089966
+    },
+    {
+      "id": "vereda-santuario-de-juaica",
+      "nombre": "Vereda Santuario de Juaica",
+      "detalle": "Tabio · a 1,7 km",
+      "cat": "barrio",
+      "lat": 4.904109,
+      "lng": -74.108957
+    },
+    {
+      "id": "terpel",
+      "nombre": "Terpel",
+      "detalle": "Tabio · a 2,0 km",
+      "cat": "comercio",
+      "lat": 4.923444,
+      "lng": -74.082232
+    },
+    {
+      "id": "carbon",
+      "nombre": "Carbon",
+      "detalle": "Vereda de Tabio",
+      "cat": "vereda",
+      "lat": 4.926127,
+      "lng": -74.120533
+    },
+    {
+      "id": "rio-frio-oriental",
+      "nombre": "Rio Frio Oriental",
+      "detalle": "Vereda de Tabio",
+      "cat": "vereda",
+      "lat": 4.936213,
+      "lng": -74.085466
+    },
+    {
+      "id": "alto-de-canica",
+      "nombre": "Alto de Canica",
+      "detalle": "Vereda de Tabio",
+      "cat": "vereda",
+      "lat": 4.935996,
+      "lng": -74.115841
+    },
+    {
+      "id": "poveda",
+      "nombre": "Poveda",
+      "detalle": "Vereda de Tabio",
+      "cat": "vereda",
+      "lat": 4.893232,
+      "lng": -74.087793
+    },
+    {
+      "id": "alto-de-chia",
+      "nombre": "Alto de Chia",
+      "detalle": "Tabio · a 2,9 km",
+      "cat": "turismo",
+      "lat": 4.897826,
+      "lng": -74.080759
+    },
+    {
+      "id": "tenjo",
+      "nombre": "Tenjo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.871304,
+      "lng": -74.147325
+    },
+    {
+      "id": "cajica",
+      "nombre": "Cajicá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.91728,
+      "lng": -74.025584
+    },
+    {
+      "id": "chia",
+      "nombre": "Chía",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.861278,
+      "lng": -74.0602
+    },
+    {
+      "id": "subachoque",
+      "nombre": "Subachoque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.927969,
+      "lng": -74.173964
+    },
+    {
+      "id": "zipaquira",
+      "nombre": "Zipaquirá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.023475,
+      "lng": -74.003982
+    },
+    {
+      "id": "cota",
+      "nombre": "Cota",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.808387,
+      "lng": -74.103677
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Rubén Sarmiento",
+      "placa": "TAB 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2177,
+      "desde": 2008,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Carlos Rodríguez",
+      "placa": "TAB 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1153,
+      "desde": 2020,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Édgar Molina",
+      "placa": "TAB 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 467,
+      "desde": 2012,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Luz Marina Rojas",
+      "placa": "TAB 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1511,
+      "desde": 2013,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-17",
+      "movil": "017",
+      "nombre": "Fabio Cruz",
+      "placa": "TAB 617",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 903,
+      "desde": 2021,
+      "tel": "3000000017"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Nelson Pinzón",
+      "placa": "TAB 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1724,
+      "desde": 2021,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Héctor Bernal",
+      "placa": "TAB 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1224,
+      "desde": 2020,
+      "tel": "3000000029"
+    },
+    {
+      "id": "demo-30",
+      "movil": "030",
+      "nombre": "Sandra Patiño",
+      "placa": "TAB 630",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 675,
+      "desde": 2012,
+      "tel": "3000000030"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "fuentes": [
+    "https://infotaxicolombia.com.co/empresas-taxi/servicio-de-taxis-trantermales-tabio-cundinamarca-colombia-2/",
+    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-transtermales"
+  ]
+}

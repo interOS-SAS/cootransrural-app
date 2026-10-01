@@ -1,10 +1,10 @@
 // Cálculo de la tarifa estimada. Las cifras están en datos.js (son de ejemplo).
 import { TARIFAS, RUTAS, LUGARES } from './datos.js';
 import { distanciaKm, redondear, horaBogota } from './util.js';
-import { CENTRO } from './config.js';
+import { CENTRO, EMPRESA } from './config.js';
 
 // Ruta fija que corresponde al destino, si el destino cae cerca de uno de los
-// municipios de la tabla y el origen está en El Rosal.
+// municipios de la tabla y el origen está en el pueblo de la cooperativa.
 export function rutaFija(origen, destino) {
   if (!origen || !destino) return null;
   if (distanciaKm(origen, CENTRO) > 8) return null;
@@ -22,7 +22,7 @@ export function calcularTarifa({ origen, destino, km, fecha = new Date(), progra
   let base;
   if (ruta) {
     base = ruta.valor;
-    detalle.push({ concepto: `Tarifa fija El Rosal → ${ruta.destino}`, valor: ruta.valor });
+    detalle.push({ concepto: `Tarifa fija ${EMPRESA.pueblo || 'desde el pueblo'} → ${ruta.destino}`, valor: ruta.valor });
   } else {
     const distancia = km ?? (origen && destino ? distanciaKm(origen, destino) * 1.35 : 0);
     base = Math.max(TARIFAS.minimaUrbana, redondear(TARIFAS.banderazo + distancia * TARIFAS.porKm, TARIFAS.redondeo));

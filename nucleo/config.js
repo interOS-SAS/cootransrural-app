@@ -1,30 +1,41 @@
-// Configuración general de la demo de Cootransrural.
+// Configuración general de la app de taxis (sirve para varias cooperativas).
 // Todo lo que cambie de un despliegue a otro (relés, sala, tiempos) vive aquí.
 
-export const EMPRESA = {
-  nombre: 'Cootransrural',
-  razonSocial: 'Cooperativa de Transportadores Rurales de El Rosal Ltda.',
-  lema: 'Más que transporte, confianza',
-  municipio: 'El Rosal, Cundinamarca',
-  telefono: '3209042977',
-  telefonoVisible: '320 904 2977',
-  whatsapp: '573209042977',
-  correo: 'recepcion@cootransrural.com',
-  direccion: 'Carrera 8 No. 12-38, Barrio San Carlos, El Rosal, Cundinamarca',
-  web: 'https://cootransrural.com',
-  fundada: 1999,
-  taxisIniciales: 22,
-  taxis: 52,
-  microbuses: 3,
-  asociados: 105,
-  servicio24h: true,
-};
+// Cooperativa activa. Cada página la fija con window.CT_EMPRESA antes de cargar
+// los módulos (o con ?e=id en la URL); sin nada, es Cootransrural. Sus datos
+// (nombre, teléfonos, lugares, rutas, tarifas, colores) están en
+// empresas/<id>/ficha.json.
+export const RAIZ = new URL('../', import.meta.url);
 
-// Centro del casco urbano (Parque Principal de El Rosal).
-export const CENTRO = { lat: 4.85257, lng: -74.26059 };
+function idPedido() {
+  const crudo = globalThis.CT_EMPRESA || new URLSearchParams(globalThis.location?.search || '').get('e') || 'cootransrural';
+  return String(crudo).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40) || 'cootransrural';
+}
 
-// Zona que se usa para buscar direcciones (Sabana Occidente y alrededores).
-export const ZONA = { sur: 4.60, norte: 5.08, oeste: -74.48, este: -73.98 };
+async function cargarFicha(id) {
+  const r = await fetch(new URL(`empresas/${id}/ficha.json`, RAIZ));
+  if (!r.ok) throw new Error(`No existe la ficha de «${id}»`);
+  return r.json();
+}
+
+let ficha;
+try {
+  ficha = await cargarFicha(idPedido());
+} catch (e) {
+  console.warn('[config]', e.message, '· se usa Cootransrural');
+  ficha = await cargarFicha('cootransrural');
+}
+
+export const FICHA = ficha;
+export const ID_EMPRESA = ficha.id;
+export const ES_PROPUESTA = ficha.estado === 'propuesta';
+export const EMPRESA = ficha.EMPRESA;
+export const COLORES = ficha.colores || {};
+export const CENTRO = ficha.CENTRO;
+export const ZONA = ficha.ZONA;
+
+// Quién hizo la app (pie de página y franja de propuesta).
+export const PROVEEDOR = { nombre: 'interOS', web: 'https://interos.com.co' };
 
 // Relés MQTT públicos para conectar celulares distintos en la demo.
 // Se usan TODOS a la vez y se descartan los mensajes repetidos: así, si una red
@@ -35,7 +46,7 @@ export const RELES_MQTT = [
   'wss://broker.hivemq.com:8884/mqtt',
 ];
 
-export const PREFIJO_TEMAS = 'cootransrural/demo-v1';
+export const PREFIJO_TEMAS = `apptaxi-demo/v2/${ID_EMPRESA}`;
 export const SALA_POR_DEFECTO = 'demo';
 
 export const TIEMPOS = {
@@ -84,10 +95,14 @@ export const CAPAS_MAPA = {
   },
 };
 
-// Raíz del sitio, calculada desde este archivo (sirve igual en GitHub Pages,
-// en un subdirectorio o en localhost).
-export const RAIZ = new URL('../', import.meta.url);
-
+// Raíz del sitio (sirve igual en GitHub Pages, en un subdirectorio o en localhost).
 export function urlDelSitio(ruta = '') {
   return new URL(ruta, RAIZ).href;
+}
+
+// Raíz de la cooperativa: Cootransrural está en la raíz; las demás en /<id>/.
+export const RAIZ_EMPRESA = ID_EMPRESA === 'cootransrural' ? RAIZ : new URL(`${ID_EMPRESA}/`, RAIZ);
+
+export function urlEmpresa(ruta = '') {
+  return new URL(ruta, RAIZ_EMPRESA).href;
 }

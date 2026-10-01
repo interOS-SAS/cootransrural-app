@@ -1,0 +1,19 @@
+{
+  "name": "Cooptranstermales — Pide tu taxi",
+  "short_name": "Cooptranstermales",
+  "description": "Pide tu taxi de Cooptranstermales en Tabio con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0E6E6E",
+  "theme_color": "#0E6E6E",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../img/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../img/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../img/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

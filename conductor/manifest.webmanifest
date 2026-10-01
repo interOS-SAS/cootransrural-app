@@ -1,6 +1,6 @@
 {
   "name": "Cootransrural Conductor",
-  "short_name": "CT Conductor",
+  "short_name": "Conductor",
   "description": "App de los conductores de Cootransrural: recibe servicios, navega hasta el pasajero y cobra con QR.",
   "lang": "es-CO",
   "id": "./",

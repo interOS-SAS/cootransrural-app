@@ -1,6 +1,6 @@
 // Códigos QR: generación (SVG, canvas, PNG) y lectura con la cámara.
 import qrcode from '../vendor/qrcode.mjs';
-import { urlDelSitio, EMPRESA } from './config.js';
+import { urlDelSitio, urlEmpresa, EMPRESA, ID_EMPRESA } from './config.js';
 import { pesos, escaparHTML } from './util.js';
 
 function matriz(texto, nivel = 'M') {
@@ -68,7 +68,7 @@ export function qrDataURL(texto, lado = 512, opciones = {}) {
 
 // URL a la que lleva el sticker del taxi (instala/abre la app del pasajero).
 export function urlDescarga({ movil = '', origen = 'sticker' } = {}) {
-  const u = new URL(urlDelSitio('descargar/'));
+  const u = new URL(urlEmpresa('descargar/'));
   if (movil) u.searchParams.set('movil', String(movil).padStart(3, '0'));
   if (origen) u.searchParams.set('o', origen);
   return u.href;
@@ -78,6 +78,7 @@ export function urlDescarga({ movil = '', origen = 'sticker' } = {}) {
 // página de pago de prueba; si la escanea desde la app, se paga ahí mismo.
 export function urlPago({ viaje, valor, movil, sala, conductor }) {
   const u = new URL(urlDelSitio('pagar/'));
+  if (ID_EMPRESA !== 'cootransrural') u.searchParams.set('e', ID_EMPRESA);
   u.searchParams.set('v', String(Math.round(valor)));
   u.searchParams.set('id', viaje);
   if (movil) u.searchParams.set('m', movil);
@@ -87,7 +88,7 @@ export function urlPago({ viaje, valor, movil, sala, conductor }) {
   return u.href;
 }
 
-// Interpreta un texto leído: ¿es un cobro de Cootransrural?
+// Interpreta un texto leído: ¿es un cobro de la app?
 export function leerCobro(texto) {
   try {
     const u = new URL(texto);
@@ -95,7 +96,7 @@ export function leerCobro(texto) {
     const valor = Number(u.searchParams.get('v'));
     const viaje = u.searchParams.get('id');
     if (!valor || !viaje) return null;
-    return { valor, viaje, movil: u.searchParams.get('m') || '', conductor: u.searchParams.get('c') || '', sala: u.searchParams.get('s') || '', llave: u.searchParams.get('b') || '' };
+    return { valor, viaje, movil: u.searchParams.get('m') || '', conductor: u.searchParams.get('c') || '', sala: u.searchParams.get('s') || '', llave: u.searchParams.get('b') || '', empresa: u.searchParams.get('e') || 'cootransrural' };
   } catch {
     return null;
   }
@@ -204,7 +205,8 @@ export async function escanearQR(video, alLeer) {
 // Llave Bre-B de ejemplo para cada móvil (no existe en ningún banco).
 export function llaveBreB(movil = '') {
   const m = String(movil || '').replace(/\D/g, '');
-  return `@cootransrural${m ? m.padStart(3, '0') : ''}`;
+  const marca = String(EMPRESA.nombreCorto || EMPRESA.nombre || 'taxi').toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, '');
+  return `@${marca}${m ? m.padStart(3, '0') : ''}`;
 }
 
 // Tarjeta completa del cobro Bre-B (HTML). `compacta` reduce textos para
@@ -212,7 +214,7 @@ export function llaveBreB(movil = '') {
 export function tarjetaBreB({ url, valor, movil = '', llave = llaveBreB(movil), compacta = false } = {}) {
   asegurarEstilosBreB();
   const qr = url ? qrSVG(url, { nivel: 'M', margen: 3, color: '#0B1F4D' }) : '';
-  const comercio = `${EMPRESA.nombre}${movil ? ` · Móvil ${escaparHTML(String(movil).padStart(3, '0'))}` : ''}`;
+  const comercio = `${EMPRESA.nombreCorto || EMPRESA.nombre}${movil ? ` · Móvil ${escaparHTML(String(movil).padStart(3, '0'))}` : ''}`;
   return `<figure class="ct-breb${compacta ? ' ct-breb-compacta' : ''}" role="group" aria-label="Cobro Bre-B de prueba por ${pesos(valor)}">
   <div class="ct-breb-cabeza">
     <span class="ct-breb-marca"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h6.2a4.3 4.3 0 0 1 2.9 7.5A4.6 4.6 0 0 1 13.6 21H7z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M7 11.2h6.4" stroke="currentColor" stroke-width="2.4"/></svg>Bre-B</span>

@@ -2,7 +2,7 @@
 //  - BroadcastChannel: pestañas del mismo navegador (siempre disponible).
 //  - MQTT por WebSocket a relés públicos: celulares distintos (demo en vivo).
 // Cada mensaje lleva un uid y se descarta si llega repetido por otro camino.
-import { RELES_MQTT, PREFIJO_TEMAS, SALA_POR_DEFECTO, urlDelSitio } from './config.js';
+import { RELES_MQTT, PREFIJO_TEMAS, SALA_POR_DEFECTO, ID_EMPRESA, urlDelSitio } from './config.js';
 import { Emisor, uid } from './util.js';
 
 let cargaMqtt = null;
@@ -50,7 +50,7 @@ export class Bus extends Emisor {
     this.vistos = new Map(); // uid → hora, para descartar repetidos
     this.clientes = [];
     this.conectados = new Set();
-    this.canal = 'BroadcastChannel' in window ? new BroadcastChannel(`cootransrural-${sala}`) : null;
+    this.canal = 'BroadcastChannel' in window ? new BroadcastChannel(`apptaxi-${ID_EMPRESA}-${sala}`) : null;
     this.canal?.addEventListener('message', (e) => this.#recibir(e.data, 'local'));
     if (enVivo) this.#conectarRele();
   }

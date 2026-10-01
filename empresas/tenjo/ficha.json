@@ -1,0 +1,616 @@
+{
+  "id": "tenjo",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootranstenjo",
+    "nombreCorto": "Cootranstenjo",
+    "razonSocial": "Cooperativa de Transportadores de Tenjo",
+    "lema": "Movilidad que conecta y construye",
+    "municipio": "Tenjo, Cundinamarca",
+    "pueblo": "Tenjo",
+    "telefono": "6018658928",
+    "telefonoVisible": "601 865 8928",
+    "whatsapp": "573125847257",
+    "correo": "recepcion@cootranstenjo.com",
+    "direccion": "Carrera 2 # 4-55, local 204, C.C. Achuá, Tenjo, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://cootranstenjo.com.co",
+    "fundada": 1996,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "TNJ",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo"
+  },
+  "colores": {
+    "primario": "#14532D",
+    "primario2": "#166534",
+    "oscuro": "#052E16",
+    "acento": "#FACC15",
+    "rojo": "#DC2626"
+  },
+  "CENTRO": {
+    "lat": 4.871304,
+    "lng": -74.147325
+  },
+  "ZONA": {
+    "sur": 4.55,
+    "norte": 5.19,
+    "oeste": -74.47,
+    "este": -73.83
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "tabio",
+      "destino": "Tabio",
+      "valor": 18000,
+      "km": 8,
+      "min": 10,
+      "radioKm": 4
+    },
+    {
+      "id": "cota",
+      "destino": "Cota",
+      "valor": 24000,
+      "km": 12,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "chia",
+      "destino": "Chía",
+      "valor": 26000,
+      "km": 13,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "subachoque",
+      "destino": "Subachoque",
+      "valor": 29000,
+      "km": 15,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "funza",
+      "destino": "Funza",
+      "valor": 39000,
+      "km": 22,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "madrid",
+      "destino": "Madrid",
+      "valor": 43000,
+      "km": 24,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 42000,
+      "km": 24,
+      "min": 35,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 52000,
+      "km": 30,
+      "min": 45,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Tenjo",
+      "cat": "centro",
+      "lat": 4.871304,
+      "lng": -74.147325
+    },
+    {
+      "id": "inaia-sue",
+      "nombre": "Inaia Sue",
+      "detalle": "Tenjo",
+      "cat": "barrio",
+      "lat": 4.873106,
+      "lng": -74.147788
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Tenjo",
+      "cat": "comercio",
+      "lat": 4.871731,
+      "lng": -74.145386
+    },
+    {
+      "id": "alcaldia-municipal-de-tenjo",
+      "nombre": "Alcaldía Municipal de Tenjo",
+      "detalle": "Tenjo",
+      "cat": "centro",
+      "lat": 4.871569,
+      "lng": -74.145336
+    },
+    {
+      "id": "hacienda-el-recreo",
+      "nombre": "Hacienda El Recreo",
+      "detalle": "Tenjo",
+      "cat": "barrio",
+      "lat": 4.872884,
+      "lng": -74.148898
+    },
+    {
+      "id": "parque",
+      "nombre": "Parque",
+      "detalle": "Tenjo",
+      "cat": "centro",
+      "lat": 4.872011,
+      "lng": -74.145022
+    },
+    {
+      "id": "paella-de-tenjo",
+      "nombre": "Paella de Tenjo",
+      "detalle": "Tenjo",
+      "cat": "comida",
+      "lat": 4.871631,
+      "lng": -74.144725
+    },
+    {
+      "id": "parroquia-santiago-apostol",
+      "nombre": "Parroquia Santiago Apostol",
+      "detalle": "Tenjo",
+      "cat": "centro",
+      "lat": 4.872241,
+      "lng": -74.144433
+    },
+    {
+      "id": "museo-de-arte-religioso-de-tenjo",
+      "nombre": "Museo de Arte Religioso de Tenjo",
+      "detalle": "Tenjo",
+      "cat": "turismo",
+      "lat": 4.872071,
+      "lng": -74.144267
+    },
+    {
+      "id": "hospital-santa-rosa-de-tenjo",
+      "nombre": "Hospital Santa Rosa de Tenjo",
+      "detalle": "Tenjo",
+      "cat": "salud",
+      "lat": 4.87017,
+      "lng": -74.144135
+    },
+    {
+      "id": "cc-santiago-apostol",
+      "nombre": "CC Santiago Apostol",
+      "detalle": "Tenjo",
+      "cat": "comercio",
+      "lat": 4.872243,
+      "lng": -74.143934
+    },
+    {
+      "id": "parque-la-felicidad",
+      "nombre": "Parque La Felicidad",
+      "detalle": "Tenjo",
+      "cat": "centro",
+      "lat": 4.867643,
+      "lng": -74.147042
+    },
+    {
+      "id": "iglesia-de-dios-pentecostal-mi",
+      "nombre": "Iglesia de Dios Pentecostal MI",
+      "detalle": "Tenjo",
+      "cat": "centro",
+      "lat": 4.874325,
+      "lng": -74.144527
+    },
+    {
+      "id": "caminos-del-bosque",
+      "nombre": "Caminos del Bosque",
+      "detalle": "Tenjo",
+      "cat": "barrio",
+      "lat": 4.875622,
+      "lng": -74.147269
+    },
+    {
+      "id": "miraflores-i",
+      "nombre": "Miraflores I",
+      "detalle": "Tenjo",
+      "cat": "barrio",
+      "lat": 4.868916,
+      "lng": -74.143438
+    },
+    {
+      "id": "estacion-de-policia-de-tenjo",
+      "nombre": "Estación de Policía de Tenjo",
+      "detalle": "Tenjo",
+      "cat": "centro",
+      "lat": 4.874691,
+      "lng": -74.144246
+    },
+    {
+      "id": "asadero-las-varas",
+      "nombre": "Asadero Las Varas",
+      "detalle": "Tenjo",
+      "cat": "comida",
+      "lat": 4.872368,
+      "lng": -74.142764
+    },
+    {
+      "id": "miraflores-ii",
+      "nombre": "Miraflores II",
+      "detalle": "Tenjo",
+      "cat": "barrio",
+      "lat": 4.869058,
+      "lng": -74.143177
+    },
+    {
+      "id": "el-refugio",
+      "nombre": "El Refugio",
+      "detalle": "Tenjo",
+      "cat": "barrio",
+      "lat": 4.86921,
+      "lng": -74.14283
+    },
+    {
+      "id": "alameda",
+      "nombre": "Alameda",
+      "detalle": "Tenjo",
+      "cat": "barrio",
+      "lat": 4.86883,
+      "lng": -74.142622
+    },
+    {
+      "id": "el-nogal",
+      "nombre": "El Nogal",
+      "detalle": "Tenjo",
+      "cat": "barrio",
+      "lat": 4.871206,
+      "lng": -74.141897
+    },
+    {
+      "id": "mobil",
+      "nombre": "Mobil",
+      "detalle": "Tenjo",
+      "cat": "comercio",
+      "lat": 4.867085,
+      "lng": -74.142336
+    },
+    {
+      "id": "centro-cultural-nohora-matallana-forero",
+      "nombre": "Centro Cultural Nohora Matallana Forero",
+      "detalle": "Tenjo",
+      "cat": "centro",
+      "lat": 4.868022,
+      "lng": -74.154093
+    },
+    {
+      "id": "complejo-deportivo-de-tenjo",
+      "nombre": "Complejo Deportivo de Tenjo",
+      "detalle": "Tenjo",
+      "cat": "centro",
+      "lat": 4.874877,
+      "lng": -74.138117
+    },
+    {
+      "id": "churuguaco",
+      "nombre": "Churuguaco",
+      "detalle": "Tenjo",
+      "cat": "vereda",
+      "lat": 4.881679,
+      "lng": -74.145886
+    },
+    {
+      "id": "colorada",
+      "nombre": "Colorada",
+      "detalle": "Vereda de Tenjo",
+      "cat": "vereda",
+      "lat": 4.861733,
+      "lng": -74.141636
+    },
+    {
+      "id": "sector-pan-de-azucar",
+      "nombre": "Sector Pan de Azucar",
+      "detalle": "Vereda de Tenjo",
+      "cat": "vereda",
+      "lat": 4.880853,
+      "lng": -74.134797
+    },
+    {
+      "id": "la-nana",
+      "nombre": "La Nana",
+      "detalle": "Vereda de Tenjo",
+      "cat": "vereda",
+      "lat": 4.861578,
+      "lng": -74.159945
+    },
+    {
+      "id": "chucua",
+      "nombre": "Chucua",
+      "detalle": "Vereda de Tenjo",
+      "cat": "vereda",
+      "lat": 4.864371,
+      "lng": -74.13155
+    },
+    {
+      "id": "churuangualo",
+      "nombre": "Churuangualo",
+      "detalle": "Tenjo · a 2,2 km",
+      "cat": "turismo",
+      "lat": 4.890706,
+      "lng": -74.1513
+    },
+    {
+      "id": "la-granja",
+      "nombre": "La Granja",
+      "detalle": "Tenjo · a 2,2 km",
+      "cat": "comida",
+      "lat": 4.855969,
+      "lng": -74.134283
+    },
+    {
+      "id": "chinche",
+      "nombre": "Chinche",
+      "detalle": "Vereda de Tenjo",
+      "cat": "vereda",
+      "lat": 4.872905,
+      "lng": -74.126585
+    },
+    {
+      "id": "chitasuga",
+      "nombre": "Chitasuga",
+      "detalle": "Vereda de Tenjo",
+      "cat": "vereda",
+      "lat": 4.850251,
+      "lng": -74.140705
+    },
+    {
+      "id": "vivero-tirra",
+      "nombre": "Vivero Tirrá",
+      "detalle": "Tenjo · a 2,7 km",
+      "cat": "comida",
+      "lat": 4.852149,
+      "lng": -74.132996
+    },
+    {
+      "id": "santuario",
+      "nombre": "Santuario",
+      "detalle": "Vereda de Tenjo",
+      "cat": "vereda",
+      "lat": 4.887956,
+      "lng": -74.165221
+    },
+    {
+      "id": "el-recreo",
+      "nombre": "El Recreo",
+      "detalle": "Tenjo · a 2,8 km",
+      "cat": "comida",
+      "lat": 4.850334,
+      "lng": -74.132739
+    },
+    {
+      "id": "escuela-el-estanco",
+      "nombre": "Escuela El Estanco",
+      "detalle": "Tenjo · a 3,1 km",
+      "cat": "educacion",
+      "lat": 4.857687,
+      "lng": -74.171583
+    },
+    {
+      "id": "tabio",
+      "nombre": "Tabio",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.916396,
+      "lng": -74.099095
+    },
+    {
+      "id": "chia",
+      "nombre": "Chía",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.861278,
+      "lng": -74.0602
+    },
+    {
+      "id": "cota",
+      "nombre": "Cota",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.808387,
+      "lng": -74.103677
+    },
+    {
+      "id": "funza",
+      "nombre": "Funza",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.717747,
+      "lng": -74.203155
+    },
+    {
+      "id": "madrid",
+      "nombre": "Madrid",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.736726,
+      "lng": -74.265468
+    },
+    {
+      "id": "subachoque",
+      "nombre": "Subachoque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.927969,
+      "lng": -74.173964
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Jorge Castañeda",
+      "placa": "TNJ 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1350,
+      "desde": 2013,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Héctor Bernal",
+      "placa": "TNJ 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1304,
+      "desde": 2010,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Diana Forero",
+      "placa": "TNJ 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 424,
+      "desde": 2021,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-18",
+      "movil": "018",
+      "nombre": "Luz Marina Rojas",
+      "placa": "TNJ 618",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 830,
+      "desde": 2019,
+      "tel": "3000000018"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Fabio Cruz",
+      "placa": "TNJ 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2147,
+      "desde": 2017,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Sandra Patiño",
+      "placa": "TNJ 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1831,
+      "desde": 2019,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Germán Quintero",
+      "placa": "TNJ 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2045,
+      "desde": 2021,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Martha Garzón",
+      "placa": "TNJ 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1813,
+      "desde": 2011,
+      "tel": "3000000029"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "fuentes": [
+    "https://cootranstenjo.com.co/",
+    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-tenjo-ltda"
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "subachoque": {
+    "estado": "cliente",
+    "pueblo_osm": "Subachoque",
+    "EMPRESA": {
+      "nombre": "Coopmultrasub", "nombreCorto": "Coopmultrasub",
+      "razonSocial": "Cooperativa Multiactiva de Transportadores de Subachoque Ltda.",
+      "lema": "Tu taxi de confianza en Subachoque",
+      "municipio": "Subachoque, Cundinamarca", "pueblo": "Subachoque",
+      "telefono": "", "telefonoVisible": "", "whatsapp": "", "correo": "",
+      "direccion": "Calle 2 # 5-63, Subachoque, Cundinamarca",
+      "web": "", "sitioOficial": "",
+      "fundada": null, "taxisIniciales": null, "taxis": 20, "microbuses": null, "asociados": null,
+      "servicio24h": true, "placaPrefijo": "SUB", "vehiculo": "Kia Picanto", "colorTaxi": "Amarillo",
+      "datosPendientes": ["teléfono de la central", "WhatsApp", "correo", "año de fundación", "número exacto de taxis"]
+    },
+    "colores": { "primario": "#1D4E89", "primario2": "#2563A8", "oscuro": "#0B2545", "acento": "#FFC107", "rojo": "#D32F2F" },
+    "destinos": ["El Rosal", "Madrid", "Facatativá", "Tabio", "Tenjo", "Zipaquirá", "portal-80", "aeropuerto"],
+    "fuentes": ["https://www.emis.com/php/company-profile/CO/Cooperativa_Multiactiva_de_Transportadores_de_Subachoque_Coopmultrasub_Ltda_es_13063659.html"]
+  },
+  "tabio": {
+    "estado": "propuesta",
+    "pueblo_osm": "Tabio",
+    "EMPRESA": {
+      "nombre": "Cooptranstermales", "nombreCorto": "Cooptranstermales",
+      "razonSocial": "Cooperativa Multiactiva de Transportadores Ltda. (Cooptranstermales)",
+      "lema": "Taxis de Tabio, tierra de termales",
+      "municipio": "Tabio, Cundinamarca", "pueblo": "Tabio",
+      "telefono": "3143519920", "telefonoVisible": "314 351 9920", "whatsapp": "573143519920", "correo": "",
+      "direccion": "Calle 7 # 5-00, Tabio, Cundinamarca",
+      "web": "", "sitioOficial": "",
+      "fundada": null, "taxisIniciales": null, "taxis": null, "microbuses": null, "asociados": null,
+      "servicio24h": true, "placaPrefijo": "TAB", "vehiculo": "Kia Picanto", "colorTaxi": "Amarillo"
+    },
+    "colores": { "primario": "#0E6E6E", "primario2": "#13898A", "oscuro": "#06393A", "acento": "#FFC107", "rojo": "#D84315" },
+    "destinos": ["Tenjo", "Cajicá", "Chía", "Subachoque", "Zipaquirá", "Cota", "portal-norte", "aeropuerto"],
+    "fuentes": ["https://infotaxicolombia.com.co/empresas-taxi/servicio-de-taxis-trantermales-tabio-cundinamarca-colombia-2/", "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-transtermales"]
+  },
+  "tenjo": {
+    "estado": "propuesta",
+    "pueblo_osm": "Tenjo",
+    "EMPRESA": {
+      "nombre": "Cootranstenjo", "nombreCorto": "Cootranstenjo",
+      "razonSocial": "Cooperativa de Transportadores de Tenjo",
+      "lema": "Movilidad que conecta y construye",
+      "municipio": "Tenjo, Cundinamarca", "pueblo": "Tenjo",
+      "telefono": "6018658928", "telefonoVisible": "601 865 8928", "whatsapp": "573125847257", "correo": "recepcion@cootranstenjo.com",
+      "direccion": "Carrera 2 # 4-55, local 204, C.C. Achuá, Tenjo, Cundinamarca",
+      "web": "", "sitioOficial": "https://cootranstenjo.com.co",
+      "fundada": 1996, "taxisIniciales": null, "taxis": null, "microbuses": null, "asociados": null,
+      "servicio24h": true, "placaPrefijo": "TNJ", "vehiculo": "Kia Picanto", "colorTaxi": "Amarillo"
+    },
+    "colores": { "primario": "#14532D", "primario2": "#166534", "oscuro": "#052E16", "acento": "#FACC15", "rojo": "#DC2626" },
+    "destinos": ["Tabio", "Chía", "Cota", "Funza", "Madrid", "Subachoque", "portal-80", "aeropuerto"],
+    "fuentes": ["https://cootranstenjo.com.co/", "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-tenjo-ltda"]
+  },
+  "madrid": {
+    "estado": "propuesta",
+    "pueblo_osm": "Madrid",
+    "EMPRESA": {
+      "nombre": "Cootransmadrid", "nombreCorto": "Cootransmadrid",
+      "razonSocial": "Cooperativa Multiactiva de Transportadores de Madrid",
+      "lema": "Bienestar, seguridad y comodidad en cada viaje",
+      "municipio": "Madrid, Cundinamarca", "pueblo": "Madrid",
+      "telefono": "6018443594", "telefonoVisible": "601 844 3594", "whatsapp": "573138043438", "correo": "secretaria.cootransmadrid@gmail.com",
+      "direccion": "Carrera 9 # 6-27, barrio San Luis, Madrid, Cundinamarca",
+      "web": "", "sitioOficial": "https://cootransmadrid.com.co",
+      "fundada": 1990, "taxisIniciales": null, "taxis": null, "vehiculos": "100+", "microbuses": null, "asociados": null,
+      "servicio24h": true, "placaPrefijo": "MDR", "vehiculo": "Kia Picanto", "colorTaxi": "Amarillo"
+    },
+    "colores": { "primario": "#9F1239", "primario2": "#BE123C", "oscuro": "#4C0519", "acento": "#FFC107", "rojo": "#E11D48" },
+    "destinos": ["Mosquera", "Funza", "Facatativá", "El Rosal", "Bojacá", "Subachoque", "portal-80", "aeropuerto"],
+    "fuentes": ["https://cootransmadrid.com.co/"]
+  },
+  "villeta": {
+    "estado": "propuesta",
+    "pueblo_osm": "Villeta",
+    "EMPRESA": {
+      "nombre": "Cootransvi", "nombreCorto": "Cootransvi",
+      "razonSocial": "Cooperativa de Transportadores de Villeta",
+      "lema": "Taxis en la capital panelera de Colombia",
+      "municipio": "Villeta, Cundinamarca", "pueblo": "Villeta",
+      "telefono": "6018445332", "telefonoVisible": "601 844 5332", "whatsapp": "", "correo": "",
+      "direccion": "Calle 5 # 4-75, Villeta, Cundinamarca",
+      "web": "", "sitioOficial": "",
+      "fundada": null, "taxisIniciales": null, "taxis": null, "microbuses": null, "asociados": null,
+      "servicio24h": true, "placaPrefijo": "VLL", "vehiculo": "Kia Picanto", "colorTaxi": "Amarillo"
+    },
+    "colores": { "primario": "#C2410C", "primario2": "#EA580C", "oscuro": "#431407", "acento": "#FACC15", "rojo": "#B91C1C" },
+    "destinos": ["Sasaima", "La Vega", "Nocaima", "Útica", "Quebradanegra", "Guaduas", "Facatativá", "terminal-salitre"],
+    "fuentes": ["https://www.planetacolombia.com/cooperativa-cootransvi-F120EC10213D342", "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-villeta"]
+  },
+  "la-vega": {
+    "estado": "propuesta",
+    "pueblo_osm": "La Vega",
+    "EMPRESA": {
+      "nombre": "Cootransvillaleal", "nombreCorto": "Cootransvillaleal",
+      "razonSocial": "Cooperativa de Transportes y Servicios Cootransvillaleal",
+      "lema": "Taxis en La Vega, de la laguna a la autopista",
+      "municipio": "La Vega, Cundinamarca", "pueblo": "La Vega",
+      "telefono": "3103178318", "telefonoVisible": "310 317 8318", "whatsapp": "573103178318", "correo": "cooptransvillaleal@gmail.com",
+      "direccion": "Carrera 4A # 20-03, Autopista Medellín, La Vega, Cundinamarca",
+      "web": "", "sitioOficial": "https://www.cootransvillaleal.com.co",
+      "fundada": null, "taxisIniciales": null, "taxis": null, "microbuses": null, "asociados": null,
+      "servicio24h": true, "placaPrefijo": "LVG", "vehiculo": "Kia Picanto", "colorTaxi": "Amarillo"
+    },
+    "colores": { "primario": "#0369A1", "primario2": "#0284C7", "oscuro": "#082F49", "acento": "#FFC107", "rojo": "#DC2626" },
+    "destinos": ["San Francisco", "Villeta", "Sasaima", "Nocaima", "Supatá", "Facatativá", "portal-80", "aeropuerto"],
+    "fuentes": ["https://www.cootransvillaleal.com.co/nosotros"]
+  }
+}

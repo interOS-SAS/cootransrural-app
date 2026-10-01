@@ -1,7 +1,7 @@
 // Avisos al usuario: notificación del sistema (si dio permiso), vibración y
 // sonido. La interfaz de cada diseño muestra además su propio aviso en pantalla
 // escuchando el evento 'aviso' de los controladores.
-import { urlDelSitio } from './config.js';
+import { urlDelSitio, ID_EMPRESA } from './config.js';
 
 let contextoAudio = null;
 
@@ -78,7 +78,7 @@ export function vibrar(patron = [120]) {
 const PATRONES = { info: [60], exito: [80, 60, 80], alerta: [200, 100, 200, 100, 300], solicitud: [300, 120, 300, 120, 300], error: [400] };
 
 // Aviso completo: sistema + sonido + vibración. Devuelve el aviso para la UI.
-export async function avisar({ titulo, cuerpo = '', tipo = 'info', etiqueta = 'cootransrural', icono = 'img/icono-192.png' }) {
+export async function avisar({ titulo, cuerpo = '', tipo = 'info', etiqueta = `apptaxi-${ID_EMPRESA}`, icono = 'img/icono-192.png' }) {
   sonar(tipo);
   vibrar(PATRONES[tipo] || PATRONES.info);
   // La notificación del sistema solo cuando la app no está a la vista.

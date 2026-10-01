@@ -1,0 +1,598 @@
+{
+  "id": "subachoque",
+  "estado": "cliente",
+  "EMPRESA": {
+    "nombre": "Coopmultrasub",
+    "nombreCorto": "Coopmultrasub",
+    "razonSocial": "Cooperativa Multiactiva de Transportadores de Subachoque Ltda.",
+    "lema": "Tu taxi de confianza en Subachoque",
+    "municipio": "Subachoque, Cundinamarca",
+    "pueblo": "Subachoque",
+    "telefono": "",
+    "telefonoVisible": "",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Calle 2 # 5-63, Subachoque, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": 20,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "SUB",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "datosPendientes": [
+      "teléfono de la central",
+      "WhatsApp",
+      "correo",
+      "año de fundación",
+      "número exacto de taxis"
+    ]
+  },
+  "colores": {
+    "primario": "#1D4E89",
+    "primario2": "#2563A8",
+    "oscuro": "#0B2545",
+    "acento": "#FFC107",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.927969,
+    "lng": -74.173964
+  },
+  "ZONA": {
+    "sur": 4.61,
+    "norte": 5.25,
+    "oeste": -74.49,
+    "este": -73.85
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "el-rosal",
+      "destino": "El Rosal",
+      "valor": 27000,
+      "km": 14,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "tabio",
+      "destino": "Tabio",
+      "valor": 28000,
+      "km": 14,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "tenjo",
+      "destino": "Tenjo",
+      "valor": 29000,
+      "km": 16,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "madrid",
+      "destino": "Madrid",
+      "valor": 47000,
+      "km": 27,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 47000,
+      "km": 27,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 56000,
+      "km": 34,
+      "min": 65,
+      "radioKm": 3
+    },
+    {
+      "id": "zipaquira",
+      "destino": "Zipaquirá",
+      "valor": 59000,
+      "km": 35,
+      "min": 70,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 66000,
+      "km": 40,
+      "min": 75,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Subachoque",
+      "cat": "centro",
+      "lat": 4.927969,
+      "lng": -74.173964
+    },
+    {
+      "id": "plaza-central-subachoque",
+      "nombre": "Plaza Central Subachoque",
+      "detalle": "Subachoque",
+      "cat": "centro",
+      "lat": 4.928079,
+      "lng": -74.173827
+    },
+    {
+      "id": "san-pablo-bbq",
+      "nombre": "San Pablo BBQ",
+      "detalle": "Subachoque",
+      "cat": "comida",
+      "lat": 4.927538,
+      "lng": -74.173645
+    },
+    {
+      "id": "papitas-de-majo",
+      "nombre": "Papitas de Majo",
+      "detalle": "Subachoque",
+      "cat": "comida",
+      "lat": 4.927465,
+      "lng": -74.173722
+    },
+    {
+      "id": "surtidora-de-aves",
+      "nombre": "Surtidora de Aves",
+      "detalle": "Subachoque",
+      "cat": "comida",
+      "lat": 4.927797,
+      "lng": -74.173362
+    },
+    {
+      "id": "madeleine-crepes",
+      "nombre": "Madeleine Crepes",
+      "detalle": "Subachoque",
+      "cat": "comida",
+      "lat": 4.927855,
+      "lng": -74.173327
+    },
+    {
+      "id": "banco-agrario",
+      "nombre": "Banco Agrario",
+      "detalle": "Subachoque",
+      "cat": "comercio",
+      "lat": 4.928098,
+      "lng": -74.174621
+    },
+    {
+      "id": "colegio-eucaristico",
+      "nombre": "Colegio Eucaristico",
+      "detalle": "Subachoque",
+      "cat": "educacion",
+      "lat": 4.92755,
+      "lng": -74.174527
+    },
+    {
+      "id": "registraduria-nacional-de-subachoque",
+      "nombre": "Registraduria Nacional de Subachoque",
+      "detalle": "Subachoque",
+      "cat": "centro",
+      "lat": 4.928358,
+      "lng": -74.174554
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Subachoque",
+      "cat": "comercio",
+      "lat": 4.927905,
+      "lng": -74.173237
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Subachoque",
+      "cat": "comercio",
+      "lat": 4.928761,
+      "lng": -74.173597
+    },
+    {
+      "id": "parroquia-san-miguel-arcangel",
+      "nombre": "Parroquia San Miguel Arcángel",
+      "detalle": "Subachoque",
+      "cat": "centro",
+      "lat": 4.928562,
+      "lng": -74.173308
+    },
+    {
+      "id": "cc-la-colina",
+      "nombre": "CC La Colina",
+      "detalle": "Subachoque",
+      "cat": "comercio",
+      "lat": 4.927036,
+      "lng": -74.173866
+    },
+    {
+      "id": "pizzeria",
+      "nombre": "Pizzeria",
+      "detalle": "Subachoque",
+      "cat": "comida",
+      "lat": 4.928913,
+      "lng": -74.173523
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Subachoque",
+      "cat": "comercio",
+      "lat": 4.929012,
+      "lng": -74.173589
+    },
+    {
+      "id": "interrapidisimo",
+      "nombre": "Interrapidisimo",
+      "detalle": "Subachoque",
+      "cat": "centro",
+      "lat": 4.926914,
+      "lng": -74.173408
+    },
+    {
+      "id": "juzgado-promiscuo-municipal-de-subachoqu",
+      "nombre": "Juzgado Promiscuo Municipal de Subachoque",
+      "detalle": "Subachoque",
+      "cat": "centro",
+      "lat": 4.927313,
+      "lng": -74.17287
+    },
+    {
+      "id": "estacion-de-policia-de-subachoque",
+      "nombre": "Estación de Policia de Subachoque",
+      "detalle": "Subachoque",
+      "cat": "centro",
+      "lat": 4.92663,
+      "lng": -74.174775
+    },
+    {
+      "id": "odonto-stetic",
+      "nombre": "Odonto Stetic",
+      "detalle": "Subachoque",
+      "cat": "salud",
+      "lat": 4.92757,
+      "lng": -74.172416
+    },
+    {
+      "id": "biblioteca-publica-municipal-jorge-enriq",
+      "nombre": "Biblioteca Pública Municipal Jorge Enrique Hernández Carrill",
+      "detalle": "Subachoque",
+      "cat": "centro",
+      "lat": 4.926637,
+      "lng": -74.172937
+    },
+    {
+      "id": "ied-ricardo-gonzalez-sede-principal",
+      "nombre": "IED Ricardo Gonzalez Sede Principal",
+      "detalle": "Subachoque",
+      "cat": "educacion",
+      "lat": 4.92862,
+      "lng": -74.171992
+    },
+    {
+      "id": "el-paseo-hygge",
+      "nombre": "El Paseo Hygge",
+      "detalle": "Subachoque",
+      "cat": "turismo",
+      "lat": 4.93036,
+      "lng": -74.173895
+    },
+    {
+      "id": "plaza-de-mercado",
+      "nombre": "Plaza de Mercado",
+      "detalle": "Subachoque",
+      "cat": "centro",
+      "lat": 4.929881,
+      "lng": -74.172173
+    },
+    {
+      "id": "plaza-de-la-cultura",
+      "nombre": "Plaza de la Cultura",
+      "detalle": "Subachoque",
+      "cat": "centro",
+      "lat": 4.930034,
+      "lng": -74.171566
+    },
+    {
+      "id": "iedp-ricardo-gonzalez-sede-la-ermita",
+      "nombre": "IEDp Ricardo Gonzalez sede La Ermita",
+      "detalle": "Subachoque",
+      "cat": "educacion",
+      "lat": 4.929474,
+      "lng": -74.170064
+    },
+    {
+      "id": "iedp-ricardo-gonzalez",
+      "nombre": "IEDp Ricardo Gonzalez",
+      "detalle": "Subachoque",
+      "cat": "educacion",
+      "lat": 4.92995,
+      "lng": -74.177948
+    },
+    {
+      "id": "el-recreo",
+      "nombre": "El Recreo",
+      "detalle": "Subachoque",
+      "cat": "barrio",
+      "lat": 4.928482,
+      "lng": -74.168692
+    },
+    {
+      "id": "centro",
+      "nombre": "Centro",
+      "detalle": "Vereda de Subachoque",
+      "cat": "vereda",
+      "lat": 4.94335,
+      "lng": -74.174686
+    },
+    {
+      "id": "hacienda-sevilla",
+      "nombre": "Hacienda Sevilla",
+      "detalle": "Vereda de Subachoque",
+      "cat": "vereda",
+      "lat": 4.91061,
+      "lng": -74.169721
+    },
+    {
+      "id": "villa-nueva",
+      "nombre": "Villa Nueva",
+      "detalle": "Vereda de Subachoque",
+      "cat": "vereda",
+      "lat": 4.941954,
+      "lng": -74.187564
+    },
+    {
+      "id": "casablanca",
+      "nombre": "Casablanca",
+      "detalle": "Vereda de Subachoque",
+      "cat": "vereda",
+      "lat": 4.948626,
+      "lng": -74.164755
+    },
+    {
+      "id": "galdamez",
+      "nombre": "Galdamez",
+      "detalle": "Vereda de Subachoque",
+      "cat": "vereda",
+      "lat": 4.91548,
+      "lng": -74.154101
+    },
+    {
+      "id": "escuela-galdamez",
+      "nombre": "Escuela Galdamez",
+      "detalle": "Subachoque · a 2,6 km",
+      "cat": "educacion",
+      "lat": 4.91389,
+      "lng": -74.154697
+    },
+    {
+      "id": "salon-victoria",
+      "nombre": "Salon Victoria",
+      "detalle": "Subachoque · a 3,2 km",
+      "cat": "centro",
+      "lat": 4.901104,
+      "lng": -74.185202
+    },
+    {
+      "id": "el-rosal",
+      "nombre": "El Rosal",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.851846,
+      "lng": -74.26206
+    },
+    {
+      "id": "madrid",
+      "nombre": "Madrid",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.736726,
+      "lng": -74.265468
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    },
+    {
+      "id": "tabio",
+      "nombre": "Tabio",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.916396,
+      "lng": -74.099095
+    },
+    {
+      "id": "tenjo",
+      "nombre": "Tenjo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.871304,
+      "lng": -74.147325
+    },
+    {
+      "id": "zipaquira",
+      "nombre": "Zipaquirá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.023475,
+      "lng": -74.003982
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-02",
+      "movil": "002",
+      "nombre": "Carlos Rodríguez",
+      "placa": "SUB 602",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 796,
+      "desde": 2011,
+      "tel": "3000000002"
+    },
+    {
+      "id": "demo-03",
+      "movil": "003",
+      "nombre": "Luz Marina Rojas",
+      "placa": "SUB 603",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 801,
+      "desde": 2009,
+      "tel": "3000000003"
+    },
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Wilson Gómez",
+      "placa": "SUB 604",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1402,
+      "desde": 2011,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-08",
+      "movil": "008",
+      "nombre": "Héctor Bernal",
+      "placa": "SUB 608",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 505,
+      "desde": 2007,
+      "tel": "3000000008"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Fabio Cruz",
+      "placa": "SUB 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1634,
+      "desde": 2013,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Édgar Molina",
+      "placa": "SUB 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1888,
+      "desde": 2013,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Sandra Patiño",
+      "placa": "SUB 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2212,
+      "desde": 2007,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Nelson Pinzón",
+      "placa": "SUB 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 590,
+      "desde": 2009,
+      "tel": "3000000015"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "fuentes": [
+    "https://www.emis.com/php/company-profile/CO/Cooperativa_Multiactiva_de_Transportadores_de_Subachoque_Coopmultrasub_Ltda_es_13063659.html"
+  ]
+}

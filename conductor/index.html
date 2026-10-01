@@ -9,8 +9,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="CT Conductor">
+  <meta name="apple-mobile-web-app-title" content="Conductor Cootransrural">
   <link rel="manifest" href="manifest.webmanifest">
+  <script>window.CT_EMPRESA = 'cootransrural';</script>
   <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32.png">
   <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
   <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
@@ -29,7 +30,7 @@
   <noscript>Para usar la app de Cootransrural activa JavaScript.</noscript>
   <script type="module">
     import * as N from '../nucleo/index.js';
-    const VERSION_DISENOS = '5b81881da8';
+    const VERSION_DISENOS = 'b959f9a331';
     const raiz = document.getElementById('app');
     const parametros = new URLSearchParams(location.search);
     const d = N.perfil.disenoElegido();

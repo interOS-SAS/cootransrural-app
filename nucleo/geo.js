@@ -26,7 +26,7 @@ async function pedirJSON(url, ms = 6000) {
   }
 }
 
-// Posición actual. Si el GPS falla o se niega, devuelve el centro de El Rosal
+// Posición actual. Si el GPS falla o se niega, devuelve el centro del pueblo
 // con real: false para que la interfaz lo diga.
 export function obtenerPosicion({ espera = 8000, precisa = true } = {}) {
   return new Promise((resolver) => {

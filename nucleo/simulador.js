@@ -1,7 +1,7 @@
 // Simulación para mostrar la app con un solo celular: taxis que circulan por
-// El Rosal, un conductor de prueba que acepta y hace el recorrido, y pasajeros
+// el pueblo, un conductor de prueba que acepta y hace el recorrido, y pasajeros
 // de prueba para la app del conductor. Nada de esto sale por la red.
-import { CONDUCTORES_DEMO, PASAJEROS_DEMO, LUGARES } from './datos.js';
+import { CONDUCTORES_DEMO, PASAJEROS_DEMO, LUGARES, RUTAS } from './datos.js';
 import { TIEMPOS } from './config.js';
 import { calcularRuta } from './geo.js';
 import { distanciaKm, desplazar, longitudes, puntoEnRuta, esperar, uid, codigoNumerico } from './util.js';
@@ -239,11 +239,11 @@ export async function crearSolicitudSimulada(posConductor) {
   let destino;
   if (Math.random() < 0.25) {
     // A veces un viaje intermunicipal.
-    const id = elegir(['madrid', 'facatativa', 'subachoque', 'funza', 'mosquera']);
-    destino = LUGARES.find((l) => l.id === id);
-  } else {
-    [destino] = puntosCerca(origen, 1, 2.2);
+    // A veces un viaje intermunicipal: uno de los destinos con tarifa fija.
+    const cercanos = RUTAS.filter((r) => r.km <= 30).map((r) => LUGARES.find((l) => l.id === r.id)).filter(Boolean);
+    destino = cercanos.length ? elegir(cercanos) : null;
   }
+  if (!destino) [destino] = puntosCerca(origen, 1, 2.2);
   const pasajero = elegir(PASAJEROS_DEMO);
   const codigo = codigoNumerico(4);
   return {

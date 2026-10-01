@@ -9,7 +9,7 @@ import pathlib
 import re
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
-OMITIR = {'pruebas', 'node_modules', '.git', 'herramientas'}
+OMITIR = {'pruebas', 'node_modules', '.git', 'herramientas', 'plantillas'}
 REF = re.compile(r'(href|src)="([^"#:?]+\.(?:css|js))(?:\?v=[0-9a-f]+)?"')
 
 

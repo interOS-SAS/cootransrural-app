@@ -7,7 +7,7 @@
 //
 // Fases: inicio → buscando → asignado → llego → en_viaje → pagar → calificar → inicio
 import { Bus } from './bus.js';
-import { TIEMPOS, CENTRO } from './config.js';
+import { TIEMPOS, CENTRO, EMPRESA } from './config.js';
 import { calcularRuta, obtenerPosicion, fueraDeZona } from './geo.js';
 import { calcularTarifa } from './tarifas.js';
 import { avisar } from './avisos.js';
@@ -215,7 +215,7 @@ class ControladorPasajero extends Emisor {
     let datos = cobro;
     if (lectura) {
       const leido = leerCobro(lectura);
-      if (!leido) return { ok: false, error: 'Ese código no es un cobro de Cootransrural' };
+      if (!leido) return { ok: false, error: `Ese código no es un cobro de ${EMPRESA.nombre}` };
       if (leido.viaje !== viaje.id) return { ok: false, error: 'Ese QR es de otro viaje' };
       datos = { valor: leido.valor };
     }
@@ -248,9 +248,9 @@ class ControladorPasajero extends Emisor {
     perfil.agregarAlHistorialPasajero(this.#resumenViaje('finalizado', { calificacionDada: estrellas }));
     const completados = this.viajesCompletados();
     if (completados > 0 && completados % 10 === 0) {
-      this.#avisar({ titulo: '¡Tu próximo viaje va al 50 %!', cuerpo: `Completaste ${completados} viajes con Cootransrural.`, tipo: 'exito' });
+      this.#avisar({ titulo: '¡Tu próximo viaje va al 50 %!', cuerpo: `Completaste ${completados} viajes con ${EMPRESA.nombre}.`, tipo: 'exito' });
     } else {
-      this.#avisar({ titulo: '¡Gracias por viajar con Cootransrural!', cuerpo: 'Tu calificación ayuda a mejorar el servicio.', tipo: 'exito' });
+      this.#avisar({ titulo: `¡Gracias por viajar con ${EMPRESA.nombre}!`, cuerpo: 'Tu calificación ayuda a mejorar el servicio.', tipo: 'exito' });
     }
     this.#cerrarViaje('finalizado');
   }
@@ -266,7 +266,7 @@ class ControladorPasajero extends Emisor {
     const { viaje, conductor, posConductor } = this.estado;
     if (!viaje || !conductor) return '';
     return [
-      `🚕 Voy en un taxi de Cootransrural`,
+      `🚕 Voy en un taxi de ${EMPRESA.nombre}`,
       `Móvil ${conductor.movil} · Placa ${conductor.placa}`,
       `Conductor: ${conductor.nombre}`,
       viaje.destino ? `Destino: ${viaje.destino.titulo || ''}` : '',
