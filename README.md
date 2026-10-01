@@ -73,6 +73,10 @@ ver ganancias del día, historial y documentos del vehículo.
 
 ## Desarrollo
 
+Antes de cada commit: `python3 herramientas/versionar.py` (pone `?v=` a los CSS
+y JS para que el navegador no muestre una versión vieja; GitHub Pages guarda los
+archivos 10 minutos).
+
 Sitio estático, sin compilación: `python3 -m http.server 8765` y abrir
 http://localhost:8765/. Pruebas automáticas con Chromium (playwright-core):
 

@@ -1,6 +1,6 @@
 // Service worker de Cootransrural: permite instalar la app, abrirla sin señal
 // (lo ya visitado) y mostrar notificaciones del sistema.
-const VERSION = 'ct-2026-10-01-1';
+const VERSION = 'ct-2026-10-01-2';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
@@ -24,8 +24,10 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET' || url.origin !== self.location.origin) return;
   // Primero la red (así siempre se ve lo último publicado); sin señal, la copia.
+  // cache: 'no-cache' obliga a preguntarle al servidor si cambió (si no, 304).
+  const red = e.request.mode === 'navigate' ? fetch(e.request.url, { cache: 'no-cache', credentials: 'same-origin' }) : fetch(e.request, { cache: 'no-cache' });
   e.respondWith(
-    fetch(e.request)
+    red
       .then((r) => {
         if (r.ok) {
           const copia = r.clone();

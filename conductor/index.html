@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32.png">
   <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
-  <link rel="stylesheet" href="../fuentes/fuentes.css">
+  <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
   <style>
     html,body{margin:0;height:100%;background:#0A5C33}
     #carga{position:fixed;inset:0;display:grid;place-items:center;background:#0A5C33;color:#fff;font:600 16px/1.4 system-ui,sans-serif;z-index:9999;transition:opacity .35s}
@@ -29,6 +29,7 @@
   <noscript>Para usar la app de Cootransrural activa JavaScript.</noscript>
   <script type="module">
     import * as N from '../nucleo/index.js';
+    const VERSION_DISENOS = '5b81881da8';
     const raiz = document.getElementById('app');
     const parametros = new URLSearchParams(location.search);
     const d = N.perfil.disenoElegido();
@@ -37,10 +38,10 @@
     if (parametros.get('vitrina')) document.documentElement.dataset.vitrina = '1';
     const css = document.createElement('link');
     css.rel = 'stylesheet';
-    css.href = `../disenos/${d}/conductor.css`;
+    css.href = `../disenos/${d}/conductor.css?v=${VERSION_DISENOS}`;
     document.head.appendChild(css);
     try {
-      const { montar } = await import(`../disenos/${d}/conductor.js`);
+      const { montar } = await import(`../disenos/${d}/conductor.js?v=${VERSION_DISENOS}`);
       await montar(raiz, { N, diseno: d, vitrina: Boolean(parametros.get('vitrina')) });
     } catch (e) {
       console.error(e);

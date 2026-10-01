@@ -325,7 +325,7 @@ function formulario() {
 /* ---------------- Costos: calculadora de los dos planes ---------------- */
 
 const PLAN_A_COMISION = 0.019; // 1,9 % de cada viaje pedido por la app
-const PLAN_B_CUOTA = 20000; // por taxi al mes
+const PLAN_B_DIA = 900; // por taxi al día (≈ $27.000 al mes)
 
 function calculadoraCostos() {
   const form = $('#calculadora');
@@ -340,10 +340,14 @@ function calculadoraCostos() {
     const viajes = campo('#calc-viajes', 1, 60);
     const valor = campo('#calc-valor', 1000, 500000);
     const app = campo('#calc-app', 0, 100) / 100;
+    const porDia = $('#calc-unidad').value === 'dia';
+    const cuota = campo('#calc-cuota', 100, 200000);
+    const cuotaMes = porDia ? cuota * 30 : cuota;
     const viajesMes = taxis * viajes * 30;
     const flota = viajesMes * valor;
     const planA = flota * app * PLAN_A_COMISION;
-    const planB = taxis * PLAN_B_CUOTA;
+    const planB = taxis * cuotaMes;
+    $('#calc-b-titulo').textContent = `Plan B · ${N.pesos(cuota)} ${porDia ? 'al día' : 'al mes'} por taxi`;
     $('#calc-app-texto').textContent = porcentaje(app * 100);
     $('#calc-flota').textContent = `La flota hace unos ${viajesMes.toLocaleString('es-CO')} viajes al mes (${N.pesos(flota)}). Por la app: ${Math.round(viajesMes * app).toLocaleString('es-CO')} viajes.`;
     const a = $('#calc-a');
@@ -351,7 +355,7 @@ function calculadoraCostos() {
     a.querySelector('b').textContent = `${N.pesos(planA)} al mes`;
     a.querySelector('small').textContent = `${N.pesos(planA / taxis / 30)} por taxi al día`;
     b.querySelector('b').textContent = `${N.pesos(planB)} al mes`;
-    b.querySelector('small').textContent = `${N.pesos(PLAN_B_CUOTA / 30)} por taxi al día`;
+    b.querySelector('small').textContent = porDia ? `${N.pesos(cuotaMes)} al mes por taxi` : `${N.pesos(cuotaMes / 30)} por taxi al día`;
     a.classList.toggle('mas-barato', planA < planB);
     b.classList.toggle('mas-barato', planB < planA);
     // Punto en el que los dos planes cuestan lo mismo.
@@ -363,7 +367,16 @@ function calculadoraCostos() {
       v.innerHTML = `Los dos planes cuestan lo mismo cuando <b>${porcentaje(equilibrio)}</b> de los viajes llegan por la app. Por debajo conviene el <b>Plan A</b>; por encima, el <b>Plan B</b>.`;
     }
   };
+  // Al cambiar la unidad se propone un valor razonable ($900 al día ↔ $27.000 al mes).
+  $('#calc-unidad').addEventListener('change', () => {
+    const c = $('#calc-cuota');
+    const v = Number(c.value) || 0;
+    c.value = $('#calc-unidad').value === 'dia' ? Math.round(v / 30 / 50) * 50 || PLAN_B_DIA : v * 30 || PLAN_B_DIA * 30;
+    c.step = $('#calc-unidad').value === 'dia' ? '50' : '1000';
+    actualizar();
+  });
   form.addEventListener('input', actualizar);
+  form.addEventListener('change', actualizar);
   actualizar();
 }
 

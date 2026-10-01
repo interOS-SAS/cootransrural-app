@@ -27,8 +27,8 @@
 
   <link rel="preload" href="fuentes/sora-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fuentes/plus-jakarta-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="fuentes/fuentes.css">
-  <link rel="stylesheet" href="web/estilos.css">
+  <link rel="stylesheet" href="fuentes/fuentes.css?v=d7cb94cf69">
+  <link rel="stylesheet" href="web/estilos.css?v=5dd66c5c77">
   <script>
     // Las animaciones solo se activan si el script de la página arranca; si no
     // carga (red lenta o navegador viejo), el contenido se muestra igual.
@@ -613,6 +613,11 @@
           <p class="lead">Para los pasajeros la app es gratis: solo pagan su viaje. La cooperativa elige el plan que más le convenga.</p>
         </div>
 
+        <div class="destacado-900 revelar" role="note">
+          <span class="destacado-precio"><small>Solo</small><b>$900</b><small>al día</small></span>
+          <p><b>Cada taxi tiene la app por solo $900 al día</b>, con actualizaciones constantes y soporte 24/7 en un grupo de WhatsApp de ayuda.</p>
+        </div>
+
         <div class="planes">
           <article class="plan revelar desde-izq" aria-labelledby="plan-a-titulo">
             <span class="plan-etiqueta">Plan A · Ideal para empezar</span>
@@ -627,15 +632,16 @@
           </article>
 
           <article class="plan plan-destacado revelar desde-der" aria-labelledby="plan-b-titulo">
-            <span class="plan-etiqueta">Plan B · Valor fijo y predecible</span>
+            <span class="plan-etiqueta">Plan B · El más completo</span>
             <h3 id="plan-b-titulo">Cuota fija por taxi</h3>
-            <p class="plan-precio"><b>$20.000</b><span>por taxi al mes</span></p>
+            <p class="plan-precio"><b>$900</b><span>al día por taxi</span></p>
             <ul class="lista-check">
-              <li><svg class="icono"><use href="#i-check"/></svg><span>El mismo valor sin importar cuántos viajes haga.</span></li>
+              <li><svg class="icono"><use href="#i-check"/></svg><span>Tu taxi con la app, sin importar cuántos viajes haga.</span></li>
+              <li><svg class="icono"><use href="#i-check"/></svg><span><b>Actualizaciones constantes</b> incluidas.</span></li>
+              <li><svg class="icono"><use href="#i-check"/></svg><span><b>Soporte 24/7</b> en un grupo de WhatsApp de ayuda.</span></li>
               <li><svg class="icono"><use href="#i-check"/></svg><span>Se puede incluir en el rodamiento mensual de cada asociado.</span></li>
-              <li><svg class="icono"><use href="#i-check"/></svg><span>Conviene cuando la app ya se usa bastante.</span></li>
             </ul>
-            <p class="plan-ejemplo"><svg class="icono"><use href="#i-taxi"/></svg><span>Menos de <b>$700 al día</b> por taxi · 52 taxis: <b>$1.040.000</b> al mes.</span></p>
+            <p class="plan-ejemplo"><svg class="icono"><use href="#i-taxi"/></svg><span>Equivale a <b>$27.000 al mes</b> por taxi · 52 taxis: <b>$1.404.000</b> al mes.</span></p>
           </article>
         </div>
 
@@ -646,7 +652,8 @@
             <li><svg class="icono"><use href="#i-descargar"/></svg>Publicación en Google Play y App Store</li>
             <li><svg class="icono"><use href="#i-grafica"/></svg>Panel de la cooperativa: servicios, conductores y calificaciones</li>
             <li><svg class="icono"><use href="#i-mapa"/></svg>Servidor, mapas y mensajes de verificación</li>
-            <li><svg class="icono"><use href="#i-reloj"/></svg>Soporte y actualizaciones constantes</li>
+            <li><svg class="icono"><use href="#i-reloj"/></svg>Actualizaciones constantes</li>
+            <li><svg class="icono"><use href="#i-chat"/></svg>Soporte 24/7 por grupo de WhatsApp</li>
             <li><svg class="icono"><use href="#i-volante"/></svg>Capacitación a los conductores</li>
             <li><svg class="icono"><use href="#i-qr"/></svg>Stickers QR listos para imprimir</li>
           </ul>
@@ -660,13 +667,23 @@
               <label>Viajes por taxi al día<input type="number" id="calc-viajes" min="1" max="60" step="1" value="15" inputmode="numeric"></label>
               <label>Valor promedio del viaje<input type="number" id="calc-valor" min="1000" max="500000" step="500" value="10000" inputmode="numeric"></label>
             </div>
+            <div class="calc-cuota">
+              <label for="calc-cuota">Cuota del Plan B por taxi</label>
+              <div class="calc-cuota-fila">
+                <input type="number" id="calc-cuota" min="100" max="200000" step="50" value="900" inputmode="numeric">
+                <select id="calc-unidad" aria-label="Unidad de la cuota">
+                  <option value="dia" selected>al día</option>
+                  <option value="mes">al mes</option>
+                </select>
+              </div>
+            </div>
             <label class="calc-deslizador" for="calc-app">Viajes que se piden por la app: <b id="calc-app-texto">30 %</b></label>
             <input type="range" id="calc-app" min="0" max="100" step="5" value="30">
             <p class="calc-nota" id="calc-flota"></p>
           </div>
           <div class="calc-resultados" aria-live="polite">
             <div class="calc-plan" id="calc-a"><span>Plan A · 1,9 % por uso</span><b>—</b><small></small></div>
-            <div class="calc-plan" id="calc-b"><span>Plan B · $20.000 por taxi</span><b>—</b><small></small></div>
+            <div class="calc-plan" id="calc-b"><span id="calc-b-titulo">Plan B · $900 al día por taxi</span><b>—</b><small></small></div>
             <p class="calc-veredicto" id="calc-veredicto"></p>
           </div>
         </form>
@@ -770,6 +787,6 @@
     </div>
   </footer>
 
-  <script type="module" src="web/sitio.js"></script>
+  <script type="module" src="web/sitio.js?v=ad2e6005b7"></script>
 </body>
 </html>
