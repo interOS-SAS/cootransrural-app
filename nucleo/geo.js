@@ -1,0 +1,182 @@
+// Ubicación, direcciones y rutas. Usa servicios gratuitos (Nominatim y OSRM) y,
+// si fallan o no hay internet, responde con aproximaciones locales.
+import { CENTRO, ZONA, SERVICIOS } from './config.js';
+import { LUGARES, CATEGORIAS } from './datos.js';
+import { distanciaKm } from './util.js';
+
+const cacheDirecciones = new Map();
+let ultimaConsultaNominatim = 0;
+
+async function turnoNominatim() {
+  // Nominatim pide máximo una consulta por segundo.
+  const espera = ultimaConsultaNominatim + 1100 - Date.now();
+  ultimaConsultaNominatim = Math.max(Date.now(), ultimaConsultaNominatim + 1100);
+  if (espera > 0) await new Promise((r) => setTimeout(r, espera));
+}
+
+async function pedirJSON(url, ms = 6000) {
+  const control = new AbortController();
+  const t = setTimeout(() => control.abort(), ms);
+  try {
+    const r = await fetch(url, { signal: control.signal, headers: { 'Accept-Language': 'es' } });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+// Posición actual. Si el GPS falla o se niega, devuelve el centro de El Rosal
+// con real: false para que la interfaz lo diga.
+export function obtenerPosicion({ espera = 8000, precisa = true } = {}) {
+  return new Promise((resolver) => {
+    if (!('geolocation' in navigator)) return resolver({ ...CENTRO, precision: null, real: false, motivo: 'sin-gps' });
+    navigator.geolocation.getCurrentPosition(
+      (p) => resolver({ lat: p.coords.latitude, lng: p.coords.longitude, precision: p.coords.accuracy, real: true }),
+      (e) => resolver({ ...CENTRO, precision: null, real: false, motivo: e.code === 1 ? 'denegado' : 'no-disponible' }),
+      { enableHighAccuracy: precisa, timeout: espera, maximumAge: 15000 },
+    );
+  });
+}
+
+// Sigue la posición en tiempo real. Devuelve la función para detenerse.
+export function seguirPosicion(fn, { precisa = true } = {}) {
+  if (!('geolocation' in navigator)) return () => {};
+  const id = navigator.geolocation.watchPosition(
+    (p) => fn({ lat: p.coords.latitude, lng: p.coords.longitude, precision: p.coords.accuracy, rumbo: p.coords.heading, velocidad: p.coords.speed, real: true }),
+    () => {},
+    { enableHighAccuracy: precisa, maximumAge: 5000, timeout: 20000 },
+  );
+  return () => navigator.geolocation.clearWatch(id);
+}
+
+// ¿La posición está lejos de la zona de servicio? (por ejemplo, alguien que
+// prueba la demo desde otra ciudad).
+export function fueraDeZona(p) {
+  return distanciaKm(p, CENTRO) > 60;
+}
+
+function lugarCercano(p, maxKm = 0.06) {
+  let mejor = null;
+  for (const l of LUGARES) {
+    const d = distanciaKm(p, l);
+    if (d <= maxKm && (!mejor || d < mejor.d)) mejor = { ...l, d };
+  }
+  return mejor;
+}
+
+// Dirección legible de un punto («Calle 8 #10-20, Centro»).
+export async function direccionDe(p) {
+  const clave = `${p.lat.toFixed(5)},${p.lng.toFixed(5)}`;
+  if (cacheDirecciones.has(clave)) return cacheDirecciones.get(clave);
+  const cerca = lugarCercano(p);
+  if (cerca) {
+    const r = { titulo: cerca.nombre, detalle: cerca.detalle, lat: p.lat, lng: p.lng };
+    cacheDirecciones.set(clave, r);
+    return r;
+  }
+  try {
+    await turnoNominatim();
+    const d = await pedirJSON(`${SERVICIOS.nominatim}/reverse?format=jsonv2&zoom=18&addressdetails=1&lat=${p.lat}&lon=${p.lng}`);
+    const a = d.address || {};
+    const via = [a.road, a.house_number ? `#${a.house_number}` : ''].filter(Boolean).join(' ');
+    const sector = a.neighbourhood || a.suburb || a.hamlet || a.village || a.quarter || '';
+    const ciudad = a.town || a.city || a.municipality || a.county || '';
+    const titulo = via || d.name || sector || ciudad || 'Punto en el mapa';
+    const detalle = [via ? sector : '', ciudad].filter(Boolean).join(', ') || 'Cundinamarca';
+    const r = { titulo, detalle, lat: p.lat, lng: p.lng };
+    cacheDirecciones.set(clave, r);
+    return r;
+  } catch {
+    return { titulo: 'Punto en el mapa', detalle: `${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}`, lat: p.lat, lng: p.lng };
+  }
+}
+
+function normalizar(t) {
+  return t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+
+// Lugares frecuentes que coinciden con el texto (sin internet).
+export function buscarLocal(texto, limite = 8) {
+  const q = normalizar(texto.trim());
+  if (!q) return [];
+  const palabras = q.split(/\s+/);
+  return LUGARES.filter((l) => {
+    const t = normalizar(`${l.nombre} ${l.detalle} ${CATEGORIAS[l.cat]?.nombre || ''}`);
+    return palabras.every((w) => t.includes(w));
+  })
+    .slice(0, limite)
+    .map((l) => ({ titulo: l.nombre, detalle: l.detalle, lat: l.lat, lng: l.lng, icono: CATEGORIAS[l.cat]?.icono, fuente: 'frecuente' }));
+}
+
+// Búsqueda de direcciones: primero lugares frecuentes, luego Nominatim.
+export async function buscarDirecciones(texto, { cerca = CENTRO, limite = 8 } = {}) {
+  const locales = buscarLocal(texto, limite);
+  if (texto.trim().length < 3) return locales;
+  let remotos = [];
+  try {
+    await turnoNominatim();
+    const q = encodeURIComponent(`${texto}`);
+    const caja = `${ZONA.oeste},${ZONA.norte},${ZONA.este},${ZONA.sur}`;
+    const d = await pedirJSON(`${SERVICIOS.nominatim}/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=co&viewbox=${caja}&bounded=1&q=${q}`);
+    remotos = d.map((x) => {
+      const a = x.address || {};
+      const via = [a.road, a.house_number ? `#${a.house_number}` : ''].filter(Boolean).join(' ');
+      const ciudad = a.town || a.city || a.village || a.municipality || '';
+      return {
+        titulo: x.name || via || x.display_name.split(',')[0],
+        detalle: [via && x.name ? via : '', a.neighbourhood || a.suburb || '', ciudad].filter(Boolean).join(', '),
+        lat: Number(x.lat),
+        lng: Number(x.lon),
+        icono: '📍',
+        fuente: 'mapa',
+      };
+    });
+  } catch {
+    /* sin internet: solo lugares frecuentes */
+  }
+  const todos = [...locales];
+  for (const r of remotos) {
+    if (!todos.some((t) => distanciaKm(t, r) < 0.05)) todos.push(r);
+  }
+  return todos.sort((a, b) => (a.fuente === b.fuente ? distanciaKm(a, cerca) - distanciaKm(b, cerca) : a.fuente === 'frecuente' ? -1 : 1)).slice(0, limite);
+}
+
+// Ruta por carretera entre dos puntos: { coords: [[lat,lng]...], km, min, aproximada }
+const cacheRutas = new Map();
+const CLAVE_CACHE_RUTAS = 'ct.cache.rutas';
+try {
+  for (const [k, v] of JSON.parse(localStorage.getItem(CLAVE_CACHE_RUTAS) || '[]')) cacheRutas.set(k, v);
+} catch {
+  /* caché dañada: se ignora */
+}
+function guardarCacheRutas() {
+  try {
+    localStorage.setItem(CLAVE_CACHE_RUTAS, JSON.stringify([...cacheRutas].slice(-40)));
+  } catch {
+    /* sin espacio */
+  }
+}
+
+export async function calcularRuta(a, b) {
+  const clave = `${a.lat.toFixed(4)},${a.lng.toFixed(4)}|${b.lat.toFixed(4)},${b.lng.toFixed(4)}`;
+  if (cacheRutas.has(clave)) return cacheRutas.get(clave);
+  try {
+    const d = await pedirJSON(`${SERVICIOS.osrm}/route/v1/driving/${a.lng},${a.lat};${b.lng},${b.lat}?overview=full&geometries=geojson`, 7000);
+    const r = d.routes?.[0];
+    if (!r) throw new Error('sin ruta');
+    const ruta = {
+      coords: r.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
+      km: r.distance / 1000,
+      // OSRM calcula para vías libres; en la Sabana el tráfico es más lento.
+      min: Math.max(2, (r.duration / 60) * 1.25),
+      aproximada: false,
+    };
+    cacheRutas.set(clave, ruta);
+    guardarCacheRutas();
+    return ruta;
+  } catch {
+    const km = distanciaKm(a, b) * 1.35;
+    return { coords: [[a.lat, a.lng], [b.lat, b.lng]], km, min: Math.max(2, (km / 28) * 60), aproximada: true };
+  }
+}

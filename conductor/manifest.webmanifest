@@ -1,0 +1,19 @@
+{
+  "name": "Cootransrural Conductor",
+  "short_name": "CT Conductor",
+  "description": "App de los conductores de Cootransrural: recibe servicios, navega hasta el pasajero y cobra con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../img/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../img/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../img/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
