@@ -48,7 +48,7 @@ CARPETAS_VIEJAS_PRINCIPAL = ('app', 'conductor', 'descargar', 'disenos', 'privac
 def carpeta(f):
     """Carpeta de la cooperativa en el sitio (sin barra)."""
     return f.get('carpeta') or f['id']
-URL_PUBLICA = 'https://interos-sas.github.io/cootransrural-app/'
+URL_PUBLICA = 'https://taxicun.com/'
 PROVEEDOR = {'nombre': 'interOS', 'web': 'https://interos.com.co',
              # Contacto comercial que firma las propuestas (plantillas/propuesta/).
              'contacto': 'Oscar Bernal', 'correo': 'oscaradrianbernal@gmail.com'}

@@ -26,7 +26,7 @@ const CAPTURAS = ARGUMENTOS[1] || '/tmp/cootrans/capturas/coop-web';
 const SOLO = ARGUMENTOS.slice(2);
 const EXE = process.env.CHROMIUM || '/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome';
 const PRINCIPAL = 'cootransrural';
-const URL_PUBLICA = 'https://interos-sas.github.io/cootransrural-app/';
+const URL_PUBLICA = 'https://taxicun.com/';
 mkdirSync(CAPTURAS, { recursive: true });
 
 const fichas = readdirSync(join(RAIZ_REPO, 'empresas'))

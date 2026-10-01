@@ -8,9 +8,9 @@ colores y el diseño que ella eligió («TaxiCun · Coptaxi»). Incluye app del
 pasajero y del conductor (3 diseños), web de cada cooperativa, stickers QR,
 propuestas comerciales y pago QR Bre-B **de prueba**.
 
-**Sitio de pruebas:** https://interos-sas.github.io/cootransrural-app/
-**TaxiCun:** https://interos-sas.github.io/cootransrural-app/taxicun/ (conductores: `taxicun/conductor/`)
-**Portada de TaxiCun y todas las cooperativas:** https://interos-sas.github.io/cootransrural-app/cooperativas/
+**Sitio:** https://taxicun.com/ (página de TaxiCun; antes https://interos-sas.github.io/cootransrural-app/, que redirige aquí)
+**TaxiCun:** https://taxicun.com/taxicun/ (conductores: `taxicun/conductor/`)
+**Todas las cooperativas:** https://taxicun.com/cooperativas/ · Cootransrural: https://taxicun.com/el-rosal/
 
 Dónde dice TaxiCun: la web de cada cooperativa («Pide tu taxi con TaxiCun»; los
 botones «Pedir taxi», «Descargar TaxiCun» y los de conductores abren

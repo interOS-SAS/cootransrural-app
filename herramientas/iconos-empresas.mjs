@@ -30,7 +30,7 @@ import qrcode from '../vendor/qrcode.mjs';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const EXE = process.env.CHROMIUM || '/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome';
-const URL_PUBLICA = 'https://interos-sas.github.io/cootransrural-app/';
+const URL_PUBLICA = 'https://taxicun.com/';
 const PRINCIPAL = 'cootransrural';
 
 const args = process.argv.slice(2);
