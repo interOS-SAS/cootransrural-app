@@ -28,7 +28,7 @@
   <link rel="preload" href="./fuentes/sora-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="./fuentes/plus-jakarta-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="./fuentes/fuentes.css?v=d7cb94cf69">
-  <link rel="stylesheet" href="./web/estilos.css?v=77fe8c5036">
+  <link rel="stylesheet" href="./web/estilos.css?v=8272375383">
   <!-- Colores de la cooperativa (de su ficha). -->
   <style>:root{--verde:#0A5C33;--verde-2:#0B6B3A;--verde-3:#13874B;--verde-osc:#052A17;--verde-tinte:#E6F2EA;--verde-tinte-2:#EAF3EC;--verde-tinte-3:#E3EFE6;--verde-linea:#D5E6DA;--exito-tinte:#E8F7EE;--b-claro:#A7D7B8;--fondo-oscuro:#0B1A12;--noche-1:#10241A;--noche-2:#04110A;--fondo-vitrina:#07140D;--amarillo:#FFC107;--amarillo-2:#FFD54F;--amarillo-osc:#C99400;--amarillo-texto:#926A00;--rojo:#D32F2F;--amarillo-vivo:#FFC107;--velo:#031E10;--velo-2:#042615;--velo-3:#031A0E;--noche:#030E09;--verde-rgb:10, 92, 51;--verde-3-rgb:19, 135, 75;--verde-osc-rgb:5, 42, 23;--amarillo-rgb:255, 193, 7;--velo-rgb:3, 30, 16;--velo-2-rgb:4, 38, 21;--velo-3-rgb:3, 26, 14;--noche-rgb:3, 14, 9;--rojo-rgb:211, 47, 47}</style>
   <script>
@@ -197,6 +197,7 @@
             <a class="boton boton-vidrio boton-grande" id="descargar-taxicun" href="./taxicun/?e=cootransrural"><svg class="icono"><use href="#i-descargar"/></svg>Descargar TaxiCun</a>
           </div>
           <ul class="hero-garantias">
+            <li><svg class="icono"><use href="#i-taxi"/></svg>Ves los taxis libres, sin llamar</li>
             <li><svg class="icono"><use href="#i-escudo"/></svg>Código de abordaje</li>
             <li><svg class="icono"><use href="#i-ruta"/></svg>Tarifa antes de subir</li>
             <li><svg class="icono"><use href="#i-qr"/></svg>Efectivo o QR</li>
@@ -253,6 +254,13 @@
             <span class="antetitulo">La app TaxiCun</span>
             <h2 id="titulo-app">Tu taxi en tres toques</h2>
             <p class="lead">Sin llamar ni explicar dónde estás. TaxiCun usa el GPS de tu celular para que el móvil llegue justo a tu punto de recogida y te lleve a tu destino.</p>
+          </div>
+          <div class="en-linea revelar" id="taxis-en-linea">
+            <span class="en-linea-contador" aria-hidden="true"><span class="punto"></span><b>5</b> libres<small>de 8 en línea</small></span>
+            <div>
+              <h3>Ya no llamas uno por uno para saber cuál está libre</h3>
+              <p>Al abrir TaxiCun ves cuántos taxis de Cootransrural están en línea cerca de ti, cuántos están libres y a cuántos minutos está el más cercano. Pides y le llega al conductor libre más cercano.</p>
+            </div>
           </div>
           <ol class="pasos">
             <li class="paso revelar" style="--retraso:.05s">

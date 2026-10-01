@@ -921,7 +921,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       },
       actualizar(e) {
         const libres = (e.taxisCercanos || []).filter((t) => !t.ocupado).length;
-        ponerTexto(hoja.contenido, '[data-taxis-cerca]', libres ? `${libres} ${libres === 1 ? 'taxi libre' : 'taxis libres'} cerca de ti${e.conductoresReales ? ` · ${e.conductoresReales} en vivo` : ''}` : '');
+        ponerTexto(hoja.contenido, '[data-taxis-cerca]', libres ? `${libres} ${libres === 1 ? 'taxi libre' : 'taxis libres'} cerca de ti · ${(e.taxisCercanos || []).length} en línea` : '');
       },
     },
 

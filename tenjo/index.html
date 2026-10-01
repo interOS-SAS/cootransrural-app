@@ -29,7 +29,7 @@
   <link rel="preload" href="../fuentes/sora-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="../fuentes/plus-jakarta-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
-  <link rel="stylesheet" href="../web/estilos.css?v=77fe8c5036">
+  <link rel="stylesheet" href="../web/estilos.css?v=8272375383">
   <!-- Colores de la cooperativa (de su ficha). -->
   <style>:root{--verde:#156B2E;--verde-2:#197C35;--verde-3:#1B8538;--verde-osc:#0B3E1A;--verde-tinte:#E8F0EA;--verde-tinte-2:#EAF2EC;--verde-tinte-3:#E3EDE6;--verde-linea:#D5E4D9;--exito-tinte:#E8F0EA;--b-claro:#A6C7B0;--fondo-oscuro:#0B1B10;--noche-1:#102516;--noche-2:#041008;--fondo-vitrina:#06130A;--amarillo:#E8A020;--amarillo-2:#FBEED6;--amarillo-osc:#B77E19;--amarillo-texto:#976815;--amarillo-vivo:#F1C475;--rojo:#DC2626;--velo:#082B12;--velo-2:#0A3817;--velo-3:#072610;--noche:#041509;--verde-rgb:21, 107, 46;--verde-3-rgb:27, 133, 56;--verde-osc-rgb:11, 62, 26;--amarillo-rgb:232, 160, 32;--velo-rgb:8, 43, 18;--velo-2-rgb:10, 56, 23;--velo-3-rgb:7, 38, 16;--noche-rgb:4, 21, 9;--rojo-rgb:220, 38, 38}.campo select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23156B2E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")}</style>
   <script>
@@ -198,6 +198,7 @@
             <a class="boton boton-vidrio boton-grande" id="descargar-taxicun" href="../taxicun/?e=tenjo"><svg class="icono"><use href="#i-descargar"/></svg>Descargar TaxiCun</a>
           </div>
           <ul class="hero-garantias">
+            <li><svg class="icono"><use href="#i-taxi"/></svg>Ves los taxis libres, sin llamar</li>
             <li><svg class="icono"><use href="#i-escudo"/></svg>Código de abordaje</li>
             <li><svg class="icono"><use href="#i-ruta"/></svg>Tarifa antes de subir</li>
             <li><svg class="icono"><use href="#i-qr"/></svg>Efectivo o QR</li>
@@ -253,6 +254,13 @@
             <span class="antetitulo">La app TaxiCun</span>
             <h2 id="titulo-app">Tu taxi en tres toques</h2>
             <p class="lead">Sin llamar ni explicar dónde estás. TaxiCun usa el GPS de tu celular para que el móvil llegue justo a tu punto de recogida y te lleve a tu destino.</p>
+          </div>
+          <div class="en-linea revelar" id="taxis-en-linea">
+            <span class="en-linea-contador" aria-hidden="true"><span class="punto"></span><b>5</b> libres<small>de 8 en línea</small></span>
+            <div>
+              <h3>Ya no llamas uno por uno para saber cuál está libre</h3>
+              <p>Al abrir TaxiCun ves cuántos taxis de Cootranstenjo están en línea cerca de ti, cuántos están libres y a cuántos minutos está el más cercano. Pides y le llega al conductor libre más cercano.</p>
+            </div>
           </div>
           <ol class="pasos">
             <li class="paso revelar" style="--retraso:.05s">

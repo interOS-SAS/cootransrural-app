@@ -316,6 +316,28 @@ p { margin: 0 0 1em; }
 .paso h3 { font-size: 1.18rem; margin: 4px 0 6px; }
 .paso p { margin: 0; color: var(--suave); }
 
+/* Destacado: taxis en línea y libres (sin llamar uno por uno) */
+.en-linea {
+  display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; margin: 0 0 22px;
+  padding: 20px 22px; border-radius: 24px; background: var(--verde-osc); color: #fff;
+  box-shadow: var(--sombra);
+}
+.en-linea h3 { margin: 0 0 6px; font-size: 1.16rem; color: #fff; }
+.en-linea p { margin: 0; color: rgba(255, 255, 255, .82); }
+.en-linea-contador {
+  display: grid; justify-items: center; gap: 2px; min-width: 104px; padding: 14px 12px; border-radius: 20px;
+  background: var(--amarillo); color: var(--tinta); font-weight: 800; font-size: .95rem; text-align: center; line-height: 1.1;
+}
+.en-linea-contador b { font: 800 2.3rem/1 var(--titulo); }
+.en-linea-contador small { font-size: .74rem; font-weight: 700; opacity: .8; }
+.en-linea-contador .punto { width: 10px; height: 10px; border-radius: 50%; background: #0B8A44; box-shadow: 0 0 0 0 rgba(11, 138, 68, .6); }
+@media (prefers-reduced-motion: no-preference) { .en-linea-contador .punto { animation: latido 2s infinite; } }
+@media (max-width: 480px) {
+  .en-linea { grid-template-columns: 1fr; justify-items: start; }
+  .en-linea-contador { grid-auto-flow: column; align-items: baseline; gap: 6px; min-width: 0; padding: 10px 14px; }
+  .en-linea-contador b { font-size: 1.6rem; }
+}
+
 /* Maqueta de celular hecha con HTML/CSS */
 .maqueta { position: relative; display: grid; place-items: center; padding: 30px 0; }
 .maqueta::before { content: ""; position: absolute; width: min(88%, 460px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(var(--amarillo-rgb), .5), rgba(var(--amarillo-rgb), 0) 68%); }

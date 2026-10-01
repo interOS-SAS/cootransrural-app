@@ -466,7 +466,7 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
           if (libres.length) {
             const km = Math.min(...libres.map((t) => N.distanciaKm(t, ui.origen)));
             const min = Math.max(2, Math.round(((km * 1.35) / 22) * 60 + 1));
-            texto = `${libres.length} ${libres.length === 1 ? 'taxi libre' : 'taxis libres'} cerca · el más cercano a ~${min} min`;
+            texto = `${libres.length} ${libres.length === 1 ? 'taxi libre' : 'taxis libres'} de ${e.taxisCercanos.length} en línea · el más cercano a ~${min}\u00a0min`;
           }
           if (cerca.textContent !== texto) cerca.textContent = texto;
         }

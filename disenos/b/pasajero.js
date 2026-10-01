@@ -396,8 +396,10 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     }
     if (k === 'inicio') {
       const chip = $('[data-taxis-cerca] span');
-      const n = e.taxisCercanos.length;
-      if (chip) chip.textContent = n ? `${n} taxi${n === 1 ? '' : 's'} cerca de ti` : 'Buscando taxis cerca…';
+      // Libres y en línea: el pasajero ve cuántos hay sin llamar uno por uno.
+      const enLinea = e.taxisCercanos.length;
+      const libres = e.taxisCercanos.filter((t) => !t.ocupado).length;
+      if (chip) chip.textContent = libres ? `${libres} ${libres === 1 ? 'taxi libre' : 'taxis libres'} cerca · ${enLinea} en línea` : 'Buscando taxis cerca…';
     }
     if (k.startsWith('seg:')) actualizarSeguimiento();
     if (k === 'calificar') actualizarCalificacionRecibida();
