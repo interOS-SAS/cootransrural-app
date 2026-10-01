@@ -138,6 +138,7 @@ http://localhost:8765/. Pruebas automáticas con Chromium (playwright-core):
 ```
 node pruebas/probar-nucleo.mjs http://localhost:8765/
 node pruebas/diseno-a.mjs http://localhost:8765/ --empresa=subachoque   # y b, c; sin --empresa = Cootransrural
+node pruebas/taxicun.mjs http://localhost:8765/                         # TaxiCun de punta a punta: sticker, GPS, viaje, cambiar de municipio, web
 node pruebas/web.mjs http://localhost:8765/
 node pruebas/web-empresas.mjs http://localhost:8765/                     # todas las cooperativas
 node pruebas/stickers.mjs http://localhost:8765/

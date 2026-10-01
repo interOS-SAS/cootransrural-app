@@ -122,7 +122,7 @@ function mostrarLista(lista, { rol, version, motivo, pos = null }) {
   caja.innerHTML = `
     <header class="tc-elegir-cabeza">
       <img src="${new URL('img/taxicun/logo-blanco.svg', RAIZ).href}" alt="TaxiCun" width="200" height="50">
-      <h1>${escapar(titulo)}</h1>
+      <h1 tabindex="-1">${escapar(titulo)}</h1>
       <p>${escapar(detalle)}</p>
       ${rol === 'conductor' ? '<p class="tc-rol">App del conductor</p>' : ''}
     </header>
@@ -155,5 +155,7 @@ function mostrarLista(lista, { rol, version, motivo, pos = null }) {
     if (cerca && cerca.d <= (cerca.c.radioKm || 9)) return abrir(cerca.c, { rol, version, porGps: true });
     mostrarLista(lista, { rol, version, motivo: 'fuera', pos: nueva });
   });
-  caja.querySelector('[data-id]')?.focus();
+  // El foco va al título (lo anuncia el lector de pantalla) y no al primer municipio:
+  // en el celular, el anillo del foco hacía parecer que ese municipio ya estaba escogido.
+  caja.querySelector('h1')?.focus({ preventScroll: true });
 }

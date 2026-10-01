@@ -9,8 +9,9 @@
 //    Cootransrural. Para las demás se pinta encima un QR nítido hacia su página
 //    de descarga (empresas/<id>/sticker-taxi.jpg y nevera.jpg) y se comprueba
 //    que se lea con jsQR.
-// 3) (Opcional) Capturas de los 3 diseños de la app de cada cooperativa para las
-//    tarjetas de la web (empresas/<id>/disenos-a|b|c.jpg). Necesita el sitio
+// 3) (Opcional) Capturas de los 3 diseños de TaxiCun con cada cooperativa
+//    (taxicun/?e=<id>&d=a|b|c: «TaxiCun · <cooperativa>») para las tarjetas de la
+//    web y la propuesta (empresas/<id>/disenos-a|b|c.jpg). Necesita el sitio
 //    servido:  --capturas http://localhost:8774/
 //
 // 4) Huella empresas/<id>/imagenes.json (colores y URL usados): si la ficha
@@ -207,7 +208,8 @@ for (const ficha of fichas) {
     await ctx.addInitScript(() => localStorage.setItem('ct.envivo', 'no'));
     const p = await ctx.newPage();
     for (const d of ['a', 'b', 'c']) {
-      await p.goto(`${URL_CAPTURAS}${ficha.id}/app/?d=${d}&vitrina=1&sala=captura-${ficha.id}-${d}`, { waitUntil: 'load' });
+      // La app es TaxiCun: la captura es TaxiCun con esta cooperativa y ese diseño.
+      await p.goto(`${URL_CAPTURAS}taxicun/?e=${ficha.id}&d=${d}&sala=captura-${ficha.id}-${d}`, { waitUntil: 'load' });
       await p.waitForSelector('#carga', { state: 'detached', timeout: 15000 }).catch(() => {});
       await p.waitForTimeout(3500);
       await p.screenshot({ path: join(dir, `disenos-${d}.jpg`), type: 'jpeg', quality: 80 });
