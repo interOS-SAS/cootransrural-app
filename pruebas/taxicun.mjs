@@ -26,7 +26,12 @@ const EXE = process.env.CHROMIUM || '/root/.cache/ms-playwright/chromium-1243/ch
 const DIR = (process.env.CAPTURAS || '/tmp/cootrans/capturas/tc-rev').replace(/\/?$/, '/');
 mkdirSync(DIR, { recursive: true });
 const ficha = (id) => JSON.parse(readFileSync(new URL(`../empresas/${id}/ficha.json`, import.meta.url), 'utf8'));
-const disenoDe = (id) => (/^[abc]$/.test(ficha(id).diseno || '') ? ficha(id).diseno : 'b');
+// «auto» (o sin diseño en la ficha): la A de 6 a. m. a 6 p. m. y la C de noche (hora de Colombia).
+const disenoPorHora = () => {
+  const h = Number(new Intl.DateTimeFormat('en-US', { timeZone: 'America/Bogota', hour: 'numeric', hourCycle: 'h23' }).format(new Date()));
+  return h >= 18 || h < 6 ? 'c' : 'a';
+};
+const disenoDe = (id) => (/^[abc]$/.test(ficha(id).diseno || '') ? ficha(id).diseno : disenoPorHora());
 const nombreDe = (id) => ficha(id).EMPRESA.nombreCorto || ficha(id).EMPRESA.nombre;
 
 const LUGAR = {
@@ -174,9 +179,12 @@ const ctxB = await contexto(LUGAR.elRosal);
   revisarPantalla(r, 'bienvenida de Cootransrural', 'cootransrural');
   ok(!/Demostración de TaxiCun/.test(r.texto), 'Cootransrural (cliente): sin franja de demostración');
   await foto(p, 'b1-gps-el-rosal');
+  // El viaje por la interfaz está escrito para el diseño B: se abre con ?d=b.
   if (r.diseno !== 'b') {
-    ok(true, `(el viaje por la interfaz está escrito para el diseño B; Cootransrural usa ${r.diseno}: se omite)`);
-  } else {
+    await p.goto(`${BASE}taxicun/?e=cootransrural&d=b`);
+    await esperarTaxiCun(p);
+  }
+  {
     await p.click('[data-accion="reg-empezar"]');
     await p.fill('input[name="nombre"]', 'Lucía Prueba');
     await p.fill('input[name="celular"]', '311 222 3344');
@@ -247,7 +255,7 @@ console.log('— c) Cambiar de municipio —');
 {
   const p = await ctxB.newPage();
   vigilar(p, 'c-municipio');
-  await p.goto(`${BASE}taxicun/`);
+  await p.goto(`${BASE}taxicun/?d=b`);
   let r = await esperarTaxiCun(p);
   ok(r.empresa === 'cootransrural', 'volviendo a abrir sin nada (GPS El Rosal) sigue en Cootransrural');
   const enlace = p.locator('[data-cambiar-municipio]').first();

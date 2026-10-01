@@ -1420,7 +1420,7 @@ html[data-vitrina="1"] .vb-app {
 
 .vb-disenos {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
@@ -1471,6 +1471,10 @@ html[data-vitrina="1"] .vb-app {
 
 .d-c .vb-diseno-muestra {
   background: linear-gradient(135deg, #5B21B6 0 50%, #F59E0B 50%);
+}
+
+.d-auto .vb-diseno-muestra {
+  background: linear-gradient(135deg, #FFC107 0 50%, #07090D 50%);
 }
 
 .vb-opciones-lista {

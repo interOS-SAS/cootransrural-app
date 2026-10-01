@@ -584,6 +584,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const yo = N.perfil.pasajero();
     const tel = String(c.tel || EM.TELEFONO || '').replace(/\D/g, '');
     const wa = c.tel ? N.enlaceWhatsApp(c.tel, `Hola ${nombreCorto(c.nombre)}, soy ${nombreCorto(yo?.nombre || '')}, el pasajero de ${EM.NOMBRE}.`) : '';
+    if (N.esTelDemo(c.tel)) {
+      return `<div class="a-acciones">
+      <button type="button" class="a-accion" data-llamada-demo>${icono('telefono')}<span>Llamar</span></button>
+      <button type="button" class="a-accion" data-llamada-demo>${icono('chat')}<span>WhatsApp</span></button>
+      <button type="button" class="a-accion" data-compartir>${icono('compartir')}<span>Compartir</span></button>
+      <button type="button" class="a-accion a-accion-sos" data-sos>${icono('sos')}<span>SOS</span></button>
+    </div>`;
+    }
     return `<div class="a-acciones">
       ${tel ? `<a class="a-accion" href="tel:${esc(tel)}">${icono('telefono')}<span>Llamar</span></a>` : ''}
       ${wa ? `<a class="a-accion" href="${esc(wa)}" target="_blank" rel="noopener">${icono('chat')}<span>WhatsApp</span></a>` : ''}
@@ -973,6 +981,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       montar(c) {
         c.addEventListener('click', (e) => {
           if (e.target.closest('[data-compartir]')) compartir();
+          if (e.target.closest('[data-llamada-demo]')) avisos.mostrar(N.AVISO_LLAMADA_DEMO);
           if (e.target.closest('[data-sos]')) sos();
         });
       },
@@ -1182,6 +1191,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   function montarConductor(c) {
     c.addEventListener('click', (e) => {
       if (e.target.closest('[data-compartir]')) compartir();
+      if (e.target.closest('[data-llamada-demo]')) avisos.mostrar(N.AVISO_LLAMADA_DEMO);
       if (e.target.closest('[data-sos]')) sos();
       if (e.target.closest('[data-cancelar]')) cancelarViaje();
     });

@@ -426,6 +426,7 @@ a { color: inherit; }
   .herramientas-marca small { display: none; }
   .herramientas-botones { width: 100%; flex-wrap: nowrap; }
   .boton { flex: 1; justify-content: center; min-height: 38px; padding: 0 10px; font-size: 13px; white-space: nowrap; }
+  #imprimir { display: none; } /* en el celular, mejor bajar el PDF ya hecho */
   .hojas { gap: 12px; padding: 12px 0 28px; }
 }
 

@@ -336,7 +336,10 @@ async function probarPasajero() {
   ok(/^\d{4}$/.test(codigo || ''), `código de abordaje visible (${codigo})`);
   ok(await p.isVisible('.a-placa'), 'placa del taxi visible');
   ok(await p.isVisible('.a-movil'), 'número de móvil visible');
-  ok((await p.getAttribute('.a-acciones a[href^="tel:"]', 'href'))?.startsWith('tel:'), 'botón para llamar al conductor');
+  // El conductor de prueba (300 000 0xxx) no se llama: Llamar y WhatsApp muestran un aviso.
+  ok((await p.locator('.a-acciones [data-llamada-demo]').count()) === 2 && (await p.locator('.a-acciones a[href^="tel:"], .a-acciones a[href*="wa.me"]').count()) === 0, 'Llamar y WhatsApp del conductor de prueba no marcan a un número de ejemplo');
+  await p.locator('.a-acciones [data-llamada-demo]').first().click();
+  ok(await p.waitForFunction(() => document.body.innerText.includes('no se llama al conductor'), null, { timeout: 5000 }).then(() => true, () => false), 'al tocar Llamar sale «En la demostración no se llama al conductor»');
   await foto360(p, 'p15b-asignado-360');
   await p.click('.a-hoja-asa');
   await p.waitForTimeout(700);

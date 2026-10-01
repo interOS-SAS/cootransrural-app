@@ -171,6 +171,18 @@ export class Emisor {
   }
 }
 
+// Teléfonos de los conductores de ejemplo (300 000 0xxx): en la demo no se marcan,
+// porque tienen formato de celular real y le sonarían a un desconocido.
+export function esTelDemo(numero) {
+  return /^(57)?3000000\d{3}$/.test(String(numero || '').replace(/\D/g, ''));
+}
+
+export const AVISO_LLAMADA_DEMO = {
+  titulo: 'En la demostración no se llama al conductor',
+  cuerpo: 'Con la app real, este botón llama o escribe por WhatsApp al conductor que te recoge.',
+  tipo: 'info',
+};
+
 // Enlace de WhatsApp con texto.
 export function enlaceWhatsApp(numero, texto) {
   const n = String(numero || '').replace(/\D/g, '');

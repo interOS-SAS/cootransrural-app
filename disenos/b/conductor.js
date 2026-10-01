@@ -789,7 +789,8 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     const yo = c.perfil || {};
     const a = N.perfil.ajustes();
     const gps = a.gpsSimulado === true ? 'sim' : a.gpsSimulado === false ? 'real' : 'auto';
-    const disenos = [['a', 'Ámbar Urbano', 'Amarillo y directo'], ['b', NOMBRE_DISENO, 'Este diseño'], ['c', 'Noche Neón', 'Modo oscuro']];
+    const disenos = [['a', 'Ámbar Urbano', 'Amarillo y directo'], ['b', NOMBRE_DISENO, 'Este diseño'], ['c', 'Noche Neón', 'Modo oscuro'], ['auto', 'Día y noche', 'Ámbar de día, Neón de noche']];
+    const elegido = N.perfil.disenoPreferido?.() || diseno;
     // Dentro de TaxiCun se abre el diseño que eligió la cooperativa; cambiarlo aquí vale solo en este celular.
     const deLaCooperativa = disenos.find(([id]) => id === N.FICHA?.diseno);
     return `<div class="vb-desliza vb-c-perfil">
@@ -821,7 +822,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
           <button type="submit" class="vb-btn vb-btn-borde">Cambiar</button></form>
         <h3 class="vb-c-subtitulo">${ic('paleta', 20)} Diseño de la app</h3>
         <div class="vb-disenos" role="radiogroup" aria-label="Diseño">
-          ${disenos.map(([id, t, s]) => `<button type="button" role="radio" aria-checked="${id === diseno}" data-accion="diseno" data-d="${id}" class="d-${id}"><span class="vb-diseno-muestra" aria-hidden="true"></span><b>${esc(t)}</b><small>${esc(s)}</small></button>`).join('')}
+          ${disenos.map(([id, t, s]) => `<button type="button" role="radio" aria-checked="${id === elegido}" data-accion="diseno" data-d="${id}" class="d-${id}"><span class="vb-diseno-muestra" aria-hidden="true"></span><b>${esc(t)}</b><small>${esc(s)}</small></button>`).join('')}
         </div>
         ${TAXICUN.activo && deLaCooperativa ? `<p class="vb-letra-chica" data-diseno-cooperativa>${esc(MARCA.nombre)} eligió el diseño «${esc(deLaCooperativa[1])}». Si escoges otro, cambia solo en este celular.</p>` : ''}
       </section>

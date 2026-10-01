@@ -44,7 +44,9 @@ const r1 = await a.evaluate(async () => {
   return { fases, avisos, cot: { total: cot.tarifa.total, km: cot.ruta?.km, aprox: cot.ruta?.aproximada }, url, pago, calif, hist: N.perfil.historialPasajero().length, taxis: p.estado.taxisCercanos.length, segs: Math.round((Date.now() - t0) / 1000) };
 });
 console.log(JSON.stringify(r1, null, 1));
-ok(r1.fases.join(',') === 'buscando,asignado,llego,en_viaje,pagar,calificar,inicio', 'fases del pasajero completas');
+// Antes de pedir, los taxis de ambiente ya emiten «cambio» con la fase «inicio»: se ignora.
+const fasesViaje = r1.fases[0] === 'inicio' ? r1.fases.slice(1) : r1.fases;
+ok(fasesViaje.join(',') === 'buscando,asignado,llego,en_viaje,pagar,calificar,inicio', 'fases del pasajero completas');
 ok(r1.pago.ok, 'pago por QR leído desde la URL de cobro');
 ok(r1.calif === 5, 'el conductor simulado calificó al pasajero');
 ok(r1.taxis >= 3, 'hay taxis circulando en el mapa');

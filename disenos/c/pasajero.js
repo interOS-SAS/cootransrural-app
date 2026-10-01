@@ -406,8 +406,11 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
     const tel = String(cd.tel || '').replace(/\D/g, '') || E.telefono;
     if (!tel) llamar = false;
     const wa = N.enlaceWhatsApp(cd.tel || E.whatsapp, `Hola ${N.primerNombre(cd.nombre || '')}, soy ${primerNombre()}, tu pasajero de ${E.nombre}.`);
+    const demo = N.esTelDemo(tel);
     return `<div class="c-acciones-viaje${llamar ? '' : ' c-acciones-dos'}">
-      ${llamar ? `<a class="c-accion" href="tel:${esc(tel)}">${icono('telefono')}<span>Llamar</span></a>
+      ${llamar && demo ? `<button type="button" class="c-accion" data-accion="llamada-demo">${icono('telefono')}<span>Llamar</span></button>
+      <button type="button" class="c-accion" data-accion="llamada-demo">${icono('chat')}<span>WhatsApp</span></button>` : ''}
+      ${llamar && !demo ? `<a class="c-accion" href="tel:${esc(tel)}">${icono('telefono')}<span>Llamar</span></a>
       <a class="c-accion" href="${esc(wa)}" target="_blank" rel="noopener">${icono('chat')}<span>WhatsApp</span></a>` : ''}
       <button type="button" class="c-accion" data-accion="compartir">${icono('compartir')}<span>Compartir</span></button>
       <button type="button" class="c-accion c-accion-sos" data-accion="sos">${icono('escudo')}<span>SOS</span></button>
@@ -1392,6 +1395,7 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
       p.cancelar(b.dataset.motivo);
     },
     compartir: abrirCompartir,
+    'llamada-demo': () => avisar(N.AVISO_LLAMADA_DEMO),
     'compartir-nativo': async () => {
       try {
         await navigator.share({ title: `Mi viaje en ${E.nombre}`, text: p.textoCompartir() });

@@ -1074,6 +1074,13 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
 
   function htmlAcciones(c) {
     const tel = String(c?.tel || '').replace(/\D/g, '');
+    if (N.esTelDemo(tel)) {
+      return `<div class="vb-acciones">
+      <button type="button" class="vb-accion" data-accion="llamada-demo">${ic('telefono')}<span>Llamar</span></button>
+      <button type="button" class="vb-accion" data-accion="llamada-demo">${ic('chat')}<span>WhatsApp</span></button>
+      <button type="button" class="vb-accion" data-accion="compartir">${ic('compartir')}<span>Compartir</span></button>
+      <button type="button" class="vb-accion sos" data-accion="sos">${ic('sos')}<span>SOS</span></button></div>`;
+    }
     const llamar = tel
       ? `<a class="vb-accion" href="tel:+57${tel}">${ic('telefono')}<span>Llamar</span></a>`
       : `<button type="button" class="vb-accion" disabled>${ic('telefono')}<span>Llamar</span></button>`;
@@ -1475,7 +1482,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
           <div><dt>Banderazo</dt><dd>${N.pesos(T.banderazo)}</dd></div>
           <div><dt>Por kilómetro</dt><dd>${N.pesos(T.porKm)}</dd></div>
           <div><dt>Recargo nocturno <small>(${sinCorte(hora12(T.nocheDesde))} a ${sinCorte(hora12(T.nocheHasta))})</small></dt><dd>+${N.pesos(T.recargoNocturno)}</dd></div>
-          <div><dt>Domingos y festivos</dt><dd>+${N.pesos(T.recargoDominical)}</dd></div>
+          ${T.recargoDominical > 0 ? `<div><dt>Domingos y festivos</dt><dd>+${N.pesos(T.recargoDominical)}</dd></div>` : ''}
         </dl>
       </section>
       <section class="vb-tarjeta vb-rutas">
@@ -1587,7 +1594,9 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       ['a', 'Ámbar Urbano', 'Amarillo taxi, alegre y directo'],
       ['b', NOMBRE_DISENO, 'Cooperativo y fácil (este)'],
       ['c', 'Noche Neón', 'Modo oscuro con luces de neón'],
+      ['auto', 'Día y noche', 'Ámbar de día y Neón de noche'],
     ];
+    const elegido = N.perfil.disenoPreferido?.() || diseno;
     // Dentro de TaxiCun se abre el diseño que eligió la cooperativa; cambiarlo aquí vale solo en este celular.
     const deLaCooperativa = disenos.find(([id]) => id === N.FICHA?.diseno);
     return `<div class="vb-desliza vb-ajustes">
@@ -1597,7 +1606,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         <p class="vb-letra-chica">${esc(TAXICUN.nombre)} te muestra los taxis de la ${MARCA.tipo} de tu municipio. Si vas para otro, cámbialo aquí.</p></section>` : ''}
       <section class="vb-bloque"><h2 class="vb-titulo-seccion">${ic('paleta', 22)} Diseño de la app</h2>
         <div class="vb-disenos" role="radiogroup" aria-label="Diseño">
-          ${disenos.map(([id, t, s]) => `<button type="button" role="radio" aria-checked="${id === diseno}" data-accion="diseno" data-d="${id}" class="d-${id}"><span class="vb-diseno-muestra" aria-hidden="true"></span><b>${esc(t)}</b><small>${esc(s)}</small></button>`).join('')}
+          ${disenos.map(([id, t, s]) => `<button type="button" role="radio" aria-checked="${id === elegido}" data-accion="diseno" data-d="${id}" class="d-${id}"><span class="vb-diseno-muestra" aria-hidden="true"></span><b>${esc(t)}</b><small>${esc(s)}</small></button>`).join('')}
         </div>
         ${TAXICUN.activo && deLaCooperativa ? `<p class="vb-letra-chica" data-diseno-cooperativa>${esc(MARCA.nombre)} eligió el diseño «${esc(deLaCooperativa[1])}». Si escoges otro, cambia solo en este celular.</p>` : ''}</section>
       <section class="vb-bloque"><h2 class="vb-titulo-seccion">${ic('robot', 22)} Conductor de prueba</h2>
@@ -1809,6 +1818,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     },
     sos: () => abrirSOS(),
     compartir: () => compartir(),
+    'llamada-demo': () => avisos.mostrar(N.AVISO_LLAMADA_DEMO),
     billetera: (b) => {
       ui.billetera = b.dataset.id;
       $$('[data-accion="billetera"]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));

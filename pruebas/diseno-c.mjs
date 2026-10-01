@@ -351,7 +351,10 @@ async function probarPasajero() {
   await p.waitForTimeout(1500);
   const codigo = (await p.textContent('[data-codigo]')).replace(/\D/g, '');
   ok(/^\d{4}$/.test(codigo) && /^\d{3}$/.test((await p.textContent('.c-movil strong')).trim()), `P6 conductor asignado: móvil ${(await p.textContent('.c-movil strong')).trim()}, placa ${(await p.textContent('.c-placa-num')).trim()}, código ${codigo}`);
-  ok((await p.getAttribute('.c-acciones-viaje a[href^="tel:"]', 'href')).startsWith('tel:') && (await p.getAttribute('.c-acciones-viaje a[href*="wa.me"]', 'href')).includes('wa.me'), 'P6 botones llamar y WhatsApp');
+  // El conductor de prueba (300 000 0xxx) no se llama: Llamar y WhatsApp muestran un aviso.
+  ok((await p.locator('.c-acciones-viaje [data-accion="llamada-demo"]').count()) === 2 && (await p.locator('.c-acciones-viaje a[href^="tel:"], .c-acciones-viaje a[href*="wa.me"]').count()) === 0, 'P6 Llamar y WhatsApp del conductor de prueba no marcan a un número de ejemplo');
+  await p.locator('.c-acciones-viaje [data-accion="llamada-demo"]').first().click();
+  ok(await p.waitForFunction(() => document.body.innerText.includes('no se llama al conductor'), null, { timeout: 5000 }).then(() => true, () => false), 'P6 al tocar Llamar sale «En la demostración no se llama al conductor»');
   if (FICHA.estado === 'propuesta') ok(await p.isVisible('.c-tarjeta-conductor .c-etiqueta-demo') && (await p.textContent('.c-tarjeta-conductor .c-etiqueta-demo')).includes(DEMO_TAXICUN), `P6 propuesta: «${DEMO_TAXICUN}» junto a «Modo prueba»`);
   await captura(p, 'p11-asignado', 600);
   await p.click('[data-accion="sos"]');

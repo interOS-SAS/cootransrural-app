@@ -592,8 +592,10 @@ async function probarPasajero(navegador) {
   const codigoAbordaje = (await pg.locator('.vb-codigo-digitos').textContent()).trim();
   ok(/^\d{4}$/.test(codigoAbordaje), `código de abordaje visible (${codigoAbordaje})`);
   ok(await pg.isVisible('.vb-carne .vb-placa'), 'carné del conductor con placa');
-  ok(await pg.locator('.vb-acciones a[href^="tel:"]').count() > 0, 'botón para llamar al conductor');
-  ok(await pg.locator('.vb-acciones a[href*="wa.me"]').count() > 0, 'botón de WhatsApp');
+  // El conductor de prueba (300 000 0xxx) no se llama: Llamar y WhatsApp muestran un aviso.
+  ok(await pg.locator('.vb-acciones [data-accion="llamada-demo"]').count() === 2 && await pg.locator('.vb-acciones a[href^="tel:"], .vb-acciones a[href*="wa.me"]').count() === 0, 'Llamar y WhatsApp del conductor de prueba no marcan a un número de ejemplo');
+  await pg.locator('.vb-acciones [data-accion="llamada-demo"]').first().click();
+  ok(await pg.waitForFunction(() => document.body.innerText.includes('no se llama al conductor'), null, { timeout: 5000 }).then(() => true, () => false), 'al tocar Llamar sale «En la demostración no se llama al conductor»');
   await fotoChica(pg, 'p12-asignado-360x740');
   await pg.evaluate(() => document.querySelector('.vb-seg-panel').scrollTo(0, 330));
   await pg.waitForTimeout(400);

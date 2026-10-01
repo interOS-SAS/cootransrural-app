@@ -333,7 +333,9 @@ class ControladorPasajero extends Emisor {
           this.#cambiar({ fase: 'llego', etaMin: 0 });
           this.#avisar({ titulo: '¡Tu taxi está en la puerta!', cuerpo: `Móvil ${conductor.movil} · Placa ${conductor.placa}. Tu código es ${viaje.codigo}.`, tipo: 'alerta' });
         } else if (d.fase === 'en_viaje' && ['asignado', 'llego'].includes(fase)) {
-          this.#cambiar({ fase: 'en_viaje', inicioViaje: Date.now() });
+          // El tiempo de llegada a la puerta (0) no sirve para el viaje: se arranca con el de
+          // la ruta hasta que el conductor mande su posición (con el GPS quieto no la manda).
+          this.#cambiar({ fase: 'en_viaje', inicioViaje: Date.now(), etaMin: viaje.ruta?.min ?? null });
           this.#avisar({ titulo: 'Viaje iniciado', cuerpo: viaje.destino ? `Rumbo a ${viaje.destino.titulo || 'tu destino'}. ¡Buen viaje!` : '¡Buen viaje!', tipo: 'info' });
         } else if (d.fase === 'finalizado' && ['en_viaje', 'llego', 'asignado'].includes(fase)) {
           const valor = d.valor || viaje.tarifa.total;

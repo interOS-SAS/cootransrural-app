@@ -397,7 +397,8 @@
               <div class="urbana"><span>Carrera mínima</span><b>{{tarifa_inicial.minima}}</b><small>Dentro del casco urbano</small></div>
               <div class="urbana"><span>Por recorrido</span><b>{{tarifa_inicial.banderazo}}</b><small>de arranque + {{tarifa_inicial.km}} por km</small></div>
               <div class="urbana"><span>Recargo nocturno</span><b>+{{tarifa_inicial.nocturno}}</b><small>{{tarifa_inicial.horario_nocturno}}</small></div>
-              <div class="urbana"><span>Domingos y festivos</span><b>+{{tarifa_inicial.dominical}}</b><small>Todo el día</small></div>
+{{#si tarifa_inicial.hay_dominical}}              <div class="urbana"><span>Domingos y festivos</span><b>+{{tarifa_inicial.dominical}}</b><small>Todo el día</small></div>
+{{/si}}
             </div>
             <form class="cotizador" id="cotizador" onsubmit="return false">
               <h3><svg class="icono"><use href="#i-ruta"/></svg>Calcula tu viaje</h3>
@@ -428,7 +429,7 @@
         <div class="encabezado centrado revelar">
           <span class="antetitulo">TaxiCun, a tu gusto</span>
           <h2 id="titulo-disenos">Elige cómo se ve TaxiCun</h2>
-          <p class="lead">TaxiCun abre con el diseño que elija la {{tipo}}, y cada pasajero lo puede cambiar en Ajustes. Los tres hacen exactamente lo mismo; solo cambia cómo se ven. Pruébalos.</p>
+          <p class="lead">TaxiCun abre el Ámbar (A) de día y el Neón (C) de noche, y cada pasajero lo puede cambiar en Ajustes. Los tres hacen exactamente lo mismo; solo cambia cómo se ven. Pruébalos.</p>
         </div>
         <div class="disenos revelar">
           <article class="diseno" data-d="a">
@@ -617,7 +618,7 @@
               <li><svg class="icono"><use href="#i-check"/></svg><span>Los viajes de la calle o de la central de siempre <b>no pagan</b>.</span></li>
               <li><svg class="icono"><use href="#i-check"/></svg><span>Si la app se usa poco, se paga poco.</span></li>
             </ul>
-            <p class="plan-ejemplo"><svg class="icono"><use href="#i-billete"/></svg><span>Si en el mes se facturan <b>$100.000.000</b> por la app, son <b>$1.900.000</b>.</span></p>
+            <p class="plan-ejemplo"><svg class="icono"><use href="#i-billete"/></svg><span>Si en el mes se facturan <b>$10.000.000</b> por la app, son <b>$190.000</b>.</span></p>
           </article>
 
           <article class="plan plan-destacado revelar desde-der" aria-labelledby="plan-b-titulo">

@@ -172,10 +172,11 @@ function codigosQR() {
 
 /* ---------------- Tarifas y cotizador ---------------- */
 
+// Con espacios que no parten: «6:00 a. m.» nunca queda con la «m.» sola en otro renglón.
 function horasTexto(h) {
-  if (h === 0) return '12:00 a. m.';
-  if (h === 12) return '12:00 p. m.';
-  return h < 12 ? `${h}:00 a. m.` : `${h - 12}:00 p. m.`;
+  if (h === 0) return '12:00\u00a0a.\u00a0m.';
+  if (h === 12) return '12:00\u00a0p.\u00a0m.';
+  return h < 12 ? `${h}:00\u00a0a.\u00a0m.` : `${h - 12}:00\u00a0p.\u00a0m.`;
 }
 
 function tarifas() {
@@ -188,7 +189,7 @@ function tarifas() {
     <div class="urbana"><span>Carrera mínima</span><b>${N.pesos(T.minimaUrbana)}</b><small>Dentro del casco urbano</small></div>
     <div class="urbana"><span>Por recorrido</span><b>${N.pesos(T.banderazo)}</b><small>de arranque + ${N.pesos(T.porKm)} por km</small></div>
     <div class="urbana"><span>Recargo nocturno</span><b>+${N.pesos(T.recargoNocturno)}</b><small>De ${horasTexto(T.nocheDesde)} a ${horasTexto(T.nocheHasta)}</small></div>
-    <div class="urbana"><span>Domingos y festivos</span><b>+${N.pesos(T.recargoDominical)}</b><small>Todo el día</small></div>`;
+    ${T.recargoDominical > 0 ? `<div class="urbana"><span>Domingos y festivos</span><b>+${N.pesos(T.recargoDominical)}</b><small>Todo el día</small></div>` : ''}`;
 
   const rutas = [...N.RUTAS].sort((a, b) => a.valor - b.valor || a.km - b.km);
   // Sin rutas con tarifa fija en la ficha: no se muestra una tabla vacía.
@@ -398,6 +399,17 @@ function calculadoraCostos() {
   };
   const porcentaje = (x) => `${(Math.round(x * 10) / 10).toString().replace('.', ',')} %`;
   const actualizar = () => {
+    // Con un campo vacío no se calcula con el mínimo: se muestra «—» hasta que lo llenen.
+    if (['#calc-taxis', '#calc-viajes', '#calc-valor', '#calc-app', '#calc-cuota'].some((id) => $(id) && $(id).value.trim() === '')) {
+      for (const id of ['#calc-a', '#calc-b']) {
+        $(id).querySelector('b').textContent = '—';
+        $(id).querySelector('small').textContent = 'Completa los datos';
+        $(id).classList.remove('mas-barato');
+      }
+      $('#calc-flota').textContent = 'Completa los datos para calcular.';
+      $('#calc-veredicto').textContent = '';
+      return;
+    }
     const taxis = campo('#calc-taxis', 1, 2000);
     const viajes = campo('#calc-viajes', 1, 60);
     const valor = campo('#calc-valor', 1000, 500000);

@@ -34,11 +34,11 @@ export function calcularTarifa({ origen, destino, km, fecha = new Date(), progra
 
   const { hora, domingo } = horaBogota(fecha);
   let recargos = 0;
-  if (hora >= TARIFAS.nocheDesde || hora < TARIFAS.nocheHasta) {
+  if (TARIFAS.recargoNocturno > 0 && (hora >= TARIFAS.nocheDesde || hora < TARIFAS.nocheHasta)) {
     recargos += TARIFAS.recargoNocturno;
     detalle.push({ concepto: 'Recargo nocturno', valor: TARIFAS.recargoNocturno });
   }
-  if (domingo) {
+  if (domingo && TARIFAS.recargoDominical > 0) {
     recargos += TARIFAS.recargoDominical;
     detalle.push({ concepto: 'Recargo dominical', valor: TARIFAS.recargoDominical });
   }

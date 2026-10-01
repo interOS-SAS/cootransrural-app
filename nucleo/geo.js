@@ -101,12 +101,23 @@ export function buscarLocal(texto, limite = 8) {
   const q = normalizar(texto.trim());
   if (!q) return [];
   const palabras = q.split(/\s+/);
-  return LUGARES.filter((l) => {
-    const t = normalizar(`${l.nombre} ${l.detalle} ${CATEGORIAS[l.cat]?.nombre || ''}`);
-    return palabras.every((w) => t.includes(w));
-  })
+  // Primero los que empiezan por lo buscado, luego los que lo traen en el nombre y al
+  // final los que solo coinciden en el detalle o la categoría («Chía» → el municipio
+  // antes que «Estación Terpel · Vía a Chía»). Dentro de cada grupo, el orden de la ficha.
+  const rango = (l) => {
+    const nombre = normalizar(l.nombre);
+    if (nombre.startsWith(q)) return 0;
+    return palabras.every((w) => nombre.includes(w)) ? 1 : 2;
+  };
+  return LUGARES.map((l, i) => ({ l, i }))
+    .filter(({ l }) => {
+      const t = normalizar(`${l.nombre} ${l.detalle} ${CATEGORIAS[l.cat]?.nombre || ''}`);
+      return palabras.every((w) => t.includes(w));
+    })
+    .map((x) => ({ ...x, r: rango(x.l) }))
+    .sort((a, b) => a.r - b.r || a.i - b.i)
     .slice(0, limite)
-    .map((l) => ({ titulo: l.nombre, detalle: l.detalle, lat: l.lat, lng: l.lng, icono: CATEGORIAS[l.cat]?.icono, fuente: 'frecuente' }));
+    .map(({ l, r }) => ({ titulo: l.nombre, detalle: l.detalle, lat: l.lat, lng: l.lng, icono: CATEGORIAS[l.cat]?.icono, fuente: 'frecuente', rango: r }));
 }
 
 // Búsqueda de direcciones: primero lugares frecuentes, luego Nominatim.
@@ -136,10 +147,17 @@ export async function buscarDirecciones(texto, { cerca = CENTRO, limite = 8 } = 
     /* sin internet: solo lugares frecuentes */
   }
   const todos = [...locales];
+  const nombres = new Set(locales.map((t) => normalizar(t.titulo)));
   for (const r of remotos) {
-    if (!todos.some((t) => distanciaKm(t, r) < 0.05)) todos.push(r);
+    // Fuera los repetidos: el mismo punto o el mismo nombre que un lugar frecuente.
+    if (!todos.some((t) => distanciaKm(t, r) < 0.05) && !nombres.has(normalizar(r.titulo || ''))) todos.push(r);
   }
-  return todos.sort((a, b) => (a.fuente === b.fuente ? distanciaKm(a, cerca) - distanciaKm(b, cerca) : a.fuente === 'frecuente' ? -1 : 1)).slice(0, limite);
+  // Los frecuentes conservan su orden por coincidencia; los de Nominatim, por cercanía.
+  return todos.sort((a, b) => {
+    if (a.fuente !== b.fuente) return a.fuente === 'frecuente' ? -1 : 1;
+    if (a.fuente === 'frecuente') return (a.rango ?? 2) - (b.rango ?? 2) || 0;
+    return distanciaKm(a, cerca) - distanciaKm(b, cerca);
+  }).slice(0, limite);
 }
 
 // Ruta por carretera entre dos puntos: { coords: [[lat,lng]...], km, min, aproximada }

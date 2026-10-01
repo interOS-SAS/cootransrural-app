@@ -396,6 +396,9 @@ button { cursor: pointer; }
   .mesa { min-height: 360px; padding: 52px 20px 40px 56px; }
 }
 @media (max-width: 520px) {
+  /* Con nombres largos («Cooptranstermales») el botón baja a otro renglón y no se sale. */
+  .barra { flex-wrap: wrap; gap: 10px; }
+  .barra-enlace { padding: 8px 12px; }
   .acciones { width: 100%; }
   .acciones .boton { flex: 1 1 auto; justify-content: center; }
   .boton.primario { flex-basis: 100%; }

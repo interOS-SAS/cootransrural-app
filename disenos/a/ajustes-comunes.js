@@ -8,6 +8,7 @@ const DISENOS = [
   { id: 'a', nombre: 'Ámbar Urbano', colores: ['#FFC107', '#121212', '#F4F5F7'] },
   { id: 'b', ...EM.DISENO_B },
   { id: 'c', nombre: 'Noche Neón', colores: ['#07090D', '#FFE14D', '#FF4D9D'] },
+  { id: 'auto', nombre: 'A de día · C de noche', colores: ['#FFC107', '#F4F5F7', '#07090D', '#FF4D9D'] },
 ];
 
 function recargarCon(cambios) {
@@ -35,16 +36,18 @@ export function interruptor({ id, titulo, detalle = '', icono: ico, activo = fal
 }
 
 export function bloqueDiseno(N, diseno) {
+  // Marcado: lo elegido (puede ser «auto», Día y noche), no solo el diseño abierto ahora.
+  const preferido = N.perfil.disenoPreferido?.() || diseno;
   const s = el(`<section class="a-grupo"><h3>Diseño de la app</h3>
     <div class="a-disenos" role="radiogroup" aria-label="Diseño de la app">
-      ${DISENOS.map((d) => `<button type="button" role="radio" class="a-diseno" aria-checked="${d.id === diseno}" data-d="${d.id}">
+      ${DISENOS.map((d) => `<button type="button" role="radio" class="a-diseno" aria-checked="${d.id === preferido}" data-d="${d.id}">
         <span class="a-diseno-muestra">${d.colores.map((c) => `<i style="background:${c}"></i>`).join('')}</span>
-        <strong>${d.id.toUpperCase()}</strong><small>${esc(d.nombre)}</small></button>`).join('')}
+        <strong>${d.id === 'auto' ? 'Día y noche' : d.id.toUpperCase()}</strong><small>${esc(d.nombre)}</small></button>`).join('')}
     </div>
-    <p class="a-ayuda-txt">Los tres diseños funcionan igual; cambia cómo se ve. Se guarda en este celular.</p></section>`);
+    <p class="a-ayuda-txt">Los tres diseños funcionan igual; cambia cómo se ve. «Día y noche» abre la A de día y la C de noche. Se guarda en este celular.</p></section>`);
   s.addEventListener('click', (e) => {
     const b = e.target.closest('[data-d]');
-    if (!b || b.dataset.d === diseno) return;
+    if (!b || b.dataset.d === preferido) return;
     N.perfil.elegirDiseno(b.dataset.d);
     recargarCon({ d: b.dataset.d });
   });

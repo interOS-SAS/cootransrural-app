@@ -160,7 +160,7 @@ export function crearSeccionesConductor({ N, c, app, ui, avisar, irATab, repinta
   function htmlAjustes() {
     const a = N.perfil.ajustes();
     const gps = a.gpsSimulado === true ? 'simulado' : a.gpsSimulado === false ? 'real' : 'auto';
-    const d = N.perfil.disenoElegido();
+    const d = N.perfil.disenoPreferido();
     const permiso = N.permisoNotificaciones();
     return `<section class="c-pantalla c-pantalla-ajustes" aria-label="Ajustes">
       ${cabeza('Ajustes', '', 'volver-taxi')}

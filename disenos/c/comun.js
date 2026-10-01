@@ -259,6 +259,7 @@ export function nombresDisenos() {
     ['a', 'Diseño A', 'Ámbar Urbano'],
     ['b', 'Diseño B', empresa.esPrincipal ? 'Verde Rosal' : `Color de la ${empresa.tipo}`],
     ['c', 'Diseño C', 'Noche Neón'],
+    ['auto', 'Día y noche', 'A de día · C de noche'],
   ];
 }
 

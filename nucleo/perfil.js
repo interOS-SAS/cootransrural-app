@@ -167,15 +167,31 @@ export function guardarAjustes(cambios) {
   return a;
 }
 
-export function disenoElegido() {
+// «auto» (Día y noche): la A (Ámbar, clara) de 6 a. m. a 6 p. m. y la C (Neón, oscura)
+// de 6 p. m. a 6 a. m., con la hora de Colombia.
+export function disenoPorHora(fecha = new Date()) {
+  const h = Number(new Intl.DateTimeFormat('en-US', { timeZone: 'America/Bogota', hour: 'numeric', hourCycle: 'h23' }).format(fecha));
+  return h >= 18 || h < 6 ? 'c' : 'a';
+}
+
+// Lo que se eligió: 'a' | 'b' | 'c' | 'auto'. Primero ?d=, luego lo que el usuario
+// escogió en Ajustes y, si no, lo de la cooperativa (ficha); por defecto, «auto».
+export function disenoPreferido() {
   const p = new URLSearchParams(location.search).get('d');
-  if (p && /^[abc]$/.test(p)) return p;
-  // Lo que el usuario escogió en Ajustes; si no, el diseño que eligió la cooperativa (ficha).
-  return localStorage.getItem(k('diseno')) || (/^[abc]$/.test(FICHA.diseno || '') ? FICHA.diseno : 'b');
+  if (p && /^([abc]|auto)$/.test(p)) return p;
+  const guardado = localStorage.getItem(k('diseno'));
+  if (/^([abc]|auto)$/.test(guardado || '')) return guardado;
+  return /^([abc]|auto)$/.test(FICHA.diseno || '') ? FICHA.diseno : 'auto';
+}
+
+// El diseño que se abre ahora: el preferido o, en «auto», el de la hora.
+export function disenoElegido() {
+  const d = disenoPreferido();
+  return d === 'auto' ? disenoPorHora() : d;
 }
 
 export function elegirDiseno(d) {
-  if (/^[abc]$/.test(d)) localStorage.setItem(k('diseno'), d);
+  if (/^([abc]|auto)$/.test(d)) localStorage.setItem(k('diseno'), d);
 }
 
 // Móvil del sticker por el que llegó el pasajero (para medir qué taxis atraen

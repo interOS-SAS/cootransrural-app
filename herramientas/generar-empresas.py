@@ -387,14 +387,20 @@ TEXTOS_PRINCIPAL = {
 }
 
 
+MUESTRAS_CONDUCTOR = ['Wilmer Castiblanco', 'Orlando Beltrán', 'Ricardo Peña', 'Gloria Sánchez', 'Mauricio Vargas', 'Óscar Ramírez']
+
+
 def muestra_conductor(ficha):
     """Conductor de muestra para las ilustraciones (móvil 023)."""
     E = ficha['EMPRESA']
     if ficha['id'] == PRINCIPAL:
         nombre, calif = 'Carlos Rodríguez', 4.9
     else:
-        demo = (ficha.get('CONDUCTORES_DEMO') or [{}])[0]
-        nombre, calif = demo.get('nombre') or 'Carlos Rodríguez', demo.get('calificacion') or 4.8
+        # Un nombre que NO esté entre los conductores de la demo: en la maqueta va con el
+        # móvil 023, y en la demo cada conductor tiene su propio móvil y su placa.
+        usados = {c.get('nombre') for c in ficha.get('CONDUCTORES_DEMO') or []}
+        nombre = next(n for n in MUESTRAS_CONDUCTOR if n not in usados)
+        calif = 4.8
     partes = nombre.split()
     prefijo = (E.get('placaPrefijo') or 'TAX').strip()
     return {
@@ -529,15 +535,24 @@ def tipo_empresa(E):
     return 'empresa' if str(E.get('tipo') or '').strip().lower() == 'empresa' else 'cooperativa'
 
 
+def colores_oficiales(ficha):
+    """¿Los colores de la ficha son los de la empresa? En las propuestas casi siempre los
+    propone interOS: entonces los textos dicen «colores propuestos»."""
+    return ficha['id'] == PRINCIPAL or bool(ficha.get('coloresOficiales'))
+
+
 def nombres_disenos(ficha):
     E = ficha['EMPRESA']
     tipo = tipo_empresa(E)
     if ficha['id'] == PRINCIPAL:
         b = {'nombre': 'Verde Rosal', 'corto': 'Verde', 'texto': 'El verde de la cooperativa y los tonos de la Sabana. Cercano, tranquilo y con el sello de Cootransrural.',
              'texto_vitrina': 'El verde de la cooperativa y los tonos de la Sabana. Cercano y tranquilo.'}
-    else:
+    elif colores_oficiales(ficha):
         b = {'nombre': f'Color de la {tipo}', 'corto': tipo.capitalize(), 'texto': f"Los colores de {E['nombre']}, letra grande y pedido por pasos. Cercano, tranquilo y pensado para todas las edades.",
              'texto_vitrina': f"Los colores de {E['nombre']}, letra grande y pedido por pasos. Cercano y tranquilo."}
+    else:
+        b = {'nombre': 'Color propio', 'corto': tipo.capitalize(), 'texto': f"Con los colores de la {tipo} (aquí, unos propuestos), letra grande y pedido por pasos. Cercano, tranquilo y pensado para todas las edades.",
+             'texto_vitrina': f"Con los colores de la {tipo} (aquí, unos propuestos), letra grande y pedido por pasos."}
     personal = (ficha.get('disenos') or {}).get('b') or {}
     b.update({k: v for k, v in personal.items() if isinstance(v, str) and v})
     return {
@@ -558,7 +573,9 @@ def municipios_taxicun(ficha, maximo=2):
     a … la misma app te sirve allá». Salen de sus RUTAS (los más cercanos por carretera),
     así solo se nombran pueblos que la propia ficha ya trae; si faltan, los más cercanos
     en línea recta (sin nombrar El Rosal fuera de Cootransrural)."""
-    otras = [f for f in fichas() if f['id'] != ficha['id']]
+    # Solo municipios donde TaxiCun ya funciona de verdad («taxicunActivo»: true en la
+    # ficha): las propuestas no deben decir que la app «ya sirve» en pueblos que no la usan.
+    otras = [f for f in fichas() if f['id'] != ficha['id'] and f.get('taxicunActivo')]
     pueblos = {(f['EMPRESA'].get('pueblo') or ''): f for f in otras if f['EMPRESA'].get('pueblo')}
     elegidos = []
     for r in sorted(ficha.get('RUTAS') or [], key=lambda r: r.get('km') or 999):
@@ -697,6 +714,7 @@ def derivados(ficha):
     vecinos = municipios_taxicun(ficha)
     p['taxicun_vecinos'] = vecinos
     p['taxicun_otros'] = lista_natural([f'a {v}' for v in vecinos], 'o') or 'a otro municipio'
+    p['colores_oficiales'] = colores_oficiales(ficha)
     p['c'] = {k.replace('-', '_'): v for k, v in pal.items()}  # paleta con claves legibles en plantillas
     p['franja_para'] = E.get('razonSocial') or E['nombre']
     # Para cerrar la frase con punto sin repetirlo («Coptaxi S.A.S.» + «.»).
@@ -773,7 +791,7 @@ def derivados(ficha):
     p['tarifas_nota'] = str(T.get('nota') or '').strip() or f'Valores de ejemplo, sujetos a confirmación de la {tipo}.'
     p['tarifa_inicial'] = {
         'minima': pesos(T.get('minimaUrbana') or 0), 'banderazo': pesos(T.get('banderazo') or 0),
-        'km': pesos(T.get('porKm') or 0), 'nocturno': pesos(T.get('recargoNocturno') or 0), 'dominical': pesos(T.get('recargoDominical') or 0),
+        'km': pesos(T.get('porKm') or 0), 'nocturno': pesos(T.get('recargoNocturno') or 0), 'dominical': pesos(T.get('recargoDominical') or 0), 'hay_dominical': (T.get('recargoDominical') or 0) > 0,
         'horario_nocturno': f"De {hora12(T.get('nocheDesde', 20))} a {hora12(T.get('nocheHasta', 6))}",
     }
 
@@ -858,7 +876,7 @@ def derivados(ficha):
     servicios = [str(x).strip() for x in (textos.get('servicios') or []) if str(x).strip()]
     p['servicios'] = servicios if not es_principal else []
     p['frase'] = textos.get('frase') or E.get('lema') or ''
-    p['insignia_nosotros'] = 'Nuestra flota, móviles 046 y 047' if es_principal and not im.get('nosotros') else (
+    p['insignia_nosotros'] = 'Nuestra flota, móviles 046 y 047' if es_principal and not im.get('nosotros') else 'Imagen ilustrativa' if not im.get('nosotros') else (
         (f'Unos {taxis} taxis' if aprox else f"{taxis} taxis {modelo_taxis(ficha)}".strip()) if taxis else f'Taxis de {pueblo}')
     p['alt_nosotros'] = (
         'Taxis Kia Picanto amarillos de Cootransrural, los móviles 046 y 047, frente a la sede en El Rosal' if es_principal and not im.get('nosotros')
@@ -1027,7 +1045,7 @@ def radar_svg(ficha, lugares, rutas, pal):
                     izq = lx if ancla == 'start' else (lx - ancho if ancla == 'end' else lx - ancho / 2)
                     izq = min(max(izq, 2), W - 2 - ancho) if ancla == 'middle' else izq
                     arriba = (ly if uy > 0.55 else (ly - alto if uy < -0.55 else ly - alto / 2)) + corrimiento * alto
-                    caja = (izq - 2, arriba - 1, izq + ancho + 2, arriba + alto + 1)
+                    caja = (izq - 6, arriba - 3, izq + ancho + 6, arriba + alto + 3)
                     dentro = caja[0] >= 1 and caja[2] <= W - 1 and caja[1] >= 1 and caja[3] <= H - 1
                     choca = any(not (caja[2] < c[0] or caja[0] > c[2] or caja[3] < c[1] or caja[1] > c[3]) for c in etiquetas)
                     # Que no se monte sobre el círculo del pueblo.
@@ -1049,6 +1067,9 @@ def radar_svg(ficha, lugares, rutas, pal):
                              + (' class="r-km"' if destacada and i == ultimo else '') + f'>{esc(txt)}</tspan>'
                              for i, txt in enumerate(renglones))
             s.append(f'<text text-anchor="{ancla}" class="{clase}" fill="{relleno}">{lineas}</text>')
+        elif destacada:
+            # Una ruta destacada sin espacio no se omite en silencio: se avisa.
+            print(f"  aviso: en el esquema de {E.get('pueblo')} no cupo la etiqueta de {r.get('destino')}")
     # Lugares del pueblo (puntos) y los destacados (números), separados para que no se tapen.
     numeros = {l.get('id'): i + 1 for i, l in enumerate(lugares)}
     for l, x, y in puntos:
@@ -1179,6 +1200,8 @@ def datos_propuesta(ficha, p):
     if T.get('ejemplo', True):
         confirmar.append('Las tarifas oficiales (las de la demo son de ejemplo)')
     confirmar.append('La lista de conductores, con sus móviles y placas')
+    if not colores_oficiales(ficha):
+        confirmar.append('Sus colores y su logo (los de la demo los propone interOS)')
 
     notas = ' '.join(str(x) for x in ficha.get('notas') or []).lower()
     region = p['region']
@@ -1349,7 +1372,7 @@ def escribir_indice(lista):
             'pueblo': E.get('pueblo') or '',
             'municipio': E.get('municipio') or '',
             'estado': f.get('estado') or 'propuesta',
-            'diseno': f.get('diseno') or 'b',
+            'diseno': f.get('diseno') or 'auto',
             'centro': f.get('CENTRO'),
             # Distancia máxima (km) desde el centro del pueblo para escogerla por GPS.
             'radioKm': f.get('radioKm') or 9,

@@ -220,7 +220,11 @@ export async function crearMapa(elemento, opciones = {}) {
     sincronizarTaxis(lista, opciones = {}) {
       const ids = new Set(lista.map((t) => t.id));
       for (const id of [...taxis.keys()]) if (!ids.has(id) && id !== opciones.conservar) api.quitarTaxi(id);
-      for (const t of lista) api.ponerTaxi(t.id, t, { rumbo: t.rumbo || 0, ...opciones });
+      // Los conductores reales (no los de ejemplo) llevan su número de móvil encima,
+      // para que en una demo con dos celulares se vea cuál es el conectado.
+      for (const t of lista) {
+        api.ponerTaxi(t.id, t, { rumbo: t.rumbo || 0, ...(t.simulado === false && t.movil ? { etiqueta: `Móvil ${t.movil}` } : {}), ...opciones });
+      }
     },
     limpiarTaxis(excepto) {
       for (const id of [...taxis.keys()]) if (id !== excepto) api.quitarTaxi(id);

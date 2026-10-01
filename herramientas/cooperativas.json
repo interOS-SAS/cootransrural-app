@@ -88,7 +88,7 @@
     "EMPRESA": {
       "nombre": "Cooptranstermales",
       "nombreCorto": "Cooptranstermales",
-      "razonSocial": "Cooperativa Multiactiva de Transportadores Ltda. (Cooptranstermales)",
+      "razonSocial": "Cooperativa Multiactiva de Transportadores Limitada Cooptranstermales Ltda.",
       "lema": "Taxis de Tabio, tierra de termales",
       "municipio": "Tabio, Cundinamarca",
       "pueblo": "Tabio",
@@ -110,10 +110,11 @@
       "colorTaxi": "Amarillo",
       "region": "Sabana Centro",
       "datosPendientes": [
-        "correo",
-        "año de fundación",
-        "número de taxis",
-        "misión y visión oficiales"
+        "La empresa que firma: Cooptranstermales o Tax Tabio S.A.S.",
+        "El correo para mostrar en la app (¿transtermales@hotmail.com?)",
+        "El número de taxis",
+        "Año de fundación",
+        "Misión y visión oficiales"
       ],
       "oficina": {
         "lat": 4.918547,
@@ -141,10 +142,13 @@
       "https://infotaxicolombia.com.co/empresas-taxi/servicio-de-taxis-trantermales-tabio-cundinamarca-colombia-2/",
       "https://www.yellowpages.com.co/phone-57-3143519920-servicio-de-taxis-Tabio-COEN358318.html",
       "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-transtermales",
+      "https://www.tabio-cundinamarca.gov.co/normatividad/decreto-024-de-2026",
+      "https://www.datos.gov.co/resource/c82u-588k.json?nit=832001434",
+      "https://directorio-empresas.einforma.co/informacion-empresa/tax-tabio-sas",
       "https://www.openstreetmap.org/"
     ],
     "textos": {
-      "historia": "Cooptranstermales —la Cooperativa Multiactiva de Transportadores Ltda., conocida como Transtermales— presta el servicio de taxi en Tabio, el municipio de los termales en la Sabana Centro. Desde su oficina en la Calle 7 # 5-00 atiende el casco urbano, las veredas y los viajes a los municipios vecinos.\n\nCon la app, la cooperativa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa, también cuando vas o vuelves de los termales.",
+      "historia": "Cooptranstermales (Transtermales) y Tax Tabio S.A.S. prestan el servicio de taxi en Tabio, el municipio de los termales en la Sabana Centro. Desde su oficina en la Calle 7 # 5-00 atienden el casco urbano, las veredas y los viajes a los municipios vecinos, las 24 horas.\n\nCon la app, ese servicio llega al celular: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa, también cuando vas o vuelves de los termales.",
       "mision": "Prestar el servicio de taxi en Tabio y sus veredas con conductores asociados que conocen el municipio, con seguridad, puntualidad y buen trato para quienes viven aquí y para quienes nos visitan.",
       "vision": "Ser la forma más fácil y confiable de moverse en Tabio: un taxi a un toque, con tarifa clara y el móvil en el mapa, de día y de noche.",
       "servicios": [
@@ -159,11 +163,20 @@
     "notas": [
       "Propuesta: no es cliente ni ha autorizado nada.",
       "Teléfono 314 351 9920 y servicio 24 horas: directorios de taxis (infotaxicolombia, páginas amarillas) bajo «Servicio de Taxis Trantermales».",
-      "Razón social, NIT 832.001.434-6 y dirección Calle 7 # 5-00: directorios empresariales (informacolombia). Los directorios también registran el fijo 601 021 9120.",
-      "Sin sitio web oficial. Colores propios de interOS (agua termal y dorado).",
+      "Razón social exacta, NIT 832.001.434-6, inscripción en la Cámara de Comercio de Bogotá el 16-dic-1996 y dirección Calle 7 # 5-00: Confecámaras (datos.gov.co) e informacolombia. Los directorios también registran el fijo 601 021 9120.",
+      "Habilitación (Decreto 024 de 2026 de la Alcaldía de Tabio): Tax Tabio S.A.S. (NIT 900.552.543-0) tiene la de taxi (Res. 164 de 2013); Cooptranstermales, la de transporte mixto (Res. 230 de 2002). Las dos comparten oficina y representación legal; el Decreto 033 de 2024 fijó las tarifas de taxi «a las empresas COOPTRANSTERMALES LTDA y TAX TABIO S.A.S.». Confirmar en la reunión con cuál se firma.",
+      "Tarifas: carrera mínima $6.600 (Decreto 024 de 2026); en las veredas rige una tarifa fija de día y de noche por destino (201 destinos en 12 sectores). Sin banderazo, valor por km ni recargo dominical.",
+      "Correo: transtermales@hotmail.com sale en búsquedas junto al NIT, pero no se pudo comprobar en una fuente abierta.",
+      "Sin sitio web oficial. Colores propios de interOS (agua termal y dorado); el lema también es de interOS.",
       "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
     ],
-    "lugaresRevisados": true
+    "lugaresRevisados": true,
+    "tarifas": {
+      "minimaUrbana": 6600,
+      "recargoNocturno": 1200,
+      "recargoDominical": 0,
+      "nota": "La carrera mínima ($6.600) es la del Decreto 024 de 2026 de la Alcaldía de Tabio, que fija además una tarifa de día y otra de noche para cada destino de las veredas. El valor por km, el recargo nocturno y las rutas a otros municipios son de ejemplo, sujetos a confirmación de la cooperativa."
+    }
   },
   "tenjo": {
     "estado": "propuesta",

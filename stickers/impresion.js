@@ -106,10 +106,14 @@ function pie(plan, formato, nHoja, totalHojas, estiloNombre) {
   // TaxiCun (la app; interOS solo la desarrolla): «<cooperativa> · TaxiCun · Propuesta de demostración».
   const propuesta = ES_PROPUESTA ? ' · Propuesta de demostración' : '';
   // El sticker es de TaxiCun (la app) con el nombre de la cooperativa.
-  const texto = `${EMPRESA.nombre} · TaxiCun${propuesta} · ${formato.corto} · ${medidaTexto(formato)} · ${estiloNombre} · Hoja ${nHoja} de ${totalHojas} · Imprime al 100 % (tamaño real)`;
+  // Sin «Imprime al 100 %»: la barra de 5 cm ya lo dice, y el texto largo se montaba sobre ella.
+  const texto = `${EMPRESA.nombre} · TaxiCun${propuesta} · ${formato.corto} · ${medidaTexto(formato)} · ${estiloNombre} · Hoja ${nHoja} de ${totalHojas}`;
   const xb = P.ancho - 8 - 50;
+  // Resguardo: si aun así el texto llegara a la barra, se comprime para que termine antes.
+  const largoEstimado = texto.length * 2.3 * 0.52;
+  const ajuste = largoEstimado > xb - 14 ? ` textLength="${n(xb - 14)}" lengthAdjust="spacingAndGlyphs"` : '';
   return (
-    `<text x="8" y="${n(y)}" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="2.3" font-weight="500" fill="#555">${texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>` +
+    `<text x="8" y="${n(y)}"${ajuste} font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="2.3" font-weight="500" fill="#555">${texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>` +
     `<g class="barra-escala"><rect x="${n(xb)}" y="${n(y - 2.6)}" width="50" height="1.6" fill="#222"/>` +
     `<rect x="${n(xb + 10)}" y="${n(y - 2.6)}" width="10" height="1.6" fill="#fff"/><rect x="${n(xb + 30)}" y="${n(y - 2.6)}" width="10" height="1.6" fill="#fff"/>` +
     `<rect x="${n(xb)}" y="${n(y - 2.6)}" width="50" height="1.6" fill="none" stroke="#222" stroke-width="0.15"/>` +
