@@ -1,13 +1,16 @@
-/* Índice de cooperativas (cooperativas/): una tarjeta por cooperativa con su
-   color, su estado (cliente o propuesta), enlaces y un QR a su web. Página
-   interna de interOS para mostrar la app; no se indexa. */
+/* Portada de TaxiCun (cooperativas/): la app de taxis para Cundinamarca,
+   desarrollada por interOS, y una tarjeta por cooperativa con su color, su
+   estado (cliente o propuesta), enlaces y un QR que abre TaxiCun con ella.
+   Página para mostrar la app; no se indexa. */
 :root {
   --tinta: #10161D;
   --texto: #2B3440;
   --suave: #5F6B78;
   --borde: #E3E7EC;
   --fondo: #F5F6F8;
-  --amarillo: #FFC107;
+  --amarillo: #FFC21A;
+  --tc-azul: #0A2552;
+  --tc-azul-2: #1A4FA0;
   --titulo: 'Sora', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --fuente: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --margen: clamp(16px, 4vw, 40px);
@@ -24,18 +27,43 @@ img { display: block; max-width: 100%; height: auto; }
 .icono { width: 1.15em; height: 1.15em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 .cabeza {
-  color: #fff; padding: 34px var(--margen) 96px;
-  background: radial-gradient(700px 360px at 90% 0%, rgba(255, 193, 7, .25), transparent 60%), linear-gradient(150deg, #1B2430, #0B0F14);
+  color: #fff; padding: 34px var(--margen) 46px;
+  background: radial-gradient(700px 360px at 90% 0%, rgba(255, 194, 26, .26), transparent 60%), radial-gradient(800px 500px at 0% 100%, rgba(26, 79, 160, .7), transparent 60%), linear-gradient(150deg, var(--tc-azul-2), var(--tc-azul) 62%, #061733);
 }
 .cabeza-interna { max-width: 1200px; margin: 0 auto; }
 .marca-interos { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 26px; padding: 7px 14px 7px 8px; border-radius: 999px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14); font: 800 .85rem/1 var(--fuente); letter-spacing: .02em; color: rgba(255, 255, 255, .9); text-decoration: none; }
 .marca-interos span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9px; background: var(--amarillo); color: #10161D; font: 900 .8rem/1 var(--titulo); }
-.cabeza h1 { color: #fff; font-size: clamp(2.2rem, 1.5rem + 3vw, 3.6rem); line-height: 1.02; letter-spacing: -.04em; margin-bottom: 14px; }
+.cabeza h1 { color: #fff; font-size: clamp(1.9rem, 1.3rem + 2.4vw, 3rem); line-height: 1.04; letter-spacing: -.035em; margin: 18px 0 14px; }
 .cabeza p { max-width: 46em; color: rgba(255, 255, 255, .8); font-size: clamp(1rem, .95rem + .3vw, 1.15rem); }
 .nota { display: inline-flex; gap: 10px; align-items: flex-start; margin: 6px 0 0; padding: 12px 16px; border-radius: 16px; background: rgba(255, 193, 7, .1); border: 1px solid rgba(255, 193, 7, .3); font-size: .92rem; color: rgba(255, 255, 255, .88); }
 .nota .icono { color: var(--amarillo); margin-top: 3px; }
 
-.rejilla { max-width: 1200px; margin: -64px auto 0; padding: 0 var(--margen) 30px; display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 20px; }
+.rejilla { max-width: 1200px; margin: 0 auto; padding: 0 var(--margen) 30px; display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 20px; }
+.titulo-rejilla { display: flex; align-items: center; gap: 10px; max-width: 1200px; margin: 0 auto; padding: 34px var(--margen) 18px; font-size: clamp(1.3rem, 1.1rem + .8vw, 1.7rem); }
+.titulo-rejilla .icono { color: var(--tc-azul-2); }
+
+/* TaxiCun: logotipo (ícono + nombre con la letra de la página), botones y QR de la portada. */
+.tc-logo { display: inline-flex; align-items: center; gap: 16px; margin: 0; color: #fff; }
+.tc-logo img { width: 84px; height: 84px; border-radius: 22px; box-shadow: 0 16px 34px -12px rgba(0, 0, 0, .6); }
+.tc-logo b { font: 800 clamp(2.6rem, 2rem + 2.6vw, 3.8rem)/1 var(--titulo); letter-spacing: -.04em; }
+.tc-logo b span { color: var(--amarillo); }
+.cabeza-rejilla { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(24px, 4vw, 56px); align-items: center; }
+.cabeza-botones { display: flex; flex-wrap: wrap; gap: 12px; margin: 22px 0 18px; }
+.boton { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 0 24px; border-radius: 999px; font: 800 1rem/1 var(--fuente); text-decoration: none; }
+.boton-amarillo { background: var(--amarillo); color: var(--tc-azul); box-shadow: 0 14px 30px -12px rgba(255, 194, 26, .75), inset 0 -3px 0 rgba(0, 0, 0, .12); }
+.boton-vidrio { color: #fff; border: 1.5px solid rgba(255, 255, 255, .45); background: rgba(255, 255, 255, .08); }
+.boton:focus-visible { outline-color: var(--amarillo); }
+.cabeza-qr { display: grid; justify-items: center; gap: 4px; width: 210px; padding: 16px 16px 14px; border-radius: 26px; background: #fff; color: var(--tinta); text-align: center; box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .7); }
+.cabeza-qr .qr { width: 172px; height: 172px; margin-bottom: 6px; }
+.cabeza-qr .qr svg { display: block; width: 100%; height: 100%; }
+.cabeza-qr b { font: 800 .98rem/1.2 var(--titulo); color: var(--tc-azul); }
+.cabeza-qr small { font-size: .8rem; color: var(--suave); line-height: 1.35; }
+@media (max-width: 760px) {
+  .cabeza-rejilla { grid-template-columns: 1fr; }
+  .cabeza-qr { display: none; }
+  .tc-logo img { width: 66px; height: 66px; border-radius: 18px; }
+  .cabeza-botones .boton { flex: 1 1 100%; }
+}
 .coop { display: flex; flex-direction: column; overflow: hidden; border-radius: 26px; background: #fff; border: 1px solid var(--borde); box-shadow: 0 24px 50px -30px rgba(16, 22, 29, .45); }
 .coop-cabeza { position: relative; display: grid; grid-template-columns: 58px 1fr; gap: 14px; align-items: center; padding: 22px 22px 20px; color: #fff; background: radial-gradient(260px 160px at 100% 0%, color-mix(in srgb, var(--a) 30%, transparent), transparent 70%), linear-gradient(140deg, var(--p), var(--o)); }
 .coop-cabeza img { width: 58px; height: 58px; border-radius: 16px; box-shadow: 0 8px 20px -6px rgba(0, 0, 0, .45); }
@@ -62,6 +90,8 @@ img { display: block; max-width: 100%; height: auto; }
 .enlaces a .icono { color: var(--p); }
 .enlaces a.web { grid-column: 1 / -1; justify-content: center; border-color: transparent; background: var(--p); color: #fff; }
 .enlaces a.web .icono { color: #fff; }
+.enlaces a.tc { border-color: var(--tc-azul); background: var(--tc-azul); color: #fff; }
+.enlaces a.tc .icono { color: var(--amarillo); }
 .pie { max-width: 1200px; margin: 0 auto; padding: 18px var(--margen) 46px; text-align: center; font-size: .88rem; color: var(--suave); }
 .pie a { font-weight: 700; }
 @media (max-width: 420px) {

@@ -16,8 +16,13 @@ const DIAPOSITIVAS = [
   { ilus: ilustracionPago, titulo: 'Pagas fácil y ahorras', texto: 'Paga en efectivo o con QR. Programa con 24\u00a0h y ahorra 10\u00a0%. Cada 10 viajes, el siguiente va al 50\u00a0%.', puntos: [['qr', 'QR de prueba'], ['calendario', '−10\u00a0% programando'], ['regalo', 'Viaje 11 al 50\u00a0%']] },
 ];
 
+// Dentro de TaxiCun, el registro lleva la marca: «TaxiCun · Coptaxi».
+function sello() {
+  return EM.EN_TAXICUN ? `<p class="a-tc-linea">${EM.marcaApp(30)}<span>${EM.palabraApp()}<span class="a-tc-punto"> · </span>${esc(EM.NOMBRE)}</span></p>` : '';
+}
+
 export function mostrarBienvenida(app, { N, alTerminar }) {
-  const capa = el(`<div class="a-bienvenida" role="dialog" aria-modal="true" aria-label="${esc(`Bienvenida a ${EM.NOMBRE}`)}"></div>`);
+  const capa = el(`<div class="a-bienvenida" role="dialog" aria-modal="true" aria-label="${esc(`Bienvenida a ${EM.NOMBRE_EN_APP}`)}"></div>`);
   app.append(capa);
   const datos = { nombre: '', celular: '', contacto: { nombre: '', celular: '' } };
   let codigo = '';
@@ -41,7 +46,7 @@ export function mostrarBienvenida(app, { N, alTerminar }) {
           </section>`).join('')}
       </div>
       <header class="a-bien-cabeza">
-        <div class="a-marca">${EM.marcaIcono(34)}<span><strong>${esc(EM.NOMBRE)}</strong><small>${esc(EM.unir([EM.PUEBLO, EM.FUNDADA ? `desde ${EM.FUNDADA}` : '']))}</small></span></div>
+        <div class="a-marca${EM.EN_TAXICUN ? ' a-marca-tc' : ''}">${EM.encabezadoMarca({ tam: 34, detalle: EM.unir([EM.PUEBLO, EM.FUNDADA ? `desde ${EM.FUNDADA}` : '']) })}</div>
         <button type="button" class="a-btn-texto" data-saltar>Saltar</button>
       </header>
       <footer class="a-bien-pie">
@@ -77,8 +82,9 @@ export function mostrarBienvenida(app, { N, alTerminar }) {
           <button type="button" class="a-icono-btn" data-atras aria-label="Volver a la bienvenida">${icono('atras')}</button>
           <span class="a-paso">Paso 1 de 2</span>
         </div>
+        ${sello()}
         <h1>Crea tu cuenta</h1>
-        <p class="a-sub">Así el conductor sabe a quién recoger y tú viajas más seguro.</p>
+        <p class="a-sub">${EM.EN_TAXICUN ? esc(`Con tu cuenta de ${EM.APP} pides los taxis de ${EM.NOMBRE}. Así el conductor sabe a quién recoger y tú viajas más seguro.`) : 'Así el conductor sabe a quién recoger y tú viajas más seguro.'}</p>
         <label class="a-campo">
           <span>Nombre y apellido</span>
           <input name="nombre" autocomplete="name" autocapitalize="words" placeholder="Ej.: Ana María Gómez" value="${esc(datos.nombre)}" required>
@@ -155,9 +161,10 @@ export function mostrarBienvenida(app, { N, alTerminar }) {
           <button type="button" class="a-icono-btn" data-atras aria-label="Cambiar el número">${icono('atras')}</button>
           <span class="a-paso">Paso 2 de 2</span>
         </div>
+        ${sello()}
         <div class="a-sms-prueba" role="status">
           <span class="a-sms-ico">${icono('mensaje', { tam: 20 })}</span>
-          <span><small>SMS simulado · ${esc(EM.NOMBRE)}</small><strong>Código de prueba: <b data-codigo-prueba>${codigo}</b></strong></span>
+          <span><small>SMS simulado · ${esc(EM.NOMBRE_EN_APP)}</small><strong>Código de prueba: <b data-codigo-prueba>${codigo}</b></strong></span>
         </div>
         <h1>Verifica tu celular</h1>
         <p class="a-sub">Escribe el código de 4 dígitos que enviamos al <strong>+57 ${esc(celularTexto(datos.celular))}</strong>.</p>
@@ -212,7 +219,7 @@ export function mostrarBienvenida(app, { N, alTerminar }) {
         ${franjaCuadros()}
         <div class="a-listo-check" aria-hidden="true">${icono('check', { tam: 56, grosor: 3 })}</div>
         <h1>¡Listo, ${esc(primer)}!</h1>
-        <p>${esc(`Tu cuenta quedó verificada. Ya puedes pedir tu taxi de ${EM.NOMBRE}.`)}</p>
+        <p>${esc(EM.EN_TAXICUN ? `Tu cuenta de ${EM.APP} quedó verificada. Ya puedes pedir tu taxi de ${EM.NOMBRE}.` : `Tu cuenta quedó verificada. Ya puedes pedir tu taxi de ${EM.NOMBRE}.`)}</p>
         <ul class="a-listo-lista">
           <li>${icono('pin', { tam: 20 })} Mueve el mapa para ajustar tu punto de recogida.</li>
           <li>${icono('escudo', { tam: 20 })} Confirma el móvil, la placa y tu código antes de subir.</li>

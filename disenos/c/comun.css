@@ -120,6 +120,8 @@ body { overflow: hidden; }
   .c-lateral-qr-codigo svg { display: block; width: 100%; height: 100%; }
   .c-lateral-qr strong { display: block; font-size: 17px; }
   .c-lateral-qr small { display: block; color: var(--c-texto-2); font-size: 14px; margin-top: 2px; }
+  .c-lateral-taxicun { display: flex; align-items: center; gap: 10px; margin: 0 0 18px; font-size: 19px; }
+  .c-lateral-taxicun .c-icono-taxicun { border-radius: 8px; box-shadow: 0 0 20px rgba(255, 194, 26, .3); }
 }
 
 /* ---------------- Mapa (Leaflet) ---------------- */
@@ -593,6 +595,31 @@ label.c-fila-ajuste { cursor: pointer; }
 .c-fila-info > span { flex: 1; min-width: 0; display: grid; }
 .c-fila-info strong { font-weight: 600; font-size: 16px; }
 .c-fila-info small { font-size: 13.5px; color: var(--c-texto-3); }
+
+/* ---------------- TaxiCun: la app (interOS la desarrolla) ---------------- */
+/* «TaxiCun» como en el logo: «Cun» en el amarillo de la marca. */
+.c-taxicun-nombre { font-weight: 800; letter-spacing: -.01em; color: var(--c-texto); white-space: nowrap; }
+.c-taxicun-nombre > span { color: #FFC21A; }
+.c-icono-taxicun { flex: none; display: block; border-radius: 22%; }
+/* Bienvenida, ingreso del conductor y hoja de la marca: «TaxiCun · Coptaxi»
+   con el ícono de TaxiCun y el de la cooperativa de insignia. */
+.c-marca-tc { display: inline-grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 14px; max-width: 100%; justify-self: start; }
+.c-marca-tc-iconos { position: relative; display: block; line-height: 0; }
+.c-marca-tc-iconos > .c-icono-taxicun { border-radius: 12px; box-shadow: 0 0 20px rgba(255, 194, 26, .35); }
+.c-marca-tc-insignia { position: absolute; right: -7px; bottom: -7px; line-height: 0; padding: 2px; border-radius: 8px; background: var(--c-fondo); }
+.c-marca-tc .c-marca-tc-insignia .c-icono-app { display: block; border-radius: 6px; box-shadow: none; }
+.c-marca-tc-texto { display: grid; gap: 6px; justify-items: start; min-width: 0; }
+.c-marca-tc .c-marca-nombre { max-width: 100%; font-size: 17.5px; font-weight: 700; }
+.c-marca-tc-sep { color: var(--c-texto-3); }
+.c-marca-coop { font-weight: 800; }
+/* «TaxiCun · desarrollada por interOS» en los pies y en «Acerca de». */
+.c-pie-taxicun { display: inline-flex; align-items: center; gap: 7px; }
+.c-pie-taxicun .c-icono-taxicun { border-radius: 5px; }
+.c-acerca-taxicun { display: flex; align-items: center; gap: 12px; margin: 0; }
+.c-acerca-taxicun .c-icono-taxicun { border-radius: 10px; }
+.c-fila-municipio > .c-ico:first-child { color: var(--c-amarillo); }
+.c-hoja-taxicun .c-marca-tc { margin: 2px 0 4px; }
+.c-hoja-taxicun .c-pie-marca { margin-top: 2px !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .c-app *, .c-app *::before, .c-app *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }

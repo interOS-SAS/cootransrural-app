@@ -29,8 +29,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
       titulo: `La app de los <em>conductores</em> de ${esc(EM.NOMBRE)}.`,
       texto: 'Recibe servicios cerca de ti, navega hasta el pasajero, verifica su código y cobra con QR de prueba o en efectivo.',
       puntos: ['Conéctate y desconéctate con un toque', 'Solicitudes con cuenta regresiva', 'Código de abordaje para viajar seguros', 'Ganancias del día y documentos al día'],
-      // El QR abre la app de conductores de esta cooperativa con el mismo diseño.
-      url: N.urlEmpresa(`conductor/?d=${encodeURIComponent(diseno)}`),
+      // El QR abre la app de conductores de esta cooperativa con el mismo diseño;
+      // dentro de TaxiCun, TaxiCun con esta cooperativa (?e=).
+      url: N.urlApp('conductor', { d: diseno }),
     }));
   }
 
@@ -177,10 +178,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
         { icono: 'auto', texto: 'Mi taxi', detalle: `${yo.vehiculo} · ${yo.placa}`, accion: () => abrirMiTaxi(ctx()) },
         { icono: 'ajustes', texto: 'Ajustes', detalle: 'GPS, sonido, sala, diseño', accion: () => abrirAjustesConductor(ctx()) },
         { separador: true },
-        { icono: 'usuario', texto: 'App del pasajero', detalle: 'Abrir la app para pedir taxi', href: `../app/?d=${encodeURIComponent(diseno)}`, clase: 'a-menu-marca' },
+        EM.EN_TAXICUN && { icono: 'pin', texto: 'Cambiar de municipio', detalle: `Ahora: ${EM.PUEBLO} · ${EM.NOMBRE}`, accion: cambiarMunicipio },
+        { icono: 'usuario', texto: 'App del pasajero', detalle: 'Abrir la app para pedir taxi', href: EM.urlOtraApp('pasajero', diseno), clase: 'a-menu-marca' },
         { icono: 'salir', texto: 'Cerrar sesión', accion: cerrarSesion, clase: 'a-menu-peligro' },
-      ],
+      ].filter(Boolean),
       pie: `<div class="a-menu-pie-marca">${EM.marcaIcono(30)}<div><strong>${esc(EM.NOMBRE)} · Conductores</strong>${EM.LEMA ? `<small>${esc(EM.LEMA)}</small>` : ''}</div></div>
+        ${EM.EN_TAXICUN ? `<div class="a-menu-pie-tc">${EM.iconoApp(18)}<span>${esc(EM.TEXTO_DESARROLLO)}</span></div>` : ''}
         <div class="a-menu-pie-estado">${chipPrueba('MODO PRUEBA')}${avisoDemo('a-chip-demo a-chip-demo-claro')}<span><span class="a-led ${c?.estado.conexion === 'en-vivo' ? 'a-led-vivo' : ''}"></span>${c?.estado.conexion === 'en-vivo' ? 'En vivo' : 'Solo este equipo'} · sala «${esc(c?.estado.sala || N.salaActual())}»</span></div>`,
     });
   }
@@ -202,8 +205,18 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
     mostrarIngreso();
   }
 
+  // Solo dentro de TaxiCun: vuelve a la lista de municipios (no con un servicio en curso).
+  function cambiarMunicipio() {
+    if (c?.estado.viaje) {
+      avisos.mostrar({ titulo: 'Tienes un servicio en curso', cuerpo: 'Termínalo o cancélalo antes de cambiar de municipio.', tipo: 'alerta' });
+      return;
+    }
+    c?.desconectar();
+    location.href = EM.urlCambiarMunicipio('conductor');
+  }
+
   function ctx() {
-    return { N, app, c, avisos, diseno };
+    return { N, app, c, avisos, diseno, cambiarMunicipio };
   }
 
   /* ---------------- ingreso ---------------- */
@@ -211,7 +224,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
     const capa = el(`<div class="a-ingreso" role="dialog" aria-modal="true" aria-label="Ingreso de conductores">
       <div class="a-ingreso-arte">
         ${franjaCuadros()}
-        <div class="a-marca a-marca-clara">${EM.marcaIcono(38)}<span><strong>${esc(EM.NOMBRE)}</strong><small>App de conductores</small></span></div>
+        <div class="a-marca a-marca-clara${EM.EN_TAXICUN ? ' a-marca-tc' : ''}">${EM.encabezadoMarca({ tam: 38, detalle: EM.EN_TAXICUN ? `App de conductores · ${EM.PUEBLO}` : 'App de conductores' })}</div>
         <div class="a-ingreso-taxi" aria-hidden="true">${taxiLateral({ ancho: 270, movil: EM.MOVIL_DEMO })}</div>
         <div class="a-ingreso-carretera" aria-hidden="true"></div>
       </div>
@@ -227,10 +240,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
         <div class="a-pista">${icono('info', { tam: 18 })}<span>Demo: móvil <b data-movil-demo>${esc(EM.MOVIL_DEMO)}</b>, PIN <b>1234</b> (cualquier PIN de 4 dígitos sirve).</span></div>
         <p class="a-error" data-error role="alert"></p>
         <button type="submit" class="a-btn a-btn-primario a-btn-grande">${icono('volante', { tam: 20 })}<span>Ingresar</span></button>
-        <a class="a-btn-texto" href="../app/?d=${encodeURIComponent(diseno)}">¿Eres pasajero? Abre la app para pedir taxi</a>
+        <a class="a-btn-texto" href="${esc(EM.urlOtraApp('pasajero', diseno))}" data-ir-pasajero>¿Eres pasajero? Abre la app para pedir taxi</a>
+        ${EM.EN_TAXICUN ? `<button type="button" class="a-btn-texto a-tc-cambiar" data-cambiar-municipio>${icono('pin', { tam: 16 })}<span>Cambiar de municipio</span></button>` : ''}
       </form>
     </div>`);
     app.append(capa);
+    capa.querySelector('[data-cambiar-municipio]')?.addEventListener('click', cambiarMunicipio);
     const f = $(capa, 'form');
     const pin = casillasCodigo({ etiqueta: 'PIN', secreto: true });
     $(capa, '[data-pin]').append(pin.el);

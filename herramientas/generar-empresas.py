@@ -42,6 +42,9 @@ URL_PUBLICA = 'https://interos-sas.github.io/cootransrural-app/'
 PROVEEDOR = {'nombre': 'interOS', 'web': 'https://interos.com.co',
              # Contacto comercial que firma las propuestas (plantillas/propuesta/).
              'contacto': 'Oscar Bernal', 'correo': 'oscaradrianbernal@gmail.com'}
+# La app de todas las cooperativas se llama TaxiCun; interOS es quien la desarrolla.
+# (taxicun/ escoge la cooperativa con ?e=<id>, la elección guardada o el GPS.)
+MARCA = {'nombre': 'TaxiCun', 'desarrollador': PROVEEDOR['nombre'], 'lema': 'Tu taxi de confianza en Cundinamarca'}
 
 # ---------------------------------------------------------------------------
 # Motor de plantillas
@@ -546,6 +549,40 @@ def nombres_disenos(ficha):
     }
 
 
+def sin_parentesis(t):
+    return re.sub(r'\s*\(.*\)$', '', t or '').strip()
+
+
+def municipios_taxicun(ficha, maximo=2):
+    """Otros municipios con TaxiCun cerca de esta cooperativa, para el ejemplo «si viajas
+    a … la misma app te sirve allá». Salen de sus RUTAS (los más cercanos por carretera),
+    así solo se nombran pueblos que la propia ficha ya trae; si faltan, los más cercanos
+    en línea recta (sin nombrar El Rosal fuera de Cootransrural)."""
+    otras = [f for f in fichas() if f['id'] != ficha['id']]
+    pueblos = {(f['EMPRESA'].get('pueblo') or ''): f for f in otras if f['EMPRESA'].get('pueblo')}
+    elegidos = []
+    for r in sorted(ficha.get('RUTAS') or [], key=lambda r: r.get('km') or 999):
+        nombre = sin_parentesis(r.get('destino'))
+        if nombre in pueblos and nombre not in elegidos and nombre != (ficha['EMPRESA'].get('pueblo') or ''):
+            elegidos.append(nombre)
+        if len(elegidos) == maximo:
+            return elegidos
+    centro = ficha.get('CENTRO') or {}
+    if centro.get('lat') is not None:
+        def distancia(f):
+            c = f.get('CENTRO') or {}
+            if c.get('lat') is None:
+                return 9e9
+            return math.hypot(*plano_km(centro, c))
+        for f in sorted(otras, key=distancia):
+            nombre = f['EMPRESA'].get('pueblo') or ''
+            if nombre and nombre not in elegidos and (ficha['id'] == PRINCIPAL or f['id'] != PRINCIPAL):
+                elegidos.append(nombre)
+            if len(elegidos) == maximo:
+                break
+    return elegidos
+
+
 def tarifas_base():
     if 'tarifas_base' not in _CACHE:
         try:
@@ -646,9 +683,20 @@ def derivados(ficha):
         # Cada cooperativa tiene su página de stickers (plantillas/stickers/). La de la raíz
         # fija CT_EMPRESA='cootransrural', así que «stickers/?e=<id>» mostraría la de Cootransrural.
         'stickers_ruta': f'{prefijo}stickers/' if (PLANTILLAS / 'stickers' / 'index.html').is_file() or es_principal else f'stickers/?e={fid}',
-        'franja_texto': f"Propuesta de demostración preparada por {PROVEEDOR['nombre']} para {E.get('razonSocial') or E['nombre']}",
+        'franja_texto': f"Propuesta de demostración de {MARCA['nombre']}, preparada por {PROVEEDOR['nombre']} para {E.get('razonSocial') or E['nombre']}",
         'otros_ids': json.dumps([f['id'] for f in fichas() if f['id'] != fid]),
+        'marca': dict(MARCA),
+        # La app es TaxiCun: los botones «Pedir taxi», «Descargar» y los de conductores
+        # abren taxicun/ con esta cooperativa (rutas desde la raíz: van con {{RAIZ}}).
+        'taxicun_ruta': f'taxicun/?e={fid}',
+        'taxicun_conductor_ruta': f'taxicun/conductor/?e={fid}',
+        'url_taxicun': f'{URL_PUBLICA}taxicun/?e={fid}',
+        'url_taxicun_conductor': f'{URL_PUBLICA}taxicun/conductor/?e={fid}',
     })
+    # «a Tenjo o a Subachoque»: otros municipios donde la misma app TaxiCun sirve.
+    vecinos = municipios_taxicun(ficha)
+    p['taxicun_vecinos'] = vecinos
+    p['taxicun_otros'] = lista_natural([f'a {v}' for v in vecinos], 'o') or 'a otro municipio'
     p['c'] = {k.replace('-', '_'): v for k, v in pal.items()}  # paleta con claves legibles en plantillas
     p['franja_para'] = E.get('razonSocial') or E['nombre']
     # Para cerrar la frase con punto sin repetirlo («Coptaxi S.A.S.» + «.»).
@@ -840,7 +888,7 @@ def derivados(ficha):
         + (' las 24 horas.' if E.get('servicio24h') else '.')
     )
     p['descripcion_meta'] = (
-        f"{nombre}, taxis en {municipio}. Pide tu taxi con tu ubicación exacta, mira la tarifa antes de subir y sigue el móvil en el mapa."
+        f"{nombre}, taxis en {municipio}. Pide tu taxi con TaxiCun: tu ubicación exacta, la tarifa antes de subir y el móvil en el mapa."
         + (f" Servicio 24 horas: {tel_visible}." if E.get('servicio24h') and tel else (' Servicio 24 horas.' if E.get('servicio24h') else ''))
     )
     p['og_descripcion'] = (
@@ -1076,17 +1124,20 @@ def datos_propuesta(ficha, p):
 
     base = p['url_publica']
     tipo = p.get('tipo') or 'cooperativa'  # «empresa» si no es cooperativa (por ejemplo, una S.A.S.)
+    # La demo de la app es TaxiCun abierto con esta cooperativa (taxicun/?e=<id>).
     enlaces = [
         {'clave': 'web', 'icono': 'i-web', 'titulo': f'Web de la {tipo}', 'texto': 'Rutas, tarifas, contacto y el botón para pedir.', 'url': base},
-        {'clave': 'app', 'icono': 'i-cel', 'titulo': 'App del pasajero', 'texto': 'Un viaje completo con un conductor de prueba.', 'url': base + 'app/'},
-        {'clave': 'conductor', 'icono': 'i-volante', 'titulo': 'App del conductor', 'texto': f'Demo: móvil {movil}, PIN 1234.', 'url': base + 'conductor/'},
+        {'clave': 'app', 'icono': 'i-cel', 'titulo': 'TaxiCun · pasajero', 'texto': 'Un viaje completo con un conductor de prueba.', 'url': p['url_taxicun']},
+        {'clave': 'conductor', 'icono': 'i-volante', 'titulo': 'TaxiCun · conductor', 'texto': f'Demo: móvil {movil}, PIN 1234.', 'url': p['url_taxicun_conductor']},
         {'clave': 'stickers', 'icono': 'i-qr', 'titulo': 'Stickers QR', 'texto': 'Taxi, nevera, afiche y tarjeta, listos para imprimir.', 'url': URL_PUBLICA + p['stickers_ruta']},
         {'clave': 'vitrina', 'icono': 'i-capas', 'titulo': 'Vitrina de diseños', 'texto': 'Los tres diseños lado a lado.', 'url': base + 'disenos/'},
     ]
     for e in enlaces:
         e['corta'] = e['url'].replace('https://', '')
-        # Trozos que no se parten por dentro (la dirección se corta solo después de «/»).
-        e['trozos'] = [x + '/' for x in e['corta'].rstrip('/').split('/')]
+        # Trozos que no se parten por dentro (la dirección se corta solo después de «/»;
+        # «?e=tabio» al final va solo, sin «/»).
+        partes = e['corta'].split('/')
+        e['trozos'] = [x + '/' for x in partes[:-1]] + ([partes[-1]] if partes[-1] else [])
 
     # Tres lugares de ejemplo, de categorías distintas (la oficina no cuenta).
     locales = [l for l in ficha.get('LUGARES') or [] if l.get('cat') not in ('municipio', 'bogota')]
@@ -1135,7 +1186,7 @@ def datos_propuesta(ficha, p):
     n_rutas = len(ficha.get('RUTAS') or [])
     return {
         'fecha': f'{dia} de {MESES[mes - 1]} de {anio}',
-        'titulo': f'Propuesta: app de taxis para {razon}',
+        'titulo': f'Propuesta: {MARCA["nombre"]} para {razon}',
         'para': razon,
         'etiqueta': 'Propuesta comercial' if p['es_cliente'] else 'Propuesta de demostración',
         'ubicacion': (E.get('municipio') or pueblo) + (f' · {mayuscula(region)}' if region else ''),
@@ -1159,7 +1210,7 @@ def datos_propuesta(ficha, p):
             for q in (ficha.get('competencia') or {}).get('quejas') or []),
         'positivas_txt': ', '.join(f'«{html.escape(x)}»' for x in (ficha.get('competencia') or {}).get('positivas') or []),
         'cifras': [x for x in (
-            {'valor': '3', 'texto': 'diseños de app para elegir'},
+            {'valor': '3', 'texto': 'diseños de TaxiCun para elegir'},
             {'valor': str(n_locales), 'texto': f'lugares de {pueblo} ya cargados'} if n_locales else None,
             {'valor': str(n_rutas), 'texto': 'destinos con tarifa'} if n_rutas else None,
             {'valor': '7', 'texto': 'días o menos para tenerla'},
@@ -1281,6 +1332,7 @@ def generar():
                 print('generado:', destino_rel)
     escritos += escribir_indice(lista)
     print(f'{escritos} archivo(s) escritos para {len(lista)} cooperativa(s)')
+    revisar_imagenes(lista)
 
 
 def escribir_indice(lista):
@@ -1312,7 +1364,6 @@ def escribir_indice(lista):
     destino.write_text(texto, encoding='utf-8')
     print('generado: empresas/indice.json')
     return 1
-    revisar_imagenes(lista)
 
 
 if __name__ == '__main__':

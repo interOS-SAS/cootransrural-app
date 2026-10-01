@@ -1,5 +1,6 @@
-// Bloques de ajustes que comparten el pasajero y el conductor: diseño, sala de
-// prueba, sonido, notificaciones, conexión en vivo, instalación y «Acerca de».
+// Bloques de ajustes que comparten el pasajero y el conductor: municipio (solo
+// dentro de TaxiCun), diseño, sala de prueba, sonido, notificaciones, conexión en
+// vivo, instalación y «Acerca de».
 import { el, esc, icono, modal, chipPrueba, avisoDemo } from './ui.js';
 import * as EM from './empresa.js';
 
@@ -118,10 +119,27 @@ export function bloqueConexion(N, { simulacion = true } = {}) {
   return s;
 }
 
+// Solo dentro de TaxiCun: de qué municipio y cooperativa es la app ahora, y
+// «Cambiar de municipio» (vuelve a la lista de TaxiCun). alCambiar decide si se
+// puede salir (por ejemplo, no con un viaje en curso).
+export function bloqueMunicipio(N, { alCambiar } = {}) {
+  if (!EM.EN_TAXICUN) return '';
+  const s = el(`<section class="a-grupo a-tc-municipio" data-municipio><h3>Tu municipio</h3>
+    <div class="a-tc-municipio-caja">
+      ${EM.marcaIcono(44)}
+      <span><strong>${esc(EM.PUEBLO)}</strong><small>${esc(`Taxis de ${EM.NOMBRE_LARGO} en ${EM.APP}`)}</small></span>
+    </div>
+    <button type="button" class="a-btn a-btn-suave" data-cambiar-municipio>${icono('pin', { tam: 20 })}<span>Cambiar de municipio</span></button>
+    <p class="a-ayuda-txt">${esc(`${EM.APP} funciona en varios municipios de Cundinamarca. Si viajas a otro, escógelo y te mostramos su ${EM.TIPO} de taxis.`)}</p>
+  </section>`);
+  s.querySelector('[data-cambiar-municipio]').addEventListener('click', () => (alCambiar ? alCambiar() : (location.href = N.urlElegirMunicipio())));
+  return s;
+}
+
 export function bloqueInstalar(N, app) {
-  const s = el(`<section class="a-grupo"><h3>Instalar la app</h3>
+  const s = el(`<section class="a-grupo"><h3>${EM.EN_TAXICUN ? `Instalar ${esc(EM.APP)}` : 'Instalar la app'}</h3>
     <div class="a-instalar">
-      ${EM.marcaIcono(52, { png: true })}
+      ${EM.EN_TAXICUN ? EM.iconoApp(52) : EM.marcaIcono(52, { png: true })}
       <span><strong>${N.yaInstalada() ? 'Ya está instalada' : 'Tenla en tu pantalla de inicio'}</strong><small>${N.yaInstalada() ? 'La abriste desde tu pantalla de inicio.' : 'Se abre como una app, sin tienda y sin ocupar espacio.'}</small></span>
       ${N.yaInstalada() ? '' : `<button type="button" class="a-btn a-btn-primario a-btn-chico" data-instalar>${icono('instalar', { tam: 18 })} Instalar</button>`}
     </div></section>`);
@@ -138,14 +156,18 @@ export function bloqueInstalar(N, app) {
   return s;
 }
 
-// «Acerca de»: de qué cooperativa es la app y quién la desarrolló.
+// «Acerca de»: de qué cooperativa es la app y que la app es TaxiCun, desarrollada por interOS.
 export function bloqueAcerca(N, { que = 'App de pasajeros' } = {}) {
   return el(`<section class="a-grupo a-acerca" data-acerca><h3>Acerca de la app</h3>
     <div class="a-acerca-caja">
       ${EM.marcaIcono(48)}
       <span><strong>${esc(EM.NOMBRE_LARGO)}</strong><small>${esc(`${que} de ${EM.RAZON_SOCIAL}`)}</small></span>
     </div>
-    <p class="a-ayuda-txt a-version">${chipPrueba('MODO PRUEBA')}${avisoDemo('a-chip-demo a-chip-demo-claro')}<span>App desarrollada por <b>${esc(EM.PROVEEDOR)}</b></span></p>
+    <div class="a-acerca-caja a-acerca-tc">
+      ${EM.iconoApp(48)}
+      <span><strong>${EM.palabraApp()}</strong><small>${esc(EM.LEMA_APP)}</small></span>
+    </div>
+    <p class="a-ayuda-txt a-version">${chipPrueba('MODO PRUEBA')}${avisoDemo('a-chip-demo a-chip-demo-claro')}<span data-desarrollo>${esc(EM.TEXTO_DESARROLLO).replace(esc(EM.DESARROLLADOR), `<b>${esc(EM.DESARROLLADOR)}</b>`)}</span></p>
     ${EM.ES_PROPUESTA ? `<p class="a-ayuda-txt">${esc(EM.TEXTO_PROPUESTA)}.</p>` : ''}
   </section>`);
 }

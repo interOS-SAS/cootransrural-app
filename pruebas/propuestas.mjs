@@ -5,7 +5,10 @@
 //  - nada de «Cootransrural»/«El Rosal» ni de otra cooperativa fuera de la suya,
 //    y nunca «null», «undefined», «NaN», «$0» ni teléfonos de contacto inventados,
 //  - título, fecha, etiqueta (propuesta o cliente), aviso de datos públicos y contacto,
-//  - los QR de la página decodifican (jsQR) a SU dirección: demo, app, conductor, stickers y vitrina,
+//  - la propuesta es de TaxiCun (desarrollada por interOS): título, logo en la portada y en
+//    las cabeceras, panel «Una sola app para Cundinamarca» y pies «desarrollada por interOS»,
+//  - los QR de la página decodifican (jsQR) a SU dirección: demo, TaxiCun (pasajero y
+//    conductor con ?e=<id>), stickers y vitrina,
 //  - las cifras de los planes cuadran (1,9 %, $900 al día = $27.000 al mes y la flota de su ficha),
 //  - lugares, rutas y móvil de la demo salen de su ficha,
 //  - el PDF existe, tiene entre 4 y 6 páginas tamaño carta, pesa menos de 4 MB, su texto
@@ -168,6 +171,12 @@ for (const ficha of fichas) {
       rutasValores: [...document.querySelectorAll('.rutas li')].map((li) => li.querySelector('.ruta-datos b')?.textContent.trim()),
       qrs: [...document.querySelectorAll('[data-qr]')].map((caja) => ({ nombre: caja.dataset.nombre, url: caja.dataset.qr, svg: caja.querySelector('svg')?.outerHTML || '' })),
       enlaces: [...document.querySelectorAll('.enlace a')].map((a) => a.href),
+      cabezas: [...document.querySelectorAll('.hoja .cabeza')].map((c) => ({ logo: c.querySelector('.tc-logo')?.getAttribute('aria-label') || '', texto: c.textContent.replace(/\s+/g, ' ').trim() })),
+      pies: [...document.querySelectorAll('.pie-proveedor')].map((s) => s.textContent.replace(/\s+/g, ' ').trim()),
+      portadaLogo: document.querySelector('.portada .tc-logo-portada')?.getAttribute('aria-label') || '',
+      portadaDesarrolla: document.querySelector('.portada-desarrolla')?.textContent.replace(/\s+/g, ' ').trim() || '',
+      panel: document.querySelector('.tc-panel')?.textContent.replace(/\s+/g, ' ').trim() || '',
+      logosRotos: [...document.querySelectorAll('.tc-logo img')].filter((i) => !/img\/taxicun\//.test(i.src) || !i.naturalWidth).length,
     };
   });
 
@@ -178,8 +187,15 @@ for (const ficha of fichas) {
   ok(!r.desbordes.length, `${nombre}: todo cabe en sus hojas carta${r.desbordes.length ? ' — ' + r.desbordes.join(' | ') : ''}`);
   ok(!r.imagenesRotas.length, `${nombre}: todas las imágenes cargan${r.imagenesRotas.length ? ' — ' + r.imagenesRotas.join(', ') : ''}`);
   ok(/noindex/.test(r.robots), `${nombre}: noindex`);
-  ok(r.h1 === `Propuesta: app de taxis para ${razon}`, `${nombre}: título «${r.h1}»`);
-  ok(r.titulo.startsWith(`Propuesta: app de taxis para ${razon}`), `${nombre}: <title> de la propuesta`);
+  ok(r.h1 === `Propuesta: TaxiCun para ${razon}`, `${nombre}: título «${r.h1}»`);
+  ok(r.titulo.startsWith(`Propuesta: TaxiCun para ${razon}`), `${nombre}: <title> de la propuesta`);
+  // Marca TaxiCun (la app) y interOS como desarrollador.
+  ok(r.portadaLogo === 'TaxiCun' && /Desarrollada por\s*interOS/i.test(r.portadaDesarrolla), `${nombre}: portada con el logo de TaxiCun y «Desarrollada por interOS»`);
+  ok(r.cabezas.length === r.hojas - 1 && r.cabezas.every((c) => c.logo === 'TaxiCun' && c.texto.includes(`Propuesta para ${E.nombre}`)), `${nombre}: logo de TaxiCun en las ${r.cabezas.length} cabeceras`);
+  ok(r.pies.length === r.hojas - 1 && r.pies.every((x) => x === 'TaxiCun · desarrollada por interOS'), `${nombre}: pies «TaxiCun · desarrollada por interOS»`);
+  ok(!r.logosRotos, `${nombre}: los logos de TaxiCun cargan (img/taxicun/)`);
+  ok(/Una sola app para Cundinamarca/.test(r.panel) && r.panel.includes(`Al abrir TaxiCun en ${E.pueblo}`) && r.panel.includes(E.nombre) && /la misma app le sirve allá/.test(r.panel) && /el diseño que ustedes elijan/.test(r.panel),
+    `${nombre}: explica la app única por GPS («${r.panel.slice(0, 120)}…»)`);
   ok(r.visible.includes(FECHA), `${nombre}: fecha «${FECHA}»`);
   ok(r.visible.includes(`Preparada por interOS para ${E.nombre}`), `${nombre}: «Preparada por interOS para ${E.nombre}»`);
   if (esPropuesta) {
@@ -224,8 +240,8 @@ for (const ficha of fichas) {
 
   // QR de la página
   const esperadas = {
-    portada: urlPublica, contacto: urlPublica, web: urlPublica, app: urlPublica + 'app/',
-    conductor: urlPublica + 'conductor/', stickers: urlPublica + 'stickers/', vitrina: urlPublica + 'disenos/',
+    portada: urlPublica, contacto: urlPublica, web: urlPublica, app: `${URL_PUBLICA}taxicun/?e=${id}`,
+    conductor: `${URL_PUBLICA}taxicun/conductor/?e=${id}`, stickers: urlPublica + 'stickers/', vitrina: urlPublica + 'disenos/',
   };
   for (const qr of r.qrs) {
     const leido = await pagina.evaluate(async (svg) => {
@@ -244,7 +260,8 @@ for (const ficha of fichas) {
     ok(leido === esperadas[qr.nombre] && qr.url === esperadas[qr.nombre], `${nombre}: QR «${qr.nombre}» → ${leido}`);
   }
   ok(r.qrs.length === 7, `${nombre}: 7 códigos QR (portada, 5 enlaces y contacto)`);
-  ok(r.enlaces.every((h) => h.startsWith(urlPublica)), `${nombre}: los enlaces de la demo van a ${urlPublica}`);
+  ok(r.enlaces.length === 5 && r.enlaces.every((h) => h.startsWith(urlPublica) || h.startsWith(`${URL_PUBLICA}taxicun/`)), `${nombre}: los enlaces de la demo van a ${urlPublica} y a TaxiCun`);
+  ok(r.enlaces.includes(`${URL_PUBLICA}taxicun/?e=${id}`) && r.enlaces.includes(`${URL_PUBLICA}taxicun/conductor/?e=${id}`), `${nombre}: enlaces a TaxiCun pasajero y conductor con ?e=${id}`);
 
   // Precios
   ok(/^1,9 %/.test(r.precioA.replace(/ /g, ' ')), `${nombre}: Plan A 1,9 % («${r.precioA}»)`);
@@ -300,6 +317,7 @@ for (const ficha of fichas) {
   ok(!vacioPdf, `${nombre}: el texto del PDF no trae «null» ni «undefined»${vacioPdf ? ` — «${vacioPdf[0]}»` : ''}`);
   ok(texto.includes(CORREO), `${nombre}: el PDF trae el correo de contacto`);
   const textoPlano = texto.replace(/\s+/g, ' ');
+  ok(/Propuesta: TaxiCun para/.test(textoPlano) && /desarrollada por interOS/.test(textoPlano) && /Una sola app para Cundinamarca/.test(textoPlano), `${nombre}: el PDF es la propuesta de TaxiCun, desarrollada por interOS`);
   ok(textoPlano.includes(razon) && textoPlano.includes(E.pueblo), `${nombre}: el PDF nombra a ${razon} y a ${E.pueblo}`);
   const total = ficha.competencia?.quejas?.length ? 7 : 6;
   ok(Array.from({ length: total - 1 }, (_, i) => i + 2).every((n) => new RegExp(`\\b${n}\\s*/\\s*${total}\\b`).test(texto)), `${nombre}: el PDF numera las hojas (2 / ${total} … ${total} / ${total})`);

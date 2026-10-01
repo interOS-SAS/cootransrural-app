@@ -110,6 +110,11 @@
   padding: 22px 20px calc(26px + var(--vb-abajo));
 }
 
+/* «TaxiCun · Coptaxi» encima de «Ingresa a tu turno» (solo dentro de TaxiCun). */
+.vb-ingreso-tc {
+  margin: 0 0 8px;
+}
+
 .vb-ingreso-form h1 {
   margin: 0 0 16px;
   font-size: 30px;

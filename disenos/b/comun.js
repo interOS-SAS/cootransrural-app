@@ -5,6 +5,7 @@
 // que siempre (verde del escudo); en las demás toma los colores de la cooperativa.
 import {
   escaparHTML, iniciales, qrSVG, EMPRESA, TIPO_EMPRESA, COLORES, ID_EMPRESA, ES_PROPUESTA, PROVEEDOR, CONDUCTORES_DEMO, urlEmpresa,
+  MARCA as MARCA_APP, EN_TAXICUN, urlApp, urlElegirMunicipio, urlDelSitio,
 } from '../../nucleo/index.js';
 
 /* ------------------------------------------------------------------ */
@@ -59,6 +60,18 @@ export const MARCA = Object.freeze({
   movilesDemo: DEMO.map((c) => dato(c.movil).replace(/\D/g, '').padStart(3, '0')).filter((m) => m !== '000'),
 });
 
+// La app se llama TaxiCun (una sola marca para todas las cooperativas) y la
+// desarrolla interOS. Dentro de TaxiCun (taxicun/, que elige la cooperativa por
+// el sticker, el GPS o la lista de municipios) la marca se ve en la bienvenida, el
+// ingreso del conductor, la cabecera y los ajustes, sin quitarle el protagonismo a
+// la cooperativa, que conserva su nombre y sus colores («TaxiCun · Coptaxi»).
+export const TAXICUN = Object.freeze({
+  activo: Boolean(EN_TAXICUN),
+  nombre: dato(MARCA_APP?.nombre) || 'TaxiCun',
+  desarrollador: dato(MARCA_APP?.desarrollador) || dato(PROVEEDOR?.nombre) || 'interOS',
+  icono: urlDelSitio(dato(MARCA_APP?.icono) || 'img/taxicun/icono-192.png'),
+});
+
 // Nombre del diseño B: en Cootransrural es «Verde Rosal»; en las demás, «Color de la cooperativa».
 export const NOMBRE_DISENO = MARCA.principal ? 'Verde Rosal' : `Color de la ${MARCA.tipo}`;
 
@@ -98,18 +111,26 @@ export function movilEjemplo() {
   return MARCA.taxis && !MARCA.taxisAprox ? String(MARCA.taxis).padStart(3, '0') : MARCA.movilDemo;
 }
 
-// Política de privacidad de la cooperativa (<id>/privacidad/; en Cootransrural, la de la raíz).
+// Política de privacidad de la cooperativa (<id>/privacidad/; en Cootransrural, la
+// de la raíz). Con urlEmpresa sirve igual desde app/, conductor/ y taxicun/.
 export function urlPrivacidad() {
-  return MARCA.principal ? '../privacidad/' : urlEmpresa('privacidad/');
+  return urlEmpresa('privacidad/');
 }
 
-// Enlace a la otra app de la MISMA cooperativa (pasajero ↔ conductor). Con un
-// enlace relativo («../conductor/»), una página abierta desde la raíz con
-// ?e=<id> llevaba al conductor de Cootransrural; así lleva a <id>/conductor/.
-export function enlaceSeccion(seccion, diseno = 'b') {
-  const u = new URL(urlEmpresa(seccion));
-  u.searchParams.set('d', diseno);
-  return u.href;
+// Enlace a la otra app de la MISMA cooperativa (rol: 'pasajero' o 'conductor').
+// Dentro de TaxiCun se queda en taxicun/… con ?e=<id>; fuera, va a <id>/app/ o
+// <id>/conductor/ (nunca un enlace relativo armado a mano: desde la raíz con
+// ?e=<id> llevaba a la app de Cootransrural). Fuera de TaxiCun lleva el diseño
+// actual (?d=); dentro, solo si la página lo trae: si no, cada app abre el
+// diseño que eligió la cooperativa (o el que la persona escogió en Ajustes).
+export function enlaceApp(rol = 'pasajero', diseno = 'b') {
+  const d = TAXICUN.activo ? new URLSearchParams(location.search).get('d') : diseno;
+  return urlApp(rol, d ? { d } : {});
+}
+
+// Lista de municipios de TaxiCun (solo tiene sentido dentro de TaxiCun).
+export function enlaceMunicipio(rol = 'pasajero') {
+  return urlElegirMunicipio(rol);
 }
 
 // El núcleo guarda el viaje en curso del pasajero en sessionStorage con la misma
@@ -157,18 +178,41 @@ export function chipPrueba(texto = 'Modo prueba') {
 }
 
 export function demoPara() {
-  return MARCA.propuesta ? `<span class="vb-demo-para">Demostración para ${esc(MARCA.nombreLargo)}</span>` : '';
+  return MARCA.propuesta ? `<span class="vb-demo-para">Demostración de ${esc(TAXICUN.nombre)} para ${esc(MARCA.nombreLargo)}</span>` : '';
 }
 
 // Nota honesta para las cooperativas a las que solo se les muestra una propuesta.
-export function notaPropuesta(clase = '') {
-  if (!MARCA.propuesta) return '';
-  return `<p class="vb-nota-propuesta ${clase}">${ic('info', 16)}<span>Propuesta de demostración preparada por ${esc(MARCA.proveedor)} para ${esc(MARCA.razonSocial)} · No es la app oficial de la ${MARCA.tipo}.</span></p>`;
+export function textoPropuesta() {
+  return `Demostración de ${TAXICUN.nombre} para ${MARCA.nombreLargo} · No es la app oficial de la ${MARCA.tipo}.`;
 }
 
-// «App desarrollada por interOS».
+export function notaPropuesta(clase = '') {
+  if (!MARCA.propuesta) return '';
+  return `<p class="vb-nota-propuesta ${clase}">${ic('info', 16)}<span>${esc(textoPropuesta())}</span></p>`;
+}
+
+// Ícono de TaxiCun (img/taxicun/icono-192.png).
+export function iconoTaxiCun(tam = 28, clase = '') {
+  return `<img class="vb-tc-icono ${clase}" src="${esc(TAXICUN.icono)}" alt="" width="${tam}" height="${tam}" decoding="async">`;
+}
+
+// «TaxiCun · Coptaxi» con el ícono de TaxiCun (bienvenida, registro, ingreso del conductor).
+export function lineaTaxiCun(clase = '', tam = 30) {
+  return `<p class="vb-tc-linea ${clase}" data-taxicun>${iconoTaxiCun(tam)}<span><b class="vb-tc-nombre">${esc(TAXICUN.nombre)}</b> · ${esc(MARCA.nombre)}</span></p>`;
+}
+
+// Quién hace la app: dentro de TaxiCun, «TaxiCun · desarrollada por interOS»;
+// en las páginas propias de la cooperativa, «Esta app es TaxiCun, desarrollada por interOS».
+export function textoDesarrollada() {
+  return TAXICUN.activo
+    ? `${TAXICUN.nombre} · desarrollada por ${TAXICUN.desarrollador}`
+    : `Esta app es ${TAXICUN.nombre}, desarrollada por ${TAXICUN.desarrollador}`;
+}
+
 export function desarrolladaPor(clase = '') {
-  return `<p class="vb-desarrollada ${clase}">App desarrollada por <b>${esc(MARCA.proveedor)}</b></p>`;
+  const t = esc(TAXICUN.nombre);
+  const d = esc(TAXICUN.desarrollador);
+  return `<p class="vb-desarrollada ${clase}">${iconoTaxiCun(20)}<span>${TAXICUN.activo ? `<b class="vb-tc-nombre">${t}</b> · desarrollada por <b>${d}</b>` : `Esta app es <b class="vb-tc-nombre">${t}</b>, desarrollada por <b>${d}</b>`}</span></p>`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -870,25 +914,27 @@ export function ladoMarco({ titulo, texto, puntos = [], enlaceQR, textoQR }) {
   } catch {
     qr = '';
   }
+  const pie = [MARCA.propuesta ? textoPropuesta() : '', `${textoDesarrollada()}.`].filter(Boolean).join(' ');
   return `<aside class="vb-lado" aria-label="Sobre ${esc(MARCA.nombre)}">
-    <div class="vb-lado-marca">${insignia(76)}<div><b>${esc(MARCA.nombre)}</b><span>${esc(lineaMarca({ largo: true }))}</span></div></div>
+    <div class="vb-lado-marca">${insignia(76)}<div>${TAXICUN.activo ? `<span class="vb-lado-tc" data-taxicun>${iconoTaxiCun(22)}<b class="vb-tc-nombre">${esc(TAXICUN.nombre)}</b></span>` : ''}<b>${esc(MARCA.nombre)}</b><span>${esc(lineaMarca({ largo: true }))}</span></div></div>
     <h2>${esc(titulo)}</h2>
     <p>${esc(texto)}</p>
     <ul>${puntos.map((p) => `<li>${ic('check', 20)}<span>${esc(p)}</span></li>`).join('')}</ul>
     ${qr ? `<div class="vb-lado-qr" data-enlace-qr="${esc(enlaceQR)}"><div class="vb-lado-qr-img">${qr}</div><span>${esc(textoQR || 'Escanea para abrirla en tu celular')}</span></div>` : ''}
-    ${MARCA.principal ? '' : `<p class="vb-lado-pie">${MARCA.propuesta ? `Propuesta de demostración preparada por ${esc(MARCA.proveedor)} para ${esc(MARCA.razonSocial)} · No es la app oficial de la ${MARCA.tipo}.` : `App desarrollada por ${esc(MARCA.proveedor)}.`}</p>`}
+    <p class="vb-lado-pie">${esc(pie)}</p>
   </aside>`;
 }
 
-// Dirección para abrir esta misma pantalla en el celular (sin parámetros de
-// prueba). Si la página se abrió desde la raíz con ?e=<id>, el QR lleva a la
-// carpeta propia de la cooperativa (<id>/app/ o <id>/conductor/).
-export function enlaceParaCelular(seccion = 'app/') {
-  const u = new URL(location.href);
-  u.searchParams.delete('vitrina');
-  const propia = new URL(urlEmpresa(seccion));
-  if (u.pathname.startsWith(propia.pathname)) return u.href;
-  u.searchParams.delete('e');
-  propia.search = u.search;
-  return propia.href;
+// Dirección para abrir esta misma app en el celular (rol: 'pasajero' o
+// 'conductor'), sin el parámetro de la vitrina. Dentro de TaxiCun queda en
+// taxicun/… con ?e=<id>; fuera, en la carpeta propia de la cooperativa (<id>/app/
+// o <id>/conductor/), aunque la página se haya abierto desde la raíz con ?e=<id>.
+// Los demás parámetros (diseño, sala de prueba, móvil del sticker) se conservan.
+export function enlaceParaCelular(rol = 'pasajero') {
+  const actual = new URL(location.href);
+  const destino = new URL(urlApp(rol));
+  for (const [k, v] of actual.searchParams) {
+    if (k !== 'vitrina' && k !== 'e' && k !== 'elegir') destino.searchParams.set(k, v);
+  }
+  return destino.href;
 }

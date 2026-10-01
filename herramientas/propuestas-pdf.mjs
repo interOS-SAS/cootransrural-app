@@ -1,16 +1,17 @@
-// Genera el PDF de la propuesta comercial de cada cooperativa a partir de
-// <url>/<id>/propuesta/ (plantillas/propuesta/), con Chromium sin pantalla.
+// Genera el PDF de la propuesta comercial de TaxiCun (desarrollada por interOS)
+// para cada cooperativa a partir de <url>/<id>/propuesta/ (plantillas/propuesta/),
+// con Chromium sin pantalla.
 //
-// Uso:  node herramientas/propuestas-pdf.mjs [url_base] [id …] [--salida=CARPETA] [--todas]
+// Uso:  node herramientas/propuestas-pdf.mjs [url_base] [id …] [--salida=CARPETA] [--todas] [--copiar]
 //   url_base   donde se sirve el sitio (por defecto http://localhost:8775/)
 //   id …       solo esas cooperativas (por ejemplo: tenjo madrid)
 //   --todas    incluye también a Cootransrural (por defecto no: es la principal)
 //   --salida   carpeta de salida (por defecto /tmp/cootrans/propuestas)
+//   --copiar   además, copia cada PDF a <id>/propuesta/ (de ahí lo enlazan los correos)
 //
 // Deja /tmp/cootrans/propuestas/<id>/Propuesta-app-taxis-<NombreCorto>.pdf.
-// Los PDF NO van al repositorio: se mandan por correo o se imprimen.
 import { chromium } from '/tmp/cootrans/npm/node_modules/playwright-core/index.mjs';
-import { mkdirSync, readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, existsSync, statSync, copyFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -25,6 +26,7 @@ const BASE = (sueltos.find((a) => /^https?:\/\//.test(a)) || 'http://localhost:8
 const PEDIDAS = sueltos.filter((a) => !/^https?:\/\//.test(a));
 const SALIDA = opcion('salida', '/tmp/cootrans/propuestas');
 const TODAS = args.includes('--todas');
+const COPIAR = args.includes('--copiar');
 
 const ids = readdirSync(join(RAIZ, 'empresas'))
   .filter((id) => existsSync(join(RAIZ, 'empresas', id, 'ficha.json')))
@@ -64,6 +66,11 @@ for (const id of ids) {
     const kb = Math.round(statSync(destino).size / 1024);
     const paginas = (readFileSync(destino, 'latin1').match(/\/Type\s*\/Page(?!s)/g) || []).length;
     console.log(`${errores.length ? '!' : '✔'} ${id}: ${destino} · ${paginas} páginas · ${kb} KB${errores.length ? ` · avisos: ${errores.join(' | ')}` : ''}`);
+    if (COPIAR) {
+      const copia = join(RAIZ, ruta, archivo || `Propuesta-app-taxis-${id}.pdf`);
+      copyFileSync(destino, copia);
+      console.log(`  copiado a ${ruta}${archivo}`);
+    }
   } catch (e) {
     fallas++;
     console.error(`✘ ${id}: ${e.message}`);

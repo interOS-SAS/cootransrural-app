@@ -11,7 +11,12 @@
 //  Además: sin cámara, sin GPS, solicitud que vence, rendimiento durante el viaje, una ruta
 //  con tarifa fija de la ficha y la separación entre cooperativas (el pasajero registrado
 //  aquí no aparece, ni con su historial, en otras dos cooperativas del mismo navegador).
-// Uso: node pruebas/diseno-a.mjs [url_base] [--empresa=<id>]   (por defecto http://localhost:8771/ y cootransrural)
+//  Con --taxicun todo corre dentro de la app única TaxiCun (taxicun/?e=<id>&d=a y
+//  taxicun/conductor/?e=<id>&d=a): además revisa la marca «TaxiCun · <cooperativa>», el sello
+//  de la barra, «Cambiar de municipio» (lleva a taxicun/?elegir=1) y que los enlaces entre las
+//  apps se queden en TaxiCun. Sin --taxicun revisa que no salga «Cambiar de municipio» y que los
+//  enlaces vayan a las páginas propias de la cooperativa.
+// Uso: node pruebas/diseno-a.mjs [url_base] [--empresa=<id>] [--taxicun]   (por defecto http://localhost:8771/ y cootransrural)
 //      CAPTURAS=/otra/carpeta/ node pruebas/diseno-a.mjs …   (para guardar las capturas en otro lado)
 import { chromium } from '/tmp/cootrans/npm/node_modules/playwright-core/index.mjs';
 import { existsSync, mkdirSync, readFileSync } from 'node:fs';
@@ -19,6 +24,7 @@ import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 const argumentos = process.argv.slice(2);
 const EMPRESA = (argumentos.find((a) => a.startsWith('--empresa='))?.split('=')[1] || 'cootransrural').toLowerCase();
 const BASE = (argumentos.find((a) => !a.startsWith('--')) || 'http://localhost:8771/').replace(/\/?$/, '/');
+const TAXICUN = argumentos.includes('--taxicun');
 const EXE = process.env.CHROMIUM || '/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome';
 
 /* ---------------- datos de la cooperativa (de su ficha) ---------------- */
@@ -41,7 +47,21 @@ const fichaDe = (id) => JSON.parse(readFileSync(new URL(`../empresas/${id}/ficha
 const existeFicha = (id) => existsSync(new URL(`../empresas/${id}/ficha.json`, import.meta.url));
 // Separación: el pasajero registrado aquí no debe aparecer en otras dos cooperativas.
 const OTRAS = ['cootransrural', 'tabio', 'subachoque'].filter((id) => id !== EMPRESA && existeFicha(id)).slice(0, 2);
-const CAPTURAS = (process.env.CAPTURAS || `/tmp/cootrans/capturas/a/${EMPRESA}/`).replace(/\/?$/, '/');
+const CAPTURAS = (process.env.CAPTURAS || `/tmp/cootrans/capturas/${TAXICUN ? 'tc-a' : 'a'}/${EMPRESA}/`).replace(/\/?$/, '/');
+// Páginas de la app: dentro de TaxiCun (taxicun/?e=<id>) o las propias de la cooperativa.
+const raizDe = (id) => (id === 'cootransrural' ? BASE : `${BASE}${id}/`);
+const urlPasajero = (id = EMPRESA, extra = '') => (TAXICUN ? `${BASE}taxicun/?e=${id}&d=a${extra}` : `${raizDe(id)}app/?d=a${extra}`);
+const urlConductor = (id = EMPRESA) => (TAXICUN ? `${BASE}taxicun/conductor/?e=${id}&d=a` : `${raizDe(id)}conductor/?d=a`);
+// La app es TaxiCun y la desarrolla interOS (ver disenos/a/empresa.js).
+const TEXTO_DESARROLLO = TAXICUN ? 'TaxiCun · desarrollada por interOS' : 'Esta app es TaxiCun, desarrollada por interOS';
+const ICONO_TAXICUN = 'img/taxicun/icono-192.png';
+// ¿Un enlace lleva a la otra app de esta cooperativa (dentro de TaxiCun: taxicun/… con ?e=<id>)?
+function enlaceApp(href, rol) {
+  if (!href) return false;
+  const u = new URL(href, BASE);
+  if (TAXICUN) return u.href.startsWith(`${BASE}${rol === 'conductor' ? 'taxicun/conductor/' : 'taxicun/'}`) && u.pathname.endsWith(rol === 'conductor' ? '/taxicun/conductor/' : '/taxicun/') && u.searchParams.get('e') === EMPRESA;
+  return u.href === `${RAIZ_COOP}${rol === 'conductor' ? 'conductor' : 'app'}/?d=a`;
+}
 mkdirSync(CAPTURAS, { recursive: true });
 
 const distanciaKm = (a, b) => {
@@ -85,7 +105,7 @@ if (!DESTINO || !SEGUNDO) {
   console.log(`✘ la ficha de «${EMPRESA}» no tiene lugares para probar (destino: ${DESTINO}, segundo: ${SEGUNDO?.nombre})`);
   process.exit(1);
 }
-console.log(`Cooperativa: ${EMPRESA} (${FICHA.estado}) · ${RAIZ_COOP} · destino «${DESTINO}» · segundo «${SEGUNDO.nombre}» (${SEGUNDO.cat}) · móviles ${MOVIL_DEMO} y ${MOVIL_2}`);
+console.log(`Cooperativa: ${EMPRESA} (${FICHA.estado}) · ${TAXICUN ? 'dentro de TaxiCun' : RAIZ_COOP} · destino «${DESTINO}» · segundo «${SEGUNDO.nombre}» (${SEGUNDO.cat}) · móviles ${MOVIL_DEMO} y ${MOVIL_2}`);
 
 const t0 = Date.now();
 const seg = () => `${Math.round((Date.now() - t0) / 1000)} s`;
@@ -190,12 +210,16 @@ async function probarPasajero() {
   await ctx.addInitScript(registrarAvisos);
   const p = await ctx.newPage();
   vigilar(p, 'pasajero');
-  await p.goto(`${RAIZ_COOP}app/?d=a`);
+  await p.goto(urlPasajero());
 
   // Bienvenida y registro
-  await p.waitForSelector('.a-bienvenida .a-bien-diapo');
+  await p.waitForSelector('.a-bienvenida .a-bien-diapo', { timeout: 30000 });
   await p.waitForTimeout(1200);
   await foto(p, 'p01-bienvenida-1');
+  const cabezaBienvenida = await p.textContent('.a-bien-cabeza .a-marca');
+  const iconoBienvenida = await p.$$eval('.a-bien-cabeza .a-marca img', (ns) => ns.map((n) => n.getAttribute('src')));
+  if (TAXICUN) ok(/TaxiCun\s*·\s*/.test(cabezaBienvenida) && cabezaBienvenida.includes(NOMBRE) && iconoBienvenida.some((s) => s.endsWith(ICONO_TAXICUN)), `TaxiCun: la bienvenida dice «TaxiCun · ${NOMBRE}» con el ícono de TaxiCun`);
+  else ok(!cabezaBienvenida.includes('TaxiCun') && cabezaBienvenida.includes(NOMBRE), 'fuera de TaxiCun: la bienvenida lleva solo la cooperativa');
   await p.click('[data-siguiente]');
   await p.waitForTimeout(800);
   await foto(p, 'p02-bienvenida-2');
@@ -204,6 +228,8 @@ async function probarPasajero() {
   await foto(p, 'p03-bienvenida-3');
   await p.click('[data-siguiente]');
   await p.waitForSelector('form.a-registro');
+  if (TAXICUN) ok(((await p.textContent('.a-registro .a-tc-linea').catch(() => '')) || '').replace(/\s+/g, ' ').includes(`TaxiCun · ${NOMBRE}`), `TaxiCun: el registro lleva «TaxiCun · ${NOMBRE}»`);
+  else ok(!(await p.$('.a-registro .a-tc-linea')), 'fuera de TaxiCun: el registro no lleva la línea de TaxiCun');
   const enlacePrivacidad = await p.getAttribute('.a-check a', 'href');
   const respPrivacidad = await fetch(enlacePrivacidad).catch(() => null);
   ok(enlacePrivacidad === `${RAIZ_COOP}privacidad/` && respPrivacidad?.ok, `los términos enlazan la privacidad de esta cooperativa (${enlacePrivacidad})`);
@@ -246,10 +272,12 @@ async function probarPasajero() {
   if (TIENE_TELEFONO) ok(Boolean(await p.$('a.a-central[href^="tel:"]')), 'la central tiene botón para llamar');
   else ok(Boolean(await p.$('.a-central-sin')) && !(await p.$('a.a-central')) && (await p.textContent('.a-central-sin')).includes('Teléfono de la central: pronto'), 'sin teléfono: «Teléfono de la central: pronto» y sin enlace para llamar');
   if (PROPUESTA) {
-    ok((await p.textContent('.a-chip-red')).includes(`Demostración para ${E.nombre}`), 'propuesta: «Demostración para …» junto a MODO PRUEBA');
+    ok((await p.textContent('.a-chip-red')).includes(`Demostración de TaxiCun para ${E.nombre}`), 'propuesta: «Demostración de TaxiCun para …» junto a MODO PRUEBA');
     ok(await p.evaluate(() => /noindex/.test(document.querySelector('meta[name="robots"]')?.content || '')), 'propuesta: la página no se indexa (noindex)');
   } else ok(!(await p.$('.a-chip-demo')), 'cliente: sin aviso de demostración');
   ok(await p.isVisible('.a-pin'), 'pin central fijo para ajustar la recogida');
+  if (TAXICUN) ok(await p.isVisible('.a-barra .a-tc-sello') && (await p.textContent('.a-barra .a-tc-sello')).includes('TaxiCun'), 'TaxiCun: sello discreto de TaxiCun en la barra');
+  else ok(!(await p.$('.a-barra .a-tc-sello')), 'fuera de TaxiCun: la barra no lleva el sello de TaxiCun');
   await foto360(p, 'p07b-inicio-360');
   await p.click('.a-hoja-asa');
   await p.waitForTimeout(700);
@@ -408,6 +436,11 @@ async function probarPasajero() {
   await p.click('[data-menu]');
   await p.waitForTimeout(600);
   await foto(p, 'p27-menu');
+  const hrefConductor = await p.getAttribute('.a-menu-item:has-text("Soy conductor")', 'href');
+  ok(enlaceApp(hrefConductor, 'conductor'), `«Soy conductor» lleva a la app de conductores ${TAXICUN ? 'de TaxiCun' : 'de la cooperativa'} (${hrefConductor})`);
+  const itemMunicipio = await p.$('.a-menu-item:has-text("Cambiar de municipio")');
+  ok(TAXICUN ? Boolean(itemMunicipio) : !itemMunicipio, TAXICUN ? 'TaxiCun: «Cambiar de municipio» en el menú' : 'fuera de TaxiCun: sin «Cambiar de municipio» en el menú');
+  if (TAXICUN) ok((await p.textContent('.a-menu-pie')).includes(TEXTO_DESARROLLO), `TaxiCun: el pie del menú dice «${TEXTO_DESARROLLO}»`);
   await p.click('.a-menu-item:has-text("Mis viajes")');
   await p.waitForSelector('[data-lista-viajes]');
   await p.waitForTimeout(500);
@@ -434,8 +467,15 @@ async function probarPasajero() {
       await p.waitForTimeout(400);
       await foto(p, 'p31b-ajustes-acerca');
       const acerca = await p.textContent('.a-panel.a-abierto [data-acerca]');
-      ok(acerca.includes('App desarrollada por interOS') && acerca.includes(E.nombre), 'Ajustes: «Acerca de» con la cooperativa y «App desarrollada por interOS»');
-      if (PROPUESTA) ok(acerca.includes(`Demostración para ${E.nombre}`), 'Ajustes: aviso de demostración en la propuesta');
+      ok(acerca.includes(TEXTO_DESARROLLO) && acerca.includes(E.nombre), `Ajustes: «Acerca de» con la cooperativa y «${TEXTO_DESARROLLO}»`);
+      if (PROPUESTA) ok(acerca.includes(`Demostración de TaxiCun para ${E.nombre}`), 'Ajustes: aviso «Demostración de TaxiCun para …» en la propuesta');
+      const municipio = await p.$('.a-panel.a-abierto [data-municipio] [data-cambiar-municipio]');
+      ok(TAXICUN ? Boolean(municipio) && (await municipio.textContent()).includes('Cambiar de municipio') : !municipio, TAXICUN ? 'TaxiCun: «Cambiar de municipio» en Ajustes' : 'fuera de TaxiCun: sin «Cambiar de municipio» en Ajustes');
+      if (TAXICUN) {
+        await p.$eval('.a-panel.a-abierto [data-municipio]', (n) => n.scrollIntoView({ block: 'start' }));
+        await p.waitForTimeout(300);
+        await foto(p, 'p31c-ajustes-municipio');
+      }
     }
     if (item === 'Ayuda') {
       const tel = await p.$$('.a-panel.a-abierto .a-contacto a[href^="tel:"]');
@@ -454,6 +494,7 @@ async function probarPasajero() {
   ok(['¡Tu taxi va en camino!', '¡Tu taxi está en la puerta!', 'Viaje iniciado', 'Llegaste a tu destino', 'Pago exitoso (prueba)'].every((t) => historialAvisos.includes(t)), 'todos los avisos del viaje quedan en la campana');
   await foto(p, 'p34-avisos');
   await probarSeparacion(ctx, p);
+  if (TAXICUN) await probarCambiarMunicipio(p, 'pasajero');
   console.log(`   pasajero listo (${seg()})`);
   await ctx.close();
 }
@@ -466,9 +507,16 @@ async function probarConductor() {
   await ctx.addInitScript(registrarAvisos);
   const p = await ctx.newPage();
   vigilar(p, 'conductor');
-  await p.goto(`${RAIZ_COOP}conductor/?d=a`);
-  await p.waitForSelector('.a-ingreso');
+  await p.goto(urlConductor());
+  await p.waitForSelector('.a-ingreso', { timeout: 30000 });
   await p.waitForTimeout(1300);
+  const marcaIngreso = await p.textContent('.a-ingreso .a-marca');
+  const iconosIngreso = await p.$$eval('.a-ingreso .a-marca img', (ns) => ns.map((n) => n.getAttribute('src')));
+  if (TAXICUN) ok(/TaxiCun\s*·\s*/.test(marcaIngreso) && marcaIngreso.includes(NOMBRE) && iconosIngreso.some((s) => s.endsWith(ICONO_TAXICUN)), `TaxiCun: el ingreso del conductor dice «TaxiCun · ${NOMBRE}» con el ícono de TaxiCun`);
+  else ok(!marcaIngreso.includes('TaxiCun') && marcaIngreso.includes(NOMBRE), 'fuera de TaxiCun: el ingreso lleva solo la cooperativa');
+  const hrefPasajero = await p.getAttribute('[data-ir-pasajero]', 'href');
+  ok(enlaceApp(hrefPasajero, 'pasajero'), `«¿Eres pasajero?» lleva a la app del pasajero ${TAXICUN ? 'de TaxiCun' : 'de la cooperativa'} (${hrefPasajero})`);
+  ok(TAXICUN ? Boolean(await p.$('.a-ingreso [data-cambiar-municipio]')) : !(await p.$('.a-ingreso [data-cambiar-municipio]')), TAXICUN ? 'TaxiCun: el ingreso ofrece «Cambiar de municipio»' : 'fuera de TaxiCun: el ingreso no ofrece cambiar de municipio');
   ok((await p.textContent('.a-ingreso')).includes(`móvil ${MOVIL_DEMO}, PIN 1234`), `pista de ingreso de la demo (móvil ${MOVIL_DEMO})`);
   await p.fill('input[name=movil]', MOVIL_DEMO);
   await p.waitForTimeout(200);
@@ -554,6 +602,9 @@ async function probarConductor() {
   await p.click('[data-menu]');
   await p.waitForTimeout(600);
   await foto(p, 'c14-menu');
+  const hrefMenuPasajero = await p.getAttribute('.a-menu-item:has-text("App del pasajero")', 'href');
+  ok(enlaceApp(hrefMenuPasajero, 'pasajero'), `menú del conductor: «App del pasajero» ${TAXICUN ? 'se queda en TaxiCun' : 'va a la app de la cooperativa'} (${hrefMenuPasajero})`);
+  ok(TAXICUN ? Boolean(await p.$('.a-menu-item:has-text("Cambiar de municipio")')) : !(await p.$('.a-menu-item:has-text("Cambiar de municipio")')), TAXICUN ? 'TaxiCun: «Cambiar de municipio» en el menú del conductor' : 'fuera de TaxiCun: sin «Cambiar de municipio» en el menú del conductor');
   const secciones = [['Ganancias', 'c15-ganancias'], ['Historial', 'c16-historial'], ['Documentos', 'c17-documentos'], ['Mi taxi', 'c18-mi-taxi'], ['Ajustes', 'c19-ajustes']];
   for (const [i, [item, nombre]] of secciones.entries()) {
     if (i > 0) {
@@ -575,13 +626,19 @@ async function probarConductor() {
   await p.$eval('.a-panel.a-abierto [data-acerca]', (n) => n.scrollIntoView({ block: 'end' }));
   await p.waitForTimeout(400);
   await foto(p, 'c19b-ajustes-acerca');
-  ok((await p.textContent('.a-panel.a-abierto [data-acerca]')).includes('App desarrollada por interOS'), 'Ajustes del conductor: «App desarrollada por interOS»');
+  ok((await p.textContent('.a-panel.a-abierto [data-acerca]')).includes(TEXTO_DESARROLLO), `Ajustes del conductor: «${TEXTO_DESARROLLO}»`);
+  ok(TAXICUN ? Boolean(await p.$('.a-panel.a-abierto [data-cambiar-municipio]')) : !(await p.$('.a-panel.a-abierto [data-cambiar-municipio]')), TAXICUN ? 'TaxiCun: «Cambiar de municipio» en los Ajustes del conductor' : 'fuera de TaxiCun: sin «Cambiar de municipio» en los Ajustes del conductor');
   await p.click('.a-panel.a-abierto [data-cerrar]');
   await p.waitForTimeout(400);
   await p.click('[data-campana]');
   await p.waitForTimeout(600);
   ok((await p.textContent('.a-panel.a-abierto')).includes('Nueva solicitud de servicio'), 'la nueva solicitud queda en los avisos de la campana');
   await foto(p, 'c20-avisos');
+  if (TAXICUN) {
+    await p.click('.a-panel.a-abierto [data-cerrar]');
+    await p.waitForTimeout(400);
+    await probarCambiarMunicipio(p, 'conductor');
+  }
   console.log(`   conductor listo (${seg()})`);
   await ctx.close();
 }
@@ -597,16 +654,21 @@ async function probarEscritorio() {
   }, `${PREFIJO}pasajero`);
   const p = await ctx.newPage();
   vigilar(p, 'escritorio');
-  await p.goto(`${RAIZ_COOP}app/?d=a`);
-  await vista(p, 'inicio', 20000);
+  await p.goto(urlPasajero());
+  await vista(p, 'inicio', 30000);
   await p.waitForTimeout(3500);
   await foto(p, 'e01-escritorio-1280');
   ok(await p.isVisible('.a-escritorio'), 'en pantallas anchas se ve el panel con el QR');
   const qrEscritorio = await leerQR(p, '.a-escritorio-qr-img svg');
-  ok(qrEscritorio === `${RAIZ_COOP}app/?d=a`, `el QR del panel abre la app de esta cooperativa (${qrEscritorio})`);
+  ok(qrEscritorio === urlPasajero(), `el QR del panel abre la app de esta cooperativa${TAXICUN ? ' dentro de TaxiCun' : ''} (${qrEscritorio})`);
   const panel = await p.textContent('.a-escritorio');
-  ok(panel.includes(NOMBRE) && panel.includes('App desarrollada por interOS'), 'el panel lleva el nombre de la cooperativa y «App desarrollada por interOS»');
-  if (PROPUESTA) ok(panel.includes(`Propuesta de demostración preparada por interOS para ${E.razonSocial}`) && panel.includes('No es la página oficial'), 'propuesta: el panel lo dice claro');
+  ok(panel.includes(NOMBRE) && panel.includes(TEXTO_DESARROLLO), `el panel lleva el nombre de la cooperativa y «${TEXTO_DESARROLLO}»`);
+  if (PROPUESTA) ok(panel.includes(`Demostración de TaxiCun para ${E.razonSocial}`) && panel.includes('No es la página oficial') && !panel.includes('preparada por interOS'), 'propuesta: el panel lo dice claro («Demostración de TaxiCun para …»)');
+  // La vitrina (iframe sin marco) es de las páginas propias; TaxiCun no la usa.
+  if (TAXICUN) {
+    await ctx.close();
+    return;
+  }
   await p.setViewportSize({ width: 412, height: 860 });
   await p.goto(`${RAIZ_COOP}app/?d=a&vitrina=1`);
   await vista(p, 'inicio', 20000);
@@ -630,7 +692,7 @@ async function probarBordes() {
   }, `${PREFIJO}pasajero`);
   const p = await ctx.newPage();
   vigilar(p, 'sin-gps');
-  await p.goto(`${RAIZ_COOP}app/?d=a`);
+  await p.goto(urlPasajero());
   await vista(p, 'inicio', 30000);
   await p.waitForSelector('[data-aviso-gps]:not([hidden])', { timeout: 15000 });
   ok((await p.textContent('[data-aviso-gps]')).includes(`centro de ${PUEBLO}`), `sin GPS avisa que usa el centro de ${PUEBLO}`);
@@ -644,8 +706,8 @@ async function probarBordes() {
   await ctx2.addInitScript(registrarAvisos);
   const c = await ctx2.newPage();
   vigilar(c, 'vence');
-  await c.goto(`${RAIZ_COOP}conductor/?d=a`);
-  await c.waitForSelector('.a-ingreso');
+  await c.goto(urlConductor());
+  await c.waitForSelector('.a-ingreso', { timeout: 30000 });
   await c.waitForTimeout(500);
   await c.fill('input[name=movil]', MOVIL_2);
   await c.keyboard.type('4321');
@@ -668,7 +730,7 @@ async function probarBordes() {
     await ctx3.addInitScript(() => localStorage.setItem('ct.envivo', 'no'));
     await ctx3.route(`**/empresas/${EMPRESA}/ficha.json*`, (r) => r.fulfill({ status: 503, body: '' }));
     const f = await ctx3.newPage();
-    await f.goto(`${RAIZ_COOP}app/?d=a`);
+    await f.goto(urlPasajero());
     await f.waitForFunction(() => /No pudimos cargar/.test(document.getElementById('carga')?.innerText || ''), null, { timeout: 25000 });
     await f.waitForTimeout(500);
     const texto = await f.evaluate(() => document.body.innerText);
@@ -689,7 +751,7 @@ async function probarSeparacion(ctx, p) {
     const pref = otra === 'cootransrural' ? 'ct.' : `ct.${otra}.`;
     const q = await ctx.newPage();
     vigilar(q, `separación ${otra}`);
-    await q.goto(`${raiz}app/?d=a`);
+    await q.goto(TAXICUN ? urlPasajero(otra) : `${raiz}app/?d=a`);
     await q.waitForSelector('.a-bienvenida .a-bien-diapo', { timeout: 20000 });
     await q.waitForTimeout(600);
     const bienvenida = await q.textContent('.a-bienvenida');
@@ -716,6 +778,29 @@ async function probarSeparacion(ctx, p) {
 }
 
 /* ------------------------------------------------------------------ */
+/* 5b) TaxiCun: «Cambiar de municipio» vuelve a la lista de municipios   */
+/* ------------------------------------------------------------------ */
+async function probarCambiarMunicipio(p, rol) {
+  if (await p.$('.a-panel.a-abierto [data-cerrar]')) {
+    await p.click('.a-panel.a-abierto [data-cerrar]');
+    await p.waitForTimeout(400);
+  }
+  await p.click('[data-menu]');
+  await p.waitForTimeout(500);
+  await p.click('.a-menu-item:has-text("Ajustes")');
+  await p.waitForSelector('.a-panel.a-abierto [data-cambiar-municipio]');
+  await p.waitForTimeout(500);
+  await p.click('.a-panel.a-abierto [data-cambiar-municipio]');
+  const destino = `${BASE}${rol === 'conductor' ? 'taxicun/conductor/' : 'taxicun/'}?elegir=1`;
+  await p.waitForURL((u) => u.href === destino, { timeout: 15000 }).catch(() => {});
+  ok(p.url() === destino, `TaxiCun (${rol}): «Cambiar de municipio» lleva a ${destino.replace(BASE, '')} (${p.url()})`);
+  await p.waitForSelector('#elegir:not([hidden]) [data-id]', { timeout: 15000 }).catch(() => {});
+  ok(Boolean(await p.$(`#elegir:not([hidden]) [data-id="${EMPRESA}"]`)), `TaxiCun (${rol}): se ve la lista de municipios con ${PUEBLO}`);
+  await p.waitForTimeout(400);
+  await p.screenshot({ path: `${CAPTURAS}${rol === 'conductor' ? 'c21' : 'p35'}-elegir-municipio.png` });
+}
+
+/* ------------------------------------------------------------------ */
 /* 6) Ruta con tarifa fija                                              */
 /* ------------------------------------------------------------------ */
 async function probarRutaFija() {
@@ -730,7 +815,7 @@ async function probarRutaFija() {
   }, `${PREFIJO}pasajero`);
   const p = await ctx.newPage();
   vigilar(p, 'ruta-fija');
-  await p.goto(`${RAIZ_COOP}app/?d=a`);
+  await p.goto(urlPasajero());
   await vista(p, 'inicio', 30000);
   await p.waitForTimeout(1500);
   await p.click('[data-buscar]');
@@ -760,5 +845,5 @@ await Promise.all([
 ok(errores.length === 0, `sin errores de JavaScript${errores.length ? `:\n   ${errores.slice(0, 8).join('\n   ')}` : ''}`);
 ok(problemasTexto.length === 0, `texto visible limpio en todas las capturas (sin null/undefined${PRINCIPAL ? '' : ' ni datos de Cootransrural'})${problemasTexto.length ? `:\n   ${[...new Set(problemasTexto)].slice(0, 12).join('\n   ')}` : ''}`);
 await navegador.close();
-console.log(`${fallas ? 'FALLÓ' : 'PASÓ'} · ${EMPRESA} · ${fallas} fallas · ${seg()} · capturas en ${CAPTURAS}`);
+console.log(`${fallas ? 'FALLÓ' : 'PASÓ'} · ${EMPRESA}${TAXICUN ? ' (TaxiCun)' : ''} · ${fallas} fallas · ${seg()} · capturas en ${CAPTURAS}`);
 process.exit(fallas ? 1 : 0);

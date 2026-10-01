@@ -127,21 +127,83 @@ export function claveLocal(nombre) {
   return empresa.esPrincipal ? `ct.c.${nombre}` : `ct.${empresa.id}.c.${nombre}`;
 }
 
-// Enlace a otra página de la misma cooperativa (app/, conductor/…). Conserva
-// el diseño (?d=) y la sala de prueba si vienen en la dirección actual.
-export function urlCooperativa(ruta) {
-  const u = new URL(NUC ? NUC.urlEmpresa(ruta) : `../${ruta}`, location.href);
+// Enlace a la otra app de la misma cooperativa: rol 'pasajero' o 'conductor'.
+// Lo arma el núcleo (N.urlApp): dentro de TaxiCun se queda en taxicun/… con la
+// cooperativa en ?e=; fuera, va a <cooperativa>/app/ o <cooperativa>/conductor/.
+// Conserva el diseño (?d=) y la sala de prueba si vienen en la dirección actual.
+export function urlApp(rol = 'pasajero') {
   const actual = new URLSearchParams(location.search);
-  for (const k of ['d', 'sala']) if (actual.get(k)) u.searchParams.set(k, actual.get(k));
+  const extra = {};
+  for (const k of ['d', 'sala']) if (actual.get(k)) extra[k] = actual.get(k);
+  if (NUC?.urlApp) return NUC.urlApp(rol, extra);
+  const u = new URL(`../${rol === 'conductor' ? 'conductor/' : 'app/'}`, location.href);
+  for (const [k, v] of Object.entries(extra)) u.searchParams.set(k, v);
   return u.href;
 }
 
 // Página de privacidad de la cooperativa: el generador la escribe junto a su
 // app (plantillas/privacidad → <id>/privacidad/; Cootransrural, en la raíz).
-// Nunca se enlaza la de otra cooperativa.
+// Nunca se enlaza la de otra cooperativa. Con urlEmpresa sirve igual desde
+// <id>/app/ que desde taxicun/ o taxicun/conductor/.
 export function urlPrivacidad() {
-  if (empresa.esPrincipal) return '../privacidad/';
-  return NUC ? NUC.urlEmpresa('privacidad/') : '';
+  return NUC ? NUC.urlEmpresa('privacidad/') : '../privacidad/';
+}
+
+/* ------------------------------------------------------------------ */
+/* TaxiCun: la app se llama TaxiCun y la desarrolla interOS.          */
+/* ------------------------------------------------------------------ */
+// Dentro de taxicun/ (app única que elige la cooperativa) se nota la marca
+// TaxiCun sin quitarle protagonismo a la cooperativa: «TaxiCun · Coptaxi».
+export function enTaxiCun() {
+  return Boolean(NUC?.EN_TAXICUN);
+}
+const MARCA_TC = () => NUC?.MARCA || { nombre: 'TaxiCun', desarrollador: 'interOS', icono: 'img/taxicun/icono-192.png' };
+export const marcaTaxiCun = {
+  get nombre() {
+    return dato(MARCA_TC().nombre) || 'TaxiCun';
+  },
+  get desarrollador() {
+    return dato(MARCA_TC().desarrollador) || empresa.proveedor;
+  },
+};
+
+// Ícono de TaxiCun (img/taxicun/icono-192.png).
+export function iconoTaxiCunHTML(tam = 34, clase = '') {
+  const src = NUC ? NUC.urlDelSitio(MARCA_TC().icono || 'img/taxicun/icono-192.png') : '../img/taxicun/icono-192.png';
+  return `<img class="c-icono-taxicun${clase ? ' ' + clase : ''}" src="${esc(src)}" alt="" width="${tam}" height="${tam}">`;
+}
+
+// «TaxiCun» escrito como en el logo («Cun» en amarillo).
+export function nombreTaxiCunHTML() {
+  const n = marcaTaxiCun.nombre;
+  const m = /^(Taxi)(.+)$/.exec(n);
+  return `<span class="c-taxicun-nombre">${m ? `${esc(m[1])}<span>${esc(m[2])}</span>` : esc(n)}</span>`;
+}
+
+// «TaxiCun · desarrollada por interOS».
+export function desarrolladaPorTexto() {
+  return `${marcaTaxiCun.nombre} · desarrollada por ${marcaTaxiCun.desarrollador}`;
+}
+
+// Opción «Cambiar de municipio» (solo dentro de TaxiCun): vuelve a la lista de
+// municipios de TaxiCun para el mismo rol. Fuera de TaxiCun no se muestra.
+// Como en urlApp, conserva el diseño (?d=) y la sala de prueba: al escoger el
+// nuevo municipio sigue con el mismo diseño.
+export function urlCambiarMunicipio(rol = 'pasajero') {
+  if (!NUC?.urlElegirMunicipio) return '';
+  const u = new URL(NUC.urlElegirMunicipio(rol), location.href);
+  const actual = new URLSearchParams(location.search);
+  for (const k of ['d', 'sala']) if (actual.get(k)) u.searchParams.set(k, actual.get(k));
+  return u.href;
+}
+export function municipioHTML(rol = 'pasajero') {
+  const url = enTaxiCun() ? urlCambiarMunicipio(rol) : '';
+  if (!url) return '';
+  const donde = [empresa.pueblo, empresa.nombre].filter(Boolean).join(' · ');
+  return `<h2 class="c-seccion-titulo">Municipio</h2>
+    <div class="c-lista">
+      <a class="c-fila-menu c-fila-municipio" href="${esc(url)}" data-cambiar-municipio>${icono('pin')}<span><strong>Cambiar de municipio</strong><small>Ahora: ${esc(donde)}</small></span>${icono('chevron')}</a>
+    </div>`;
 }
 
 // Cifras de la cooperativa que sí se conocen (las que faltan no se muestran).
@@ -155,30 +217,40 @@ export function cifrasEmpresa({ conDesde = true } = {}) {
 }
 
 // Etiqueta «Modo prueba» y, en las propuestas, el aviso de demostración.
+// La app es TaxiCun (interOS solo la desarrolla): la demostración es «de TaxiCun».
+export function textoDemostracion() {
+  return `Demostración de ${marcaTaxiCun.nombre} para ${empresa.nombreLargo}`;
+}
 export function etiquetasPrueba(texto = 'Modo prueba') {
-  return `<span class="c-etiquetas-prueba"><span class="c-etiqueta">${esc(texto)}</span>${empresa.esPropuesta ? `<span class="c-etiqueta c-etiqueta-demo">Demostración para ${esc(empresa.nombreLargo)}</span>` : ''}</span>`;
+  return `<span class="c-etiquetas-prueba"><span class="c-etiqueta">${esc(texto)}</span>${empresa.esPropuesta ? `<span class="c-etiqueta c-etiqueta-demo">${esc(textoDemostracion())}</span>` : ''}</span>`;
 }
 
 // Franja de las propuestas (no son clientes ni han autorizado nada).
 export function franjaPropuestaHTML() {
   if (!empresa.esPropuesta) return '';
-  return `<p class="c-franja-propuesta" role="note">${icono('info')}<span>Propuesta de demostración preparada por ${esc(empresa.proveedor)} para ${esc(empresa.razonSocial)} · No es la app oficial de la ${empresa.tipo}.</span></p>`;
+  return `<p class="c-franja-propuesta" role="note">${icono('info')}<span>${esc(textoDemostracion())} · No es la app oficial de la ${empresa.tipo}.</span></p>`;
 }
 
-// «Acerca de» para Ajustes: quién hizo la app y, en propuestas, que es una demostración.
+// «Acerca de» para Ajustes: la cooperativa, que la app es TaxiCun (desarrollada
+// por interOS) y, en propuestas, que es una demostración.
 export function acercaDeHTML() {
-  const prov = esc(empresa.proveedor);
+  const prov = esc(marcaTaxiCun.desarrollador);
+  const desarrollador = empresa.proveedorWeb ? `<a href="${esc(empresa.proveedorWeb)}" target="_blank" rel="noopener">${prov}</a>` : prov;
+  const tc = nombreTaxiCunHTML();
   return `<div class="c-bloque c-acerca">
     <div class="c-acerca-marca">${iconoAppHTML(44, 'acerca')}<div><strong>${esc(empresa.nombreLargo)}</strong><small>${esc(empresa.razonSocial)}</small></div></div>
-    <p class="c-acerca-proveedor">App desarrollada por ${empresa.proveedorWeb ? `<a href="${esc(empresa.proveedorWeb)}" target="_blank" rel="noopener">${prov}</a>` : prov}</p>
-    ${empresa.esPropuesta ? `<p class="c-acerca-demo">${icono('info')}<span>Demostración para ${esc(empresa.nombreLargo)}: no es la app oficial de la ${empresa.tipo}.</span></p>` : ''}
+    <p class="c-acerca-proveedor c-acerca-taxicun">${iconoTaxiCunHTML(36)}<span>${enTaxiCun() ? `${tc} · desarrollada por ${desarrollador}` : `Esta app es ${tc}, desarrollada por ${desarrollador}`}</span></p>
+    ${empresa.esPropuesta ? `<p class="c-acerca-demo">${icono('info')}<span>${esc(textoDemostracion())}: no es la app oficial de la ${empresa.tipo}.</span></p>` : ''}
   </div>`;
 }
 
-// Pie con la cooperativa y el proveedor.
+// Pie con la cooperativa y la marca de la app (TaxiCun, desarrollada por interOS).
 export function pieMarcaHTML({ conDesde = true } = {}) {
   const linea1 = `${esc(empresa.razonSocial)}${conDesde && empresa.fundada ? ` · desde ${empresa.fundada}` : ''}`;
-  return `<p class="c-pie-marca">${linea1}${empresa.lema ? `<br>«${esc(empresa.lema)}»` : ''}<br><span class="c-pie-proveedor">Desarrollado por ${esc(empresa.proveedor)}</span></p>`;
+  return `<p class="c-pie-marca">${linea1}${empresa.lema ? `<br>«${esc(empresa.lema)}»` : ''}<br>${pieTaxiCunHTML()}</p>`;
+}
+export function pieTaxiCunHTML() {
+  return `<span class="c-pie-proveedor c-pie-taxicun">${iconoTaxiCunHTML(18)}${esc(desarrolladaPorTexto())}</span>`;
 }
 
 // Nombres de los tres diseños (el B lleva el nombre de El Rosal solo allí).
@@ -241,8 +313,19 @@ function iconoSVG(tam, id) {
 }
 
 // Marca en las pantallas de bienvenida: ícono, nombre y una etiqueta.
+// Dentro de TaxiCun: ícono de TaxiCun con el de la cooperativa de insignia y
+// «TaxiCun · <cooperativa>» (la etiqueta pasa a un segundo renglón para que
+// los nombres largos no se corten).
 export function marcaHTML({ etiqueta = '', clase = 'c-etiqueta-cian', id = 'mc' } = {}) {
+  if (enTaxiCun()) return marcaTaxiCunHTML({ etiqueta, clase, id });
   return `<span class="c-marca">${iconoAppHTML(34, id)}<span class="c-marca-nombre">${esc(empresa.nombre)}</span>${etiqueta ? ` <span class="c-etiqueta ${clase}">${esc(etiqueta)}</span>` : ''}</span>`;
+}
+
+export function marcaTaxiCunHTML({ etiqueta = '', clase = 'c-etiqueta-cian', id = 'mc', tam = 40 } = {}) {
+  return `<span class="c-marca c-marca-tc">
+    <span class="c-marca-tc-iconos">${iconoTaxiCunHTML(tam)}<span class="c-marca-tc-insignia">${iconoAppHTML(Math.round(tam / 2), `${id}-ins`)}</span></span>
+    <span class="c-marca-tc-texto"><span class="c-marca-nombre">${nombreTaxiCunHTML()}<span class="c-marca-tc-sep"> · </span><span class="c-marca-coop">${esc(empresa.nombre)}</span></span>${etiqueta ? `<span class="c-etiqueta ${clase}">${esc(etiqueta)}</span>` : ''}</span>
+  </span>`;
 }
 
 // Lugares destacados para los atajos del inicio y para la prueba: los de
@@ -821,12 +904,14 @@ export function escenaHTML({ tipo = 'pasajero', contenido }) {
     E.asociados ? `${E.asociados} asociados` : '',
     E.servicio24h ? 'servicio 24 horas' : '',
   ].filter(Boolean).join(' · ');
-  const url = urlParaCelular(pasajero ? 'app/' : 'conductor/');
+  const url = urlParaCelular(pasajero ? 'pasajero' : 'conductor');
   const qr = NUC?.qrSVG ? NUC.qrSVG(url, { redondeado: true, color: '#07090D', fondo: '#FFFFFF', margen: 2 }) : '';
+  const tc = enTaxiCun();
   return `<div class="c-escena" style="${coloresEmpresaCSS()}">
     <aside class="c-lateral" aria-label="Sobre ${esc(E.nombre)}">
+      ${tc ? `<p class="c-lateral-taxicun">${iconoTaxiCunHTML(30)}${nombreTaxiCunHTML()}</p>` : ''}
       <div class="c-lateral-marca">${iconoAppHTML(56, 'lat')}<div><strong>${esc(E.nombre)}</strong>${E.lema ? `<span>${esc(E.lema)}</span>` : ''}</div></div>
-      ${E.esPropuesta ? `<p class="c-lateral-demo">${icono('info')}<span>Demostración para ${esc(E.nombreLargo)} · no es la app oficial de la ${E.tipo}.</span></p>` : ''}
+      ${E.esPropuesta ? `<p class="c-lateral-demo">${icono('info')}<span>${esc(textoDemostracion())} · no es la app oficial de la ${E.tipo}.</span></p>` : ''}
       <h2>${pasajero ? `Tu taxi${E.pueblo ? ` de ${esc(E.pueblo)}` : ''}, <em>en tu celular</em>.` : 'La cabina del conductor, <em>en tu celular</em>.'}</h2>
       <ul>
         ${pasajero
@@ -837,20 +922,21 @@ export function escenaHTML({ tipo = 'pasajero', contenido }) {
         ? `<div class="c-lateral-qr" data-url="${esc(url)}"><div class="c-lateral-qr-codigo">${qr}</div><div><strong>Ábrela en tu celular</strong><small>Escanea el código con la cámara.</small></div></div>`
         : ''}
       ${pie ? `<p class="c-lateral-pie">${esc(pie)}</p>` : ''}
-      <p class="c-lateral-pie c-lateral-proveedor">Desarrollado por ${esc(E.proveedor)}</p>
+      <p class="c-lateral-pie c-lateral-proveedor">${esc(desarrolladaPorTexto())}</p>
     </aside>
     ${contenido}
   </div>`;
 }
 
 // Dirección para abrir esta misma app en el celular (QR del panel lateral):
-// la de esta cooperativa, con el diseño C y la sala de prueba si no es la de siempre.
-export function urlParaCelular(ruta) {
-  const u = new URL(NUC ? NUC.urlEmpresa(ruta) : location.href, location.href);
-  u.search = '';
-  u.hash = '';
-  u.searchParams.set('d', 'c');
+// la de esta cooperativa (dentro de TaxiCun, taxicun/…?e=<id>), con el diseño C
+// y la sala de prueba si no es la de siempre. rol: 'pasajero' o 'conductor'.
+export function urlParaCelular(rol = 'pasajero') {
+  const extra = { d: 'c' };
   const sala = NUC?.salaActual?.();
-  if (sala && sala !== (NUC.SALA_POR_DEFECTO || 'demo')) u.searchParams.set('sala', sala);
+  if (sala && sala !== (NUC.SALA_POR_DEFECTO || 'demo')) extra.sala = sala;
+  if (NUC?.urlApp) return NUC.urlApp(rol, extra);
+  const u = new URL(`../${rol === 'conductor' ? 'conductor/' : 'app/'}`, location.href);
+  for (const [k, v] of Object.entries(extra)) u.searchParams.set(k, v);
   return u.href;
 }

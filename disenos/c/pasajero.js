@@ -41,7 +41,7 @@ function separarViajeGuardado(id) {
   }
 }
 
-export async function montar(raiz, { N, vitrina = false } = {}) {
+export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) {
   // Datos de la cooperativa activa (nombre, teléfonos, cifras) para las piezas comunes.
   C.usarNucleo(N);
   const E = C.empresa;
@@ -384,6 +384,11 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
   /* Piezas de interfaz                                                 */
   /* ------------------------------------------------------------------ */
   const filaArriba = (izquierda) => `<div class="c-fila-arriba">${izquierda}<span class="c-conexion" data-conexion></span></div>`;
+  // Dentro de TaxiCun, una marca discreta junto al saludo: abre una hoja con la
+  // cooperativa que atiende y la opción de cambiar de municipio.
+  const marcaMini = () => (C.enTaxiCun()
+    ? `<button type="button" class="c-marca-mini" data-accion="marca-taxicun" aria-label="${esc(`${C.marcaTaxiCun.nombre} · ${E.nombre}`)}: cambiar de municipio">${C.iconoTaxiCunHTML(30)}</button>`
+    : '');
 
   function chipFase(texto, ico = 'taxi') {
     return `<span class="c-chip-fase c-vidrio">${icono(ico)}<span>${esc(texto)}</span></span>`;
@@ -420,7 +425,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
       html() {
         atajosLista = construirAtajos();
         return {
-          cabeza: `${filaArriba(`<button type="button" class="c-saludo" data-accion="tab" data-tab="perfil" aria-label="Abrir tu perfil">${C.avatarHTML(nombre(), 'c-avatar-chico')}<span><small>${esc(N.saludo())}</small><strong>${esc(primerNombre())}</strong></span></button>`)}
+          cabeza: `${filaArriba(`<span class="c-fila-izq"><button type="button" class="c-saludo" data-accion="tab" data-tab="perfil" aria-label="Abrir tu perfil">${C.avatarHTML(nombre(), 'c-avatar-chico')}<span><small>${esc(N.saludo())}</small><strong>${esc(primerNombre())}</strong></span></button>${marcaMini()}</span>`)}
             <button type="button" class="c-pildora-busqueda c-vidrio" data-accion="abrir-destino">
               <span class="c-pildora-ico">${icono('buscar')}</span>
               <span class="c-pildora-texto"><strong>¿A dónde vas?</strong><small>Busca un lugar o una dirección</small></span>
@@ -1232,6 +1237,21 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
     });
   }
 
+  // Hoja de la marca (solo dentro de TaxiCun): qué cooperativa atiende aquí y
+  // «Cambiar de municipio» (vuelve a la lista de municipios de TaxiCun).
+  function abrirMarcaTaxiCun() {
+    const url = C.urlCambiarMunicipio('pasajero');
+    const donde = E.pueblo ? `en ${E.pueblo}` : 'en tu municipio';
+    C.abrirHoja(app, {
+      titulo: C.marcaTaxiCun.nombre,
+      clase: 'c-hoja-taxicun',
+      contenido: `${C.marcaTaxiCunHTML({ etiqueta: E.pueblo, id: 'hoja', tam: 48 })}
+        <p class="c-muted">Pides tu taxi ${esc(donde)} con <strong>${esc(E.nombre)}</strong>${taxicun?.porGps ? ', según tu ubicación' : ''}. ¿Estás en otro municipio? Escoge el tuyo y te mostramos sus taxis.</p>
+        ${url ? `<a class="c-boton c-boton-ancho" href="${esc(url)}" data-cambiar-municipio>${icono('pin')} Cambiar de municipio</a>` : ''}
+        <p class="c-pie-marca">${C.pieTaxiCunHTML()}</p>`,
+    });
+  }
+
   function abrirSOS() {
     const cd = p.estado.conductor;
     const contacto = p.perfil?.contactoEmergencia;
@@ -1426,6 +1446,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
       p.calificar(ui.calif.estrellas, { etiquetas: [...ui.calif.etiquetas], comentario });
     },
     'omitir-calificacion': () => p.omitirCalificacion(),
+    'marca-taxicun': abrirMarcaTaxiCun,
     ...secciones.acciones,
   };
 

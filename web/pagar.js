@@ -7,7 +7,7 @@
 // No mueve dinero: solo avisa al conductor (por el bus de la sala) que el pago
 // de prueba se hizo, para que la demostración se vea completa.
 // Solo se cargan los módulos del núcleo que hacen falta (página ligera).
-import { ID_EMPRESA, EMPRESA, TIPO_EMPRESA, COLORES, ES_PROPUESTA, PROVEEDOR, urlEmpresa } from '../nucleo/config.js';
+import { ID_EMPRESA, EMPRESA, TIPO_EMPRESA, COLORES, ES_PROPUESTA, PROVEEDOR, urlDelSitio } from '../nucleo/config.js';
 import { Bus, enVivoActivo } from '../nucleo/bus.js';
 import { BILLETERAS } from '../nucleo/datos.js';
 import { pesos, horaTexto, fechaTexto, escaparHTML, esperar } from '../nucleo/util.js';
@@ -18,7 +18,8 @@ const parametros = new URLSearchParams(location.search);
 // Cada cooperativa guarda sus comprobantes aparte (Cootransrural conserva la clave de siempre).
 const CLAVE_PAGOS = ID_EMPRESA === 'cootransrural' ? 'ct.pagosPrueba' : `ct.${ID_EMPRESA}.pagosPrueba`;
 const NOMBRE = EMPRESA.nombre || EMPRESA.nombreCorto || 'la cooperativa';
-const URL_APP = urlEmpresa('app/');
+// La app es TaxiCun (desarrollada por interOS), abierta con esta cooperativa.
+const URL_APP = urlDelSitio(`taxicun/?e=${encodeURIComponent(ID_EMPRESA)}`);
 // ¿La cooperativa del enlace es la que se cargó? (si la ficha no existe, el núcleo cae en Cootransrural).
 const empresaReconocida = !window.CT_EMPRESA_INVALIDA && (window.CT_EMPRESA_PEDIDA || 'cootransrural') === ID_EMPRESA;
 
@@ -63,10 +64,10 @@ function pintarMarco() {
   document.getElementById('franja-detalle').textContent = `Demostración del pago con QR de ${NOMBRE}`;
   if (ES_PROPUESTA) {
     const franja = document.getElementById('franja-propuesta');
-    franja.innerHTML = `<b>Propuesta de demostración</b> preparada por ${escaparHTML(PROVEEDOR.nombre)} para ${escaparHTML(EMPRESA.razonSocial || NOMBRE)} · No es la página oficial de la ${TIPO_EMPRESA}`;
+    franja.innerHTML = `<b>Propuesta de demostración de TaxiCun</b>, preparada por ${escaparHTML(PROVEEDOR.nombre)} para ${escaparHTML(EMPRESA.razonSocial || NOMBRE)} · No es la página oficial de la ${TIPO_EMPRESA}`;
     franja.hidden = false;
   }
-  document.getElementById('pie').innerHTML = `<a href="${escaparHTML(URL_APP)}">App de ${escaparHTML(NOMBRE)}</a> · Desarrollado por <a href="${escaparHTML(PROVEEDOR.web)}" rel="noopener">${escaparHTML(PROVEEDOR.nombre)}</a>`;
+  document.getElementById('pie').innerHTML = `<a href="${escaparHTML(URL_APP)}">TaxiCun de ${escaparHTML(NOMBRE)}</a> · App TaxiCun · desarrollada por <a href="${escaparHTML(PROVEEDOR.web)}" rel="noopener">${escaparHTML(PROVEEDOR.nombre)}</a>`;
 }
 
 function esClaro(hex) {
@@ -111,7 +112,7 @@ function mostrarError() {
       <span class="circulo"><svg class="icono"><use href="#i-alerta"/></svg></span>
       <h1>Este enlace de pago está incompleto</h1>
       <p>Falta ${faltan.join(' y ')}. Pídele al conductor que te muestre otra vez el código QR de cobro o, si prefieres, págale en efectivo.</p>
-      <a class="boton boton-amarillo boton-ancho" href="${escaparHTML(URL_APP)}">Ir a la app de ${escaparHTML(NOMBRE)}</a>
+      <a class="boton boton-amarillo boton-ancho" href="${escaparHTML(URL_APP)}">Abrir TaxiCun con ${escaparHTML(NOMBRE)}</a>
     </div>`;
 }
 
@@ -120,7 +121,7 @@ function mostrarError() {
 function mostrarEmpresaDesconocida() {
   document.title = 'Cooperativa no reconocida · Pago de prueba';
   document.getElementById('franja-detalle').textContent = 'Demostración del pago con QR';
-  document.getElementById('pie').innerHTML = `Desarrollado por <a href="${escaparHTML(PROVEEDOR.web)}" rel="noopener">${escaparHTML(PROVEEDOR.nombre)}</a>`;
+  document.getElementById('pie').innerHTML = `App TaxiCun · desarrollada por <a href="${escaparHTML(PROVEEDOR.web)}" rel="noopener">${escaparHTML(PROVEEDOR.nombre)}</a>`;
   tarjeta.innerHTML = `<div class="error-pago">
       <span class="circulo"><svg class="icono"><use href="#i-alerta"/></svg></span>
       <h1>No reconocemos la cooperativa de este cobro</h1>
@@ -255,7 +256,7 @@ function iniciar() {
         </dl>
         <p class="estado-envio" id="estado-envio"><span class="punto"></span><span id="texto-envio">Avisándole al conductor…</span></p>
         <div class="acciones">
-          <a class="boton boton-amarillo boton-ancho" href="${escaparHTML(URL_APP)}">Volver a la app</a>
+          <a class="boton boton-amarillo boton-ancho" href="${escaparHTML(URL_APP)}">Volver a TaxiCun</a>
           <button class="boton boton-borde boton-ancho" id="reenviar" type="button">Reenviar la confirmación</button>
         </div>
         <p class="sello-agua">Comprobante de prueba · sin valor</p>

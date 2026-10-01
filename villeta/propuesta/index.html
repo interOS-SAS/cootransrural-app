@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Propuesta: app de taxis para Cooperativa de Transportadores de Villeta (Cootransvi) · interOS</title>
-  <meta name="description" content="Propuesta de demostración de interOS para Cooperativa de Transportadores de Villeta (Cootransvi): app de taxis para pasajeros y conductores de Villeta, demo, planes, precios y tiempo de entrega.">
+  <title>Propuesta: TaxiCun para Cooperativa de Transportadores de Villeta (Cootransvi) · interOS</title>
+  <meta name="description" content="Propuesta de demostración de TaxiCun para Cooperativa de Transportadores de Villeta (Cootransvi): la app de taxis de Cundinamarca, con el nombre y los colores de Cootransvi en Villeta. Demo, planes, precios y entrega. Desarrollada por interOS.">
   <!-- Documento comercial de interOS: no se indexa en buscadores. -->
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#3B1E08">
   <meta name="color-scheme" content="light">
-  <link rel="icon" type="image/png" sizes="32x32" href="../../empresas/villeta/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../img/taxicun/favicon-32.png">
   <link rel="preload" href="../../fuentes/sora-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="../../fuentes/plus-jakarta-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../../fuentes/fuentes.css?v=d7cb94cf69">
-  <link rel="stylesheet" href="../../web/propuesta.css?v=f60a9903a5">
+  <link rel="stylesheet" href="../../web/propuesta.css?v=45f708f110">
   <!-- Colores de Cootransvi (de su ficha). -->
   <style>:root{--verde:#8A4513;--verde-2:#A55817;--verde-3:#AF5E18;--verde-osc:#3B1E08;--verde-tinte:#F3ECE7;--verde-tinte-2:#F4EEEA;--verde-tinte-3:#F1E9E3;--verde-linea:#EADED5;--exito-tinte:#F3ECE7;--b-claro:#D3B8A5;--fondo-oscuro:#1B120B;--noche-1:#251910;--noche-2:#100904;--fondo-vitrina:#130C06;--amarillo:#F5C04A;--amarillo-2:#FBE7BA;--amarillo-osc:#C2983A;--amarillo-texto:#8C6E2A;--amarillo-vivo:#F6C455;--rojo:#B91C1C;--velo:#291506;--velo-2:#351B07;--velo-3:#251305;--noche:#140A03;--verde-rgb:138, 69, 19;--verde-3-rgb:175, 94, 24;--verde-osc-rgb:59, 30, 8;--amarillo-rgb:245, 192, 74;--velo-rgb:41, 21, 6;--velo-2-rgb:53, 27, 7;--velo-3-rgb:37, 19, 5;--noche-rgb:20, 10, 3;--rojo-rgb:185, 28, 28}</style>
 </head>
@@ -57,7 +57,7 @@
   </svg>
 
   <div class="herramientas" role="toolbar" aria-label="Opciones del documento">
-    <span class="herramientas-marca"><img src="../../empresas/villeta/icono-192.png" alt="" width="28" height="28"><span><b>Cootransvi</b><small>Propuesta de demostración · 1 de octubre de 2026</small></span></span>
+    <span class="herramientas-marca"><img src="../../img/taxicun/icono.svg" alt="" width="28" height="28"><span><b>TaxiCun · Cootransvi</b><small>Propuesta de demostración · 1 de octubre de 2026</small></span></span>
     <span class="herramientas-botones">
       <a class="boton boton-claro" href="../" target="_blank" rel="noopener"><svg class="ic"><use href="#i-web"/></svg>Abrir la demo</a>
       <button type="button" class="boton" id="imprimir"><svg class="ic"><use href="#i-imprimir"/></svg>Imprimir o guardar en PDF</button>
@@ -73,13 +73,16 @@
         <span class="portada-velo"></span>
       </div>
       <div class="portada-arriba">
-        <span class="portada-coop"><img src="../../empresas/villeta/icono-512.png" alt="Ícono de la app de Cootransvi" width="56" height="56"><span><b>Cootransvi</b><small>Villeta, Cundinamarca · Provincia del Gualivá</small></span></span>
-        <span class="portada-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="40" height="22"><b>inter<span>OS</span></b></span>
+        <span class="portada-marcas">
+          <span class="tc-logo tc-logo-portada" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="56" height="56"><b aria-hidden="true">Taxi<span>Cun</span></b></span>
+          <span class="portada-coop"><img src="../../empresas/villeta/icono-192.png" alt="Ícono de Cootransvi" width="40" height="40"><span><b>Cootransvi</b><small>Villeta, Cundinamarca · Provincia del Gualivá</small></span></span>
+        </span>
+        <span class="portada-desarrolla"><small>Desarrollada por</small><span class="portada-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="40" height="22"><b>inter<span>OS</span></b></span></span>
       </div>
       <div class="portada-texto">
         <span class="pildora">Propuesta de demostración</span>
-        <h1><span class="h1-antes">Propuesta: app de taxis para</span> <span class="h1-nombre">Cooperativa de Transportadores de Villeta (Cootransvi)</span></h1>
-        <p class="portada-lead">Una app propia para pedir taxi en Villeta, con el nombre, los colores y los conductores de Cootransvi. Y ya está hecha: la pueden probar hoy.</p>
+        <h1><span class="h1-antes">Propuesta: TaxiCun para</span> <span class="h1-nombre">Cooperativa de Transportadores de Villeta (Cootransvi)</span></h1>
+        <p class="portada-lead">TaxiCun, la app de taxis de Cundinamarca, con el nombre, los colores y los conductores de Cootransvi en Villeta. Y ya está hecha: la pueden probar hoy.</p>
       </div>
       <div class="portada-telefonos" aria-hidden="true">
         <span class="telefono telefono-atras"><img src="../../empresas/villeta/disenos-c.jpg" alt=""></span>
@@ -94,7 +97,7 @@
           <p class="portada-preparada">Preparada por <b>interOS</b> para <b>Cootransvi</b></p>
           <p class="portada-fecha">1 de octubre de 2026</p>
           <ul class="portada-cifras">
-            <li><b>3</b><span>diseños de app para elegir</span></li>
+            <li><b>3</b><span>diseños de TaxiCun para elegir</span></li>
             <li><b>41</b><span>lugares de Villeta ya cargados</span></li>
             <li><b>8</b><span>destinos con tarifa</span></li>
             <li><b>7</b><span>días o menos para tenerla</span></li>
@@ -110,14 +113,14 @@
     <!-- ===================== 2 · QUÉ GANAN ===================== -->
     <section class="hoja" aria-labelledby="t-ganan">
       <header class="cabeza">
-        <span class="cabeza-marca"><img src="../../empresas/villeta/icono-192.png" alt="" width="22" height="22"><b>Cootransvi</b><span>Propuesta de app de taxis</span></span>
+        <span class="cabeza-marca"><span class="tc-logo tc-logo-cabeza" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="22" height="22"><b aria-hidden="true">Taxi<span>Cun</span></b></span><span>Propuesta para Cootransvi</span></span>
         <span class="cabeza-seccion"><b>02</b>Qué ganan</span>
       </header>
       <div class="contenido">
         <div class="titular">
           <span class="antetitulo">Qué ganan</span>
-          <h2 id="t-ganan">Una app propia para los pasajeros y los conductores de Cootransvi</h2>
-          <p class="lead">Los pasajeros de Villeta piden su taxi desde el celular, ven quién llega y pagan como prefieran. Los conductores reciben los servicios en su propia app. Y todo lleva la marca de la cooperativa.</p>
+          <h2 id="t-ganan">TaxiCun con la marca de Cootransvi, para sus pasajeros y conductores</h2>
+          <p class="lead">Los pasajeros de Villeta piden su taxi con TaxiCun, ven quién llega y pagan como prefieran. Los conductores reciben los servicios en TaxiCun. Y en la app todo lleva la marca de la cooperativa.</p>
         </div>
 
         <div class="avisos" aria-label="Avisos durante el servicio">
@@ -137,58 +140,71 @@
           <article><span class="b-ic"><svg class="ic"><use href="#i-etiqueta"/></svg></span><h3>Tarifas claras</h3><p>El valor se ve antes de pedir, con tarifa fija a los destinos de siempre y recargos avisados. Y si la cooperativa quiere: −10&nbsp;% al programar con 24&nbsp;h y cada 10 viajes, el siguiente al 50&nbsp;%.</p></article>
           <article><span class="b-ic"><svg class="ic"><use href="#i-qr"/></svg></span><h3>Pago con QR Bre-B</h3><p>Al terminar, el conductor muestra un QR y el pasajero paga desde su banco o billetera, o en efectivo. En la demo el pago es de prueba; en producción se conecta con un proveedor autorizado.</p></article>
           <article><span class="b-ic"><svg class="ic"><use href="#i-volante"/></svg></span><h3>App para los conductores</h3><p>Solicitudes con cuenta regresiva, navegación con Google Maps o Waze, código del pasajero, cobro con QR o en efectivo, ganancias del día y documentos del vehículo.</p></article>
-          <article><span class="b-ic"><svg class="ic"><use href="#i-web"/></svg></span><h3>Stickers QR y web propia</h3><p>Un QR en cada taxi y en neveras, restaurantes y conjuntos lleva directo a la app (y dice de qué móvil llegó cada usuario). Además, una web propia con el botón para pedir.</p></article>
+          <article><span class="b-ic"><svg class="ic"><use href="#i-web"/></svg></span><h3>Stickers QR y web propia</h3><p>Un QR en cada taxi y en neveras, restaurantes y conjuntos abre TaxiCun con la cooperativa (y dice de qué móvil llegó cada usuario). Además, una web propia con el botón para pedir.</p></article>
         </div>
 
         <div class="frente">
           <h3>Frente a las apps grandes</h3>
           <table>
-            <thead><tr><th scope="col"><span class="solo-lector">Tema</span></th><th scope="col">Apps grandes</th><th scope="col">App de Cootransvi</th></tr></thead>
+            <thead><tr><th scope="col"><span class="solo-lector">Tema</span></th><th scope="col">Apps grandes</th><th scope="col">TaxiCun con Cootransvi</th></tr></thead>
             <tbody>
               <tr><th scope="row">El cliente</th><td>Queda en la plataforma</td><td><svg class="ic"><use href="#i-check"/></svg>Sigue siendo de la cooperativa</td></tr>
               <tr><th scope="row">Lo que cuesta</th><td>Del 10 al 25&nbsp;% de cada viaje</td><td><svg class="ic"><use href="#i-check"/></svg>1,9&nbsp;% o $900 al día por taxi</td></tr>
-              <tr><th scope="row">La marca</th><td>La de la plataforma</td><td><svg class="ic"><use href="#i-check"/></svg>Cootransvi, con sus colores</td></tr>
+              <tr><th scope="row">La marca</th><td>La de la plataforma</td><td><svg class="ic"><use href="#i-check"/></svg>La suya, dentro de TaxiCun</td></tr>
             </tbody>
           </table>
         </div>
       </div>
       <footer class="pie">
-        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">Preparada por <b>interOS</b> · 1 de octubre de 2026</span>
+        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">TaxiCun · desarrollada por <b>interOS</b></span>
         <span class="aviso-datos">Demostración preparada con datos públicos; no es una página oficial de la cooperativa.</span>
         <span class="pie-numero">2 / 6</span>
       </footer>
     </section>
 
     <!-- ===================== 3 · SU DEMO ===================== -->
-    <section class="hoja" aria-labelledby="t-demo">
+    <section class="hoja hoja-demo" aria-labelledby="t-demo">
       <header class="cabeza">
-        <span class="cabeza-marca"><img src="../../empresas/villeta/icono-192.png" alt="" width="22" height="22"><b>Cootransvi</b><span>Propuesta de app de taxis</span></span>
+        <span class="cabeza-marca"><span class="tc-logo tc-logo-cabeza" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="22" height="22"><b aria-hidden="true">Taxi<span>Cun</span></b></span><span>Propuesta para Cootransvi</span></span>
         <span class="cabeza-seccion"><b>03</b>Su demo</span>
       </header>
       <div class="contenido">
         <div class="titular">
           <span class="antetitulo">Su demo ya está lista</span>
-          <h2 id="t-demo">Así se ve la app de Cootransvi, en sus colores</h2>
-          <p class="lead">Tres diseños para elegir. Los tres hacen lo mismo y solo cambia cómo se ven: la cooperativa se queda con el que más le guste.</p>
+          <h2 id="t-demo">Así se ve TaxiCun con los colores de Cootransvi</h2>
+          <p class="lead">Tres diseños para elegir. Los tres hacen lo mismo y solo cambia cómo se ven: la cooperativa se queda con el que más le guste, y es el que verán sus pasajeros al abrir TaxiCun en Villeta.</p>
         </div>
 
+        <div class="demo-fila">
+        <aside class="tc-panel" aria-labelledby="t-taxicun">
+          <span class="tc-logo" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="40" height="40"><b aria-hidden="true">Taxi<span>Cun</span></b></span>
+          <h3 id="t-taxicun">Una sola app para Cundinamarca</h3>
+          <ul>
+            <li><svg class="ic"><use href="#i-pin"/></svg><span>Al abrir TaxiCun en Villeta, el GPS muestra a Cootransvi, con el diseño que ustedes elijan.</span></li>
+            <li><svg class="ic"><use href="#i-mapa"/></svg><span>Si el pasajero viaja a La Vega o a Facatativá con TaxiCun, la misma app le sirve allá.</span></li>
+            <li><svg class="ic"><use href="#i-qr"/></svg><span>Los stickers QR abren TaxiCun directo con Cootransvi y el móvil del taxi.</span></li>
+            <li><svg class="ic"><use href="#i-tienda"/></svg><span>Una sola app en Google Play y App Store: el pasajero la descarga una vez.</span></li>
+          </ul>
+          <p class="tc-panel-pie">Desarrollada por interOS</p>
+        </aside>
         <div class="disenos">
           <figure>
-            <span class="telefono"><img src="../../empresas/villeta/disenos-a.jpg" alt="Pantalla de la app de Cootransvi con el diseño Ámbar Urbano"></span>
+            <span class="telefono"><img src="../../empresas/villeta/disenos-a.jpg" alt="Pantalla de TaxiCun con Cootransvi, diseño Ámbar Urbano"></span>
             <figcaption><b><i>A</i>Ámbar Urbano</b><span>Amarillo taxi con detalles oscuros. Alegre, urbano y directo, con botones grandes.</span></figcaption>
           </figure>
           <figure>
-            <span class="telefono"><img src="../../empresas/villeta/disenos-b.jpg" alt="Pantalla de la app de Cootransvi con el diseño Color de la cooperativa"></span>
+            <span class="telefono"><img src="../../empresas/villeta/disenos-b.jpg" alt="Pantalla de TaxiCun con Cootransvi, diseño Color de la cooperativa"></span>
             <figcaption><b><i>B</i>Color de la cooperativa</b><span>Los colores de Cootransvi, letra grande y pedido por pasos. Cercano y tranquilo.</span></figcaption>
           </figure>
           <figure>
-            <span class="telefono"><img src="../../empresas/villeta/disenos-c.jpg" alt="Pantalla de la app de Cootransvi con el diseño Noche Neón"></span>
+            <span class="telefono"><img src="../../empresas/villeta/disenos-c.jpg" alt="Pantalla de TaxiCun con Cootransvi, diseño Noche Neón"></span>
             <figcaption><b><i>C</i>Noche Neón</b><span>Modo oscuro con luces de neón. Elegante y cómodo para pedir taxi de noche.</span></figcaption>
           </figure>
         </div>
+        </div>
 
         <div class="enlaces">
-          <p class="enlaces-titulo"><svg class="ic"><use href="#i-cel"/></svg>Pruébenla desde el celular: apunten la cámara a cada código</p>
+          <p class="enlaces-titulo"><svg class="ic"><use href="#i-cel"/></svg>Pruébenla desde el celular: apunten la cámara a cada código (TaxiCun abre con Cootransvi)</p>
           <ul>
             <li class="enlace enlace-web">
               <div class="qr" data-qr="https://interos-sas.github.io/cootransrural-app/villeta/" data-nombre="web" role="img" aria-label="Código QR: Web de la cooperativa"></div>
@@ -197,16 +213,16 @@
               <a class="url" href="https://interos-sas.github.io/cootransrural-app/villeta/" target="_blank" rel="noopener"><span>interos-sas.github.io/</span><wbr><span>cootransrural-app/</span><wbr><span>villeta/</span><wbr></a>
             </li>
             <li class="enlace enlace-app">
-              <div class="qr" data-qr="https://interos-sas.github.io/cootransrural-app/villeta/app/" data-nombre="app" role="img" aria-label="Código QR: App del pasajero"></div>
-              <b><svg class="ic"><use href="#i-cel"/></svg>App del pasajero</b>
+              <div class="qr" data-qr="https://interos-sas.github.io/cootransrural-app/taxicun/?e=villeta" data-nombre="app" role="img" aria-label="Código QR: TaxiCun · pasajero"></div>
+              <b><svg class="ic"><use href="#i-cel"/></svg>TaxiCun · pasajero</b>
               <span>Un viaje completo con un conductor de prueba.</span>
-              <a class="url" href="https://interos-sas.github.io/cootransrural-app/villeta/app/" target="_blank" rel="noopener"><span>interos-sas.github.io/</span><wbr><span>cootransrural-app/</span><wbr><span>villeta/</span><wbr><span>app/</span><wbr></a>
+              <a class="url" href="https://interos-sas.github.io/cootransrural-app/taxicun/?e=villeta" target="_blank" rel="noopener"><span>interos-sas.github.io/</span><wbr><span>cootransrural-app/</span><wbr><span>taxicun/</span><wbr><span>?e=villeta</span><wbr></a>
             </li>
             <li class="enlace enlace-conductor">
-              <div class="qr" data-qr="https://interos-sas.github.io/cootransrural-app/villeta/conductor/" data-nombre="conductor" role="img" aria-label="Código QR: App del conductor"></div>
-              <b><svg class="ic"><use href="#i-volante"/></svg>App del conductor</b>
+              <div class="qr" data-qr="https://interos-sas.github.io/cootransrural-app/taxicun/conductor/?e=villeta" data-nombre="conductor" role="img" aria-label="Código QR: TaxiCun · conductor"></div>
+              <b><svg class="ic"><use href="#i-volante"/></svg>TaxiCun · conductor</b>
               <span>Demo: móvil 001, PIN 1234.</span>
-              <a class="url" href="https://interos-sas.github.io/cootransrural-app/villeta/conductor/" target="_blank" rel="noopener"><span>interos-sas.github.io/</span><wbr><span>cootransrural-app/</span><wbr><span>villeta/</span><wbr><span>conductor/</span><wbr></a>
+              <a class="url" href="https://interos-sas.github.io/cootransrural-app/taxicun/conductor/?e=villeta" target="_blank" rel="noopener"><span>interos-sas.github.io/</span><wbr><span>cootransrural-app/</span><wbr><span>taxicun/</span><wbr><span>conductor/</span><wbr><span>?e=villeta</span><wbr></a>
             </li>
             <li class="enlace enlace-stickers">
               <div class="qr" data-qr="https://interos-sas.github.io/cootransrural-app/villeta/stickers/" data-nombre="stickers" role="img" aria-label="Código QR: Stickers QR"></div>
@@ -224,7 +240,7 @@
         </div>
       </div>
       <footer class="pie">
-        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">Preparada por <b>interOS</b> · 1 de octubre de 2026</span>
+        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">TaxiCun · desarrollada por <b>interOS</b></span>
         <span class="aviso-datos">Demostración preparada con datos públicos; no es una página oficial de la cooperativa.</span>
         <span class="pie-numero">3 / 6</span>
       </footer>
@@ -233,7 +249,7 @@
     <!-- ===================== 4 · HECHA PARA EL PUEBLO ===================== -->
     <section class="hoja hoja-pueblo" aria-labelledby="t-pueblo">
       <header class="cabeza">
-        <span class="cabeza-marca"><img src="../../empresas/villeta/icono-192.png" alt="" width="22" height="22"><b>Cootransvi</b><span>Propuesta de app de taxis</span></span>
+        <span class="cabeza-marca"><span class="tc-logo tc-logo-cabeza" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="22" height="22"><b aria-hidden="true">Taxi<span>Cun</span></b></span><span>Propuesta para Cootransvi</span></span>
         <span class="cabeza-seccion"><b>04</b>Hecha para Villeta</span>
       </header>
       <div class="contenido">
@@ -266,7 +282,7 @@
         </div>
 
         <div class="stickers">
-          <h3><svg class="ic"><use href="#i-qr"/></svg>Stickers con el QR de Cootransvi</h3>
+          <h3><svg class="ic"><use href="#i-qr"/></svg>Stickers QR: abren TaxiCun con Cootransvi</h3>
           <div class="stickers-fotos">
             <figure><img src="../../empresas/villeta/sticker-taxi.jpg" alt="Sticker con código QR en el vidrio trasero de un taxi amarillo"><figcaption>En el vidrio de cada taxi: el QR lleva el número del móvil.</figcaption></figure>
             <figure><img src="../../empresas/villeta/nevera.jpg" alt="Sticker con código QR en una nevera de tienda"><figcaption>En neveras, tiendas, restaurantes y conjuntos de Villeta.</figcaption></figure>
@@ -274,7 +290,7 @@
         </div>
       </div>
       <footer class="pie">
-        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">Preparada por <b>interOS</b> · 1 de octubre de 2026</span>
+        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">TaxiCun · desarrollada por <b>interOS</b></span>
         <span class="aviso-datos">Demostración preparada con datos públicos; no es una página oficial de la cooperativa.</span>
         <span class="pie-numero">4 / 6</span>
       </footer>
@@ -283,13 +299,13 @@
     <!-- ===================== 5 · PLANES Y PRECIOS ===================== -->
     <section class="hoja hoja-planes" aria-labelledby="t-planes">
       <header class="cabeza">
-        <span class="cabeza-marca"><img src="../../empresas/villeta/icono-192.png" alt="" width="22" height="22"><b>Cootransvi</b><span>Propuesta de app de taxis</span></span>
+        <span class="cabeza-marca"><span class="tc-logo tc-logo-cabeza" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="22" height="22"><b aria-hidden="true">Taxi<span>Cun</span></b></span><span>Propuesta para Cootransvi</span></span>
         <span class="cabeza-seccion"><b>05</b>Planes y entrega</span>
       </header>
       <div class="contenido">
         <div class="titular">
           <span class="antetitulo">Planes y precios</span>
-          <h2 id="t-planes">Dos formas de tener la app: por uso o con cuota fija</h2>
+          <h2 id="t-planes">Dos formas de tener TaxiCun: por uso o con cuota fija</h2>
           <p class="lead">Para los pasajeros la app es gratis: solo pagan su viaje. La cooperativa elige el plan que más le convenga.</p>
         </div>
 
@@ -308,7 +324,7 @@
             <span class="plan-etiqueta">Plan B · Cuota fija por taxi</span>
             <p class="plan-precio" id="precio-b"><small>Solo</small><b>$900</b><span>al día por taxi · $27.000 al mes</span></p>
             <ul class="lista-check">
-              <li><svg class="ic"><use href="#i-check"/></svg>El taxi tiene la app sin importar cuántos viajes haga.</li>
+              <li><svg class="ic"><use href="#i-check"/></svg>Cada taxi con TaxiCun, haga los viajes que haga.</li>
               <li><svg class="ic"><use href="#i-check"/></svg>Actualizaciones constantes incluidas.</li>
               <li><svg class="ic"><use href="#i-check"/></svg>Soporte 24/7 en un grupo de WhatsApp.</li>
             </ul>
@@ -323,8 +339,8 @@
         <div class="incluye">
           <h3>Los dos planes incluyen</h3>
           <ul>
-            <li><svg class="ic"><use href="#i-cel"/></svg>App del pasajero y del conductor con la marca Cootransvi</li>
-            <li><svg class="ic"><use href="#i-tienda"/></svg>Publicación en Google Play y App Store</li>
+            <li><svg class="ic"><use href="#i-cel"/></svg>TaxiCun (pasajero y conductor) con la marca Cootransvi</li>
+            <li><svg class="ic"><use href="#i-tienda"/></svg>TaxiCun en Google Play y App Store</li>
             <li><svg class="ic"><use href="#i-grafica"/></svg>Panel de la cooperativa: servicios, conductores y calificaciones</li>
             <li><svg class="ic"><use href="#i-servidor"/></svg>Servidor, mapas y mensajes de verificación</li>
             <li><svg class="ic"><use href="#i-reloj"/></svg>Actualizaciones constantes</li>
@@ -337,17 +353,17 @@
         <div class="entrega">
           <div class="entrega-cifra"><span>Tiempo de entrega</span><b>1 semana</b><small>o menos</small></div>
           <ol class="entrega-pasos">
-            <li><b>Días 1 y 2</b><span>App con la marca, las tarifas y los conductores de la cooperativa.</span></li>
+            <li><b>Días 1 y 2</b><span>Su nombre, sus tarifas y sus conductores en TaxiCun.</span></li>
             <li><b>Días 3 y 4</b><span>Pruebas con los conductores y capacitación.</span></li>
-            <li><b>Días 5 a 7</b><span>Publicación en Google Play y App Store.</span></li>
+            <li><b>Días 5 a 7</b><span>Salida en TaxiCun, en Google Play y App Store.</span></li>
           </ol>
-          <p class="entrega-nota"><svg class="ic"><use href="#i-info"/></svg><span>La única espera es la revisión de Google Play y App Store. Mientras tanto, la app ya funciona desde el navegador, con el enlace y los stickers QR.</span></p>
+          <p class="entrega-nota"><svg class="ic"><use href="#i-info"/></svg><span>La única espera es la revisión de Google Play y App Store. Mientras tanto, TaxiCun ya funciona desde el navegador, con el enlace y los stickers QR.</span></p>
         </div>
 
         <p class="nota nota-iva"><svg class="ic"><use href="#i-info"/></svg>Valores antes de IVA. El Plan A se calcula sobre lo facturado por la app en el mes, no sobre todo lo que factura la flota. La propuesta final se acuerda con la cooperativa.</p>
       </div>
       <footer class="pie">
-        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">Preparada por <b>interOS</b> · 1 de octubre de 2026</span>
+        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">TaxiCun · desarrollada por <b>interOS</b></span>
         <span class="aviso-datos">Demostración preparada con datos públicos; no es una página oficial de la cooperativa.</span>
         <span class="pie-numero">5 / 6</span>
       </footer>
@@ -356,7 +372,7 @@
     <!-- ===================== 6 · SEGURIDAD, PASOS Y CONTACTO ===================== -->
     <section class="hoja hoja-final" aria-labelledby="t-seguridad">
       <header class="cabeza">
-        <span class="cabeza-marca"><img src="../../empresas/villeta/icono-192.png" alt="" width="22" height="22"><b>Cootransvi</b><span>Propuesta de app de taxis</span></span>
+        <span class="cabeza-marca"><span class="tc-logo tc-logo-cabeza" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="22" height="22"><b aria-hidden="true">Taxi<span>Cun</span></b></span><span>Propuesta para Cootransvi</span></span>
         <span class="cabeza-seccion"><b>06</b>Siguientes pasos</span>
       </header>
       <div class="contenido">
@@ -378,7 +394,7 @@
             <h3><svg class="ic"><use href="#i-candado"/></svg>En producción</h3>
             <ul>
               <li><svg class="ic"><use href="#i-servidor"/></svg>Servidor propio con conexión cifrada, en lugar de los canales de prueba.</li>
-              <li><svg class="ic"><use href="#i-candado"/></svg>Los datos de cada cooperativa van separados: son suyos y solo ella los ve.</li>
+              <li><svg class="ic"><use href="#i-candado"/></svg>En TaxiCun, los datos de cada cooperativa van separados: son suyos y solo ella los ve.</li>
               <li><svg class="ic"><use href="#i-cel"/></svg>Registro de pasajeros verificado por SMS.</li>
               <li><svg class="ic"><use href="#i-usuario-ok"/></svg>Conductores validados por la cooperativa, con sus documentos al día.</li>
               <li><svg class="ic"><use href="#i-documento"/></svg>Autorización de datos y política de privacidad (Ley 1581&nbsp;de&nbsp;2012).</li>
@@ -394,11 +410,11 @@
         <ol class="pasos">
           <li><span class="paso-num">1</span><span class="paso-ic"><svg class="ic"><use href="#i-video"/></svg></span><b>Reunión de 30 minutos</b><span>La vemos funcionando en vivo, desde el celular de un pasajero y el de un conductor, y resolvemos dudas.</span></li>
           <li><span class="paso-num">2</span><span class="paso-ic"><svg class="ic"><use href="#i-cohete"/></svg></span><b>Piloto</b><span>Algunos conductores la usan en su día a día antes de abrirla a toda la flota.</span></li>
-          <li><span class="paso-num">3</span><span class="paso-ic"><svg class="ic"><use href="#i-lista"/></svg></span><b>Confirmar datos</b><span>Para que la app salga con la información oficial (lista abajo).</span></li>
-          <li><span class="paso-num">4</span><span class="paso-ic"><svg class="ic"><use href="#i-pluma"/></svg></span><b>Firma</b><span>Firmamos y en una semana o menos la app queda lista con la marca Cootransvi.</span></li>
+          <li><span class="paso-num">3</span><span class="paso-ic"><svg class="ic"><use href="#i-lista"/></svg></span><b>Confirmar datos</b><span>Para que TaxiCun salga con la información oficial (lista abajo).</span></li>
+          <li><span class="paso-num">4</span><span class="paso-ic"><svg class="ic"><use href="#i-pluma"/></svg></span><b>Firma</b><span>Firmamos y en una semana o menos Cootransvi queda en TaxiCun, con su nombre y sus colores.</span></li>
         </ol>
         <div class="confirmar">
-          <p><b>Para confirmar con Cootransvi:</b> nos ayudan con estos datos y la app queda con su información oficial.</p>
+          <p><b>Para confirmar con Cootransvi:</b> nos ayudan con estos datos y TaxiCun queda con su información oficial.</p>
           <ul>
             <li><svg class="ic"><use href="#i-check"/></svg>El teléfono de la central de taxis</li>
             <li><svg class="ic"><use href="#i-check"/></svg>El número de WhatsApp de la central</li>
@@ -426,7 +442,7 @@
         </div>
       </div>
       <footer class="pie">
-        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">Preparada por <b>interOS</b> · 1 de octubre de 2026</span>
+        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">TaxiCun · desarrollada por <b>interOS</b></span>
         <span class="aviso-datos">Demostración preparada con datos públicos; no es una página oficial de la cooperativa.</span>
         <span class="pie-numero">6 / 6</span>
       </footer>

@@ -190,3 +190,27 @@ img { display: block; max-width: 100%; height: auto; }
 .interos { color: var(--suave); }
 .interos a { font-weight: 700; }
 .aviso-propuesta { margin: 0 0 22px; padding: 14px 16px; border-radius: 16px; background: var(--verde-tinte); color: var(--tinta); font-size: .94rem; }
+
+/* ---------- TaxiCun (la app de todas las cooperativas, desarrollada por interOS) ---------- */
+/* Página de descarga con la marca TaxiCun: azul y amarillo taxi; la cooperativa va en un chip. */
+.descarga-taxicun { --tc-azul: #0A2552; --tc-azul-2: #1A4FA0; --tc-amarillo: #FFC21A; }
+.descarga-taxicun .descarga-cabeza {
+  background: radial-gradient(500px 300px at 85% 0%, rgba(255, 194, 26, .3), transparent 60%), radial-gradient(600px 400px at 0% 100%, rgba(26, 79, 160, .9), transparent 60%), linear-gradient(160deg, var(--tc-azul-2), var(--tc-azul));
+}
+.descarga-taxicun .boton-amarillo { --fondo: var(--tc-amarillo); --color: var(--tc-azul); box-shadow: 0 14px 30px -12px rgba(255, 194, 26, .8), inset 0 -4px 0 rgba(0, 0, 0, .12); }
+.descarga-taxicun .boton-borde, .descarga-taxicun .boton-blanco { --color: var(--tc-azul); }
+.descarga-taxicun .instrucciones { background: #E8EEF8; }
+.descarga-taxicun .ventajas .circulo { background: #E8EEF8; color: var(--tc-azul-2); }
+.descarga-taxicun .insignia .icono { color: var(--tc-amarillo); }
+.descarga-taxicun .chip-movil b { background: var(--tc-amarillo); color: var(--tc-azul); }
+.tc-logo { display: inline-flex; align-items: center; gap: 12px; margin: 6px 0 0; color: #fff; }
+.descarga-cabeza .tc-logo img { width: 64px; height: 64px; margin: 0; border-radius: 17px; box-shadow: 0 14px 30px -10px rgba(0, 0, 0, .55); }
+.tc-logo b { font: 800 2.3rem/1 var(--titulo); letter-spacing: -.035em; }
+.tc-logo b span { color: #FFC21A; }
+.descarga-taxicun .descarga-cabeza h1 { margin-top: 18px; }
+.descarga-cabeza .descarga-lema { margin-top: 6px; font-weight: 600; color: rgba(255, 255, 255, .82); }
+.chip-coop { display: inline-flex; align-items: center; gap: 10px; margin: 16px 0 0; padding: 6px 16px 6px 6px; border-radius: 999px; background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .24); font-size: .92rem; text-align: left; }
+.descarga-cabeza .chip-coop img { width: 34px; height: 34px; margin: 0; border-radius: 10px; box-shadow: none; flex: none; }
+.chip-coop b { color: #fff; }
+.descarga-cabeza .chip-movil { display: flex; width: max-content; max-width: 100%; margin: 12px auto 0; }
+.descarga-cabeza .chip-movil[hidden] { display: none; }

@@ -130,19 +130,32 @@ function trazadoQR(filas) {
 }
 
 // ---------------------------------------------------------------------------
-// Imágenes (el ícono de la app, con los colores de la cooperativa). Se guardan
-// como URL (para canvas y vista previa) y como data URI (para que el SVG
-// descargado sea autónomo).
+// Imágenes: el ícono de TaxiCun (la app que abre el QR: img/taxicun/icono.svg)
+// y el de la cooperativa (img/icono.svg con sus colores, para la barra de la
+// página). Se guardan como URL (para canvas y vista previa) y como data URI
+// (para que el SVG descargado sea autónomo).
 // ---------------------------------------------------------------------------
 export const IMAGENES = {};
+const URL_TAXICUN = new URL('../img/taxicun/icono.svg', import.meta.url).href;
 
-export async function prepararImagenes() {
-  const { url, dataURI } = await iconoApp();
+async function cargarImagen(url, dataURI) {
   const img = new Image();
   img.decoding = 'sync';
   img.src = url;
   await img.decode();
-  IMAGENES.icono = { url, dataURI, img };
+  return { url, dataURI, img };
+}
+
+async function iconoTaxiCun() {
+  const r = await fetch(URL_TAXICUN);
+  if (!r.ok) throw new Error('No se pudo cargar el ícono de TaxiCun');
+  const texto = await r.text();
+  return { url: URL_TAXICUN, dataURI: 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(texto))) };
+}
+
+export async function prepararImagenes() {
+  const [coop, tc] = await Promise.all([iconoApp(), iconoTaxiCun()]);
+  [IMAGENES.icono, IMAGENES.taxicun] = await Promise.all([cargarImagen(coop.url, coop.dataURI), cargarImagen(tc.url, tc.dataURI)]);
 }
 
 // ---------------------------------------------------------------------------

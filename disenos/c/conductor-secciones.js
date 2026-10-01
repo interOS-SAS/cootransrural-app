@@ -124,11 +124,11 @@ export function crearSeccionesConductor({ N, c, app, ui, avisar, irATab, repinta
       </div>
       <div class="c-lista">
         <button type="button" class="c-fila-menu" data-accion="sub" data-sub="documentos">${icono('documento')}<span><strong>Documentos del vehículo</strong><small>${alertas ? `${alertas} ${alertas === 1 ? 'documento necesita' : 'documentos necesitan'} atención` : 'Todo al día'}</small></span><i class="c-semaforo-mini" data-estado="${estados.includes('vencido') ? 'vencido' : alertas ? 'pronto' : 'ok'}" aria-hidden="true"></i>${icono('chevron')}</button>
-        <button type="button" class="c-fila-menu" data-accion="sub" data-sub="ajustes">${icono('ajustes')}<span><strong>Ajustes</strong><small>GPS, sonido, sala y diseño</small></span>${icono('chevron')}</button>
+        <button type="button" class="c-fila-menu" data-accion="sub" data-sub="ajustes">${icono('ajustes')}<span><strong>Ajustes</strong><small>${C.enTaxiCun() ? 'Municipio, GPS, sonido, sala y diseño' : 'GPS, sonido, sala y diseño'}</small></span>${icono('chevron')}</button>
         ${E.telefono
           ? `<a class="c-fila-menu" href="tel:${esc(E.telefono)}">${icono('telefono')}<span><strong>Llamar a la central</strong><small>${esc(E.telefonoVisible)}${E.servicio24h ? ' · 24 horas' : ''}</small></span>${icono('chevron')}</a>`
           : `<div class="c-fila-info">${icono('telefono')}<span><strong>Teléfono de la central: pronto</strong><small>${esc(E.nombre)} lo publicará en la app</small></span></div>`}
-        <a class="c-fila-menu" href="${esc(C.urlCooperativa('app/'))}">${icono('perfil')}<span><strong>App del pasajero</strong><small>Ábrela para probar un viaje completo</small></span>${icono('chevron')}</a>
+        <a class="c-fila-menu" href="${esc(C.urlApp('pasajero'))}" data-app-pasajero>${icono('perfil')}<span><strong>App del pasajero</strong><small>Ábrela para probar un viaje completo</small></span>${icono('chevron')}</a>
         <button type="button" class="c-fila-menu c-fila-peligro" data-accion="cerrar-sesion">${icono('salir')}<span><strong>Cerrar sesión</strong><small>Te desconecta y sale del móvil ${esc(cd.movil || '')}</small></span></button>
       </div>
       ${C.pieMarcaHTML({ conDesde: false })}
@@ -164,6 +164,7 @@ export function crearSeccionesConductor({ N, c, app, ui, avisar, irATab, repinta
     const permiso = N.permisoNotificaciones();
     return `<section class="c-pantalla c-pantalla-ajustes" aria-label="Ajustes">
       ${cabeza('Ajustes', '', 'volver-taxi')}
+      ${C.municipioHTML('conductor')}
       <h2 class="c-seccion-titulo">Ubicación</h2>
       <div class="c-fila-ajuste">${icono('mira')}<div><strong>GPS</strong><small>Ahora: <span data-gps-texto>${c.estado.gpsReal ? 'GPS real del celular' : 'GPS simulado (la demo mueve el taxi)'}</span></small>
         <div class="c-segmentado c-segmentado-chico" role="radiogroup" aria-label="Modo de GPS">

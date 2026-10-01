@@ -9,6 +9,8 @@ window.ctSitioListo = true;
 
 // Ícono de la cooperativa (ruta relativa a la página, la pone la plantilla).
 const ICONO = document.documentElement.dataset.icono || 'img/icono-192.png';
+// Ícono de TaxiCun (la app que abre el QR de la portada).
+const ICONO_TAXICUN = new URL('../img/taxicun/icono-192.png', import.meta.url).href;
 const E = N.EMPRESA;
 // Oferta de servicio programado (de las tarifas de la ficha).
 const DESCUENTO = Math.round((N.TARIFAS.descuentoProgramado ?? 0.1) * 100);
@@ -145,7 +147,7 @@ function codigosQR() {
   const urlDescarga = N.urlDescarga({ origen: 'web' });
   const caja = $('#qr-descarga');
   // Módulos cuadrados: el estilo redondeado no siempre lo lee jsQR (el lector de la app en iPhone).
-  caja.innerHTML = N.qrSVG(urlDescarga, { nivel: 'H', color: colorQR(), margen: 1 }) + `<img class="qr-logo" src="${ICONO}" alt="" width="48" height="48">`;
+  caja.innerHTML = N.qrSVG(urlDescarga, { nivel: 'H', color: colorQR(), margen: 1 }) + `<img class="qr-logo" src="${ICONO_TAXICUN}" alt="" width="48" height="48">`;
   const enlace = $('#qr-descarga-url');
   enlace.href = urlDescarga;
   // La dirección completa solo en la cooperativa principal: en las demás, la del

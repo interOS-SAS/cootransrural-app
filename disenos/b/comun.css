@@ -2426,14 +2426,87 @@ html[data-propuesta="1"] .vb-seg-cab {
 }
 
 .vb-desarrollada {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   margin: 8px 0 0;
   color: var(--vb-texto-3);
   font-size: 14px;
   font-weight: 700;
+  line-height: 1.3;
 }
 
 .vb-desarrollada b {
   color: var(--vb-verde-osc);
+}
+
+/* ---------------- TaxiCun (la app; interOS la desarrolla) ---------------- */
+/* Azul y amarillo de TaxiCun. El nombre de la cooperativa conserva sus colores. */
+html[data-diseno="b"] {
+  --vb-tc-azul: #0A2552;
+  --vb-tc-azul-2: #1A4FA0;
+  --vb-tc-amarillo: #FFC21A;
+}
+
+.vb-tc-icono {
+  flex: none;
+  display: block;
+  border-radius: 24%;
+  box-shadow: 0 1px 2px rgba(10, 37, 82, .18), 0 3px 8px rgba(10, 37, 82, .14);
+}
+
+.vb-app .vb-tc-nombre,
+.vb-desarrollada .vb-tc-nombre {
+  color: var(--vb-tc-azul);
+  font-weight: 900;
+  letter-spacing: -.01em;
+}
+
+/* «TaxiCun · Coptaxi» encima del título (bienvenida, registro, ingreso del conductor). */
+.vb-tc-linea {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: var(--vb-verde-prof);
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.vb-tc-linea > span {
+  min-width: 0;
+}
+
+/* Panel lateral (computador): «TaxiCun» encima del nombre de la cooperativa, sobre su fondo oscuro. */
+.vb-lado .vb-lado-tc {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 3px;
+}
+
+.vb-lado .vb-lado-tc .vb-tc-nombre {
+  display: inline;
+  color: var(--vb-tc-amarillo);
+  font-size: 16px;
+  letter-spacing: .01em;
+}
+
+/* Marca discreta en la cabecera del inicio (a la derecha, junto a «Solo este equipo»). */
+.vb-cab-tc {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.vb-conexion:has(+ .vb-cab-tc) {
+  margin-left: auto;
+}
+
+/* «Cambiar de municipio»: el ícono de TaxiCun ocupa la casilla del ícono. */
+.vb-menu-ic.vb-menu-ic-tc {
+  background: none;
 }
 
 .vb-acerca {

@@ -18,6 +18,21 @@
 }
 .c-saludo small { display: block; font-size: 12px; color: var(--c-texto-2); line-height: 1.1; }
 .c-saludo strong { display: block; font-size: 16px; font-weight: 700; line-height: 1.2; }
+/* Saludo y, dentro de TaxiCun, la marca discreta a su lado. */
+.c-fila-izq { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.c-fila-izq .c-saludo { min-width: 0; }
+.c-fila-izq .c-saludo > span { min-width: 0; }
+.c-fila-izq .c-saludo small, .c-fila-izq .c-saludo strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c-marca-mini {
+  flex: none; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: 16px;
+  background: rgba(13, 17, 26, .72); border: 1px solid var(--c-borde); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.c-marca-mini .c-icono-taxicun { border-radius: 9px; box-shadow: 0 0 14px rgba(255, 194, 26, .35); }
+.c-marca-mini:focus-visible { outline: 3px solid var(--c-amarillo); outline-offset: 2px; }
+@media (max-width: 374px) {
+  .c-marca-mini { width: 40px; height: 40px; border-radius: 14px; }
+  .c-marca-mini .c-icono-taxicun { width: 26px; height: 26px; border-radius: 8px; }
+}
 
 .c-pildora-busqueda {
   display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%;

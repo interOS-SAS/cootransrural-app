@@ -12,9 +12,16 @@
 // navegador no herede el registro, el historial, el viaje por pagar ni la sesión
 // del conductor.
 //
-// Uso: node pruebas/diseno-b.mjs [url_base] [--empresa=<id>] [--solo=pasajero|conductor]
+// Con --taxicun abre la app única TaxiCun (taxicun/?e=<id>&d=b y
+// taxicun/conductor/?e=<id>&d=b) y revisa además la marca «TaxiCun · <cooperativa>»,
+// «Cambiar de municipio» (lleva a taxicun/?elegir=1), que «Soy conductor» y
+// «¿Eres pasajero?» se quedan en TaxiCun con ?e=<id> y «TaxiCun · desarrollada por
+// interOS». Sin --taxicun revisa que nada de eso se cuele en las páginas propias.
+//
+// Uso: node pruebas/diseno-b.mjs [url_base] [--empresa=<id>] [--solo=pasajero|conductor] [--taxicun]
 //      (por defecto http://localhost:8772/ y cootransrural; capturas en
-//      /tmp/cootrans/capturas/b/ o /tmp/cootrans/capturas/b-<id>/, o en $CAPTURAS)
+//      /tmp/cootrans/capturas/b/, /tmp/cootrans/capturas/b-<id>/ o, con --taxicun,
+//      /tmp/cootrans/capturas/tc-b/<id>/; o en $CAPTURAS)
 import { chromium } from '/tmp/cootrans/npm/node_modules/playwright-core/index.mjs';
 import { mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 
@@ -30,10 +37,15 @@ const TIPO = E.tipo === 'empresa' ? 'empresa' : 'cooperativa';
 const PROPUESTA = FICHA.estado === 'propuesta';
 const TEL = String(E.telefono || '').replace(/\D/g, '');
 const PRE = PRINCIPAL ? '' : `${ID}/`;
-const URL_APP = `${BASE}${PRE}app/?d=b`;
-const URL_CONDUCTOR = `${BASE}${PRE}conductor/?d=b`;
+// App única TaxiCun (la cooperativa va en ?e=) o las páginas propias de la cooperativa.
+const TAXICUN = process.argv.includes('--taxicun');
+const URL_APP = TAXICUN ? `${BASE}taxicun/?e=${ID}&d=b` : `${BASE}${PRE}app/?d=b`;
+const URL_CONDUCTOR = TAXICUN ? `${BASE}taxicun/conductor/?e=${ID}&d=b` : `${BASE}${PRE}conductor/?d=b`;
+// Textos de marca: la app es TaxiCun y la desarrolla interOS.
+const DESARROLLADA = TAXICUN ? 'TaxiCun · desarrollada por interOS' : 'Esta app es TaxiCun, desarrollada por interOS';
+const DEMO_PARA = `Demostración de TaxiCun para ${E.nombre}`;
 const EXE = process.env.CHROMIUM || '/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome';
-const DIR = (process.env.CAPTURAS || (PRINCIPAL ? '/tmp/cootrans/capturas/b' : `/tmp/cootrans/capturas/b-${ID}`)).replace(/\/?$/, '/');
+const DIR = (process.env.CAPTURAS || (TAXICUN ? `/tmp/cootrans/capturas/tc-b/${ID}` : PRINCIPAL ? '/tmp/cootrans/capturas/b' : `/tmp/cootrans/capturas/b-${ID}`)).replace(/\/?$/, '/');
 // GPS en el centro del pueblo de la cooperativa (de su ficha).
 const GEO = { latitude: FICHA.CENTRO.lat, longitude: FICHA.CENTRO.lng };
 const DEMO = FICHA.CONDUCTORES_DEMO || [];
@@ -192,6 +204,32 @@ async function revisarDesborde(pagina, donde) {
   ok(!anchos.length, `${donde}: nada se sale por los lados${anchos.length ? ` (${anchos.join(', ')})` : ''}`);
 }
 
+// ¿El enlace lleva a la app (rol 'pasajero' o 'conductor') de esta cooperativa? Dentro
+// de TaxiCun: taxicun/… con ?e=<id>; fuera: <id>/app/ o <id>/conductor/.
+function llevaA(href, rol) {
+  if (!href) return false;
+  const u = new URL(href, BASE);
+  if (TAXICUN) return u.pathname.endsWith(rol === 'conductor' ? '/taxicun/conductor/' : '/taxicun/') && u.searchParams.get('e') === ID;
+  return u.pathname.endsWith(`/${PRE}${rol === 'conductor' ? 'conductor' : 'app'}/`) && !u.searchParams.has('e');
+}
+
+// Marca TaxiCun: dentro de TaxiCun se ve «TaxiCun · <cooperativa>» con el ícono; fuera, no.
+async function revisarMarcaTaxiCun(pagina, selector, donde) {
+  const r = await pagina.evaluate((sel) => {
+    const el = document.querySelector(sel);
+    if (!el) return null;
+    const img = el.querySelector('img');
+    const caja = el.getBoundingClientRect();
+    return { texto: el.textContent.replace(/\s+/g, ' ').trim(), src: img?.getAttribute('src') || '', cargada: Boolean(img?.complete && img.naturalWidth), visible: caja.width > 0 && caja.top >= 0 && caja.bottom <= innerHeight };
+  }, selector);
+  if (!TAXICUN) {
+    ok(r === null && await pagina.locator('[data-taxicun], [data-cambiar-municipio]').count() === 0, `${donde}: sin marca TaxiCun ni «Cambiar de municipio» fuera de TaxiCun`);
+    return;
+  }
+  ok(r && r.texto === `TaxiCun · ${NOMBRE}` && r.visible, `${donde}: «TaxiCun · ${NOMBRE}» visible sin desplazar${r ? ` («${r.texto}»)` : ''}`);
+  ok(r && /img\/taxicun\/icono-192\.png$/.test(r.src) && r.cargada, `${donde}: ícono de TaxiCun cargado${r ? ` (${r.src})` : ''}`);
+}
+
 async function revisarTexto(pagina, donde) {
   const r = await pagina.evaluate((datos) => {
     let texto = document.body.innerText;
@@ -294,7 +332,9 @@ function destinoDePrueba() {
 const VECINAS = ['cootransrural', 'tabio', 'subachoque']
   .filter((v) => v !== ID && existsSync(new URL(`../empresas/${v}/ficha.json`, import.meta.url)))
   .slice(0, 2);
-const urlDe = (id, seccion) => `${BASE}${id === 'cootransrural' ? '' : `${id}/`}${seccion}/?d=b`;
+const urlDe = (id, seccion) => (TAXICUN
+  ? `${BASE}taxicun/${seccion === 'conductor' ? 'conductor/' : ''}?e=${id}&d=b`
+  : `${BASE}${id === 'cootransrural' ? '' : `${id}/`}${seccion}/?d=b`);
 const nombreDe = (id) => OTRAS.find((f) => f.id === id)?.EMPRESA?.nombreCorto || id;
 
 async function registrarRapido(pg) {
@@ -393,8 +433,23 @@ async function probarPasajero(navegador) {
       const r = el?.getBoundingClientRect();
       return el && r.top >= 0 && r.bottom <= innerHeight ? el.textContent.trim() : '';
     });
-    ok(franja.includes(`Propuesta de demostración preparada por interOS para ${E.razonSocial}`) && /No es la app oficial/.test(franja), 'bienvenida: franja de propuesta visible sin desplazar');
+    ok(franja.includes(DEMO_PARA) && /No es la app oficial/.test(franja) && !/interOS/.test(franja), `bienvenida: franja «${DEMO_PARA} · No es la app oficial…» visible sin desplazar`);
   } else ok(await pg.locator('.vb-nota-propuesta').count() === 0, 'sin aviso de propuesta (es cliente)');
+  await revisarMarcaTaxiCun(pg, '.vb-bienvenida [data-taxicun]', 'bienvenida');
+  {
+    const href = await pg.getAttribute('.vb-bienvenida [data-enlace-conductor]', 'href');
+    ok(llevaA(href, 'conductor'), `bienvenida: «Soy conductor» lleva a ${TAXICUN ? `taxicun/conductor/?e=${ID}` : `${PRE}conductor/`} (${href})`);
+    if (TAXICUN) {
+      // Se abre de verdad: la app del conductor de TaxiCun con esta cooperativa.
+      const otra = await ctx.newPage();
+      vigilar(otra, 'soy-conductor');
+      await otra.goto(new URL(href, BASE).href);
+      await otra.waitForSelector('.vb-ingreso', { timeout: 30000 });
+      const r = await otra.evaluate(() => ({ empresa: window.CT_EMPRESA, ruta: location.pathname, e: new URLSearchParams(location.search).get('e'), nombre: document.querySelector('.vb-ingreso-marca b')?.textContent.trim() }));
+      ok(r.empresa === ID && r.ruta.endsWith('/taxicun/conductor/') && r.e === ID && r.nombre === NOMBRE, `«Soy conductor» abre el conductor de TaxiCun con ${NOMBRE} (${r.ruta}?e=${r.e})`);
+      await otra.close();
+    }
+  }
   await revisarTexto(pg, 'bienvenida');
   await revisarContraste(pg, 'bienvenida');
   ok(!(await pg.isVisible('.vb-pedir')), 'sin registro no se ve el botón de pedir');
@@ -410,7 +465,11 @@ async function probarPasajero(navegador) {
   await pg.fill('input[name="celular"]', '300 123 4567');
   await pg.fill('input[name="emerNombre"]', 'Mamá');
   await pg.fill('input[name="emerCelular"]', '3109876543');
-  ok(await pg.locator(PRINCIPAL ? 'a[href="../privacidad/"]' : `a[href$="/${ID}/privacidad/"]`).count() > 0, 'enlace a la política de privacidad de la cooperativa');
+  {
+    const privacidad = await pg.$$eval('form[data-form="registro"] a[href]', (as) => as.map((a) => a.href));
+    ok(privacidad.includes(`${BASE}${PRE}privacidad/`), `enlace a la política de privacidad de la cooperativa (${PRE}privacidad/)`);
+  }
+  if (TAXICUN) ok(await pg.isVisible('.vb-registro [data-taxicun]'), 'registro: «TaxiCun · …» encima del título');
   await pg.click('form[data-form="registro"] button[type="submit"]');
   ok(await pg.isVisible('[data-error]:not(:empty)'), 'exige aceptar los términos');
   await pg.check('input[name="terminos"]');
@@ -455,7 +514,16 @@ async function probarPasajero(navegador) {
   await pg.evaluate(() => document.querySelector('.vb-inicio').scrollTo(0, 0));
   await revisarTexto(pg, 'inicio');
   await revisarContraste(pg, 'inicio');
-  ok(/App desarrollada por interOS/.test(await pg.textContent('.vb-pie')), 'pie del inicio: «App desarrollada por interOS»');
+  ok((await pg.textContent('.vb-pie')).includes(DESARROLLADA), `pie del inicio: «${DESARROLLADA}»`);
+  if (TAXICUN) {
+    ok(await pg.isVisible('.vb-cab-inicio .vb-cab-tc img'), 'inicio: ícono de TaxiCun en la cabecera');
+    // A 360 px pasa a ser un sello sobre la insignia de la cooperativa.
+    await pg.setViewportSize(CHICO);
+    await pg.waitForTimeout(300);
+    ok(await pg.isVisible('.vb-cab-marca .vb-cab-tc-sello img') && !(await pg.isVisible('.vb-cab-inicio .vb-cab-tc')), 'inicio a 360 px: sello de TaxiCun sobre la insignia');
+    await pg.setViewportSize(CELULAR);
+    await pg.waitForTimeout(300);
+  } else ok(await pg.locator('.vb-cab-tc, .vb-cab-tc-sello').count() === 0, 'inicio: sin ícono de TaxiCun fuera de TaxiCun');
   if (TEL) ok(await pg.locator(`.vb-mosaicos a[href="tel:+57${TEL}"]`).count() === 1, `inicio: llamar a la central (${E.telefonoVisible})`);
   else ok(await pg.locator('.vb-mosaicos a[href^="tel:"]').count() === 0 && /pronto|WhatsApp/.test(await pg.textContent('.vb-mosaicos')), 'inicio: sin teléfono, no hay «Llamar a la central» y se dice con honestidad');
 
@@ -519,7 +587,7 @@ async function probarPasajero(navegador) {
   await revisarContraste(pg, 'asignado');
   ok(/Verificado por /.test(await pg.textContent('.vb-carne')) && (await pg.textContent('.vb-carne')).includes(NOMBRE), 'carné «Verificado por» la cooperativa');
   ok((await pg.getAttribute('.vb-carne .vb-sello', 'aria-label')) === `Verificado por ${NOMBRE}`, 'sello con el nombre de la cooperativa');
-  if (PROPUESTA) ok((await pg.textContent('.vb-seg-cab-der')).includes(`Demostración para ${E.nombre}`), 'seguimiento: «Demostración para …» junto a «Modo prueba»');
+  if (PROPUESTA) ok((await pg.textContent('.vb-seg-cab-der')).includes(DEMO_PARA), `seguimiento: «${DEMO_PARA}» junto a «Modo prueba»`);
   else ok(await pg.locator('.vb-demo-para').count() === 0, 'seguimiento: sin aviso de demostración (es cliente)');
   const codigoAbordaje = (await pg.locator('.vb-codigo-digitos').textContent()).trim();
   ok(/^\d{4}$/.test(codigoAbordaje), `código de abordaje visible (${codigoAbordaje})`);
@@ -554,7 +622,7 @@ async function probarPasajero(navegador) {
   await foto(pg, 'p16-pagar');
   await revisarTexto(pg, 'cobro QR Bre-B (pasajero)');
   await revisarContraste(pg, 'cobro QR Bre-B (pasajero)');
-  if (PROPUESTA) ok((await pg.textContent('.vb-recibo-cab')).includes(`Demostración para ${E.nombre}`), 'pago: «Demostración para …» junto a «Modo prueba»');
+  if (PROPUESTA) ok((await pg.textContent('.vb-recibo-cab')).includes(DEMO_PARA), `pago: «${DEMO_PARA}» junto a «Modo prueba»`);
   await fotoChica(pg, 'p16-pagar-360x740');
   await pg.click('.vb-otro-cel summary');
   await pg.locator('.vb-otro-cel').scrollIntoViewIfNeeded();
@@ -627,8 +695,12 @@ async function probarPasajero(navegador) {
   await foto(pg, 'p22-perfil');
   await revisarTexto(pg, 'perfil');
   {
-    const enlace = await pg.$eval('.vb-perfil a.vb-menu-item[href*="conductor/"]', (a) => a.href);
-    ok(new URL(enlace).pathname.endsWith(`/${PRE}conductor/`), `perfil: «Soy conductor» lleva al conductor de ${NOMBRE} (${new URL(enlace).pathname})`);
+    const enlace = await pg.$eval('.vb-perfil a.vb-menu-item[data-enlace-conductor]', (a) => a.href);
+    ok(llevaA(enlace, 'conductor'), `perfil: «Soy conductor» lleva al conductor de ${NOMBRE} (${new URL(enlace).pathname}${new URL(enlace).search})`);
+    const municipio = await pg.$$eval('.vb-perfil [data-cambiar-municipio]', (as) => as.map((a) => a.href));
+    if (TAXICUN) ok(municipio.length === 1 && municipio[0] === `${BASE}taxicun/?elegir=1`, `perfil: «Cambiar de municipio» lleva a taxicun/?elegir=1 (${municipio[0] || 'no está'})`);
+    else ok(municipio.length === 0, 'perfil: sin «Cambiar de municipio» fuera de TaxiCun');
+    ok((await pg.textContent('.vb-perfil .vb-version')).includes(DESARROLLADA), `perfil: «${DESARROLLADA}»`);
   }
   await pg.click('[data-accion="ir"][data-pantalla="ajustes"]');
   await pg.waitForSelector('.vb-ajustes');
@@ -641,8 +713,18 @@ async function probarPasajero(navegador) {
   await revisarContraste(pg, 'ajustes');
   const disenoB = (await pg.textContent('.vb-disenos .d-b b')).trim();
   ok(disenoB === (PRINCIPAL ? 'Verde Rosal' : `Color de la ${TIPO}`), `ajustes: el diseño B se llama «${disenoB}»`);
-  ok(/App desarrollada por interOS/.test(await pg.textContent('[data-acerca]')), 'ajustes: «App desarrollada por interOS»');
-  if (PROPUESTA) ok(await pg.isVisible('.vb-ajustes .vb-nota-propuesta'), 'ajustes: aviso de propuesta de demostración');
+  ok((await pg.textContent('[data-acerca]')).replace(/\s+/g, ' ').includes(DESARROLLADA), `ajustes: «${DESARROLLADA}»`);
+  if (PROPUESTA) ok((await pg.textContent('.vb-ajustes .vb-nota-propuesta')).includes(DEMO_PARA), `ajustes: aviso «${DEMO_PARA}»`);
+  {
+    const municipio = await pg.$$eval('.vb-ajustes [data-cambiar-municipio]', (as) => as.map((a) => [a.href, a.textContent.replace(/\s+/g, ' ').trim()]));
+    if (TAXICUN) {
+      ok(municipio.length === 1 && municipio[0][0] === `${BASE}taxicun/?elegir=1` && /Cambiar de municipio/.test(municipio[0][1]), `ajustes: «Cambiar de municipio» lleva a taxicun/?elegir=1 (${municipio[0]?.[0] || 'no está'})`);
+      ok(await pg.isVisible('.vb-ajustes [data-diseno-cooperativa]'), 'ajustes: dice qué diseño eligió la cooperativa');
+      await pg.evaluate(() => document.querySelector('.vb-ajustes').scrollTo(0, 0));
+      await pg.waitForTimeout(300);
+      await foto(pg, 'p23c-ajustes-municipio');
+    } else ok(municipio.length === 0 && await pg.locator('.vb-ajustes [data-diseno-cooperativa]').count() === 0, 'ajustes: sin «Cambiar de municipio» fuera de TaxiCun');
+  }
   await pg.click('[data-accion="volver"]');
   await pg.waitForSelector('.vb-perfil');
   await pg.click('[data-accion="ir"][data-pantalla="fidelidad"]');
@@ -705,16 +787,19 @@ async function probarPasajero(navegador) {
   await foto(sinGps, 'p27-inicio-sin-gps');
   await ctxSinGps.close();
 
-  // Vitrina (la app dentro de un iframe): llena todo, sin marco
-  const ctxVitrina = await navegador.newContext({ viewport: { width: 430, height: 880 }, geolocation: GEO, permissions: ['geolocation'], storageState: estado, locale: 'es-CO' });
-  await ctxVitrina.addInitScript(() => localStorage.setItem('ct.envivo', 'no'));
-  const vitrina = await ctxVitrina.newPage();
-  vigilar(vitrina, 'pasajero-vitrina');
-  await vitrina.goto(`${URL_APP}&vitrina=1`);
-  await vitrina.waitForSelector('.vb-inicio', { timeout: 20000 });
-  const radio = await vitrina.evaluate(() => getComputedStyle(document.querySelector('.vb-app')).borderTopLeftRadius);
-  ok(radio === '0px', 'modo vitrina sin marco de celular');
-  await ctxVitrina.close();
+  // Vitrina (la app dentro de un iframe): llena todo, sin marco. Solo en las páginas
+  // propias: la vitrina de diseños no usa TaxiCun.
+  if (!TAXICUN) {
+    const ctxVitrina = await navegador.newContext({ viewport: { width: 430, height: 880 }, geolocation: GEO, permissions: ['geolocation'], storageState: estado, locale: 'es-CO' });
+    await ctxVitrina.addInitScript(() => localStorage.setItem('ct.envivo', 'no'));
+    const vitrina = await ctxVitrina.newPage();
+    vigilar(vitrina, 'pasajero-vitrina');
+    await vitrina.goto(`${URL_APP}&vitrina=1`);
+    await vitrina.waitForSelector('.vb-inicio', { timeout: 20000 });
+    const radio = await vitrina.evaluate(() => getComputedStyle(document.querySelector('.vb-app')).borderTopLeftRadius);
+    ok(radio === '0px', 'modo vitrina sin marco de celular');
+    await ctxVitrina.close();
+  }
 
   // Inicio en computador (1280×800)
   const ctxPC = await navegador.newContext({ viewport: { width: 1280, height: 800 }, geolocation: GEO, permissions: ['geolocation'], storageState: estado, locale: 'es-CO' });
@@ -727,8 +812,31 @@ async function probarPasajero(navegador) {
   await foto(pc, 'p26-inicio-1280x800');
   await revisarTexto(pc, 'inicio en computador');
   const qrPasajero = await pc.getAttribute('.vb-lado-qr', 'data-enlace-qr');
-  ok(qrPasajero && new URL(qrPasajero).pathname.endsWith(`/${PRE}app/`) && !/vitrina/.test(qrPasajero), `QR del panel lateral con la URL de la cooperativa (${qrPasajero})`);
+  ok(llevaA(qrPasajero, 'pasajero') && !/vitrina/.test(qrPasajero), `QR del panel lateral con la URL de la cooperativa (${qrPasajero})`);
+  ok((await pc.textContent('.vb-lado-pie')).includes(DESARROLLADA), `panel lateral: «${DESARROLLADA}»`);
+  if (TAXICUN) ok(await pc.isVisible('.vb-lado [data-taxicun]'), 'panel lateral: «TaxiCun · …» arriba');
   await ctxPC.close();
+
+  // «Cambiar de municipio» (solo TaxiCun): lleva a la lista de municipios y, al
+  // escoger de nuevo la cooperativa, vuelve a su app con la sesión.
+  if (TAXICUN) {
+    const pm = await ctx.newPage();
+    vigilar(pm, 'cambiar-municipio');
+    await pm.goto(URL_APP);
+    await pm.waitForSelector('.vb-inicio', { timeout: 30000 });
+    await pm.click('.vb-pestana[data-pantalla="perfil"]');
+    await pm.waitForSelector('.vb-perfil');
+    await Promise.all([pm.waitForURL(/\/taxicun\/\?elegir=1$/, { timeout: 15000 }), pm.click('.vb-perfil [data-cambiar-municipio]')]);
+    await pm.waitForSelector('#elegir:not([hidden]) .tc-lista [data-id]', { timeout: 20000 });
+    // La pantalla de carga de TaxiCun se desvanece (0,4 s) antes de la captura.
+    await pm.waitForTimeout(700);
+    ok(await pm.locator(`#elegir [data-id="${ID}"]`).count() === 1, `«Cambiar de municipio» abre la lista de municipios de TaxiCun (${new URL(pm.url()).pathname}${new URL(pm.url()).search})`);
+    await foto(pm, 'p28-cambiar-municipio');
+    await pm.click(`#elegir [data-id="${ID}"]`);
+    await pm.waitForSelector('.vb-inicio', { timeout: 30000 });
+    ok(await pm.evaluate(() => window.CT_EMPRESA) === ID && new URL(pm.url()).searchParams.get('e') === ID, `al escoger ${E.pueblo} vuelve a la app de ${NOMBRE} con la sesión`);
+    await pm.close();
+  }
   await ctx.close();
 }
 
@@ -755,7 +863,12 @@ async function probarConductor(navegador) {
       const r = el?.getBoundingClientRect();
       return el && r.top >= 0 && r.bottom <= innerHeight ? el.textContent.trim() : '';
     });
-    ok(PROPUESTA ? franja.includes(E.razonSocial) : franja === '', PROPUESTA ? 'ingreso del conductor: franja de propuesta visible sin desplazar' : 'ingreso del conductor: sin franja de propuesta (es cliente)');
+    ok(PROPUESTA ? franja.includes(DEMO_PARA) && !/interOS/.test(franja) : franja === '', PROPUESTA ? `ingreso del conductor: franja «${DEMO_PARA}» visible sin desplazar` : 'ingreso del conductor: sin franja de propuesta (es cliente)');
+  }
+  await revisarMarcaTaxiCun(pg, '.vb-ingreso [data-taxicun]', 'ingreso del conductor');
+  {
+    const href = await pg.getAttribute('.vb-ingreso [data-enlace-pasajero]', 'href');
+    ok(llevaA(href, 'pasajero'), `ingreso: «¿Eres pasajero?» lleva a ${TAXICUN ? `taxicun/?e=${ID}` : `${PRE}app/`} (${href})`);
   }
   await revisarTexto(pg, 'ingreso del conductor');
   await revisarContraste(pg, 'ingreso del conductor');
@@ -829,7 +942,7 @@ async function probarConductor(navegador) {
     const llave = `@${LLAVE}${MOVIL_DEMO}`;
     ok(breb.includes(llave) && breb.includes(`${NOMBRE} · Móvil ${MOVIL_DEMO}`), `cobro Bre-B del conductor con la llave ${llave} y el comercio`);
   }
-  if (PROPUESTA) ok((await pg.textContent('.vb-c-cobro-cab')).includes(`Demostración para ${E.nombre}`), 'cobro: «Demostración para …» junto a «Modo prueba»');
+  if (PROPUESTA) ok((await pg.textContent('.vb-c-cobro-cab')).includes(DEMO_PARA), `cobro: «${DEMO_PARA}» junto a «Modo prueba»`);
   await fotoChica(pg, 'c09-cobro-qr-360x740');
 
   // C8: pago recibido y calificación del pasajero
@@ -872,7 +985,18 @@ async function probarConductor(navegador) {
   await revisarTexto(pg, 'perfil del conductor (ajustes)');
   await revisarContraste(pg, 'perfil del conductor (ajustes)');
   ok((await pg.textContent('.vb-c-perfil .vb-disenos .d-b b')).trim() === (PRINCIPAL ? 'Verde Rosal' : `Color de la ${TIPO}`), 'conductor: nombre del diseño B según la cooperativa');
-  ok(/App desarrollada por interOS/.test(await pg.textContent('.vb-c-perfil [data-acerca]')), 'conductor: «App desarrollada por interOS»');
+  ok((await pg.textContent('.vb-c-perfil [data-acerca]')).replace(/\s+/g, ' ').includes(DESARROLLADA), `conductor: «${DESARROLLADA}»`);
+  {
+    const pasajero = await pg.getAttribute('.vb-c-perfil [data-enlace-pasajero]', 'href');
+    ok(llevaA(pasajero, 'pasajero'), `conductor: «App del pasajero» lleva a la de ${NOMBRE} (${pasajero})`);
+    const municipio = await pg.$$eval('.vb-c-perfil [data-cambiar-municipio]', (as) => as.map((a) => a.href));
+    if (TAXICUN) {
+      ok(municipio.length === 1 && municipio[0] === `${BASE}taxicun/conductor/?elegir=1`, `conductor: «Cambiar de municipio» lleva a taxicun/conductor/?elegir=1 (${municipio[0] || 'no está'})`);
+      await pg.locator('.vb-c-perfil [data-cambiar-municipio]').scrollIntoViewIfNeeded();
+      await pg.waitForTimeout(300);
+      await foto(pg, 'c15c-perfil-municipio');
+    } else ok(municipio.length === 0, 'conductor: sin «Cambiar de municipio» fuera de TaxiCun');
+  }
   if (TEL) ok(await pg.locator(`.vb-c-perfil a[href="tel:+57${TEL}"]`).count() === 1, 'conductor: llamar a la central');
   else ok(await pg.isVisible('.vb-c-perfil [data-sin-telefono]'), 'conductor: sin teléfono, «Teléfono de la central: pronto»');
 
@@ -914,13 +1038,29 @@ async function probarConductor(navegador) {
   await foto(pc, 'c17-inicio-1280x800');
   await revisarTexto(pc, 'conductor en computador');
   const qrConductor = await pc.getAttribute('.vb-lado-qr', 'data-enlace-qr');
-  ok(qrConductor && new URL(qrConductor).pathname.endsWith(`/${PRE}conductor/`), `QR del panel lateral del conductor con la URL de la cooperativa (${qrConductor})`);
+  ok(llevaA(qrConductor, 'conductor'), `QR del panel lateral del conductor con la URL de la cooperativa (${qrConductor})`);
   await ctxPC.close();
+
+  // «Cambiar de municipio» del conductor (solo TaxiCun): lista de municipios para conductores.
+  if (TAXICUN) {
+    const pm = await ctx.newPage();
+    vigilar(pm, 'conductor-cambiar-municipio');
+    await pm.goto(URL_CONDUCTOR);
+    await pm.waitForSelector('.vb-c-servicios', { timeout: 30000 });
+    await pm.click('.vb-pestana[data-pantalla="perfil"]');
+    await pm.waitForSelector('.vb-c-perfil');
+    await Promise.all([pm.waitForURL(/\/taxicun\/conductor\/\?elegir=1$/, { timeout: 15000 }), pm.click('.vb-c-perfil [data-cambiar-municipio]')]);
+    await pm.waitForSelector('#elegir:not([hidden]) .tc-lista [data-id]', { timeout: 20000 });
+    await pm.waitForTimeout(700);
+    ok(/conductor/i.test(await pm.textContent('#elegir .tc-rol')), 'conductor: «Cambiar de municipio» abre la lista de municipios de TaxiCun para conductores');
+    await foto(pm, 'c18-cambiar-municipio');
+    await pm.close();
+  }
   await ctx.close();
 }
 
 /* ================================================================== */
-console.log(`Diseño B · ${NOMBRE} (${ID}, ${FICHA.estado}) · ${URL_APP}`);
+console.log(`Diseño B${TAXICUN ? ' dentro de TaxiCun' : ''} · ${NOMBRE} (${ID}, ${FICHA.estado}) · ${URL_APP}`);
 const navegador = await chromium.launch({ executablePath: EXE });
 try {
   const tareas = [];

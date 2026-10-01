@@ -67,6 +67,9 @@ button { cursor: pointer; }
   white-space: nowrap;
 }
 .barra-enlace:hover { background: rgba(255, 255, 255, 0.12); }
+/* «Abrir TaxiCun» con el ícono de la app (los stickers abren TaxiCun con la cooperativa). */
+.barra-enlace { display: inline-flex; align-items: center; gap: 8px; }
+.barra-enlace img { width: 22px; height: 22px; border-radius: 6px; flex: none; }
 
 /* ---------- Distribución ---------- */
 .taller {

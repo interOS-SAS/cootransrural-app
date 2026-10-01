@@ -312,7 +312,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
         <p class="c-error" data-error hidden></p>
         <button type="submit" class="c-boton c-boton-grande c-boton-ancho">Ingresar ${icono('flecha')}</button>
       </form>
-      <a class="c-enlace c-ingreso-pasajero" href="${esc(C.urlCooperativa('app/'))}">${icono('perfil')} Soy pasajero</a>
+      <a class="c-enlace c-ingreso-pasajero" href="${esc(C.urlApp('pasajero'))}" data-app-pasajero>${icono('perfil')} Soy pasajero</a>
     </section>`;
     C.fijarAnillo(capaIngreso.querySelector('.c-anillo'), 0.68);
     const form = capaIngreso.querySelector('form');

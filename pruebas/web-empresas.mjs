@@ -6,7 +6,10 @@
 //  - nada de «Cootransrural» ni «El Rosal» fuera de Cootransrural (salvo en el índice),
 //  - nunca «null», «undefined», «NaN», «$0» ni enlaces tel: vacíos,
 //  - franja «Propuesta de demostración…» y noindex solo en las propuestas,
-//  - pie «Desarrollado por interOS» en todas,
+//  - pie «desarrollada por interOS» en todas (la app es TaxiCun),
+//  - «Pedir taxi», «Descargar TaxiCun», «Abrir TaxiCun» y los botones de conductores
+//    llevan a taxicun/?e=<id> (taxicun/conductor/?e=<id>); descargar/ abre TaxiCun
+//    con el móvil del sticker; cooperativas/ es la portada de TaxiCun,
 //  - colores, íconos, JSON-LD, Open Graph y QR propios de cada cooperativa,
 //  - capturas de la portada a 390 y 1440 px de cada una.
 // Uso: node pruebas/web-empresas.mjs [url_base] [carpeta_capturas] [id …]
@@ -171,14 +174,14 @@ async function revisarPagina(p, ficha, nombre, { franjaSel, pie = true } = {}) {
   ok(!r.telVacios.length && !r.waVacios.length && !r.mailVacios.length, `${nombre}: enlaces tel:, WhatsApp y correo completos${[...r.telVacios, ...r.waVacios, ...r.mailVacios].join(' ')}`);
   if (franjaSel) {
     if (propuesta) {
-      const esperado = `Propuesta de demostración preparada por interOS para ${ficha.EMPRESA.razonSocial || ficha.EMPRESA.nombre}`;
+      const esperado = `Propuesta de demostración de TaxiCun, preparada por interOS para ${ficha.EMPRESA.razonSocial || ficha.EMPRESA.nombre}`;
       ok(r.franja.includes(esperado) && r.franja.includes(`No es la página oficial de la ${ficha.EMPRESA.tipo === 'empresa' ? 'empresa' : 'cooperativa'}`), `${nombre}: franja de propuesta («${r.franja.slice(0, 90)}…»)`);
     } else {
       ok(!r.franja, `${nombre}: sin franja de propuesta (es cliente)`);
     }
     ok(propuesta ? /noindex/.test(r.robots) : (!/noindex/.test(r.robots) || nombre.includes('privacidad')), `${nombre}: ${propuesta ? 'con' : 'sin'} noindex (${r.robots || 'sin meta robots'})`);
   }
-  if (pie) ok(r.desarrollado, `${nombre}: pie «Desarrollado por interOS»`);
+  if (pie) ok(r.desarrollado, `${nombre}: pie «desarrollada por interOS»`);
   return r;
 }
 
@@ -259,6 +262,19 @@ for (const ficha of fichas) {
       canonica: document.querySelector('link[rel="canonical"]')?.href || '',
       barraTop: document.querySelector('#barra')?.getBoundingClientRect().top || 0,
       franjaAlto: document.querySelector('#franja')?.getBoundingClientRect().height || 0,
+      tc: {
+        barra: document.querySelector('.boton-barra')?.href,
+        pedir: document.querySelector('#pedir-taxi')?.href,
+        descargar: document.querySelector('#descargar-taxicun')?.href,
+        abrir: document.querySelector('#taxicun .boton')?.href,
+        probar: [...document.querySelectorAll('.diseno .boton-verde')].map((a) => a.href),
+        conductor: [...document.querySelectorAll('a')].filter((a) => /TaxiCun para conductores/.test(a.textContent)).map((a) => a.href),
+        viejos: [...document.querySelectorAll('a[href]')].map((a) => a.getAttribute('href')).filter((h) => /^(\.\/)?(app|conductor)\/(\?|$)/.test(h)),
+        franja: document.querySelector('#taxicun')?.innerText.replace(/\s+/g, ' ') || '',
+        logo: (() => { const i = document.querySelector('#taxicun .tc-logo img'); return Boolean(i && i.complete && i.naturalWidth > 0 && /img\/taxicun\//.test(i.src)); })(),
+        pie: document.querySelector('.pie-interos')?.textContent.replace(/\s+/g, ' ').trim() || '',
+        pieApp: [...document.querySelectorAll('.pie h4')].map((h) => h.textContent),
+      },
     }));
     const rutasNucleo = await p.evaluate(async (u) => (await import(u)).RUTAS.length, new URL('nucleo/index.js', BASE).href);
     ok(d.h1.includes(E.pueblo) && d.marca === E.nombre, `${nombre}: «${d.h1}» con la marca ${d.marca}`);
@@ -275,6 +291,17 @@ for (const ficha of fichas) {
     ok(d.ocultos === 0, `${nombre}: todas las secciones animadas quedaron visibles`);
     ok(d.rotas.length === 0, `${nombre}: sin imágenes rotas${d.rotas.length ? ': ' + d.rotas.join(', ') : ''}`);
     ok(d.mapa, `${nombre}: mapa de la oficina creado`);
+    // La app es TaxiCun: los botones llevan a taxicun/?e=<id>.
+    const tcApp = `${BASE}taxicun/?e=${ficha.id}`;
+    ok([d.tc.barra, d.tc.pedir, d.tc.descargar, d.tc.abrir].every((u) => u === tcApp), `${nombre}: «Pedir taxi», «Descargar TaxiCun» y «Abrir TaxiCun» → taxicun/?e=${ficha.id}`);
+    ok(d.tc.probar.length === 3 && d.tc.probar.every((u, i) => u === `${tcApp}&d=${'abc'[i]}`), `${nombre}: «Probar» cada diseño abre TaxiCun con ?d=a|b|c`);
+    ok(d.tc.conductor.length >= 1 && d.tc.conductor.every((u) => u === `${BASE}taxicun/conductor/?e=${ficha.id}`), `${nombre}: «TaxiCun para conductores» → taxicun/conductor/?e=${ficha.id}`);
+    ok(!d.tc.viejos.length, `${nombre}: ningún enlace a la app vieja (app/, conductor/)${d.tc.viejos.length ? ': ' + d.tc.viejos.join(', ') : ''}`);
+    // (el antetítulo va en mayúsculas por CSS: se compara sin distinguir mayúsculas)
+    ok(d.tc.logo && /Pide tu taxi con TaxiCun/.test(d.tc.franja) && d.tc.franja.toLowerCase().includes(`la app taxicun de ${E.nombre}`.toLowerCase())
+      && d.tc.franja.includes(E.pueblo) && /varios municipios de Cundinamarca/.test(d.tc.franja),
+      `${nombre}: franja de TaxiCun con su logo («${d.tc.franja.slice(0, 110)}…»)`);
+    ok(/^App TaxiCun · desarrollada por interOS/.test(d.tc.pie) && d.tc.pieApp.includes('TaxiCun'), `${nombre}: pie «${d.tc.pie}»`);
     if (!principal) {
       const ajenas = d.imgs.filter((s) => /img\/web\/(flota-1|sticker-taxi|nevera)\.jpg|web\/disenos\/[abc]\.jpg|img\/fotos\//.test(s || ''));
       ok(ajenas.length === 0, `${nombre}: sin fotos ni capturas de Cootransrural${ajenas.length ? ': ' + ajenas.join(', ') : ''}`);
@@ -339,12 +366,22 @@ for (const ficha of fichas) {
     await p.waitForTimeout(500);
     const d = await p.evaluate(() => ({
       h1: document.querySelector('h1')?.textContent,
-      pedir: document.querySelector('#pedir')?.getAttribute('href'),
+      pedir: document.querySelector('#pedir')?.href,
+      textoPedir: document.querySelector('#pedir')?.textContent.trim(),
+      instalar: document.querySelector('#abrir-app')?.href,
+      conductor: document.querySelector('#enlace-conductor')?.href,
       titulo: document.title,
-      icono: document.querySelector('.descarga-cabeza img')?.getAttribute('src'),
+      logo: document.querySelector('.descarga-cabeza .tc-logo img')?.getAttribute('src'),
+      coop: document.querySelector('.chip-coop')?.textContent.replace(/\s+/g, ' ').trim() || '',
+      icono: document.querySelector('.chip-coop img')?.getAttribute('src'),
+      chip: document.querySelector('#chip-movil')?.hidden === false ? document.querySelector('#chip-movil').textContent.replace(/\s+/g, ' ') : '',
     }));
-    ok(d.h1 === `Bienvenido a ${E.nombre}` && d.pedir === '../app/?movil=023' && d.titulo === `Móvil 023 · ${E.nombre}`, `${nombre}: «${d.h1}», pedir → ${d.pedir}, título «${d.titulo}»`);
-    if (iconosPropios) ok(d.icono.includes(`empresas/${ficha.id}/`), `${nombre}: ícono propio (${d.icono})`);
+    const conMovil = `${BASE}taxicun/?e=${ficha.id}&movil=023`;
+    ok(d.h1 === 'Descarga TaxiCun' && /img\/taxicun\//.test(d.logo || '') && d.titulo === `Móvil 023 · TaxiCun · ${E.nombre}`, `${nombre}: «${d.h1}» con el logo de TaxiCun, título «${d.titulo}»`);
+    ok(d.textoPedir === 'Abrir TaxiCun' && d.pedir === conMovil && d.instalar === conMovil, `${nombre}: «Abrir TaxiCun» e «Instalar» → taxicun/?e=${ficha.id}&movil=023`);
+    ok(/móvil\s*023/.test(d.chip) && d.coop.includes(E.nombre) && d.coop.includes(E.pueblo), `${nombre}: conserva el móvil escaneado y nombra a ${E.nombre} («${d.coop}»)`);
+    ok(d.conductor === `${BASE}taxicun/conductor/?e=${ficha.id}`, `${nombre}: el enlace de conductores abre TaxiCun para conductores`);
+    if (iconosPropios) ok(d.icono.includes(`empresas/${ficha.id}/`), `${nombre}: ícono propio en el chip de la cooperativa (${d.icono})`);
     await revisarPagina(p, ficha, nombre, { franjaSel: '.franja-pagina' });
     await juntarEnlaces(p, nombre);
     await p.screenshot({ path: `${CAPTURAS}/${ficha.id}-descargar.png`, fullPage: true });
@@ -360,6 +397,8 @@ for (const ficha of fichas) {
     await p.goto(`${base}privacidad/`, { waitUntil: 'load' });
     const responsable = (await p.textContent('#responsable')).replace(/\s+/g, ' ');
     ok(responsable.includes(E.razonSocial || E.nombre) && (!E.correo || responsable.includes(E.correo)), `${nombre}: el responsable es ${E.razonSocial || E.nombre}`);
+    ok(/TaxiCun/.test(responsable) && /interOS/.test(responsable) && /encargado del tratamiento/.test(responsable), `${nombre}: la app es TaxiCun e interOS es el encargado del tratamiento`);
+    ok(/términos de uso de TaxiCun/.test(await p.textContent('h1')), `${nombre}: título de la política con TaxiCun`);
     const r = await revisarPagina(p, ficha, nombre, { franjaSel: '.franja-pagina' });
     ok(/noindex/.test(r.robots), `${nombre}: noindex (borrador)`);
     // «Borrar mis datos» solo borra las claves de esta cooperativa.
@@ -391,7 +430,10 @@ for (const ficha of fichas) {
       marcos: [...document.querySelectorAll('.v-pantalla iframe')].map((f) => f.getAttribute('src')),
       esperas: [...document.querySelectorAll('.v-espera .texto')].filter((t) => !t.closest('.v-espera').hidden).map((t) => t.textContent),
       volver: document.querySelector('.v-volver span')?.textContent,
+      pedir: document.querySelector('.v-pedir')?.href,
+      titulo: document.querySelector('.v-intro h1')?.textContent,
     }));
+    ok(d.pedir === `${BASE}taxicun/?e=${ficha.id}` && d.titulo === 'Elige el diseño de TaxiCun', `${nombre}: nombra TaxiCun y «Pedir taxi» abre taxicun/?e=${ficha.id}`);
     ok(d.columnas === 3 && d.volver === E.nombre, `${nombre}: 3 diseños (${d.nombres.join(', ')}) y «volver» a ${d.volver}`);
     ok(d.marcos.length === 3 && d.marcos.every((s) => /^\.\.\/app\/\?d=[abc]&vitrina=1&sala=vitrina-[abc]$/.test(s)), `${nombre}: cada columna carga la app de ${E.nombre} (${d.marcos.join(' | ')})`);
     ok(!d.esperas.some((t) => /se está terminando/.test(t)), `${nombre}: los tres diseños están disponibles`);
@@ -414,15 +456,29 @@ if (!SOLO.length) {
   await p.goto(`${BASE}cooperativas/`, { waitUntil: 'load' });
   await p.waitForTimeout(800);
   const d = await p.evaluate(() => ({
-    tarjetas: [...document.querySelectorAll('.coop')].map((c) => ({ id: c.id.replace('coop-', ''), estado: c.querySelector('.estado')?.textContent, enlaces: c.querySelectorAll('.enlaces a').length })),
+    tarjetas: [...document.querySelectorAll('.coop')].map((c) => ({
+      id: c.id.replace('coop-', ''), estado: c.querySelector('.estado')?.textContent, enlaces: c.querySelectorAll('.enlaces a').length,
+      hrefs: [...c.querySelectorAll('.enlaces a')].map((a) => a.href),
+    })),
     robots: document.querySelector('meta[name="robots"]')?.content || '',
     pie: document.querySelector('.pie')?.textContent || '',
+    titulo: document.title,
+    abrir: [...document.querySelectorAll('.cabeza a.boton')].map((a) => a.href),
+    logo: document.querySelector('.cabeza .tc-logo')?.getAttribute('aria-label'),
   }));
+  ok(d.titulo === 'TaxiCun · App de taxis para Cundinamarca · desarrollada por interOS' && d.logo === 'TaxiCun', `cooperativas: portada de TaxiCun («${d.titulo}»)`);
+  ok(d.abrir[0] === `${BASE}taxicun/` && d.abrir[1] === `${BASE}taxicun/conductor/`, 'cooperativas: «Abrir TaxiCun» → taxicun/ y conductores → taxicun/conductor/');
+  ok(d.tarjetas.every((t) => {
+    const raiz = BASE + (t.id === PRINCIPAL ? '' : `${t.id}/`);
+    return [raiz, `${BASE}taxicun/?e=${t.id}`, `${BASE}taxicun/conductor/?e=${t.id}`, `${raiz}propuesta/`, `${raiz}stickers/`].every((u) => t.hrefs.includes(u));
+  }), 'cooperativas: cada tarjeta enlaza su web, TaxiCun, conductor, propuesta y stickers');
   ok(d.tarjetas.length === fichas.length && fichas.every((f) => d.tarjetas.some((t) => t.id === f.id && t.estado === (f.estado === 'propuesta' ? 'Propuesta' : 'Cliente') && t.enlaces >= 6)),
     `cooperativas: una tarjeta por ficha con su estado (${d.tarjetas.map((t) => `${t.id}: ${t.estado}`).join(', ')})`);
-  ok(/noindex/.test(d.robots) && /Desarrollado por interOS/.test(d.pie), 'cooperativas: noindex y «Desarrollado por interOS»');
+  ok(/noindex/.test(d.robots) && /TaxiCun · desarrollada por interOS/.test(d.pie), 'cooperativas: noindex y «TaxiCun · desarrollada por interOS»');
   const qrs = await leerQRs(p, '.coop .qr svg');
-  ok(qrs.length === d.tarjetas.length && d.tarjetas.every((t, i) => qrs[i] === BASE + (t.id === PRINCIPAL ? '' : `${t.id}/`)), `cooperativas: cada QR abre la web de su cooperativa (${qrs.map((q) => (q || 'ilegible').replace(origen, '')).join(' | ')})`);
+  ok(qrs.length === d.tarjetas.length && d.tarjetas.every((t, i) => qrs[i] === `${BASE}taxicun/?e=${t.id}`), `cooperativas: cada QR abre TaxiCun con su cooperativa (${qrs.map((q) => (q || 'ilegible').replace(origen, '')).join(' | ')})`);
+  const [qrTaxiCun] = await leerQRs(p, '#qr-taxicun svg');
+  ok(qrTaxiCun === `${BASE}taxicun/`, `cooperativas: el QR grande abre TaxiCun (${(qrTaxiCun || 'ilegible').replace(origen, '')})`);
   await juntarEnlaces(p, 'cooperativas');
   await p.screenshot({ path: `${CAPTURAS}/cooperativas-1440.png`, fullPage: true });
   await p.setViewportSize({ width: 390, height: 844 });
@@ -447,8 +503,8 @@ if (!SOLO.length) {
     await p404.route(`${BASE}${otra.id}/no-existe/`, (r) => r.fulfill({ status: 404, contentType: 'text/html; charset=utf-8', body: pagina404 }));
     await p404.goto(`${BASE}${otra.id}/no-existe/`, { waitUntil: 'load' });
     await p404.waitForTimeout(800);
-    const r = await p404.evaluate(() => ({ inicio: document.querySelector('[data-ruta=""]')?.href, app: document.querySelector('[data-ruta="app/"]')?.href, titulo: document.title, verde: document.documentElement.style.getPropertyValue('--verde') }));
-    ok(r.inicio === `${BASE}${otra.id}/` && r.app === `${BASE}${otra.id}/app/` && r.titulo.includes(otra.EMPRESA.nombre) && r.verde.toUpperCase() === otra.colores.primario.toUpperCase(),
+    const r = await p404.evaluate(() => ({ inicio: document.querySelector('[data-ruta=""]')?.href, app: document.querySelector('[data-taxicun]')?.href, titulo: document.title, verde: document.documentElement.style.getPropertyValue('--verde') }));
+    ok(r.inicio === `${BASE}${otra.id}/` && r.app === `${BASE}taxicun/?e=${otra.id}` && r.titulo.includes(otra.EMPRESA.nombre) && r.verde.toUpperCase() === otra.colores.primario.toUpperCase(),
       `404 en /${otra.id}/…: lleva al inicio de ${otra.EMPRESA.nombre} con sus colores (${r.inicio.replace(origen, '')})`);
     await p404.screenshot({ path: `${CAPTURAS}/404-${otra.id}.png` });
     errores.push(...errores404.filter((e) => !/nucleo\/config\.js|\/no-existe\/(\s|\)|$)/.test(e)));

@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Elige el diseño de tu app · Cootransrural</title>
-  <meta name="description" content="Compara los tres diseños de la app de Cootransrural (Ámbar Urbano, Verde Rosal y Noche Neón), pruébalos aquí mismo y quédate con el que más te guste.">
+  <title>Elige el diseño de TaxiCun · Cootransrural</title>
+  <meta name="description" content="Compara los tres diseños de TaxiCun con Cootransrural (Ámbar Urbano, Verde Rosal y Noche Neón), pruébalos aquí mismo y quédate con el que más te guste.">
   <meta name="theme-color" content="#07140D">
-  <meta property="og:title" content="Elige el diseño de la app de Cootransrural">
-  <meta property="og:description" content="Tres diseños, la misma app: pruébalos y elige.">
+  <meta property="og:title" content="Elige el diseño de TaxiCun con Cootransrural">
+  <meta property="og:description" content="Tres diseños, la misma app TaxiCun: pruébalos y elige.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://interos-sas.github.io/cootransrural-app/disenos/">
   <meta property="og:image" content="https://interos-sas.github.io/cootransrural-app/img/web/hero.jpg">
@@ -16,7 +16,11 @@
   <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
   <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
   <link rel="stylesheet" href="../disenos/vitrina.css?v=f2c3297b02">
-  <style>:root{--verde:#0A5C33;--verde-2:#0B6B3A;--verde-3:#13874B;--verde-osc:#052A17;--verde-tinte:#E6F2EA;--verde-tinte-2:#EAF3EC;--verde-tinte-3:#E3EFE6;--verde-linea:#D5E6DA;--exito-tinte:#E8F7EE;--b-claro:#A7D7B8;--fondo-oscuro:#0B1A12;--noche-1:#10241A;--noche-2:#04110A;--fondo-vitrina:#07140D;--amarillo:#FFC107;--amarillo-2:#FFD54F;--amarillo-osc:#C99400;--amarillo-texto:#926A00;--rojo:#D32F2F;--amarillo-vivo:#FFC107;--velo:#031E10;--velo-2:#042615;--velo-3:#031A0E;--noche:#030E09;--verde-rgb:10, 92, 51;--verde-3-rgb:19, 135, 75;--verde-osc-rgb:5, 42, 23;--amarillo-rgb:255, 193, 7;--velo-rgb:3, 30, 16;--velo-2-rgb:4, 38, 21;--velo-3-rgb:3, 26, 14;--noche-rgb:3, 14, 9;--rojo-rgb:211, 47, 47}</style>
+  <style>:root{--verde:#0A5C33;--verde-2:#0B6B3A;--verde-3:#13874B;--verde-osc:#052A17;--verde-tinte:#E6F2EA;--verde-tinte-2:#EAF3EC;--verde-tinte-3:#E3EFE6;--verde-linea:#D5E6DA;--exito-tinte:#E8F7EE;--b-claro:#A7D7B8;--fondo-oscuro:#0B1A12;--noche-1:#10241A;--noche-2:#04110A;--fondo-vitrina:#07140D;--amarillo:#FFC107;--amarillo-2:#FFD54F;--amarillo-osc:#C99400;--amarillo-texto:#926A00;--rojo:#D32F2F;--amarillo-vivo:#FFC107;--velo:#031E10;--velo-2:#042615;--velo-3:#031A0E;--noche:#030E09;--verde-rgb:10, 92, 51;--verde-3-rgb:19, 135, 75;--verde-osc-rgb:5, 42, 23;--amarillo-rgb:255, 193, 7;--velo-rgb:3, 30, 16;--velo-2-rgb:4, 38, 21;--velo-3-rgb:3, 26, 14;--noche-rgb:3, 14, 9;--rojo-rgb:211, 47, 47}
+    /* TaxiCun en la vitrina (la app de todas las cooperativas, desarrollada por interOS). */
+    .v-intro > p.v-taxicun{display:inline-flex;align-items:center;gap:10px;margin:0 0 6px;font:800 1.05rem/1 'Sora',system-ui,sans-serif;letter-spacing:-.02em;color:inherit}
+    .v-taxicun img{width:30px;height:30px;border-radius:8px}
+    .v-taxicun span{color:#FFC21A}</style>
   <!-- Cooperativa de esta página: el núcleo carga su ficha (empresas/cootransrural/ficha.json). -->
   <script>window.CT_EMPRESA = 'cootransrural';</script>
 </head>
@@ -33,14 +37,15 @@
 
   <header class="v-barra">
     <a class="v-volver" href="../"><svg class="icono"><use href="#i-flecha-izq"/></svg><img src="../img/icono-192.png" alt="" width="34" height="34"><span>Cootransrural</span></a>
-    <a class="v-boton v-boton-amarillo v-pedir" href="../app/">Pedir taxi</a>
+    <a class="v-boton v-boton-amarillo v-pedir" href="../taxicun/?e=cootransrural">Pedir taxi</a>
   </header>
 
   <main class="v-principal">
     <section class="v-intro">
-      <p class="v-antetitulo">Vitrina de diseños</p>
-      <h1>Elige el diseño de tu app</h1>
-      <p>Los tres diseños usan el mismo motor: funcionan igual y solo cambia cómo se ven. Tócalos, pide un taxi de prueba y quédate con el que más te guste.</p>
+      <p class="v-taxicun"><img src="../img/taxicun/icono.svg" alt="" width="30" height="30"><b>Taxi<span>Cun</span></b></p>
+      <p class="v-antetitulo">Vitrina de diseños de TaxiCun</p>
+      <h1>Elige el diseño de TaxiCun</h1>
+      <p>Los tres diseños de TaxiCun usan el mismo motor: funcionan igual y solo cambia cómo se ven. La cooperativa elige con cuál abre TaxiCun en El Rosal, y cada pasajero lo puede cambiar en Ajustes. Tócalos, pide un taxi de prueba y quédate con el que más te guste.</p>
       <p class="v-consejo"><svg class="icono"><use href="#i-info"/></svg><span><b>Prueba los dos lados:</b> en una columna abre <b>Conductor</b> y conéctate; luego vuelve a <b>Pasajero</b> y pide un taxi. El servicio te llega en la otra vista.</span></p>
     </section>
 
@@ -74,7 +79,7 @@
 
   <footer class="v-pie">
     <p>Puedes cambiar de diseño cuando quieras desde esta página. <a href="../">Volver a Cootransrural</a> · <a href="../privacidad/">Privacidad</a></p>
-    <p>Desarrollado por <a href="https://interos.com.co" target="_blank" rel="noopener">interOS</a></p>
+    <p>App TaxiCun · desarrollada por <a href="https://interos.com.co" target="_blank" rel="noopener">interOS</a></p>
   </footer>
 
   <script type="module" src="../disenos/vitrina.js?v=6e0e5c7243"></script>

@@ -143,7 +143,7 @@ export function chipPrueba(texto = 'PRUEBA') {
 
 // En las propuestas (cooperativas que no son clientes), aviso discreto junto a «MODO PRUEBA».
 export function avisoDemo(clase = 'a-chip-demo') {
-  return EM.ES_PROPUESTA ? `<span class="${clase}">Demostración para ${esc(EM.NOMBRE_LARGO)}</span>` : '';
+  return EM.ES_PROPUESTA ? `<span class="${clase}">Demostración de ${esc(EM.APP)} para ${esc(EM.NOMBRE_LARGO)}</span>` : '';
 }
 
 // Cuadros de colores tipo «tablero de taxi» (detalle de marca).
@@ -747,7 +747,7 @@ export function panelEscritorio({ titulo, texto, puntos = [], url = location.hre
   const propuesta = EM.ES_PROPUESTA ? `<p class="a-escritorio-propuesta">${icono('info', { tam: 18 })}<span>${esc(EM.TEXTO_PROPUESTA)}</span></p>` : '';
   return el(`<aside class="a-escritorio" aria-label="Información de la demo">
     ${propuesta}
-    <div class="a-escritorio-marca">${EM.marcaIcono(52)}<div><strong>${esc(EM.NOMBRE)}</strong>${EM.LEMA ? `<span>${esc(EM.LEMA)}</span>` : ''}</div></div>
+    <div class="a-escritorio-marca">${EM.EN_TAXICUN ? EM.marcaApp(52) : EM.marcaIcono(52)}<div><strong>${EM.EN_TAXICUN ? `${EM.palabraApp()} · ${esc(EM.NOMBRE)}` : esc(EM.NOMBRE)}</strong>${EM.LEMA ? `<span>${esc(EM.LEMA)}</span>` : ''}</div></div>
     <h1>${titulo}</h1>
     <p>${esc(texto)}</p>
     <ul>${puntos.filter(Boolean).map((p) => `<li>${icono('check', { tam: 18 })}<span>${esc(p)}</span></li>`).join('')}</ul>
@@ -755,6 +755,6 @@ export function panelEscritorio({ titulo, texto, puntos = [], url = location.hre
       <div class="a-escritorio-qr-img">${N.qrSVG(url, { redondeado: true, color: '#121212' })}</div>
       <div><strong>Ábrela en tu celular</strong><span>Escanea el código con la cámara.</span></div>
     </div>
-    <small>${esc(EM.unir(['Demo', EM.RAZON_SOCIAL, EM.TELEFONO_VISIBLE]))}<br>App desarrollada por ${esc(EM.PROVEEDOR)}</small>
+    <small>${esc(EM.unir(['Demo', EM.RAZON_SOCIAL, EM.TELEFONO_VISIBLE]))}<br>${esc(EM.TEXTO_DESARROLLO)}</small>
   </aside>`);
 }

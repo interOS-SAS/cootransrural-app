@@ -92,6 +92,16 @@
   gap: 12px;
 }
 
+/* «TaxiCun · Coptaxi» encima del título (solo dentro de TaxiCun). */
+.vb-bienv-tc {
+  margin-bottom: -4px;
+}
+
+.vb-registro-tc {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
 .vb-bienv-cuerpo h1 {
   margin: 0;
   font-size: 32px;
@@ -330,6 +340,27 @@
   min-width: 0;
   white-space: normal;
   text-align: center;
+}
+
+/* Sello de TaxiCun sobre la esquina de la insignia (solo en pantallas estrechas, ver abajo). */
+.vb-cab-marca {
+  position: relative;
+}
+
+.vb-cab-tc-sello {
+  display: none;
+  position: absolute;
+  left: 20px;
+  bottom: -4px;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--vb-crema);
+  line-height: 0;
+}
+
+.vb-cab-tc-sello .vb-tc-icono {
+  border-radius: 6px;
+  box-shadow: none;
 }
 
 .vb-cab-marca b {
@@ -2697,6 +2728,14 @@
   .vb-cab-inicio .vb-conexion {
     padding: 4px 9px;
     font-size: 12px;
+  }
+  /* Pantallas estrechas: el ícono de TaxiCun pasa a ser un sello sobre la insignia
+     (al lado no cabe con nombres largos como «Cooptranstermales»). */
+  .vb-cab-inicio .vb-cab-tc {
+    display: none;
+  }
+  .vb-cab-marca .vb-cab-tc-sello {
+    display: block;
   }
   .vb-cab-marca b {
     font-size: 17px;

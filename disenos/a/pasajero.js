@@ -17,7 +17,7 @@ const MENSAJES_BUSQUEDA = [
   'Un conductor está revisando tu servicio',
 ];
 
-export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
+export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun = null }) {
   raiz.innerHTML = '';
   raiz.classList.add('a-raiz');
   if (EM.FICHA_EQUIVOCADA) {
@@ -30,13 +30,16 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
   if (!vitrina) {
     raiz.append(panelEscritorio({
       titulo: `Pide tu taxi en <em>${esc(EM.PUEBLO)}</em>, sin llamar.`,
-      texto: `Demo de la app de ${EM.NOMBRE}: ubicación exacta, seguimiento en vivo, código de abordaje y pago con QR de prueba.`,
+      texto: EM.EN_TAXICUN
+        ? `Demo de ${EM.APP} con los taxis de ${EM.NOMBRE}: ubicación exacta, seguimiento en vivo, código de abordaje y pago con QR de prueba.`
+        : `Demo de la app de ${EM.NOMBRE}: ubicación exacta, seguimiento en vivo, código de abordaje y pago con QR de prueba.`,
       puntos: [
         EM.unir([EM.textoTaxis(), EM.SERVICIO_24H ? 'servicio 24 horas' : ''], ' y ').replace(/^s/, 'S') || `Taxis de la ${EM.TIPO} cerca de ti`,
         'Sabes quién llega: móvil, placa y código', 'Programa con 24 h y ahorra 10 %', 'Cada 10 viajes, el siguiente al 50 %',
       ],
-      // El QR abre la app de esta cooperativa (no la de otra) con el mismo diseño.
-      url: N.urlEmpresa(`app/?d=${encodeURIComponent(diseno)}`),
+      // El QR abre la app de esta cooperativa (no la de otra) con el mismo diseño;
+      // dentro de TaxiCun, TaxiCun con esta cooperativa (?e=).
+      url: N.urlApp('pasajero', { d: diseno }),
     }));
   }
 
@@ -51,6 +54,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
         <span data-avatar>${avatar('')}</span><span class="a-barra-menu-ico">${icono('menu', { tam: 13, grosor: 3 })}</span>
       </button>
       <div class="a-barra-saludo"><small data-saludo>${esc(N.saludo())}</small><strong data-nombre>${esc(EM.NOMBRE)}</strong></div>
+      ${EM.EN_TAXICUN ? `<span class="a-tc-sello a-tc-sello-barra" title="${esc(`${EM.APP} · ${EM.NOMBRE}`)}">${EM.iconoApp(20)}<span>${EM.palabraApp()}</span></span>` : ''}
       <button class="a-icono-btn a-barra-campana" type="button" data-campana aria-label="Avisos">${icono('campana')}<span class="a-insignia" data-insignia hidden></span></button>
     </header>
     <div class="a-chip-red${EM.ES_PROPUESTA ? ' a-chip-red-demo' : ''}" data-conexion><span class="a-led"></span><span data-conexion-txt>Solo este equipo</span><b>MODO PRUEBA</b>${avisoDemo()}</div>
@@ -266,10 +270,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
         { icono: 'ajustes', texto: 'Ajustes', detalle: 'Diseño, sala, sonido, instalar', accion: () => abrirAjustes(ctx()) },
         { icono: 'ayuda', texto: 'Ayuda', detalle: EM.TELEFONO ? `Central${EM.SERVICIO_24H ? ' 24 h' : ''} · ${EM.TELEFONO_VISIBLE}` : 'Preguntas frecuentes y contacto', accion: () => abrirAyuda(ctx()) },
         { separador: true },
-        { icono: 'volante', texto: 'Soy conductor', detalle: 'Abrir la app de conductores', href: `../conductor/?d=${encodeURIComponent(diseno)}`, clase: 'a-menu-marca' },
+        EM.EN_TAXICUN && { icono: 'pin', texto: 'Cambiar de municipio', detalle: `Ahora: ${EM.PUEBLO} · ${EM.NOMBRE}`, accion: cambiarMunicipio },
+        { icono: 'volante', texto: 'Soy conductor', detalle: 'Abrir la app de conductores', href: EM.urlOtraApp('conductor', diseno), clase: 'a-menu-marca' },
         { icono: 'salir', texto: 'Cerrar sesión', accion: cerrarSesion, clase: 'a-menu-peligro' },
-      ],
+      ].filter(Boolean),
       pie: `<div class="a-menu-pie-marca">${EM.marcaIcono(30)}<div><strong>${esc(EM.NOMBRE_LARGO)}</strong>${EM.LEMA ? `<small>${esc(EM.LEMA)}</small>` : ''}</div></div>
+        ${EM.EN_TAXICUN ? `<div class="a-menu-pie-tc">${EM.iconoApp(18)}<span>${esc(EM.TEXTO_DESARROLLO)}</span></div>` : ''}
         <div class="a-menu-pie-estado">${chipPrueba('MODO PRUEBA')}${avisoDemo('a-chip-demo a-chip-demo-claro')}<span><span class="a-led ${p?.estado.conexion === 'en-vivo' ? 'a-led-vivo' : ''}"></span>${conexion} · sala «${esc(p?.estado.sala || N.salaActual())}»</span></div>`,
     });
   }
@@ -290,9 +296,18 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
     mostrarBienvenida(app, { N, alTerminar: alRegistrarse });
   }
 
+  // Solo dentro de TaxiCun: vuelve a la lista de municipios (no con un viaje en curso).
+  function cambiarMunicipio() {
+    if (p && p.estado.fase !== 'inicio') {
+      avisos.mostrar({ titulo: 'Tienes un viaje en curso', cuerpo: 'Termínalo o cancélalo antes de cambiar de municipio.', tipo: 'alerta' });
+      return;
+    }
+    location.href = EM.urlCambiarMunicipio('pasajero');
+  }
+
   function ctx() {
     return {
-      N, app, p, avisos, diseno, hoja,
+      N, app, p, avisos, diseno, hoja, cambiarMunicipio,
       programarViaje: () => {
         ui.programar = true;
         ui.fecha = fechaPorDefecto();
@@ -1419,6 +1434,18 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
   function alRegistrarse() {
     pintarBarra();
     avisos.mostrar({ titulo: `¡Hola, ${nombreCorto(N.perfil.pasajero()?.nombre || '')}!`, cuerpo: 'Mueve el mapa a tu punto y dinos a dónde vas.', tipo: 'exito' });
+    avisarMunicipioPorGps();
+  }
+
+  // TaxiCun escogió la cooperativa por el GPS: se dice cuál y cómo cambiarla (una vez por sesión).
+  function avisarMunicipioPorGps() {
+    // Si aún no se registró, se avisa después del registro (no encima de la bienvenida).
+    if (!EM.EN_TAXICUN || !taxicun?.porGps || !N.perfil.pasajero()?.nombre) return;
+    try {
+      if (sessionStorage.getItem('ct.a.tc.avisoGps') === N.ID_EMPRESA) return;
+      sessionStorage.setItem('ct.a.tc.avisoGps', N.ID_EMPRESA);
+    } catch { /* sin sessionStorage */ }
+    avisos.mostrar({ titulo: `Estás en ${EM.PUEBLO}`, cuerpo: `Te mostramos los taxis de ${EM.NOMBRE}. Si no es tu municipio, cámbialo en el menú.`, tipo: 'info' });
   }
 
   /* ---------------- arranque ---------------- */
@@ -1487,6 +1514,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
       ui.vista = null;
       pintarAhora();
       if (p.registrado) await retomarTrasRecarga();
+      avisarMunicipioPorGps();
     } catch (err) {
       console.error(err);
       avisos.mostrar({ titulo: 'No pudimos iniciar la app', cuerpo: err.message, tipo: 'error' });

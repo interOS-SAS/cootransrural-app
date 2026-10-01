@@ -976,3 +976,45 @@ html.con-franja { scroll-padding-top: calc(var(--alto-barra) + var(--alto-franja
 /* Pie: quién desarrolló la app y enlace discreto al índice de cooperativas. */
 .pie-interos a { font-weight: 700; }
 .pie-interos .discreto { font-weight: 600; color: rgba(255, 255, 255, .62); }
+
+/* ---------- TaxiCun: la app de todas las cooperativas (desarrollada por interOS) ---------- */
+/* Colores de la marca TaxiCun (los mismos de img/taxicun/ y de nucleo/config.js MARCA). */
+:root { --tc-azul: #0A2552; --tc-azul-2: #1A4FA0; --tc-amarillo: #FFC21A; --tc-amarillo-osc: #F2A900; }
+/* Logotipo: el ícono de img/taxicun/ y el nombre escrito con la letra de la página
+   (el SVG de logo.svg usado como <img> no puede cargar la fuente Sora). */
+.tc-logo { display: inline-flex; align-items: center; gap: .55em; color: #fff; }
+.tc-logo img { width: 64px; height: 64px; border-radius: 17px; box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .55); }
+.tc-logo b { font: 800 2.15rem/1 var(--titulo); letter-spacing: -.035em; white-space: nowrap; }
+.tc-logo b span, .tc-nombre span { color: var(--tc-amarillo); }
+.tc-nombre { font-family: var(--titulo); font-weight: 800; letter-spacing: -.02em; color: #fff; white-space: nowrap; }
+
+.tc-franja { position: relative; z-index: 2; padding: clamp(40px, 5.5vw, 64px) 0 0; }
+.tc-franja-caja {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: clamp(20px, 3.4vw, 44px);
+  padding: clamp(24px, 3.4vw, 38px) clamp(22px, 3.6vw, 44px);
+  border-radius: var(--radio-g); color: #fff;
+  background: radial-gradient(520px 260px at 100% 0%, rgba(255, 194, 26, .22), transparent 62%), linear-gradient(135deg, var(--tc-azul-2) 0%, var(--tc-azul) 68%);
+  box-shadow: 0 30px 60px -32px rgba(10, 37, 82, .75);
+}
+/* Cuadros de taxi en el borde izquierdo. */
+.tc-franja-caja::before {
+  content: ""; position: absolute; inset: 0 auto 0 0; z-index: -1; width: 12px;
+  background: conic-gradient(var(--tc-amarillo) 25%, var(--tc-azul) 0 50%, var(--tc-amarillo) 0 75%, var(--tc-azul) 0) 0 0 / 12px 12px;
+  opacity: .9;
+}
+.tc-franja-marca { display: grid; justify-items: start; gap: 10px; }
+.tc-franja-marca small { font-size: .82rem; font-weight: 700; letter-spacing: .02em; color: rgba(255, 255, 255, .7); }
+.tc-antetitulo { display: block; font: 800 .76rem/1.2 var(--fuente); letter-spacing: .16em; text-transform: uppercase; color: var(--tc-amarillo); }
+.tc-franja h2 { margin: 8px 0 8px; color: #fff; font: 800 clamp(1.55rem, 1.1rem + 1.6vw, 2.25rem)/1.08 var(--titulo); letter-spacing: -.03em; }
+.tc-franja p { margin: 0; max-width: 40em; color: rgba(255, 255, 255, .88); font-size: clamp(.98rem, .94rem + .25vw, 1.08rem); line-height: 1.55; }
+.tc-franja .boton-amarillo { --fondo: var(--tc-amarillo); --color: var(--tc-azul); white-space: nowrap; box-shadow: 0 14px 30px -12px rgba(255, 194, 26, .7), inset 0 -3px 0 rgba(0, 0, 0, .12); }
+.tc-franja :focus-visible { outline-color: var(--tc-amarillo); }
+@media (max-width: 900px) {
+  .tc-franja-caja { grid-template-columns: 1fr; gap: 18px; }
+  .tc-franja-boton { justify-self: stretch; }
+}
+@media (max-width: 420px) {
+  .tc-logo img { width: 54px; height: 54px; border-radius: 14px; }
+  .tc-logo b { font-size: 1.85rem; }
+}

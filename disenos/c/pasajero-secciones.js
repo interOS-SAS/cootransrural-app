@@ -139,9 +139,9 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
       <div class="c-lista">
         ${fila('sub', 'tarifa', 'Tarifas y rutas', 'Valores de ejemplo y rutas fijas', 'data-sub="tarifas"')}
         ${fila('tab', 'regalo', 'Promociones y fidelidad', '10 % programando · cada 10 viajes, uno al 50 %', 'data-tab="billetera"')}
-        ${fila('sub', 'ajustes', 'Ajustes', 'Diseño, sala, simulación, sonido, instalar', 'data-sub="ajustes"')}
+        ${fila('sub', 'ajustes', 'Ajustes', C.enTaxiCun() ? 'Municipio, diseño, sala, simulación, sonido' : 'Diseño, sala, simulación, sonido, instalar', 'data-sub="ajustes"')}
         ${fila('sub', 'ayuda', 'Ayuda y central', E.telefono ? `Llama o escribe al ${esc(E.telefonoVisible)}` : E.whatsapp ? 'Escríbenos por WhatsApp' : `Preguntas frecuentes y datos de la ${E.tipo}`, 'data-sub="ayuda"')}
-        <a class="c-fila-menu" href="${esc(C.urlCooperativa('conductor/'))}">${icono('volante')}<span><strong>Soy conductor</strong><small>Abrir la app de los conductores</small></span>${icono('chevron')}</a>
+        <a class="c-fila-menu" href="${esc(C.urlApp('conductor'))}" data-soy-conductor>${icono('volante')}<span><strong>Soy conductor</strong><small>Abrir la app de los conductores</small></span>${icono('chevron')}</a>
         <button type="button" class="c-fila-menu c-fila-peligro" data-accion="cerrar-sesion">${icono('salir')}<span><strong>Cerrar sesión</strong><small>Tu nombre y tu celular se borran de este equipo</small></span></button>
       </div>
       ${C.pieMarcaHTML()}
@@ -183,6 +183,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
     const instalada = N.yaInstalada();
     return `<section class="c-pantalla c-pantalla-ajustes" aria-label="Ajustes">
       ${cabeza('Ajustes', '', 'volver-perfil')}
+      ${C.municipioHTML('pasajero')}
       <h2 class="c-seccion-titulo">Diseño de la app</h2>
       <div class="c-disenos" role="radiogroup" aria-label="Diseño">
         ${C.nombresDisenos()
@@ -251,7 +252,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
       ${filas.length ? `<div class="c-lista">${filas.join('')}</div>` : ''}
       <h2 class="c-seccion-titulo">Preguntas frecuentes</h2>
       <div class="c-lista">${preguntas.map(([q, r]) => `<details class="c-pregunta"><summary>${esc(q)}${icono('abajo')}</summary><p>${esc(r)}</p></details>`).join('')}</div>
-      <p class="c-pie-marca">${privacidad ? `<a href="${esc(privacidad)}">Política de privacidad</a>` : 'Política de privacidad: en preparación'}<br><span class="c-pie-proveedor">App desarrollada por ${esc(E.proveedor)}</span></p>
+      <p class="c-pie-marca">${privacidad ? `<a href="${esc(privacidad)}">Política de privacidad</a>` : 'Política de privacidad: en preparación'}<br>${C.pieTaxiCunHTML()}</p>
     </section>`;
   }
 

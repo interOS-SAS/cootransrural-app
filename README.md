@@ -1,11 +1,28 @@
-# App de taxis para cooperativas (demo) · interOS
+# TaxiCun · app de taxis para Cundinamarca (demo) · desarrollada por interOS
 
-Plataforma de demostración para cooperativas de taxis de Cundinamarca: app del
-pasajero, app del conductor (3 diseños), web de cada cooperativa, stickers QR y
-pago QR Bre-B **de prueba**. Desarrollado por interOS.
+**TaxiCun** es la app (marca única, amarillo taxi y azul); **interOS** es quien
+la desarrolla. Es una sola app para varias cooperativas de taxis de
+Cundinamarca: por el enlace del sticker (`?e=<id>`), por la elección guardada o
+por GPS escoge la cooperativa del municipio y la muestra con su nombre, sus
+colores y el diseño que ella eligió («TaxiCun · Coptaxi»). Incluye app del
+pasajero y del conductor (3 diseños), web de cada cooperativa, stickers QR,
+propuestas comerciales y pago QR Bre-B **de prueba**.
 
 **Sitio de pruebas:** https://interos-sas.github.io/cootransrural-app/
-**Todas las cooperativas:** https://interos-sas.github.io/cootransrural-app/cooperativas/
+**TaxiCun:** https://interos-sas.github.io/cootransrural-app/taxicun/ (conductores: `taxicun/conductor/`)
+**Portada de TaxiCun y todas las cooperativas:** https://interos-sas.github.io/cootransrural-app/cooperativas/
+
+Dónde dice TaxiCun: la web de cada cooperativa («Pide tu taxi con TaxiCun»; los
+botones «Pedir taxi», «Descargar TaxiCun» y los de conductores abren
+`taxicun/?e=<id>` y `taxicun/conductor/?e=<id>`), la página de descarga (destino
+del QR de los stickers: «Abrir TaxiCun» con el móvil escaneado; la instalación se
+hace desde `taxicun/`, que tiene el manifiesto), los stickers («Pide tu taxi con
+TaxiCun» con el ícono de TaxiCun y el nombre de la cooperativa; el QR sigue
+llevando a `<id>/descargar/?movil=…`), las propuestas («Propuesta: TaxiCun para
+…», desarrollada por interOS), la vitrina, la privacidad (responsable: la
+cooperativa; encargado: interOS) y `cooperativas/`. El logotipo se arma con
+`img/taxicun/icono.svg` y el nombre escrito con la letra Sora de la página
+(`logo.svg` como imagen no puede cargar la fuente).
 
 | Cooperativa | Pueblo | Estado | Ruta |
 | --- | --- | --- | --- |
@@ -44,13 +61,15 @@ buscadores y no usan logos de la cooperativa: aún no son clientes.
 | Página | Para qué |
 | --- | --- |
 | `./` | Web renovada de la cooperativa |
-| `app/` | App del pasajero (`?d=a`, `?d=b` o `?d=c` para elegir el diseño) |
+| `app/` | App del pasajero propia de la cooperativa (la usa la vitrina; `?d=a`, `?d=b` o `?d=c`). La web ya lleva a TaxiCun |
 | `conductor/` | App del conductor (demo: móvil 023, PIN 1234) |
 | `disenos/` | Vitrina para comparar los 3 diseños lado a lado |
 | `stickers/` | Stickers QR imprimibles (taxi, nevera, afiche, tarjeta) |
-| `descargar/` | Página a la que lleva el QR de los stickers |
+| `descargar/` | «Descarga TaxiCun»: página a la que lleva el QR de los stickers (abre `taxicun/?e=<id>&movil=…`) |
 | `pagar/` | Pago con QR **de prueba** (no mueve dinero) |
-| `propuesta/` | Propuesta comercial de interOS (6 hojas carta, imprimible; no se indexa) |
+| `propuesta/` | Propuesta comercial de TaxiCun, desarrollada por interOS (6 hojas carta; 7 con el anexo de Coptaxi; imprimible; no se indexa) |
+| `taxicun/` | La app TaxiCun (raíz del sitio): escoge la cooperativa por `?e=`, la elección guardada o el GPS |
+| `cooperativas/` | Portada de TaxiCun con todas las cooperativas (raíz del sitio) |
 
 ## Los 3 diseños
 
@@ -123,7 +142,7 @@ node pruebas/web.mjs http://localhost:8765/
 node pruebas/web-empresas.mjs http://localhost:8765/                     # todas las cooperativas
 node pruebas/stickers.mjs http://localhost:8765/
 node pruebas/stickers-empresas.mjs http://localhost:8765/
-node herramientas/propuestas-pdf.mjs http://localhost:8765/              # PDF de cada propuesta en /tmp/cootrans/propuestas/<id>/ (no van al repo)
+node herramientas/propuestas-pdf.mjs http://localhost:8765/ --copiar     # PDF de cada propuesta en /tmp/cootrans/propuestas/<id>/ y copia en <id>/propuesta/
 node pruebas/propuestas.mjs http://localhost:8765/                       # propuestas web y PDF (datos, precios, QR)
 ```
 

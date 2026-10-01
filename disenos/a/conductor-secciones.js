@@ -2,7 +2,7 @@
 // Ajustes y la lista de avisos.
 import { el, esc, icono, abrirPanel, chipPrueba, decimal, placa, franjaCuadros } from './ui.js';
 import { ilustracionVacia, taxiLateral } from './ilustraciones.js';
-import { bloqueDiseno, bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca } from './ajustes-comunes.js';
+import { bloqueDiseno, bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio } from './ajustes-comunes.js';
 import * as EM from './empresa.js';
 
 // Colores validados para las dos categorías (QR / efectivo) sobre fondo claro.
@@ -180,7 +180,7 @@ export function abrirMiTaxi({ N, app }) {
   });
 }
 
-export function abrirAjustesConductor({ N, app, c, avisos, diseno }) {
+export function abrirAjustesConductor({ N, app, c, avisos, diseno, cambiarMunicipio }) {
   abrirPanel(app, {
     titulo: 'Ajustes',
     construir(cuerpo) {
@@ -200,6 +200,7 @@ export function abrirAjustesConductor({ N, app, c, avisos, diseno }) {
         avisos.mostrar({ titulo: 'Ubicación actualizada', cuerpo: c?.estado.gpsReal ? 'Usando el GPS del celular.' : 'Usando el GPS simulado.', tipo: 'info' });
       });
       cuerpo.append(
+        bloqueMunicipio(N, { alCambiar: cambiarMunicipio }),
         gps,
         bloqueSonidoYAvisos(N),
         bloqueConexion(N, { simulacion: false }),

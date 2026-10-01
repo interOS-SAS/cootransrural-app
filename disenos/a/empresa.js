@@ -193,9 +193,60 @@ export function marcaIcono(tam = 40, { clase = '', png = false } = {}) {
 }
 
 /* ------------------------------------------------------------------ */
+/* TaxiCun: la app de todas las cooperativas                            */
+/* ------------------------------------------------------------------ */
+// La app se llama TaxiCun y la desarrolla interOS. Cada cooperativa conserva su
+// nombre y sus colores dentro de la app. EN_TAXICUN: la página es la app única
+// (taxicun/), que escoge la cooperativa por el sticker, el GPS o la lista.
+export const EN_TAXICUN = Boolean(N.EN_TAXICUN);
+export const APP = limpio(N.MARCA?.nombre) || 'TaxiCun';
+export const DESARROLLADOR = limpio(N.MARCA?.desarrollador) || PROVEEDOR;
+export const LEMA_APP = limpio(N.MARCA?.lema) || 'Tu taxi de confianza en Cundinamarca';
+export const TEXTO_DESARROLLO = EN_TAXICUN ? `${APP} · desarrollada por ${DESARROLLADOR}` : `Esta app es ${APP}, desarrollada por ${DESARROLLADOR}`;
+// «TaxiCun · Coptaxi» dentro de TaxiCun; fuera, solo el nombre de la cooperativa.
+export const NOMBRE_EN_APP = EN_TAXICUN ? `${APP} · ${NOMBRE}` : NOMBRE;
+
+// Ícono de TaxiCun (el de la pantalla de inicio del celular).
+export function iconoApp(tam = 40, clase = '') {
+  const src = N.urlDelSitio(N.MARCA?.icono || 'img/taxicun/icono-192.png');
+  return `<img class="a-tc-ico ${clase}" src="${esc(src)}" alt="" width="${tam}" height="${tam}" decoding="async">`;
+}
+
+// La palabra «TaxiCun» como en el logo («Cun» de otro color).
+export function palabraApp() {
+  return APP === 'TaxiCun' ? '<span class="a-tc-palabra">Taxi<span>Cun</span></span>' : `<span class="a-tc-palabra">${esc(APP)}</span>`;
+}
+
+// Ícono de TaxiCun con el de la cooperativa en la esquina: «TaxiCun · <cooperativa>».
+export function marcaApp(tam = 38) {
+  return `<span class="a-tc-duo" style="--a-tc-tam:${tam}px">${iconoApp(tam)}${marcaIcono(Math.round(tam * 0.5), { clase: 'a-tc-duo-coop' })}</span>`;
+}
+
+// Encabezado de marca: dentro de TaxiCun, «TaxiCun · Coptaxi» con el ícono de
+// TaxiCun; fuera, la cooperativa con su ícono (como siempre).
+export function encabezadoMarca({ tam = 36, detalle = '' } = {}) {
+  if (!EN_TAXICUN) return `${marcaIcono(tam)}<span><strong>${esc(NOMBRE)}</strong>${detalle ? `<small>${esc(detalle)}</small>` : ''}</span>`;
+  return `${marcaApp(tam)}<span><strong class="a-tc-titulo">${palabraApp()}<span class="a-tc-punto"> · </span><span class="a-tc-coop">${esc(NOMBRE)}</span></strong>${detalle ? `<small>${esc(detalle)}</small>` : ''}</span>`;
+}
+
+// Enlace a la otra app (pasajero ↔ conductor). Dentro de TaxiCun se queda en
+// taxicun/… con la cooperativa (?e=); fuera, va a las páginas de la cooperativa.
+// Fuera conserva el diseño (?d=); dentro, solo si la página lo trae en la URL (si
+// no, la otra app usa el mismo diseño guardado o el que eligió la cooperativa).
+export function urlOtraApp(rol, diseno) {
+  const conDiseno = !EN_TAXICUN || new URLSearchParams(globalThis.location?.search || '').has('d');
+  return N.urlApp(rol, { d: conDiseno ? diseno : '' });
+}
+
+// Cambiar de municipio (solo dentro de TaxiCun): vuelve a la lista de cooperativas.
+export function urlCambiarMunicipio(rol = 'pasajero') {
+  return EN_TAXICUN ? N.urlElegirMunicipio(rol) : '';
+}
+
+/* ------------------------------------------------------------------ */
 /* Propuestas y almacenamiento                                          */
 /* ------------------------------------------------------------------ */
-export const TEXTO_PROPUESTA = `Propuesta de demostración preparada por ${PROVEEDOR} para ${RAZON_SOCIAL} · No es la página oficial de la ${TIPO}`;
+export const TEXTO_PROPUESTA = `Demostración de ${APP} para ${RAZON_SOCIAL} · No es la página oficial de la ${TIPO}`;
 
 // Las propuestas no se indexan (la plantilla debería traerlo; si no, se agrega aquí).
 export function marcarNoIndexar() {

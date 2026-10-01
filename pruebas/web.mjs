@@ -1,6 +1,8 @@
 // Prueba de la web de Cootransrural en Chromium sin pantalla (incluye el cobro real del conductor y la lectura de los QR):
 //  - capturas de la página de inicio a 360, 390, 768, 1024 y 1440 px (página completa),
-//  - descargar/?movil=023,
+//  - la app es TaxiCun: «Pedir taxi», «Descargar», «Abrir TaxiCun» y los botones de
+//    conductores llevan a taxicun/?e=cootransrural (o taxicun/conductor/?e=…),
+//  - descargar/?movil=023 (página de TaxiCun: «Abrir TaxiCun» con el móvil),
 //  - pago de prueba en pagar/: el mensaje 'pago' llega por BroadcastChannel a
 //    otra página que escucha con new N.Bus({ sala }) y el comprobante muestra la
 //    confirmación del conductor,
@@ -155,6 +157,17 @@ for (const ancho of [360, 390, 768, 1024, 1440]) {
     fotos: [...document.querySelectorAll('img')].filter((i) => i.complete && i.naturalWidth === 0 && !i.hidden).map((i) => i.getAttribute('src')),
     fotosOcultas: [...document.querySelectorAll('img[hidden]')].map((i) => i.getAttribute('src')),
     mapa: Boolean(document.querySelector('#mapa-oficina.leaflet-container .leaflet-tile-pane')),
+    taxicun: {
+      barra: document.querySelector('.boton-barra')?.href,
+      pedir: document.querySelector('#pedir-taxi')?.href,
+      descargar: document.querySelector('#descargar-taxicun')?.href,
+      franja: document.querySelector('#taxicun .boton')?.href,
+      franjaTexto: document.querySelector('#taxicun')?.innerText.replace(/\s+/g, ' ') || '',
+      logo: document.querySelector('#taxicun .tc-logo img')?.complete && document.querySelector('#taxicun .tc-logo img')?.naturalWidth > 0,
+      conductor: [...document.querySelectorAll('a')].filter((a) => /TaxiCun para conductores/.test(a.textContent)).map((a) => a.href),
+      viejos: [...document.querySelectorAll('a[href]')].map((a) => a.getAttribute('href')).filter((h) => /^(\.\/)?(app|conductor)\/(\?|$)/.test(h)),
+      pie: document.querySelector('.pie-interos')?.textContent.replace(/\s+/g, ' ').trim() || '',
+    },
   }));
   const rutas = await p.evaluate(async () => (await import('./nucleo/index.js')).RUTAS.length);
   ok(datos.qr && datos.qrUrl.includes('/descargar/'), `inicio ${ancho}: QR grande hacia descargar/`);
@@ -165,6 +178,15 @@ for (const ancho of [360, 390, 768, 1024, 1440]) {
   ok(datos.fotos.length === 0, `inicio ${ancho}: no hay imágenes rotas visibles${datos.fotos.length ? ': ' + datos.fotos.join(', ') : ''}`);
   if (datos.fotosOcultas.length) aviso(`inicio ${ancho}: fotos que aún no existen (se ocultaron): ${datos.fotosOcultas.join(', ')}`);
   ok(datos.mapa, `inicio ${ancho}: mapa de la oficina (Leaflet) creado`);
+  if (ancho === 1440 || ancho === 390) {
+    const tc = datos.taxicun;
+    const app = new URL('taxicun/?e=cootransrural', BASE).href;
+    ok([tc.barra, tc.pedir, tc.descargar, tc.franja].every((u) => u === app), `inicio ${ancho}: «Pedir taxi», «Descargar TaxiCun» y «Abrir TaxiCun» llevan a taxicun/?e=cootransrural`);
+    ok(tc.conductor.length >= 1 && tc.conductor.every((u) => u === new URL('taxicun/conductor/?e=cootransrural', BASE).href), `inicio ${ancho}: «TaxiCun para conductores» → taxicun/conductor/?e=cootransrural (${tc.conductor.length})`);
+    ok(!tc.viejos.length, `inicio ${ancho}: ningún enlace a la app vieja (app/ o conductor/)${tc.viejos.length ? ': ' + tc.viejos.join(', ') : ''}`);
+    ok(/Pide tu taxi con TaxiCun/.test(tc.franjaTexto) && /La app TaxiCun de Cootransrural/i.test(tc.franjaTexto) && /varios municipios de Cundinamarca/.test(tc.franjaTexto) && tc.logo, `inicio ${ancho}: franja de TaxiCun con su logo («${tc.franjaTexto.slice(0, 90)}…»)`);
+    ok(/^App TaxiCun · desarrollada por interOS/.test(tc.pie), `inicio ${ancho}: pie «${tc.pie}»`);
+  }
   if (ancho === 1440) {
     // Los tres QR de la página se leen con jsQR y llevan a donde dicen.
     const [descarga, cobro, sticker] = await leerQRs(p, '#qr-descarga svg, #qr-cobro svg, #qr-sticker svg');
@@ -238,16 +260,24 @@ for (const ancho of [360, 390, 768, 1024, 1440]) {
   const d = await p.evaluate(() => ({
     titulo: document.querySelector('h1')?.textContent,
     chip: document.querySelector('#chip-movil')?.hidden === false ? document.querySelector('#chip-movil').textContent : '',
-    pedir: document.querySelector('#pedir')?.getAttribute('href'),
+    coop: document.querySelector('.chip-coop')?.textContent.replace(/\s+/g, ' ').trim() || '',
+    pedir: document.querySelector('#pedir')?.href,
+    textoPedir: document.querySelector('#pedir')?.textContent.trim(),
+    conductor: document.querySelector('#enlace-conductor')?.href,
+    logo: document.querySelector('.tc-logo')?.getAttribute('aria-label'),
   }));
-  ok(d.titulo === 'Bienvenido a Cootransrural', 'descargar: «Bienvenido a Cootransrural»');
+  ok(d.titulo === 'Descarga TaxiCun' && d.logo === 'TaxiCun', 'descargar: «Descarga TaxiCun» con el logo de TaxiCun');
+  ok(d.coop.includes('Cootransrural') && d.coop.includes('El Rosal'), `descargar: nombra a la cooperativa («${d.coop}»)`);
   ok(/Escaneaste el sticker del móvil\s*023/.test(d.chip.replace(/\s+/g, ' ')), 'descargar: «Escaneaste el sticker del móvil 023»');
-  ok(d.pedir === '../app/?movil=023', 'descargar: «Pedir taxi ahora» lleva a ../app/?movil=023');
+  ok(d.textoPedir === 'Abrir TaxiCun' && d.pedir === new URL('taxicun/?e=cootransrural&movil=023', BASE).href, `descargar: «Abrir TaxiCun» lleva a taxicun/?e=cootransrural&movil=023 (${(d.pedir || '').replace(origen, '')})`);
+  ok(d.conductor === new URL('taxicun/conductor/?e=cootransrural', BASE).href, 'descargar: «¿Eres conductor?» abre TaxiCun para conductores');
   await p.screenshot({ path: `${CAPTURAS}/descargar-023.png`, fullPage: true });
   await p.click('#instalar');
   await p.waitForTimeout(400);
   const pasos = await p.evaluate(() => (document.querySelector('#instrucciones')?.hidden ? 0 : document.querySelectorAll('#pasos-instalar li').length));
-  ok(pasos >= 2, `descargar: «Instalar la app» muestra las instrucciones del equipo (${pasos} pasos)`);
+  const abrirParaInstalar = await p.evaluate(() => document.querySelector('#abrir-app')?.href);
+  ok(pasos >= 2, `descargar: «Instalar TaxiCun» muestra las instrucciones del equipo (${pasos} pasos)`);
+  ok(abrirParaInstalar === new URL('taxicun/?e=cootransrural&movil=023', BASE).href, 'descargar: la instalación se hace desde taxicun/ (allí está el manifiesto de TaxiCun)');
   await p.screenshot({ path: `${CAPTURAS}/descargar-instalar.png`, fullPage: true });
   console.log(`  captura: ${CAPTURAS}/descargar-023.png`);
   await ctx.close();
@@ -441,6 +471,7 @@ for (const [ancho, alto] of [[1440, 900], [390, 844]]) {
   await p.goto(BASE + 'privacidad/', { waitUntil: 'load' });
   const texto = await p.textContent('main');
   ok(/BORRADOR/i.test(texto) && texto.includes('Ley Estatutaria 1581 de 2012') && texto.includes('recepcion@cootransrural.com') && /relés MQTT públicos/.test(texto), 'privacidad: borrador con Ley 1581, relés públicos y contacto');
+  ok(/términos de uso de TaxiCun/.test(texto) && /encargado del tratamiento/.test(texto) && /responsable del tratamiento de los datos es la Cooperativa de Transportadores Rurales/.test(texto.replace(/\s+/g, ' ')), 'privacidad: la app es TaxiCun, la cooperativa es la responsable e interOS el encargado');
   await p.screenshot({ path: `${CAPTURAS}/privacidad-390.png`, fullPage: true });
   await p.goto(BASE + '404.html', { waitUntil: 'load' });
   await p.waitForTimeout(800);
@@ -454,7 +485,7 @@ for (const [ancho, alto] of [[1440, 900], [390, 844]]) {
 {
   const ctx = await nuevoContexto();
   const p = await ctx.newPage();
-  const paginas = ['', 'descargar/?movil=023', 'pagar/?v=12000&id=enlaces&m=23', 'privacidad/', 'disenos/', '404.html'];
+  const paginas = ['', 'descargar/?movil=023', 'pagar/?v=12000&id=enlaces&m=23', 'privacidad/', 'disenos/', '404.html', 'cooperativas/'];
   const enlaces = new Map(); // url → página donde aparece
   const anclasRotas = [];
   for (const ruta of paginas) {
@@ -497,7 +528,7 @@ for (const [ancho, alto] of [[1440, 900], [390, 844]]) {
 
 /* ============ 8) Rutas relativas en los archivos de la web ============ */
 {
-  const archivos = ['index.html', '404.html', 'descargar/index.html', 'pagar/index.html', 'privacidad/index.html', 'disenos/index.html', 'disenos/vitrina.css', 'disenos/vitrina.js', 'web/estilos.css', 'web/paginas.css', 'web/sitio.js', 'web/pagar.js'];
+  const archivos = ['index.html', '404.html', 'descargar/index.html', 'pagar/index.html', 'privacidad/index.html', 'disenos/index.html', 'disenos/vitrina.css', 'disenos/vitrina.js', 'web/estilos.css', 'web/paginas.css', 'web/sitio.js', 'web/pagar.js', 'cooperativas/index.html', 'web/cooperativas.css', 'propuesta/index.html', 'web/propuesta.css'];
   const absolutas = [];
   for (const a of archivos) {
     const ruta = join(RAIZ_REPO, a);

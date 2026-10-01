@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Stickers QR para imprimir · {{EMPRESA.nombre}}</title>
-  <meta name="description" content="Genera e imprime los stickers con código QR para pedir taxi con la app de {{EMPRESA.nombre}} en {{EMPRESA.pueblo}}: taxis, neveras, restaurantes y conjuntos.">
+  <title>Stickers QR de TaxiCun para imprimir · {{EMPRESA.nombre}}</title>
+  <meta name="description" content="Genera e imprime los stickers con código QR para pedir taxi con TaxiCun y {{EMPRESA.nombre}} en {{EMPRESA.pueblo}}: taxis, neveras, restaurantes y conjuntos.">
   {{#si es_propuesta}}<meta name="robots" content="noindex">
   {{/si}}<meta name="theme-color" content="{{colores.oscuro}}">
   <script>window.CT_EMPRESA = '{{id}}';</script>
@@ -16,14 +16,14 @@
   {{/no}}<style id="estilo-pagina">@page { size: 215.9mm 279.4mm; margin: 0; }</style>
 </head>
 <body>
-  {{#si es_propuesta}}<p class="franja-propuesta" role="note"><b>Propuesta de demostración</b> preparada por {{proveedor.nombre}} para {{franja_para}} · No es la página oficial de la {{tipo}}</p>
+  {{#si es_propuesta}}<p class="franja-propuesta" role="note"><b>Propuesta de demostración de TaxiCun</b>, preparada por {{proveedor.nombre}} para {{franja_para}} · No es la página oficial de la {{tipo}}</p>
   {{/si}}<header class="barra">
-    <a class="marca" href="{{RAIZ_EMPRESA}}app/" title="Abrir la app del pasajero">
+    <a class="marca" href="{{RAIZ}}{{taxicun_ruta}}" title="Abrir TaxiCun con {{EMPRESA.nombre}}">
       <img id="marca-icono" src="{{RAIZ}}img/icono.svg" alt="" width="40" height="40"{{#no es_principal}} style="visibility:hidden"{{/no}}>
-      <span><strong>{{EMPRESA.nombre}}</strong><small>Stickers QR para imprimir</small></span>
+      <span><strong>{{EMPRESA.nombre}}</strong><small>Stickers QR de TaxiCun para imprimir</small></span>
     </a>
-    <p class="barra-lema">Un QR en cada taxi, nevera y mostrador: <b>pide tu taxi con la app</b>.</p>
-    <a class="barra-enlace" href="{{RAIZ_EMPRESA}}app/">Abrir la app</a>
+    <p class="barra-lema">Un QR en cada taxi, nevera y mostrador: <b>pide tu taxi con TaxiCun</b>.</p>
+    <a class="barra-enlace" href="{{RAIZ}}{{taxicun_ruta}}"><img src="{{RAIZ}}img/taxicun/icono.svg" alt="" width="22" height="22">Abrir TaxiCun</a>
   </header>
 
   <main class="taller" id="taller" aria-busy="true">
@@ -64,7 +64,7 @@
       <section class="grupo">
         <h2><span class="paso">4</span> Destino del QR</h2>
         <label class="campo"><span>Otra URL base (opcional)</span><input type="url" id="url-base" placeholder="https://app.tucooperativa.com/descargar/" autocomplete="off" spellcheck="false"></label>
-        <p class="ayuda">Déjala vacía para usar la página de descarga de esta app. Cuando tengan dominio propio, escríbelo aquí.</p>
+        <p class="ayuda">Déjala vacía para usar la página de descarga de TaxiCun de la {{tipo}}. Cuando tengan dominio propio, escríbelo aquí.</p>
         <p class="error" id="error-url" hidden></p>
         <div class="url-final"><span>El QR del móvil seleccionado abre:</span><a id="url-final" href="#" target="_blank" rel="noopener"></a></div>
       </section>
@@ -142,8 +142,8 @@
   </main>
 
   <footer class="pie-pagina">
-    {{#si es_propuesta}}<p>Propuesta de demostración preparada por {{proveedor.nombre}} para {{franja_para_sin_punto}}. No es la página oficial de la {{tipo}}. La marca de agua «PROPUESTA» solo se ve en la vista previa.</p>
-    {{/si}}<p><a href="{{RAIZ_EMPRESA}}app/">App de {{EMPRESA.nombre}}</a> · Desarrollado por <a href="{{proveedor.web}}" rel="noopener">{{proveedor.nombre}}</a></p>
+    {{#si es_propuesta}}<p>Propuesta de demostración de TaxiCun, preparada por {{proveedor.nombre}} para {{franja_para_sin_punto}}. No es la página oficial de la {{tipo}}. La marca de agua «PROPUESTA» solo se ve en la vista previa.</p>
+    {{/si}}<p><a href="{{RAIZ}}{{taxicun_ruta}}">TaxiCun de {{EMPRESA.nombre}}</a> · App TaxiCun · desarrollada por <a href="{{proveedor.web}}" rel="noopener">{{proveedor.nombre}}</a></p>
   </footer>
 
   <div id="impresion" aria-hidden="true"></div>

@@ -10,7 +10,8 @@ import {
   FOTOS, fotoHTML, activarFotos,
   protegerVibracion,
   MARCA, PALETA, NOMBRE_DISENO, aplicarMarca, enPueblo, lineaMarca, cifrasMarca, telCentral, movilEjemplo, urlPrivacidad,
-  chipPrueba, demoPara, notaPropuesta, desarrolladaPor, enlaceSeccion, separarViajeGuardado, sincronizarSonido,
+  chipPrueba, demoPara, notaPropuesta, desarrolladaPor, enlaceApp, enlaceMunicipio, separarViajeGuardado, sincronizarSonido,
+  TAXICUN, lineaTaxiCun, iconoTaxiCun, textoDesarrollada,
 } from './comun.js';
 
 const PESTANAS = [
@@ -49,9 +50,9 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
   raiz.innerHTML = `<div class="vb-marco">
     ${ladoMarco({
       titulo: ['Pide tu taxi', enPueblo('en', { sinCortar: true })].filter(Boolean).join(' '),
-      texto: `La app de ${MARCA.nombre}: ubicación exacta, conductores verificados y pago con QR.${MARCA.lema ? ` ${MARCA.lema.replace(/[.!]*$/, '.')}` : ''}`,
+      texto: `${TAXICUN.activo ? `${TAXICUN.nombre}, con los taxis de ${MARCA.nombre}` : `La app de ${MARCA.nombre}`}: ubicación exacta, conductores verificados y pago con QR.${MARCA.lema ? ` ${MARCA.lema.replace(/[.!]*$/, '.')}` : ''}`,
       puntos: ['Te recogemos en la puerta con GPS', 'Sabes qué móvil llega y con qué placa', 'Código de abordaje y botón de emergencia', 'Tarifas claras y programación con 10 % menos'],
-      enlaceQR: enlaceParaCelular('app/'),
+      enlaceQR: enlaceParaCelular('pasajero'),
       textoQR: 'Escanea para probarla en tu celular',
     })}
     <div class="vb-app vb-pasajero">
@@ -426,6 +427,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         ${MARCA.servicio24h ? `<span class="vb-bienv-chip">${ic('reloj', 18)} Servicio las 24 horas</span>` : ''}
       </div>
       <div class="vb-bienv-cuerpo">
+        ${TAXICUN.activo ? lineaTaxiCun('vb-bienv-tc') : ''}
         <h1 tabindex="-1">${esc(titulo)}</h1>
         ${lema ? `<p class="vb-lema">«${esc(lema)}»</p>` : ''}
         <ul class="vb-beneficios">
@@ -434,7 +436,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
           <li><span class="vb-beneficio-ic">${ic('qr')}</span><span><b>Paga con QR o en efectivo</b>, como prefieras.</span></li>
         </ul>
         <button type="button" class="vb-btn vb-btn-primario vb-btn-xl" data-accion="reg-empezar">Crear mi cuenta ${ic('flechaDer')}</button>
-        <a class="vb-btn vb-btn-texto vb-btn-bloque" href="${esc(enlaceSeccion('conductor/', diseno))}">Soy conductor de ${esc(MARCA.nombre)}</a>
+        <a class="vb-btn vb-btn-texto vb-btn-bloque" href="${esc(enlaceApp('conductor', diseno))}" data-enlace-conductor>Soy conductor de ${esc(MARCA.nombre)}</a>
         ${htmlCifras()}
       </div>
     </div>`;
@@ -447,6 +449,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         <button type="button" class="vb-btn-icono" data-accion="reg-atras" aria-label="Volver">${ic('atras')}</button>
         <span class="vb-paso-mini">Paso 1 de 2</span>
       </header>
+      ${TAXICUN.activo ? lineaTaxiCun('vb-registro-tc', 26) : ''}
       <h1 tabindex="-1">Crea tu cuenta</h1>
       <p class="vb-sub">Por tu seguridad, todos los pasajeros se registran. Solo toma un minuto.</p>
       <form class="vb-form" data-form="registro" novalidate>
@@ -476,6 +479,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         <button type="button" class="vb-btn-icono" data-accion="reg-atras" aria-label="Volver">${ic('atras')}</button>
         <span class="vb-paso-mini">Paso 2 de 2</span>
       </header>
+      ${TAXICUN.activo ? lineaTaxiCun('vb-registro-tc', 26) : ''}
       <h1 tabindex="-1">Escribe el código</h1>
       <p class="vb-sub">Lo enviamos por SMS al <b>${esc(celularTexto(d.celular))}</b>.</p>
       <div class="vb-sms-prueba" role="note">
@@ -486,7 +490,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       <p class="vb-error" data-error role="alert"></p>
       <button type="button" class="vb-btn vb-btn-primario vb-btn-xl" data-accion="reg-verificar">Verificar y entrar</button>
       <button type="button" class="vb-btn vb-btn-texto vb-btn-bloque" data-accion="reg-reenviar">Enviar otro código</button>
-      <p class="vb-nota-segura">${insignia(34)}<span>Tus datos quedan guardados en este celular y solo se usan para tus viajes con ${esc(MARCA.nombre)}.</span></p>
+      <p class="vb-nota-segura">${insignia(34)}<span>Tus datos quedan guardados en este celular y solo se usan para tus viajes con ${esc(MARCA.nombre)}${TAXICUN.activo ? ` en ${esc(TAXICUN.nombre)}` : ''}.</span></p>
     </div>`;
   }
 
@@ -590,8 +594,9 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     const historial = N.perfil.historialPasajero();
     return `<div class="vb-desliza vb-inicio">
       <header class="vb-cab-inicio">
-        <div class="vb-cab-marca">${insignia(40)}<div><b>${esc(MARCA.nombre)}</b><span>${esc(lineaMarca())}</span></div></div>
+        <div class="vb-cab-marca">${insignia(40)}${TAXICUN.activo ? `<i class="vb-cab-tc-sello" aria-hidden="true">${iconoTaxiCun(18)}</i>` : ''}<div><b>${esc(MARCA.nombre)}</b><span>${esc(lineaMarca())}</span></div></div>
         ${conexionHTML(p.estado.conexion)}
+        ${TAXICUN.activo ? `<span class="vb-cab-tc" role="img" aria-label="${esc(TAXICUN.nombre)}" title="${esc(`${TAXICUN.nombre} · ${MARCA.nombre}`)}" data-taxicun>${iconoTaxiCun(34)}</span>` : ''}
       </header>
       <div class="vb-saludo"><span>${esc(N.saludo())},</span><h1 tabindex="-1">${esc(N.primerNombre(yo.nombre) || 'vecino')}</h1></div>
 
@@ -647,7 +652,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
   // Pie del inicio: nombre, lema, cifras conocidas y quién hizo la app.
   function htmlPie() {
     const cifras = cifrasMarca().map((c, i) => `${i ? c.antes.toLowerCase() : c.antes}${numeroMiles(c.n)} ${c.texto}`).join(' · ');
-    return [`<b>${esc(MARCA.nombre)}</b>${MARCA.lema ? ` · ${esc(MARCA.lema)}` : ''}`, cifras ? esc(cifras) : '', `App desarrollada por ${esc(MARCA.proveedor)}`]
+    return [`<b>${esc(MARCA.nombre)}</b>${MARCA.lema ? ` · ${esc(MARCA.lema)}` : ''}`, cifras ? esc(cifras) : '', esc(textoDesarrollada())]
       .filter(Boolean).join('<br>');
   }
 
@@ -1482,6 +1487,13 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     </div>`;
   }
 
+  // Solo dentro de TaxiCun: volver a la lista de municipios para usar otra cooperativa.
+  function itemMunicipio() {
+    const ahora = [MARCA.pueblo, MARCA.nombre].filter(Boolean).join(' · ');
+    return `<a class="vb-menu-item vb-menu-tc" href="${esc(enlaceMunicipio('pasajero'))}" data-accion="cambiar-municipio" data-cambiar-municipio>
+      <span class="vb-menu-ic vb-menu-ic-tc">${iconoTaxiCun(44)}</span><span><b>Cambiar de municipio</b><small>Ahora: ${esc(ahora)}</small></span>${ic('flecha', 20)}</a>`;
+  }
+
   function htmlPerfil() {
     const yo = p.perfil || {};
     const n = p.viajesCompletados();
@@ -1502,10 +1514,11 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         ${item('ir', 'ajustes', 'Ajustes', 'Diseño, sonido, avisos y modo de prueba', 'data-pantalla="ajustes"')}
         ${item('instalar', 'instalar', 'Instalar la app', N.yaInstalada() ? 'Ya está instalada en este celular' : 'Tenla a un toque en tu pantalla')}
         ${item('ir', 'ayuda', 'Ayuda y contacto', MARCA.telefono ? `Central${MARCA.servicio24h ? ' 24 h' : ''} · ${esc(MARCA.telefonoVisible)}` : 'Preguntas frecuentes y contacto', 'data-pantalla="ayuda"')}
-        <a class="vb-menu-item" href="${esc(enlaceSeccion('conductor/', diseno))}"><span class="vb-menu-ic">${ic('volante', 24)}</span><span><b>Soy conductor</b><small>Abrir la app de conductores</small></span>${ic('flecha', 20)}</a>
+        ${TAXICUN.activo ? itemMunicipio() : ''}
+        <a class="vb-menu-item" href="${esc(enlaceApp('conductor', diseno))}" data-enlace-conductor><span class="vb-menu-ic">${ic('volante', 24)}</span><span><b>Soy conductor</b><small>Abrir la app de conductores</small></span>${ic('flecha', 20)}</a>
         <button type="button" class="vb-menu-item rojo" data-accion="cerrar-sesion"><span class="vb-menu-ic">${ic('salir', 24)}</span><span><b>Cerrar sesión</b></span></button>
       </div>
-      <p class="vb-version">${esc(MARCA.nombre)} · Diseño B «${esc(NOMBRE_DISENO)}» · <a href="${esc(urlPrivacidad())}" target="_blank" rel="noopener">Privacidad</a><br>App desarrollada por ${esc(MARCA.proveedor)}</p>
+      <p class="vb-version">${esc(MARCA.nombre)} · Diseño B «${esc(NOMBRE_DISENO)}» · <a href="${esc(urlPrivacidad())}" target="_blank" rel="noopener">Privacidad</a><br>${esc(textoDesarrollada())}</p>
       ${notaPropuesta()}
     </div>`;
   }
@@ -1573,12 +1586,18 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       ['b', NOMBRE_DISENO, 'Cooperativo y fácil (este)'],
       ['c', 'Noche Neón', 'Modo oscuro con luces de neón'],
     ];
+    // Dentro de TaxiCun se abre el diseño que eligió la cooperativa; cambiarlo aquí vale solo en este celular.
+    const deLaCooperativa = disenos.find(([id]) => id === N.FICHA?.diseno);
     return `<div class="vb-desliza vb-ajustes">
       ${cabSub('Ajustes')}
+      ${TAXICUN.activo ? `<section class="vb-bloque"><h2 class="vb-titulo-seccion">${ic('pin', 22)} Tu municipio</h2>
+        ${itemMunicipio()}
+        <p class="vb-letra-chica">${esc(TAXICUN.nombre)} te muestra los taxis de la ${MARCA.tipo} de tu municipio. Si vas para otro, cámbialo aquí.</p></section>` : ''}
       <section class="vb-bloque"><h2 class="vb-titulo-seccion">${ic('paleta', 22)} Diseño de la app</h2>
         <div class="vb-disenos" role="radiogroup" aria-label="Diseño">
           ${disenos.map(([id, t, s]) => `<button type="button" role="radio" aria-checked="${id === diseno}" data-accion="diseno" data-d="${id}" class="d-${id}"><span class="vb-diseno-muestra" aria-hidden="true"></span><b>${esc(t)}</b><small>${esc(s)}</small></button>`).join('')}
-        </div></section>
+        </div>
+        ${TAXICUN.activo && deLaCooperativa ? `<p class="vb-letra-chica" data-diseno-cooperativa>${esc(MARCA.nombre)} eligió el diseño «${esc(deLaCooperativa[1])}». Si escoges otro, cambia solo en este celular.</p>` : ''}</section>
       <section class="vb-bloque"><h2 class="vb-titulo-seccion">${ic('robot', 22)} Conductor de prueba</h2>
         <div class="vb-opciones-lista" role="radiogroup" aria-label="Simulación">
           <button type="button" role="radio" aria-checked="${a.simulacion !== 'real'}" data-accion="simulacion" data-v="auto"><b>Automática</b><small>Si ningún conductor real acepta, entra uno de prueba.</small></button>
@@ -1857,6 +1876,13 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       pintar(true, true);
     },
     instalar: () => instalarApp(),
+    // Es un enlace a la lista de municipios de TaxiCun (urlElegirMunicipio); con un
+    // viaje en curso no se sale (se perdería el seguimiento del taxi).
+    'cambiar-municipio': (b, e) => {
+      if (p.estado.fase === 'inicio') return;
+      e.preventDefault();
+      avisos.mostrar({ titulo: 'Tienes un viaje en curso', cuerpo: 'Termínalo antes de cambiar de municipio.', tipo: 'info' });
+    },
     diseno: (b) => {
       N.perfil.elegirDiseno(b.dataset.d);
       recargarCon('d', b.dataset.d);

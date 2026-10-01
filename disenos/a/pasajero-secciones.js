@@ -2,7 +2,7 @@
 // Promociones, Ajustes, Ayuda y la lista de avisos.
 import { esc, icono, abrirPanel, modal, chipPrueba, franjaCuadros } from './ui.js';
 import { ilustracionVacia, sellosFidelidad } from './ilustraciones.js';
-import { bloqueDiseno, bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca } from './ajustes-comunes.js';
+import { bloqueDiseno, bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio } from './ajustes-comunes.js';
 import * as EM from './empresa.js';
 
 const ESTADOS = {
@@ -173,11 +173,12 @@ export function abrirPromociones({ N, app, programarViaje }) {
   });
 }
 
-export function abrirAjustes({ N, app, diseno }) {
+export function abrirAjustes({ N, app, diseno, cambiarMunicipio }) {
   abrirPanel(app, {
     titulo: 'Ajustes',
     construir(cuerpo) {
       cuerpo.append(
+        bloqueMunicipio(N, { alCambiar: cambiarMunicipio }),
         bloqueDiseno(N, diseno),
         bloqueSonidoYAvisos(N),
         bloqueConexion(N, { simulacion: true }),
@@ -199,7 +200,7 @@ export function abrirAyuda({ N, app }) {
   // Solo se ofrecen los canales que existen; si falta el teléfono, se dice con honestidad.
   const contacto = [
     EM.TELEFONO && `<a class="a-btn a-btn-primario a-btn-grande" href="tel:${esc(EM.TELEFONO)}">${icono('telefono', { tam: 20 })} Llamar a la central · ${esc(EM.TELEFONO_VISIBLE)}</a>`,
-    EM.WHATSAPP && `<a class="a-btn a-btn-tinta a-btn-grande" href="${esc(N.enlaceWhatsApp(EM.WHATSAPP, `Hola, necesito ayuda con la app de ${EM.NOMBRE}.`))}" target="_blank" rel="noopener">${icono('chat', { tam: 20 })} Escribir por WhatsApp</a>`,
+    EM.WHATSAPP && `<a class="a-btn a-btn-tinta a-btn-grande" href="${esc(N.enlaceWhatsApp(EM.WHATSAPP, EM.EN_TAXICUN ? `Hola, necesito ayuda con ${EM.APP} (taxis de ${EM.NOMBRE}).` : `Hola, necesito ayuda con la app de ${EM.NOMBRE}.`))}" target="_blank" rel="noopener">${icono('chat', { tam: 20 })} Escribir por WhatsApp</a>`,
     !EM.TELEFONO && `<div class="a-sin-telefono" data-sin-telefono>${icono('telefono', { tam: 20 })}<span><strong>Teléfono de la central: pronto</strong><small>Mientras tanto, pide tu taxi desde la app: el móvil más cercano te recoge.</small></span></div>`,
     EM.CORREO && `<a class="a-btn a-btn-suave" href="mailto:${esc(EM.CORREO)}">${icono('mensaje', { tam: 18 })} ${esc(EM.CORREO)}</a>`,
   ].filter(Boolean);

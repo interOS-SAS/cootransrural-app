@@ -3,7 +3,8 @@
 //  a) Página de stickers de la cooperativa: datos de su ficha, franja y marca
 //     de agua en las propuestas, sin datos de otra cooperativa, sin «null».
 //  b) Textos de todas las escenas (formatos × estilos): sin huecos, sin
-//     «Cootransrural» en otras cooperativas, sin textos encimados.
+//     «Cootransrural» en otras cooperativas, sin textos encimados; todos dicen
+//     TaxiCun (la app) y llevan el ícono de TaxiCun.
 //  c) PNG de 2 móviles decodificados con jsQR: el QR es EXACTAMENTE
 //     <id>/descargar/?movil=…&o=sticker. SVG autónomo y legible.
 //  d) PDF de las hojas: tamaño de página y de cada sticker, y el QR impreso.
@@ -154,13 +155,13 @@ for (const F of A_PROBAR) {
   ok(pag.clave === (esPrincipal ? 'ct.stickers' : `ct.${id}.stickers`), `opciones guardadas aparte (${pag.clave})`);
   if (esPrincipal) ok(pag.estilos.join() === 'clasico,verde,neon', `estilos de siempre: ${pag.nombresEstilos.join(', ')}`);
   else ok(pag.estilos.join() === 'clasico,cooperativa,verde,neon' && pag.nombresEstilos[1] === `Color de la ${E.tipo === 'empresa' ? 'empresa' : 'cooperativa'}`, `4 estilos: ${pag.nombresEstilos.join(', ')}`);
-  ok(pag.enlaceApp === `${BASE}${pref}app/`, `«Abrir la app» lleva a ${pag.enlaceApp}`);
+  ok(pag.enlaceApp === `${BASE}taxicun/?e=${id}`, `«Abrir TaxiCun» lleva a ${pag.enlaceApp}`);
   ok(pag.iconoVisible === 'visible' && (esPrincipal ? /img\/icono\.svg/.test(pag.iconoSrc) : pag.iconoSrc.startsWith('blob:')), `ícono de la barra ${esPrincipal ? 'de siempre' : 'con los colores de la cooperativa'}`);
   if (!esPrincipal) ok(pag.colorPaso === rgbDe(F.colores.primario), `la página usa el color primario (${pag.colorPaso})`);
-  ok(/Desarrollado por interOS/.test(pag.pie), 'pie «Desarrollado por interOS»');
+  ok(/desarrollada por interOS/.test(pag.pie) && /TaxiCun/.test(pag.pie), 'pie «App TaxiCun · desarrollada por interOS»');
   if (esPropuesta) {
     ok(pag.robots === 'noindex', 'propuesta: <meta name="robots" content="noindex">');
-    ok(pag.franjaVisible && pag.franja.includes(`Propuesta de demostración preparada por interOS para ${E.razonSocial}`) && /No es la página oficial de la (cooperativa|empresa)/.test(pag.franja) && pag.franja.includes(`la ${E.tipo === 'empresa' ? 'empresa' : 'cooperativa'}`), 'propuesta: franja «Propuesta de demostración … No es la página oficial»');
+    ok(pag.franjaVisible && pag.franja.includes(`Propuesta de demostración de TaxiCun, preparada por interOS para ${E.razonSocial}`) && /No es la página oficial de la (cooperativa|empresa)/.test(pag.franja) && pag.franja.includes(`la ${E.tipo === 'empresa' ? 'empresa' : 'cooperativa'}`), 'propuesta: franja «Propuesta de demostración … No es la página oficial»');
     ok(pag.marcaAgua, 'propuesta: marca de agua «PROPUESTA» en la vista previa');
     // Aun con la marca de agua, el QR de la pantalla se lee (foto de la vista previa).
     const foto = await (await p.$('#vista')).screenshot();
@@ -233,12 +234,28 @@ for (const F of A_PROBAR) {
   } else {
     ok(!todos.some((t) => /CENTRAL/.test(t)) || tieneWa, 'sin teléfono: no aparece «CENTRAL»');
     if (!tieneWa) {
-      ok(del('afiche').includes('Pide tu taxi con la app'), 'sin teléfono: el afiche pone «Pide tu taxi con la app» en grande');
-      ok(del('iman').includes('Descarga la app gratis') && del('tarjeta').includes('Descarga la app gratis'), 'sin teléfono: imán y tarjeta dicen «Descarga la app gratis» donde iba el número');
+      ok(del('afiche').includes('Pide tu taxi con TaxiCun'), 'sin teléfono: el afiche pone «Pide tu taxi con TaxiCun» en grande');
+      ok(del('iman').includes('Descarga TaxiCun gratis') && del('tarjeta').includes('Descarga TaxiCun gratis'), 'sin teléfono: imán y tarjeta dicen «Descarga TaxiCun gratis» donde iba el número');
       ok(del('taxi').includes('SERVICIO 24 HORAS') || !E.servicio24h, 'sin teléfono: la banda del taxi dice «SERVICIO 24 HORAS» con el nombre en grande');
     }
   }
   if (E.servicio24h) ok(del('iman').includes('Servicio 24 horas') && del('afiche').includes('24 h'), 'servicio 24 horas en imán y afiche');
+  // La app es TaxiCun: «Pide tu taxi con TaxiCun», el nombre y el ícono de TaxiCun en cada formato.
+  ok(del('taxi').includes('¡Pide tu taxi con TaxiCun!') && del('taxi').includes('TaxiCun'), 'taxi: «¡Pide tu taxi con TaxiCun!» y el nombre TaxiCun bajo el ícono');
+  ok(del('iman').includes('Pide tu taxi con') && del('iman').includes('TaxiCun') && del('tarjeta').includes('Pide tu taxi con') && del('tarjeta').includes('TaxiCun'), 'imán y tarjeta: «Pide tu taxi con» + TaxiCun');
+  ok(del('afiche').includes('con TaxiCun') && del('espaldar').includes('Descarga TaxiCun'), 'afiche «con TaxiCun» y espaldar «Descarga TaxiCun»');
+  ok(!todos.some((t) => /con la app|Descarga la app/.test(t)), 'ningún sticker dice «la app» sin nombrarla');
+  const conIcono = await p.evaluate(() => {
+    const tiene = (ops) => ops.some((op) => (op.t === 'imagen' && op.src === 'taxicun') || (op.t === 'grupo' && tiene(op.ops)));
+    const malos = [];
+    for (const formato of Object.keys(window.stickers.FORMATOS)) {
+      for (const estilo of Object.keys(window.stickers.ESTILOS)) {
+        if (!tiene(window.stickers.escenaDe('001', formato, estilo).ops)) malos.push(`${formato}/${estilo}`);
+      }
+    }
+    return malos;
+  });
+  ok(!conIcono.length, `todos los formatos y estilos llevan el ícono de TaxiCun${conIcono.length ? ' — faltan: ' + conIcono.join(', ') : ''}`);
   ok(del('afiche').includes(`OFERTAS DE LA ${E.tipo === 'empresa' ? 'EMPRESA' : 'COOPERATIVA'}`) && del('afiche').includes('−10 %') && del('afiche').includes('50 %'), 'afiche: ofertas de la cooperativa (−10 % programado, 50 % fidelidad)');
   // Textos dentro del sticker y sin encimarse en el mismo renglón.
   const fuera = [];
@@ -368,7 +385,7 @@ for (const F of A_PROBAR) {
     ok(r.every((x) => cerca(x.w / PX_MM, wP) && cerca(x.h / PX_MM, hP)), `${nombre}: hojas de ${wP} × ${hP} mm`);
     ok(piezas.every((s) => cerca(s.w / PX_MM, wS) && cerca(s.h / PX_MM, hS)), `${nombre}: cada sticker mide ${wS} × ${hS} mm`);
     const pie = r[0].pie;
-    ok(pie.startsWith(E.nombre) && (esPropuesta ? /Propuesta de demostración de interOS/.test(pie) : !/Propuesta/.test(pie)), `${nombre}: pie de la hoja «${pie.slice(0, 70)}…»`);
+    ok(pie.startsWith(`${E.nombre} · TaxiCun`) && (esPropuesta ? /^[^·]+ · TaxiCun · Propuesta de demostración · /.test(pie) && !/interOS/.test(pie) : !/Propuesta/.test(pie)), `${nombre}: pie de la hoja «${pie.slice(0, 70)}…»`);
     const ruta = `${dir}hoja-${nombre}.pdf`;
     await p.pdf({ path: ruta, preferCSSPageSize: true, printBackground: true });
     const info = execFileSync('pdfinfo', [ruta]).toString();
@@ -522,8 +539,8 @@ for (const F of A_PROBAR) {
   const colorCabeza = rgbDe(F.colores.primario2 || F.colores.primario);
   ok(vista.fondo.includes(colorCabeza) && vista.fondo.includes(rgbDe(F.colores.oscuro)), `cabecera con los colores de la cooperativa (${colorCabeza})`);
   ok(esPrincipal ? /icono-192\.png/.test(vista.icono) : vista.icono.startsWith('blob:'), 'ícono de la app con los colores de la cooperativa');
-  ok(vista.detalle.includes(E.nombre) && /Desarrollado por interOS/.test(vista.pie) && vista.enlaceApp === `${BASE}${pref}app/`, 'franja de prueba, pie «Desarrollado por interOS» y enlace a su app');
-  if (esPropuesta) ok(vista.franja.includes(`preparada por interOS para ${E.razonSocial}`) && /No es la página oficial/.test(vista.franja), 'propuesta: franja de propuesta en pagar/');
+  ok(vista.detalle.includes(E.nombre) && /App TaxiCun · desarrollada por interOS/.test(vista.pie) && vista.enlaceApp === `${BASE}taxicun/?e=${id}`, 'franja de prueba, pie «App TaxiCun · desarrollada por interOS» y enlace a TaxiCun con la cooperativa');
+  if (esPropuesta) ok(vista.franja.includes(`Propuesta de demostración de TaxiCun, preparada por interOS para ${E.razonSocial}`) && /No es la página oficial/.test(vista.franja), 'propuesta: franja de propuesta de TaxiCun en pagar/');
   else ok(!vista.franja, 'cliente: sin franja de propuesta en pagar/');
   if (!esPrincipal) ok(!/cootransrural|el rosal/i.test(vista.texto + vista.titulo), 'pagar/ no menciona a Cootransrural ni a El Rosal');
   ok(!/\bnull\b|undefined|NaN/.test(vista.texto), 'pagar/ sin «null» ni «undefined»');

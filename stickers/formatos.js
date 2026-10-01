@@ -1,4 +1,6 @@
-// Diseños de los 5 formatos de sticker en los estilos de color.
+// Diseños de los 5 formatos de sticker en los estilos de color. Todos dicen
+// «Pide tu taxi con TaxiCun» (la app, desarrollada por interOS), llevan el
+// ícono de TaxiCun y el nombre de la cooperativa.
 // Todas las medidas están en milímetros sobre el tamaño final (corte).
 // Lo que toca el borde se extiende EXT mm hacia afuera para el sangrado.
 // Los datos (nombre, lema, teléfono, pueblo, ofertas) salen de la ficha de la
@@ -278,6 +280,25 @@ const ancho = (cadena, estilo, tam, espaciadoEm = 0) => anchoTexto(cadena, { ...
 // Línea base para centrar verticalmente mayúsculas en una franja [y, y+h].
 const baseCentrada = (y, h, estilo, tam) => y + h / 2 + (altoMayus(estilo.familia, estilo.peso) * tam) / 2;
 
+// ---------------------------------------------------------------------------
+// Marca TaxiCun: la app que abre el QR (desarrollada por interOS). El nombre va
+// en dos colores como en img/taxicun/logo.svg: sobre fondo oscuro, «Taxi» blanco
+// y «Cun» amarillo TaxiCun; sobre fondo claro (estilo clásico), todo en azul TaxiCun.
+// ---------------------------------------------------------------------------
+const TAXICUN = { nombre: 'TaxiCun', azul: '#0A2552', amarillo: '#FFC21A' };
+const fondoClaro = (est) => est.tinta !== '#FFFFFF';
+
+// «antes» + TaxiCun + «despues», ajustado a un ancho máximo.
+function textoMarca(x, y, { antes = '', despues = '' }, estilo, tamMax, anchoMax, colorTexto, claro, { alinear = 'izq', espaciadoEm = 0 } = {}) {
+  const tam = tamParaAncho(`${antes}${TAXICUN.nombre}${despues}`, { ...estilo, espaciadoEm }, anchoMax, tamMax);
+  const [c1, c2] = claro ? [TAXICUN.azul, TAXICUN.azul] : ['#FFFFFF', TAXICUN.amarillo];
+  const tramos = [];
+  if (antes) tramos.push(tramo(antes, estilo, tam, colorTexto, espaciadoEm));
+  tramos.push(tramo('Taxi', estilo, tam, c1, espaciadoEm), tramo('Cun', estilo, tam, c2, espaciadoEm));
+  if (despues) tramos.push(tramo(despues, estilo, tam, colorTexto, espaciadoEm));
+  return { op: { t: 'texto', x, y, alinear, rotar: 0, tramos }, tam };
+}
+
 function fondo(est, w, h) {
   const relleno = est.fondoDegradado ? { tipo: 'lineal', x1: 0, y1: 0, x2: w * 0.35, y2: h, paradas: [[0, est.fondoDegradado[0]], [1, est.fondoDegradado[1]]] } : est.fondo;
   const ops = [{ t: 'rect', x: -EXT, y: -EXT, w: w + 2 * EXT, h: h + 2 * EXT, relleno }];
@@ -356,14 +377,14 @@ function estrella(cx, cy, rExt, relleno) {
   return { t: 'ruta', d: d + 'Z', relleno, trazo: relleno, grosor: rExt * 0.12, punta: 'round' };
 }
 
-// Ícono de la app. Sobre fondos oscuros lleva un filo claro para que no se pierda.
+// Ícono de la app (TaxiCun). Sobre fondos oscuros lleva un filo claro para que no se pierda.
 function iconoApp(est, x, y, lado) {
   const ops = [];
   if (est.id !== 'clasico') {
     const g = Math.max(0.35, lado * 0.025);
     ops.push({ t: 'rect', x: x - g, y: y - g, w: lado + 2 * g, h: lado + 2 * g, r: lado * 0.219 + g, relleno: est.id === 'neon' ? est.segundo : '#FFFFFF', opacidad: est.id === 'neon' ? 0.9 : 0.85 });
   }
-  ops.push({ t: 'imagen', src: 'icono', x, y, w: lado, h: lado });
+  ops.push({ t: 'imagen', src: 'taxicun', x, y, w: lado, h: lado });
   return ops;
 }
 
@@ -386,7 +407,7 @@ function disenoTaxi({ est, url, movil }) {
   ops.push(cuadros(-EXT, -EXT, W + 2 * EXT, 7 + EXT, 3.5, est.cuadros, { anclaY: 0, desfase: 1 }));
 
   // Titular a todo lo ancho.
-  const tit = textoAjustado(W / 2, 18.6, '¡Pide tu taxi con la app!', est.titulo, 11, W - 2 * M, est.tinta, { alinear: 'centro', espaciadoEm: -0.012 });
+  const tit = textoMarca(W / 2, 18.6, { antes: '¡Pide tu taxi con ', despues: '!' }, est.titulo, 11, W - 2 * M, est.tinta, fondoClaro(est), { alinear: 'centro', espaciadoEm: -0.012 });
   ops.push(tit.op);
 
   // QR: los módulos ocupan al menos 9 cm de lado (sin contar la zona silenciosa).
@@ -405,6 +426,10 @@ function disenoTaxi({ est, url, movil }) {
   const cx = xc + wc / 2;
   const icon = Math.min(wc, 26);
   ops.push(...iconoApp(est, cx - icon / 2, yQR, icon));
+  // El nombre de la app bajo el ícono (logo pequeño de TaxiCun).
+  const nombreApp = textoMarca(cx, 0, {}, est.titulo, 6, wc, est.tinta, fondoClaro(est), { alinear: 'centro', espaciadoEm: -0.02 });
+  nombreApp.op.y = yQR + icon + 2.4 + altoMayus(est.titulo.familia, est.titulo.peso) * nombreApp.tam;
+  ops.push(nombreApp.op);
 
   // «Escanéame» con flecha hacia el QR, alineado con el borde inferior del QR.
   const hPill = 20;
@@ -414,7 +439,7 @@ function disenoTaxi({ est, url, movil }) {
   ops.push(textoAjustado(cx, yPill + hPill - 4.2, 'ESCANÉAME', est.titulo, 4.6, wc - 3.6, est.sobreInsignia, { alinear: 'centro', espaciadoEm: 0.04 }).op);
 
   // Tarjeta del móvil (o del servicio 24 h si no se imprime el número).
-  const libreIni = yQR + icon + 4;
+  const libreIni = nombreApp.op.y + 3.6;
   const libreFin = yPill - 4;
   const hMov = Math.min(libreFin - libreIni, 38);
   const yMov = libreIni + (libreFin - libreIni - hMov) / 2;
@@ -484,7 +509,7 @@ function disenoEspaldar({ est, url, movil }) {
   // Encabezado oscuro.
   const hEnc = 25;
   ops.push({ t: 'rect', x: -EXT, y: -EXT, w: W + 2 * EXT, h: hEnc + EXT, relleno: est.panel });
-  const t1 = textoAjustado(M, 11.4, 'Descarga la app', est.titulo, 8.4, W - 2 * M, est.destacado, { espaciadoEm: -0.01 });
+  const t1 = textoMarca(M, 11.4, { antes: 'Descarga ' }, est.titulo, 8.4, W - 2 * M, est.destacado, false, { espaciadoEm: -0.01 });
   ops.push(t1.op);
   ops.push(textoAjustado(M, 19.6, 'y califica tu viaje', est.titulo, t1.tam * 0.78, W - 2 * M, est.sobrePanel, { espaciadoEm: -0.01 }).op);
   ops.push(cuadros(-EXT, hEnc, W + 2 * EXT, 4, 2, est.cuadros));
@@ -548,18 +573,17 @@ function disenoIman({ est, url, movil }) {
   ops.push(textoAjustado(M + ic + 2, M + 3.4, DATOS.nombre, est.titulo, 3.4, anchoMarca, est.tinta).op);
   ops.push(textoAjustado(M + ic + 2, M + 6.9, DATOS.pueblo.toUpperCase(), est.texto, 2.0, anchoMarca, est.id === 'clasico' ? est.tintaSuave : est.destacado, { espaciadoEm: 0.2 }).op);
 
-  // Titular.
+  // Titular: «Pide tu taxi con» y, en grande, TaxiCun.
   const anchoTexto1 = xPanel - 2.4 - M - 3;
-  const t1 = textoAjustado(M, 23.2, 'Tu taxi', est.titulo, 8.4, anchoTexto1, est.tinta, { espaciadoEm: -0.02 });
-  ops.push(t1.op);
-  ops.push(textoAjustado(M, 31.4, 'a un toque', est.titulo, t1.tam, anchoTexto1, est.tinta, { espaciadoEm: -0.02 }).op);
+  ops.push(textoAjustado(M, 21.6, 'Pide tu taxi con', est.titulo, 4.8, anchoTexto1, est.tinta, { espaciadoEm: -0.01 }).op);
+  ops.push(textoMarca(M, 31.4, {}, est.titulo, 8.6, anchoTexto1, est.tinta, fondoClaro(est), { espaciadoEm: -0.02 }).op);
 
   // Teléfono en píldora (sin teléfono: «Descarga la app gratis»).
   const yTel = 35.2;
   const hTel = 8;
   ops.push({ t: 'rect', x: M, y: yTel, w: anchoTexto1, h: hTel, r: hTel / 2, relleno: est.insignia });
   ops.push(icono(DATOS.contacto ? 'telefono' : 'escanear', M + 2.2, yTel + 1.9, 4.2, est.sobreInsignia));
-  const enPildora = DATOS.contacto ? DATOS.contacto.numero : 'Descarga la app gratis';
+  const enPildora = DATOS.contacto ? DATOS.contacto.numero : 'Descarga TaxiCun gratis';
   const tamPildora = DATOS.contacto ? 4.2 : 3.4;
   ops.push(textoAjustado(M + 7.6, baseCentrada(yTel, hTel, est.titulo, tamPildora), enPildora, est.titulo, tamPildora, anchoTexto1 - 10, est.sobreInsignia).op);
 
@@ -608,12 +632,17 @@ function disenoAfiche({ est, url, movil }) {
   const yT = hEnc + 5 + 5.2 + altoMayus(est.titulo.familia, est.titulo.peso) * tam;
   t1.op.y = yT;
   ops.push(t1.op);
-  // «con la app» resaltado en una franja.
-  const w2 = ancho('con la app', est.titulo, tam, -0.025);
+  // «con TaxiCun» resaltado en una franja (más chico si al lado va el móvil que lo recomienda).
+  let tam2 = tam;
+  if (movil) {
+    const anchoMovil = Math.max(ancho('TE LO RECOMIENDA', est.negrita, 2.1, 0.12), ancho(`MÓVIL ${movil}`, est.titulo, 4.8));
+    tam2 = Math.min(tam, tamParaAncho('con TaxiCun', { ...est.titulo, espaciadoEm: -0.025 }, W - 2 * M - anchoMovil - 4.8 - 5));
+  }
+  const w2 = ancho('con TaxiCun', est.titulo, tam2, -0.025);
   const yR = yT + 4.4;
   const hR = tam * 1.1;
   ops.push({ t: 'rect', x: M - 2.2, y: yR, w: w2 + 4.8, h: hR, r: 2.2, relleno: est.insignia });
-  ops.push(texto(M, baseCentrada(yR, hR, est.titulo, tam), 'con la app', est.titulo, tam, est.sobreInsignia, { espaciadoEm: -0.025 }));
+  ops.push(texto(M, baseCentrada(yR, hR, est.titulo, tam2), 'con TaxiCun', est.titulo, tam2, est.sobreInsignia, { espaciadoEm: -0.025 }));
   if (movil) {
     // Móvil que recomienda (a la derecha de la franja).
     const xD = W - M;
@@ -639,7 +668,7 @@ function disenoAfiche({ est, url, movil }) {
 
   const xP = M + lado + 7;
   const pasos = [
-    ['Escanea el código', 'Descarga la app gratis y regístrate en un minuto.'],
+    ['Escanea el código', 'Abre TaxiCun gratis y regístrate en un minuto.'],
     ['Marca tu destino', 'Tu ubicación GPS le llega sola al conductor.'],
     ['Sube tranquilo', 'Verifica móvil, placa y tu código de 4 dígitos.'],
   ];
@@ -685,7 +714,7 @@ function disenoAfiche({ est, url, movil }) {
   ops.push({ t: 'circulo', cx: M + 4.2, cy: yL - 2, r: 4.2, relleno: est.insignia });
   ops.push(icono(C ? 'telefono' : 'escanear', M + 1.7, yL - 4.5, 5, est.sobreInsignia));
   const etiquetaPie = C ? `${C.etiqueta}${C.conWhatsApp ? ' Y WHATSAPP' : ''}${DATOS.servicio24h ? ' · 24 HORAS' : ''}` : DATOS.servicio24h ? 'SERVICIO 24 HORAS' : `TAXIS DE ${DATOS.pueblo.toUpperCase()}`;
-  const grandePie = C ? C.numero : 'Pide tu taxi con la app';
+  const grandePie = C ? C.numero : 'Pide tu taxi con TaxiCun';
   // Columna derecha: correo, dirección y municipio (solo los que existan).
   const lineas = [DATOS.correo, DATOS.direccion, DATOS.municipio].filter(Boolean);
   const estiloLinea = (i) => (i === 0 && DATOS.correo ? est.texto : est.suave);
@@ -733,17 +762,16 @@ function disenoTarjeta({ est, url, movil }) {
   ops.push(nom.op);
   if (DATOS.lema) ops.push(textoAjustado(M + ic + 1.8, M + 6.1, DATOS.lema, est.suave, 1.95, wIzq - ic - 1.8, est.id === 'clasico' ? est.tinta : est.destacado).op);
 
-  // Titular.
-  const t1 = textoAjustado(M, 20.4, 'Pide tu taxi', est.titulo, 6.6, wIzq, est.tinta, { espaciadoEm: -0.02 });
-  ops.push(t1.op);
-  ops.push(textoAjustado(M, 27.2, 'con la app', est.titulo, t1.tam, wIzq, est.tinta, { espaciadoEm: -0.02 }).op);
+  // Titular: «Pide tu taxi con» y, en grande, TaxiCun.
+  ops.push(textoAjustado(M, 18.4, 'Pide tu taxi con', est.titulo, 3.9, wIzq, est.tinta, { espaciadoEm: -0.01 }).op);
+  ops.push(textoMarca(M, 27.2, {}, est.titulo, 7.4, wIzq, est.tinta, fondoClaro(est), { espaciadoEm: -0.02 }).op);
 
   // Teléfono.
   const yTel = 31;
   const hTel = 7;
   ops.push({ t: 'rect', x: M, y: yTel, w: wIzq, h: hTel, r: hTel / 2, relleno: est.insignia });
   ops.push(icono(DATOS.contacto ? 'telefono' : 'escanear', M + 2, yTel + 1.7, 3.6, est.sobreInsignia));
-  const enPildora = DATOS.contacto ? DATOS.contacto.numero : 'Descarga la app gratis';
+  const enPildora = DATOS.contacto ? DATOS.contacto.numero : 'Descarga TaxiCun gratis';
   const tamPildora = DATOS.contacto ? 3.7 : 3.0;
   ops.push(textoAjustado(M + 6.8, baseCentrada(yTel, hTel, est.titulo, tamPildora), enPildora, est.titulo, tamPildora, wIzq - 9, est.sobreInsignia).op);
   if (DATOS.servicio24h) {

@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Elige el diseño de tu app · {{EMPRESA.nombre}}</title>
-  <meta name="description" content="Compara los tres diseños de la app de {{EMPRESA.nombre}} ({{disenos.a.nombre}}, {{disenos.b.nombre}} y {{disenos.c.nombre}}), pruébalos aquí mismo y quédate con el que más te guste.">
+  <title>Elige el diseño de TaxiCun · {{EMPRESA.nombre}}</title>
+  <meta name="description" content="Compara los tres diseños de TaxiCun con {{EMPRESA.nombre}} ({{disenos.a.nombre}}, {{disenos.b.nombre}} y {{disenos.c.nombre}}), pruébalos aquí mismo y quédate con el que más te guste.">
 {{#si es_propuesta}}  <meta name="robots" content="noindex">
 {{/si}}  <meta name="theme-color" content="{{c.fondo_vitrina}}">
-  <meta property="og:title" content="Elige el diseño de la app de {{EMPRESA.nombre}}">
-  <meta property="og:description" content="Tres diseños, la misma app: pruébalos y elige.">
+  <meta property="og:title" content="Elige el diseño de TaxiCun con {{EMPRESA.nombre}}">
+  <meta property="og:description" content="Tres diseños, la misma app TaxiCun: pruébalos y elige.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{url_publica}}disenos/">
   <meta property="og:image" content="{{url_sitio}}{{img.hero}}">
@@ -17,7 +17,11 @@
   <link rel="apple-touch-icon" href="{{RAIZ}}{{icono.apple}}">
   <link rel="stylesheet" href="{{RAIZ}}fuentes/fuentes.css">
   <link rel="stylesheet" href="{{RAIZ}}disenos/vitrina.css">
-  <style>{{{estilo_colores}}}{{#no es_principal}}:root{--acento-b:{{c.verde_3}};--sobre-acento-b:#fff}{{/no}}</style>
+  <style>{{{estilo_colores}}}{{#no es_principal}}:root{--acento-b:{{c.verde_3}};--sobre-acento-b:#fff}{{/no}}
+    /* TaxiCun en la vitrina (la app de todas las cooperativas, desarrollada por interOS). */
+    .v-intro > p.v-taxicun{display:inline-flex;align-items:center;gap:10px;margin:0 0 6px;font:800 1.05rem/1 'Sora',system-ui,sans-serif;letter-spacing:-.02em;color:inherit}
+    .v-taxicun img{width:30px;height:30px;border-radius:8px}
+    .v-taxicun span{color:#FFC21A}</style>
   <!-- Cooperativa de esta página: el núcleo carga su ficha (empresas/{{id}}/ficha.json). -->
   <script>window.CT_EMPRESA = '{{id}}';</script>
 </head>
@@ -32,17 +36,18 @@
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
   </svg>
 
-{{#si es_propuesta}}  <p class="v-franja" role="note"><b>Propuesta de demostración</b> preparada por {{proveedor.nombre}} para {{franja_para}} · No es la página oficial de la {{tipo}}</p>
+{{#si es_propuesta}}  <p class="v-franja" role="note"><b>Propuesta de demostración de TaxiCun</b>, preparada por {{proveedor.nombre}} para {{franja_para}} · No es la página oficial de la {{tipo}}</p>
 {{/si}}  <header class="v-barra">
     <a class="v-volver" href="../"><svg class="icono"><use href="#i-flecha-izq"/></svg><img src="{{RAIZ}}{{icono.i192}}" alt="" width="34" height="34"><span>{{EMPRESA.nombre}}</span></a>
-    <a class="v-boton v-boton-amarillo v-pedir" href="../app/">Pedir taxi</a>
+    <a class="v-boton v-boton-amarillo v-pedir" href="{{RAIZ}}{{taxicun_ruta}}">Pedir taxi</a>
   </header>
 
   <main class="v-principal">
     <section class="v-intro">
-      <p class="v-antetitulo">Vitrina de diseños</p>
-      <h1>Elige el diseño de tu app</h1>
-      <p>Los tres diseños usan el mismo motor: funcionan igual y solo cambia cómo se ven. Tócalos, pide un taxi de prueba y quédate con el que más te guste.</p>
+      <p class="v-taxicun"><img src="{{RAIZ}}img/taxicun/icono.svg" alt="" width="30" height="30"><b>Taxi<span>Cun</span></b></p>
+      <p class="v-antetitulo">Vitrina de diseños de TaxiCun</p>
+      <h1>Elige el diseño de TaxiCun</h1>
+      <p>Los tres diseños de TaxiCun usan el mismo motor: funcionan igual y solo cambia cómo se ven. La {{tipo}} elige con cuál abre TaxiCun en {{EMPRESA.pueblo}}, y cada pasajero lo puede cambiar en Ajustes. Tócalos, pide un taxi de prueba y quédate con el que más te guste.</p>
       <p class="v-consejo"><svg class="icono"><use href="#i-info"/></svg><span><b>Prueba los dos lados:</b> en una columna abre <b>Conductor</b> y conéctate; luego vuelve a <b>Pasajero</b> y pide un taxi. El servicio te llega en la otra vista.</span></p>
     </section>
 
@@ -76,7 +81,7 @@
 
   <footer class="v-pie">
     <p>Puedes cambiar de diseño cuando quieras desde esta página. <a href="../">Volver a {{EMPRESA.nombre}}</a> · <a href="../privacidad/">Privacidad</a></p>
-    <p>Desarrollado por <a href="{{proveedor.web}}" target="_blank" rel="noopener">{{proveedor.nombre}}</a></p>
+    <p>App TaxiCun · desarrollada por <a href="{{proveedor.web}}" target="_blank" rel="noopener">{{proveedor.nombre}}</a></p>
   </footer>
 
   <script type="module" src="{{RAIZ}}disenos/vitrina.js"></script>

@@ -1,6 +1,6 @@
 // Hojas de impresión: reparte los stickers en hojas carta o A4, en tamaño
 // exacto (mm), con marcas de corte y una barra de control de escala.
-import { EMPRESA, ES_PROPUESTA, PROVEEDOR } from '../nucleo/config.js';
+import { EMPRESA, ES_PROPUESTA } from '../nucleo/config.js';
 import { escenaASVG } from './escena.js';
 import { medidaTexto } from './formatos.js';
 
@@ -102,9 +102,11 @@ function pie(plan, formato, nHoja, totalHojas, estiloNombre) {
   const espacio = P.alto - (plan.y0 + plan.altoGrilla);
   if (espacio < 12) return '';
   const y = P.alto - Math.min(7, espacio / 2 - 1);
-  // En las propuestas, la hoja (fuera del corte) dice que es una demostración.
-  const propuesta = ES_PROPUESTA ? ` · Propuesta de demostración de ${PROVEEDOR.nombre}` : '';
-  const texto = `${EMPRESA.nombre}${propuesta} · ${formato.nombre} · ${medidaTexto(formato)} · ${estiloNombre} · Hoja ${nHoja} de ${totalHojas} · Imprime al 100 % (tamaño real)`;
+  // En las propuestas, la hoja (fuera del corte) dice que es una demostración de
+  // TaxiCun (la app; interOS solo la desarrolla): «<cooperativa> · TaxiCun · Propuesta de demostración».
+  const propuesta = ES_PROPUESTA ? ' · Propuesta de demostración' : '';
+  // El sticker es de TaxiCun (la app) con el nombre de la cooperativa.
+  const texto = `${EMPRESA.nombre} · TaxiCun${propuesta} · ${formato.corto} · ${medidaTexto(formato)} · ${estiloNombre} · Hoja ${nHoja} de ${totalHojas} · Imprime al 100 % (tamaño real)`;
   const xb = P.ancho - 8 - 50;
   return (
     `<text x="8" y="${n(y)}" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="2.3" font-weight="500" fill="#555">${texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>` +

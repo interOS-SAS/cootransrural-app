@@ -66,7 +66,7 @@
     </div>
     <div class="botones">
       <a class="boton amarillo" href="./" data-ruta="">Ir al inicio</a>
-      <a class="boton vidrio" href="./app/" data-ruta="app/">Pedir taxi</a>
+      <a class="boton vidrio" href="./taxicun/?e=cootransrural" data-taxicun>Pedir taxi</a>
     </div>
 {{#si tiene_telefono}}    <small id="ayuda"><span id="ayuda-texto">¿Necesitas ayuda? {{#si EMPRESA.servicio24h}}Central 24 horas{{/si}}{{#no EMPRESA.servicio24h}}Central{{/no}}:</span> <a id="ayuda-tel" href="tel:{{tel}}">{{tel_visible}}</a></small>
 {{/si}}    <small id="propuesta" hidden></small>
@@ -92,6 +92,8 @@
           const coop = COOPERATIVAS.find((c) => c.ruta && c.ruta === siguiente + '/');
           const base = raiz + (coop ? coop.ruta : '');
           document.querySelectorAll('[data-ruta]').forEach((a) => { a.href = base + a.dataset.ruta; });
+          // «Pedir taxi» abre TaxiCun (la app) con la cooperativa de la carpeta.
+          document.querySelectorAll('[data-taxicun]').forEach((a) => { a.href = `${raiz}taxicun/?e=${encodeURIComponent(coop ? coop.id : 'cootransrural')}`; });
           if (coop) adaptar(coop);
           const fuentes = document.createElement('link');
           fuentes.rel = 'stylesheet';
@@ -126,7 +128,7 @@
       }
       if (coop.es_propuesta) {
         const nota = document.getElementById('propuesta');
-        nota.textContent = `Propuesta de demostración preparada por {{proveedor.nombre}} para ${coop.razonSocial} · No es la página oficial de la cooperativa`;
+        nota.textContent = `Propuesta de demostración de TaxiCun, preparada por {{proveedor.nombre}} para ${coop.razonSocial} · No es la página oficial de la cooperativa`;
         nota.hidden = false;
       }
     }

@@ -1,7 +1,7 @@
 // Bienvenida y registro obligatorio del pasajero (diseño C).
 // Pasos: bienvenida → datos (nombre y celular) → código SMS simulado → seguridad
 // (contacto de emergencia opcional y términos). Sin registro no se puede pedir.
-import { icono, esc, montarCasillas, ilustracionTaxi, ilustracionRuta, formatoCelular, montarCelular, soloCelular, empresa, marcaHTML, cifrasEmpresa, franjaPropuestaHTML, urlCooperativa, urlPrivacidad } from './comun.js';
+import { icono, esc, montarCasillas, ilustracionTaxi, ilustracionRuta, formatoCelular, montarCelular, soloCelular, empresa, marcaHTML, cifrasEmpresa, franjaPropuestaHTML, urlApp, urlPrivacidad } from './comun.js';
 
 export function montarRegistro(capa, { N, alTerminar }) {
   const datos = { nombre: '', celular: '', codigo: '', contactoNombre: '', contactoCelular: '' };
@@ -34,7 +34,7 @@ export function montarRegistro(capa, { N, alTerminar }) {
         </div>
         <div class="c-reg-pie">
           <button type="button" class="c-boton c-boton-grande c-boton-ancho" data-reg="a-datos">Crear mi cuenta ${icono('flecha')}</button>
-          <a class="c-enlace" href="${esc(urlCooperativa('conductor/'))}">${icono('volante')} Soy conductor</a>
+          <a class="c-enlace" href="${esc(urlApp('conductor'))}" data-soy-conductor>${icono('volante')} Soy conductor</a>
         </div>
       </section>`;
       return;
