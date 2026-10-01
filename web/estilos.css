@@ -869,3 +869,21 @@ a.dato:hover { border-color: var(--verde-3); transform: translateY(-2px); }
   .destacado-precio { justify-self: center; }
 }
 .calc-nota b { color: var(--amarillo); font-weight: 800; }
+
+/* Tiempo de entrega */
+.entrega { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(18px, 3vw, 36px); align-items: center; max-width: 980px; margin: clamp(28px, 4vw, 40px) auto 0; padding: clamp(22px, 3vw, 34px); border-radius: var(--radio-g); background: var(--tinta); color: #fff; box-shadow: var(--sombra-g); }
+.entrega :focus-visible { outline-color: var(--amarillo); }
+.entrega-cifra { display: grid; justify-items: center; text-align: center; padding: 18px 26px; border-radius: 24px; background: var(--amarillo); color: var(--tinta); line-height: 1; }
+.entrega-cifra span, .entrega-cifra small { font: 800 .74rem/1.5 var(--fuente); letter-spacing: .12em; text-transform: uppercase; }
+.entrega-cifra b { font: 800 clamp(2.4rem, 1.8rem + 2.6vw, 3.6rem)/1 var(--titulo); letter-spacing: -.045em; margin: 4px 0; white-space: nowrap; }
+.entrega-pasos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; counter-reset: paso; }
+.entrega-pasos li { position: relative; display: grid; gap: 4px; padding: 14px 14px 14px 16px; border-radius: 16px; background: rgba(255, 255, 255, .07); border-top: 3px solid var(--amarillo); }
+.entrega-pasos b { font: 800 1rem/1.2 var(--titulo); color: var(--amarillo); }
+.entrega-pasos span { font-size: .92rem; line-height: 1.4; color: rgba(255, 255, 255, .86); }
+.entrega-nota { grid-column: 1 / -1; display: flex; align-items: flex-start; gap: 10px; margin: 0; padding: 12px 16px; border-radius: 14px; background: rgba(255, 193, 7, .12); color: rgba(255, 255, 255, .9); font-size: .93rem; line-height: 1.45; }
+.entrega-nota .icono { flex: none; width: 20px; height: 20px; color: var(--amarillo); margin-top: 1px; }
+@media (max-width: 860px) {
+  .entrega { grid-template-columns: 1fr; }
+  .entrega-cifra { justify-self: stretch; }
+  .entrega-pasos { grid-template-columns: 1fr; }
+}
