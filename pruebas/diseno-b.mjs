@@ -36,7 +36,7 @@ const NOMBRE = E.nombreCorto || E.nombre;
 const TIPO = E.tipo === 'empresa' ? 'empresa' : 'cooperativa';
 const PROPUESTA = FICHA.estado === 'propuesta';
 const TEL = String(E.telefono || '').replace(/\D/g, '');
-const PRE = PRINCIPAL ? '' : `${ID}/`;
+const PRE = PRINCIPAL ? 'el-rosal/' : `${ID}/`; // Cootransrural vive en el-rosal/
 // App única TaxiCun (la cooperativa va en ?e=) o las páginas propias de la cooperativa.
 const TAXICUN = process.argv.includes('--taxicun');
 const URL_APP = TAXICUN ? `${BASE}taxicun/?e=${ID}&d=b` : `${BASE}${PRE}app/?d=b`;
@@ -334,7 +334,7 @@ const VECINAS = ['cootransrural', 'tabio', 'subachoque']
   .slice(0, 2);
 const urlDe = (id, seccion) => (TAXICUN
   ? `${BASE}taxicun/${seccion === 'conductor' ? 'conductor/' : ''}?e=${id}&d=b`
-  : `${BASE}${id === 'cootransrural' ? '' : `${id}/`}${seccion}/?d=b`);
+  : `${BASE}${id === 'cootransrural' ? 'el-rosal/' : `${id}/`}${seccion}/?d=b`);
 const nombreDe = (id) => OTRAS.find((f) => f.id === id)?.EMPRESA?.nombreCorto || id;
 
 async function registrarRapido(pg) {

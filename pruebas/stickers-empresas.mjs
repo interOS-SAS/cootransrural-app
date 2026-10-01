@@ -51,7 +51,7 @@ const PX_MM = 96 / 25.4;
 const MEDIDAS = { taxi: [150, 150], espaldar: [100, 100], iman: [90, 55], afiche: [140, 216], tarjeta: [90, 50] };
 const PAPEL = { carta: [215.9, 279.4], a4: [210, 297] };
 const externo = (t) => /cartocdn|nominatim|project-osrm|openstreetmap|mapbox|mosquitto|emqx|hivemq|ERR_NAME_NOT_RESOLVED|ERR_INTERNET_DISCONNECTED|ERR_CONNECTION/i.test(t);
-const prefijoDe = (id) => (id === PRINCIPAL ? '' : `${id}/`);
+const prefijoDe = (id) => (id === PRINCIPAL ? 'el-rosal/' : `${id}/`); // Cootransrural vive en el-rosal/
 const rgbDe = (hex) => {
   const n = parseInt(hex.slice(1), 16);
   return `rgb(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255})`;

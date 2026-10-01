@@ -100,7 +100,7 @@ function revisarPantalla(r, donde, id) {
 // Todos los enlaces visibles de la app deben quedarse en TaxiCun o en la cooperativa correcta.
 async function revisarEnlaces(p, id, donde) {
   const malos = await p.evaluate(({ id, base }) => {
-    const pre = id === 'cootransrural' ? '' : `${id}/`;
+    const pre = id === 'cootransrural' ? 'el-rosal/' : `${id}/`;
     return [...document.querySelectorAll('#app a[href]')].map((a) => a.href).filter((h) => h.startsWith(base)).filter((h) => {
       const u = new URL(h);
       const ruta = u.pathname.slice(new URL(base).pathname.length);

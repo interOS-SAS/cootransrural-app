@@ -3,16 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Página no encontrada · {{EMPRESA.nombre}}</title>
+  <title>Página no encontrada · TaxiCun</title>
   <meta name="robots" content="noindex">
-  <meta name="theme-color" content="{{c.verde}}">
+  <meta name="theme-color" content="#0A2552">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230A5C33'/%3E%3Crect x='7' y='13' width='18' height='9' rx='3' fill='%23FFC107'/%3E%3C/svg%3E">
   <!-- Esta página se sirve en cualquier ruta que no exista (de cualquier
        cooperativa), así que no depende de archivos con rutas relativas: los
        estilos van aquí mismo y un script calcula la raíz del sitio, reconoce
        la carpeta de la cooperativa y ajusta enlaces, nombre y colores. -->
   <style>
-    :root{--verde:{{c.verde}};--verde-2:{{c.verde_2}};--verde-3:{{c.verde_3}};--verde-osc:{{c.verde_osc}};--amarillo:{{c.amarillo}}}
+    /* Colores de TaxiCun; dentro de la carpeta de una cooperativa se cambian por los suyos. */
+    :root{--verde:#1A4FA0;--verde-2:#163F86;--verde-3:#2A63C2;--verde-osc:#0A2552;--amarillo:#FFC21A}
     *,*::before,*::after{box-sizing:border-box}
     html,body{margin:0;min-height:100%}
     body{min-height:100svh;display:grid;place-items:center;padding:28px 20px;font:400 1rem/1.6 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:#fff;text-align:center;
@@ -66,7 +67,7 @@
     </div>
     <div class="botones">
       <a class="boton amarillo" href="./" data-ruta="">Ir al inicio</a>
-      <a class="boton vidrio" href="./taxicun/?e=cootransrural" data-taxicun>Pedir taxi</a>
+      <a class="boton vidrio" href="./taxicun/" data-taxicun>Pedir taxi</a>
     </div>
 {{#si tiene_telefono}}    <small id="ayuda"><span id="ayuda-texto">¿Necesitas ayuda? {{#si EMPRESA.servicio24h}}Central 24 horas{{/si}}{{#no EMPRESA.servicio24h}}Central{{/no}}:</span> <a id="ayuda-tel" href="tel:{{tel}}">{{tel_visible}}</a></small>
 {{/si}}    <small id="propuesta" hidden></small>
@@ -93,8 +94,9 @@
           const base = raiz + (coop ? coop.ruta : '');
           document.querySelectorAll('[data-ruta]').forEach((a) => { a.href = base + a.dataset.ruta; });
           // «Pedir taxi» abre TaxiCun (la app) con la cooperativa de la carpeta.
-          document.querySelectorAll('[data-taxicun]').forEach((a) => { a.href = `${raiz}taxicun/?e=${encodeURIComponent(coop ? coop.id : 'cootransrural')}`; });
+          document.querySelectorAll('[data-taxicun]').forEach((a) => { a.href = coop ? `${raiz}taxicun/?e=${encodeURIComponent(coop.id)}` : `${raiz}taxicun/`; });
           if (coop) adaptar(coop);
+          else document.getElementById('ayuda')?.remove(); // en la raíz es TaxiCun: sin central de una cooperativa
           const fuentes = document.createElement('link');
           fuentes.rel = 'stylesheet';
           fuentes.href = raiz + 'fuentes/fuentes.css';

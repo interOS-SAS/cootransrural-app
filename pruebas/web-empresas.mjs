@@ -213,7 +213,7 @@ async function juntarEnlaces(p, nombre) {
 for (const ficha of fichas) {
   const E = ficha.EMPRESA;
   const principal = ficha.id === PRINCIPAL;
-  const ruta = principal ? '' : `${ficha.id}/`;
+  const ruta = principal ? 'el-rosal/' : `${ficha.id}/`;
   const base = BASE + ruta;
   const publica = URL_PUBLICA + ruta;
   const iconosPropios = !principal && existsSync(join(RAIZ_REPO, 'empresas', ficha.id, 'icono-192.png'));
@@ -469,7 +469,7 @@ if (!SOLO.length) {
   ok(d.titulo === 'TaxiCun · App de taxis para Cundinamarca · desarrollada por interOS' && d.logo === 'TaxiCun', `cooperativas: portada de TaxiCun («${d.titulo}»)`);
   ok(d.abrir[0] === `${BASE}taxicun/` && d.abrir[1] === `${BASE}taxicun/conductor/`, 'cooperativas: «Abrir TaxiCun» → taxicun/ y conductores → taxicun/conductor/');
   ok(d.tarjetas.every((t) => {
-    const raiz = BASE + (t.id === PRINCIPAL ? '' : `${t.id}/`);
+    const raiz = BASE + (t.id === PRINCIPAL ? 'el-rosal/' : `${t.id}/`);
     return [raiz, `${BASE}taxicun/?e=${t.id}`, `${BASE}taxicun/conductor/?e=${t.id}`, `${raiz}propuesta/`, `${raiz}stickers/`].every((u) => t.hrefs.includes(u));
   }), 'cooperativas: cada tarjeta enlaza su web, TaxiCun, conductor, propuesta y stickers');
   ok(d.tarjetas.length === fichas.length && fichas.every((f) => d.tarjetas.some((t) => t.id === f.id && t.estado === (f.estado === 'propuesta' ? 'Propuesta' : 'Cliente') && t.enlaces >= 6)),
@@ -487,9 +487,9 @@ if (!SOLO.length) {
   await p.screenshot({ path: `${CAPTURAS}/cooperativas-390.png`, fullPage: true });
   console.log(`  capturas: ${CAPTURAS}/cooperativas-*.png`);
 
-  // Enlace discreto desde el pie de la raíz.
-  await p.goto(BASE, { waitUntil: 'load' });
-  ok(await p.evaluate(() => Boolean(document.querySelector('.pie a[href="cooperativas/"]'))), 'raíz: el pie enlaza (discreto) al índice de cooperativas');
+  // Enlace discreto desde el pie de la web de Cootransrural (el-rosal/).
+  await p.goto(BASE + 'el-rosal/', { waitUntil: 'load' });
+  ok(await p.evaluate(() => Boolean(document.querySelector('.pie a[href="../cooperativas/"]'))), 'Cootransrural: el pie enlaza (discreto) al índice de cooperativas');
 
   // 404 dentro de la carpeta de otra cooperativa (como la sirve GitHub Pages).
   const otra = fichas.find((f) => f.id !== PRINCIPAL);

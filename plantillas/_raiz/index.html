@@ -10,11 +10,11 @@
   <meta property="og:site_name" content="TaxiCun">
   <meta property="og:title" content="TaxiCun · Tu taxi de confianza en Cundinamarca">
   <meta property="og:description" content="Ve cuántos taxis de tu cooperativa están libres cerca y pide con tu ubicación. Sin llamar uno por uno.">
-  <meta property="og:image" content="https://interos-sas.github.io/cootransrural-app/img/taxicun/icono-512.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="./img/taxicun/favicon-32.png">
-  <link rel="apple-touch-icon" href="./img/taxicun/apple-touch-icon.png">
-  <link rel="stylesheet" href="./fuentes/fuentes.css?v=d7cb94cf69">
-  <link rel="stylesheet" href="./web/inicio.css?v=22423e9e39">
+  <meta property="og:image" content="{{url_sitio}}img/taxicun/icono-512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{RAIZ}}img/taxicun/favicon-32.png">
+  <link rel="apple-touch-icon" href="{{RAIZ}}img/taxicun/apple-touch-icon.png">
+  <link rel="stylesheet" href="{{RAIZ}}fuentes/fuentes.css">
+  <link rel="stylesheet" href="{{RAIZ}}web/inicio.css">
 </head>
 <body>
   <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -62,14 +62,14 @@
 
   <header class="barra">
     <div class="contenedor barra-caja">
-      <a class="marca" href="./" aria-label="TaxiCun, inicio"><img src="./img/taxicun/logo-blanco.svg" alt="TaxiCun" width="168" height="42"></a>
+      <a class="marca" href="{{RAIZ}}" aria-label="TaxiCun, inicio"><img src="{{RAIZ}}img/taxicun/logo-blanco.svg" alt="TaxiCun" width="168" height="42"></a>
       <nav class="menu" aria-label="Secciones">
         <a href="#como">Cómo funciona</a>
         <a href="#seguridad">Seguridad</a>
         <a href="#conductores">Conductores</a>
         <a href="#cooperativas">Cooperativas</a>
       </nav>
-      <a class="boton boton-amarillo boton-barra" href="./taxicun/"><svg class="icono" aria-hidden="true"><use href="#i-taxi"/></svg>Pedir taxi</a>
+      <a class="boton boton-amarillo boton-barra" href="{{RAIZ}}taxicun/"><svg class="icono" aria-hidden="true"><use href="#i-taxi"/></svg>Pedir taxi</a>
     </div>
   </header>
 
@@ -82,8 +82,8 @@
           <h1 id="titulo-portada">Tu taxi del pueblo, <span class="resaltado">sin llamar uno por uno</span></h1>
           <p class="portada-lead">Abres TaxiCun y ves cuántos taxis de la cooperativa de tu municipio están libres cerca de ti. Pides con tu ubicación exacta, ves la tarifa antes de subir y sigues el taxi en el mapa hasta tu puerta.</p>
           <div class="botones">
-            <a class="boton boton-amarillo boton-grande" href="./taxicun/"><svg class="icono" aria-hidden="true"><use href="#i-taxi"/></svg>Pedir taxi ahora</a>
-            <a class="boton boton-vidrio boton-grande" href="./taxicun/conductor/"><svg class="icono" aria-hidden="true"><use href="#i-volante"/></svg>Soy conductor</a>
+            <a class="boton boton-amarillo boton-grande" href="{{RAIZ}}taxicun/"><svg class="icono" aria-hidden="true"><use href="#i-taxi"/></svg>Pedir taxi ahora</a>
+            <a class="boton boton-vidrio boton-grande" href="{{RAIZ}}taxicun/conductor/"><svg class="icono" aria-hidden="true"><use href="#i-volante"/></svg>Soy conductor</a>
           </div>
           <ul class="garantias">
             <li><svg class="icono" aria-hidden="true"><use href="#i-pin"/></svg>Con tu ubicación exacta</li>
@@ -93,8 +93,8 @@
           <p class="nota">Funciona desde el navegador del celular. Pronto en Google Play y App Store.</p>
         </div>
         <div class="portada-telefonos" aria-hidden="true">
-          <span class="telefono telefono-atras"><img src="./web/disenos/c.jpg" alt="" width="390" height="844"></span>
-          <span class="telefono telefono-frente"><img src="./web/disenos/a.jpg" alt="" width="390" height="844"></span>
+          <span class="telefono telefono-atras"><img src="{{RAIZ}}web/disenos/c.jpg" alt="" width="390" height="844"></span>
+          <span class="telefono telefono-frente"><img src="{{RAIZ}}web/disenos/a.jpg" alt="" width="390" height="844"></span>
           <span class="chip-libres"><span class="punto"></span><b>5</b> taxis libres · 8 en línea</span>
         </div>
       </div>
@@ -154,8 +154,8 @@
           <p class="lead">TaxiCun abre su diseño Ámbar de día y el Neón de noche, más cómodo para los ojos. Si prefieres uno solo, lo eliges en Ajustes.</p>
         </div>
         <div class="dia-noche-telefonos">
-          <figure><span class="telefono"><img src="./web/disenos/a.jpg" alt="TaxiCun de día, diseño Ámbar" width="390" height="844" loading="lazy"></span><figcaption><svg class="icono"><use href="#i-reloj"/></svg>6:00 a. m. a 6:00 p. m.</figcaption></figure>
-          <figure><span class="telefono"><img src="./web/disenos/c.jpg" alt="TaxiCun de noche, diseño Neón" width="390" height="844" loading="lazy"></span><figcaption><svg class="icono"><use href="#i-luna"/></svg>6:00 p. m. a 6:00 a. m.</figcaption></figure>
+          <figure><span class="telefono"><img src="{{RAIZ}}web/disenos/a.jpg" alt="TaxiCun de día, diseño Ámbar" width="390" height="844" loading="lazy"></span><figcaption><svg class="icono"><use href="#i-reloj"/></svg>6:00 a. m. a 6:00 p. m.</figcaption></figure>
+          <figure><span class="telefono"><img src="{{RAIZ}}web/disenos/c.jpg" alt="TaxiCun de noche, diseño Neón" width="390" height="844" loading="lazy"></span><figcaption><svg class="icono"><use href="#i-luna"/></svg>6:00 p. m. a 6:00 a. m.</figcaption></figure>
         </div>
       </div>
     </section>
@@ -163,7 +163,7 @@
     <!-- ============ CONDUCTORES ============ -->
     <section class="seccion seccion-crema" id="conductores" aria-labelledby="titulo-conductores">
       <div class="contenedor dos-columnas">
-        <figure class="foto"><img src="./img/web/conductor.jpg" alt="Conductor de taxi sonriente junto a su carro" width="800" height="1000" loading="lazy"></figure>
+        <figure class="foto"><img src="{{RAIZ}}img/web/conductor.jpg" alt="Conductor de taxi sonriente junto a su carro" width="800" height="1000" loading="lazy"></figure>
         <div>
           <div class="encabezado">
             <span class="antetitulo">Para conductores</span>
@@ -176,7 +176,7 @@
             <li><svg class="icono"><use href="#i-qr"/></svg>Cobro con QR o en efectivo</li>
             <li><svg class="icono"><use href="#i-grafica"/></svg>Tus viajes y ganancias del día</li>
           </ul>
-          <a class="boton boton-azul boton-grande" href="./taxicun/conductor/"><svg class="icono" aria-hidden="true"><use href="#i-volante"/></svg>Abrir TaxiCun para conductores</a>
+          <a class="boton boton-azul boton-grande" href="{{RAIZ}}taxicun/conductor/"><svg class="icono" aria-hidden="true"><use href="#i-volante"/></svg>Abrir TaxiCun para conductores</a>
         </div>
       </div>
     </section>
@@ -192,13 +192,13 @@
         <div class="planes">
           <article class="plan">
             <span class="plan-etiqueta">Plan A · Por uso</span>
-            <p class="plan-precio"><b>1,9&nbsp;%</b> de lo que se facture por la app en el mes</p>
+            <p class="plan-precio"><b>{{propuesta.plan_a.porcentaje}}&nbsp;%</b> de lo que se facture por la app en el mes</p>
             <p>Solo se paga sobre los servicios pedidos y terminados en TaxiCun.</p>
           </article>
           <article class="plan plan-destacado">
             <span class="plan-etiqueta">Plan B · Por taxi</span>
-            <p class="plan-precio"><b>Solo $900</b> al día por taxi</p>
-            <p>$27.000 al mes por taxi, con actualizaciones constantes y soporte 24/7 por WhatsApp.</p>
+            <p class="plan-precio"><b>Solo {{propuesta.plan_b.dia}}</b> al día por taxi</p>
+            <p>{{propuesta.plan_b.mes}} al mes por taxi, con actualizaciones constantes y soporte 24/7 por WhatsApp.</p>
           </article>
         </div>
         <ul class="incluye">
@@ -210,7 +210,7 @@
         </ul>
         <div class="contacto">
           <p><b>¿Quiere ver su cooperativa en TaxiCun?</b> Le preparamos una demo con su nombre, sus lugares y sus rutas.</p>
-          <a class="boton boton-amarillo boton-grande" href="mailto:oscaradrianbernal@gmail.com?subject=TaxiCun%20para%20mi%20cooperativa"><svg class="icono" aria-hidden="true"><use href="#i-correo"/></svg>Escríbanos</a>
+          <a class="boton boton-amarillo boton-grande" href="mailto:{{proveedor.correo}}?subject=TaxiCun%20para%20mi%20cooperativa"><svg class="icono" aria-hidden="true"><use href="#i-correo"/></svg>Escríbanos</a>
         </div>
       </div>
     </section>
@@ -218,9 +218,9 @@
 
   <footer class="pie">
     <div class="contenedor pie-caja">
-      <img src="./img/taxicun/logo-blanco.svg" alt="TaxiCun" width="140" height="35" loading="lazy">
-      <p>Tu taxi de confianza en Cundinamarca · TaxiCun es desarrollada por <a href="https://interos.com.co" rel="noopener">interOS</a>.</p>
-      <p class="pie-enlaces"><a href="./taxicun/">Pedir taxi</a><a href="./taxicun/conductor/">Conductores</a><a href="mailto:oscaradrianbernal@gmail.com">oscaradrianbernal@gmail.com</a></p>
+      <img src="{{RAIZ}}img/taxicun/logo-blanco.svg" alt="TaxiCun" width="140" height="35" loading="lazy">
+      <p>Tu taxi de confianza en Cundinamarca · TaxiCun es desarrollada por <a href="{{proveedor.web}}" rel="noopener">{{proveedor.nombre}}</a>.</p>
+      <p class="pie-enlaces"><a href="{{RAIZ}}taxicun/">Pedir taxi</a><a href="{{RAIZ}}taxicun/conductor/">Conductores</a><a href="mailto:{{proveedor.correo}}">{{proveedor.correo}}</a></p>
     </div>
   </footer>
 </body>

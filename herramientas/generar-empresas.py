@@ -37,7 +37,17 @@ from urllib.parse import urlparse
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 PLANTILLAS = RAIZ / 'plantillas'
-PRINCIPAL = 'cootransrural'  # la que vive en la raíz del sitio
+PRINCIPAL = 'cootransrural'  # la cooperativa de Oscar (textos, fotos y colores propios)
+# En la raíz del sitio está la página de TaxiCun (plantillas/_raiz/index.html). Cada
+# cooperativa vive en su carpeta: la del «id», o la de «carpeta» en la ficha
+# (Cootransrural → el-rosal/). Las direcciones viejas de Cootransrural en la raíz
+# (app/, conductor/, stickers/…) quedan como redirecciones a el-rosal/.
+CARPETAS_VIEJAS_PRINCIPAL = ('app', 'conductor', 'descargar', 'disenos', 'privacidad', 'propuesta', 'stickers')
+
+
+def carpeta(f):
+    """Carpeta de la cooperativa en el sitio (sin barra)."""
+    return f.get('carpeta') or f['id']
 URL_PUBLICA = 'https://interos-sas.github.io/cootransrural-app/'
 PROVEEDOR = {'nombre': 'interOS', 'web': 'https://interos.com.co',
              # Contacto comercial que firma las propuestas (plantillas/propuesta/).
@@ -619,7 +629,7 @@ def derivados(ficha):
     es_principal = fid == PRINCIPAL
     es_propuesta = ficha.get('estado') == 'propuesta'
     es_cliente = not es_propuesta
-    prefijo = '' if es_principal else f'{fid}/'
+    prefijo = f'{carpeta(ficha)}/'
     pueblo = E.get('pueblo') or ''
     municipio = E.get('municipio') or pueblo
     departamento = municipio.split(',')[-1].strip() if ',' in municipio else 'Cundinamarca'
@@ -1253,7 +1263,7 @@ def contexto(ficha, destino_rel):
     profundidad = len(pathlib.PurePosixPath(destino_rel).parts) - 1
     raiz = '../' * profundidad or './'
     es_principal = ficha['id'] == PRINCIPAL
-    prefijo = '' if es_principal else f"{ficha['id']}/"
+    prefijo = f"{carpeta(ficha)}/"
     # Ruta relativa desde el archivo hasta la raíz de la cooperativa.
     partes_empresa = len(pathlib.PurePosixPath(prefijo).parts) if prefijo else 0
     raiz_empresa = '../' * (profundidad - partes_empresa) or './'
@@ -1283,7 +1293,7 @@ def lista_cooperativas():
                 'id': f['id'], 'nombre': E['nombre'], 'razonSocial': E.get('razonSocial') or E['nombre'],
                 'pueblo': E.get('pueblo'), 'municipio': E.get('municipio'), 'estado': f.get('estado'),
                 'es_propuesta': f.get('estado') == 'propuesta', 'es_principal': f['id'] == PRINCIPAL,
-                'ruta': '' if f['id'] == PRINCIPAL else f"{f['id']}/", 'url_publica': d['url_publica'],
+                'ruta': f"{carpeta(f)}/", 'url_publica': d['url_publica'],
                 'stickers_ruta': d['stickers_ruta'], 'icono': d['icono']['i192'], 'lema': E.get('lema') or '',
                 'primario': d['paleta']['verde'], 'oscuro': d['paleta']['verde-osc'], 'acento': d['paleta']['amarillo'], 'color_qr': d['color_qr'],
                 'tel_visible': d['tel_visible'], 'tel': d['tel'], 'taxis': E.get('taxis') or '', 'cifras': d['cifras'][:3],
@@ -1343,7 +1353,7 @@ def generar():
         for ficha in lista:
             if solo_raiz and ficha['id'] != PRINCIPAL:
                 continue
-            destino_rel = rel[len('_raiz/'):] if solo_raiz else (rel if ficha['id'] == PRINCIPAL else f"{ficha['id']}/{rel}")
+            destino_rel = rel[len('_raiz/'):] if solo_raiz else f"{carpeta(ficha)}/{rel}"
             salida = pintar(arbol, contexto(ficha, destino_rel))
             destino = RAIZ / destino_rel
             destino.parent.mkdir(parents=True, exist_ok=True)
@@ -1354,6 +1364,7 @@ def generar():
                 escritos += 1
                 print('generado:', destino_rel)
     escritos += escribir_indice(lista)
+    escritos += escribir_redirecciones(lista)
     print(f'{escritos} archivo(s) escritos para {len(lista)} cooperativa(s)')
     revisar_imagenes(lista)
 
@@ -1378,7 +1389,7 @@ def escribir_indice(lista):
             'radioKm': f.get('radioKm') or 9,
             'color': (f.get('colores') or {}).get('primario') or '#0A5C33',
             'icono': iconos(f['id'])['i192'],
-            'ruta': '' if f['id'] == PRINCIPAL else f"{f['id']}/",
+            'ruta': f"{carpeta(f)}/",
         })
     texto = json.dumps({'marca': 'TaxiCun', 'cooperativas': indice}, ensure_ascii=False, indent=1) + '\n'
     destino = RAIZ / 'empresas' / 'indice.json'
@@ -1387,6 +1398,48 @@ def escribir_indice(lista):
     destino.write_text(texto, encoding='utf-8')
     print('generado: empresas/indice.json')
     return 1
+
+
+REDIRECCION = '''<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <title>{titulo}</title>
+  <meta name="robots" content="noindex">
+  <meta http-equiv="refresh" content="0; url={destino}">
+  <link rel="canonical" href="{destino}">
+  <script>location.replace('{destino}' + location.search + location.hash);</script>
+</head>
+<body>
+  <p>Esta página se movió a <a href="{destino}">{destino_texto}</a>.</p>
+</body>
+</html>
+'''
+
+
+def escribir_redirecciones(lista):
+    """Las páginas de Cootransrural estaban en la raíz (app/, stickers/…): ahora están
+    en su carpeta. Las direcciones viejas (enlaces enviados, íconos instalados, el QR de
+    las fotos) redirigen allá con los mismos parámetros."""
+    principal = next((f for f in lista if f['id'] == PRINCIPAL), None)
+    if not principal or carpeta(principal) == '':
+        return 0
+    escritos = 0
+    for vieja in CARPETAS_VIEJAS_PRINCIPAL:
+        destino_rel = f'{vieja}/index.html'
+        destino = f'../{carpeta(principal)}/{vieja}/'
+        texto = REDIRECCION.format(titulo=f"{principal['EMPRESA']['nombre']} · TaxiCun", destino=destino, destino_texto=f'{carpeta(principal)}/{vieja}/')
+        archivo = RAIZ / destino_rel
+        if archivo.exists() and archivo.read_text(encoding='utf-8') == texto:
+            continue
+        archivo.parent.mkdir(parents=True, exist_ok=True)
+        archivo.write_text(texto, encoding='utf-8')
+        escritos += 1
+        print('redirección:', destino_rel, '→', destino)
+    # Los manifiestos viejos de la raíz ya no se usan (la app instalada abre la redirección).
+    for vieja in ('app', 'conductor'):
+        (RAIZ / vieja / 'manifest.webmanifest').unlink(missing_ok=True)
+    return escritos
 
 
 if __name__ == '__main__':

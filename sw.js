@@ -1,14 +1,14 @@
 // Service worker del sitio (TaxiCun y las páginas de cada cooperativa): permite
 // instalar la app, abrirla sin señal (lo ya visitado) y mostrar notificaciones.
-const VERSION = 'ct-2026-10-01-3';
+const VERSION = 'ct-2026-10-02-1';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
     caches.open(VERSION).then((c) =>
       c.addAll([
-        './', './app/', './conductor/', './descargar/', './vendor/leaflet/leaflet.js', './vendor/leaflet/leaflet.css',
-        // TaxiCun (la app instalada abre taxicun/?o=app): sin señal debe abrir TaxiCun, no la web de Cootransrural.
+        './', './vendor/leaflet/leaflet.js', './vendor/leaflet/leaflet.css',
+        // TaxiCun (la app instalada abre taxicun/?o=app): sin señal debe abrir TaxiCun.
         './taxicun/', './taxicun/conductor/', './web/taxicun.js', './web/taxicun.css', './empresas/indice.json',
       ]).catch(() => {}),
     ),
@@ -47,7 +47,9 @@ self.addEventListener('fetch', (e) => {
 // ?o=app… el HTML es el mismo); si no, dentro de TaxiCun, TaxiCun, y en la carpeta
 // de una cooperativa, su web. La web de Cootransrural (raíz) solo para sus propias
 // páginas: a la persona de otra cooperativa nunca se le muestra la de Cootransrural.
-const RAIZ_COOTRANSRURAL = ['', 'app', 'conductor', 'descargar', 'disenos', 'stickers', 'pagar', 'privacidad', 'propuesta', 'cooperativas'];
+// Carpetas de la raíz que, sin señal, abren la página de TaxiCun (las de cada
+// cooperativa abren su propia página; las viejas de Cootransrural redirigen a el-rosal/).
+const RAIZ_TAXICUN = ['', 'pagar', 'cooperativas'];
 function respaldo(pedido, url) {
   return caches.match(pedido, { ignoreSearch: true }).then(async (r) => {
     if (r) return r;
@@ -55,7 +57,7 @@ function respaldo(pedido, url) {
     const tc = resto.match(/^taxicun\/(conductor\/)?/);
     if (tc) return caches.match(`./taxicun/${tc[1] || ''}`);
     const carpeta = resto.split('/')[0];
-    if (RAIZ_COOTRANSRURAL.includes(carpeta)) return caches.match('./');
+    if (RAIZ_TAXICUN.includes(carpeta)) return caches.match('./');
     return (await caches.match(`./${carpeta}/`)) || sinSenal();
   });
 }

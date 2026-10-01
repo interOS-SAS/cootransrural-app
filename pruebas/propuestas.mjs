@@ -92,8 +92,8 @@ for (const ficha of fichas) {
   const esPrincipal = id === PRINCIPAL;
   const esPropuesta = ficha.estado === 'propuesta';
   const tipo = String(E.tipo || '').trim().toLowerCase() === 'empresa' ? 'empresa' : 'cooperativa';
-  const ruta = esPrincipal ? 'propuesta/' : `${id}/propuesta/`;
-  const urlPublica = URL_PUBLICA + (esPrincipal ? '' : `${id}/`);
+  const ruta = esPrincipal ? 'el-rosal/propuesta/' : `${id}/propuesta/`;
+  const urlPublica = URL_PUBLICA + (esPrincipal ? 'el-rosal/' : `${id}/`);
   const razon = E.razonSocial || E.nombre;
   const nombre = `${id}/propuesta`;
   console.log(`\n== ${E.nombre} (${id}, ${esPropuesta ? 'propuesta' : 'cliente'})`);

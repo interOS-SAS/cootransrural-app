@@ -40,7 +40,7 @@ const WHATSAPP = String(E.whatsapp || '').replace(/\D/g, '');
 const TIENE_WHATSAPP = WHATSAPP.length >= 10;
 // Llave Bre-B de ejemplo: @<nombre corto sin tildes ni espacios><móvil>.
 const LLAVE = `@${String(E.nombreCorto || E.nombre).toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, '')}`;
-const RAIZ_COOP = PRINCIPAL ? BASE : `${BASE}${EMPRESA}/`;
+const RAIZ_COOP = PRINCIPAL ? `${BASE}el-rosal/` : `${BASE}${EMPRESA}/`; // Cootransrural vive en el-rosal/
 const PREFIJO = PRINCIPAL ? 'ct.' : `ct.${EMPRESA}.`;
 const CENTRO = { latitude: FICHA.CENTRO.lat, longitude: FICHA.CENTRO.lng };
 const fichaDe = (id) => JSON.parse(readFileSync(new URL(`../empresas/${id}/ficha.json`, import.meta.url), 'utf8'));
@@ -49,7 +49,8 @@ const existeFicha = (id) => existsSync(new URL(`../empresas/${id}/ficha.json`, i
 const OTRAS = ['cootransrural', 'tabio', 'subachoque'].filter((id) => id !== EMPRESA && existeFicha(id)).slice(0, 2);
 const CAPTURAS = (process.env.CAPTURAS || `/tmp/cootrans/capturas/${TAXICUN ? 'tc-a' : 'a'}/${EMPRESA}/`).replace(/\/?$/, '/');
 // Páginas de la app: dentro de TaxiCun (taxicun/?e=<id>) o las propias de la cooperativa.
-const raizDe = (id) => (id === 'cootransrural' ? BASE : `${BASE}${id}/`);
+// Cootransrural vive en el-rosal/ (en la raíz está la página de TaxiCun).
+const raizDe = (id) => (id === 'cootransrural' ? `${BASE}el-rosal/` : `${BASE}${id}/`);
 const urlPasajero = (id = EMPRESA, extra = '') => (TAXICUN ? `${BASE}taxicun/?e=${id}&d=a${extra}` : `${raizDe(id)}app/?d=a${extra}`);
 const urlConductor = (id = EMPRESA) => (TAXICUN ? `${BASE}taxicun/conductor/?e=${id}&d=a` : `${raizDe(id)}conductor/?d=a`);
 // La app es TaxiCun y la desarrolla interOS (ver disenos/a/empresa.js).
@@ -750,7 +751,7 @@ async function probarBordes() {
 async function probarSeparacion(ctx, p) {
   for (const otra of OTRAS) {
     const fo = fichaDe(otra);
-    const raiz = otra === 'cootransrural' ? BASE : `${BASE}${otra}/`;
+    const raiz = raizDe(otra);
     const pref = otra === 'cootransrural' ? 'ct.' : `ct.${otra}.`;
     const q = await ctx.newPage();
     vigilar(q, `separación ${otra}`);

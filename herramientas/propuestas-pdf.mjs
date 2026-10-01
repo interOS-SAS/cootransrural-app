@@ -37,13 +37,16 @@ if (!ids.length) {
   process.exit(1);
 }
 
+// Carpeta de cada cooperativa en el sitio (la ficha puede traer otra, p. ej. Cootransrural → el-rosal).
+const carpetaDe = (id) => JSON.parse(readFileSync(join(RAIZ, 'empresas', id, 'ficha.json'), 'utf8')).carpeta || id;
+
 const navegador = await chromium.launch({ executablePath: EXE });
 const contexto = await navegador.newContext({ locale: 'es-CO', timezoneId: 'America/Bogota' });
 await contexto.addInitScript(() => localStorage.setItem('ct.envivo', 'no'));
 let fallas = 0;
 
 for (const id of ids) {
-  const ruta = id === PRINCIPAL ? 'propuesta/' : `${id}/propuesta/`;
+  const ruta = `${carpetaDe(id)}/propuesta/`;
   if (!existsSync(join(RAIZ, ruta, 'index.html'))) {
     console.error(`✘ ${id}: falta ${ruta}index.html (corre python3 herramientas/generar-empresas.py)`);
     fallas++;

@@ -127,8 +127,9 @@ export function urlDelSitio(ruta = '') {
   return new URL(ruta, RAIZ).href;
 }
 
-// Raíz de la cooperativa: Cootransrural está en la raíz; las demás en /<id>/.
-export const RAIZ_EMPRESA = ID_EMPRESA === 'cootransrural' ? RAIZ : new URL(`${ID_EMPRESA}/`, RAIZ);
+// Carpeta de la cooperativa: /<id>/ o la que diga la ficha (Cootransrural → /el-rosal/).
+// En la raíz del sitio está la página de TaxiCun.
+export const RAIZ_EMPRESA = new URL(`${FICHA.carpeta || ID_EMPRESA}/`, RAIZ);
 
 export function urlEmpresa(ruta = '') {
   return new URL(ruta, RAIZ_EMPRESA).href;

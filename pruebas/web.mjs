@@ -30,6 +30,8 @@ const ROSAL = { latitude: 4.8531, longitude: -74.2611 };
 const RAIZ_REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
 mkdirSync(CAPTURAS, { recursive: true });
 
+// La web de Cootransrural vive en el-rosal/; en la raíz está la página de TaxiCun.
+const COOP = `${BASE}el-rosal/`;
 const origen = new URL(BASE).origin;
 let fallas = 0;
 const ok = (condicion, mensaje) => {
@@ -130,7 +132,7 @@ if (CAPTURAR_DISENOS) {
   for (const d of ['a', 'b', 'c']) {
     const ctx = await nuevoContexto({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
     const p = await ctx.newPage();
-    await p.goto(`${BASE}app/?d=${d}&vitrina=1&sala=captura-${d}`, { waitUntil: 'load' });
+    await p.goto(`${COOP}app/?d=${d}&vitrina=1&sala=captura-${d}`, { waitUntil: 'load' });
     await p.waitForSelector('#carga', { state: 'detached', timeout: 15000 }).catch(() => {});
     await p.waitForTimeout(3500);
     const destino = join(RAIZ_REPO, 'web', 'disenos', `${d}.jpg`);
@@ -145,7 +147,7 @@ for (const ancho of [360, 390, 768, 1024, 1440]) {
   const ctx = await nuevoContexto({ viewport: { width: ancho, height: ancho < 800 ? 844 : 900 } });
   const p = await ctx.newPage();
   vigilar(p, `inicio ${ancho}`, errores);
-  await p.goto(BASE, { waitUntil: 'load' });
+  await p.goto(COOP, { waitUntil: 'load' });
   await recorrer(p);
   const datos = await p.evaluate(() => ({
     qr: Boolean(document.querySelector('#qr-descarga svg')),
@@ -169,7 +171,7 @@ for (const ancho of [360, 390, 768, 1024, 1440]) {
       pie: document.querySelector('.pie-interos')?.textContent.replace(/\s+/g, ' ').trim() || '',
     },
   }));
-  const rutas = await p.evaluate(async () => (await import('./nucleo/index.js')).RUTAS.length);
+  const rutas = await p.evaluate(async () => (await import('../nucleo/index.js')).RUTAS.length);
   ok(datos.qr && datos.qrUrl.includes('/descargar/'), `inicio ${ancho}: QR grande hacia descargar/`);
   ok(datos.filas === rutas, `inicio ${ancho}: tabla de tarifas con las ${rutas} rutas del núcleo`);
   ok(/^\$\d/.test(datos.total), `inicio ${ancho}: el cotizador calcula (${datos.total})`);
@@ -190,10 +192,10 @@ for (const ancho of [360, 390, 768, 1024, 1440]) {
   if (ancho === 1440) {
     // Los tres QR de la página se leen con jsQR y llevan a donde dicen.
     const [descarga, cobro, sticker] = await leerQRs(p, '#qr-descarga svg, #qr-cobro svg, #qr-sticker svg');
-    ok(descarga === new URL('descargar/?o=web', BASE).href, `inicio: el QR de la portada se lee y abre descargar/ (${(descarga || 'ilegible').replace(origen, '')})`);
+    ok(descarga === new URL('descargar/?o=web', COOP).href, `inicio: el QR de la portada se lee y abre descargar/ (${(descarga || 'ilegible').replace(origen, '')})`);
     const uCobro = cobro ? new URL(cobro) : null;
     ok(uCobro && uCobro.pathname.endsWith('/pagar/') && uCobro.searchParams.get('v') === '12000' && uCobro.searchParams.get('m') === '023', `inicio: el QR de cobro de muestra abre pagar/ con $12.000 (${(cobro || 'ilegible').replace(origen, '')})`);
-    ok(sticker === new URL('descargar/?movil=023&o=sticker', BASE).href, `inicio: el QR del sticker de muestra abre descargar/?movil=023 (${(sticker || 'ilegible').replace(origen, '')})`);
+    ok(sticker === new URL('descargar/?movil=023&o=sticker', COOP).href, `inicio: el QR del sticker de muestra abre descargar/?movil=023 (${(sticker || 'ilegible').replace(origen, '')})`);
     // Datos estructurados (JSON-LD) y Open Graph.
     const seo = await p.evaluate(() => {
       let jsonld = null;
@@ -231,7 +233,7 @@ for (const ancho of [360, 390, 768, 1024, 1440]) {
     window.__abiertas = [];
     window.open = (url) => { window.__abiertas.push(String(url)); return null; };
   });
-  await p.goto(BASE + '#contacto', { waitUntil: 'load' });
+  await p.goto(COOP + '#contacto', { waitUntil: 'load' });
   await p.click('#formulario button[type="submit"]');
   const invalidos = await p.evaluate(() => document.querySelectorAll('#formulario [aria-invalid="true"]').length);
   ok(invalidos >= 4, `formulario: valida los campos vacíos (${invalidos} marcados)`);
@@ -255,7 +257,7 @@ for (const ancho of [360, 390, 768, 1024, 1440]) {
   const ctx = await nuevoContexto({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   const p = await ctx.newPage();
   vigilar(p, 'descargar', errores);
-  await p.goto(BASE + 'descargar/?movil=023&o=sticker', { waitUntil: 'load' });
+  await p.goto(COOP + 'descargar/?movil=023&o=sticker', { waitUntil: 'load' });
   await p.waitForTimeout(500);
   const d = await p.evaluate(() => ({
     titulo: document.querySelector('h1')?.textContent,
@@ -415,7 +417,7 @@ for (const [ancho, alto] of [[1440, 900], [390, 844]]) {
   const p = await ctx.newPage();
   const erroresVitrina = [];
   vigilar(p, `vitrina ${ancho}`, erroresVitrina, erroresDisenos);
-  await p.goto(BASE + 'disenos/', { waitUntil: 'load' });
+  await p.goto(COOP + 'disenos/', { waitUntil: 'load' });
   await p.waitForTimeout(800);
   const cargados = await p.evaluate(() => document.querySelectorAll('.v-pantalla iframe').length);
   await p.waitForTimeout(5000);
@@ -448,10 +450,10 @@ for (const [ancho, alto] of [[1440, 900], [390, 844]]) {
   if (ancho > 900) {
     // Los QR de cada columna abren el diseño correcto (se leen con jsQR, como lo haría la cámara).
     const leidos = await leerQRs(p, '.v-qr .codigo svg');
-    ok(leidos.length === 3 && ['a', 'b', 'c'].every((d, i) => leidos[i] === new URL(`app/?d=${d}`, BASE).href), `vitrina: los QR abren app/?d=a|b|c (${leidos.map((u) => (u || 'ilegible').replace(origen, '')).join(' | ')})`);
+    ok(leidos.length === 3 && ['a', 'b', 'c'].every((d, i) => leidos[i] === new URL(`app/?d=${d}`, COOP).href), `vitrina: los QR abren app/?d=a|b|c (${leidos.map((u) => (u || 'ilegible').replace(origen, '')).join(' | ')})`);
     await p.click('#c .v-interruptor [data-rol="conductor"]');
     const [qrConductor] = await leerQRs(p, '#c .v-qr .codigo svg');
-    ok(qrConductor === new URL('conductor/?d=c', BASE).href, `vitrina: con «Conductor» el QR abre conductor/?d=c (${(qrConductor || 'ilegible').replace(origen, '')})`);
+    ok(qrConductor === new URL('conductor/?d=c', COOP).href, `vitrina: con «Conductor» el QR abre conductor/?d=c (${(qrConductor || 'ilegible').replace(origen, '')})`);
     await p.click('#c .v-interruptor [data-rol="pasajero"]');
     await Promise.all([p.waitForURL(/\/app\/$/, { timeout: 8000 }).catch(() => {}), p.click('#b .usar')]);
     const elegido = await p.evaluate(() => ({ d: localStorage.getItem('ct.diseno'), sala: localStorage.getItem('ct.sala'), url: location.pathname }));
@@ -468,7 +470,7 @@ for (const [ancho, alto] of [[1440, 900], [390, 844]]) {
   const ctx = await nuevoContexto({ viewport: { width: 390, height: 844 } });
   const p = await ctx.newPage();
   vigilar(p, 'privacidad', errores);
-  await p.goto(BASE + 'privacidad/', { waitUntil: 'load' });
+  await p.goto(COOP + 'privacidad/', { waitUntil: 'load' });
   const texto = await p.textContent('main');
   ok(/BORRADOR/i.test(texto) && texto.includes('Ley Estatutaria 1581 de 2012') && texto.includes('recepcion@cootransrural.com') && /relés MQTT públicos/.test(texto), 'privacidad: borrador con Ley 1581, relés públicos y contacto');
   ok(/términos de uso de TaxiCun/.test(texto) && /encargado del tratamiento/.test(texto) && /responsable del tratamiento de los datos es la Cooperativa de Transportadores Rurales/.test(texto.replace(/\s+/g, ' ')), 'privacidad: la app es TaxiCun, la cooperativa es la responsable e interOS el encargado');
@@ -485,7 +487,7 @@ for (const [ancho, alto] of [[1440, 900], [390, 844]]) {
 {
   const ctx = await nuevoContexto();
   const p = await ctx.newPage();
-  const paginas = ['', 'descargar/?movil=023', 'pagar/?v=12000&id=enlaces&m=23', 'privacidad/', 'disenos/', '404.html', 'cooperativas/'];
+  const paginas = ['', 'el-rosal/', 'el-rosal/descargar/?movil=023', 'pagar/?v=12000&id=enlaces&m=23', 'el-rosal/privacidad/', 'el-rosal/disenos/', '404.html', 'cooperativas/'];
   const enlaces = new Map(); // url → página donde aparece
   const anclasRotas = [];
   for (const ruta of paginas) {

@@ -52,8 +52,8 @@ const TAXICUN = ARGS.includes('--taxicun');
 const PRINCIPAL = ID === 'cootransrural';
 const FICHA = JSON.parse(readFileSync(new URL(`../empresas/${ID}/ficha.json`, import.meta.url), 'utf8'));
 const EMPRESA = FICHA.EMPRESA;
-const RAIZ_EMPRESA = PRINCIPAL ? '' : `${ID}/`;
-const raizDe = (id) => (id === 'cootransrural' ? '' : `${id}/`);
+const RAIZ_EMPRESA = PRINCIPAL ? 'el-rosal/' : `${ID}/`; // Cootransrural vive en el-rosal/
+const raizDe = (id) => (id === 'cootransrural' ? 'el-rosal/' : `${id}/`);
 // Dirección de la app del pasajero o del conductor de una cooperativa (con el diseño C).
 const urlAppDe = (id, rol = 'pasajero') => (TAXICUN
   ? `${BASE}taxicun/${rol === 'conductor' ? 'conductor/' : ''}?e=${id}&d=c`
