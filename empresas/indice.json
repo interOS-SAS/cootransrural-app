@@ -128,6 +128,24 @@
    "ruta": "tenjo/"
   },
   {
+   "id": "tenjotax",
+   "nombre": "Tenjo Tax",
+   "razonSocial": "Tenjo Tax S.A.S.",
+   "tipo": "empresa",
+   "pueblo": "Tenjo",
+   "municipio": "Tenjo, Cundinamarca",
+   "estado": "propuesta",
+   "diseno": "b",
+   "centro": {
+    "lat": 4.871304,
+    "lng": -74.147325
+   },
+   "radioKm": 9,
+   "color": "#8B1E2D",
+   "icono": "empresas/tenjotax/icono-192.png",
+   "ruta": "tenjotax/"
+  },
+  {
    "id": "villeta",
    "nombre": "Cootransvi",
    "razonSocial": "Cooperativa de Transportadores de Villeta (Cootransvi)",

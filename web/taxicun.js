@@ -36,6 +36,15 @@ async function leerIndice() {
   return (await r.json()).cooperativas || [];
 }
 
+// Por GPS: la empresa del municipio más cercano. Si en ese municipio hay más de
+// una empresa en TaxiCun, devuelve todas para que la persona escoja.
+function porUbicacion(lista, pos) {
+  const cerca = masCercana(lista, pos);
+  if (!cerca || cerca.d > (cerca.c.radioKm || 9)) return null;
+  const mismas = lista.filter((c) => c.pueblo === cerca.c.pueblo);
+  return mismas.length > 1 ? { varias: mismas, pueblo: cerca.c.pueblo } : { una: cerca.c };
+}
+
 function masCercana(lista, pos) {
   let mejor = null;
   for (const c of lista) {
@@ -69,8 +78,9 @@ export async function iniciarTaxiCun({ rol = 'pasajero', version = '' } = {}) {
   texto('Buscando tu municipio…');
   const pos = await ubicacion();
   if (!pos) return mostrarLista(lista, { rol, version, motivo: 'sin-gps' });
-  const cerca = masCercana(lista, pos);
-  if (cerca && cerca.d <= (cerca.c.radioKm || 9)) return abrir(cerca.c, { rol, version, porGps: true });
+  const r = porUbicacion(lista, pos);
+  if (r?.una) return abrir(r.una, { rol, version, porGps: true });
+  if (r?.varias) return mostrarLista(r.varias, { rol, version, motivo: 'varias', pos, pueblo: r.pueblo, todas: lista });
   return mostrarLista(lista, { rol, version, motivo: 'fuera', pos });
 }
 
@@ -109,7 +119,7 @@ async function abrir(coop, { rol, version, porGps = false }) {
   N.registrarServiceWorker();
 }
 
-function mostrarLista(lista, { rol, version, motivo, pos = null }) {
+function mostrarLista(lista, { rol, version, motivo, pos = null, pueblo = '', todas = lista }) {
   $('carga').classList.add('oculta');
   const caja = $('elegir');
   const ordenadas = [...lista].sort((a, b) => (pos ? distanciaKm(pos, a.centro) - distanciaKm(pos, b.centro) : a.pueblo.localeCompare(b.pueblo, 'es')));
@@ -117,7 +127,9 @@ function mostrarLista(lista, { rol, version, motivo, pos = null }) {
     elegir: ['¿En qué municipio estás?', 'Escoge tu municipio y te mostramos la cooperativa de taxis de ahí.'],
     'sin-gps': ['¿En qué municipio estás?', 'No pudimos ver tu ubicación. Escoge tu municipio o activa la ubicación.'],
     fuera: ['TaxiCun aún no llega a tu municipio', 'Por ahora estamos en estos municipios de Cundinamarca. Si vas para alguno, escógelo.'],
+    varias: [`¿Con quién pides tu taxi en ${pueblo}?`, `En ${pueblo} hay ${lista.length} empresas de taxis en TaxiCun. Escoge una; la puedes cambiar después en el menú.`],
   };
+  const varias = motivo === 'varias';
   const [titulo, detalle] = mensajes[motivo] || mensajes.elegir;
   caja.innerHTML = `
     <header class="tc-elegir-cabeza">
@@ -133,13 +145,17 @@ function mostrarLista(lista, { rol, version, motivo, pos = null }) {
       ${ordenadas.map((c) => `
         <li><button type="button" data-id="${escapar(c.id)}" style="--c:${escapar(c.color)}">
           <img src="${new URL(c.icono, RAIZ).href}" alt="" width="48" height="48">
-          <span class="tc-lista-texto"><b>${escapar(c.pueblo)}</b><small>${escapar(c.nombre)}${pos && c.centro ? ` · a ${Math.round(distanciaKm(pos, c.centro))} km` : ''}</small></span>
+          <span class="tc-lista-texto">${varias
+            ? `<b>${escapar(c.nombre)}</b><small>${escapar(c.razonSocial || c.pueblo)}</small>`
+            : `<b>${escapar(c.pueblo)}</b><small>${escapar(c.nombre)}${pos && c.centro ? ` · a ${Math.round(distanciaKm(pos, c.centro))} km` : ''}</small>`}</span>
           ${c.estado === 'propuesta' ? '<span class="tc-demo">Demo</span>' : ''}
           <svg class="tc-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
         </button></li>`).join('')}
     </ul>
+    ${varias ? '<button type="button" class="tc-enlace" data-todas>Ver todos los municipios</button>' : ''}
     <p class="tc-elegir-pie">TaxiCun · desarrollada por interOS</p>`;
   caja.hidden = false;
+  caja.querySelector('[data-todas]')?.addEventListener('click', () => mostrarLista(todas, { rol, version, motivo: 'elegir', pos }));
   caja.querySelectorAll('[data-id]').forEach((b) => b.addEventListener('click', () => {
     const coop = lista.find((c) => c.id === b.dataset.id);
     localStorage.setItem(CLAVE, coop.id);
@@ -151,9 +167,10 @@ function mostrarLista(lista, { rol, version, motivo, pos = null }) {
     localStorage.removeItem(CLAVE);
     const nueva = await ubicacion(10000);
     if (!nueva) return mostrarLista(lista, { rol, version, motivo: 'sin-gps' });
-    const cerca = masCercana(lista, nueva);
-    if (cerca && cerca.d <= (cerca.c.radioKm || 9)) return abrir(cerca.c, { rol, version, porGps: true });
-    mostrarLista(lista, { rol, version, motivo: 'fuera', pos: nueva });
+    const r = porUbicacion(todas, nueva);
+    if (r?.una) return abrir(r.una, { rol, version, porGps: true });
+    if (r?.varias) return mostrarLista(r.varias, { rol, version, motivo: 'varias', pos: nueva, pueblo: r.pueblo, todas });
+    mostrarLista(todas, { rol, version, motivo: 'fuera', pos: nueva });
   });
   // El foco va al título (lo anuncia el lector de pantalla) y no al primer municipio:
   // en el celular, el anillo del foco hacía parecer que ese municipio ya estaba escogido.

@@ -688,5 +688,69 @@
       "Otras páginas consultadas del sitio de Coptaxi: https://coptaxi.com.co/nosotros/ (misión y visión), https://coptaxi.com.co/servicios/ y https://coptaxi.com.co/contacto/ (teléfonos, correos, dirección y horario)."
     ],
     "lugaresRevisados": true
+  },
+  "tenjotax": {
+    "estado": "propuesta",
+    "pueblo_osm": "Tenjo",
+    "EMPRESA": {
+      "nombre": "Tenjo Tax",
+      "nombreCorto": "Tenjo Tax",
+      "razonSocial": "Tenjo Tax S.A.S.",
+      "tipo": "empresa",
+      "lema": "Tu taxi en Tenjo y sus veredas",
+      "municipio": "Tenjo, Cundinamarca",
+      "pueblo": "Tenjo",
+      "region": "Sabana Centro",
+      "telefono": "6018658980",
+      "telefonoVisible": "601 865 8980",
+      "whatsapp": "",
+      "correo": "contacteno@tenjotax.com",
+      "direccion": "Carrera 2 # 4-55, local 2-02, C.C. Achuá, Tenjo, Cundinamarca",
+      "web": "",
+      "sitioOficial": "",
+      "fundada": 2004,
+      "taxisIniciales": null,
+      "taxis": null,
+      "microbuses": null,
+      "asociados": null,
+      "servicio24h": true,
+      "placaPrefijo": "TJX",
+      "vehiculo": "Kia Picanto",
+      "colorTaxi": "Amarillo",
+      "oficina": {
+        "lat": 4.87324,
+        "lng": -74.144656
+      },
+      "datosPendientes": [
+        "WhatsApp de la central",
+        "número de taxis",
+        "colores de la empresa",
+        "misión y visión",
+        "confirmar el correo (contacteno@ o contactenos@tenjotax.com)"
+      ]
+    },
+    "colores": {
+      "primario": "#8B1E2D",
+      "primario2": "#A6283A",
+      "oscuro": "#4A0E17",
+      "acento": "#FFC21A",
+      "rojo": "#DC2626"
+    },
+    "destinos": [
+      "Tabio",
+      "Chía",
+      "Cota",
+      "Funza",
+      "Madrid",
+      "Subachoque",
+      "portal-80",
+      "aeropuerto"
+    ],
+    "fuentes": [
+      "https://directorio-empresas.einforma.co/informacion-empresa/tenjo-tax-ltda",
+      "https://www.emis.com/php/company-profile/CO/Tenjo_Tax_SAS_es_9466753.html",
+      "https://www.informacolombia.com/directorio-empresas/informacion-empresa/tenjo-tax-ltda",
+      "https://www.openstreetmap.org/"
+    ]
   }
 }
