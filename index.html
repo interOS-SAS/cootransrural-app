@@ -142,6 +142,7 @@
         <a href="#tarifas">Tarifas</a>
         <a href="#nosotros">Nosotros</a>
         <a href="#conductores">Conductores</a>
+        <a href="#costos">Costos</a>
         <a href="#contacto">Contacto</a>
       </nav>
       <a class="boton boton-amarillo boton-barra" href="app/"><svg class="icono" aria-hidden="true"><use href="#i-taxi"/></svg><span class="boton-texto">Pedir taxi</span></a>
@@ -600,6 +601,77 @@
           <a class="boton boton-amarillo boton-grande" href="tel:+573209042977"><svg class="icono"><use href="#i-telefono"/></svg>Llamar: 320 904 2977</a>
           <a class="boton boton-vidrio boton-grande" href="https://wa.me/573209042977" target="_blank" rel="noopener"><svg class="icono"><use href="#i-chat"/></svg>Escribir por WhatsApp</a>
         </div>
+      </div>
+    </section>
+
+    <!-- ============ COSTOS (planes para la cooperativa) ============ -->
+    <section class="seccion seccion-crema costos" id="costos" aria-labelledby="titulo-costos">
+      <div class="contenedor">
+        <div class="encabezado centrado revelar">
+          <span class="antetitulo">Costos para la cooperativa</span>
+          <h2 id="titulo-costos">Dos formas de tener la app: por uso o con cuota fija</h2>
+          <p class="lead">Para los pasajeros la app es gratis: solo pagan su viaje. La cooperativa elige el plan que más le convenga.</p>
+        </div>
+
+        <div class="planes">
+          <article class="plan revelar desde-izq" aria-labelledby="plan-a-titulo">
+            <span class="plan-etiqueta">Plan A · Ideal para empezar</span>
+            <h3 id="plan-a-titulo">Por uso</h3>
+            <p class="plan-precio"><b>1,9&nbsp;%</b><span>de cada viaje pedido por la app</span></p>
+            <ul class="lista-check">
+              <li><svg class="icono"><use href="#i-check"/></svg><span>Solo se paga por los viajes que llegan por la app.</span></li>
+              <li><svg class="icono"><use href="#i-check"/></svg><span>Los viajes de la calle o de la central de siempre <b>no pagan</b>.</span></li>
+              <li><svg class="icono"><use href="#i-check"/></svg><span>Si la app se usa poco, se paga poco.</span></li>
+            </ul>
+            <p class="plan-ejemplo"><svg class="icono"><use href="#i-billete"/></svg><span>En un viaje de $10.000 son <b>$190</b>.</span></p>
+          </article>
+
+          <article class="plan plan-destacado revelar desde-der" aria-labelledby="plan-b-titulo">
+            <span class="plan-etiqueta">Plan B · Valor fijo y predecible</span>
+            <h3 id="plan-b-titulo">Cuota fija por taxi</h3>
+            <p class="plan-precio"><b>$30.000</b><span>por taxi al mes</span></p>
+            <ul class="lista-check">
+              <li><svg class="icono"><use href="#i-check"/></svg><span>El mismo valor sin importar cuántos viajes haga.</span></li>
+              <li><svg class="icono"><use href="#i-check"/></svg><span>Se puede incluir en el rodamiento mensual de cada asociado.</span></li>
+              <li><svg class="icono"><use href="#i-check"/></svg><span>Conviene cuando la app ya se usa bastante.</span></li>
+            </ul>
+            <p class="plan-ejemplo"><svg class="icono"><use href="#i-taxi"/></svg><span>Unos <b>$1.000 al día</b> por taxi · 52 taxis: <b>$1.560.000</b> al mes.</span></p>
+          </article>
+        </div>
+
+        <div class="incluye revelar">
+          <h3>Los dos planes incluyen</h3>
+          <ul>
+            <li><svg class="icono"><use href="#i-celular"/></svg>App del pasajero y del conductor con la marca Cootransrural</li>
+            <li><svg class="icono"><use href="#i-descargar"/></svg>Publicación en Google Play y App Store</li>
+            <li><svg class="icono"><use href="#i-grafica"/></svg>Panel de la cooperativa: servicios, conductores y calificaciones</li>
+            <li><svg class="icono"><use href="#i-mapa"/></svg>Servidor, mapas y mensajes de verificación</li>
+            <li><svg class="icono"><use href="#i-reloj"/></svg>Soporte y actualizaciones constantes</li>
+            <li><svg class="icono"><use href="#i-volante"/></svg>Capacitación a los conductores</li>
+            <li><svg class="icono"><use href="#i-qr"/></svg>Stickers QR listos para imprimir</li>
+          </ul>
+        </div>
+
+        <form class="calculadora revelar" id="calculadora" onsubmit="return false" aria-labelledby="calc-titulo">
+          <div class="calc-datos">
+            <h3 id="calc-titulo"><svg class="icono"><use href="#i-grafica"/></svg>Calcula cuánto pagaría la cooperativa</h3>
+            <div class="calc-campos">
+              <label>Taxis<input type="number" id="calc-taxis" min="1" max="2000" step="1" value="52" inputmode="numeric"></label>
+              <label>Viajes por taxi al día<input type="number" id="calc-viajes" min="1" max="60" step="1" value="15" inputmode="numeric"></label>
+              <label>Valor promedio del viaje<input type="number" id="calc-valor" min="1000" max="500000" step="500" value="10000" inputmode="numeric"></label>
+            </div>
+            <label class="calc-deslizador" for="calc-app">Viajes que se piden por la app: <b id="calc-app-texto">30 %</b></label>
+            <input type="range" id="calc-app" min="0" max="100" step="5" value="30">
+            <p class="calc-nota" id="calc-flota"></p>
+          </div>
+          <div class="calc-resultados" aria-live="polite">
+            <div class="calc-plan" id="calc-a"><span>Plan A · 1,9 % por uso</span><b>—</b><small></small></div>
+            <div class="calc-plan" id="calc-b"><span>Plan B · $30.000 por taxi</span><b>—</b><small></small></div>
+            <p class="calc-veredicto" id="calc-veredicto"></p>
+          </div>
+        </form>
+
+        <p class="aviso-ejemplo centrado revelar"><svg class="icono"><use href="#i-info"/></svg>Valores de referencia antes de IVA. La comisión del Plan A se calcula solo sobre los viajes pedidos por la app, no sobre todo lo que factura la flota. La propuesta final se acuerda con la cooperativa.</p>
       </div>
     </section>
 

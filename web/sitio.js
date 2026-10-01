@@ -322,6 +322,51 @@ function formulario() {
   });
 }
 
+/* ---------------- Costos: calculadora de los dos planes ---------------- */
+
+const PLAN_A_COMISION = 0.019; // 1,9 % de cada viaje pedido por la app
+const PLAN_B_CUOTA = 30000; // por taxi al mes
+
+function calculadoraCostos() {
+  const form = $('#calculadora');
+  if (!form) return;
+  const campo = (id, min, max) => {
+    const n = Math.round(Number($(id).value));
+    return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : min;
+  };
+  const porcentaje = (x) => `${(Math.round(x * 10) / 10).toString().replace('.', ',')} %`;
+  const actualizar = () => {
+    const taxis = campo('#calc-taxis', 1, 2000);
+    const viajes = campo('#calc-viajes', 1, 60);
+    const valor = campo('#calc-valor', 1000, 500000);
+    const app = campo('#calc-app', 0, 100) / 100;
+    const viajesMes = taxis * viajes * 30;
+    const flota = viajesMes * valor;
+    const planA = flota * app * PLAN_A_COMISION;
+    const planB = taxis * PLAN_B_CUOTA;
+    $('#calc-app-texto').textContent = porcentaje(app * 100);
+    $('#calc-flota').textContent = `La flota hace unos ${viajesMes.toLocaleString('es-CO')} viajes al mes (${N.pesos(flota)}). Por la app: ${Math.round(viajesMes * app).toLocaleString('es-CO')} viajes.`;
+    const a = $('#calc-a');
+    const b = $('#calc-b');
+    a.querySelector('b').textContent = `${N.pesos(planA)} al mes`;
+    a.querySelector('small').textContent = `${N.pesos(planA / taxis / 30)} por taxi al día`;
+    b.querySelector('b').textContent = `${N.pesos(planB)} al mes`;
+    b.querySelector('small').textContent = `${N.pesos(PLAN_B_CUOTA / 30)} por taxi al día`;
+    a.classList.toggle('mas-barato', planA < planB);
+    b.classList.toggle('mas-barato', planB < planA);
+    // Punto en el que los dos planes cuestan lo mismo.
+    const equilibrio = (planB / (flota * PLAN_A_COMISION)) * 100;
+    const v = $('#calc-veredicto');
+    if (equilibrio > 100) {
+      v.innerHTML = 'Con estos números, el <b>Plan A</b> siempre sale más barato.';
+    } else {
+      v.innerHTML = `Los dos planes cuestan lo mismo cuando <b>${porcentaje(equilibrio)}</b> de los viajes llegan por la app. Por debajo conviene el <b>Plan A</b>; por encima, el <b>Plan B</b>.`;
+    }
+  };
+  form.addEventListener('input', actualizar);
+  actualizar();
+}
+
 /* ---------------- Arranque ---------------- */
 
 intentar('barra', barraSuperior);
@@ -331,4 +376,5 @@ intentar('qr', codigosQR);
 intentar('tarifas', tarifas);
 intentar('mapa', mapaOficina);
 intentar('formulario', formulario);
+intentar('costos', calculadoraCostos);
 intentar('año', () => { $('#anio').textContent = String(new Date().getFullYear()); });
