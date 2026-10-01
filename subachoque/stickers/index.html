@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Stickers QR para imprimir · Coopmultrasub</title>
+  <meta name="description" content="Genera e imprime los stickers con código QR para pedir taxi con la app de Coopmultrasub en Subachoque: taxis, neveras, restaurantes y conjuntos.">
+  <meta name="theme-color" content="#0B2545">
+  <script>window.CT_EMPRESA = 'subachoque';</script>
+  <link rel="icon" href="../../empresas/subachoque/favicon-32.png" type="image/png">
+  <link rel="apple-touch-icon" href="../../empresas/subachoque/apple-touch-icon.png">
+  <link rel="stylesheet" href="../../fuentes/fuentes.css?v=d7cb94cf69">
+  <link rel="stylesheet" href="../../stickers/stickers.css?v=d6cd15e027">
+  <style>:root{--verde:#1D4E89;--verde-2:#2563A8;--verde-3:#2B75C5;--verde-osc:#0B2545;--verde-tinte:#E8EDF3;--verde-tinte-2:#EBEFF4;--verde-tinte-3:#E4EAF1;--verde-linea:#D6DFEA;--exito-tinte:#E8EDF3;--b-claro:#A9BCD2;--fondo-oscuro:#0B121B;--noche-1:#101A25;--noche-2:#040A10;--fondo-vitrina:#060C13;--amarillo:#FFC107;--amarillo-2:#FFD658;--amarillo-osc:#C99806;--amarillo-texto:#8F6C04;--amarillo-vivo:#FFC107;--rojo:#D32F2F;--velo:#081A30;--velo-2:#0A213E;--velo-3:#07172B;--noche:#040D17;--verde-rgb:29, 78, 137;--verde-3-rgb:43, 117, 197;--verde-osc-rgb:11, 37, 69;--amarillo-rgb:255, 193, 7;--velo-rgb:8, 26, 48;--velo-2-rgb:10, 33, 62;--velo-3-rgb:7, 23, 43;--noche-rgb:4, 13, 23;--rojo-rgb:211, 47, 47}:root{--verde-medio:var(--verde);--amarillo:var(--amarillo-vivo);--mesa:color-mix(in srgb, var(--verde-osc) 80%, #50605a)}</style>
+  <style id="estilo-pagina">@page { size: 215.9mm 279.4mm; margin: 0; }</style>
+</head>
+<body>
+  <header class="barra">
+    <a class="marca" href="../app/" title="Abrir la app del pasajero">
+      <img id="marca-icono" src="../../img/icono.svg" alt="" width="40" height="40" style="visibility:hidden">
+      <span><strong>Coopmultrasub</strong><small>Stickers QR para imprimir</small></span>
+    </a>
+    <p class="barra-lema">Un QR en cada taxi, nevera y mostrador: <b>pide tu taxi con la app</b>.</p>
+    <a class="barra-enlace" href="../app/">Abrir la app</a>
+  </header>
+
+  <main class="taller" id="taller" aria-busy="true">
+    <aside class="panel" aria-label="Opciones del sticker">
+      <section class="grupo">
+        <h2><span class="paso">1</span> Formato</h2>
+        <div class="formatos" id="formatos" role="radiogroup" aria-label="Formato del sticker"></div>
+      </section>
+
+      <section class="grupo">
+        <h2><span class="paso">2</span> Estilo de color</h2>
+        <div class="estilos" id="estilos" role="radiogroup" aria-label="Estilo de color"></div>
+      </section>
+
+      <section class="grupo">
+        <h2><span class="paso">3</span> Móviles</h2>
+        <div class="segmentado" role="radiogroup" aria-label="Qué móviles" id="modo-moviles">
+          <button type="button" role="radio" data-modo="rango">Rango</button>
+          <button type="button" role="radio" data-modo="lista">Lista</button>
+          <button type="button" role="radio" data-modo="generico">Sin móvil</button>
+        </div>
+        <div class="fila-campos" data-si-modo="rango">
+          <label class="campo"><span>Desde</span><input type="number" id="desde" min="1" max="999" inputmode="numeric"></label>
+          <span class="guion" aria-hidden="true">–</span>
+          <label class="campo"><span>Hasta</span><input type="number" id="hasta" min="1" max="999" inputmode="numeric"></label>
+        </div>
+        <label class="campo" data-si-modo="lista"><span>Números separados por comas</span><input type="text" id="lista" placeholder="Ej.: 3, 7, 12-15, 40" autocomplete="off"></label>
+        <p class="ayuda" data-si-modo="generico">Un mismo diseño sin número de móvil, ideal para neveras, tiendas y conjuntos.</p>
+        <label class="interruptor" data-no-modo="generico">
+          <input type="checkbox" id="imprimir-movil">
+          <span class="interruptor-pista" aria-hidden="true"></span>
+          <span>Imprimir el número de móvil</span>
+        </label>
+        <p class="ayuda" data-no-modo="generico" id="ayuda-movil">El QR de cada sticker lleva su móvil: así se sabe desde qué taxi llegó cada usuario.</p>
+        <p class="error" id="error-moviles" hidden></p>
+      </section>
+
+      <section class="grupo">
+        <h2><span class="paso">4</span> Destino del QR</h2>
+        <label class="campo"><span>Otra URL base (opcional)</span><input type="url" id="url-base" placeholder="https://app.tucooperativa.com/descargar/" autocomplete="off" spellcheck="false"></label>
+        <p class="ayuda">Déjala vacía para usar la página de descarga de esta app. Cuando tengan dominio propio, escríbelo aquí.</p>
+        <p class="error" id="error-url" hidden></p>
+        <div class="url-final"><span>El QR del móvil seleccionado abre:</span><a id="url-final" href="#" target="_blank" rel="noopener"></a></div>
+      </section>
+
+      <section class="grupo">
+        <h2><span class="paso">5</span> Copias e impresión</h2>
+        <div class="fila-campos">
+          <div class="campo">
+            <span id="etiqueta-copias">Copias por móvil</span>
+            <div class="contador" role="group" aria-labelledby="etiqueta-copias">
+              <button type="button" id="copias-menos" aria-label="Una copia menos">−</button>
+              <input type="number" id="copias" min="1" max="20" inputmode="numeric" aria-labelledby="etiqueta-copias">
+              <button type="button" id="copias-mas" aria-label="Una copia más">+</button>
+            </div>
+          </div>
+          <div class="campo">
+            <span>Hoja</span>
+            <div class="segmentado compacto" role="radiogroup" aria-label="Tamaño de hoja" id="papel">
+              <button type="button" role="radio" data-papel="carta">Carta</button>
+              <button type="button" role="radio" data-papel="a4">A4</button>
+            </div>
+          </div>
+        </div>
+        <label class="interruptor">
+          <input type="checkbox" id="sangrado">
+          <span class="interruptor-pista" aria-hidden="true"></span>
+          <span>Sangrado de 2 mm (el color pasa del corte)</span>
+        </label>
+        <div class="resumen" id="resumen"></div>
+      </section>
+    </aside>
+
+    <section class="escenario" aria-label="Vista previa">
+      <div class="herramientas">
+        <div class="selector-movil">
+          <button type="button" class="boton-icono" id="movil-anterior" aria-label="Móvil anterior">‹</button>
+          <label><span class="sr">Móvil de la vista previa</span><select id="movil-actual"></select></label>
+          <button type="button" class="boton-icono" id="movil-siguiente" aria-label="Móvil siguiente">›</button>
+        </div>
+        <div class="acciones">
+          <button type="button" class="boton" id="descargar-png" title="Imagen a 300 ppp del tamaño real, del móvil seleccionado">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg>Descargar PNG
+          </button>
+          <button type="button" class="boton" id="descargar-svg" title="Vectorial para imprenta, del móvil seleccionado">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg>Descargar SVG
+          </button>
+          <button type="button" class="boton primario" id="imprimir">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H4v-7h16v7h-3M7 14h10v7H7z"/></svg>Imprimir / Guardar PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="mesa" id="mesa">
+        <figure class="vista" id="vista">
+          <div class="cota cota-h" aria-hidden="true"><span id="cota-ancho"></span></div>
+          <div class="cota cota-v" aria-hidden="true"><span id="cota-alto"></span></div>
+          <div class="lienzo" id="vista-sticker"></div>
+          <figcaption class="sr" id="vista-descripcion"></figcaption>
+        </figure>
+        <button type="button" class="tamano-real" id="tamano-real" aria-pressed="false" title="Ver el sticker a su tamaño aproximado en pantalla">Tamaño real</button>
+      </div>
+
+      <div class="ficha" id="ficha" aria-live="polite"></div>
+
+      <section class="hojas-previa">
+        <div class="hojas-cabeza">
+          <h3>Hoja de impresión</h3>
+          <p id="hojas-texto"></p>
+        </div>
+        <div class="hojas-lista" id="hojas-previa"></div>
+        <p class="ayuda consejo">Consejo: en el diálogo de impresión deja la <b>escala en 100 %</b> (o «Tamaño real») y los <b>márgenes en «Ninguno»</b>. Para guardar el PDF elige «Guardar como PDF». Comprueba con una regla que la barra del pie mida 5 cm. Para la imprenta envía el PDF (vectorial, con las fuentes incluidas) o el SVG de cada móvil.</p>
+      </section>
+    </section>
+  </main>
+
+  <footer class="pie-pagina">
+    <p><a href="../app/">App de Coopmultrasub</a> · Desarrollado por <a href="https://interos.com.co" rel="noopener">interOS</a></p>
+  </footer>
+
+  <div id="impresion" aria-hidden="true"></div>
+  <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+  <script type="module" src="../../stickers/stickers.js?v=89ef09a5b1"></script>
+</body>
+</html>

@@ -23,7 +23,12 @@
     "placaPrefijo": "VAK",
     "vehiculo": "Kia Picanto",
     "colorTaxi": "Amarillo",
-    "sitioOficial": "https://cootransrural.com"
+    "sitioOficial": "https://cootransrural.com",
+    "oficina": {
+      "lat": 4.854931,
+      "lng": -74.263286
+    },
+    "region": "Sabana de Occidente"
   },
   "colores": {
     "primario": "#0A5C33",
@@ -193,8 +198,8 @@
       "nombre": "Oficina Cootransrural",
       "detalle": "Cra. 8 No. 12-38, San Carlos",
       "cat": "centro",
-      "lat": 4.855106,
-      "lng": -74.26222
+      "lat": 4.854931,
+      "lng": -74.263286
     },
     {
       "id": "policia",
@@ -463,8 +468,8 @@
     {
       "id": "monasterio",
       "nombre": "Monasterio Benedictino",
-      "detalle": "El Rosal",
-      "cat": "vereda",
+      "detalle": "Vereda de El Rosal",
+      "cat": "turismo",
       "lat": 4.863916,
       "lng": -74.265014
     },
@@ -728,5 +733,42 @@
       "nombre": "Don Álvaro",
       "calificacion": 4.6
     }
+  ],
+  "textos": {
+    "historia": "Cootransrural nació en 1999, cuando un grupo de conductores de El Rosal decidió organizarse para dignificar su oficio y darle al municipio un transporte seguro, eficiente y confiable, tanto en el casco urbano como en las veredas.\n\nEmpezamos con 22 taxis y una idea sencilla: trabajar juntos, con solidaridad, compromiso y responsabilidad con la comunidad. Gracias al esfuerzo de los asociados y al respaldo de la gente, hoy movemos a El Rosal y a la Sabana de Occidente de día y de noche. Ahora damos un paso más: llevar el servicio de siempre a tu celular.",
+    "mision": "Ofrecer a nuestros usuarios un servicio de transporte excelente y oportuno que responda a lo que esperan de un servicio público, con base en los principios del cooperativismo y con un equipo humano competente y motivado, comprometido con la mejora continua y con el crecimiento económico, social y cultural de todos nuestros asociados.",
+    "vision": "En 2030 seremos la cooperativa líder en transporte urbano e intermunicipal de la región, reconocida por la confianza que inspira, por su calidad certificada, su seguridad y su servicio oportuno, gracias a la mejora continua y a una alta competitividad.",
+    "servicios": [
+      "Taxi",
+      "Taxi al aeropuerto",
+      "Microbús para grupos",
+      "Transporte especial de pasajeros",
+      "Ruta intermunicipal"
+    ],
+    "frase": "Más que transporte, confianza",
+    "linea_tiempo": [
+      {
+        "b": "1999",
+        "s": "Nace la cooperativa con 22 taxis."
+      },
+      {
+        "b": "Hoy",
+        "s": "52 taxis, 3 microbuses y 105 asociados."
+      },
+      {
+        "b": "2030",
+        "s": "Líderes del transporte en la región."
+      }
+    ]
+  },
+  "fuentes": [
+    "https://cootransrural.com/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Cliente de interOS (cooperativa principal de la demo, en la raíz del sitio).",
+    "Historia (1999, 22 taxis), misión y visión 2030: su sitio https://cootransrural.com y la web renovada (index.html). Cifras de hoy (52 taxis, 3 microbuses, 105 asociados): datos de la cooperativa ya publicados en la web renovada.",
+    "Lugares, rutas y tarifas de la ficha: revisados a mano antes; tarifas de EJEMPLO.",
+    "Oficina (Carrera 8 No. 12-38) ubicada por cruce de calles de OSM (Carrera 8 × Calle 12 + 38 m); antes estaba en el punto del barrio San Carlos, 120 m al este."
   ]
 }

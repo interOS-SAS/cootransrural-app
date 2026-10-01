@@ -4,6 +4,7 @@
 // impresión y descarga vectorial) y en canvas (descarga PNG a 300 ppp), así lo
 // que se ve en pantalla es exactamente lo que sale impreso.
 import * as N from '../nucleo/index.js';
+import { icono as iconoApp } from './icono.js';
 
 export const PPP = 300;
 export const MM_POR_PULGADA = 25.4;
@@ -129,24 +130,19 @@ function trazadoQR(filas) {
 }
 
 // ---------------------------------------------------------------------------
-// Imágenes (el ícono de la app). Se guardan como URL del sitio (para canvas)
-// y como data URI (para que el SVG descargado sea autónomo).
+// Imágenes (el ícono de la app, con los colores de la cooperativa). Se guardan
+// como URL (para canvas y vista previa) y como data URI (para que el SVG
+// descargado sea autónomo).
 // ---------------------------------------------------------------------------
 export const IMAGENES = {};
 
 export async function prepararImagenes() {
-  const lista = { icono: new URL('../img/icono.svg', import.meta.url).href };
-  await Promise.all(
-    Object.entries(lista).map(async ([clave, url]) => {
-      const texto = await (await fetch(url)).text();
-      const dataURI = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(texto)));
-      const img = new Image();
-      img.decoding = 'sync';
-      img.src = url;
-      await img.decode();
-      IMAGENES[clave] = { url, dataURI, img };
-    }),
-  );
+  const { url, dataURI } = await iconoApp();
+  const img = new Image();
+  img.decoding = 'sync';
+  img.src = url;
+  await img.decode();
+  IMAGENES.icono = { url, dataURI, img };
 }
 
 // ---------------------------------------------------------------------------

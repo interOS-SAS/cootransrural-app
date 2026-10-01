@@ -8,6 +8,23 @@ igual y solo cambia cómo se ven.
 import * as N from '../../nucleo/index.js';
 ```
 
+## Cooperativa activa
+
+Antes de cargar los módulos, la página fija `window.CT_EMPRESA = '<id>'` (o `?e=<id>`).
+`config.js` carga `empresas/<id>/ficha.json` y exporta `FICHA`, `ID_EMPRESA`,
+`EMPRESA`, `COLORES`, `CENTRO`, `ZONA`, `ES_PROPUESTA` (todo lo que no sea
+`estado: "cliente"`) y `PROVEEDOR`. `datos.js` toma de la ficha `LUGARES`,
+`RUTAS`, `TARIFAS` (completadas con valores de ejemplo) y `CONDUCTORES_DEMO`.
+Si la ficha no carga, el módulo falla (nunca muestra otra cooperativa) y la
+pantalla de carga avisa a los 15 s.
+
+- `urlDelSitio(ruta)`: raíz del sitio (librerías, `pagar/`).
+- `urlEmpresa(ruta)`: raíz de la cooperativa (`<id>/descargar/`…).
+- `perfil.*` guarda con prefijo `ct.<id>.` (Cootransrural: `ct.`).
+- Bus: `BroadcastChannel apptaxi-<id>-<sala>` y temas `apptaxi-demo/v2/<id>/<sala>`.
+- Pendiente conocido: el viaje en curso va en `sessionStorage['ct.viaje.pasajero']`
+  (común a todas). Cada diseño lo aparta por cooperativa al abrir.
+
 ## Pasajero
 
 ```js

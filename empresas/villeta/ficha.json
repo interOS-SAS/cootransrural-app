@@ -1,0 +1,688 @@
+{
+  "id": "villeta",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootransvi",
+    "nombreCorto": "Cootransvi",
+    "razonSocial": "Cooperativa de Transportadores de Villeta (Cootransvi)",
+    "lema": "Taxis en Villeta, tierra de trapiches y panela",
+    "municipio": "Villeta, Cundinamarca",
+    "pueblo": "Villeta",
+    "telefono": "6018447000",
+    "telefonoVisible": "601 844 7000",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Calle 5 # 4-75, Villeta, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "VLL",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Gualivá",
+    "datosPendientes": [
+      "teléfono de la central",
+      "WhatsApp",
+      "correo",
+      "año de fundación",
+      "número de taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 5.011874,
+      "lng": -74.469668
+    }
+  },
+  "colores": {
+    "primario": "#8A4513",
+    "primario2": "#A85A17",
+    "oscuro": "#3B1E08",
+    "acento": "#F5C04A",
+    "rojo": "#B91C1C"
+  },
+  "CENTRO": {
+    "lat": 5.011258,
+    "lng": -74.47023
+  },
+  "ZONA": {
+    "sur": 4.69,
+    "norte": 5.33,
+    "oeste": -74.79,
+    "este": -74.15
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "sasaima",
+      "destino": "Sasaima",
+      "valor": 23000,
+      "km": 11,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "quebradanegra",
+      "destino": "Quebradanegra",
+      "valor": 32000,
+      "km": 17,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "nocaima",
+      "destino": "Nocaima",
+      "valor": 42000,
+      "km": 24,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "la-vega",
+      "destino": "La Vega",
+      "valor": 45000,
+      "km": 26,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "utica",
+      "destino": "Útica",
+      "valor": 53000,
+      "km": 32,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "guaduas",
+      "destino": "Guaduas",
+      "valor": 57000,
+      "km": 34,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 77000,
+      "km": 47,
+      "min": 65,
+      "radioKm": 4
+    },
+    {
+      "id": "terminal-salitre",
+      "destino": "Terminal Salitre (Bogotá)",
+      "valor": 129000,
+      "km": 82,
+      "min": 115,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Villeta",
+      "cat": "centro",
+      "lat": 5.011291,
+      "lng": -74.470175
+    },
+    {
+      "id": "alcaldia",
+      "nombre": "Alcaldía Municipal",
+      "detalle": "Parque Principal, Villeta",
+      "cat": "centro",
+      "lat": 5.010765,
+      "lng": -74.47016
+    },
+    {
+      "id": "oficina",
+      "nombre": "Oficina Cootransvi",
+      "detalle": "Calle 5 # 4-75, Villeta",
+      "cat": "centro",
+      "lat": 5.011874,
+      "lng": -74.469668
+    },
+    {
+      "id": "iglesia",
+      "nombre": "Iglesia del Parque Principal",
+      "detalle": "Calle 4, Villeta",
+      "cat": "centro",
+      "lat": 5.010937,
+      "lng": -74.469701
+    },
+    {
+      "id": "policia",
+      "nombre": "Estación de Policía",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.010236,
+      "lng": -74.471108
+    },
+    {
+      "id": "plaza-mercado",
+      "nombre": "Plaza de Mercado",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.009675,
+      "lng": -74.471399
+    },
+    {
+      "id": "biblioteca",
+      "nombre": "Biblioteca Arcadio Plazas",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.011262,
+      "lng": -74.473455
+    },
+    {
+      "id": "flota-aguila",
+      "nombre": "Flota Águila (buses)",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.013098,
+      "lng": -74.470428
+    },
+    {
+      "id": "flota-santafe",
+      "nombre": "Flota Santafé (buses)",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.012979,
+      "lng": -74.471161
+    },
+    {
+      "id": "expreso-bolivariano",
+      "nombre": "Expreso Bolivariano (buses)",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.007719,
+      "lng": -74.474048
+    },
+    {
+      "id": "hospital",
+      "nombre": "Hospital de Villeta",
+      "detalle": "Calle 1, Palmanova",
+      "cat": "salud",
+      "lat": 5.006597,
+      "lng": -74.470116
+    },
+    {
+      "id": "unidad-medica",
+      "nombre": "Unidad Médica, sede principal",
+      "detalle": "Calle 5, Villeta",
+      "cat": "salud",
+      "lat": 5.011093,
+      "lng": -74.47104
+    },
+    {
+      "id": "colegio-divino-pastor",
+      "nombre": "Colegio Divino Pastor",
+      "detalle": "Avenida Calle 7, Villeta",
+      "cat": "educacion",
+      "lat": 5.00935,
+      "lng": -74.476636
+    },
+    {
+      "id": "colegio-cristiano-integral",
+      "nombre": "Colegio Cristiano Integral",
+      "detalle": "Avenida Calle 7, Villeta",
+      "cat": "educacion",
+      "lat": 5.009137,
+      "lng": -74.477058
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Centro, Villeta",
+      "cat": "comercio",
+      "lat": 5.011147,
+      "lng": -74.470912
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Centro, Villeta",
+      "cat": "comercio",
+      "lat": 5.011811,
+      "lng": -74.470669
+    },
+    {
+      "id": "surtimax",
+      "nombre": "Mercahogar SurtiMAX",
+      "detalle": "Centro, Villeta",
+      "cat": "comercio",
+      "lat": 5.011618,
+      "lng": -74.470283
+    },
+    {
+      "id": "surtiplaza",
+      "nombre": "Surtiplaza",
+      "detalle": "Villeta",
+      "cat": "comercio",
+      "lat": 5.011264,
+      "lng": -74.47125
+    },
+    {
+      "id": "brio",
+      "nombre": "Estación BRIO",
+      "detalle": "Avenida Calle 7, Villeta",
+      "cat": "comercio",
+      "lat": 5.009087,
+      "lng": -74.477875
+    },
+    {
+      "id": "aimapanela",
+      "nombre": "Aimapanela",
+      "detalle": "Centro, Villeta",
+      "cat": "comida",
+      "lat": 5.011751,
+      "lng": -74.469892
+    },
+    {
+      "id": "la-terraza",
+      "nombre": "La Terraza",
+      "detalle": "Parque Principal, Villeta",
+      "cat": "comida",
+      "lat": 5.010845,
+      "lng": -74.470416
+    },
+    {
+      "id": "kaliz-pizza",
+      "nombre": "Kaliz Pizza",
+      "detalle": "Centro, Villeta",
+      "cat": "comida",
+      "lat": 5.011815,
+      "lng": -74.469849
+    },
+    {
+      "id": "nuestra-molienda",
+      "nombre": "Nuestra Molienda",
+      "detalle": "Villeta · a 3,7 km",
+      "cat": "comida",
+      "lat": 5.039921,
+      "lng": -74.452954
+    },
+    {
+      "id": "ciudad-cristales",
+      "nombre": "Ciudad Cristales",
+      "detalle": "Barrio de Villeta",
+      "cat": "barrio",
+      "lat": 5.014202,
+      "lng": -74.467973
+    },
+    {
+      "id": "palmanova",
+      "nombre": "Palmanova",
+      "detalle": "Barrio de Villeta",
+      "cat": "barrio",
+      "lat": 5.014956,
+      "lng": -74.46513
+    },
+    {
+      "id": "bagazal",
+      "nombre": "Bagazal",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 4.982783,
+      "lng": -74.486395
+    },
+    {
+      "id": "cune",
+      "nombre": "Cune",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.033414,
+      "lng": -74.501617
+    },
+    {
+      "id": "potosi",
+      "nombre": "Potosí",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 4.998587,
+      "lng": -74.49098
+    },
+    {
+      "id": "payande",
+      "nombre": "Payandé",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 4.987545,
+      "lng": -74.495856
+    },
+    {
+      "id": "san-mateo",
+      "nombre": "San Mateo",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.036158,
+      "lng": -74.492127
+    },
+    {
+      "id": "totumos",
+      "nombre": "Totumos",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.024986,
+      "lng": -74.488223
+    },
+    {
+      "id": "acata",
+      "nombre": "Acata",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.032429,
+      "lng": -74.448103
+    },
+    {
+      "id": "santa-lucia",
+      "nombre": "Santa Lucía",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.02698,
+      "lng": -74.484097
+    },
+    {
+      "id": "la-esmeralda",
+      "nombre": "La Esmeralda",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.031282,
+      "lng": -74.484527
+    },
+    {
+      "id": "el-hoyito",
+      "nombre": "El Hoyito",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.005183,
+      "lng": -74.486248
+    },
+    {
+      "id": "lisboa",
+      "nombre": "Lisboa",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.009055,
+      "lng": -74.439929
+    },
+    {
+      "id": "salto-de-los-micos",
+      "nombre": "Salto de los Micos (siete cascadas)",
+      "detalle": "Villeta · a 1,4 km",
+      "cat": "turismo",
+      "lat": 5.017369,
+      "lng": -74.480104
+    },
+    {
+      "id": "hotel-mediterraneo",
+      "nombre": "Hotel Mediterráneo",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.010945,
+      "lng": -74.473315
+    },
+    {
+      "id": "club-de-villeta",
+      "nombre": "Club de Villeta",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.01332,
+      "lng": -74.472876
+    },
+    {
+      "id": "hacienda-el-diamante",
+      "nombre": "Hotel Hacienda El Diamante",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.012792,
+      "lng": -74.484568
+    },
+    {
+      "id": "san-martin-plaza",
+      "nombre": "Hotel San Martín Plaza",
+      "detalle": "Parque Principal, Villeta",
+      "cat": "turismo",
+      "lat": 5.011302,
+      "lng": -74.46972
+    },
+    {
+      "id": "sasaima",
+      "nombre": "Sasaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.964577,
+      "lng": -74.433115
+    },
+    {
+      "id": "la-vega",
+      "nombre": "La Vega",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.999712,
+      "lng": -74.339522
+    },
+    {
+      "id": "nocaima",
+      "nombre": "Nocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.069767,
+      "lng": -74.377522
+    },
+    {
+      "id": "utica",
+      "nombre": "Útica",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.18792,
+      "lng": -74.481477
+    },
+    {
+      "id": "quebradanegra",
+      "nombre": "Quebradanegra",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.117231,
+      "lng": -74.479364
+    },
+    {
+      "id": "guaduas",
+      "nombre": "Guaduas",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.067467,
+      "lng": -74.595077
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    },
+    {
+      "id": "terminal-salitre",
+      "nombre": "Terminal Salitre",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6534,
+      "lng": -74.1163
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Martha Garzón",
+      "placa": "VLL 601",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2143,
+      "desde": 2006,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Nelson Pinzón",
+      "placa": "VLL 604",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1475,
+      "desde": 2010,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Carlos Rodríguez",
+      "placa": "VLL 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1885,
+      "desde": 2016,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Fabio Cruz",
+      "placa": "VLL 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1117,
+      "desde": 2010,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Sandra Patiño",
+      "placa": "VLL 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 895,
+      "desde": 2011,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-17",
+      "movil": "017",
+      "nombre": "Édgar Molina",
+      "placa": "VLL 617",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1153,
+      "desde": 2007,
+      "tel": "3000000017"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Jairo Moreno",
+      "placa": "VLL 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1770,
+      "desde": 2013,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Jorge Castañeda",
+      "placa": "VLL 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1076,
+      "desde": 2008,
+      "tel": "3000000028"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootransvi, la Cooperativa de Transportadores de Villeta, presta servicio de transporte en tres modalidades: taxi, colectivo y campero, y hace expresos a cualquier parte del país. Su oficina está en la Calle 5 # 4-75, en el centro de Villeta.\n\nCon la app, la cooperativa puede llevar el taxi de siempre al celular: pides con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa, en el pueblo o camino a la finca.",
+    "mision": "Llevar a la gente de Villeta y a sus visitantes a donde necesiten, en el casco urbano, las veredas y la región, con conductores asociados que conocen el territorio y un servicio seguro y amable.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Villeta y el Gualivá: un taxi a un toque, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en Villeta",
+      "Colectivos",
+      "Camperos a las veredas",
+      "Expresos a cualquier parte del país",
+      "Viajes a los municipios del Gualivá"
+    ],
+    "frase": "Taxis en Villeta, tierra de trapiches y panela"
+  },
+  "imagenes": {
+    "hero": "img/web/hero-calido.jpg"
+  },
+  "fuentes": [
+    "https://www.aiyellow.com/cootransvi/",
+    "https://radiotaxi.com.co/villeta/",
+    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-villeta",
+    "https://www.waze.com/es-419/live-map/directions/co/cundinamarca/villeta/cooperativa-de-transportadores-de-villeta-cootransvi?to=place.ChIJXVfAsYCbQI4RcP2autIwuMw",
+    "https://www.youtube.com/watch?v=2VNT5ha3FbE",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Modalidades (taxi, colectivo, campero) y expresos: ficha de AiYellow. Dirección Calle 5 # 4-75 (Waze) o 4-76 (otros directorios); informacolombia registra «Calle 5 7 02 piso 5».",
+    "Teléfono: 601 844 7000 aparece en dos fuentes (radiotaxi.com.co y informacolombia) y como «Línea Fácil 844 70 00»; otros directorios dan 601 844 6827 y 601 844 5332. Confirmar cuál es la central de taxis.",
+    "NIT 800.248.439-7 (informacolombia). Sin sitio web oficial. Colores propios de interOS (panela y trapiche).",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

@@ -1,12 +1,17 @@
-/* Generador de stickers QR · Cootransrural */
+/* Generador de stickers QR (cualquier cooperativa).
+   Los colores de la marca son variables: la página de cada cooperativa las
+   cambia con los de su ficha (--verde, --verde-2, --verde-medio, --verde-osc,
+   --amarillo y --mesa). Los valores de aquí son los de Cootransrural. */
 :root {
   --tinta: #0f1b15;
   --tinta-2: #4b5b52;
   --tinta-3: #7a8a81;
   --verde: #0b6b3a;
   --verde-2: #0e7a43;
+  --verde-medio: #0b5a33;
   --verde-osc: #083d23;
   --amarillo: #ffcc00;
+  --mesa: #1b4d3a;
   --fondo: #eef2ee;
   --tarjeta: #ffffff;
   --borde: #dde5df;
@@ -41,7 +46,7 @@ button { cursor: pointer; }
   align-items: center;
   gap: 20px;
   padding: 12px clamp(16px, 3vw, 32px);
-  background: linear-gradient(100deg, #083d23 0%, #0b5a33 55%, #0e7a43 100%);
+  background: linear-gradient(100deg, var(--verde-osc) 0%, var(--verde-medio) 55%, var(--verde-2) 100%);
   color: #fff;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
 }
@@ -120,15 +125,16 @@ button { cursor: pointer; }
   transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 .formato:hover { border-color: var(--borde-2); background: #fff; }
-.formato[aria-checked='true'] { border-color: var(--verde); background: #fff; box-shadow: 0 0 0 3px rgba(11, 107, 58, 0.14); }
+.formato[aria-checked='true'] { border-color: var(--verde); background: #fff; box-shadow: 0 0 0 3px color-mix(in srgb, var(--verde) 14%, transparent); }
 .formato .mini { display: grid; place-items: center; width: 64px; height: 56px; }
 .formato .mini svg { display: block; max-width: 60px; max-height: 54px; width: auto; height: auto; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25)); }
 .formato b { display: block; font-size: 13.5px; line-height: 1.25; }
 .formato small { display: block; color: var(--tinta-2); font-size: 12px; margin-top: 2px; }
-.formato .medida { display: inline-block; margin-top: 4px; padding: 1px 8px; border-radius: 999px; background: #e6efe8; color: var(--verde-osc); font-size: 11.5px; font-weight: 700; }
+.formato .medida { display: inline-block; margin-top: 4px; padding: 1px 8px; border-radius: 999px; background: color-mix(in srgb, var(--verde) 12%, #fff); color: var(--verde-osc); font-size: 11.5px; font-weight: 700; }
 .formato[aria-checked='true'] .medida { background: var(--verde); color: #fff; }
 
 .estilos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.estilos[data-cantidad='4'] { grid-template-columns: repeat(2, 1fr); }
 .estilo {
   display: grid;
   justify-items: center;
@@ -142,7 +148,7 @@ button { cursor: pointer; }
   line-height: 1.2;
   text-align: center;
 }
-.estilo[aria-checked='true'] { border-color: var(--verde); background: #fff; box-shadow: 0 0 0 3px rgba(11, 107, 58, 0.14); }
+.estilo[aria-checked='true'] { border-color: var(--verde); background: #fff; box-shadow: 0 0 0 3px color-mix(in srgb, var(--verde) 14%, transparent); }
 .muestras { display: flex; }
 .muestras i { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12); }
 .muestras i + i { margin-left: -7px; }
@@ -163,14 +169,14 @@ button { cursor: pointer; }
   font-weight: 600;
   outline: none;
 }
-.campo input:focus, .selector-movil select:focus { border-color: var(--verde); box-shadow: 0 0 0 3px rgba(11, 107, 58, 0.15); }
+.campo input:focus, .selector-movil select:focus { border-color: var(--verde); box-shadow: 0 0 0 3px color-mix(in srgb, var(--verde) 15%, transparent); }
 .campo input[aria-invalid='true'] { border-color: #c62828; }
 .fila-campos { display: flex; align-items: end; gap: 10px; }
 .guion { padding-bottom: 19px; color: var(--tinta-3); }
 
 .contador { display: flex; border: 1.5px solid var(--borde-2); border-radius: 10px; overflow: hidden; background: #fff; }
 .contador button { width: 38px; border: 0; background: #f3f6f3; font-size: 18px; font-weight: 700; color: var(--verde-osc); }
-.contador button:hover { background: #e6efe8; }
+.contador button:hover { background: color-mix(in srgb, var(--verde) 12%, #fff); }
 .contador input { border: 0 !important; border-radius: 0 !important; text-align: center; box-shadow: none !important; padding: 8px 4px !important; -moz-appearance: textfield; }
 .contador input::-webkit-inner-spin-button { -webkit-appearance: none; }
 
@@ -180,7 +186,7 @@ button { cursor: pointer; }
 .interruptor-pista::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); transition: transform 0.15s; }
 .interruptor input:checked + .interruptor-pista { background: var(--verde); }
 .interruptor input:checked + .interruptor-pista::after { transform: translateX(16px); }
-.interruptor input:focus-visible + .interruptor-pista { box-shadow: 0 0 0 3px rgba(11, 107, 58, 0.3); }
+.interruptor input:focus-visible + .interruptor-pista { box-shadow: 0 0 0 3px color-mix(in srgb, var(--verde) 30%, transparent); }
 
 .ayuda { margin: 0 0 8px; font-size: 12.5px; color: var(--tinta-2); }
 .error { margin: 4px 0 8px; font-size: 12.5px; font-weight: 600; color: #b71c1c; }
@@ -188,7 +194,7 @@ button { cursor: pointer; }
 .url-final a { color: var(--verde-osc); font-weight: 700; word-break: break-all; text-decoration: none; }
 .url-final a:hover { text-decoration: underline; }
 
-.resumen { margin-top: 6px; padding: 12px 14px; border-radius: 12px; background: linear-gradient(135deg, #0b5a33, #0e7a43); color: #fff; font-size: 13px; }
+.resumen { margin-top: 6px; padding: 12px 14px; border-radius: 12px; background: linear-gradient(135deg, var(--verde-medio), var(--verde-2)); color: #fff; font-size: 13px; }
 .resumen b { font-family: var(--titulo); font-size: 20px; color: var(--amarillo); }
 .resumen p { margin: 0; }
 .resumen p + p { margin-top: 2px; opacity: 0.88; }
@@ -229,8 +235,8 @@ button { cursor: pointer; }
 .boton:hover { background: #f0f5f1; }
 .boton:active { transform: translateY(1px); }
 .boton svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.boton.primario { background: var(--verde); border-color: var(--verde); color: #fff; box-shadow: 0 4px 14px rgba(11, 107, 58, 0.3); }
-.boton.primario:hover { background: #0a5f34; }
+.boton.primario { background: var(--verde); border-color: var(--verde); color: #fff; box-shadow: 0 4px 14px color-mix(in srgb, var(--verde) 30%, transparent); }
+.boton.primario:hover { filter: brightness(0.92); }
 .boton[aria-busy='true'] { opacity: 0.6; pointer-events: none; }
 
 /* Mesa de corte con la vista previa */
@@ -241,7 +247,7 @@ button { cursor: pointer; }
   min-height: 520px;
   padding: 64px 40px 48px 72px;
   border-radius: var(--radio);
-  background-color: #1b4d3a;
+  background-color: var(--mesa);
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.11) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.11) 1px, transparent 1px),
@@ -258,10 +264,10 @@ button { cursor: pointer; }
 .cota { position: absolute; color: rgba(255, 255, 255, 0.85); font-size: 12px; font-weight: 700; letter-spacing: 0.02em; }
 .cota-h { left: 0; right: 0; top: -30px; height: 14px; border-left: 1.5px solid currentColor; border-right: 1.5px solid currentColor; }
 .cota-h::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 1.5px solid currentColor; }
-.cota-h span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 0 8px; background: #1b4d3a; border-radius: 4px; }
+.cota-h span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 0 8px; background: var(--mesa); border-radius: 4px; }
 .cota-v { top: 0; bottom: 0; left: -34px; width: 14px; border-top: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; }
 .cota-v::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; border-left: 1.5px solid currentColor; }
-.cota-v span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); padding: 0 8px; background: #1b4d3a; border-radius: 4px; white-space: nowrap; }
+.cota-v span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); padding: 0 8px; background: var(--mesa); border-radius: 4px; white-space: nowrap; }
 .tamano-real {
   position: absolute;
   right: 14px;
@@ -306,6 +312,55 @@ button { cursor: pointer; }
   width: calc(100% + 2 * var(--sangrado, 0mm));
   height: calc(100% + 2 * var(--sangrado, 0mm));
 }
+
+/* Propuesta: franja arriba y marca de agua SOLO en la vista previa (no sale en el PNG, SVG ni PDF) */
+.franja-propuesta {
+  margin: 0;
+  padding: 9px clamp(16px, 3vw, 32px);
+  background: #fff4cc;
+  border-bottom: 1px solid #e9d27a;
+  color: #4a3b00;
+  font-size: 13.5px;
+  line-height: 1.4;
+  text-align: center;
+}
+.franja-propuesta b { font-weight: 800; }
+.marca-agua {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+.marca-agua span {
+  /* Sello rojo translúcido: se ve sobre el amarillo y el blanco, y sobre los
+     módulos negros del QR casi no cambia nada (el QR de la pantalla se sigue leyendo). */
+  transform: rotate(-28deg);
+  padding: 0.12em 0.5em;
+  border: 0.07em solid rgba(214, 40, 40, 0.32);
+  border-radius: 0.18em;
+  color: rgba(214, 40, 40, 0.32);
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+  font: 800 clamp(22px, 9cqw, 72px) / 1 var(--titulo);
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+.vista { container-type: inline-size; }
+
+/* Pie de la página */
+.pie-pagina {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 32px) 32px;
+  color: var(--tinta-2);
+  font-size: 12.5px;
+  text-align: center;
+}
+.pie-pagina p { margin: 4px 0; }
+.pie-pagina a { color: var(--verde-osc); font-weight: 700; text-decoration: none; }
+.pie-pagina a:hover { text-decoration: underline; }
 
 /* Aviso flotante */
 .aviso {

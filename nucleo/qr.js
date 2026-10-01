@@ -214,7 +214,7 @@ export function llaveBreB(movil = '') {
 export function tarjetaBreB({ url, valor, movil = '', llave = llaveBreB(movil), compacta = false } = {}) {
   asegurarEstilosBreB();
   const qr = url ? qrSVG(url, { nivel: 'M', margen: 3, color: '#0B1F4D' }) : '';
-  const comercio = `${EMPRESA.nombreCorto || EMPRESA.nombre}${movil ? ` · Móvil ${escaparHTML(String(movil).padStart(3, '0'))}` : ''}`;
+  const comercio = `${escaparHTML(EMPRESA.nombreCorto || EMPRESA.nombre || '')}${movil ? ` · Móvil ${escaparHTML(String(movil).padStart(3, '0'))}` : ''}`;
   return `<figure class="ct-breb${compacta ? ' ct-breb-compacta' : ''}" role="group" aria-label="Cobro Bre-B de prueba por ${pesos(valor)}">
   <div class="ct-breb-cabeza">
     <span class="ct-breb-marca"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h6.2a4.3 4.3 0 0 1 2.9 7.5A4.6 4.6 0 0 1 13.6 21H7z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M7 11.2h6.4" stroke="currentColor" stroke-width="2.4"/></svg>Bre-B</span>

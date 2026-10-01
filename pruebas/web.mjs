@@ -63,7 +63,8 @@ function vigilar(pagina, nombre, errores, erroresDisenos = []) {
     if (m.type() !== 'error') return;
     const url = m.location()?.url || '';
     if (url && !url.startsWith(origen)) return; // recurso externo
-    if (EXTERNOS.test(m.text()) && !m.text().includes(origen)) return;
+    // Servicio externo caído o limitado (p. ej. Nominatim sin cabeceras CORS): no es error de la web.
+    if (EXTERNOS.test(m.text()) && !m.text().replace(/from origin '[^']*'/g, '').includes(origen)) return;
     const texto = `${nombre}: ${m.text()} ${url ? `(${url.replace(origen, '')})` : ''}`;
     if (DE_LOS_DISENOS.test(url)) erroresDisenos.push(texto);
     else errores.push(texto);

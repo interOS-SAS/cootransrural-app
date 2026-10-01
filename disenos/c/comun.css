@@ -103,7 +103,7 @@ body { overflow: hidden; }
     color: var(--c-texto);
   }
   .c-lateral-marca { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
-  .c-lateral-marca img { border-radius: 16px; box-shadow: 0 0 30px rgba(255, 225, 77, .25); }
+  .c-lateral-marca .c-icono-app { flex: none; border-radius: 16px; box-shadow: 0 0 30px rgba(255, 225, 77, .25); }
   .c-lateral-marca strong { display: block; font-size: 22px; font-weight: 800; letter-spacing: .01em; }
   .c-lateral-marca span { color: var(--c-texto-2); font-size: 15px; }
   .c-lateral h2 { font-size: 40px; line-height: 1.08; font-weight: 800; margin: 0 0 26px; letter-spacing: -.02em; }
@@ -112,6 +112,14 @@ body { overflow: hidden; }
   .c-lateral li { display: flex; align-items: center; gap: 12px; font-size: 17px; color: var(--c-texto-2); }
   .c-lateral li .c-ico { color: var(--c-cian); width: 26px; height: 26px; padding: 4px; border-radius: 10px; background: rgba(34, 211, 238, .1); box-shadow: inset 0 0 0 1px rgba(34, 211, 238, .25); box-sizing: content-box; }
   .c-lateral-pie { color: var(--c-texto-3); font-size: 14px; letter-spacing: .02em; margin: 0; }
+  .c-lateral-proveedor { margin-top: 8px; font-size: 13px; }
+  .c-lateral-demo { display: flex; gap: 10px; align-items: flex-start; margin: -12px 0 24px; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; color: var(--c-texto-2); background: rgba(255, 255, 255, .04); border: 1px dashed var(--c-coop-acento, rgba(255, 225, 77, .6)); }
+  .c-lateral-demo .c-ico { flex: none; width: 18px; height: 18px; margin-top: 1px; color: var(--c-coop-acento, var(--c-amarillo)); }
+  .c-lateral-qr { display: flex; align-items: center; gap: 16px; margin: 0 0 24px; padding: 12px; border-radius: 22px; background: rgba(255, 255, 255, .04); border: 1px solid var(--c-borde); }
+  .c-lateral-qr-codigo { width: 112px; height: 112px; flex: none; padding: 6px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px rgba(255, 225, 77, .5), 0 0 26px rgba(34, 211, 238, .25); }
+  .c-lateral-qr-codigo svg { display: block; width: 100%; height: 100%; }
+  .c-lateral-qr strong { display: block; font-size: 17px; }
+  .c-lateral-qr small { display: block; color: var(--c-texto-2); font-size: 14px; margin-top: 2px; }
 }
 
 /* ---------------- Mapa (Leaflet) ---------------- */
@@ -546,7 +554,7 @@ textarea.c-input { padding: 14px 16px; min-height: 84px; resize: none; line-heig
 .c-diseno small { font-size: 12px; color: var(--c-texto-3); }
 .c-diseno-muestra { height: 56px; border-radius: 12px; }
 .c-diseno-a .c-diseno-muestra { background: linear-gradient(135deg, #121212 0 50%, #FFC107 50% 78%, #F4F5F7 78%); }
-.c-diseno-b .c-diseno-muestra { background: linear-gradient(135deg, #0A5C33 0 50%, #FFFFFF 50% 78%, #FFD54F 78%); }
+.c-diseno-b .c-diseno-muestra { background: linear-gradient(135deg, var(--c-coop-primario, #0A5C33) 0 50%, #FFFFFF 50% 78%, #FFD54F 78%); }
 .c-diseno-c .c-diseno-muestra { background: radial-gradient(circle at 70% 30%, rgba(255, 77, 157, .7), transparent 45%), radial-gradient(circle at 25% 75%, rgba(34, 211, 238, .6), transparent 45%), #07090D; box-shadow: inset 0 0 0 1px rgba(255, 225, 77, .5); }
 .c-diseno[aria-checked="true"] { border-color: var(--c-amarillo); box-shadow: 0 0 20px rgba(255, 225, 77, .25); }
 .c-diseno[aria-checked="true"] strong { color: var(--c-amarillo); }
@@ -559,9 +567,32 @@ label.c-fila-ajuste { cursor: pointer; }
 .c-segmentado-chico { margin-top: 10px; }
 .c-segmentado-chico button { font-size: 13.5px; min-height: 44px; padding: 0 6px; }
 .c-marca { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; }
-.c-marca img { border-radius: 10px; box-shadow: 0 0 18px rgba(255, 225, 77, .35); }
+.c-marca .c-icono-app { flex: none; border-radius: 10px; box-shadow: 0 0 18px rgba(255, 225, 77, .35); }
 
 
+
+/* ---------------- Cooperativa: propuesta, «Acerca de» y pie ---------------- */
+.c-marca-nombre { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c-pie-proveedor { color: var(--c-texto-3); letter-spacing: .02em; }
+.c-etiquetas-prueba { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; max-width: 100%; }
+.c-etiqueta-demo { height: auto; min-height: 22px; padding: 3px 9px; white-space: normal; text-transform: none; letter-spacing: .01em; font-size: 11.5px; line-height: 1.25; color: var(--c-texto-2); background: rgba(255, 255, 255, .05); box-shadow: inset 0 0 0 1px var(--c-coop-acento, rgba(255, 225, 77, .5)); }
+.c-franja-propuesta { display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 8px 12px; border-radius: 14px; font-size: 13px; line-height: 1.35; color: var(--c-texto-2); background: rgba(7, 9, 13, .82); border: 1px dashed var(--c-coop-acento, rgba(255, 225, 77, .6)); }
+.c-franja-propuesta .c-ico { flex: none; width: 16px; height: 16px; margin-top: 1px; color: var(--c-coop-acento, var(--c-amarillo)); }
+.c-registro > .c-franja-propuesta, .c-ingreso > .c-franja-propuesta { flex: none; margin: calc(var(--c-seg-arriba) + 10px) 14px 0; }
+.c-acerca { display: grid; gap: 10px; }
+.c-acerca-marca { display: flex; align-items: center; gap: 12px; }
+.c-acerca-marca .c-icono-app { flex: none; border-radius: 12px; }
+.c-acerca-marca strong { display: block; font-size: 16px; }
+.c-acerca-marca small { display: block; font-size: 13px; color: var(--c-texto-3); }
+.c-acerca-proveedor { font-size: 15px; color: var(--c-texto-2); }
+.c-acerca-proveedor a { color: var(--c-cian); font-weight: 700; }
+.c-acerca-demo { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; color: var(--c-texto-2); }
+.c-acerca-demo .c-ico { flex: none; width: 18px; height: 18px; color: var(--c-coop-acento, var(--c-amarillo)); }
+.c-fila-info { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 64px; padding: 12px 16px; border-radius: 20px; background: rgba(255, 255, 255, .03); border: 1px dashed var(--c-borde-2); color: var(--c-texto); }
+.c-fila-info > .c-ico { color: var(--c-texto-3); }
+.c-fila-info > span { flex: 1; min-width: 0; display: grid; }
+.c-fila-info strong { font-weight: 600; font-size: 16px; }
+.c-fila-info small { font-size: 13.5px; color: var(--c-texto-3); }
 
 @media (prefers-reduced-motion: reduce) {
   .c-app *, .c-app *::before, .c-app *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }

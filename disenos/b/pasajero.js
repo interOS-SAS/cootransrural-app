@@ -1,12 +1,16 @@
 // Diseño B «Verde Rosal» — app del pasajero.
 // Cooperativo, cercano y fácil para todas las edades: letra grande, botones
 // grandes, pasos numerados y una línea de tiempo clara del viaje.
+// Sirve para cualquier cooperativa: nombre, datos y colores salen de MARCA y
+// PALETA (comun.js), que a su vez salen de la ficha de la cooperativa.
 import {
   ic, insignia, taxiLado, escenaBienvenida, selloVerificado, esc, decimal, celularTexto, numeroMiles,
   placaHTML, avatarHTML, estrellasHTML, conexionHTML, actualizarConexion, sellosHTML, casillasHTML,
   activarCasillas, crearAvisos, crearHoja, ladoMarco, enlaceParaCelular, ponerTeselas, nombreCorto, sinCorte, encuadrar,
   FOTOS, fotoHTML, activarFotos,
   protegerVibracion,
+  MARCA, PALETA, NOMBRE_DISENO, aplicarMarca, enPueblo, lineaMarca, cifrasMarca, telCentral, movilEjemplo, urlPrivacidad,
+  chipPrueba, demoPara, notaPropuesta, desarrolladaPor, enlaceSeccion, separarViajeGuardado, sincronizarSonido,
 } from './comun.js';
 
 const PESTANAS = [
@@ -24,9 +28,12 @@ const MENSAJES_BUSQUEDA = [
 ];
 const TEXTO_ESTRELLAS = ['Toca las estrellas', 'Muy malo', 'Malo', 'Regular', 'Bueno', '¡Excelente!'];
 const NOTAS_RAPIDAS = ['Estoy en la portería', 'Llevo maletas', 'Voy con mascota', 'Casa de reja verde'];
-const COLOR_RUTA = '#0B6B3A';
+const COLOR_RUTA = PALETA.verde;
 
 export async function montar(raiz, { N, diseno = 'b' } = {}) {
+  // El viaje guardado de otra cooperativa (misma pestaña) se aparta antes de leerlo.
+  separarViajeGuardado(MARCA.id);
+  sincronizarSonido(N);
   // Viaje que había antes de recargar la página (para explicar qué pasó con él).
   let previo = null;
   try {
@@ -35,15 +42,16 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     previo = null;
   }
   protegerVibracion();
+  aplicarMarca();
   const p = await N.crearPasajero();
 
   /* ---------------- estructura base ---------------- */
   raiz.innerHTML = `<div class="vb-marco">
     ${ladoMarco({
-      titulo: 'Pide tu taxi en El\u00a0Rosal',
-      texto: 'La app de Cootransrural: ubicación exacta, conductores verificados y pago con QR. Más que transporte, confianza.',
+      titulo: ['Pide tu taxi', enPueblo('en', { sinCortar: true })].filter(Boolean).join(' '),
+      texto: `La app de ${MARCA.nombre}: ubicación exacta, conductores verificados y pago con QR.${MARCA.lema ? ` ${MARCA.lema.replace(/[.!]*$/, '.')}` : ''}`,
       puntos: ['Te recogemos en la puerta con GPS', 'Sabes qué móvil llega y con qué placa', 'Código de abordaje y botón de emergencia', 'Tarifas claras y programación con 10 % menos'],
-      enlaceQR: enlaceParaCelular(),
+      enlaceQR: enlaceParaCelular('app/'),
       textoQR: 'Escanea para probarla en tu celular',
     })}
     <div class="vb-app vb-pasajero">
@@ -108,8 +116,8 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       centro: ui.recogida,
       zoom: 16,
       colorRuta: COLOR_RUTA,
-      colorOrigen: '#0B6B3A',
-      colorDestino: '#D32F2F',
+      colorOrigen: PALETA.verde,
+      colorDestino: PALETA.rojo,
       controles: false,
     }).then((mm) => {
       m = mm;
@@ -397,24 +405,37 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
   /* ================================================================ */
   /* REGISTRO                                                          */
   /* ================================================================ */
+  // Cifras conocidas de la cooperativa (las que la ficha no trae no se muestran).
+  function htmlCifras() {
+    const cifras = cifrasMarca().filter((c) => c.clave !== 'microbuses')
+      .map((c) => `<span>${c.antes}<b>${numeroMiles(c.n)}</b> ${c.texto}</span>`);
+    if (MARCA.servicio24h) cifras.push('<span><b>24 h</b> de servicio</span>');
+    return cifras.length ? `<p class="vb-cifras">${cifras.join('')}</p>` : '';
+  }
+
   function htmlBienvenida() {
+    const titulo = ['Tu taxi de confianza', enPueblo()].filter(Boolean).join(' ');
+    // El lema solo se muestra si no repite el título (en Subachoque son iguales).
+    const normal = (s) => s.toLowerCase().replace(/\s+/g, ' ').replace(/[^a-záéíóúñü ]/g, '').trim();
+    const lema = MARCA.lema && normal(MARCA.lema) !== normal(titulo) ? MARCA.lema : '';
     return `<div class="vb-desliza vb-bienvenida">
+      ${notaPropuesta('franja')}
       <div class="vb-bienv-escena">
-        ${fotoHTML({ src: FOTOS.bienvenida, alt: 'Taxi amarillo en una calle empedrada de un pueblo de la Sabana, al atardecer', posicion: '38% 70%', respaldo: escenaBienvenida({ movil: '023' }) })}
-        <div class="vb-bienv-marca">${insignia(52)}<div><b>Cootransrural</b><span>Desde 1999 · El Rosal</span></div></div>
-        <span class="vb-bienv-chip">${ic('reloj', 18)} Servicio las 24 horas</span>
+        ${fotoHTML({ src: FOTOS.bienvenida, alt: 'Taxi amarillo en una calle empedrada de un pueblo de la Sabana, al atardecer', posicion: '38% 70%', respaldo: escenaBienvenida({ movil: MARCA.movilDemo }) })}
+        <div class="vb-bienv-marca">${insignia(52)}<div><b>${esc(MARCA.nombre)}</b><span>${esc(lineaMarca())}</span></div></div>
+        ${MARCA.servicio24h ? `<span class="vb-bienv-chip">${ic('reloj', 18)} Servicio las 24 horas</span>` : ''}
       </div>
       <div class="vb-bienv-cuerpo">
-        <h1 tabindex="-1">Tu taxi de confianza en El Rosal</h1>
-        <p class="vb-lema">«${esc(N.EMPRESA.lema)}»</p>
+        <h1 tabindex="-1">${esc(titulo)}</h1>
+        ${lema ? `<p class="vb-lema">«${esc(lema)}»</p>` : ''}
         <ul class="vb-beneficios">
           <li><span class="vb-beneficio-ic">${ic('pin')}</span><span><b>Te recogemos en la puerta</b> con tu ubicación exacta.</span></li>
           <li><span class="vb-beneficio-ic">${ic('escudo')}</span><span><b>Conductores verificados</b> y código para abordar.</span></li>
           <li><span class="vb-beneficio-ic">${ic('qr')}</span><span><b>Paga con QR o en efectivo</b>, como prefieras.</span></li>
         </ul>
         <button type="button" class="vb-btn vb-btn-primario vb-btn-xl" data-accion="reg-empezar">Crear mi cuenta ${ic('flechaDer')}</button>
-        <a class="vb-btn vb-btn-texto vb-btn-bloque" href="../conductor/?d=${diseno}">Soy conductor de Cootransrural</a>
-        <p class="vb-cifras"><span><b>${N.EMPRESA.taxis}</b> taxis</span><span><b>${N.EMPRESA.asociados}</b> asociados</span><span><b>24 h</b> de servicio</span></p>
+        <a class="vb-btn vb-btn-texto vb-btn-bloque" href="${esc(enlaceSeccion('conductor/', diseno))}">Soy conductor de ${esc(MARCA.nombre)}</a>
+        ${htmlCifras()}
       </div>
     </div>`;
   }
@@ -441,7 +462,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
           <label class="vb-campo"><span>Celular</span><input name="emerCelular" type="tel" inputmode="tel" maxlength="20" placeholder="310 000 0000" value="${esc(d.emerCelular || '')}"></label>
         </fieldset>
         <label class="vb-check"><input type="checkbox" name="terminos" ${d.terminos ? 'checked' : ''}><span class="vb-check-caja" aria-hidden="true">${ic('check', 18)}</span>
-          <span>Acepto los <a href="../privacidad/" target="_blank" rel="noopener">términos y la política de privacidad</a>.</span></label>
+          <span>Acepto los <a href="${esc(urlPrivacidad())}" target="_blank" rel="noopener">términos y la política de privacidad</a>.</span></label>
         <p class="vb-error" id="vb-error-registro" data-error role="alert"></p>
         <button type="submit" class="vb-btn vb-btn-primario vb-btn-xl">Enviarme el código ${ic('mensaje')}</button>
       </form>
@@ -465,7 +486,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       <p class="vb-error" data-error role="alert"></p>
       <button type="button" class="vb-btn vb-btn-primario vb-btn-xl" data-accion="reg-verificar">Verificar y entrar</button>
       <button type="button" class="vb-btn vb-btn-texto vb-btn-bloque" data-accion="reg-reenviar">Enviar otro código</button>
-      <p class="vb-nota-segura">${insignia(34)}<span>Tus datos quedan guardados en este celular y solo se usan para tus viajes con Cootransrural.</span></p>
+      <p class="vb-nota-segura">${insignia(34)}<span>Tus datos quedan guardados en este celular y solo se usan para tus viajes con ${esc(MARCA.nombre)}.</span></p>
     </div>`;
   }
 
@@ -558,7 +579,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
 
   function notaSinGps() {
     return p.estado.miPosicion?.real === false
-      ? `<p class="vb-nota-gps" role="note">${ic('info', 20)}<span>Usamos el centro de El Rosal; mueve el mapa para ubicar tu punto.</span></p>`
+      ? `<p class="vb-nota-gps" role="note">${ic('info', 20)}<span>Usamos el centro de ${esc(MARCA.pueblo || 'el municipio')}; mueve el mapa para ubicar tu punto.</span></p>`
       : '';
   }
 
@@ -569,7 +590,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     const historial = N.perfil.historialPasajero();
     return `<div class="vb-desliza vb-inicio">
       <header class="vb-cab-inicio">
-        <div class="vb-cab-marca">${insignia(40)}<div><b>Cootransrural</b><span>Desde 1999 · El Rosal</span></div></div>
+        <div class="vb-cab-marca">${insignia(40)}<div><b>${esc(MARCA.nombre)}</b><span>${esc(lineaMarca())}</span></div></div>
         ${conexionHTML(p.estado.conexion)}
       </header>
       <div class="vb-saludo"><span>${esc(N.saludo())},</span><h1 tabindex="-1">${esc(N.primerNombre(yo.nombre) || 'vecino')}</h1></div>
@@ -606,8 +627,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         <button type="button" class="vb-mosaico m-tarjeta" data-accion="ir" data-pantalla="fidelidad">
           <span class="vb-mosaico-ic">${ic('tarjeta', 28)}</span><b>Tarjeta de fidelidad</b>${sellosHTML(prog, { mini: true })}
           <span>${prog.siguienteConDescuento ? '¡El próximo va al 50 %!' : `${prog.completados} de ${prog.meta} viajes`}</span></button>
-        <a class="vb-mosaico m-verde" href="tel:+57${N.EMPRESA.telefono}">
-          <span class="vb-mosaico-ic">${ic('telefono', 28)}</span><b>Llamar a la central</b><span>${N.EMPRESA.telefonoVisible}<br>Las 24 horas</span></a>
+        ${htmlMosaicoCentral()}
       </div>
 
       <section class="vb-seguridad" aria-labelledby="vb-seg-titulo">
@@ -619,8 +639,31 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         </ul>
       </section>
 
-      <footer class="vb-pie">${insignia(30)}<span><b>Cootransrural</b> · ${esc(N.EMPRESA.lema)}<br>${N.EMPRESA.taxis} taxis · ${N.EMPRESA.microbuses} microbuses · ${N.EMPRESA.asociados} asociados</span></footer>
+      <footer class="vb-pie">${insignia(30)}<span>${htmlPie()}</span></footer>
+      ${notaPropuesta()}
     </div>`;
+  }
+
+  // Pie del inicio: nombre, lema, cifras conocidas y quién hizo la app.
+  function htmlPie() {
+    const cifras = cifrasMarca().map((c, i) => `${i ? c.antes.toLowerCase() : c.antes}${numeroMiles(c.n)} ${c.texto}`).join(' · ');
+    return [`<b>${esc(MARCA.nombre)}</b>${MARCA.lema ? ` · ${esc(MARCA.lema)}` : ''}`, cifras ? esc(cifras) : '', `App desarrollada por ${esc(MARCA.proveedor)}`]
+      .filter(Boolean).join('<br>');
+  }
+
+  // Mosaico de la central: llamar si hay teléfono; WhatsApp si solo hay WhatsApp; si
+  // no hay ninguno, lleva a Ayuda con un texto honesto (sin enlaces tel: vacíos).
+  function htmlMosaicoCentral() {
+    if (MARCA.telefono) {
+      return `<a class="vb-mosaico m-verde" href="${telCentral()}">
+          <span class="vb-mosaico-ic">${ic('telefono', 28)}</span><b>Llamar a la central</b><span>${esc(sinCorte(MARCA.telefonoVisible))}${MARCA.servicio24h ? '<br>Las 24 horas' : ''}</span></a>`;
+    }
+    if (MARCA.whatsapp) {
+      return `<a class="vb-mosaico m-verde" href="${esc(N.enlaceWhatsApp(MARCA.whatsapp, `Hola ${MARCA.nombre}, necesito un taxi.`))}" target="_blank" rel="noopener">
+          <span class="vb-mosaico-ic">${ic('chat', 28)}</span><b>Escribir a la central</b><span>Por WhatsApp${MARCA.servicio24h ? '<br>Las 24 horas' : ''}</span></a>`;
+    }
+    return `<button type="button" class="vb-mosaico m-verde" data-accion="ir" data-pantalla="ayuda">
+          <span class="vb-mosaico-ic">${ic('ayuda', 28)}</span><b>Ayuda</b><span>Teléfono de la central: pronto</span></button>`;
   }
 
   function htmlAvisoProgramado(v) {
@@ -655,7 +698,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     return `<div class="vb-paso vb-paso1">
       ${htmlPaso(1, '¿Dónde te recogemos?')}
       <div class="vb-mapa-grande" data-slot-mapa>
-        <div class="vb-pin-fijo" aria-hidden="true"><span class="vb-pin-globo">Te recogemos aquí</span>${svgPinGrande('#0B6B3A', 'A')}<i class="vb-pin-sombra"></i></div>
+        <div class="vb-pin-fijo" aria-hidden="true"><span class="vb-pin-globo">Te recogemos aquí</span>${svgPinGrande(PALETA.verde, 'A')}<i class="vb-pin-sombra"></i></div>
         <button type="button" class="vb-btn-flotante" data-accion="mi-ubicacion">${ic('miUbicacion', 22)} Usar mi ubicación</button>
       </div>
       <div class="vb-panel-paso">
@@ -778,7 +821,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     return `<div class="vb-paso vb-paso1 destino">
       ${htmlPaso(2, '¿A dónde vas?', 'Mueve el mapa hasta tu destino.')}
       <div class="vb-mapa-grande" data-slot-mapa>
-        <div class="vb-pin-fijo rojo" aria-hidden="true"><span class="vb-pin-globo">Voy para acá</span>${svgPinGrande('#D32F2F', 'B')}<i class="vb-pin-sombra"></i></div>
+        <div class="vb-pin-fijo rojo" aria-hidden="true"><span class="vb-pin-globo">Voy para acá</span>${svgPinGrande(PALETA.rojo, 'B')}<i class="vb-pin-sombra"></i></div>
       </div>
       <div class="vb-panel-paso">
         <div class="vb-direccion destino" data-dir="destinoMapa"><span class="vb-direccion-ic">${ic('bandera', 24)}</span><div><b data-dir-titulo>${esc(d.titulo)}</b><span data-dir-detalle>${esc(d.detalle)}</span></div></div>
@@ -1006,7 +1049,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
 
   function htmlCarne(c) {
     return `<article class="vb-carne" aria-label="Carné del conductor">
-      <header class="vb-carne-cab">${insignia(30)}<div><b>Cootransrural</b><small>Carné del conductor</small></div>
+      <header class="vb-carne-cab">${insignia(30)}<div><b>${esc(MARCA.nombre)}</b><small>Carné del conductor</small></div>
         <span class="vb-carne-movil">Móvil<b>${esc(c.movil)}</b></span></header>
       <div class="vb-carne-cuerpo">
         ${avatarHTML(c.nombre, 'grande')}
@@ -1016,9 +1059,9 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
           ${c.desde ? `<p class="vb-carne-desde">En la cooperativa desde ${esc(c.desde)}</p>` : ''}
         </div>
         ${selloVerificado()}
-        <span class="vb-verificado">${ic('check', 16)} Verificado por Cootransrural</span>
+        <span class="vb-verificado">${ic('check', 16)} Verificado por ${esc(MARCA.nombre)}</span>
       </div>
-      <footer class="vb-carne-pie">${placaHTML(c.placa)}<span>${esc(c.vehiculo || 'Kia Picanto')} · ${esc(c.color || 'Amarillo')}</span></footer>
+      <footer class="vb-carne-pie">${placaHTML(c.placa)}<span>${esc(c.vehiculo || N.EMPRESA.vehiculo || 'Kia Picanto')} · ${esc(c.color || N.EMPRESA.colorTaxi || 'Amarillo')}</span></footer>
     </article>`;
   }
 
@@ -1028,7 +1071,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       ? `<a class="vb-accion" href="tel:+57${tel}">${ic('telefono')}<span>Llamar</span></a>`
       : `<button type="button" class="vb-accion" disabled>${ic('telefono')}<span>Llamar</span></button>`;
     const wa = tel
-      ? `<a class="vb-accion" href="${esc(N.enlaceWhatsApp(tel, 'Hola, soy tu pasajero de Cootransrural.'))}" target="_blank" rel="noopener">${ic('chat')}<span>WhatsApp</span></a>`
+      ? `<a class="vb-accion" href="${esc(N.enlaceWhatsApp(tel, `Hola, soy tu pasajero de ${MARCA.nombre}.`))}" target="_blank" rel="noopener">${ic('chat')}<span>WhatsApp</span></a>`
       : `<button type="button" class="vb-accion" disabled>${ic('chat')}<span>WhatsApp</span></button>`;
     return `<div class="vb-acciones">${llamar}${wa}
       <button type="button" class="vb-accion" data-accion="compartir">${ic('compartir')}<span>Compartir</span></button>
@@ -1075,7 +1118,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       <div class="vb-seg-mapa" data-slot-mapa>
         <header class="vb-seg-cab">
           <span class="vb-seg-marca">${insignia(28)}<b>Tu viaje</b></span>
-          <span class="vb-seg-cab-der">${v?.simulado ? '<span class="vb-prueba">Modo prueba</span>' : ''}${conexionHTML(e.conexion)}</span>
+          <span class="vb-seg-cab-der">${v?.simulado ? chipPrueba() : demoPara()}${conexionHTML(e.conexion)}</span>
         </header>
         ${f === 'buscando' ? `<div class="vb-radar" aria-hidden="true"><i></i><i></i><i></i></div>` : ''}
         <button type="button" class="vb-sos-flotante" data-accion="sos" aria-label="Emergencia: SOS">SOS</button>
@@ -1162,7 +1205,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     const c = e.conductor;
     const yo = p.perfil || {};
     const contacto = yo.contactoEmergencia;
-    const texto = p.textoCompartir() || `Estoy pidiendo un taxi de Cootransrural en ${ui.recogida.titulo}.`;
+    const texto = p.textoCompartir() || `Estoy pidiendo un taxi de ${MARCA.nombre} en ${ui.recogida.titulo}.`;
     hoja.abrir({
       titulo: 'Emergencia',
       clase: 'vb-hoja-sos',
@@ -1171,17 +1214,17 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         ${contacto?.celular
           ? `<a class="vb-btn vb-btn-oro vb-btn-xl" href="${esc(N.enlaceWhatsApp(contacto.celular, `🚨 Necesito ayuda.\n${texto}`))}" target="_blank" rel="noopener">${ic('chat')} Avisar a ${esc(contacto.nombre || 'mi contacto')}</a>`
           : `<p class="vb-nota-gps">${ic('info', 20)}<span>Agrega un contacto de emergencia en tu Perfil para avisarle con un toque.</span></p>`}
-        <a class="vb-btn vb-btn-borde vb-btn-xl" href="tel:+57${N.EMPRESA.telefono}">${ic('telefono')} Llamar a la central</a>
+        ${MARCA.telefono ? `<a class="vb-btn vb-btn-borde vb-btn-xl" href="${telCentral()}">${ic('telefono')} Llamar a la central</a>` : ''}
         <button type="button" class="vb-btn vb-btn-suave vb-btn-xl" data-accion="compartir">${ic('compartir')} Compartir mi viaje</button>
         ${c ? `<p class="vb-letra-chica">Tu taxi: móvil ${esc(c.movil)} · placa ${esc(c.placa)} · ${esc(c.nombre)}</p>` : ''}`,
     });
   }
 
   async function compartir() {
-    const texto = p.textoCompartir() || `Voy a pedir un taxi de Cootransrural en ${ui.recogida.titulo}.`;
+    const texto = p.textoCompartir() || `Voy a pedir un taxi de ${MARCA.nombre} en ${ui.recogida.titulo}.`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'Mi viaje en Cootransrural', text: texto });
+        await navigator.share({ title: `Mi viaje en ${MARCA.nombre}`, text: texto });
         return;
       } catch (e) {
         if (e?.name === 'AbortError') return;
@@ -1216,7 +1259,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         <div><h1 tabindex="-1">¡Llegaste a tu destino!</h1><p>${esc(v.destino?.titulo || 'Fin del recorrido')}</p></div>
       </header>
       <section class="vb-recibo" aria-label="Valor del viaje">
-        <div class="vb-recibo-cab"><span>Total a pagar</span><span class="vb-prueba">Modo prueba</span></div>
+        <div class="vb-recibo-cab"><span>Total a pagar</span><span class="vb-recibo-etiquetas">${chipPrueba()}</span></div>
         <div class="vb-recibo-total">${N.pesos(valor)}</div>
         <div class="vb-recibo-fila"><span>${esc(sinCorte(`Móvil ${c.movil || ''}`))} · ${esc(sinCorte(c.placa || ''))}</span><b>${esc(c.nombre || '')}</b></div>
         <details class="vb-detalle"><summary>Ver detalle</summary><ul>
@@ -1362,7 +1405,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
   }
 
   function vacio(titulo, texto, boton = '') {
-    return `<div class="vb-vacio">${taxiLado({ movil: '0' + N.EMPRESA.taxis, clase: 'vb-vacio-ilus' })}<h2>${titulo}</h2><p>${texto}</p>${boton}</div>`;
+    return `<div class="vb-vacio">${taxiLado({ movil: movilEjemplo(), clase: 'vb-vacio-ilus' })}<h2>${titulo}</h2><p>${texto}</p>${boton}</div>`;
   }
 
   function htmlHistorial() {
@@ -1419,7 +1462,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         <button type="button" class="vb-oferta verde" data-accion="ir" data-pantalla="fidelidad"><span class="vb-oferta-num">50 %</span><span><b>Cada 10 viajes</b><small>El siguiente viaje va a mitad de precio.</small></span>${ic('flecha')}</button>
       </section>
       <section class="vb-tarjeta vb-reglas">
-        <h2>${ic('taxi', 24)} Dentro de El Rosal</h2>
+        <h2>${ic('taxi', 24)} ${esc(MARCA.pueblo ? `Dentro de ${MARCA.pueblo}` : 'Dentro del municipio')}</h2>
         <dl>
           <div><dt>Carrera mínima</dt><dd>${N.pesos(T.minimaUrbana)}</dd></div>
           <div><dt>Banderazo</dt><dd>${N.pesos(T.banderazo)}</dd></div>
@@ -1429,7 +1472,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         </dl>
       </section>
       <section class="vb-tarjeta vb-rutas">
-        <h2>${ic('ruta', 24)} Rutas desde El Rosal</h2>
+        <h2>${ic('ruta', 24)} ${esc(MARCA.pueblo ? `Rutas desde ${MARCA.pueblo}` : 'Rutas a otros municipios')}</h2>
         <p class="vb-sub">Tarifa fija por trayecto. Toca una ruta para pedirla.</p>
         <ul>${N.RUTAS.map((r) => `<li><button type="button" data-accion="ruta-pedir" data-id="${esc(r.id)}">
             <span class="vb-ruta-nombre"><b>${esc(r.destino)}</b><small>${r.km} km · ${N.minutosTexto(r.min)}</small></span>
@@ -1458,11 +1501,12 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         <h2>La app</h2>
         ${item('ir', 'ajustes', 'Ajustes', 'Diseño, sonido, avisos y modo de prueba', 'data-pantalla="ajustes"')}
         ${item('instalar', 'instalar', 'Instalar la app', N.yaInstalada() ? 'Ya está instalada en este celular' : 'Tenla a un toque en tu pantalla')}
-        ${item('ir', 'ayuda', 'Ayuda y contacto', `Central 24 h · ${N.EMPRESA.telefonoVisible}`, 'data-pantalla="ayuda"')}
-        <a class="vb-menu-item" href="../conductor/?d=${diseno}"><span class="vb-menu-ic">${ic('volante', 24)}</span><span><b>Soy conductor</b><small>Abrir la app de conductores</small></span>${ic('flecha', 20)}</a>
+        ${item('ir', 'ayuda', 'Ayuda y contacto', MARCA.telefono ? `Central${MARCA.servicio24h ? ' 24 h' : ''} · ${esc(MARCA.telefonoVisible)}` : 'Preguntas frecuentes y contacto', 'data-pantalla="ayuda"')}
+        <a class="vb-menu-item" href="${esc(enlaceSeccion('conductor/', diseno))}"><span class="vb-menu-ic">${ic('volante', 24)}</span><span><b>Soy conductor</b><small>Abrir la app de conductores</small></span>${ic('flecha', 20)}</a>
         <button type="button" class="vb-menu-item rojo" data-accion="cerrar-sesion"><span class="vb-menu-ic">${ic('salir', 24)}</span><span><b>Cerrar sesión</b></span></button>
       </div>
-      <p class="vb-version">Cootransrural · Diseño B «Verde Rosal» · <a href="../privacidad/" target="_blank" rel="noopener">Privacidad</a></p>
+      <p class="vb-version">${esc(MARCA.nombre)} · Diseño B «${esc(NOMBRE_DISENO)}» · <a href="${esc(urlPrivacidad())}" target="_blank" rel="noopener">Privacidad</a><br>App desarrollada por ${esc(MARCA.proveedor)}</p>
+      ${notaPropuesta()}
     </div>`;
   }
 
@@ -1494,9 +1538,9 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     const prog = N.progresoFidelidad(n);
     const yo = p.perfil || {};
     return `<div class="vb-desliza vb-fidelidad">
-      ${cabSub('Tarjeta de fidelidad', 'Promociones de Cootransrural')}
+      ${cabSub('Tarjeta de fidelidad', `Promociones de ${esc(MARCA.nombre)}`)}
       <article class="vb-tarjeta-fisica" aria-label="Tarjeta de fidelidad">
-        <header>${insignia(40)}<div><b>Cootransrural</b><small>Tarjeta de fidelidad</small></div><span class="vb-tf-num">N.º ${esc(String(yo.id || '').slice(-5).toUpperCase())}</span></header>
+        <header>${insignia(40)}<div><b>${esc(MARCA.nombre)}</b><small>Tarjeta de fidelidad</small></div><span class="vb-tf-num">N.º ${esc(String(yo.id || '').slice(-5).toUpperCase())}</span></header>
         <p class="vb-tf-nombre">${esc(yo.nombre || '')}</p>
         ${sellosHTML(prog)}
         <footer>${prog.siguienteConDescuento ? '<b>¡Tu próximo viaje va al 50 %!</b>' : `Te faltan <b>${prog.faltan}</b> viaje${prog.faltan === 1 ? '' : 's'} para tu viaje al 50 %`}</footer>
@@ -1511,7 +1555,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         </ol>
       </section>
       <button type="button" class="vb-btn vb-btn-oro vb-btn-xl" data-accion="programar">${ic('calendario')} Programar y ahorrar 10 %</button>
-      <p class="vb-letra-chica centro">Llevas ${n} viaje${n === 1 ? '' : 's'} completado${n === 1 ? '' : 's'} con Cootransrural.</p>
+      <p class="vb-letra-chica centro">Llevas ${n} viaje${n === 1 ? '' : 's'} completado${n === 1 ? '' : 's'} con ${esc(MARCA.nombre)}.</p>
     </div>`;
   }
 
@@ -1526,14 +1570,14 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     const textoPermiso = { granted: 'Activadas: te avisamos aunque la app esté cerrada.', denied: 'Bloqueadas en el navegador. Actívalas en la configuración del sitio.', default: 'Aún no están activadas.', 'no-soportado': 'Este navegador no las permite.' }[permiso] || '';
     const disenos = [
       ['a', 'Ámbar Urbano', 'Amarillo taxi, alegre y directo'],
-      ['b', 'Verde Rosal', 'Cooperativo y fácil (este)'],
+      ['b', NOMBRE_DISENO, 'Cooperativo y fácil (este)'],
       ['c', 'Noche Neón', 'Modo oscuro con luces de neón'],
     ];
     return `<div class="vb-desliza vb-ajustes">
       ${cabSub('Ajustes')}
       <section class="vb-bloque"><h2 class="vb-titulo-seccion">${ic('paleta', 22)} Diseño de la app</h2>
         <div class="vb-disenos" role="radiogroup" aria-label="Diseño">
-          ${disenos.map(([id, t, s]) => `<button type="button" role="radio" aria-checked="${id === diseno}" data-accion="diseno" data-d="${id}" class="d-${id}"><span class="vb-diseno-muestra" aria-hidden="true"></span><b>${t}</b><small>${s}</small></button>`).join('')}
+          ${disenos.map(([id, t, s]) => `<button type="button" role="radio" aria-checked="${id === diseno}" data-accion="diseno" data-d="${id}" class="d-${id}"><span class="vb-diseno-muestra" aria-hidden="true"></span><b>${esc(t)}</b><small>${esc(s)}</small></button>`).join('')}
         </div></section>
       <section class="vb-bloque"><h2 class="vb-titulo-seccion">${ic('robot', 22)} Conductor de prueba</h2>
         <div class="vb-opciones-lista" role="radiogroup" aria-label="Simulación">
@@ -1553,20 +1597,28 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       </section>
       <section class="vb-bloque"><h2 class="vb-titulo-seccion">${ic('instalar', 22)} Instalar</h2>
         <button type="button" class="vb-btn vb-btn-primario vb-btn-xl" data-accion="instalar">${ic('instalar')} ${N.yaInstalada() ? 'Ya está instalada' : 'Instalar la app'}</button></section>
+      <section class="vb-bloque"><h2 class="vb-titulo-seccion">${ic('info', 22)} Acerca de</h2>
+        <div class="vb-acerca" data-acerca>${insignia(40)}<div><b>${esc(MARCA.nombre)}</b>${MARCA.razonSocial && MARCA.razonSocial !== MARCA.nombre ? `<small>${esc(MARCA.razonSocial)}</small>` : ''}${desarrolladaPor()}</div></div>
+        ${notaPropuesta()}
+      </section>
     </div>`;
   }
 
   function htmlAyuda() {
-    const E = N.EMPRESA;
     const pregunta = (q, r) => `<details class="vb-tarjeta vb-pregunta"><summary>${q}</summary><p>${r}</p></details>`;
+    // Solo los medios de contacto que la ficha trae; si falta el teléfono, se dice con honestidad.
+    const contacto = [
+      MARCA.telefono ? `<a class="vb-btn vb-btn-primario vb-btn-xl" href="${telCentral()}">${ic('telefono')} Llamar a la central</a>` : '',
+      MARCA.whatsapp ? `<a class="vb-btn vb-btn-oro vb-btn-xl" href="${esc(N.enlaceWhatsApp(MARCA.whatsapp, `Hola ${MARCA.nombre}, necesito ayuda con la app.`))}" target="_blank" rel="noopener">${ic('chat')} Escribir por WhatsApp</a>` : '',
+      MARCA.correo ? `<a class="vb-btn vb-btn-borde vb-btn-xl" href="mailto:${esc(MARCA.correo)}">${ic('correo')} ${esc(MARCA.correo)}</a>` : '',
+    ].filter(Boolean).join('');
+    const sinTelefono = MARCA.telefono ? '' : `<p class="vb-nota-gps" role="note" data-sin-telefono>${ic('info', 20)}<span><b>Teléfono de la central: pronto.</b> Mientras tanto, pide tu taxi desde la app${MARCA.whatsapp ? ' o escríbenos por WhatsApp' : ''}.</span></p>`;
+    const lineaOficina = [MARCA.telefono ? esc(MARCA.telefonoVisible) : '', MARCA.servicio24h ? 'Servicio 24 horas' : ''].filter(Boolean).join(' · ');
     return `<div class="vb-desliza vb-ayuda">
-      ${cabSub('Ayuda y contacto', 'Estamos para servirte las 24 horas')}
-      <div class="vb-contacto">
-        <a class="vb-btn vb-btn-primario vb-btn-xl" href="tel:+57${E.telefono}">${ic('telefono')} Llamar a la central</a>
-        <a class="vb-btn vb-btn-oro vb-btn-xl" href="${esc(N.enlaceWhatsApp(E.whatsapp, 'Hola Cootransrural, necesito ayuda con la app.'))}" target="_blank" rel="noopener">${ic('chat')} Escribir por WhatsApp</a>
-        <a class="vb-btn vb-btn-borde vb-btn-xl" href="mailto:${E.correo}">${ic('correo')} ${esc(E.correo)}</a>
-      </div>
-      <section class="vb-tarjeta vb-oficina">${insignia(44)}<div><b>${esc(E.razonSocial)}</b><p>${esc(E.direccion)}</p><p>${E.telefonoVisible} · Servicio 24 horas</p></div></section>
+      ${cabSub('Ayuda y contacto', MARCA.servicio24h ? 'Estamos para servirte las 24 horas' : 'Estamos para servirte')}
+      ${sinTelefono}
+      ${contacto ? `<div class="vb-contacto">${contacto}</div>` : ''}
+      <section class="vb-tarjeta vb-oficina">${insignia(44)}<div><b>${esc(MARCA.razonSocial || MARCA.nombre)}</b>${MARCA.direccion ? `<p>${esc(MARCA.direccion)}</p>` : ''}${lineaOficina ? `<p>${lineaOficina}</p>` : ''}</div></section>
       <h2 class="vb-titulo-seccion">Preguntas frecuentes</h2>
       ${pregunta('¿Cómo sé que es mi taxi?', 'En la app ves el carné del conductor con su nombre, el número de móvil y la placa. Al subir, dile tu código de 4 dígitos: si no te lo pide, no es tu servicio.')}
       ${pregunta('¿Cómo pago?', 'Puedes pagar en efectivo o escaneando el código QR que el conductor muestra en su celular. En esta demostración el pago con QR es de prueba.')}

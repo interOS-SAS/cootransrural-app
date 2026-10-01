@@ -103,6 +103,20 @@
       "retoques": "Emblemas genéricos de las parrillas difuminados (canvas de Chromium); las placas ya venían en blanco. Reducida de 1920x1080.",
       "uso": "Banda grande «52 taxis Kia Picanto» en Nosotros (reemplaza a flota-2.jpg, que se veía ampliada y borrosa).",
       "alt": "Taxis amarillos en fila frente a la iglesia y el parque principal de un pueblo de la Sabana, con las montañas al fondo."
+    },
+    {
+      "archivo": "hero-calido.jpg",
+      "origen": "canva-generada",
+      "disenoCanva": "DAHWv6LdZeA",
+      "enlaceCanva": "https://canva.link/ast7oahqxjzcyjh",
+      "proporcion": "16:9",
+      "dimensiones": "1920x1080",
+      "retoques": "Emblema de marca de la parrilla borrado (inpainting); la placa ya venía en blanco. Imagen generada con IA en Canva (generate-image) y exportada desde un diseño de Canva.",
+      "usadaEn": [
+        "villeta",
+        "la-vega"
+      ],
+      "alt": "Taxi amarillo pequeño estacionado en una calle de pueblo de clima cálido, con casas blancas de teja de barro, buganvilias, palmas y montañas verdes al fondo."
     }
   ]
 }

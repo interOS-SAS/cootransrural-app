@@ -12,8 +12,8 @@
   "theme_color": "#111111",
   "categories": ["travel", "navigation"],
   "icons": [
-    { "src": "{{RAIZ}}img/icono-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "{{RAIZ}}img/icono-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "{{RAIZ}}img/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "{{RAIZ}}{{icono.i192}}", "sizes": "192x192", "type": "image/png" },
+    { "src": "{{RAIZ}}{{icono.i512}}", "sizes": "512x512", "type": "image/png" },
+    { "src": "{{RAIZ}}{{icono.maskable}}", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

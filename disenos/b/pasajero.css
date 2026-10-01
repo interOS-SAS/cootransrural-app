@@ -1,4 +1,4 @@
-/* Diseño B «Verde Rosal» — app del pasajero. */
+/* Diseño B «Verde Rosal» — app del pasajero. Colores de la cooperativa en comun.css. */
 @import url('./comun.css');
 
 /* ================================================================ */
@@ -22,7 +22,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(20, 12, 0, .28) 0%, rgba(20, 12, 0, 0) 32%, rgba(20, 12, 0, 0) 66%, rgba(7, 40, 22, .45) 100%);
+  background: linear-gradient(180deg, rgba(20, 12, 0, .28) 0%, rgba(20, 12, 0, 0) 32%, rgba(20, 12, 0, 0) 66%, rgba(var(--vb-oscuro-rgb, 7, 40, 22), .45) 100%);
 }
 
 .vb-bienv-escena .sin-foto ~ .vb-bienv-chip,
@@ -323,6 +323,15 @@
   gap: 10px;
 }
 
+/* Con nombres largos («Cooptranstermales», «Cootransvillaleal») el chip «Solo este
+   equipo» se parte en dos renglones en vez de salirse de la pantalla. */
+.vb-cab-inicio .vb-conexion {
+  flex-shrink: 1;
+  min-width: 0;
+  white-space: normal;
+  text-align: center;
+}
+
 .vb-cab-marca b {
   display: block;
   font-size: 19px;
@@ -368,8 +377,8 @@
   padding: 18px 16px 16px;
   border-radius: 28px;
   color: #fff;
-  background: var(--vb-rosas), linear-gradient(150deg, #10804A 0%, var(--vb-verde) 45%, var(--vb-verde-prof) 100%);
-  box-shadow: 0 18px 36px rgba(7, 61, 34, .3);
+  background: var(--vb-rosas), linear-gradient(150deg, var(--vb-verde-vivo, #10804A) 0%, var(--vb-verde) 45%, var(--vb-verde-prof) 100%);
+  box-shadow: 0 18px 36px rgba(var(--vb-prof-rgb, 7, 61, 34), .3);
   display: grid;
   gap: 12px;
 }
@@ -404,7 +413,7 @@
   margin: 2px 0 0;
   font-size: 16px;
   font-weight: 700;
-  color: rgba(255, 255, 255, .85);
+  color: rgba(255, 255, 255, .96);
 }
 
 .vb-pedir-dir {
@@ -416,7 +425,9 @@
   padding: 10px 14px;
   border-radius: 18px;
   border: 1.5px solid rgba(255, 255, 255, .22);
-  background: rgba(255, 255, 255, .12);
+  /* Hundida en el tono profundo de la cooperativa: con blanco translúcido, la
+     etiqueta dorada y el detalle quedaban en 3,3:1 en todas las paletas. */
+  background: rgba(var(--vb-prof-rgb, 7, 61, 34), .35);
   color: #fff;
   text-align: left;
   font: inherit;
@@ -462,7 +473,7 @@
   display: block;
   font-style: normal;
   font-size: 15px;
-  color: rgba(255, 255, 255, .8);
+  color: rgba(255, 255, 255, .92);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -677,7 +688,7 @@
   padding: 16px;
   border-radius: 22px;
   background: var(--vb-verde-suave);
-  border: 1.5px solid #CFE5D6;
+  border: 1.5px solid var(--vb-verde-borde, #CFE5D6);
 }
 
 .vb-seguridad h2 {
@@ -819,7 +830,7 @@
   background: var(--vb-oro);
   border-color: var(--vb-oro);
   color: var(--vb-texto);
-  box-shadow: 0 0 0 5px rgba(242, 183, 5, .25);
+  box-shadow: 0 0 0 5px rgba(var(--vb-oro-rgb, 242, 183, 5), .25);
 }
 
 .vb-pasos em {
@@ -1036,7 +1047,7 @@
 }
 
 .vb-buscador:focus-within {
-  box-shadow: 0 0 0 6px var(--vb-crema), 0 0 0 9px rgba(242, 183, 5, .75), var(--vb-sombra);
+  box-shadow: 0 0 0 6px var(--vb-crema), 0 0 0 9px rgba(var(--vb-oro-rgb, 242, 183, 5), .75), var(--vb-sombra);
 }
 
 .vb-app .vb-buscador input:focus,
@@ -1375,7 +1386,7 @@
 .vb-opciones-pago [aria-checked="true"] {
   border-color: var(--vb-verde);
   background: var(--vb-verde-suave);
-  box-shadow: 0 0 0 4px rgba(11, 107, 58, .12);
+  box-shadow: 0 0 0 4px rgba(var(--vb-verde-rgb, 11, 107, 58), .12);
 }
 
 .vb-opciones-pago [aria-checked="true"]::after {
@@ -1455,7 +1466,7 @@
   padding: 14px;
   border-radius: 18px;
   background: #fff;
-  border: 2px dashed #E3C9C9;
+  border: 2px dashed var(--vb-rojo-borde, #E3C9C9);
 }
 
 .vb-fidelidad-mini p {
@@ -1557,7 +1568,7 @@
   color: #fff;
   font: 900 17px var(--vb-fuente);
   letter-spacing: .04em;
-  box-shadow: 0 8px 20px rgba(166, 31, 31, .45);
+  box-shadow: 0 8px 20px rgba(var(--vb-rojo-osc-rgb, 166, 31, 31), .45);
   cursor: pointer;
   animation: vbLatidoRojo 2.4s ease-out infinite;
 }
@@ -1579,8 +1590,8 @@
   width: 320px;
   height: 320px;
   border-radius: 50%;
-  border: 4px solid rgba(11, 107, 58, .75);
-  background: radial-gradient(circle, rgba(242, 183, 5, .45) 0%, rgba(242, 183, 5, .18) 45%, rgba(11, 107, 58, .12) 68%, transparent 71%);
+  border: 4px solid rgba(var(--vb-verde-rgb, 11, 107, 58), .75);
+  background: radial-gradient(circle, rgba(var(--vb-oro-rgb, 242, 183, 5), .45) 0%, rgba(var(--vb-oro-rgb, 242, 183, 5), .18) 45%, rgba(var(--vb-verde-rgb, 11, 107, 58), .12) 68%, transparent 71%);
   animation: vbRadar 2.4s ease-out infinite;
 }
 
@@ -1609,7 +1620,7 @@
   padding: 10px 16px calc(20px + var(--vb-abajo));
   border-radius: 28px 28px 0 0;
   background: var(--vb-crema);
-  box-shadow: 0 -10px 30px rgba(7, 61, 34, .18);
+  box-shadow: 0 -10px 30px rgba(var(--vb-prof-rgb, 7, 61, 34), .18);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -1732,7 +1743,7 @@
   border-radius: 22px;
   background: var(--vb-oro);
   color: var(--vb-texto);
-  box-shadow: 0 0 0 4px rgba(242, 183, 5, .3), 0 10px 24px rgba(182, 137, 0, .3);
+  box-shadow: 0 0 0 4px rgba(var(--vb-oro-rgb, 242, 183, 5), .3), 0 10px 24px rgba(var(--vb-oro-osc-rgb, 182, 137, 0), .3);
   animation: vbLatidoOro 1.6s ease-out infinite;
 }
 
@@ -1899,7 +1910,7 @@
   margin: 0 -16px;
   padding: calc(var(--vb-arriba) + 18px) 20px 56px;
   color: #fff;
-  background: var(--vb-rosas), linear-gradient(160deg, #10804A, var(--vb-verde-prof));
+  background: var(--vb-rosas), linear-gradient(160deg, var(--vb-verde-vivo, #10804A), var(--vb-verde-prof));
 }
 
 .vb-check-grande {
@@ -1911,7 +1922,7 @@
   border-radius: 50%;
   background: var(--vb-oro);
   color: var(--vb-texto);
-  box-shadow: 0 0 0 7px rgba(242, 183, 5, .25);
+  box-shadow: 0 0 0 7px rgba(var(--vb-oro-rgb, 242, 183, 5), .25);
 }
 
 .vb-pagar-cab h1 {
@@ -1925,7 +1936,7 @@
   margin: 2px 0 0;
   font-size: 17px;
   font-weight: 700;
-  color: rgba(255, 255, 255, .88);
+  color: rgba(255, 255, 255, .96);
 }
 
 .vb-recibo {
@@ -2071,7 +2082,7 @@
 .vb-billeteras [aria-checked="true"] {
   border-color: var(--vb-verde);
   background: var(--vb-verde-suave);
-  box-shadow: 0 0 0 3px rgba(11, 107, 58, .14);
+  box-shadow: 0 0 0 3px rgba(var(--vb-verde-rgb, 11, 107, 58), .14);
 }
 
 .vb-otro-cel summary {
@@ -2145,7 +2156,7 @@
   padding: 14px;
   border-radius: 20px;
   background: var(--vb-verde-suave);
-  border: 2px solid #BFDCC8;
+  border: 2px solid var(--vb-verde-borde, #BFDCC8);
 }
 
 .vb-recibo-ok > div {
@@ -2174,7 +2185,7 @@
   padding: 12px 14px;
   border-radius: 18px;
   background: var(--vb-oro-claro);
-  border: 2px solid #EBD38A;
+  border: 2px solid var(--vb-oro-borde, #EBD38A);
 }
 
 .vb-calif-recibida[hidden] {
@@ -2450,7 +2461,7 @@
   margin: 0 -16px 18px;
   padding: calc(var(--vb-arriba) + 22px) 18px 22px;
   color: #fff;
-  background: var(--vb-rosas), linear-gradient(150deg, #10804A, var(--vb-verde-prof));
+  background: var(--vb-rosas), linear-gradient(150deg, var(--vb-verde-vivo, #10804A), var(--vb-verde-prof));
   border-bottom: 4px solid var(--vb-oro);
 }
 
@@ -2469,7 +2480,7 @@
   gap: 8px;
   font-weight: 700;
   font-size: 16px;
-  color: rgba(255, 255, 255, .9);
+  color: rgba(255, 255, 255, .97);
 }
 
 .vb-perfil-datos .vb-ic {
@@ -2737,7 +2748,7 @@
   min-height: 52px;
   font-size: 17px;
   color: var(--vb-rojo-osc);
-  border-color: #E8B4B4;
+  border-color: var(--vb-rojo-borde, #E8B4B4);
   background: #fff;
 }
 
@@ -2765,7 +2776,7 @@
   display: grid;
   place-items: center;
   background: var(--vb-rojo-claro);
-  border: 2px dashed #E8B4B4;
+  border: 2px dashed var(--vb-rojo-borde, #E8B4B4);
 }
 
 .vb-escaner.sin-camara video,

@@ -17,14 +17,20 @@ export const CATEGORIAS = {
 };
 
 // Lugares frecuentes del municipio (de la ficha).
-export const LUGARES = FICHA.LUGARES;
+export const LUGARES = FICHA.LUGARES || [];
 
 // Tarifas y rutas con tarifa fija: de EJEMPLO, por cooperativa (ficha).
-export const TARIFAS = FICHA.TARIFAS;
-export const RUTAS = FICHA.RUTAS;
+const TARIFAS_BASE = {
+  ejemplo: true, minimaUrbana: 8000, banderazo: 5500, porKm: 1300, redondeo: 500,
+  recargoNocturno: 2000, recargoDominical: 1000, nocheDesde: 20, nocheHasta: 6,
+  descuentoProgramado: 0.10, horasAnticipacion: 24, viajesFidelidad: 10, descuentoFidelidad: 0.50,
+};
+// Lo que falte en la ficha se completa con los valores de ejemplo (nunca NaN).
+export const TARIFAS = { ...TARIFAS_BASE, ...(FICHA.TARIFAS || {}) };
+export const RUTAS = FICHA.RUTAS || [];
 
 // Conductores y pasajeros ficticios para la simulación (ficha).
-export const CONDUCTORES_DEMO = FICHA.CONDUCTORES_DEMO;
+export const CONDUCTORES_DEMO = FICHA.CONDUCTORES_DEMO || [];
 export const PASAJEROS_DEMO = FICHA.PASAJEROS_DEMO || [
   { nombre: 'María Fernanda', calificacion: 4.9 },
   { nombre: 'Andrés', calificacion: 4.8 },

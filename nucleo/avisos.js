@@ -78,13 +78,15 @@ export function vibrar(patron = [120]) {
 const PATRONES = { info: [60], exito: [80, 60, 80], alerta: [200, 100, 200, 100, 300], solicitud: [300, 120, 300, 120, 300], error: [400] };
 
 // Aviso completo: sistema + sonido + vibración. Devuelve el aviso para la UI.
-export async function avisar({ titulo, cuerpo = '', tipo = 'info', etiqueta = `apptaxi-${ID_EMPRESA}`, icono = 'img/icono-192.png' }) {
+const ICONO_EMPRESA = ID_EMPRESA === 'cootransrural' ? 'img/icono-192.png' : `empresas/${ID_EMPRESA}/icono-192.png`;
+
+export async function avisar({ titulo, cuerpo = '', tipo = 'info', etiqueta = `apptaxi-${ID_EMPRESA}`, icono = ICONO_EMPRESA }) {
   sonar(tipo);
   vibrar(PATRONES[tipo] || PATRONES.info);
   // La notificación del sistema solo cuando la app no está a la vista.
   if (permisoNotificaciones() === 'granted' && document.visibilityState !== 'visible') {
     try {
-      const opciones = { body: cuerpo, tag: etiqueta, renotify: true, icon: urlDelSitio(icono), badge: urlDelSitio('img/insignia-96.png'), vibrate: PATRONES[tipo] };
+      const opciones = { body: cuerpo, tag: etiqueta, renotify: true, icon: urlDelSitio(icono), badge: urlDelSitio(ID_EMPRESA === 'cootransrural' ? 'img/insignia-96.png' : icono), vibrate: PATRONES[tipo] };
       const reg = await navigator.serviceWorker?.getRegistration?.(urlDelSitio(''));
       if (reg) await reg.showNotification(titulo, opciones);
       else new Notification(titulo, opciones);

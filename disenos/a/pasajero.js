@@ -4,14 +4,15 @@
 import {
   el, esc, $, $$, icono, ICONO_CATEGORIA, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos,
   modal, elegirOpcion, abrirMenu, estrellas, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
-  panelEscritorio, limitar, nombreCorto, sinMovimiento,
+  panelEscritorio, limitar, nombreCorto, sinMovimiento, avisoDemo,
 } from './ui.js';
+import * as EM from './empresa.js';
 import { mostrarBienvenida } from './registro.js';
 import { abrirMisViajes, abrirProgramados, abrirTarifas, abrirPromociones, abrirAjustes, abrirAyuda, abrirAvisos } from './pasajero-secciones.js';
 
 const MENSAJES_BUSQUEDA = [
   'Avisando a los taxis cercanos…',
-  'Tu solicitud les llegó a los conductores de Cootransrural',
+  `Tu solicitud les llegó a los conductores de ${EM.NOMBRE}`,
   'Buscando el móvil más cercano a tu punto',
   'Un conductor está revisando tu servicio',
 ];
@@ -19,11 +20,23 @@ const MENSAJES_BUSQUEDA = [
 export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
   raiz.innerHTML = '';
   raiz.classList.add('a-raiz');
+  if (EM.FICHA_EQUIVOCADA) {
+    EM.pantallaSinFicha(raiz);
+    return;
+  }
+  EM.aplicarColores();
+  EM.aplicarFoto(raiz);
+  EM.marcarNoIndexar();
   if (!vitrina) {
     raiz.append(panelEscritorio({
-      titulo: 'Pide tu taxi en <em>El Rosal</em>, sin llamar.',
-      texto: 'Demo de la app de Cootransrural: ubicación exacta, seguimiento en vivo, código de abordaje y pago con QR de prueba.',
-      puntos: [`${N.EMPRESA.taxis} taxis y servicio 24 horas`, 'Sabes quién llega: móvil, placa y código', 'Programa con 24 h y ahorra 10 %', 'Cada 10 viajes, el siguiente al 50 %'],
+      titulo: `Pide tu taxi en <em>${esc(EM.PUEBLO)}</em>, sin llamar.`,
+      texto: `Demo de la app de ${EM.NOMBRE}: ubicación exacta, seguimiento en vivo, código de abordaje y pago con QR de prueba.`,
+      puntos: [
+        EM.unir([EM.textoTaxis(), EM.SERVICIO_24H ? 'servicio 24 horas' : ''], ' y ').replace(/^s/, 'S') || 'Taxis de la cooperativa cerca de ti',
+        'Sabes quién llega: móvil, placa y código', 'Programa con 24 h y ahorra 10 %', 'Cada 10 viajes, el siguiente al 50 %',
+      ],
+      // El QR abre la app de esta cooperativa (no la de otra) con el mismo diseño.
+      url: N.urlEmpresa(`app/?d=${encodeURIComponent(diseno)}`),
     }));
   }
 
@@ -37,10 +50,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
       <button class="a-barra-menu" type="button" data-menu aria-label="Abrir menú">
         <span data-avatar>${avatar('')}</span><span class="a-barra-menu-ico">${icono('menu', { tam: 13, grosor: 3 })}</span>
       </button>
-      <div class="a-barra-saludo"><small data-saludo>${esc(N.saludo())}</small><strong data-nombre>Cootransrural</strong></div>
+      <div class="a-barra-saludo"><small data-saludo>${esc(N.saludo())}</small><strong data-nombre>${esc(EM.NOMBRE)}</strong></div>
       <button class="a-icono-btn a-barra-campana" type="button" data-campana aria-label="Avisos">${icono('campana')}<span class="a-insignia" data-insignia hidden></span></button>
     </header>
-    <div class="a-chip-red" data-conexion><span class="a-led"></span><span data-conexion-txt>Solo este equipo</span><b>MODO PRUEBA</b></div>
+    <div class="a-chip-red${EM.ES_PROPUESTA ? ' a-chip-red-demo' : ''}" data-conexion><span class="a-led"></span><span data-conexion-txt>Solo este equipo</span><b>MODO PRUEBA</b>${avisoDemo()}</div>
     <div class="a-banner-puerta" data-banner-puerta hidden role="alert"></div>
     <button class="a-flotante a-btn-ubicacion" type="button" data-mi-ubicacion aria-label="Volver a mi ubicación">${icono('mira')}</button>
   </div>`);
@@ -58,7 +71,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
   });
 
   // El mapa va de último en el DOM: con teclado se llega primero al menú y al panel.
-  const divMapa = el('<div class="a-mapa" role="region" aria-label="Mapa de El Rosal"></div>');
+  const divMapa = el(`<div class="a-mapa" role="region" aria-label="${esc(`Mapa de ${EM.PUEBLO}`)}"></div>`);
   app.append(divMapa);
   // Los marcadores no se tocan ni se enfocan: que el tabulador no pase por cada taxi.
   const L = await N.cargarLeaflet();
@@ -80,7 +93,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
     destinoProvisional: null,
     cotizacion: null,
     reqCot: 0,
-    metodo: localStorage.getItem('ct.a.metodo') === 'efectivo' ? 'efectivo' : 'qr',
+    metodo: localStorage.getItem(EM.clave('metodo')) === 'efectivo' ? 'efectivo' : 'qr',
     programar: false,
     fecha: null,
     nota: '',
@@ -221,7 +234,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
     const pos = p ? await p.actualizarMiPosicion() : await N.obtenerPosicion();
     b.classList.remove('a-girando');
     m.ponerYo(pos);
-    if (pos.real === false) avisos.mostrar({ titulo: 'No tenemos tu GPS', cuerpo: 'Usamos el centro de El Rosal; mueve el mapa para ubicar tu punto.', tipo: 'info' });
+    if (pos.real === false) avisos.mostrar({ titulo: 'No tenemos tu GPS', cuerpo: `Usamos el centro de ${EM.PUEBLO}; mueve el mapa para ubicar tu punto.`, tipo: 'info' });
     if (app.dataset.pin) centrarVisible(pos, 17, ui.pinY);
     else centrarVisible(pos, 17);
   });
@@ -229,14 +242,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
   function pintarBarra() {
     const yo = N.perfil.pasajero();
     $(app, '[data-avatar]').innerHTML = avatar(yo?.nombre || '');
-    ponerTexto(app, '[data-nombre]', yo?.nombre ? nombreCorto(yo.nombre) : 'Cootransrural');
+    ponerTexto(app, '[data-nombre]', yo?.nombre ? nombreCorto(yo.nombre) : EM.NOMBRE);
     ponerTexto(app, '[data-saludo]', N.saludo());
   }
 
   function abrirMenuPasajero() {
     const yo = N.perfil.pasajero();
     const completados = N.perfil.viajesCompletadosPasajero();
-    const fid = N.progresoFidelidad(completados);
+    const fid = EM.fidelidad(completados);
     const programados = N.perfil.viajesProgramados().length;
     const conexion = p?.estado.conexion === 'en-vivo' ? 'En vivo' : 'Solo este equipo';
     abrirMenu(app, {
@@ -249,15 +262,15 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
         { icono: 'reloj', texto: 'Mis viajes', detalle: completados ? `${completados} ${completados === 1 ? 'viaje completado' : 'viajes completados'}` : 'Tu historial', accion: () => abrirMisViajes(ctx()) },
         { icono: 'calendario', texto: 'Programados', detalle: 'Con 24 h: 10 % menos', insignia: programados ? String(programados) : '', accion: () => abrirProgramados(ctx()) },
         { icono: 'ruta', texto: 'Tarifas y rutas', detalle: 'Valores de ejemplo', accion: () => abrirTarifas(ctx()) },
-        { icono: 'regalo', texto: 'Promociones', detalle: fid.siguienteConDescuento ? '¡Tu próximo viaje va al 50 %!' : `Tarjeta de viajes: ${fid.completados}/${fid.meta}`, accion: () => abrirPromociones(ctx()) },
+        { icono: 'regalo', texto: 'Promociones', detalle: !fid ? 'Ofertas de la cooperativa' : fid.siguienteConDescuento ? '¡Tu próximo viaje va al 50 %!' : `Tarjeta de viajes: ${fid.completados}/${fid.meta}`, accion: () => abrirPromociones(ctx()) },
         { icono: 'ajustes', texto: 'Ajustes', detalle: 'Diseño, sala, sonido, instalar', accion: () => abrirAjustes(ctx()) },
-        { icono: 'ayuda', texto: 'Ayuda', detalle: `Central 24 h · ${N.EMPRESA.telefonoVisible}`, accion: () => abrirAyuda(ctx()) },
+        { icono: 'ayuda', texto: 'Ayuda', detalle: EM.TELEFONO ? `Central${EM.SERVICIO_24H ? ' 24 h' : ''} · ${EM.TELEFONO_VISIBLE}` : 'Preguntas frecuentes y contacto', accion: () => abrirAyuda(ctx()) },
         { separador: true },
         { icono: 'volante', texto: 'Soy conductor', detalle: 'Abrir la app de conductores', href: `../conductor/?d=${encodeURIComponent(diseno)}`, clase: 'a-menu-marca' },
         { icono: 'salir', texto: 'Cerrar sesión', accion: cerrarSesion, clase: 'a-menu-peligro' },
       ],
-      pie: `<div class="a-menu-pie-marca"><img src="../img/icono.svg" width="30" height="30" alt=""><div><strong>${esc(N.EMPRESA.nombre)}</strong><small>${esc(N.EMPRESA.lema)}</small></div></div>
-        <div class="a-menu-pie-estado">${chipPrueba('MODO PRUEBA')}<span><span class="a-led ${p?.estado.conexion === 'en-vivo' ? 'a-led-vivo' : ''}"></span>${conexion} · sala «${esc(p?.estado.sala || N.salaActual())}»</span></div>`,
+      pie: `<div class="a-menu-pie-marca">${EM.marcaIcono(30)}<div><strong>${esc(EM.NOMBRE_LARGO)}</strong>${EM.LEMA ? `<small>${esc(EM.LEMA)}</small>` : ''}</div></div>
+        <div class="a-menu-pie-estado">${chipPrueba('MODO PRUEBA')}${avisoDemo('a-chip-demo a-chip-demo-claro')}<span><span class="a-led ${p?.estado.conexion === 'en-vivo' ? 'a-led-vivo' : ''}"></span>${conexion} · sala «${esc(p?.estado.sala || N.salaActual())}»</span></div>`,
     });
   }
 
@@ -491,6 +504,37 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
   };
 
   /* ---------------- piezas repetidas ---------------- */
+  // Seis lugares frecuentes para la pantalla de inicio: primero los conocidos de
+  // Cootransrural (si existen en la ficha) y luego uno por categoría, sin repetir.
+  function lugaresDestacados(cuantos = 6) {
+    const lista = [];
+    const usados = new Set();
+    const agregar = (l) => {
+      const llave = String(l?.nombre || '').toLowerCase();
+      if (!l || lista.length >= cuantos || usados.has(l.id) || usados.has(llave)) return;
+      usados.add(l.id);
+      usados.add(llave);
+      lista.push(l);
+    };
+    const lugares = (N.LUGARES || []).filter((l) => l && l.nombre && Number.isFinite(l.lat) && Number.isFinite(l.lng));
+    ['parque', 'tierra-grata', 'puesto-salud', 'el-rey', 'rotonda', 'facatativa'].forEach((k) => agregar(lugares.find((l) => l.id === k)));
+    for (const cat of ['centro', 'salud', 'comercio', 'barrio', 'educacion', 'vereda', 'comida', 'municipio', 'bogota']) {
+      agregar(lugares.find((l) => l.cat === cat && !usados.has(l.id)));
+    }
+    lugares.forEach(agregar);
+    return lista;
+  }
+
+  // Tarjeta de la central: solo es un enlace para llamar si hay teléfono.
+  function bloqueCentral() {
+    const titulo = EM.SERVICIO_24H ? 'Central 24 horas' : `Central de ${EM.NOMBRE}`;
+    const taxis = EM.textoTaxis(` en ${EM.PUEBLO}`);
+    if (EM.TELEFONO) {
+      return `<a class="a-central" href="tel:${esc(EM.TELEFONO)}">${icono('telefono', { tam: 20 })}<span><strong>${esc(titulo)}</strong><small>${esc(EM.unir([EM.TELEFONO_VISIBLE, taxis]))}</small></span>${icono('adelante', { tam: 18 })}</a>`;
+    }
+    return `<div class="a-central a-central-sin">${icono('telefono', { tam: 20 })}<span><strong>${esc(titulo)}</strong><small>${esc(EM.unir(['Teléfono de la central: pronto', taxis]))}</small><small>Mientras tanto, pide tu taxi desde la app.</small></span></div>`;
+  }
+
   function trayecto(origen, destino, { datos = true } = {}) {
     return `<div class="a-trayecto">
       <div class="a-trayecto-linea" aria-hidden="true"></div>
@@ -506,7 +550,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
         <span class="a-conductor-foto">${avatar(c.nombre, 'a-avatar-grande')}<span class="a-conductor-cal">${icono('estrella', { tam: 11 })}${decimal(c.calificacion)}</span></span>
         <span class="a-conductor-datos">
           <strong>${esc(c.nombre)}</strong>
-          <small>${Number(c.viajes || 0).toLocaleString('es-CO')} viajes · ${esc(c.vehiculo || 'Kia Picanto')} ${esc((c.color || '').toLowerCase())}</small>
+          <small>${Number(c.viajes || 0).toLocaleString('es-CO')} viajes · ${esc(c.vehiculo || EM.VEHICULO)} ${esc((c.color || '').toLowerCase())}</small>
         </span>
         <span class="a-movil" aria-label="Móvil ${esc(c.movil)}"><small>MÓVIL</small><b>${esc(c.movil)}</b></span>
       </div>
@@ -523,10 +567,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
 
   function acciones(c) {
     const yo = N.perfil.pasajero();
-    const wa = N.enlaceWhatsApp(c.tel, `Hola ${nombreCorto(c.nombre)}, soy ${nombreCorto(yo?.nombre || '')}, el pasajero de Cootransrural.`);
+    const tel = String(c.tel || EM.TELEFONO || '').replace(/\D/g, '');
+    const wa = c.tel ? N.enlaceWhatsApp(c.tel, `Hola ${nombreCorto(c.nombre)}, soy ${nombreCorto(yo?.nombre || '')}, el pasajero de ${EM.NOMBRE}.`) : '';
     return `<div class="a-acciones">
-      <a class="a-accion" href="tel:${esc(c.tel || N.EMPRESA.telefono)}">${icono('telefono')}<span>Llamar</span></a>
-      <a class="a-accion" href="${esc(wa)}" target="_blank" rel="noopener">${icono('chat')}<span>WhatsApp</span></a>
+      ${tel ? `<a class="a-accion" href="tel:${esc(tel)}">${icono('telefono')}<span>Llamar</span></a>` : ''}
+      ${wa ? `<a class="a-accion" href="${esc(wa)}" target="_blank" rel="noopener">${icono('chat')}<span>WhatsApp</span></a>` : ''}
       <button type="button" class="a-accion" data-compartir>${icono('compartir')}<span>Compartir</span></button>
       <button type="button" class="a-accion a-accion-sos" data-sos>${icono('sos')}<span>SOS</span></button>
     </div>`;
@@ -537,7 +582,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
     if (!texto) return;
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'Mi viaje en Cootransrural', text: texto });
+        await navigator.share({ title: `Mi viaje en ${EM.NOMBRE}`, text: texto });
         return;
       } catch (e) {
         if (e?.name === 'AbortError') return;
@@ -552,7 +597,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
     const acc = [
       { texto: 'Llamar a la Línea 123', href: 'tel:123', clase: 'a-btn-peligro', icono: 'telefono' },
       contacto?.celular ? { texto: `Avisar a ${contacto.nombre || 'mi contacto'}`, href: N.enlaceWhatsApp(contacto.celular, `🆘 Necesito ayuda.\n${p.textoCompartir()}`), externo: true, clase: 'a-btn-tinta', icono: 'chat' } : null,
-      { texto: 'Llamar a la central Cootransrural', href: `tel:${N.EMPRESA.telefono}`, clase: 'a-btn-suave', icono: 'telefono' },
+      EM.TELEFONO ? { texto: `Llamar a la central ${EM.NOMBRE}`, href: `tel:${EM.TELEFONO}`, clase: 'a-btn-suave', icono: 'telefono' } : null,
       { texto: 'Cancelar', valor: null, clase: 'a-btn-texto' },
     ].filter(Boolean);
     await modal(app, {
@@ -584,7 +629,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
       html() {
         const g = N.perfil.lugaresGuardados();
         const rec = N.perfil.recientes().slice(0, 3);
-        const fid = N.progresoFidelidad(p.viajesCompletados());
+        const fid = EM.fidelidad(p.viajesCompletados());
         const prog = N.perfil.viajesProgramados();
         const chips = [
           g.casa ? `<button type="button" class="a-chip" data-lugar="casa">${icono('casa', { tam: 16 })}<span>Casa</span></button>` : `<button type="button" class="a-chip a-chip-vacio" data-guardar="casa">${icono('casa', { tam: 16 })}<span>Casa</span>${icono('mas', { tam: 14 })}</button>`,
@@ -592,25 +637,25 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
           ...rec.map((r, i) => `<button type="button" class="a-chip" data-reciente="${i}">${icono('reloj', { tam: 16 })}<span>${esc(r.titulo)}</span></button>`),
         ];
         const anillo = 2 * Math.PI * 19;
-        const frac = fid.siguienteConDescuento ? 1 : fid.completados / fid.meta;
-        const destacados = ['parque', 'tierra-grata', 'puesto-salud', 'el-rey', 'rotonda', 'facatativa'].map((k) => N.LUGARES.find((l) => l.id === k)).filter(Boolean);
+        const frac = !fid ? 0 : fid.siguienteConDescuento ? 1 : fid.completados / fid.meta;
+        const destacados = lugaresDestacados();
         return `
           <div class="a-recoger" data-arrastre>
             <span class="a-punto a-punto-verde a-punto-vivo" aria-hidden="true"></span>
             <span class="a-recoger-txt"><small>Te recogemos en</small><strong data-origen-titulo>${esc(ui.origen?.titulo || 'Buscando dirección…')}</strong></span>
             <span class="a-recoger-ayuda">${icono('mapa', { tam: 14 })} Mueve el mapa</span>
           </div>
-          <div class="a-aviso-gps" data-aviso-gps hidden>${icono('info', { tam: 18 })}<span>Usamos el centro de El Rosal; mueve el mapa para ubicar tu punto.</span></div>
+          <div class="a-aviso-gps" data-aviso-gps hidden>${icono('info', { tam: 18 })}<span>${esc(`Usamos el centro de ${EM.PUEBLO}; mueve el mapa para ubicar tu punto.`)}</span></div>
           <div class="a-campo-destino">
             <button type="button" class="a-campo-destino-btn" data-buscar>${icono('buscar', { tam: 22, grosor: 2.4 })}<span>¿A dónde vas?</span></button>
             <button type="button" class="a-campo-prog" data-programar aria-label="Programar un viaje">${icono('calendario', { tam: 18 })}<span>Programar</span></button>
           </div>
           <div class="a-chips" role="list">${chips.join('')}</div>
-          <button type="button" class="a-fid-mini" data-promos>
+          ${fid ? `<button type="button" class="a-fid-mini" data-promos>
             <span class="a-anillo" aria-hidden="true"><svg viewBox="0 0 44 44" width="46" height="46"><circle cx="22" cy="22" r="19" class="a-anillo-fondo"/><circle cx="22" cy="22" r="19" class="a-anillo-valor" style="stroke-dasharray:${anillo};stroke-dashoffset:${anillo * (1 - frac)}"/></svg><b>${fid.siguienteConDescuento ? '50&nbsp;%' : `${fid.completados}/${fid.meta}`}</b></span>
             <span class="a-fid-mini-txt"><strong>${fid.siguienteConDescuento ? '¡Tu próximo viaje va al 50 %!' : 'Tarjeta de viajes'}</strong><small>${fid.siguienteConDescuento ? 'Se aplica solo al pedir tu taxi' : `Te ${fid.faltan === 1 ? 'falta 1 viaje' : `faltan ${fid.faltan} viajes`} para uno al 50 %`}</small></span>
             ${icono('adelante', { tam: 18 })}
-          </button>
+          </button>` : ''}
           <div data-corte></div>
           ${prog.length ? `<button type="button" class="a-prog-aviso" data-ver-programados>${icono('calendario', { tam: 20 })}<span><strong>${prog.length} ${prog.length === 1 ? 'viaje programado' : 'viajes programados'}</strong><small>El próximo: ${esc(N.fechaTexto(prog[0].fecha))}, ${esc(N.horaTexto(prog[0].fecha))}</small></span>${icono('adelante', { tam: 18 })}</button>` : ''}
           <section class="a-bloque">
@@ -624,7 +669,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
               <span><strong>Programa con 24 horas</strong><small>y paga 10 % menos en tu viaje.</small></span>
               <button type="button" class="a-btn a-btn-tinta a-btn-chico" data-programar>Programar</button>
             </div>
-            <a class="a-central" href="tel:${N.EMPRESA.telefono}">${icono('telefono', { tam: 20 })}<span><strong>Central 24 horas</strong><small>${esc(N.EMPRESA.telefonoVisible)} · ${N.EMPRESA.taxis} taxis en El Rosal</small></span>${icono('adelante', { tam: 18 })}</a>
+            ${bloqueCentral()}
           </section>`;
       },
       montar(c) {
@@ -710,7 +755,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
       altura: 'media',
       maxMedia: 0.8,
       html() {
-        const fid = N.progresoFidelidad(p.viajesCompletados());
+        const fid = EM.fidelidad(p.viajesCompletados());
         return `
         <div class="a-vista-cabeza" data-arrastre>
           <button type="button" class="a-icono-btn" data-volver aria-label="Cambiar el destino">${icono('atras')}</button>
@@ -718,7 +763,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
         </div>
         <div class="a-tarifa" data-arrastre>
           <span class="a-tarifa-txt"><small>Tarifa estimada</small><strong data-total class="a-esqueleto-txt">$——</strong><span class="a-chip-ejemplo">${icono('info', { tam: 13 })} Tarifa de ejemplo</span></span>
-          <span class="a-tarifa-taxi" aria-hidden="true"><svg viewBox="0 0 40 64" width="30" height="48">${N.svgTaxi ? N.svgTaxi({ tamano: 48 }).replace(/<svg[^>]*>|<\/svg>/g, '') : ''}</svg><small>Kia Picanto<br>4 puestos</small></span>
+          <span class="a-tarifa-taxi" aria-hidden="true"><svg viewBox="0 0 40 64" width="30" height="48">${N.svgTaxi ? N.svgTaxi({ tamano: 48 }).replace(/<svg[^>]*>|<\/svg>/g, '') : ''}</svg><small>${esc(EM.VEHICULO)}<br>4 puestos</small></span>
         </div>
         <button type="button" class="a-ver-detalle" data-detalle aria-expanded="false">${icono('lista', { tam: 16 })} Ver detalle de la tarifa ${icono('abajo', { tam: 16 })}</button>
         <div class="a-detalle" data-detalle-lista hidden></div>
@@ -742,10 +787,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
           <p class="a-programar-info" data-programar-info></p>
         </div>
         <label class="a-campo-nota">${icono('mensaje', { tam: 20 })}<input data-nota maxlength="140" placeholder="Nota para el conductor (opcional)" value="${esc(ui.nota)}" aria-label="Nota para el conductor"></label>
-        <div class="a-fid-linea ${fid.siguienteConDescuento ? 'a-fid-premio' : ''}">
+        ${fid ? `<div class="a-fid-linea ${fid.siguienteConDescuento ? 'a-fid-premio' : ''}">
           <span class="a-fid-barra" aria-hidden="true"><span style="width:${(fid.siguienteConDescuento ? 1 : fid.completados / fid.meta) * 100}%"></span></span>
           <small>${fid.siguienteConDescuento ? '¡Este viaje va con 50 % de descuento!' : `Viaje ${fid.completados + 1} de tu tarjeta · al completar ${fid.meta}, el siguiente va al 50 %`}</small>
-        </div>`;
+        </div>` : ''}`;
       },
       pie: () => `<button type="button" class="a-btn a-btn-primario a-btn-grande a-btn-pedir" data-pedir disabled><span data-pedir-txt>${ui.programar ? 'Programar viaje' : 'Pedir taxi'}</span><strong data-total-boton></strong></button>`,
       montar(c, pie) {
@@ -763,7 +808,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
         });
         $$(c, '[data-metodo]').forEach((b) => b.addEventListener('click', () => {
           ui.metodo = b.dataset.metodo;
-          localStorage.setItem('ct.a.metodo', ui.metodo);
+          localStorage.setItem(EM.clave('metodo'), ui.metodo);
           $$(c, '[data-metodo]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
         }));
         const fecha = $(c, '[data-fecha]');
@@ -904,7 +949,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
           <div class="a-progreso-puntos"><span>${esc(v.origen.titulo || 'Origen')}</span><span>${esc(v.destino.titulo || 'Destino')}</span></div>
         </div>` : `<p class="a-sin-destino-txt">${icono('chat', { tam: 18 })} Indícale al conductor a dónde vas.</p>`}
         <div class="a-conductor-mini">
-          ${avatar(c.nombre)}<span><strong>${esc(c.nombre)}</strong><small>Móvil ${esc(c.movil)} · ${esc(c.vehiculo || '')}</small></span>${placa(c.placa, 'EL ROSAL', 'a-placa-chica')}
+          ${avatar(c.nombre)}<span><strong>${esc(c.nombre)}</strong><small>Móvil ${esc(c.movil)} · ${esc(c.vehiculo || '')}</small></span>${placa(c.placa, undefined, 'a-placa-chica')}
         </div>
         ${acciones(c)}
         <div data-corte></div>
@@ -954,7 +999,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
         <div class="a-pago-cabeza">
           <span class="a-meta-ico" aria-hidden="true">${icono('bandera', { tam: 28 })}</span>
           <h2>${v.destino ? `Llegaste a ${esc(v.destino.titulo)}` : 'Llegaste a tu destino'}</h2>
-          <p>Gracias por viajar con Cootransrural</p>
+          <p>${esc(`Gracias por viajar con ${EM.NOMBRE}`)}</p>
         </div>
         <div class="a-total">
           <small>Total a pagar</small>
@@ -1322,6 +1367,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
     if (!p) return;
     const e = p.estado;
     if (ui.fase && ui.fase !== 'inicio' && e.fase === 'inicio') reiniciarUI();
+    if (e.fase !== ui.fase) anotarViaje(e.fase);
     ui.fase = e.fase;
     const clave = e.fase === 'inicio' ? ui.modo : e.fase;
     if (clave !== ui.vista) renderVista(clave);
@@ -1379,6 +1425,25 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
   pintarBarra();
   renderVista('carga');
   if (!N.perfil.pasajero()?.nombre) mostrarBienvenida(app, { N, alTerminar: alRegistrarse });
+
+  // Rodeo del núcleo: el viaje en curso se guarda en sessionStorage con la misma
+  // clave para todas las cooperativas ('ct.viaje.pasajero'). Si en esta pestaña
+  // quedó un viaje de OTRA cooperativa, no se debe retomar aquí. Este diseño anota
+  // de qué cooperativa es el viaje activo (CLAVE_VIAJE_DE) y, si no coincide, lo descarta.
+  const CLAVE_VIAJE_DE = 'ct.a.viaje.empresa';
+  try {
+    const de = sessionStorage.getItem(CLAVE_VIAJE_DE);
+    if (de && de !== N.ID_EMPRESA) {
+      sessionStorage.removeItem('ct.viaje.pasajero');
+      sessionStorage.removeItem(CLAVE_VIAJE_DE);
+    }
+  } catch { /* sin sessionStorage */ }
+  function anotarViaje(fase) {
+    try {
+      if (fase && fase !== 'inicio') sessionStorage.setItem(CLAVE_VIAJE_DE, N.ID_EMPRESA);
+      else sessionStorage.removeItem(CLAVE_VIAJE_DE);
+    } catch { /* sin sessionStorage */ }
+  }
 
   // Viaje que estaba en curso antes de recargar (lo guarda el núcleo en sessionStorage).
   let previo = null;

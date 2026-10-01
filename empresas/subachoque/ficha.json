@@ -29,8 +29,14 @@
       "WhatsApp",
       "correo",
       "año de fundación",
-      "número exacto de taxis"
-    ]
+      "número exacto de taxis",
+      "misión y visión oficiales"
+    ],
+    "region": "Sabana de Occidente",
+    "oficina": {
+      "lat": 4.929927,
+      "lng": -74.175977
+    }
   },
   "colores": {
     "primario": "#1D4E89",
@@ -134,181 +140,61 @@
     {
       "id": "parque",
       "nombre": "Parque Principal",
-      "detalle": "Centro, Subachoque",
-      "cat": "centro",
-      "lat": 4.927969,
-      "lng": -74.173964
-    },
-    {
-      "id": "plaza-central-subachoque",
-      "nombre": "Plaza Central Subachoque",
-      "detalle": "Subachoque",
+      "detalle": "Plaza central, Subachoque",
       "cat": "centro",
       "lat": 4.928079,
       "lng": -74.173827
     },
     {
-      "id": "san-pablo-bbq",
-      "nombre": "San Pablo BBQ",
-      "detalle": "Subachoque",
-      "cat": "comida",
-      "lat": 4.927538,
-      "lng": -74.173645
-    },
-    {
-      "id": "papitas-de-majo",
-      "nombre": "Papitas de Majo",
-      "detalle": "Subachoque",
-      "cat": "comida",
-      "lat": 4.927465,
-      "lng": -74.173722
-    },
-    {
-      "id": "surtidora-de-aves",
-      "nombre": "Surtidora de Aves",
-      "detalle": "Subachoque",
-      "cat": "comida",
-      "lat": 4.927797,
-      "lng": -74.173362
-    },
-    {
-      "id": "madeleine-crepes",
-      "nombre": "Madeleine Crepes",
-      "detalle": "Subachoque",
-      "cat": "comida",
-      "lat": 4.927855,
-      "lng": -74.173327
-    },
-    {
-      "id": "banco-agrario",
-      "nombre": "Banco Agrario",
-      "detalle": "Subachoque",
-      "cat": "comercio",
-      "lat": 4.928098,
-      "lng": -74.174621
-    },
-    {
-      "id": "colegio-eucaristico",
-      "nombre": "Colegio Eucaristico",
-      "detalle": "Subachoque",
-      "cat": "educacion",
-      "lat": 4.92755,
-      "lng": -74.174527
-    },
-    {
-      "id": "registraduria-nacional-de-subachoque",
-      "nombre": "Registraduria Nacional de Subachoque",
-      "detalle": "Subachoque",
+      "id": "alcaldia",
+      "nombre": "Alcaldía Municipal",
+      "detalle": "Carrera 2 # 3-20, Subachoque",
       "cat": "centro",
-      "lat": 4.928358,
-      "lng": -74.174554
+      "lat": 4.928127,
+      "lng": -74.173089
     },
     {
-      "id": "davivienda",
-      "nombre": "Davivienda",
-      "detalle": "Subachoque",
-      "cat": "comercio",
-      "lat": 4.927905,
-      "lng": -74.173237
+      "id": "oficina",
+      "nombre": "Oficina Coopmultrasub",
+      "detalle": "Calle 2 # 5-63, Subachoque",
+      "cat": "centro",
+      "lat": 4.929927,
+      "lng": -74.175977
     },
     {
-      "id": "bancolombia",
-      "nombre": "Bancolombia",
-      "detalle": "Subachoque",
-      "cat": "comercio",
-      "lat": 4.928761,
-      "lng": -74.173597
-    },
-    {
-      "id": "parroquia-san-miguel-arcangel",
+      "id": "iglesia",
       "nombre": "Parroquia San Miguel Arcángel",
-      "detalle": "Subachoque",
+      "detalle": "Parque Principal, Subachoque",
       "cat": "centro",
       "lat": 4.928562,
       "lng": -74.173308
     },
     {
-      "id": "cc-la-colina",
-      "nombre": "CC La Colina",
-      "detalle": "Subachoque",
-      "cat": "comercio",
-      "lat": 4.927036,
-      "lng": -74.173866
-    },
-    {
-      "id": "pizzeria",
-      "nombre": "Pizzeria",
-      "detalle": "Subachoque",
-      "cat": "comida",
-      "lat": 4.928913,
-      "lng": -74.173523
-    },
-    {
-      "id": "banco-de-bogota",
-      "nombre": "Banco de Bogotá",
-      "detalle": "Subachoque",
-      "cat": "comercio",
-      "lat": 4.929012,
-      "lng": -74.173589
-    },
-    {
-      "id": "interrapidisimo",
-      "nombre": "Interrapidisimo",
-      "detalle": "Subachoque",
-      "cat": "centro",
-      "lat": 4.926914,
-      "lng": -74.173408
-    },
-    {
-      "id": "juzgado-promiscuo-municipal-de-subachoqu",
-      "nombre": "Juzgado Promiscuo Municipal de Subachoque",
-      "detalle": "Subachoque",
-      "cat": "centro",
-      "lat": 4.927313,
-      "lng": -74.17287
-    },
-    {
-      "id": "estacion-de-policia-de-subachoque",
-      "nombre": "Estación de Policia de Subachoque",
+      "id": "policia",
+      "nombre": "Estación de Policía",
       "detalle": "Subachoque",
       "cat": "centro",
       "lat": 4.92663,
       "lng": -74.174775
     },
     {
-      "id": "odonto-stetic",
-      "nombre": "Odonto Stetic",
+      "id": "registraduria",
+      "nombre": "Registraduría",
       "detalle": "Subachoque",
-      "cat": "salud",
-      "lat": 4.92757,
-      "lng": -74.172416
+      "cat": "centro",
+      "lat": 4.928358,
+      "lng": -74.174554
     },
     {
-      "id": "biblioteca-publica-municipal-jorge-enriq",
-      "nombre": "Biblioteca Pública Municipal Jorge Enrique Hernández Carrill",
+      "id": "biblioteca",
+      "nombre": "Biblioteca Pública Jorge Enrique Hernández Carrillo",
       "detalle": "Subachoque",
       "cat": "centro",
       "lat": 4.926637,
       "lng": -74.172937
     },
     {
-      "id": "ied-ricardo-gonzalez-sede-principal",
-      "nombre": "IED Ricardo Gonzalez Sede Principal",
-      "detalle": "Subachoque",
-      "cat": "educacion",
-      "lat": 4.92862,
-      "lng": -74.171992
-    },
-    {
-      "id": "el-paseo-hygge",
-      "nombre": "El Paseo Hygge",
-      "detalle": "Subachoque",
-      "cat": "turismo",
-      "lat": 4.93036,
-      "lng": -74.173895
-    },
-    {
-      "id": "plaza-de-mercado",
+      "id": "plaza-mercado",
       "nombre": "Plaza de Mercado",
       "detalle": "Subachoque",
       "cat": "centro",
@@ -316,16 +202,48 @@
       "lng": -74.172173
     },
     {
-      "id": "plaza-de-la-cultura",
-      "nombre": "Plaza de la Cultura",
+      "id": "juzgado",
+      "nombre": "Juzgado Promiscuo Municipal",
       "detalle": "Subachoque",
       "cat": "centro",
-      "lat": 4.930034,
-      "lng": -74.171566
+      "lat": 4.927313,
+      "lng": -74.17287
     },
     {
-      "id": "iedp-ricardo-gonzalez-sede-la-ermita",
-      "nombre": "IEDp Ricardo Gonzalez sede La Ermita",
+      "id": "cementerio",
+      "nombre": "Cementerio",
+      "detalle": "Subachoque",
+      "cat": "centro",
+      "lat": 4.931887,
+      "lng": -74.171294
+    },
+    {
+      "id": "centro-salud",
+      "nombre": "Centro de Salud Subachoque",
+      "detalle": "Calle 1, Subachoque",
+      "cat": "salud",
+      "lat": 4.928549,
+      "lng": -74.175496
+    },
+    {
+      "id": "colegio-eucaristico",
+      "nombre": "Colegio Eucarístico",
+      "detalle": "Subachoque",
+      "cat": "educacion",
+      "lat": 4.92755,
+      "lng": -74.174527
+    },
+    {
+      "id": "ied-ricardo-gonzalez",
+      "nombre": "IED Ricardo González, sede principal",
+      "detalle": "Subachoque",
+      "cat": "educacion",
+      "lat": 4.92862,
+      "lng": -74.171992
+    },
+    {
+      "id": "ied-ricardo-gonzalez-ermita",
+      "nombre": "IED Ricardo González, sede La Ermita",
       "detalle": "Subachoque",
       "cat": "educacion",
       "lat": 4.929474,
@@ -333,43 +251,115 @@
     },
     {
       "id": "iedp-ricardo-gonzalez",
-      "nombre": "IEDp Ricardo Gonzalez",
+      "nombre": "IEDP Ricardo González",
       "detalle": "Subachoque",
       "cat": "educacion",
       "lat": 4.92995,
       "lng": -74.177948
     },
     {
+      "id": "escuela-galdamez",
+      "nombre": "Escuela Galdámez",
+      "detalle": "Vereda Galdámez",
+      "cat": "educacion",
+      "lat": 4.91389,
+      "lng": -74.154697
+    },
+    {
+      "id": "banco-agrario",
+      "nombre": "Banco Agrario",
+      "detalle": "Parque Principal",
+      "cat": "comercio",
+      "lat": 4.928098,
+      "lng": -74.174621
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Centro, Subachoque",
+      "cat": "comercio",
+      "lat": 4.928761,
+      "lng": -74.173597
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Centro, Subachoque",
+      "cat": "comercio",
+      "lat": 4.927905,
+      "lng": -74.173237
+    },
+    {
+      "id": "cc-la-colina",
+      "nombre": "Centro Comercial La Colina",
+      "detalle": "Centro, Subachoque",
+      "cat": "comercio",
+      "lat": 4.927036,
+      "lng": -74.173866
+    },
+    {
+      "id": "d1",
+      "nombre": "Tiendas D1",
+      "detalle": "Subachoque",
+      "cat": "comercio",
+      "lat": 4.929104,
+      "lng": -74.172408
+    },
+    {
+      "id": "el-municipal",
+      "nombre": "Restaurante El Municipal",
+      "detalle": "Centro, Subachoque",
+      "cat": "comida",
+      "lat": 4.92879,
+      "lng": -74.174911
+    },
+    {
+      "id": "la-molienda-de-tavo",
+      "nombre": "La Molienda de Tavo",
+      "detalle": "Subachoque",
+      "cat": "comida",
+      "lat": 4.932491,
+      "lng": -74.173064
+    },
+    {
+      "id": "madeleine-crepes",
+      "nombre": "Madeleine Crepes",
+      "detalle": "Centro, Subachoque",
+      "cat": "comida",
+      "lat": 4.927855,
+      "lng": -74.173327
+    },
+    {
       "id": "el-recreo",
       "nombre": "El Recreo",
-      "detalle": "Subachoque",
+      "detalle": "Barrio de Subachoque",
       "cat": "barrio",
       "lat": 4.928482,
       "lng": -74.168692
     },
     {
-      "id": "centro",
-      "nombre": "Centro",
-      "detalle": "Vereda de Subachoque",
+      "id": "la-pradera",
+      "nombre": "La Pradera",
+      "detalle": "Centro poblado de Subachoque",
       "cat": "vereda",
-      "lat": 4.94335,
-      "lng": -74.174686
+      "lat": 5.004176,
+      "lng": -74.132066
     },
     {
-      "id": "hacienda-sevilla",
-      "nombre": "Hacienda Sevilla",
-      "detalle": "Vereda de Subachoque",
+      "id": "el-guamal",
+      "nombre": "El Guamal",
+      "detalle": "Centro poblado de Subachoque",
       "cat": "vereda",
-      "lat": 4.91061,
-      "lng": -74.169721
+      "lat": 5.038546,
+      "lng": -74.118385
     },
     {
-      "id": "villa-nueva",
-      "nombre": "Villa Nueva",
+      "id": "galdamez",
+      "nombre": "Galdámez",
       "detalle": "Vereda de Subachoque",
       "cat": "vereda",
-      "lat": 4.941954,
-      "lng": -74.187564
+      "lat": 4.91548,
+      "lng": -74.154101
     },
     {
       "id": "casablanca",
@@ -380,28 +370,76 @@
       "lng": -74.164755
     },
     {
-      "id": "galdamez",
-      "nombre": "Galdamez",
+      "id": "cascajal",
+      "nombre": "Cascajal",
       "detalle": "Vereda de Subachoque",
       "cat": "vereda",
-      "lat": 4.91548,
-      "lng": -74.154101
+      "lat": 4.981366,
+      "lng": -74.165066
     },
     {
-      "id": "escuela-galdamez",
-      "nombre": "Escuela Galdamez",
-      "detalle": "Subachoque · a 2,6 km",
-      "cat": "educacion",
-      "lat": 4.91389,
-      "lng": -74.154697
+      "id": "cinco-caminos",
+      "nombre": "Cinco Caminos",
+      "detalle": "Vereda de Subachoque",
+      "cat": "vereda",
+      "lat": 4.967969,
+      "lng": -74.213139
     },
     {
-      "id": "salon-victoria",
-      "nombre": "Salon Victoria",
-      "detalle": "Subachoque · a 3,2 km",
-      "cat": "centro",
-      "lat": 4.901104,
-      "lng": -74.185202
+      "id": "el-valle",
+      "nombre": "El Valle",
+      "detalle": "Vereda de Subachoque",
+      "cat": "vereda",
+      "lat": 4.947074,
+      "lng": -74.205719
+    },
+    {
+      "id": "agua-blanca",
+      "nombre": "Agua Blanca",
+      "detalle": "Vereda de Subachoque",
+      "cat": "vereda",
+      "lat": 4.972366,
+      "lng": -74.19765
+    },
+    {
+      "id": "santa-rosa",
+      "nombre": "Santa Rosa",
+      "detalle": "Vereda de Subachoque",
+      "cat": "vereda",
+      "lat": 4.961505,
+      "lng": -74.11743
+    },
+    {
+      "id": "santa-ines",
+      "nombre": "Santa Inés",
+      "detalle": "Vereda de Subachoque",
+      "cat": "vereda",
+      "lat": 4.983072,
+      "lng": -74.155601
+    },
+    {
+      "id": "plaza-cultura",
+      "nombre": "Plaza de la Cultura",
+      "detalle": "Centro, Subachoque",
+      "cat": "turismo",
+      "lat": 4.930034,
+      "lng": -74.171566
+    },
+    {
+      "id": "pantano-de-arce",
+      "nombre": "Pantano de Arce",
+      "detalle": "Humedal, vereda Pantano de Arce",
+      "cat": "turismo",
+      "lat": 5.002718,
+      "lng": -74.178576
+    },
+    {
+      "id": "ferreria-la-pradera",
+      "nombre": "Ruinas de la Ferrería de La Pradera",
+      "detalle": "La Pradera, Subachoque",
+      "cat": "turismo",
+      "lat": 5.001843,
+      "lng": -74.133959
     },
     {
       "id": "el-rosal",
@@ -592,7 +630,28 @@
       "calificacion": 4.6
     }
   ],
+  "textos": {
+    "historia": "Coopmultrasub, la Cooperativa Multiactiva de Transportadores de Subachoque, reúne a los conductores de taxi del municipio. Desde su oficina en la Calle 2 # 5-63, en el centro del pueblo, presta el servicio de transporte en el casco urbano, en las veredas y hacia los municipios vecinos de la Sabana de Occidente.\n\nAhora la cooperativa da un paso más: llevar el servicio de siempre al celular. Pides el taxi con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa hasta tu puerta.",
+    "mision": "Llevar a los habitantes y visitantes de Subachoque a donde necesiten, en el pueblo y en las veredas, con conductores asociados que conocen el municipio y un servicio seguro, puntual y amable.",
+    "vision": "Que pedir un taxi en Subachoque sea tan fácil como abrir el celular: saber quién llega, cuánto cuesta y llegar tranquilo a casa, de día y de noche.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Viajes a los municipios vecinos",
+      "Traslados a Bogotá y al aeropuerto",
+      "Servicios programados"
+    ],
+    "frase": "Tu taxi de confianza en Subachoque"
+  },
   "fuentes": [
-    "https://www.emis.com/php/company-profile/CO/Cooperativa_Multiactiva_de_Transportadores_de_Subachoque_Coopmultrasub_Ltda_es_13063659.html"
+    "https://www.emis.com/php/company-profile/CO/Cooperativa_Multiactiva_de_Transportadores_de_Subachoque_Coopmultrasub_Ltda_es_13063659.html",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Cliente de interOS. Oscar indica que tiene unos 20 taxis (número exacto por confirmar).",
+    "Razón social, dirección (Calle 2 # 5-63) y actividad «transporte interurbano y rural»: perfil de EMIS.",
+    "Sin página web ni teléfono público confirmado. Un resumen de búsqueda atribuye a EMIS el 313 876 9182, pero EMIS lo muestra solo pagando: confirmarlo con la cooperativa antes de publicarlo.",
+    "La fecha de constitución que muestra EMIS no es confiable (sale la fecha del día de la consulta).",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
   ]
 }

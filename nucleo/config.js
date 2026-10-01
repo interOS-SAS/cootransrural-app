@@ -8,27 +8,37 @@
 export const RAIZ = new URL('../', import.meta.url);
 
 function idPedido() {
-  const crudo = globalThis.CT_EMPRESA || new URLSearchParams(globalThis.location?.search || '').get('e') || 'cootransrural';
-  return String(crudo).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40) || 'cootransrural';
+  const crudo = String(globalThis.CT_EMPRESA || new URLSearchParams(globalThis.location?.search || '').get('e') || 'cootransrural').toLowerCase();
+  // Solo ids válidos (a-z, 0-9 y guiones); cualquier otra cosa es Cootransrural.
+  return /^[a-z0-9-]{1,40}$/.test(crudo) ? crudo : 'cootransrural';
 }
 
 async function cargarFicha(id) {
-  const r = await fetch(new URL(`empresas/${id}/ficha.json`, RAIZ));
-  if (!r.ok) throw new Error(`No existe la ficha de «${id}»`);
-  return r.json();
+  // Hasta 3 intentos: en datos móviles la primera petición a veces falla.
+  let error;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const r = await fetch(new URL(`empresas/${id}/ficha.json`, RAIZ));
+      if (r.status === 404) throw Object.assign(new Error(`No existe la cooperativa «${id}»`), { definitivo: true });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return await r.json();
+    } catch (e) {
+      error = e;
+      if (e.definitivo) break;
+      await new Promise((ok) => setTimeout(ok, 700 * (i + 1)));
+    }
+  }
+  throw error;
 }
 
-let ficha;
-try {
-  ficha = await cargarFicha(idPedido());
-} catch (e) {
-  console.warn('[config]', e.message, '· se usa Cootransrural');
-  ficha = await cargarFicha('cootransrural');
-}
+// Si no carga la ficha pedida, NO se muestra otra cooperativa en su lugar: la
+// página avisa que no pudo cargar (ver la pantalla de carga de app/ y conductor/).
+const ficha = await cargarFicha(idPedido());
 
 export const FICHA = ficha;
 export const ID_EMPRESA = ficha.id;
-export const ES_PROPUESTA = ficha.estado === 'propuesta';
+// Sin «estado» explícito se trata como propuesta (franja y sin indexar): más seguro.
+export const ES_PROPUESTA = ficha.estado !== 'cliente';
 export const EMPRESA = ficha.EMPRESA;
 export const COLORES = ficha.colores || {};
 export const CENTRO = ficha.CENTRO;

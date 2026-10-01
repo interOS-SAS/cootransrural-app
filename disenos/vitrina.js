@@ -2,13 +2,18 @@
 // marco de celular (iframe de 390 × 844 escalado). Cada diseño usa su propia
 // sala (vitrina-a, vitrina-b, vitrina-c) para que el pasajero y el conductor de
 // esa columna se encuentren entre sí sin mezclarse con los demás.
+// Sirve para todas las cooperativas: cada una tiene su página <id>/disenos/
+// (generada desde plantillas/disenos/index.html) que fija window.CT_EMPRESA.
 import * as N from '../nucleo/index.js';
 
 const $ = (sel, raiz = document) => raiz.querySelector(sel);
 const $$ = (sel, raiz = document) => [...raiz.querySelectorAll(sel)];
 const ANCHO = 390;
 const ALTO = 844;
-const NOMBRES = { a: 'Ámbar Urbano', b: 'Verde Rosal', c: 'Noche Neón' };
+// Los nombres salen de la página (el diseño B cambia de nombre según la cooperativa).
+const NOMBRES = Object.fromEntries(['a', 'b', 'c'].map((d) => [d, document.getElementById(`titulo-${d}`)?.textContent.trim() || `Diseño ${d.toUpperCase()}`]));
+// Ícono de la cooperativa (ruta relativa a la página, la pone la plantilla).
+const ICONO = document.documentElement.dataset.icono || '../img/icono-192.png';
 
 /* ---------------- La sala del usuario no se toca ----------------
    La app guarda en el celular la sala que recibe por ?sala=… (núcleo). Los
@@ -33,9 +38,11 @@ const rutaCompleta = (d, rol) => `../${carpeta(rol)}/?d=${d}`;
 const urlAbsoluta = (ruta) => new URL(ruta, location.href).href;
 
 // ¿Ya está publicado este diseño? (otros equipos los construyen en paralelo)
+// Los archivos de los diseños están junto a este módulo (disenos/a, b, c), no
+// junto a la página (que para las demás cooperativas vive en <id>/disenos/).
 const existencias = new Map();
 function disenoDisponible(d, rol) {
-  const archivo = `${d}/${rol === 'conductor' ? 'conductor' : 'pasajero'}.js`;
+  const archivo = new URL(`${d}/${rol === 'conductor' ? 'conductor' : 'pasajero'}.js`, import.meta.url).href;
   if (!existencias.has(archivo)) {
     existencias.set(archivo, fetch(archivo, { method: 'HEAD', cache: 'no-store' }).then((r) => r.ok).catch(() => true));
   }
@@ -56,7 +63,7 @@ function armarColumna(col) {
     </div>
     <div class="v-marco">
       <div class="v-pantalla">
-        <div class="v-espera"><img src="../img/icono-192.png" alt="" width="64" height="64"><span class="anillo"></span><span class="texto">Cargando el diseño…</span></div>
+        <div class="v-espera"><img src="${ICONO}" alt="" width="64" height="64"><span class="anillo"></span><span class="texto">Cargando el diseño…</span></div>
       </div>
     </div>
     <div class="v-acciones">

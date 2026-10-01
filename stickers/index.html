@@ -4,18 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Stickers QR para imprimir · Cootransrural</title>
-  <meta name="description" content="Genera e imprime los stickers con código QR para pedir taxi con la app de Cootransrural: taxis, neveras, restaurantes y conjuntos.">
-  <meta name="theme-color" content="#0B4F2E">
+  <meta name="description" content="Genera e imprime los stickers con código QR para pedir taxi con la app de Cootransrural en El Rosal: taxis, neveras, restaurantes y conjuntos.">
+  <meta name="theme-color" content="#052A17">
+  <script>window.CT_EMPRESA = 'cootransrural';</script>
   <link rel="icon" href="../img/favicon-32.png" type="image/png">
   <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
   <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
-  <link rel="stylesheet" href="stickers.css?v=966d39cf46">
+  <link rel="stylesheet" href="../stickers/stickers.css?v=d6cd15e027">
   <style id="estilo-pagina">@page { size: 215.9mm 279.4mm; margin: 0; }</style>
 </head>
 <body>
   <header class="barra">
     <a class="marca" href="../app/" title="Abrir la app del pasajero">
-      <img src="../img/icono.svg" alt="" width="40" height="40">
+      <img id="marca-icono" src="../img/icono.svg" alt="" width="40" height="40">
       <span><strong>Cootransrural</strong><small>Stickers QR para imprimir</small></span>
     </a>
     <p class="barra-lema">Un QR en cada taxi, nevera y mostrador: <b>pide tu taxi con la app</b>.</p>
@@ -59,7 +60,7 @@
 
       <section class="grupo">
         <h2><span class="paso">4</span> Destino del QR</h2>
-        <label class="campo"><span>Otra URL base (opcional)</span><input type="url" id="url-base" placeholder="https://app.cootransrural.com/descargar/" autocomplete="off" spellcheck="false"></label>
+        <label class="campo"><span>Otra URL base (opcional)</span><input type="url" id="url-base" placeholder="https://app.tucooperativa.com/descargar/" autocomplete="off" spellcheck="false"></label>
         <p class="ayuda">Déjala vacía para usar la página de descarga de esta app. Cuando tengan dominio propio, escríbelo aquí.</p>
         <p class="error" id="error-url" hidden></p>
         <div class="url-final"><span>El QR del móvil seleccionado abre:</span><a id="url-final" href="#" target="_blank" rel="noopener"></a></div>
@@ -136,9 +137,13 @@
     </section>
   </main>
 
+  <footer class="pie-pagina">
+    <p><a href="../app/">App de Cootransrural</a> · Desarrollado por <a href="https://interos.com.co" rel="noopener">interOS</a></p>
+  </footer>
+
   <div id="impresion" aria-hidden="true"></div>
   <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
 
-  <script type="module" src="stickers.js?v=eefa2bde5a"></script>
+  <script type="module" src="../stickers/stickers.js?v=89ef09a5b1"></script>
 </body>
 </html>

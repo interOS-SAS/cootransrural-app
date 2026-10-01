@@ -12,6 +12,7 @@ const DIAS_AVISO = 100; // a partir de aquí el semáforo se pone en amarillo
 
 export function crearSeccionesConductor({ N, c, app, ui, avisar, irATab, repintar }) {
   const { icono, esc } = C;
+  const E = C.empresa;
   const yo = () => c.perfil || {};
 
   const cabeza = (titulo, subtitulo = '', volver = null) => `<header class="c-pantalla-cabeza${volver ? ' c-con-volver' : ''}">
@@ -114,7 +115,7 @@ export function crearSeccionesConductor({ N, c, app, ui, avisar, irATab, repinta
       ${cabeza('Mi taxi')}
       <div class="c-mi-taxi c-borde-neon">
         <div class="c-mi-taxi-arte">${C.ilustracionTaxi('mt', { movil: cd.movil || '' })}</div>
-        <div class="c-mi-taxi-datos">${C.placaHTML(cd.placa || '')}<div><strong>Móvil ${esc(cd.movil || '')}</strong><small>${esc(cd.vehiculo || 'Kia Picanto')} · ${esc(cd.color || 'Amarillo')}</small></div></div>
+        <div class="c-mi-taxi-datos">${C.placaHTML(cd.placa || '')}<div><strong>Móvil ${esc(cd.movil || '')}</strong><small>${esc(cd.vehiculo || E.vehiculo)} · ${esc(cd.color || E.colorTaxi)}</small></div></div>
       </div>
       <div class="c-perfil-cabeza">
         ${C.avatarHTML(cd.nombre, 'c-avatar-grande')}
@@ -124,11 +125,13 @@ export function crearSeccionesConductor({ N, c, app, ui, avisar, irATab, repinta
       <div class="c-lista">
         <button type="button" class="c-fila-menu" data-accion="sub" data-sub="documentos">${icono('documento')}<span><strong>Documentos del vehículo</strong><small>${alertas ? `${alertas} ${alertas === 1 ? 'documento necesita' : 'documentos necesitan'} atención` : 'Todo al día'}</small></span><i class="c-semaforo-mini" data-estado="${estados.includes('vencido') ? 'vencido' : alertas ? 'pronto' : 'ok'}" aria-hidden="true"></i>${icono('chevron')}</button>
         <button type="button" class="c-fila-menu" data-accion="sub" data-sub="ajustes">${icono('ajustes')}<span><strong>Ajustes</strong><small>GPS, sonido, sala y diseño</small></span>${icono('chevron')}</button>
-        <a class="c-fila-menu" href="tel:${esc(N.EMPRESA.telefono)}">${icono('telefono')}<span><strong>Llamar a la central</strong><small>${esc(N.EMPRESA.telefonoVisible)} · 24 horas</small></span>${icono('chevron')}</a>
-        <a class="c-fila-menu" href="../app/">${icono('perfil')}<span><strong>App del pasajero</strong><small>Ábrela para probar un viaje completo</small></span>${icono('chevron')}</a>
+        ${E.telefono
+          ? `<a class="c-fila-menu" href="tel:${esc(E.telefono)}">${icono('telefono')}<span><strong>Llamar a la central</strong><small>${esc(E.telefonoVisible)}${E.servicio24h ? ' · 24 horas' : ''}</small></span>${icono('chevron')}</a>`
+          : `<div class="c-fila-info">${icono('telefono')}<span><strong>Teléfono de la central: pronto</strong><small>${esc(E.nombre)} lo publicará en la app</small></span></div>`}
+        <a class="c-fila-menu" href="${esc(C.urlCooperativa('app/'))}">${icono('perfil')}<span><strong>App del pasajero</strong><small>Ábrela para probar un viaje completo</small></span>${icono('chevron')}</a>
         <button type="button" class="c-fila-menu c-fila-peligro" data-accion="cerrar-sesion">${icono('salir')}<span><strong>Cerrar sesión</strong><small>Te desconecta y sale del móvil ${esc(cd.movil || '')}</small></span></button>
       </div>
-      <p class="c-pie-marca">${esc(N.EMPRESA.razonSocial)}<br>«${esc(N.EMPRESA.lema)}»</p>
+      ${C.pieMarcaHTML({ conDesde: false })}
     </section>`;
   }
 
@@ -181,10 +184,12 @@ export function crearSeccionesConductor({ N, c, app, ui, avisar, irATab, repinta
       </div>
       <h2 class="c-seccion-titulo">Diseño de la app</h2>
       <div class="c-disenos" role="radiogroup" aria-label="Diseño">
-        ${[['a', 'Diseño A', 'Ámbar Urbano'], ['b', 'Diseño B', 'Verde Rosal'], ['c', 'Diseño C', 'Noche Neón']]
+        ${C.nombresDisenos()
           .map(([id, t, s]) => `<button type="button" role="radio" aria-checked="${d === id}" class="c-diseno c-diseno-${id}" data-accion="diseno" data-d="${id}"><span class="c-diseno-muestra" aria-hidden="true"></span><strong>${t}</strong><small>${s}</small></button>`)
           .join('')}
       </div>
+      <h2 class="c-seccion-titulo">Acerca de</h2>
+      ${C.acercaDeHTML()}
     </section>`;
   }
 
@@ -238,7 +243,7 @@ export function crearSeccionesConductor({ N, c, app, ui, avisar, irATab, repinta
     'volver-taxi': () => irATab('perfil'),
     meta: (b) => {
       ui.meta = Number(b.dataset.valor);
-      localStorage.setItem('ct.c.meta', String(ui.meta));
+      localStorage.setItem(C.claveLocal('meta'), String(ui.meta));
       repintar();
     },
     gps: async (b) => {

@@ -1,22 +1,91 @@
-// Prueba del diseño A «Ámbar Urbano» en Chromium sin pantalla.
-//  1) Pasajero (390×844, táctil): registro por la interfaz, destino «Tierra Grata»,
+// Prueba del diseño A «Ámbar Urbano» en Chromium sin pantalla, para CUALQUIER cooperativa.
+//  1) Pasajero (390×844, táctil): registro por la interfaz, un destino de la ficha,
 //     viaje completo con el conductor simulado, pago «Simular pago con QR»,
 //     calificación y el viaje en «Mis viajes». Además, un segundo pedido cancelado.
 //  2) Conductor: ingreso, conexión, «Simular solicitud», aceptar deslizando,
 //     «Llegué», código de abordaje, fin del viaje, QR de cobro, pago y calificación.
-//  3) Capturas en /tmp/cootrans/capturas/a/ (también a 360×740 y escritorio 1280×800).
+//  3) Capturas en /tmp/cootrans/capturas/a/<id>/ (también a 360×740 y escritorio 1280×800).
 //  4) Falla si hay errores de JavaScript (salvo recursos externos caídos).
-//  Además: sin cámara, sin GPS, solicitud que vence y rendimiento durante el viaje.
-// Uso: node pruebas/diseno-a.mjs [url_base]   (por defecto http://localhost:8771/)
+//  5) En cada captura revisa el texto visible: nunca «null», «undefined» ni «NaN»; en las
+//     otras cooperativas, nada de Cootransrural ni de El Rosal; enlaces tel: y mailto: completos.
+//  Además: sin cámara, sin GPS, solicitud que vence, rendimiento durante el viaje, una ruta
+//  con tarifa fija de la ficha y la separación entre cooperativas (el pasajero registrado
+//  aquí no aparece, ni con su historial, en otras dos cooperativas del mismo navegador).
+// Uso: node pruebas/diseno-a.mjs [url_base] [--empresa=<id>]   (por defecto http://localhost:8771/ y cootransrural)
 //      CAPTURAS=/otra/carpeta/ node pruebas/diseno-a.mjs …   (para guardar las capturas en otro lado)
 import { chromium } from '/tmp/cootrans/npm/node_modules/playwright-core/index.mjs';
-import { mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 
-const BASE = (process.argv[2] || 'http://localhost:8771/').replace(/\/?$/, '/');
+const argumentos = process.argv.slice(2);
+const EMPRESA = (argumentos.find((a) => a.startsWith('--empresa='))?.split('=')[1] || 'cootransrural').toLowerCase();
+const BASE = (argumentos.find((a) => !a.startsWith('--')) || 'http://localhost:8771/').replace(/\/?$/, '/');
 const EXE = process.env.CHROMIUM || '/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome';
-const ROSAL = { latitude: 4.8531, longitude: -74.2611 };
-const CAPTURAS = (process.env.CAPTURAS || '/tmp/cootrans/capturas/a/').replace(/\/?$/, '/');
+
+/* ---------------- datos de la cooperativa (de su ficha) ---------------- */
+const TEXTO_FICHA = readFileSync(new URL(`../empresas/${EMPRESA}/ficha.json`, import.meta.url), 'utf8');
+const FICHA = JSON.parse(TEXTO_FICHA);
+const PRINCIPAL = EMPRESA === 'cootransrural';
+const PROPUESTA = FICHA.estado === 'propuesta';
+const E = FICHA.EMPRESA;
+const NOMBRE = E.nombreCorto || E.nombre;
+const PUEBLO = E.pueblo || String(E.municipio || '').split(',')[0];
+const TIENE_TELEFONO = String(E.telefono || '').replace(/\D/g, '').length >= 7;
+const WHATSAPP = String(E.whatsapp || '').replace(/\D/g, '');
+const TIENE_WHATSAPP = WHATSAPP.length >= 10;
+// Llave Bre-B de ejemplo: @<nombre corto sin tildes ni espacios><móvil>.
+const LLAVE = `@${String(E.nombreCorto || E.nombre).toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, '')}`;
+const RAIZ_COOP = PRINCIPAL ? BASE : `${BASE}${EMPRESA}/`;
+const PREFIJO = PRINCIPAL ? 'ct.' : `ct.${EMPRESA}.`;
+const CENTRO = { latitude: FICHA.CENTRO.lat, longitude: FICHA.CENTRO.lng };
+const fichaDe = (id) => JSON.parse(readFileSync(new URL(`../empresas/${id}/ficha.json`, import.meta.url), 'utf8'));
+const existeFicha = (id) => existsSync(new URL(`../empresas/${id}/ficha.json`, import.meta.url));
+// Separación: el pasajero registrado aquí no debe aparecer en otras dos cooperativas.
+const OTRAS = ['cootransrural', 'tabio', 'subachoque'].filter((id) => id !== EMPRESA && existeFicha(id)).slice(0, 2);
+const CAPTURAS = (process.env.CAPTURAS || `/tmp/cootrans/capturas/a/${EMPRESA}/`).replace(/\/?$/, '/');
 mkdirSync(CAPTURAS, { recursive: true });
+
+const distanciaKm = (a, b) => {
+  const r = (g) => (g * Math.PI) / 180;
+  const h = Math.sin(r(b.lat - a.lat) / 2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(r(b.lng - a.lng) / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(h));
+};
+const LUGARES = FICHA.LUGARES.filter((l) => l.nombre && Number.isFinite(l.lat));
+// Un nombre sirve para buscarlo con :has-text si no aparece dentro de otro lugar.
+const nombreUnico = (l, lista = LUGARES) => l.nombre.length >= 5 && !lista.some((o) => o !== l && `${o.nombre} ${o.detalle || ''}`.toLowerCase().includes(l.nombre.toLowerCase()));
+// Destino del viaje: Tierra Grata en El Rosal; en las demás, un lugar a 1-2,6 km del centro.
+const DESTINO = PRINCIPAL
+  ? 'Tierra Grata'
+  : LUGARES.filter((l) => nombreUnico(l) && distanciaKm(FICHA.CENTRO, l) >= 1 && distanciaKm(FICHA.CENTRO, l) <= 2.6)
+    .sort((a, b) => Math.abs(distanciaKm(FICHA.CENTRO, a) - 1.6) - Math.abs(distanciaKm(FICHA.CENTRO, b) - 1.6))[0]?.nombre;
+// Segundo pedido (el que se cancela): un lugar de salud o, si no hay, de otra categoría.
+const SEGUNDO = (() => {
+  if (PRINCIPAL) return { cat: 'salud', nombre: 'Puesto de Salud' };
+  for (const cat of ['salud', 'comercio', 'educacion', 'centro', 'barrio', 'vereda']) {
+    const delCat = LUGARES.filter((l) => l.cat === cat);
+    const l = delCat.find((x) => x.nombre !== DESTINO && nombreUnico(x, delCat));
+    if (l) return { cat, nombre: l.nombre };
+  }
+  return null;
+})();
+// Ruta fija: un municipio de la tabla que está en los lugares (para tocarlo en el buscador).
+const RUTA_FIJA = (() => {
+  for (const r of FICHA.RUTAS || []) {
+    const lugar = LUGARES.find((l) => l.id === r.id);
+    if (!lugar || !Number.isFinite(Number(r.valor))) continue;
+    const delCat = LUGARES.filter((l) => l.cat === lugar.cat);
+    if (nombreUnico(lugar, delCat)) return { ...r, lugar };
+  }
+  return null;
+})();
+// Móviles de la demo: los de la ficha (Cootransrural conserva el 023 y el 044).
+const MOVILES = FICHA.CONDUCTORES_DEMO.map((c) => String(c.movil).padStart(3, '0'));
+const MOVIL_DEMO = MOVILES.includes('023') ? '023' : MOVILES[0];
+const MOVIL_2 = PRINCIPAL ? '044' : MOVILES.filter((m) => m !== MOVIL_DEMO).slice(-1)[0] || MOVIL_DEMO;
+if (!DESTINO || !SEGUNDO) {
+  console.log(`✘ la ficha de «${EMPRESA}» no tiene lugares para probar (destino: ${DESTINO}, segundo: ${SEGUNDO?.nombre})`);
+  process.exit(1);
+}
+console.log(`Cooperativa: ${EMPRESA} (${FICHA.estado}) · ${RAIZ_COOP} · destino «${DESTINO}» · segundo «${SEGUNDO.nombre}» (${SEGUNDO.cat}) · móviles ${MOVIL_DEMO} y ${MOVIL_2}`);
 
 const t0 = Date.now();
 const seg = () => `${Math.round((Date.now() - t0) / 1000)} s`;
@@ -54,10 +123,55 @@ const registrarAvisos = () => {
 };
 
 const navegador = await chromium.launch({ executablePath: EXE });
-const movil = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, geolocation: ROSAL, permissions: ['geolocation'], locale: 'es-CO', timezoneId: 'America/Bogota' };
+const movil = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, geolocation: CENTRO, permissions: ['geolocation'], locale: 'es-CO', timezoneId: 'America/Bogota' };
 
+// Texto que no debe aparecer: datos escritos a mano de Cootransrural en otra cooperativa,
+// y valores vacíos mal pintados en cualquiera.
+const PROHIBIDOS = [/\b(null|undefined|NaN)\b/, /\$\s?0 taxis/i];
+if (!PRINCIPAL) {
+  PROHIBIDOS.push(/Cootransrural/i, /\bVAK\b/, /320 ?904 ?2977/, /recepcion@cootransrural/i, /Verde Rosal/i);
+  // Si la ficha nombra El Rosal (por ejemplo, como ruta), solo se prohíben las frases fijas del diseño.
+  PROHIBIDOS.push(TEXTO_FICHA.includes('El Rosal') ? /\b(?:de|en|desde) El Rosal\b|EL ROSAL/ : /El Rosal/i);
+}
+const problemasTexto = [];
+async function revisarTexto(p, donde) {
+  const r = await p.evaluate(() => {
+    const textos = [document.body.innerText];
+    for (const t of document.querySelectorAll('svg text')) textos.push(t.textContent);
+    for (const n of document.querySelectorAll('[aria-label], [title], [alt], [placeholder]')) {
+      for (const a of ['aria-label', 'title', 'alt', 'placeholder']) if (n.getAttribute(a)) textos.push(n.getAttribute(a));
+    }
+    const malos = [...document.querySelectorAll('a[href]')].map((a) => a.getAttribute('href')).filter((h) => /^tel:(?!\+?\d{3,})/.test(h) || /^mailto:(?![^@\s]+@)/.test(h) || /^https:\/\/wa\.me\/\d{1,11}(?:\?|$)/.test(h) || /undefined|null|NaN/.test(h));
+    return { texto: textos.join('\n'), malos };
+  });
+  for (const re of PROHIBIDOS) {
+    const m = r.texto.match(re);
+    if (m) problemasTexto.push(`${donde}: «${r.texto.slice(Math.max(0, m.index - 40), m.index + m[0].length + 40).replace(/\s+/g, ' ')}»`);
+  }
+  for (const h of r.malos) problemasTexto.push(`${donde}: enlace incompleto «${h}»`);
+}
 async function foto(p, nombre) {
   await p.screenshot({ path: `${CAPTURAS}${nombre}.png` });
+  await revisarTexto(p, nombre);
+}
+// Lee un QR (svg) de la página con jsQR.
+async function leerQR(p, selector) {
+  if (!(await p.evaluate(() => Boolean(window.jsQR)))) await p.addScriptTag({ url: `${BASE}vendor/jsQR.min.js` });
+  return p.evaluate(async (sel) => {
+    const svg = document.querySelector(sel);
+    if (!svg) return null;
+    const img = new Image();
+    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg.outerHTML)}`;
+    await img.decode();
+    const lado = 360;
+    const c = document.createElement('canvas');
+    c.width = c.height = lado;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, lado, lado);
+    ctx.drawImage(img, 20, 20, lado - 40, lado - 40);
+    return window.jsQR(ctx.getImageData(0, 0, lado, lado).data, lado, lado)?.data || null;
+  }, selector);
 }
 async function foto360(p, nombre) {
   await p.setViewportSize({ width: 360, height: 740 });
@@ -76,7 +190,7 @@ async function probarPasajero() {
   await ctx.addInitScript(registrarAvisos);
   const p = await ctx.newPage();
   vigilar(p, 'pasajero');
-  await p.goto(`${BASE}app/?d=a`);
+  await p.goto(`${RAIZ_COOP}app/?d=a`);
 
   // Bienvenida y registro
   await p.waitForSelector('.a-bienvenida .a-bien-diapo');
@@ -90,6 +204,9 @@ async function probarPasajero() {
   await foto(p, 'p03-bienvenida-3');
   await p.click('[data-siguiente]');
   await p.waitForSelector('form.a-registro');
+  const enlacePrivacidad = await p.getAttribute('.a-check a', 'href');
+  const respPrivacidad = await fetch(enlacePrivacidad).catch(() => null);
+  ok(enlacePrivacidad === `${RAIZ_COOP}privacidad/` && respPrivacidad?.ok, `los términos enlazan la privacidad de esta cooperativa (${enlacePrivacidad})`);
   await p.click('button[type=submit]');
   ok((await p.textContent('[data-error]')).includes('nombre'), 'el registro exige el nombre');
   await p.fill('input[name=nombre]', 'Ana María Gómez');
@@ -113,7 +230,7 @@ async function probarPasajero() {
   await p.waitForTimeout(600);
   await foto(p, 'p06-registro-listo');
   await p.click('[data-empezar]');
-  ok(await p.evaluate(() => JSON.parse(localStorage.getItem('ct.pasajero'))?.nombre === 'Ana María Gómez'), 'el pasajero quedó registrado');
+  ok(await p.evaluate((k) => JSON.parse(localStorage.getItem(k))?.nombre === 'Ana María Gómez', `${PREFIJO}pasajero`), `el pasajero quedó registrado (${PREFIJO}pasajero)`);
 
   // Inicio
   await vista(p, 'inicio', 20000);
@@ -121,11 +238,26 @@ async function probarPasajero() {
   await p.waitForTimeout(2500);
   await foto(p, 'p07-inicio');
   ok((await p.$$('.ct-taxi-marcador')).length >= 3, 'hay taxis cercanos en el mapa');
+  ok((await p.textContent('[data-nombre]')).trim() === 'Ana', 'la barra saluda al pasajero por su nombre');
+  ok((await p.$$('.a-rejilla-lugares .a-lugar')).length === 6, 'seis lugares frecuentes en el inicio');
+  const frecuentes = await p.$$eval('.a-rejilla-lugares .a-lugar strong', (ns) => ns.map((n) => n.textContent.trim()));
+  const nombresFicha = new Set(LUGARES.map((l) => l.nombre));
+  ok(frecuentes.length > 0 && frecuentes.every((n) => nombresFicha.has(n)), `los lugares frecuentes son de la ficha de ${PUEBLO} (${frecuentes.join(', ')})`);
+  if (TIENE_TELEFONO) ok(Boolean(await p.$('a.a-central[href^="tel:"]')), 'la central tiene botón para llamar');
+  else ok(Boolean(await p.$('.a-central-sin')) && !(await p.$('a.a-central')) && (await p.textContent('.a-central-sin')).includes('Teléfono de la central: pronto'), 'sin teléfono: «Teléfono de la central: pronto» y sin enlace para llamar');
+  if (PROPUESTA) {
+    ok((await p.textContent('.a-chip-red')).includes(`Demostración para ${E.nombre}`), 'propuesta: «Demostración para …» junto a MODO PRUEBA');
+    ok(await p.evaluate(() => /noindex/.test(document.querySelector('meta[name="robots"]')?.content || '')), 'propuesta: la página no se indexa (noindex)');
+  } else ok(!(await p.$('.a-chip-demo')), 'cliente: sin aviso de demostración');
   ok(await p.isVisible('.a-pin'), 'pin central fijo para ajustar la recogida');
   await foto360(p, 'p07b-inicio-360');
   await p.click('.a-hoja-asa');
   await p.waitForTimeout(700);
   await foto(p, 'p08-inicio-completa');
+  await p.$eval('.a-hoja-contenido', (n) => n.scrollTo({ top: n.scrollHeight }));
+  await p.waitForTimeout(500);
+  await foto(p, 'p08b-inicio-central');
+  await p.$eval('.a-hoja-contenido', (n) => n.scrollTo({ top: 0 }));
   await p.click('.a-hoja-asa');
   await p.waitForTimeout(500);
 
@@ -134,11 +266,11 @@ async function probarPasajero() {
   await p.waitForSelector('.a-buscador.a-abierto');
   await p.waitForTimeout(500);
   await foto(p, 'p09-buscar');
-  await p.fill('[data-q]', 'Tierra Grata');
-  await p.waitForSelector('.a-buscador .a-fila:has-text("Tierra Grata")');
+  await p.fill('[data-q]', DESTINO);
+  await p.waitForSelector(`.a-buscador .a-fila:has-text("${DESTINO}")`);
   await p.waitForTimeout(2200);
   await foto(p, 'p10-resultados');
-  await p.click('.a-buscador .a-fila:has-text("Tierra Grata")');
+  await p.click(`.a-buscador .a-fila:has-text("${DESTINO}")`);
 
   // Confirmar
   await vista(p, 'confirmar', 10000);
@@ -160,6 +292,8 @@ async function probarPasajero() {
   await p.click('[data-programar]');
   await p.waitForSelector('[data-pedir]:not([disabled])');
   await p.click('[data-metodo="qr"]');
+  const claveMetodo = PRINCIPAL ? 'ct.a.metodo' : `ct.a.${EMPRESA}.metodo`;
+  ok(await p.evaluate(([k, principal]) => localStorage.getItem(k) === 'qr' && (principal || localStorage.getItem('ct.a.metodo') === null), [claveMetodo, PRINCIPAL]), `el método de pago se guarda en «${claveMetodo}»`);
   await p.fill('[data-nota]', 'Estoy en la portería');
   await p.click('[data-pedir]');
 
@@ -182,6 +316,7 @@ async function probarPasajero() {
   await p.click('[data-sos]');
   await p.waitForSelector('.a-modal-sos');
   ok(Boolean(await p.$('.a-modal-sos a[href="tel:123"]')), 'SOS llama a la Línea 123');
+  ok(TIENE_TELEFONO === (await p.$$('.a-modal-sos a:has-text("Llamar a la central")')).length > 0, TIENE_TELEFONO ? 'SOS ofrece llamar a la central' : 'sin teléfono: SOS no ofrece llamar a la central');
   await p.waitForTimeout(400);
   await foto(p, 'p17-sos');
   await p.keyboard.press('Escape');
@@ -206,12 +341,16 @@ async function probarPasajero() {
   await vista(p, 'pagar', 80000);
   await p.waitForTimeout(1200);
   await foto(p, 'p20-pagar');
+  ok((await p.textContent('.a-pago-cabeza')).includes(`Gracias por viajar con ${NOMBRE}`), 'al llegar agradece en nombre de la cooperativa');
   await foto360(p, 'p20b-pagar-360');
   await p.click('details[data-otro] summary');
   await p.waitForSelector('[data-qr-otro] svg');
   await p.waitForTimeout(500);
   await foto(p, 'p21-otro-celular');
-  ok(true, 'QR para probar con otro celular');
+  const cobroLeido = await leerQR(p, '[data-qr-otro] .ct-breb-qr svg');
+  const tarjetaOtro = await p.textContent('[data-qr-otro] .ct-breb');
+  ok(new RegExp(`${LLAVE}\\d{3}`).test(tarjetaOtro) && tarjetaOtro.includes(NOMBRE), `la tarjeta Bre-B del pasajero lleva la llave ${LLAVE}<móvil> y el nombre de la cooperativa`);
+  ok(Boolean(cobroLeido) && cobroLeido.includes('/pagar/') && (PRINCIPAL ? !/[?&]e=/.test(cobroLeido) : cobroLeido.includes(`e=${EMPRESA}`)), `el QR Bre-B de prueba lleva el cobro de esta cooperativa (${cobroLeido})`);
   // Sin cámara (Chromium sin pantalla): mensaje claro y se sigue con el pago simulado.
   await p.click('[data-escanear]');
   await p.waitForSelector('.a-camara-error:not([hidden])', { timeout: 10000 });
@@ -252,8 +391,8 @@ async function probarPasajero() {
   // Segundo pedido, cancelado con motivo.
   await p.click('[data-buscar]');
   await p.waitForSelector('.a-buscador.a-abierto');
-  await p.click('.a-cat[data-cat="salud"]');
-  await p.click('.a-buscador .a-fila:has-text("Puesto de Salud")');
+  await p.click(`.a-cat[data-cat="${SEGUNDO.cat}"]`);
+  await p.click(`.a-buscador .a-fila:has-text("${SEGUNDO.nombre}")`);
   await p.waitForSelector('[data-pedir]:not([disabled])', { timeout: 20000 });
   await p.click('[data-pedir]');
   await vista(p, 'buscando', 15000);
@@ -273,7 +412,7 @@ async function probarPasajero() {
   await p.waitForSelector('[data-lista-viajes]');
   await p.waitForTimeout(500);
   const lista = await p.textContent('[data-lista-viajes]');
-  ok(lista.includes('Tierra Grata') && lista.includes('Finalizado'), 'el viaje aparece en Mis viajes como finalizado');
+  ok(lista.includes(DESTINO) && lista.includes('Finalizado'), 'el viaje aparece en Mis viajes como finalizado');
   ok(lista.includes('Cancelado'), 'el pedido cancelado aparece en Mis viajes');
   await foto(p, 'p28-mis-viajes');
   for (const [item, nombre] of [['Tarifas y rutas', 'p29-tarifas'], ['Promociones', 'p30-promociones'], ['Ajustes', 'p31-ajustes'], ['Ayuda', 'p32-ayuda'], ['Programados', 'p33-programados']]) {
@@ -284,6 +423,27 @@ async function probarPasajero() {
     await p.click(`.a-menu-item:has-text("${item}")`);
     await p.waitForTimeout(700);
     await foto(p, nombre);
+    if (item === 'Tarifas y rutas') {
+      ok((await p.textContent('.a-panel.a-abierto')).includes(`Dentro de ${PUEBLO}`), `las tarifas hablan de ${PUEBLO}`);
+      const filas = await p.$$eval('.a-panel.a-abierto .a-tabla tbody th', (ns) => ns.map((n) => n.textContent.trim()));
+      const esperadas = (FICHA.RUTAS || []).filter((r) => r.destino && Number.isFinite(Number(r.valor))).map((r) => r.destino);
+      ok(JSON.stringify(filas) === JSON.stringify(esperadas), `Tarifas y rutas: las ${esperadas.length} rutas de la ficha (${filas.slice(0, 3).join(', ')}…)`);
+    }
+    if (item === 'Ajustes') {
+      await p.$eval('.a-panel.a-abierto [data-acerca]', (n) => n.scrollIntoView({ block: 'end' }));
+      await p.waitForTimeout(400);
+      await foto(p, 'p31b-ajustes-acerca');
+      const acerca = await p.textContent('.a-panel.a-abierto [data-acerca]');
+      ok(acerca.includes('App desarrollada por interOS') && acerca.includes(E.nombre), 'Ajustes: «Acerca de» con la cooperativa y «App desarrollada por interOS»');
+      if (PROPUESTA) ok(acerca.includes(`Demostración para ${E.nombre}`), 'Ajustes: aviso de demostración en la propuesta');
+    }
+    if (item === 'Ayuda') {
+      const tel = await p.$$('.a-panel.a-abierto .a-contacto a[href^="tel:"]');
+      if (TIENE_TELEFONO) ok(tel.length === 1 && (await tel[0].getAttribute('href')) === `tel:${String(E.telefono).replace(/\D/g, '')}` && (await tel[0].textContent()).includes(E.telefonoVisible || E.telefono), `Ayuda: botón para llamar a la central (${E.telefonoVisible})`);
+      else ok(tel.length === 0 && (await p.isVisible('[data-sin-telefono]')), 'Ayuda sin teléfono: texto honesto y sin botón de llamar');
+      const wa = await p.$$eval('.a-panel.a-abierto .a-contacto a[href*="wa.me/"]', (ns) => ns.map((n) => n.getAttribute('href')));
+      ok(TIENE_WHATSAPP ? wa.length === 1 && wa[0].startsWith(`https://wa.me/${WHATSAPP.startsWith('57') ? WHATSAPP : `57${WHATSAPP}`}?`) : wa.length === 0, TIENE_WHATSAPP ? 'Ayuda: WhatsApp de la cooperativa' : 'Ayuda sin WhatsApp: no se ofrece');
+    }
   }
   await p.click('.a-panel.a-abierto [data-cerrar]');
   await p.waitForTimeout(400);
@@ -293,6 +453,7 @@ async function probarPasajero() {
   const historialAvisos = await p.textContent('[data-lista-avisos]');
   ok(['¡Tu taxi va en camino!', '¡Tu taxi está en la puerta!', 'Viaje iniciado', 'Llegaste a tu destino', 'Pago exitoso (prueba)'].every((t) => historialAvisos.includes(t)), 'todos los avisos del viaje quedan en la campana');
   await foto(p, 'p34-avisos');
+  await probarSeparacion(ctx, p);
   console.log(`   pasajero listo (${seg()})`);
   await ctx.close();
 }
@@ -305,11 +466,11 @@ async function probarConductor() {
   await ctx.addInitScript(registrarAvisos);
   const p = await ctx.newPage();
   vigilar(p, 'conductor');
-  await p.goto(`${BASE}conductor/?d=a`);
+  await p.goto(`${RAIZ_COOP}conductor/?d=a`);
   await p.waitForSelector('.a-ingreso');
   await p.waitForTimeout(1300);
-  ok((await p.textContent('.a-ingreso')).includes('móvil 023, PIN 1234'), 'pista de ingreso de la demo');
-  await p.fill('input[name=movil]', '023');
+  ok((await p.textContent('.a-ingreso')).includes(`móvil ${MOVIL_DEMO}, PIN 1234`), `pista de ingreso de la demo (móvil ${MOVIL_DEMO})`);
+  await p.fill('input[name=movil]', MOVIL_DEMO);
   await p.waitForTimeout(200);
   await p.keyboard.type('1234');
   await foto(p, 'c01-ingreso');
@@ -317,6 +478,8 @@ async function probarConductor() {
   await vista(p, 'libre', 15000);
   await p.waitForTimeout(2500);
   await foto(p, 'c02-inicio');
+  ok((await p.textContent('[data-movil]')).includes(MOVIL_DEMO), 'la barra muestra el móvil del conductor');
+  ok((await p.textContent('.a-tarjeta-taxi .a-placa small')).trim() === PUEBLO.toLocaleUpperCase('es-CO'), `la placa dice ${PUEBLO.toLocaleUpperCase('es-CO')}`);
   await p.click('[data-conectar]');
   await p.waitForSelector('[data-conectar][aria-checked="true"]');
   await p.waitForTimeout(1200);
@@ -371,6 +534,10 @@ async function probarConductor() {
   await p.waitForTimeout(700);
   ok(Boolean(await p.$('[data-qr-cobro] svg')), 'se muestra el QR de cobro (svg)');
   await foto(p, 'c11-cobro');
+  const cobroConductor = await leerQR(p, '[data-qr-cobro] .ct-breb-qr svg');
+  ok(Boolean(cobroConductor) && (PRINCIPAL ? !/[?&]e=/.test(cobroConductor) : cobroConductor.includes(`e=${EMPRESA}`)), 'el QR de cobro del conductor es de esta cooperativa');
+  ok((await p.textContent('[data-qr-cobro]')).includes(NOMBRE), 'la tarjeta Bre-B muestra el nombre de la cooperativa');
+  ok((await p.textContent('[data-qr-cobro]')).includes(`${LLAVE}${MOVIL_DEMO}`), `la llave Bre-B de prueba es ${LLAVE}${MOVIL_DEMO}`);
   await foto360(p, 'c11b-cobro-360');
   await vista(p, 'calificar', 20000);
   await p.waitForTimeout(1000);
@@ -398,8 +565,17 @@ async function probarConductor() {
     await p.click(`.a-menu-item:has-text("${item}")`);
     await p.waitForTimeout(700);
     await foto(p, nombre);
+    if (item === 'Mi taxi') {
+      const sticker = await leerQR(p, '.a-panel.a-abierto .a-sticker-qr svg');
+      ok(Boolean(sticker) && sticker.startsWith(`${RAIZ_COOP}descargar/?`) && sticker.includes(`movil=${MOVIL_DEMO}`), `el sticker de «Mi taxi» lleva a la descarga de esta cooperativa (${sticker})`);
+    }
   }
   ok((await p.textContent('.a-panel.a-abierto')).includes('GPS simulado'), 'ajuste de GPS simulado');
+  ok((await p.textContent('.a-panel.a-abierto')).includes(`calles de ${PUEBLO}`), `el GPS simulado recorre ${PUEBLO}`);
+  await p.$eval('.a-panel.a-abierto [data-acerca]', (n) => n.scrollIntoView({ block: 'end' }));
+  await p.waitForTimeout(400);
+  await foto(p, 'c19b-ajustes-acerca');
+  ok((await p.textContent('.a-panel.a-abierto [data-acerca]')).includes('App desarrollada por interOS'), 'Ajustes del conductor: «App desarrollada por interOS»');
   await p.click('.a-panel.a-abierto [data-cerrar]');
   await p.waitForTimeout(400);
   await p.click('[data-campana]');
@@ -414,20 +590,25 @@ async function probarConductor() {
 /* 3) Escritorio y vitrina                                              */
 /* ------------------------------------------------------------------ */
 async function probarEscritorio() {
-  const ctx = await navegador.newContext({ viewport: { width: 1280, height: 800 }, geolocation: ROSAL, permissions: ['geolocation'], locale: 'es-CO', timezoneId: 'America/Bogota' });
-  await ctx.addInitScript(() => {
+  const ctx = await navegador.newContext({ viewport: { width: 1280, height: 800 }, geolocation: CENTRO, permissions: ['geolocation'], locale: 'es-CO', timezoneId: 'America/Bogota' });
+  await ctx.addInitScript((k) => {
     localStorage.setItem('ct.envivo', 'no');
-    localStorage.setItem('ct.pasajero', JSON.stringify({ id: 'p-escritorio', nombre: 'Laura Méndez', celular: '3115550000', calificacion: 5, verificado: true }));
-  });
+    localStorage.setItem(k, JSON.stringify({ id: 'p-escritorio', nombre: 'Laura Méndez', celular: '3115550000', calificacion: 5, verificado: true }));
+  }, `${PREFIJO}pasajero`);
   const p = await ctx.newPage();
   vigilar(p, 'escritorio');
-  await p.goto(`${BASE}app/?d=a`);
+  await p.goto(`${RAIZ_COOP}app/?d=a`);
   await vista(p, 'inicio', 20000);
   await p.waitForTimeout(3500);
   await foto(p, 'e01-escritorio-1280');
   ok(await p.isVisible('.a-escritorio'), 'en pantallas anchas se ve el panel con el QR');
+  const qrEscritorio = await leerQR(p, '.a-escritorio-qr-img svg');
+  ok(qrEscritorio === `${RAIZ_COOP}app/?d=a`, `el QR del panel abre la app de esta cooperativa (${qrEscritorio})`);
+  const panel = await p.textContent('.a-escritorio');
+  ok(panel.includes(NOMBRE) && panel.includes('App desarrollada por interOS'), 'el panel lleva el nombre de la cooperativa y «App desarrollada por interOS»');
+  if (PROPUESTA) ok(panel.includes(`Propuesta de demostración preparada por interOS para ${E.razonSocial}`) && panel.includes('No es la página oficial'), 'propuesta: el panel lo dice claro');
   await p.setViewportSize({ width: 412, height: 860 });
-  await p.goto(`${BASE}app/?d=a&vitrina=1`);
+  await p.goto(`${RAIZ_COOP}app/?d=a&vitrina=1`);
   await vista(p, 'inicio', 20000);
   await p.waitForTimeout(2500);
   const radio = await p.$eval('.a-app', (n) => getComputedStyle(n).borderRadius);
@@ -440,19 +621,19 @@ async function probarEscritorio() {
 /* 4) Casos borde: sin GPS y solicitud que vence                        */
 /* ------------------------------------------------------------------ */
 async function probarBordes() {
-  // Sin permiso de ubicación: aviso de que se usa el centro de El Rosal.
+  // Sin permiso de ubicación: aviso de que se usa el centro del municipio.
   const { geolocation, permissions, ...sinGps } = movil;
   const ctx = await navegador.newContext(sinGps);
-  await ctx.addInitScript(() => {
+  await ctx.addInitScript((k) => {
     localStorage.setItem('ct.envivo', 'no');
-    localStorage.setItem('ct.pasajero', JSON.stringify({ id: 'p-sin-gps', nombre: 'Doña Rosa Pérez', celular: '3115550000', calificacion: 5, verificado: true }));
-  });
+    localStorage.setItem(k, JSON.stringify({ id: 'p-sin-gps', nombre: 'Doña Rosa Pérez', celular: '3115550000', calificacion: 5, verificado: true }));
+  }, `${PREFIJO}pasajero`);
   const p = await ctx.newPage();
   vigilar(p, 'sin-gps');
-  await p.goto(`${BASE}app/?d=a`);
+  await p.goto(`${RAIZ_COOP}app/?d=a`);
   await vista(p, 'inicio', 30000);
   await p.waitForSelector('[data-aviso-gps]:not([hidden])', { timeout: 15000 });
-  ok((await p.textContent('[data-aviso-gps]')).includes('centro de El Rosal'), 'sin GPS avisa que usa el centro de El Rosal');
+  ok((await p.textContent('[data-aviso-gps]')).includes(`centro de ${PUEBLO}`), `sin GPS avisa que usa el centro de ${PUEBLO}`);
   ok((await p.textContent('[data-nombre]')).trim() === 'Doña Rosa', 'el saludo conserva el «Doña»');
   await p.waitForTimeout(1500);
   await foto(p, 'b01-sin-gps');
@@ -463,12 +644,14 @@ async function probarBordes() {
   await ctx2.addInitScript(registrarAvisos);
   const c = await ctx2.newPage();
   vigilar(c, 'vence');
-  await c.goto(`${BASE}conductor/?d=a`);
+  await c.goto(`${RAIZ_COOP}conductor/?d=a`);
   await c.waitForSelector('.a-ingreso');
-  await c.fill('input[name=movil]', '044');
+  await c.waitForTimeout(500);
+  await c.fill('input[name=movil]', MOVIL_2);
   await c.keyboard.type('4321');
   await c.click('.a-ingreso button[type=submit]');
-  await vista(c, 'libre', 15000);
+  // La vista «libre» ya está detrás del ingreso: se espera a que la barra muestre el móvil.
+  await c.waitForFunction((m) => document.querySelector('[data-movil]')?.textContent.includes(m) && !document.querySelector('.a-ingreso'), MOVIL_2, { timeout: 15000 });
   await c.click('[data-simular]');
   await c.waitForSelector('.a-solicitud.a-abierta', { timeout: 45000 });
   await c.waitForSelector('.a-solicitud.a-urgente', { timeout: 30000 });
@@ -477,6 +660,93 @@ async function probarBordes() {
   await c.waitForTimeout(500);
   ok((await c.evaluate(() => window.__avisos)).includes('La solicitud venció'), 'la solicitud sin respuesta vence y se avisa');
   await ctx2.close();
+
+  // La ficha no carga (red caída): el núcleo NO cae a otra cooperativa; a los 15 s la
+  // pantalla de carga avisa con «Reintentar». No se vigila: el 503 es a propósito.
+  if (!PRINCIPAL) {
+    const ctx3 = await navegador.newContext({ ...movil, serviceWorkers: 'block' });
+    await ctx3.addInitScript(() => localStorage.setItem('ct.envivo', 'no'));
+    await ctx3.route(`**/empresas/${EMPRESA}/ficha.json*`, (r) => r.fulfill({ status: 503, body: '' }));
+    const f = await ctx3.newPage();
+    await f.goto(`${RAIZ_COOP}app/?d=a`);
+    await f.waitForFunction(() => /No pudimos cargar/.test(document.getElementById('carga')?.innerText || ''), null, { timeout: 25000 });
+    await f.waitForTimeout(500);
+    const texto = await f.evaluate(() => document.body.innerText);
+    const guardado = await f.evaluate(() => Object.keys(localStorage).filter((k) => /^ct\.(?:pasajero|historial|a\.metodo)/.test(k)));
+    ok(texto.includes('Reintentar') && !/Cootransrural|El Rosal/i.test(texto) && !guardado.length, 'si la ficha no carga: aviso con «Reintentar», sin datos de Cootransrural');
+    await f.screenshot({ path: `${CAPTURAS}b03-sin-ficha.png` });
+    await ctx3.close();
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 5) Separación entre cooperativas (mismo navegador)                   */
+/* ------------------------------------------------------------------ */
+async function probarSeparacion(ctx, p) {
+  for (const otra of OTRAS) {
+    const fo = fichaDe(otra);
+    const raiz = otra === 'cootransrural' ? BASE : `${BASE}${otra}/`;
+    const pref = otra === 'cootransrural' ? 'ct.' : `ct.${otra}.`;
+    const q = await ctx.newPage();
+    vigilar(q, `separación ${otra}`);
+    await q.goto(`${raiz}app/?d=a`);
+    await q.waitForSelector('.a-bienvenida .a-bien-diapo', { timeout: 20000 });
+    await q.waitForTimeout(600);
+    const bienvenida = await q.textContent('.a-bienvenida');
+    const guardado = await q.evaluate((k) => ({ pasajero: localStorage.getItem(`${k}pasajero`), historial: JSON.parse(localStorage.getItem(`${k}historial.pasajero`) || '[]').length }), pref);
+    ok(!guardado.pasajero && guardado.historial === 0 && bienvenida.includes(fo.EMPRESA.nombreCorto || fo.EMPRESA.nombre) && !bienvenida.includes(NOMBRE), `${otra}: el pasajero de ${EMPRESA} no aparece registrado (sale la bienvenida de ${fo.EMPRESA.nombreCorto || fo.EMPRESA.nombre})`);
+    await q.screenshot({ path: `${CAPTURAS}s-${otra}-1-bienvenida.png` });
+    // Con otra persona registrada allí, «Mis viajes» está vacío: no hereda el historial de aquí.
+    await q.evaluate((k) => localStorage.setItem(`${k}pasajero`, JSON.stringify({ id: 'p-otra', nombre: 'Pedro Pérez', celular: '3001112233', calificacion: 5, verificado: true })), pref);
+    await q.reload();
+    await vista(q, 'inicio', 20000);
+    await q.waitForTimeout(800);
+    ok((await q.textContent('[data-nombre]')).trim() === 'Pedro', `${otra}: saluda a su propio pasajero (Pedro), no a Ana`);
+    await q.click('[data-menu]');
+    await q.waitForTimeout(500);
+    await q.click('.a-menu-item:has-text("Mis viajes")');
+    await q.waitForTimeout(700);
+    const panel = await q.textContent('.a-panel.a-abierto');
+    ok(panel.includes('Aún no tienes viajes') && !panel.includes(DESTINO), `${otra}: «Mis viajes» vacío, sin el historial de ${EMPRESA}`);
+    await q.screenshot({ path: `${CAPTURAS}s-${otra}-2-mis-viajes.png` });
+    await q.close();
+  }
+  const intacto = await p.evaluate(([k, h]) => JSON.parse(localStorage.getItem(k) || 'null')?.nombre === 'Ana María Gómez' && JSON.parse(localStorage.getItem(h) || '[]').length >= 2, [`${PREFIJO}pasajero`, `${PREFIJO}historial.pasajero`]);
+  ok(intacto, `después de abrir ${OTRAS.join(' y ')}, el registro y el historial de ${EMPRESA} siguen intactos`);
+}
+
+/* ------------------------------------------------------------------ */
+/* 6) Ruta con tarifa fija                                              */
+/* ------------------------------------------------------------------ */
+async function probarRutaFija() {
+  if (!RUTA_FIJA) {
+    ok(!(FICHA.RUTAS || []).length, 'la ficha no tiene rutas fijas para probar');
+    return;
+  }
+  const ctx = await navegador.newContext(movil);
+  await ctx.addInitScript((k) => {
+    localStorage.setItem('ct.envivo', 'no');
+    localStorage.setItem(k, JSON.stringify({ id: 'p-ruta', nombre: 'Marta Ruiz', celular: '3115550001', calificacion: 5, verificado: true }));
+  }, `${PREFIJO}pasajero`);
+  const p = await ctx.newPage();
+  vigilar(p, 'ruta-fija');
+  await p.goto(`${RAIZ_COOP}app/?d=a`);
+  await vista(p, 'inicio', 30000);
+  await p.waitForTimeout(1500);
+  await p.click('[data-buscar]');
+  await p.waitForSelector('.a-buscador.a-abierto');
+  await p.click(`.a-cat[data-cat="${RUTA_FIJA.lugar.cat}"]`);
+  await p.click(`.a-buscador .a-fila:has-text("${RUTA_FIJA.lugar.nombre}")`);
+  await vista(p, 'confirmar', 10000);
+  await p.waitForSelector('[data-pedir]:not([disabled])', { timeout: 30000 });
+  await p.click('[data-detalle]');
+  await p.waitForTimeout(800);
+  const detalle = await p.textContent('[data-detalle-lista]');
+  const concepto = `Tarifa fija ${PUEBLO} → ${RUTA_FIJA.destino}`;
+  ok(detalle.includes(concepto) && detalle.replace(/\D/g, '').includes(String(RUTA_FIJA.valor)), `ruta fija: «${concepto}» por $${RUTA_FIJA.valor.toLocaleString('es-CO')}`);
+  ok((await p.textContent('[data-ruta-sub]')).includes('tarifa fija'), 'ruta fija: el resumen dice «ruta con tarifa fija»');
+  await foto(p, 'f01-ruta-fija');
+  await ctx.close();
 }
 
 await Promise.all([
@@ -484,9 +754,11 @@ await Promise.all([
   probarConductor().catch((e) => { fallas++; console.log(`✘ conductor: ${e.message}`); }),
   probarEscritorio().catch((e) => { fallas++; console.log(`✘ escritorio: ${e.message}`); }),
   probarBordes().catch((e) => { fallas++; console.log(`✘ bordes: ${e.message}`); }),
+  probarRutaFija().catch((e) => { fallas++; console.log(`✘ ruta fija: ${e.message}`); }),
 ]);
 
 ok(errores.length === 0, `sin errores de JavaScript${errores.length ? `:\n   ${errores.slice(0, 8).join('\n   ')}` : ''}`);
+ok(problemasTexto.length === 0, `texto visible limpio en todas las capturas (sin null/undefined${PRINCIPAL ? '' : ' ni datos de Cootransrural'})${problemasTexto.length ? `:\n   ${[...new Set(problemasTexto)].slice(0, 12).join('\n   ')}` : ''}`);
 await navegador.close();
-console.log(`${fallas ? 'FALLÓ' : 'PASÓ'} · ${fallas} fallas · ${seg()} · capturas en ${CAPTURAS}`);
+console.log(`${fallas ? 'FALLÓ' : 'PASÓ'} · ${EMPRESA} · ${fallas} fallas · ${seg()} · capturas en ${CAPTURAS}`);
 process.exit(fallas ? 1 : 0);

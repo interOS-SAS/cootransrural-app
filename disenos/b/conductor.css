@@ -1,4 +1,4 @@
-/* Diseño B «Verde Rosal» — app del conductor: alto contraste y botones enormes. */
+/* Diseño B «Verde Rosal» — app del conductor: alto contraste y botones enormes. Colores de la cooperativa en comun.css. */
 @import url('./comun.css');
 
 /* ================================================================ */
@@ -23,7 +23,7 @@
 }
 
 .vb-ingreso-cab .vb-foto {
-  background: var(--vb-rosas), linear-gradient(165deg, #10804A 0%, var(--vb-verde) 40%, var(--vb-verde-prof) 100%);
+  background: var(--vb-rosas), linear-gradient(165deg, var(--vb-verde-vivo, #10804A) 0%, var(--vb-verde) 40%, var(--vb-verde-prof) 100%);
 }
 
 /* Velo verde abajo para que la marca se lea sobre la foto (la cara queda libre). */
@@ -32,7 +32,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(0deg, rgba(4, 38, 20, .92) 0%, rgba(4, 38, 20, .6) 30%, rgba(4, 38, 20, 0) 58%);
+  background: linear-gradient(0deg, rgba(var(--vb-oscuro-rgb, 4, 38, 20), .92) 0%, rgba(var(--vb-oscuro-rgb, 4, 38, 20), .6) 30%, rgba(var(--vb-oscuro-rgb, 4, 38, 20), 0) 58%);
 }
 
 .vb-ingreso-cab:has(.sin-foto)::after {
@@ -227,7 +227,7 @@
   justify-content: space-between;
   gap: 8px;
   padding: calc(var(--vb-arriba) + 10px) 10px 26px;
-  background: linear-gradient(180deg, rgba(7, 61, 34, .92) 0%, rgba(7, 61, 34, .75) 60%, rgba(7, 61, 34, 0) 100%);
+  background: linear-gradient(180deg, rgba(var(--vb-prof-rgb, 7, 61, 34), .92) 0%, rgba(var(--vb-prof-rgb, 7, 61, 34), .75) 60%, rgba(var(--vb-prof-rgb, 7, 61, 34), 0) 100%);
   color: #fff;
   pointer-events: none;
 }
@@ -368,7 +368,7 @@
   padding: 10px 16px 20px;
   border-radius: 28px 28px 0 0;
   background: var(--vb-crema);
-  box-shadow: 0 -10px 30px rgba(7, 61, 34, .2);
+  box-shadow: 0 -10px 30px rgba(var(--vb-prof-rgb, 7, 61, 34), .2);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -438,7 +438,8 @@
   justify-self: start;
   min-height: 52px;
   font-size: 17px;
-  background: rgba(255, 255, 255, .12);
+  /* Tono profundo de la cooperativa: con blanco translúcido quedaba en 4,4:1 en algunas paletas. */
+  background: rgba(var(--vb-prof-rgb, 7, 61, 34), .35);
   color: #fff;
   border-color: rgba(255, 255, 255, .6);
 }
@@ -517,7 +518,7 @@
   border-radius: 24px;
   background: #fff;
   border: 4px solid var(--vb-oro);
-  box-shadow: 0 0 0 0 rgba(242, 183, 5, .6), 0 14px 30px rgba(91, 70, 20, .2);
+  box-shadow: 0 0 0 0 rgba(var(--vb-oro-rgb, 242, 183, 5), .6), 0 14px 30px rgba(91, 70, 20, .2);
   animation: vbLatidoOro 1.6s ease-out infinite, vbEntraArriba .4s ease;
   overflow: hidden;
 }
@@ -864,7 +865,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 3px solid rgba(11, 107, 58, .25);
+  border: 3px solid rgba(var(--vb-verde-rgb, 11, 107, 58), .25);
   border-top-color: var(--vb-verde);
   animation: vbGira .9s linear infinite;
 }
@@ -900,12 +901,12 @@
   border-radius: 22px;
   background: var(--vb-verde);
   color: #fff;
-  box-shadow: 0 5px 0 var(--vb-verde-prof), 0 10px 22px rgba(11, 107, 58, .3);
+  box-shadow: 0 5px 0 var(--vb-verde-prof), 0 10px 22px rgba(var(--vb-verde-rgb, 11, 107, 58), .3);
 }
 
 .vb-c-principal.fase-en_viaje {
   background: var(--vb-rojo);
-  box-shadow: 0 5px 0 var(--vb-rojo-osc), 0 10px 22px rgba(166, 31, 31, .3);
+  box-shadow: 0 5px 0 var(--vb-rojo-osc), 0 10px 22px rgba(var(--vb-rojo-osc-rgb, 166, 31, 31), .3);
 }
 
 .vb-c-principal.fase-hacia_origen.resaltado,
@@ -947,7 +948,7 @@
   margin: 0 -16px;
   padding: calc(var(--vb-arriba) + 18px) 18px 70px;
   color: #fff;
-  background: var(--vb-rosas), linear-gradient(160deg, #10804A, var(--vb-verde-prof));
+  background: var(--vb-rosas), linear-gradient(160deg, var(--vb-verde-vivo, #10804A), var(--vb-verde-prof));
 }
 
 .vb-c-cobro-cab small {
@@ -955,7 +956,8 @@
   font-weight: 900;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: var(--vb-oro-texto);
+  /* Casi blanco: el dorado no llega a 4,5:1 sobre el tramo claro del degradado. */
+  color: rgba(255, 255, 255, .96);
 }
 
 .vb-c-cobro-cab h1 {
@@ -973,7 +975,7 @@
   border-radius: 28px;
   background: #fff;
   border: 6px solid var(--vb-verde);
-  box-shadow: 0 0 0 4px #fff, 0 18px 40px rgba(7, 61, 34, .3);
+  box-shadow: 0 0 0 4px #fff, 0 18px 40px rgba(var(--vb-prof-rgb, 7, 61, 34), .3);
   text-align: center;
 }
 
@@ -1042,7 +1044,7 @@
   padding: 12px 14px;
   border-radius: 18px;
   background: var(--vb-verde-suave);
-  border: 1.5px solid #CFE5D6;
+  border: 1.5px solid var(--vb-verde-borde, #CFE5D6);
   font-size: 17px;
   font-weight: 600;
 }

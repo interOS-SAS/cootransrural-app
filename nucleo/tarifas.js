@@ -8,11 +8,14 @@ import { CENTRO, EMPRESA } from './config.js';
 export function rutaFija(origen, destino) {
   if (!origen || !destino) return null;
   if (distanciaKm(origen, CENTRO) > 8) return null;
+  let mejor = null;
   for (const ruta of RUTAS) {
     const lugar = LUGARES.find((l) => l.id === ruta.id);
-    if (lugar && distanciaKm(destino, lugar) <= ruta.radioKm) return ruta;
+    if (!lugar) continue;
+    const d = distanciaKm(destino, lugar);
+    if (d <= ruta.radioKm && (!mejor || d < mejor.d)) mejor = { ruta, d };
   }
-  return null;
+  return mejor?.ruta || null;
 }
 
 // Devuelve el detalle de la tarifa. `km` es la distancia por vía (si se conoce).

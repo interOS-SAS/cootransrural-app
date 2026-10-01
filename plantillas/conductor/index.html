@@ -6,14 +6,15 @@
   <title>{{EMPRESA.nombre}} · Conductor</title>
   <meta name="description" content="App de los conductores de {{EMPRESA.nombre}}.">
   <meta name="theme-color" content="#111111">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+{{#si es_propuesta}}  <meta name="robots" content="noindex">
+{{/si}}  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Conductor {{EMPRESA.nombreCorto}}">
   <link rel="manifest" href="manifest.webmanifest">
   <script>window.CT_EMPRESA = '{{id}}';</script>
-  <link rel="icon" type="image/png" sizes="32x32" href="{{RAIZ}}img/favicon-32.png">
-  <link rel="apple-touch-icon" href="{{RAIZ}}img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{RAIZ}}{{icono.favicon}}">
+  <link rel="apple-touch-icon" href="{{RAIZ}}{{icono.apple}}">
   <link rel="stylesheet" href="{{RAIZ}}fuentes/fuentes.css">
   <style>
     html,body{margin:0;height:100%;background:{{colores.primario}}}
@@ -25,9 +26,20 @@
   </style>
 </head>
 <body>
-  <div id="carga"><div style="text-align:center"><img src="{{RAIZ}}img/icono-192.png" alt=""><p>{{EMPRESA.nombre}}<br><small>{{EMPRESA.lema}}</small></p></div></div>
+  <div id="carga"><div style="text-align:center"><img src="{{RAIZ}}{{icono.i192}}" alt=""><p>{{EMPRESA.nombre}}<br><small>{{EMPRESA.lema}}</small></p></div></div>
   <div id="app"></div>
-  <noscript>Para usar la app de Cootransrural activa JavaScript.</noscript>
+  <noscript>Para usar la app de {{EMPRESA.nombre}} activa JavaScript.</noscript>
+  <script>
+    // Si en 15 s la app no terminó de cargar (sin señal o sin los datos de la
+    // cooperativa), se dice en pantalla en vez de quedarse cargando.
+    setTimeout(function () {
+      var c = document.getElementById('carga');
+      if (!c || c.classList.contains('oculta')) return;
+      var p = c.querySelector('p');
+      if (p) p.innerHTML = 'No pudimos cargar la app.<br><small>Revisa tu conexión a internet e inténtalo de nuevo.</small><br><button type="button" onclick="location.reload()" style="margin-top:14px;min-height:44px;padding:0 20px;border:0;border-radius:999px;background:#fff;color:#111;font:700 15px system-ui,sans-serif;cursor:pointer">Reintentar</button>';
+      c.querySelector('img') && (c.querySelector('img').style.animation = 'none');
+    }, 15000);
+  </script>
   <script type="module">
     import * as N from '{{RAIZ}}nucleo/index.js';
     const VERSION_DISENOS = '';

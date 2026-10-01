@@ -2,15 +2,22 @@
 // verificación por SMS SIMULADA. Sin registro no se puede pedir taxi.
 import { el, esc, icono, casillasCodigo, celularTexto, franjaCuadros, nombreCorto } from './ui.js';
 import { ilustracionUbicacion, ilustracionSeguridad, ilustracionPago } from './ilustraciones.js';
+import * as EM from './empresa.js';
 
 const DIAPOSITIVAS = [
-  { ilus: ilustracionUbicacion, titulo: 'Tu taxi llega a tu puerta', texto: 'Pides con tu ubicación exacta y el móvil más cercano de Cootransrural va por ti, a tu casa o a tu negocio.', puntos: [['pin', 'GPS exacto'], ['auto', '52\u00a0taxis'], ['reloj', '24\u00a0horas']] },
+  {
+    ilus: ilustracionUbicacion,
+    titulo: 'Tu taxi llega a tu puerta',
+    texto: `Pides con tu ubicación exacta y el móvil más cercano de ${EM.NOMBRE} va por ti, a tu casa o a tu negocio.`,
+    // Solo cifras que conocemos: si la ficha no trae el número de taxis, no se inventa.
+    puntos: [['pin', 'GPS exacto'], ['auto', EM.textoTaxis().replace(/ /g, '\u00a0') || 'El móvil más cercano'], ['reloj', EM.SERVICIO_24H ? '24\u00a0horas' : 'Sin llamar']],
+  },
   { ilus: ilustracionSeguridad, titulo: 'Sabes quién te recoge', texto: 'Ves al conductor, el número de móvil, la placa y un código de abordaje. Compartes tu viaje y tienes botón de emergencia.', puntos: [['escudo', 'Placa y móvil'], ['candado', 'Código de 4 dígitos'], ['sos', 'SOS']] },
   { ilus: ilustracionPago, titulo: 'Pagas fácil y ahorras', texto: 'Paga en efectivo o con QR. Programa con 24\u00a0h y ahorra 10\u00a0%. Cada 10 viajes, el siguiente va al 50\u00a0%.', puntos: [['qr', 'QR de prueba'], ['calendario', '−10\u00a0% programando'], ['regalo', 'Viaje 11 al 50\u00a0%']] },
 ];
 
 export function mostrarBienvenida(app, { N, alTerminar }) {
-  const capa = el(`<div class="a-bienvenida" role="dialog" aria-modal="true" aria-label="Bienvenida a Cootransrural"></div>`);
+  const capa = el(`<div class="a-bienvenida" role="dialog" aria-modal="true" aria-label="${esc(`Bienvenida a ${EM.NOMBRE}`)}"></div>`);
   app.append(capa);
   const datos = { nombre: '', celular: '', contacto: { nombre: '', celular: '' } };
   let codigo = '';
@@ -34,7 +41,7 @@ export function mostrarBienvenida(app, { N, alTerminar }) {
           </section>`).join('')}
       </div>
       <header class="a-bien-cabeza">
-        <div class="a-marca"><img src="../img/icono.svg" alt="" width="34" height="34"><span><strong>Cootransrural</strong><small>El Rosal · desde ${N.EMPRESA.fundada}</small></span></div>
+        <div class="a-marca">${EM.marcaIcono(34)}<span><strong>${esc(EM.NOMBRE)}</strong><small>${esc(EM.unir([EM.PUEBLO, EM.FUNDADA ? `desde ${EM.FUNDADA}` : '']))}</small></span></div>
         <button type="button" class="a-btn-texto" data-saltar>Saltar</button>
       </header>
       <footer class="a-bien-pie">
@@ -91,7 +98,7 @@ export function mostrarBienvenida(app, { N, alTerminar }) {
         <label class="a-check">
           <input type="checkbox" name="terminos">
           <span class="a-check-caja" aria-hidden="true">${icono('check', { tam: 16, grosor: 3 })}</span>
-          <span>Acepto los <a href="../privacidad/" target="_blank" rel="noopener">términos y la política de privacidad</a></span>
+          <span>Acepto los <a href="${esc(EM.urlPrivacidad())}" target="_blank" rel="noopener">términos y la política de privacidad</a></span>
         </label>
         <p class="a-error" data-error role="alert"></p>
         <button class="a-btn a-btn-primario a-btn-grande" type="submit">${icono('mensaje', { tam: 20 })}<span>Recibir código por SMS</span></button>
@@ -150,7 +157,7 @@ export function mostrarBienvenida(app, { N, alTerminar }) {
         </div>
         <div class="a-sms-prueba" role="status">
           <span class="a-sms-ico">${icono('mensaje', { tam: 20 })}</span>
-          <span><small>SMS simulado · Cootransrural</small><strong>Código de prueba: <b data-codigo-prueba>${codigo}</b></strong></span>
+          <span><small>SMS simulado · ${esc(EM.NOMBRE)}</small><strong>Código de prueba: <b data-codigo-prueba>${codigo}</b></strong></span>
         </div>
         <h1>Verifica tu celular</h1>
         <p class="a-sub">Escribe el código de 4 dígitos que enviamos al <strong>+57 ${esc(celularTexto(datos.celular))}</strong>.</p>
@@ -205,7 +212,7 @@ export function mostrarBienvenida(app, { N, alTerminar }) {
         ${franjaCuadros()}
         <div class="a-listo-check" aria-hidden="true">${icono('check', { tam: 56, grosor: 3 })}</div>
         <h1>¡Listo, ${esc(primer)}!</h1>
-        <p>Tu cuenta quedó verificada. Ya puedes pedir tu taxi de Cootransrural.</p>
+        <p>${esc(`Tu cuenta quedó verificada. Ya puedes pedir tu taxi de ${EM.NOMBRE}.`)}</p>
         <ul class="a-listo-lista">
           <li>${icono('pin', { tam: 20 })} Mueve el mapa para ajustar tu punto de recogida.</li>
           <li>${icono('escudo', { tam: 20 })} Confirma el móvil, la placa y tu código antes de subir.</li>
@@ -225,3 +232,4 @@ export function mostrarBienvenida(app, { N, alTerminar }) {
   diapositivas();
   return capa;
 }
+

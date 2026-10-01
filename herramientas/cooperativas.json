@@ -3,109 +3,547 @@
     "estado": "cliente",
     "pueblo_osm": "Subachoque",
     "EMPRESA": {
-      "nombre": "Coopmultrasub", "nombreCorto": "Coopmultrasub",
+      "nombre": "Coopmultrasub",
+      "nombreCorto": "Coopmultrasub",
       "razonSocial": "Cooperativa Multiactiva de Transportadores de Subachoque Ltda.",
       "lema": "Tu taxi de confianza en Subachoque",
-      "municipio": "Subachoque, Cundinamarca", "pueblo": "Subachoque",
-      "telefono": "", "telefonoVisible": "", "whatsapp": "", "correo": "",
+      "municipio": "Subachoque, Cundinamarca",
+      "pueblo": "Subachoque",
+      "telefono": "",
+      "telefonoVisible": "",
+      "whatsapp": "",
+      "correo": "",
       "direccion": "Calle 2 # 5-63, Subachoque, Cundinamarca",
-      "web": "", "sitioOficial": "",
-      "fundada": null, "taxisIniciales": null, "taxis": 20, "microbuses": null, "asociados": null,
-      "servicio24h": true, "placaPrefijo": "SUB", "vehiculo": "Kia Picanto", "colorTaxi": "Amarillo",
-      "datosPendientes": ["teléfono de la central", "WhatsApp", "correo", "año de fundación", "número exacto de taxis"]
+      "web": "",
+      "sitioOficial": "",
+      "fundada": null,
+      "taxisIniciales": null,
+      "taxis": 20,
+      "microbuses": null,
+      "asociados": null,
+      "servicio24h": true,
+      "placaPrefijo": "SUB",
+      "vehiculo": "Kia Picanto",
+      "colorTaxi": "Amarillo",
+      "datosPendientes": [
+        "teléfono de la central",
+        "WhatsApp",
+        "correo",
+        "año de fundación",
+        "número exacto de taxis",
+        "misión y visión oficiales"
+      ],
+      "region": "Sabana de Occidente",
+      "oficina": {
+        "lat": 4.929927,
+        "lng": -74.175977
+      }
     },
-    "colores": { "primario": "#1D4E89", "primario2": "#2563A8", "oscuro": "#0B2545", "acento": "#FFC107", "rojo": "#D32F2F" },
-    "destinos": ["El Rosal", "Madrid", "Facatativá", "Tabio", "Tenjo", "Zipaquirá", "portal-80", "aeropuerto"],
-    "fuentes": ["https://www.emis.com/php/company-profile/CO/Cooperativa_Multiactiva_de_Transportadores_de_Subachoque_Coopmultrasub_Ltda_es_13063659.html"]
+    "colores": {
+      "primario": "#1D4E89",
+      "primario2": "#2563A8",
+      "oscuro": "#0B2545",
+      "acento": "#FFC107",
+      "rojo": "#D32F2F"
+    },
+    "destinos": [
+      "El Rosal",
+      "Madrid",
+      "Facatativá",
+      "Tabio",
+      "Tenjo",
+      "Zipaquirá",
+      "portal-80",
+      "aeropuerto"
+    ],
+    "fuentes": [
+      "https://www.emis.com/php/company-profile/CO/Cooperativa_Multiactiva_de_Transportadores_de_Subachoque_Coopmultrasub_Ltda_es_13063659.html",
+      "https://www.openstreetmap.org/"
+    ],
+    "textos": {
+      "historia": "Coopmultrasub, la Cooperativa Multiactiva de Transportadores de Subachoque, reúne a los conductores de taxi del municipio. Desde su oficina en la Calle 2 # 5-63, en el centro del pueblo, presta el servicio de transporte en el casco urbano, en las veredas y hacia los municipios vecinos de la Sabana de Occidente.\n\nAhora la cooperativa da un paso más: llevar el servicio de siempre al celular. Pides el taxi con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa hasta tu puerta.",
+      "mision": "Llevar a los habitantes y visitantes de Subachoque a donde necesiten, en el pueblo y en las veredas, con conductores asociados que conocen el municipio y un servicio seguro, puntual y amable.",
+      "vision": "Que pedir un taxi en Subachoque sea tan fácil como abrir el celular: saber quién llega, cuánto cuesta y llegar tranquilo a casa, de día y de noche.",
+      "servicios": [
+        "Taxi en el casco urbano",
+        "Servicio a las veredas",
+        "Viajes a los municipios vecinos",
+        "Traslados a Bogotá y al aeropuerto",
+        "Servicios programados"
+      ],
+      "frase": "Tu taxi de confianza en Subachoque"
+    },
+    "notas": [
+      "Cliente de interOS. Oscar indica que tiene unos 20 taxis (número exacto por confirmar).",
+      "Razón social, dirección (Calle 2 # 5-63) y actividad «transporte interurbano y rural»: perfil de EMIS.",
+      "Sin página web ni teléfono público confirmado. Un resumen de búsqueda atribuye a EMIS el 313 876 9182, pero EMIS lo muestra solo pagando: confirmarlo con la cooperativa antes de publicarlo.",
+      "La fecha de constitución que muestra EMIS no es confiable (sale la fecha del día de la consulta).",
+      "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+    ],
+    "lugaresRevisados": true
   },
   "tabio": {
     "estado": "propuesta",
     "pueblo_osm": "Tabio",
     "EMPRESA": {
-      "nombre": "Cooptranstermales", "nombreCorto": "Cooptranstermales",
+      "nombre": "Cooptranstermales",
+      "nombreCorto": "Cooptranstermales",
       "razonSocial": "Cooperativa Multiactiva de Transportadores Ltda. (Cooptranstermales)",
       "lema": "Taxis de Tabio, tierra de termales",
-      "municipio": "Tabio, Cundinamarca", "pueblo": "Tabio",
-      "telefono": "3143519920", "telefonoVisible": "314 351 9920", "whatsapp": "573143519920", "correo": "",
+      "municipio": "Tabio, Cundinamarca",
+      "pueblo": "Tabio",
+      "telefono": "3143519920",
+      "telefonoVisible": "314 351 9920",
+      "whatsapp": "573143519920",
+      "correo": "",
       "direccion": "Calle 7 # 5-00, Tabio, Cundinamarca",
-      "web": "", "sitioOficial": "",
-      "fundada": null, "taxisIniciales": null, "taxis": null, "microbuses": null, "asociados": null,
-      "servicio24h": true, "placaPrefijo": "TAB", "vehiculo": "Kia Picanto", "colorTaxi": "Amarillo"
+      "web": "",
+      "sitioOficial": "",
+      "fundada": null,
+      "taxisIniciales": null,
+      "taxis": null,
+      "microbuses": null,
+      "asociados": null,
+      "servicio24h": true,
+      "placaPrefijo": "TAB",
+      "vehiculo": "Kia Picanto",
+      "colorTaxi": "Amarillo",
+      "region": "Sabana Centro",
+      "datosPendientes": [
+        "correo",
+        "año de fundación",
+        "número de taxis",
+        "misión y visión oficiales"
+      ],
+      "oficina": {
+        "lat": 4.918547,
+        "lng": -74.098264
+      }
     },
-    "colores": { "primario": "#0E6E6E", "primario2": "#13898A", "oscuro": "#06393A", "acento": "#FFC107", "rojo": "#D84315" },
-    "destinos": ["Tenjo", "Cajicá", "Chía", "Subachoque", "Zipaquirá", "Cota", "portal-norte", "aeropuerto"],
-    "fuentes": ["https://infotaxicolombia.com.co/empresas-taxi/servicio-de-taxis-trantermales-tabio-cundinamarca-colombia-2/", "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-transtermales"]
+    "colores": {
+      "primario": "#0F5F63",
+      "primario2": "#17807F",
+      "oscuro": "#06363A",
+      "acento": "#F2B33D",
+      "rojo": "#C62828"
+    },
+    "destinos": [
+      "Tenjo",
+      "Cajicá",
+      "Chía",
+      "Subachoque",
+      "Zipaquirá",
+      "Cota",
+      "portal-norte",
+      "aeropuerto"
+    ],
+    "fuentes": [
+      "https://infotaxicolombia.com.co/empresas-taxi/servicio-de-taxis-trantermales-tabio-cundinamarca-colombia-2/",
+      "https://www.yellowpages.com.co/phone-57-3143519920-servicio-de-taxis-Tabio-COEN358318.html",
+      "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-transtermales",
+      "https://www.openstreetmap.org/"
+    ],
+    "textos": {
+      "historia": "Cooptranstermales —la Cooperativa Multiactiva de Transportadores Ltda., conocida como Transtermales— presta el servicio de taxi en Tabio, el municipio de los termales en la Sabana Centro. Desde su oficina en la Calle 7 # 5-00 atiende el casco urbano, las veredas y los viajes a los municipios vecinos.\n\nCon la app, la cooperativa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa, también cuando vas o vuelves de los termales.",
+      "mision": "Prestar el servicio de taxi en Tabio y sus veredas con conductores asociados que conocen el municipio, con seguridad, puntualidad y buen trato para quienes viven aquí y para quienes nos visitan.",
+      "vision": "Ser la forma más fácil y confiable de moverse en Tabio: un taxi a un toque, con tarifa clara y el móvil en el mapa, de día y de noche.",
+      "servicios": [
+        "Taxi en el casco urbano",
+        "Servicio a las veredas",
+        "Viajes a los termales",
+        "Viajes a Tenjo, Chía, Cajicá y la Sabana",
+        "Traslados a Bogotá y al aeropuerto"
+      ],
+      "frase": "Taxis de Tabio, tierra de termales"
+    },
+    "notas": [
+      "Propuesta: no es cliente ni ha autorizado nada.",
+      "Teléfono 314 351 9920 y servicio 24 horas: directorios de taxis (infotaxicolombia, páginas amarillas) bajo «Servicio de Taxis Trantermales».",
+      "Razón social, NIT 832.001.434-6 y dirección Calle 7 # 5-00: directorios empresariales (informacolombia). Los directorios también registran el fijo 601 021 9120.",
+      "Sin sitio web oficial. Colores propios de interOS (agua termal y dorado).",
+      "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+    ],
+    "lugaresRevisados": true
   },
   "tenjo": {
     "estado": "propuesta",
     "pueblo_osm": "Tenjo",
     "EMPRESA": {
-      "nombre": "Cootranstenjo", "nombreCorto": "Cootranstenjo",
-      "razonSocial": "Cooperativa de Transportadores de Tenjo",
+      "nombre": "Cootranstenjo",
+      "nombreCorto": "Cootranstenjo",
+      "razonSocial": "Cooperativa de Transportadores de Tenjo (Cootranstenjo)",
       "lema": "Movilidad que conecta y construye",
-      "municipio": "Tenjo, Cundinamarca", "pueblo": "Tenjo",
-      "telefono": "6018658928", "telefonoVisible": "601 865 8928", "whatsapp": "573125847257", "correo": "recepcion@cootranstenjo.com",
+      "municipio": "Tenjo, Cundinamarca",
+      "pueblo": "Tenjo",
+      "telefono": "3125847257",
+      "telefonoVisible": "312 584 7257",
+      "whatsapp": "573125847257",
+      "correo": "recepcion@cootranstenjo.com",
       "direccion": "Carrera 2 # 4-55, local 204, C.C. Achuá, Tenjo, Cundinamarca",
-      "web": "", "sitioOficial": "https://cootranstenjo.com.co",
-      "fundada": 1996, "taxisIniciales": null, "taxis": null, "microbuses": null, "asociados": null,
-      "servicio24h": true, "placaPrefijo": "TNJ", "vehiculo": "Kia Picanto", "colorTaxi": "Amarillo"
+      "web": "",
+      "sitioOficial": "https://cootranstenjo.com.co",
+      "fundada": 1996,
+      "taxisIniciales": null,
+      "taxis": 11,
+      "microbuses": null,
+      "asociados": null,
+      "servicio24h": true,
+      "placaPrefijo": "TNJ",
+      "vehiculo": "Kia Picanto",
+      "colorTaxi": "Amarillo",
+      "region": "Sabana Centro",
+      "datosPendientes": [
+        "misión y visión oficiales",
+        "modelo de los taxis"
+      ],
+      "oficina": {
+        "lat": 4.87324,
+        "lng": -74.144656
+      }
     },
-    "colores": { "primario": "#14532D", "primario2": "#166534", "oscuro": "#052E16", "acento": "#FACC15", "rojo": "#DC2626" },
-    "destinos": ["Tabio", "Chía", "Cota", "Funza", "Madrid", "Subachoque", "portal-80", "aeropuerto"],
-    "fuentes": ["https://cootranstenjo.com.co/", "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-tenjo-ltda"]
+    "colores": {
+      "primario": "#156B2E",
+      "primario2": "#1B8438",
+      "oscuro": "#0B3E1A",
+      "acento": "#E8A020",
+      "rojo": "#DC2626"
+    },
+    "destinos": [
+      "Tabio",
+      "Chía",
+      "Cota",
+      "Funza",
+      "Madrid",
+      "Subachoque",
+      "portal-80",
+      "aeropuerto"
+    ],
+    "fuentes": [
+      "https://cootranstenjo.com.co/conocenos",
+      "https://www.emis.com/php/company-profile/CO/Cooperativa_De_Transportadores_De_Tenjo_Cootranstenjo_es_8158540.html",
+      "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-tenjo-ltda",
+      "https://www.openstreetmap.org/"
+    ],
+    "textos": {
+      "historia": "La Cooperativa de Transportadores de Tenjo, Cootranstenjo, nació en 1996 y lleva más de dos décadas conectando personas, familias y empresas en Tenjo y la región, con responsabilidad, seguridad y sentido humano.\n\nHoy presta tres servicios: transporte urbano, con 18 vehículos; transporte especial empresarial, escolar y turístico, con 16; y taxi, con 11 taxis que cuentan con central de radio, monitoreo GPS en tiempo real y conductores certificados. Con la app, pedir uno de esos taxis queda a un toque.",
+      "mision": "Ofrecer a Tenjo y la región un transporte seguro, puntual y humano, con vehículos en óptimas condiciones, conductores capacitados y una atención cercana antes, durante y después de cada servicio.",
+      "vision": "Seguir conectando a Tenjo con la región y llevar el servicio de la cooperativa al celular de cada usuario, sin perder el trato humano que la distingue.",
+      "servicios": [
+        "Taxi con central de radio y GPS",
+        "Pedidos por WhatsApp",
+        "Transporte urbano",
+        "Transporte especial: empresarial, escolar y turístico",
+        "Despacho las 24 horas"
+      ],
+      "frase": "Responsabilidad, seguridad y sentido humano",
+      "linea_tiempo": [
+        {
+          "b": "1996",
+          "s": "Nace la cooperativa en Tenjo."
+        },
+        {
+          "b": "Hoy",
+          "s": "11 taxis, 16 vehículos de servicio especial y 18 urbanos."
+        },
+        {
+          "b": "Con la app",
+          "s": "Tu taxi desde el celular, con GPS y tarifa clara."
+        }
+      ]
+    },
+    "notas": [
+      "Propuesta: no es cliente ni ha autorizado nada.",
+      "Flota (11 taxis, 16 de servicio especial, 18 urbanos), central de radio, GPS, despacho 24 h y WhatsApp/teléfono de taxi 312 584 7257: su sitio oficial.",
+      "Fundada el 28 de agosto de 1996: perfil de EMIS. Su web dice «más de dos décadas».",
+      "Fijo de recepción (601) 865 8928 y otro celular 311 804 1978: su sitio oficial. NIT 832.002.211-5 (informacolombia).",
+      "Su web publica las secciones «Misión» y «Visión» vacías: los textos de la ficha son una redacción general de interOS.",
+      "Colores tomados del CSS de su sitio (verde #22A84A–#0B3E1A y dorado #E8A020), oscurecidos para contraste AA.",
+      "Otras páginas consultadas del mismo sitio: https://cootranstenjo.com.co/, https://cootranstenjo.com.co/servicios/taxi."
+    ],
+    "lugaresRevisados": true
   },
   "madrid": {
     "estado": "propuesta",
     "pueblo_osm": "Madrid",
     "EMPRESA": {
-      "nombre": "Cootransmadrid", "nombreCorto": "Cootransmadrid",
-      "razonSocial": "Cooperativa Multiactiva de Transportadores de Madrid",
+      "nombre": "Cootransmadrid",
+      "nombreCorto": "Cootransmadrid",
+      "razonSocial": "Cooperativa Multiactiva de Transportadores de Madrid (Cootransmadrid)",
       "lema": "Bienestar, seguridad y comodidad en cada viaje",
-      "municipio": "Madrid, Cundinamarca", "pueblo": "Madrid",
-      "telefono": "6018443594", "telefonoVisible": "601 844 3594", "whatsapp": "573138043438", "correo": "secretaria.cootransmadrid@gmail.com",
+      "municipio": "Madrid, Cundinamarca",
+      "pueblo": "Madrid",
+      "telefono": "6018443594",
+      "telefonoVisible": "601 844 3594",
+      "whatsapp": "573138043438",
+      "correo": "secretaria.cootransmadrid@gmail.com",
       "direccion": "Carrera 9 # 6-27, barrio San Luis, Madrid, Cundinamarca",
-      "web": "", "sitioOficial": "https://cootransmadrid.com.co",
-      "fundada": 1990, "taxisIniciales": null, "taxis": null, "vehiculos": "100+", "microbuses": null, "asociados": null,
-      "servicio24h": true, "placaPrefijo": "MDR", "vehiculo": "Kia Picanto", "colorTaxi": "Amarillo"
+      "web": "",
+      "sitioOficial": "https://cootransmadrid.com.co",
+      "fundada": null,
+      "taxisIniciales": null,
+      "taxis": null,
+      "vehiculos": "100+",
+      "microbuses": null,
+      "asociados": null,
+      "servicio24h": true,
+      "placaPrefijo": "MDR",
+      "vehiculo": "Kia Picanto",
+      "colorTaxi": "Amarillo",
+      "region": "Sabana de Occidente",
+      "datosPendientes": [
+        "año de fundación",
+        "número de taxis"
+      ],
+      "oficina": {
+        "lat": 4.732772,
+        "lng": -74.266061
+      }
     },
-    "colores": { "primario": "#9F1239", "primario2": "#BE123C", "oscuro": "#4C0519", "acento": "#FFC107", "rojo": "#E11D48" },
-    "destinos": ["Mosquera", "Funza", "Facatativá", "El Rosal", "Bojacá", "Subachoque", "portal-80", "aeropuerto"],
-    "fuentes": ["https://cootransmadrid.com.co/"]
+    "colores": {
+      "primario": "#2E2A25",
+      "primario2": "#4A433A",
+      "oscuro": "#1E1810",
+      "acento": "#FFB100",
+      "rojo": "#D92D20"
+    },
+    "destinos": [
+      "Mosquera",
+      "Funza",
+      "Facatativá",
+      "El Rosal",
+      "Bojacá",
+      "Subachoque",
+      "portal-80",
+      "aeropuerto"
+    ],
+    "fuentes": [
+      "https://cootransmadrid.com.co/index.php/about/",
+      "https://www.openstreetmap.org/"
+    ],
+    "textos": {
+      "historia": "Cootransmadrid, la Cooperativa Multiactiva de Transportadores de Madrid, lleva más de 30 años al servicio de la comunidad madrileña en transporte público de pasajeros, en las modalidades individual, mixto y especial.\n\nCuenta con más de 100 vehículos entre taxis y camionetas y más de 150 conductores verificados, atiende reservas las 24 horas y en 2022 obtuvo las certificaciones ISO 9001:2015 e ISO 45001:2018.",
+      "mision": "Somos una cooperativa madrileña que incentiva el trabajo solidario, dedicada al servicio de transporte individual, mixto y especial con cubrimiento nacional, urbano e interveredal, cumpliendo estándares de seguridad, comodidad y confiabilidad para asegurar un servicio de calidad.",
+      "vision": "Para 2030, ser una empresa que satisfaga las necesidades de sus asociados, con proyección a particulares, y que brinde la mejor opción en transporte público de pasajeros y servicio especial, con altos estándares de calidad, un parque automotor moderno y de alta tecnología, puntualidad, máxima comodidad y bajos índices de accidentalidad.",
+      "servicios": [
+        "Taxi y camioneta las 24 horas",
+        "Minivan",
+        "Transporte especial de 18 a 40 pasajeros",
+        "Transporte empresarial con vales",
+        "Transporte escolar y turístico",
+        "Traslados al aeropuerto",
+        "Traslado de mascotas",
+        "Encomiendas exprés"
+      ],
+      "frase": "Tu empresa de toda la vida en Madrid",
+      "linea_tiempo": [
+        {
+          "b": "+30 años",
+          "s": "Al servicio de la comunidad madrileña."
+        },
+        {
+          "b": "2022",
+          "s": "Certificación ISO 9001 e ISO 45001."
+        },
+        {
+          "b": "Hoy",
+          "s": "Más de 100 vehículos y 150 conductores verificados."
+        }
+      ]
+    },
+    "notas": [
+      "Propuesta: no es cliente ni ha autorizado nada.",
+      "OJO para la venta: ya usa un sistema de despacho y app de Autocab (empresa inglesa) desde julio de 2019, con app de pasajero «Taxis y Camionetas Madrid» en Google Play y reservas web en eb3.autocab.net. La propuesta debe compararse con eso.",
+      "Cifras (100+ vehículos, 150+ conductores, 1.000+ clientes diarios), ISO 2022, servicios, misión y visión 2030: su sitio oficial (la misión y la visión van con ajustes mínimos de redacción y en tuteo neutro).",
+      "Año de fundación sin confirmar: su web dice «34 años de experiencia» y «más de 30 años»; un sitio antiguo (Wix) y un directorio registran el 10 de abril de 1997. NIT 800.201.715-2.",
+      "Teléfonos: reservas 24/7 (601) 844 3594; oficina 601 825 4444 y 601 820 5873; WhatsApp 313 804 3438; correos secretaria.cootransmadrid@gmail.com y gerencia.cootransmadrid@gmail.com.",
+      "Colores tomados de su sitio (ámbar #FFB100 sobre café muy oscuro #1E1810) y de su logo (negro y amarillo).",
+      "Otras páginas consultadas del mismo sitio: https://cootransmadrid.com.co/, https://cootransmadrid.com.co/index.php/contact-us/."
+    ],
+    "lugaresRevisados": true
   },
   "villeta": {
     "estado": "propuesta",
     "pueblo_osm": "Villeta",
     "EMPRESA": {
-      "nombre": "Cootransvi", "nombreCorto": "Cootransvi",
-      "razonSocial": "Cooperativa de Transportadores de Villeta",
-      "lema": "Taxis en la capital panelera de Colombia",
-      "municipio": "Villeta, Cundinamarca", "pueblo": "Villeta",
-      "telefono": "6018445332", "telefonoVisible": "601 844 5332", "whatsapp": "", "correo": "",
+      "nombre": "Cootransvi",
+      "nombreCorto": "Cootransvi",
+      "razonSocial": "Cooperativa de Transportadores de Villeta (Cootransvi)",
+      "lema": "Taxis en Villeta, tierra de trapiches y panela",
+      "municipio": "Villeta, Cundinamarca",
+      "pueblo": "Villeta",
+      "telefono": "6018447000",
+      "telefonoVisible": "601 844 7000",
+      "whatsapp": "",
+      "correo": "",
       "direccion": "Calle 5 # 4-75, Villeta, Cundinamarca",
-      "web": "", "sitioOficial": "",
-      "fundada": null, "taxisIniciales": null, "taxis": null, "microbuses": null, "asociados": null,
-      "servicio24h": true, "placaPrefijo": "VLL", "vehiculo": "Kia Picanto", "colorTaxi": "Amarillo"
+      "web": "",
+      "sitioOficial": "",
+      "fundada": null,
+      "taxisIniciales": null,
+      "taxis": null,
+      "microbuses": null,
+      "asociados": null,
+      "servicio24h": true,
+      "placaPrefijo": "VLL",
+      "vehiculo": "Kia Picanto",
+      "colorTaxi": "Amarillo",
+      "region": "provincia del Gualivá",
+      "datosPendientes": [
+        "teléfono de la central",
+        "WhatsApp",
+        "correo",
+        "año de fundación",
+        "número de taxis",
+        "misión y visión oficiales"
+      ],
+      "oficina": {
+        "lat": 5.011874,
+        "lng": -74.469668
+      }
     },
-    "colores": { "primario": "#C2410C", "primario2": "#EA580C", "oscuro": "#431407", "acento": "#FACC15", "rojo": "#B91C1C" },
-    "destinos": ["Sasaima", "La Vega", "Nocaima", "Útica", "Quebradanegra", "Guaduas", "Facatativá", "terminal-salitre"],
-    "fuentes": ["https://www.planetacolombia.com/cooperativa-cootransvi-F120EC10213D342", "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-villeta"]
+    "colores": {
+      "primario": "#8A4513",
+      "primario2": "#A85A17",
+      "oscuro": "#3B1E08",
+      "acento": "#F5C04A",
+      "rojo": "#B91C1C"
+    },
+    "destinos": [
+      "Sasaima",
+      "La Vega",
+      "Nocaima",
+      "Útica",
+      "Quebradanegra",
+      "Guaduas",
+      "Facatativá",
+      "terminal-salitre"
+    ],
+    "fuentes": [
+      "https://www.aiyellow.com/cootransvi/",
+      "https://radiotaxi.com.co/villeta/",
+      "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-villeta",
+      "https://www.waze.com/es-419/live-map/directions/co/cundinamarca/villeta/cooperativa-de-transportadores-de-villeta-cootransvi?to=place.ChIJXVfAsYCbQI4RcP2autIwuMw",
+      "https://www.youtube.com/watch?v=2VNT5ha3FbE",
+      "https://www.openstreetmap.org/"
+    ],
+    "textos": {
+      "historia": "Cootransvi, la Cooperativa de Transportadores de Villeta, presta servicio de transporte en tres modalidades: taxi, colectivo y campero, y hace expresos a cualquier parte del país. Su oficina está en la Calle 5 # 4-75, en el centro de Villeta.\n\nCon la app, la cooperativa puede llevar el taxi de siempre al celular: pides con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa, en el pueblo o camino a la finca.",
+      "mision": "Llevar a la gente de Villeta y a sus visitantes a donde necesiten, en el casco urbano, las veredas y la región, con conductores asociados que conocen el territorio y un servicio seguro y amable.",
+      "vision": "Ser la forma más fácil y confiable de moverse en Villeta y el Gualivá: un taxi a un toque, con tarifa clara y el móvil en el mapa.",
+      "servicios": [
+        "Taxi en Villeta",
+        "Colectivos",
+        "Camperos a las veredas",
+        "Expresos a cualquier parte del país",
+        "Viajes a los municipios del Gualivá"
+      ],
+      "frase": "Taxis en Villeta, tierra de trapiches y panela"
+    },
+    "imagenes": {
+      "hero": "img/web/hero-calido.jpg"
+    },
+    "notas": [
+      "Propuesta: no es cliente ni ha autorizado nada.",
+      "Modalidades (taxi, colectivo, campero) y expresos: ficha de AiYellow. Dirección Calle 5 # 4-75 (Waze) o 4-76 (otros directorios); informacolombia registra «Calle 5 7 02 piso 5».",
+      "Teléfono: 601 844 7000 aparece en dos fuentes (radiotaxi.com.co y informacolombia) y como «Línea Fácil 844 70 00»; otros directorios dan 601 844 6827 y 601 844 5332. Confirmar cuál es la central de taxis.",
+      "NIT 800.248.439-7 (informacolombia). Sin sitio web oficial. Colores propios de interOS (panela y trapiche).",
+      "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+    ],
+    "lugaresRevisados": true
   },
   "la-vega": {
     "estado": "propuesta",
     "pueblo_osm": "La Vega",
     "EMPRESA": {
-      "nombre": "Cootransvillaleal", "nombreCorto": "Cootransvillaleal",
+      "nombre": "Cootransvillaleal",
+      "nombreCorto": "Cootransvillaleal",
       "razonSocial": "Cooperativa de Transportes y Servicios Cootransvillaleal",
       "lema": "Taxis en La Vega, de la laguna a la autopista",
-      "municipio": "La Vega, Cundinamarca", "pueblo": "La Vega",
-      "telefono": "3103178318", "telefonoVisible": "310 317 8318", "whatsapp": "573103178318", "correo": "cooptransvillaleal@gmail.com",
+      "municipio": "La Vega, Cundinamarca",
+      "pueblo": "La Vega",
+      "telefono": "3103178318",
+      "telefonoVisible": "310 317 8318",
+      "whatsapp": "573103178318",
+      "correo": "cooptransvillaleal@gmail.com",
       "direccion": "Carrera 4A # 20-03, Autopista Medellín, La Vega, Cundinamarca",
-      "web": "", "sitioOficial": "https://www.cootransvillaleal.com.co",
-      "fundada": null, "taxisIniciales": null, "taxis": null, "microbuses": null, "asociados": null,
-      "servicio24h": true, "placaPrefijo": "LVG", "vehiculo": "Kia Picanto", "colorTaxi": "Amarillo"
+      "web": "",
+      "sitioOficial": "https://www.cootransvillaleal.com.co",
+      "fundada": null,
+      "taxisIniciales": null,
+      "taxis": null,
+      "microbuses": null,
+      "asociados": null,
+      "servicio24h": true,
+      "placaPrefijo": "LVG",
+      "vehiculo": "Kia Picanto",
+      "colorTaxi": "Amarillo",
+      "region": "provincia del Gualivá",
+      "datosPendientes": [
+        "año de fundación",
+        "número de taxis"
+      ],
+      "oficina": {
+        "lat": 4.99921,
+        "lng": -74.340936
+      }
     },
-    "colores": { "primario": "#0369A1", "primario2": "#0284C7", "oscuro": "#082F49", "acento": "#FFC107", "rojo": "#DC2626" },
-    "destinos": ["San Francisco", "Villeta", "Sasaima", "Nocaima", "Supatá", "Facatativá", "portal-80", "aeropuerto"],
-    "fuentes": ["https://www.cootransvillaleal.com.co/nosotros"]
+    "colores": {
+      "primario": "#0C3C60",
+      "primario2": "#147285",
+      "oscuro": "#062134",
+      "acento": "#FFCB05",
+      "rojo": "#D32F2F"
+    },
+    "destinos": [
+      "San Francisco",
+      "Villeta",
+      "Sasaima",
+      "Nocaima",
+      "Supatá",
+      "Facatativá",
+      "portal-80",
+      "aeropuerto"
+    ],
+    "fuentes": [
+      "https://www.cootransvillaleal.com.co/nosotros",
+      "https://www.openstreetmap.org/"
+    ],
+    "textos": {
+      "historia": "Cootransvillaleal, la Cooperativa de Transportes y Servicios de La Vega, está habilitada por la Alcaldía de La Vega para el servicio de taxi individual desde la Resolución 0227 del 8 de abril de 2005, y para el servicio mixto con la Resolución 0187 de 2005.\n\nAdemás de los taxis, cubre rutas diarias a las veredas San Juan, Petaquero, Naguy, Hoya Grande, La Patria, Cacahual, Chupal y Patio Bonito. Su oficina está sobre la Autopista Medellín, en la Carrera 4A # 20-03.",
+      "mision": "Garantizar el servicio óptimo de transporte terrestre de pasajeros a nivel nacional, con un equipo humano competente y comprometido con la satisfacción de las necesidades de sus asociados, sus familias y la comunidad, exaltando la excelencia y la calidad del servicio para generar beneficios a usuarios, colaboradores y asociados.",
+      "vision": "Ser para la comunidad de La Vega la empresa de transporte que satisfaga las necesidades de asociados y usuarios, con proyección de servicio a nivel nacional de la mejor calidad, y brindar la mejor opción de transporte con un parque automotor en óptimas condiciones que garantice comodidad y bajos índices de accidentalidad.",
+      "servicios": [
+        "Taxi individual",
+        "Servicio mixto a las veredas",
+        "Rutas diarias a San Juan, Petaquero, Naguy, La Patria y Chupal",
+        "Viajes a los municipios vecinos y a Bogotá"
+      ],
+      "frase": "Cooperamos para el desarrollo de La Vega",
+      "linea_tiempo": [
+        {
+          "b": "2005",
+          "s": "Habilitada para taxi individual y servicio mixto."
+        },
+        {
+          "b": "Hoy",
+          "s": "Taxis y rutas diarias a ocho veredas."
+        },
+        {
+          "b": "Con la app",
+          "s": "Tu taxi desde el celular, con GPS y tarifa clara."
+        }
+      ]
+    },
+    "imagenes": {
+      "hero": "img/web/hero-calido.jpg"
+    },
+    "notas": [
+      "Propuesta: no es cliente ni ha autorizado nada.",
+      "Habilitaciones (Res. 0227 del 8-abr-2005 taxi; Res. 0187 de 2005 mixto), NIT 832.004.158-1, misión, visión, rutas a veredas, dirección, celular y correo: su sitio oficial (Wix). La misión y la visión van con ajustes mínimos de ortografía.",
+      "Gerente según su web (2023): Guillermo Nieto Bello.",
+      "Colores tomados de su sitio: azul marino #0C3C60, turquesa #147285/#1EABC7 y amarillo #FFCB05 de su paleta.",
+      "Otras páginas consultadas del mismo sitio: https://www.cootransvillaleal.com.co/proyectos, https://www.cootransvillaleal.com.co/contactenos."
+    ],
+    "lugaresRevisados": true
   }
 }

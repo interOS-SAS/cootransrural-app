@@ -1,6 +1,309 @@
 // Diseño B «Verde Rosal»: piezas compartidas por la app del pasajero y la del
 // conductor (íconos, ilustraciones, avisos en pantalla, hojas, casillas de código).
-import { escaparHTML, iniciales, qrSVG } from '../../nucleo/index.js';
+// Sirve para cualquier cooperativa: el nombre, los datos y los colores salen de su
+// ficha (empresas/<id>/ficha.json, vía el núcleo). En Cootransrural se ve igual
+// que siempre (verde del escudo); en las demás toma los colores de la cooperativa.
+import {
+  escaparHTML, iniciales, qrSVG, EMPRESA, COLORES, ID_EMPRESA, ES_PROPUESTA, PROVEEDOR, CONDUCTORES_DEMO, urlEmpresa,
+} from '../../nucleo/index.js';
+
+/* ------------------------------------------------------------------ */
+/* Datos de la cooperativa (nunca «null», «undefined» ni ceros)        */
+/* ------------------------------------------------------------------ */
+// Texto usable de la ficha: descarta null, undefined, «null» y cadenas vacías.
+function dato(v) {
+  if (v == null) return '';
+  const t = String(v).trim();
+  return /^(null|undefined|nan)$/i.test(t) ? '' : t;
+}
+
+// Número positivo de la ficha (taxis, año de fundación…) o 0 si no se sabe.
+function cifra(v) {
+  const n = Number(v);
+  return v != null && v !== '' && Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+const FE = EMPRESA || {};
+const TEL_CENTRAL = dato(FE.telefono).replace(/\D/g, '');
+const DEMO = Array.isArray(CONDUCTORES_DEMO) ? CONDUCTORES_DEMO : [];
+
+export const MARCA = Object.freeze({
+  id: ID_EMPRESA,
+  principal: ID_EMPRESA === 'cootransrural',
+  propuesta: Boolean(ES_PROPUESTA),
+  nombre: dato(FE.nombreCorto) || dato(FE.nombre) || 'la cooperativa',
+  nombreLargo: dato(FE.nombre) || dato(FE.nombreCorto) || 'la cooperativa',
+  razonSocial: dato(FE.razonSocial) || dato(FE.nombre) || dato(FE.nombreCorto),
+  lema: dato(FE.lema),
+  pueblo: dato(FE.pueblo),
+  municipio: dato(FE.municipio) || dato(FE.pueblo),
+  direccion: dato(FE.direccion),
+  correo: dato(FE.correo),
+  telefono: TEL_CENTRAL,
+  telefonoVisible: dato(FE.telefonoVisible) || celularTexto(TEL_CENTRAL),
+  whatsapp: dato(FE.whatsapp).replace(/\D/g, ''),
+  fundada: cifra(FE.fundada),
+  taxis: cifra(FE.taxis),
+  microbuses: cifra(FE.microbuses),
+  asociados: cifra(FE.asociados),
+  // Si la ficha marca el NÚMERO de taxis como pendiente, la cifra es aproximada («unos 20»).
+  // Otros pendientes que mencionan los taxis (p. ej. «modelo de los taxis») no cuentan.
+  taxisAprox: (Array.isArray(FE.datosPendientes) ? FE.datosPendientes : []).some((d) => /(n[úu]mero|cantidad|cu[áa]ntos).*(taxis|veh[íi]culos)/i.test(String(d))),
+  servicio24h: FE.servicio24h !== false,
+  proveedor: dato(PROVEEDOR?.nombre) || 'interOS',
+  // Móvil para entrar a la demo del conductor: el 023 si existe en la ficha; si no, el primero.
+  movilDemo: DEMO.some((c) => c.movil === '023') ? '023' : dato(DEMO[0]?.movil) || '023',
+  // Móviles de los conductores de prueba de la ficha (pueden pasar del número de taxis).
+  movilesDemo: DEMO.map((c) => dato(c.movil).replace(/\D/g, '').padStart(3, '0')).filter((m) => m !== '000'),
+});
+
+// Nombre del diseño B: en Cootransrural es «Verde Rosal»; en las demás, «Color de la cooperativa».
+export const NOMBRE_DISENO = MARCA.principal ? 'Verde Rosal' : 'Color de la cooperativa';
+
+// «en El Rosal» / «en Subachoque» (o vacío si la ficha no trae el pueblo).
+export function enPueblo(prefijo = 'en', { sinCortar = false } = {}) {
+  if (!MARCA.pueblo) return '';
+  return `${prefijo} ${sinCortar ? MARCA.pueblo.replace(/ /g, '\u00a0') : MARCA.pueblo}`;
+}
+
+// «Desde 1999 · El Rosal» (sin año si no se conoce; con el departamento si es largo).
+export function lineaMarca({ largo = false } = {}) {
+  const partes = [MARCA.fundada ? `Desde ${MARCA.fundada}` : '', largo ? MARCA.municipio : MARCA.pueblo].filter(Boolean);
+  return partes.join(' · ') || 'Taxis de la cooperativa';
+}
+
+// Cifras conocidas de la cooperativa: «52 taxis», «3 microbuses», «105 asociados»
+// (con «Unos» delante si la ficha dice que el número de taxis es aproximado).
+export function cifrasMarca() {
+  return [
+    ['taxis', MARCA.taxis, 'taxi', 'taxis'],
+    ['microbuses', MARCA.microbuses, 'microbús', 'microbuses'],
+    ['asociados', MARCA.asociados, 'asociado', 'asociados'],
+  ].filter(([, n]) => n).map(([clave, n, uno, varios]) => ({
+    clave, n, texto: n === 1 ? uno : varios, antes: clave === 'taxis' && MARCA.taxisAprox ? 'Unos ' : '',
+  }));
+}
+
+// Enlace tel: de la central (vacío si la ficha no trae teléfono).
+export function telCentral() {
+  const d = MARCA.telefono;
+  if (!d) return '';
+  return d.length === 12 && d.startsWith('57') ? `tel:+${d}` : `tel:+57${d}`;
+}
+
+// Móvil para las ilustraciones (el último de la flota si se sabe cuántos taxis hay).
+export function movilEjemplo() {
+  return MARCA.taxis && !MARCA.taxisAprox ? String(MARCA.taxis).padStart(3, '0') : MARCA.movilDemo;
+}
+
+// Política de privacidad de la cooperativa (<id>/privacidad/; en Cootransrural, la de la raíz).
+export function urlPrivacidad() {
+  return MARCA.principal ? '../privacidad/' : urlEmpresa('privacidad/');
+}
+
+// Enlace a la otra app de la MISMA cooperativa (pasajero ↔ conductor). Con un
+// enlace relativo («../conductor/»), una página abierta desde la raíz con
+// ?e=<id> llevaba al conductor de Cootransrural; así lleva a <id>/conductor/.
+export function enlaceSeccion(seccion, diseno = 'b') {
+  const u = new URL(urlEmpresa(seccion));
+  u.searchParams.set('d', diseno);
+  return u.href;
+}
+
+// El núcleo guarda el viaje en curso del pasajero en sessionStorage con la misma
+// clave para todas las cooperativas ('ct.viaje.pasajero'). Si en la misma pestaña
+// se pasa de una cooperativa a otra con un viaje por pagar o por calificar, la
+// otra lo retomaría (con el conductor y la placa de la primera). Antes de crear
+// el pasajero se aparta el viaje de la otra cooperativa (queda guardado para
+// cuando vuelva) y se trae el de esta. Usa las mismas claves que el diseño C
+// para que cambiar de diseño no rompa la separación.
+// El núcleo guarda «sonido sí/no» en los ajustes de cada cooperativa y, además, en
+// una clave común ('ct.sonido') que es la que de verdad silencia los avisos. Al
+// abrir la app se copia a esa clave el ajuste de ESTA cooperativa: si no, apagar el
+// sonido en una cooperativa lo apagaba en todas aunque su interruptor dijera que no.
+export function sincronizarSonido(N) {
+  try {
+    localStorage.setItem('ct.sonido', N.perfil.ajustes().sonido === false ? 'no' : 'si');
+  } catch {
+    /* sin localStorage: el núcleo usa su valor por defecto */
+  }
+}
+
+const CLAVE_VIAJE = 'ct.viaje.pasajero';
+const CLAVE_DUENO = 'ct.c.viaje.empresa';
+export function separarViajeGuardado(id = MARCA.id) {
+  try {
+    const dueno = sessionStorage.getItem(CLAVE_DUENO);
+    // Sin dueño anotado (primera vez o un diseño que no lo anota) se deja como está.
+    if (dueno && dueno !== id) {
+      const otro = sessionStorage.getItem(CLAVE_VIAJE);
+      if (otro) sessionStorage.setItem(`ct.c.viaje.${dueno}`, otro);
+      sessionStorage.removeItem(CLAVE_VIAJE);
+      const mio = sessionStorage.getItem(`ct.c.viaje.${id}`);
+      if (mio) sessionStorage.setItem(CLAVE_VIAJE, mio);
+    }
+    sessionStorage.removeItem(`ct.c.viaje.${id}`);
+    sessionStorage.setItem(CLAVE_DUENO, id);
+  } catch {
+    /* sessionStorage bloqueado: el núcleo tampoco podrá guardar el viaje */
+  }
+}
+
+// Etiqueta «Modo prueba» y, en las propuestas, el aviso discreto de demostración al lado.
+export function chipPrueba(texto = 'Modo prueba') {
+  return `<span class="vb-prueba">${esc(texto)}</span>${demoPara()}`;
+}
+
+export function demoPara() {
+  return MARCA.propuesta ? `<span class="vb-demo-para">Demostración para ${esc(MARCA.nombreLargo)}</span>` : '';
+}
+
+// Nota honesta para las cooperativas a las que solo se les muestra una propuesta.
+export function notaPropuesta(clase = '') {
+  if (!MARCA.propuesta) return '';
+  return `<p class="vb-nota-propuesta ${clase}">${ic('info', 16)}<span>Propuesta de demostración preparada por ${esc(MARCA.proveedor)} para ${esc(MARCA.razonSocial)} · No es la app oficial de la cooperativa.</span></p>`;
+}
+
+// «App desarrollada por interOS».
+export function desarrolladaPor(clase = '') {
+  return `<p class="vb-desarrollada ${clase}">App desarrollada por <b>${esc(MARCA.proveedor)}</b></p>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* Colores de la cooperativa (con contraste AA)                        */
+/* ------------------------------------------------------------------ */
+function hexValido(h) {
+  return /^#?[0-9a-f]{6}$/i.test(String(h || '').trim()) || /^#?[0-9a-f]{3}$/i.test(String(h || '').trim());
+}
+
+function rgb(h) {
+  let x = String(h).trim().replace('#', '');
+  if (x.length === 3) x = x.split('').map((c) => c + c).join('');
+  const n = parseInt(x, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function hex(v) {
+  return `#${v.map((c) => Math.round(Math.min(255, Math.max(0, c))).toString(16).padStart(2, '0')).join('').toUpperCase()}`;
+}
+
+// Mezcla dos colores: t = cuánto se toma de «b» (0 a 1).
+export function mezclar(a, b, t) {
+  const x = rgb(a);
+  const y = rgb(b);
+  return hex(x.map((c, i) => c + (y[i] - c) * t));
+}
+
+function luminancia(h) {
+  const k = [0.2126, 0.7152, 0.0722];
+  return rgb(h).reduce((s, c, i) => {
+    const v = c / 255;
+    return s + k[i] * (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+  }, 0);
+}
+
+// Relación de contraste WCAG entre dos colores (1 a 21).
+export function contraste(a, b) {
+  const [x, y] = [luminancia(a), luminancia(b)].sort((p, q) => q - p);
+  return (x + 0.05) / (y + 0.05);
+}
+
+// Acerca el color a «hacia» (negro o blanco) poco a poco hasta lograr el contraste pedido.
+function ajustarHasta(color, fondo, minimo, hacia) {
+  let c = color;
+  for (let i = 0; i < 60 && contraste(c, fondo) < minimo; i++) c = mezclar(c, hacia, 0.05);
+  return c;
+}
+
+const TEXTO = '#1E2A22';
+const BLANCO = '#FFFFFF';
+
+function rgbTexto(h) {
+  return rgb(h).join(', ');
+}
+
+// Paleta del diseño. En Cootransrural, los valores de siempre (comun.css); en las
+// demás se deriva de sus colores, garantizando AA: texto blanco sobre el color
+// principal y el rojo, verde oscuro sobre el tono claro y texto oscuro sobre el acento.
+function calcularPaleta() {
+  if (ID_EMPRESA === 'cootransrural') {
+    return {
+      verde: '#0B6B3A', osc: '#0A5C33', prof: '#073D22', claro: '#E2F0E6', suave: '#F1F8F3', vivo: '#10804A', oscuro: '#052A17',
+      oro: '#F2B705', oroOsc: '#B68900', rojo: '#D32F2F', rojoOsc: '#A61F1F', qr: '#0A3D22',
+    };
+  }
+  const c = COLORES || {};
+  const P = hexValido(c.primario) ? c.primario : '#0A5C33';
+  const P2 = hexValido(c.primario2) ? c.primario2 : P;
+  const O = hexValido(c.oscuro) ? c.oscuro : mezclar(P, '#000000', 0.55);
+  const A = hexValido(c.acento) ? c.acento : '#F2B705';
+  const R = hexValido(c.rojo) ? c.rojo : '#D32F2F';
+  // 5,5:1 con el blanco (no solo 4,5) para que también el texto dorado se lea encima.
+  const verde = ajustarHasta(P2, BLANCO, 5.5, '#000000');
+  const claro = mezclar(verde, BLANCO, 0.88);
+  const suave = mezclar(verde, BLANCO, 0.94);
+  const osc = ajustarHasta(ajustarHasta(P, BLANCO, 4.6, '#000000'), claro, 4.6, '#000000');
+  const prof = ajustarHasta(mezclar(P, O, 0.5), BLANCO, 8, '#000000');
+  const oscuro = ajustarHasta(O, BLANCO, 12, '#000000');
+  const vivo = ajustarHasta(mezclar(verde, BLANCO, 0.1), BLANCO, 4.6, '#000000');
+  const oro = ajustarHasta(A, TEXTO, 4.6, BLANCO);
+  const oroOsc = mezclar(oro, '#000000', 0.25);
+  // Texto dorado sobre el color de la cooperativa (cabeceras, carné, «Tu taxi llega en»).
+  const oroTexto = ajustarHasta(mezclar(oro, BLANCO, 0.3), verde, 4.6, BLANCO);
+  const rojo = ajustarHasta(R, BLANCO, 4.6, '#000000');
+  return {
+    verde, osc, prof, claro, suave, vivo, oscuro,
+    oro, oroOsc, oroClaro: mezclar(oro, BLANCO, 0.84), oroTexto, oroBorde: mezclar(oro, BLANCO, 0.5),
+    rojo, rojoOsc: mezclar(rojo, '#000000', 0.22), rojoClaro: mezclar(rojo, BLANCO, 0.91), rojoLuz: mezclar(rojo, BLANCO, 0.2),
+    rojoBorde: mezclar(rojo, BLANCO, 0.66), borde: mezclar(verde, BLANCO, 0.8), luz: mezclar(verde, BLANCO, 0.25), qr: prof,
+  };
+}
+
+export const PALETA = Object.freeze(calcularPaleta());
+
+// Fondo con figuritas: rosas en Cootransrural (comun.css); pines y estrellas en las demás.
+const FIGURAS = `<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke='#ffffff' stroke-opacity='.07' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M30 46s-10-9-10-17a10 10 0 0 1 20 0c0 8-10 17-10 17z'/><circle cx='30' cy='29' r='3.5'/><path d='M90 79l3.2 6.6 7.3 1-5.3 5.1 1.3 7.2L90 95.5l-6.5 3.4 1.3-7.2-5.3-5.1 7.3-1z'/></g></svg>`;
+
+// Pone los colores de la cooperativa en las variables CSS del diseño (las de
+// comun.css quedan como están en Cootransrural).
+export function aplicarMarca() {
+  const raiz = document.documentElement;
+  raiz.dataset.empresa = MARCA.id;
+  if (MARCA.propuesta) raiz.dataset.propuesta = '1';
+  if (MARCA.principal) return;
+  const P = PALETA;
+  const variables = {
+    '--vb-verde': P.verde,
+    '--vb-verde-osc': P.osc,
+    '--vb-verde-prof': P.prof,
+    '--vb-verde-claro': P.claro,
+    '--vb-verde-suave': P.suave,
+    '--vb-verde-vivo': P.vivo,
+    '--vb-verde-luz': P.luz,
+    '--vb-verde-borde': P.borde,
+    '--vb-oscuro': P.oscuro,
+    '--vb-verde-rgb': rgbTexto(P.verde),
+    '--vb-prof-rgb': rgbTexto(P.prof),
+    '--vb-oscuro-rgb': rgbTexto(P.oscuro),
+    '--vb-oro': P.oro,
+    '--vb-oro-osc': P.oroOsc,
+    '--vb-oro-claro': P.oroClaro,
+    '--vb-oro-texto': P.oroTexto,
+    '--vb-oro-borde': P.oroBorde,
+    '--vb-oro-rgb': rgbTexto(P.oro),
+    '--vb-oro-osc-rgb': rgbTexto(P.oroOsc),
+    '--vb-rojo': P.rojo,
+    '--vb-rojo-osc': P.rojoOsc,
+    '--vb-rojo-claro': P.rojoClaro,
+    '--vb-rojo-luz': P.rojoLuz,
+    '--vb-rojo-hondo': P.rojoOsc,
+    '--vb-rojo-borde': P.rojoBorde,
+    '--vb-rojo-rgb': rgbTexto(P.rojo),
+    '--vb-rojo-osc-rgb': rgbTexto(P.rojoOsc),
+    '--vb-rosas': `url("data:image/svg+xml,${encodeURIComponent(FIGURAS)}")`,
+  };
+  for (const [k, v] of Object.entries(variables)) raiz.style.setProperty(k, v);
+}
 
 /* ------------------------------------------------------------------ */
 /* Íconos (SVG en línea, trazo de 2 px, 24×24)                         */
@@ -98,9 +401,24 @@ function puntosEstrella(cx, cy, re, ri) {
   return p.join(' ');
 }
 
-// Escudo de la cooperativa estilizado: verde con borde dorado y una rosa (El Rosal).
+// Insignia de la marca. En Cootransrural: su escudo estilizado (verde con borde
+// dorado y una rosa, por El Rosal). En las demás: una placa con un taxi en los
+// colores de la cooperativa (no imita el logo de ninguna).
 export function insignia(tam = 44, clase = '') {
-  return `<svg class="vb-insignia ${clase}" viewBox="0 0 64 72" width="${tam}" height="${Math.round((tam * 72) / 64)}" aria-hidden="true" focusable="false">
+  const alto = Math.round((tam * 72) / 64);
+  if (!MARCA.principal) {
+    const P = PALETA;
+    return `<svg class="vb-insignia ${clase}" viewBox="0 0 64 72" width="${tam}" height="${alto}" aria-hidden="true" focusable="false">
+  <rect x="4" y="8" width="56" height="56" rx="17" fill="${P.verde}" stroke="${P.oro}" stroke-width="3.2"/>
+  <rect x="9.5" y="13.5" width="45" height="45" rx="12.5" fill="none" stroke="${P.oro}" stroke-width="1" opacity=".55"/>
+  <rect x="26" y="19.5" width="12" height="5.5" rx="1.6" fill="${P.oro}"/>
+  <path d="M17.5 47v-8.5l4.2-9.3a3 3 0 0 1 2.7-1.7h15.2a3 3 0 0 1 2.7 1.7l4.2 9.3V47z" fill="${P.oro}"/>
+  <path d="M23.4 37.6l2.5-6.2h12.2l2.5 6.2z" fill="${P.prof}"/>
+  <circle cx="23" cy="42" r="2.1" fill="#fff"/><circle cx="41" cy="42" r="2.1" fill="#fff"/>
+  <rect x="19" y="46" width="6.5" height="5.5" rx="1.6" fill="#1E2A22"/><rect x="38.5" y="46" width="6.5" height="5.5" rx="1.6" fill="#1E2A22"/>
+</svg>`;
+  }
+  return `<svg class="vb-insignia ${clase}" viewBox="0 0 64 72" width="${tam}" height="${alto}" aria-hidden="true" focusable="false">
   <path d="M32 3 59 11v24c0 18-13 29-27 34C18 64 5 53 5 35V11z" fill="#0B6B3A" stroke="#F2B705" stroke-width="3.2" stroke-linejoin="round"/>
   <path d="M32 9.5 53 15.8V35c0 14-10 23-21 27.5C21 58 11 49 11 35V15.8z" fill="none" stroke="#F2B705" stroke-width="1" opacity=".55"/>
   <polygon points="${puntosEstrella(32, 17.5, 4.4, 1.9)}" fill="#F2B705"/>
@@ -113,10 +431,19 @@ export function insignia(tam = 44, clase = '') {
 </svg>`;
 }
 
-// Kia Picanto amarillo de perfil, con la franja verde de la cooperativa.
+// Nombre de la cooperativa en la franja del taxi (más apretado si es muy largo).
+function textoFranja() {
+  const nombre = escaparHTML(MARCA.nombre.toUpperCase());
+  const n = MARCA.nombre.length;
+  const tam = n > 18 ? Math.max(7.5, (10.5 * 18) / n).toFixed(1) : '10.5';
+  const espacio = n > 15 ? '1.2' : '2.2';
+  return `<text x="206" y="128.3" font-family="Nunito, Arial, sans-serif" font-size="${tam}" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="${espacio}">${nombre}</text>`;
+}
+
+// Kia Picanto amarillo de perfil, con la franja de la cooperativa (su color y su nombre).
 function cuerpoTaxi(movil = '023') {
   const m = escaparHTML(String(movil).padStart(3, '0'));
-  return `<ellipse cx="205" cy="184" rx="182" ry="8" fill="#0A2E1A" opacity=".18"/>
+  return `<ellipse cx="205" cy="184" rx="182" ry="8" fill="${MARCA.principal ? '#0A2E1A' : PALETA.oscuro}" opacity=".18"/>
   <path d="M24 150v-36c0-15 7-24 18-30l24-25c7-7 15-9 24-9.4l138-1.6c16 0 27 4 37 13l35 30 46 9c22 4.5 32 14 33 32l1 18c0 4-3 6-6 6H30c-4 0-6-2-6-6z" fill="url(#vbCarro)" stroke="#9A6A00" stroke-width="2"/>
   <path d="M30 104c40-6 300-6 350 4" stroke="#FFE08A" stroke-width="3" fill="none" opacity=".7"/>
   <path d="M74 64c5-5 11-6.5 19-6.8l66-.9V93H62z" fill="url(#vbVidrio)"/>
@@ -125,9 +452,9 @@ function cuerpoTaxi(movil = '023') {
   <path d="M190 60h18l-18 30h-12z" fill="#fff" opacity=".14"/>
   <rect x="159" y="55" width="10" height="40" fill="#1B2A33"/>
   <path d="M164 95v55M281 95l4 55" stroke="#B98200" stroke-width="1.6" fill="none"/>
-  <path d="M26 117h356v14H26z" fill="#0B6B3A"/>
-  <path d="M26 131h356v2.5H26z" fill="#F2B705"/>
-  <text x="206" y="128.3" font-family="Nunito, Arial, sans-serif" font-size="10.5" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="2.2">COOTRANSRURAL</text>
+  <path d="M26 117h356v14H26z" fill="${PALETA.verde}"/>
+  <path d="M26 131h356v2.5H26z" fill="${PALETA.oro}"/>
+  ${textoFranja()}
   <rect x="146" y="101" width="13" height="4.5" rx="2.2" fill="#9A6A00"/>
   <rect x="262" y="101" width="13" height="4.5" rx="2.2" fill="#9A6A00"/>
   <rect x="46" y="98.5" width="88" height="16" rx="5" fill="#FFF7D6" stroke="#B98200" stroke-width="1"/>
@@ -152,13 +479,17 @@ export function taxiLado({ movil = '023', clase = '' } = {}) {
   return `<svg class="vb-taxi-ilus ${clase}" viewBox="0 0 400 196" aria-hidden="true" focusable="false"><defs>${DEFS_TAXI}</defs>${cuerpoTaxi(movil)}</svg>`;
 }
 
+// Rosas en Cootransrural (El Rosal); en las demás, matas con florecitas.
 function rosa(x, y, e = 1) {
+  if (!MARCA.principal) {
+    return `<g transform="translate(${x} ${y}) scale(${e})"><circle cx="-6" cy="4" r="7" fill="#3E9A5C"/><circle cx="6" cy="3" r="8" fill="#4FA56B"/><circle cx="0" cy="-4" r="7.5" fill="#57B074"/><circle cx="-3" cy="-5" r="1.9" fill="${PALETA.oro}"/><circle cx="5" cy="0" r="1.9" fill="#fff"/><circle cx="-7" cy="4" r="1.7" fill="#fff"/></g>`;
+  }
   return `<g transform="translate(${x} ${y}) scale(${e})"><path d="M0 4v16" stroke="#2E7D4F" stroke-width="2.2"/><path d="M0 14c-6 0-9-4-9-7 5 0 8 3 9 7zM0 12c6 0 9-4 9-7-5 0-8 3-9 7z" fill="#3E9A5C"/><circle r="6.5" fill="#D32F2F"/><path d="M0-3.2c2.2 0 3.6 1.6 3.2 3.4-.4 1.9-2.7 2.6-4 1.5-1.2-1.1-.4-2.8 1-2.6" fill="none" stroke="#8E1B1B" stroke-width="1.3" stroke-linecap="round"/></g>`;
 }
 
 // Escena de bienvenida: la Sabana, el pueblo, la carretera y el taxi.
 export function escenaBienvenida({ movil = '023' } = {}) {
-  const casas = [[38, 150, '#D32F2F'], [64, 146, '#0B6B3A'], [92, 152, '#B5532D'], [330, 148, '#D32F2F'], [356, 152, '#0B6B3A']]
+  const casas = [[38, 150, '#D32F2F'], [64, 146, PALETA.verde], [92, 152, '#B5532D'], [330, 148, '#D32F2F'], [356, 152, PALETA.verde]]
     .map(([x, y, techo]) => `<g transform="translate(${x} ${y})"><path d="M-11 0h22v-14h-22z" fill="#FFFDF7" stroke="#E2D9C3"/><path d="M-13-13l13-9 13 9z" fill="${techo}"/><rect x="-3" y="-8" width="6" height="8" fill="#6C4A2F"/></g>`)
     .join('');
   return `<svg class="vb-escena" viewBox="0 0 400 270" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
@@ -179,13 +510,13 @@ export function escenaBienvenida({ movil = '023' } = {}) {
   <path d="M0 226c120-14 260-14 400 0v44H0z" fill="#56635B"/>
   <path d="M10 246c120-10 260-10 380 0" stroke="#F8EFD6" stroke-width="3" stroke-dasharray="18 14" fill="none"/>
   <svg x="78" y="128" width="250" height="122" viewBox="0 0 400 196">${cuerpoTaxi(movil)}</svg>
-  <g class="vb-escena-pin"><path d="M262 84c0 0 15-15 15-28a15 15 0 0 0-30 0c0 13 15 28 15 28z" fill="#D32F2F" stroke="#fff" stroke-width="2.5"/><circle cx="262" cy="56" r="6" fill="#fff"/></g>
+  <g class="vb-escena-pin"><path d="M262 84c0 0 15-15 15-28a15 15 0 0 0-30 0c0 13 15 28 15 28z" fill="${PALETA.rojo}" stroke="#fff" stroke-width="2.5"/><circle cx="262" cy="56" r="6" fill="#fff"/></g>
   ${rosa(22, 214, 1.1)}${rosa(40, 222, 0.85)}${rosa(374, 216, 1.1)}${rosa(356, 224, 0.8)}
 </svg>`;
 }
 
-// Fotos de la marca (generadas para la web de Cootransrural, ver img/web/creditos.json),
-// recortadas y comprimidas para el celular.
+// Fotos genéricas (sin marcas ni logos; generadas para la web, ver img/web/creditos.json),
+// recortadas y comprimidas para el celular. Sirven para cualquier cooperativa.
 export const FOTOS = {
   bienvenida: new URL('./img/bienvenida.jpg', import.meta.url).href,
   conductor: new URL('./img/conductor.jpg', import.meta.url).href,
@@ -212,15 +543,18 @@ export function activarFotos(raiz) {
   }
 }
 
-// Sello redondo «Verificado por Cootransrural» (como sello de tinta).
+// Sello redondo «Verificado por <cooperativa>» (como sello de tinta). El texto da
+// la vuelta completa: con nombres largos la letra se achica para que quepa.
 let contadorSellos = 0;
 export function selloVerificado(clase = '') {
   const id = `vbSello${++contadorSellos}`;
-  return `<svg class="vb-sello ${clase}" viewBox="0 0 100 100" role="img" aria-label="Verificado por Cootransrural">
+  const texto = `VERIFICADO · ${MARCA.nombre.toUpperCase()} ·`;
+  const escala = Math.min(1, 28 / texto.length);
+  return `<svg class="vb-sello ${clase}" viewBox="0 0 100 100" role="img" aria-label="Verificado por ${esc(MARCA.nombre)}">
   <defs><path id="${id}" d="M50 50m-35 0a35 35 0 1 1 70 0a35 35 0 1 1-70 0"/></defs>
   <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="3"/>
   <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" stroke-width="1.6"/>
-  <text font-family="Nunito, Arial, sans-serif" font-size="10.2" font-weight="900" letter-spacing="1.25" fill="currentColor"><textPath href="#${id}">VERIFICADO · COOTRANSRURAL ·</textPath></text>
+  <text font-family="Nunito, Arial, sans-serif" font-size="${(10.2 * escala).toFixed(2)}" font-weight="900" letter-spacing="${(1.25 * escala).toFixed(2)}" fill="currentColor"><textPath href="#${id}">${esc(texto)}</textPath></text>
   <path d="M38 50.5l8 8 16-17" fill="none" stroke="currentColor" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
 }
@@ -273,7 +607,7 @@ export function numeroMiles(n) {
 }
 
 // Placa de servicio público colombiana (blanca, letras negras, municipio abajo).
-export function placaHTML(placa = '', municipio = 'EL ROSAL') {
+export function placaHTML(placa = '', municipio = MARCA.pueblo.toUpperCase()) {
   return `<span class="vb-placa" role="img" aria-label="Placa ${esc(placa)}"><b>${esc(placa)}</b><small>${esc(municipio)}</small></span>`;
 }
 
@@ -528,22 +862,29 @@ export function ponerTeselas(m) {
 export function ladoMarco({ titulo, texto, puntos = [], enlaceQR, textoQR }) {
   let qr = '';
   try {
-    qr = enlaceQR ? qrSVG(enlaceQR, { redondeado: true, color: '#0A3D22' }) : '';
+    qr = enlaceQR ? qrSVG(enlaceQR, { redondeado: true, color: PALETA.qr }) : '';
   } catch {
     qr = '';
   }
-  return `<aside class="vb-lado" aria-label="Sobre Cootransrural">
-    <div class="vb-lado-marca">${insignia(76)}<div><b>Cootransrural</b><span>Desde 1999 · El Rosal, Cundinamarca</span></div></div>
+  return `<aside class="vb-lado" aria-label="Sobre ${esc(MARCA.nombre)}">
+    <div class="vb-lado-marca">${insignia(76)}<div><b>${esc(MARCA.nombre)}</b><span>${esc(lineaMarca({ largo: true }))}</span></div></div>
     <h2>${esc(titulo)}</h2>
     <p>${esc(texto)}</p>
     <ul>${puntos.map((p) => `<li>${ic('check', 20)}<span>${esc(p)}</span></li>`).join('')}</ul>
-    ${qr ? `<div class="vb-lado-qr"><div class="vb-lado-qr-img">${qr}</div><span>${esc(textoQR || 'Escanea para abrirla en tu celular')}</span></div>` : ''}
+    ${qr ? `<div class="vb-lado-qr" data-enlace-qr="${esc(enlaceQR)}"><div class="vb-lado-qr-img">${qr}</div><span>${esc(textoQR || 'Escanea para abrirla en tu celular')}</span></div>` : ''}
+    ${MARCA.principal ? '' : `<p class="vb-lado-pie">${MARCA.propuesta ? `Propuesta de demostración preparada por ${esc(MARCA.proveedor)} para ${esc(MARCA.razonSocial)} · No es la app oficial de la cooperativa.` : `App desarrollada por ${esc(MARCA.proveedor)}.`}</p>`}
   </aside>`;
 }
 
-// Dirección de la página actual sin parámetros de prueba, para el QR del marco.
-export function enlaceParaCelular() {
+// Dirección para abrir esta misma pantalla en el celular (sin parámetros de
+// prueba). Si la página se abrió desde la raíz con ?e=<id>, el QR lleva a la
+// carpeta propia de la cooperativa (<id>/app/ o <id>/conductor/).
+export function enlaceParaCelular(seccion = 'app/') {
   const u = new URL(location.href);
   u.searchParams.delete('vitrina');
-  return u.href;
+  const propia = new URL(urlEmpresa(seccion));
+  if (u.pathname.startsWith(propia.pathname)) return u.href;
+  u.searchParams.delete('e');
+  propia.search = u.search;
+  return propia.href;
 }

@@ -3,14 +3,37 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Pago de prueba · Cootransrural</title>
-  <meta name="description" content="Pago con código QR de prueba de Cootransrural. No se mueve dinero.">
+  <title>Pago de prueba</title>
+  <meta name="description" content="Pago con código QR de prueba de la app de taxis. No se mueve dinero.">
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#FFC107">
+  <script>
+    // La cooperativa del cobro llega en ?e=<id> (el QR del conductor). Se fija
+    // ANTES de cargar los módulos para que el núcleo lea su ficha y el pago
+    // salga por el canal de ESA cooperativa. Solo se aceptan a-z, 0-9 y guiones;
+    // sin ?e= es Cootransrural. Si el valor no sirve, se marca y no se paga.
+    (function () {
+      var pedida = (new URLSearchParams(location.search).get('e') || '').trim().toLowerCase();
+      var valida = /^[a-z0-9-]{1,40}$/.test(pedida);
+      window.CT_EMPRESA_PEDIDA = pedida || 'cootransrural';
+      window.CT_EMPRESA = valida ? pedida : 'cootransrural';
+      window.CT_EMPRESA_INVALIDA = Boolean(pedida) && !valida;
+    })();
+  </script>
   <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32.png">
   <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
   <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
-  <link rel="stylesheet" href="../web/paginas.css?v=b1a3c9a75f">
+  <link rel="stylesheet" href="../web/paginas.css?v=0c6f16149a">
+  <style>
+    /* Franja de propuesta (solo cooperativas que aún no son clientes). */
+    .franja-propuesta { margin: 0; padding: 9px 16px; background: #fff; border-bottom: 1px solid var(--borde); color: var(--texto); font-size: .82rem; line-height: 1.4; text-align: center; }
+    .franja-propuesta b { color: var(--tinta); }
+    .pago-cabeza .pago-icono { width: 46px; height: 46px; border-radius: 14px; flex: none; }
+    .pago-pie a { font-weight: 700; }
+    /* El éxito va en verde en todas las cooperativas (no en el color de la marca). */
+    .estado-envio.ok { color: #0A5C33; }
+    .recibo dt { white-space: nowrap; }
+  </style>
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -19,17 +42,45 @@
     <symbol id="i-candado" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
   </svg>
 
-  <div class="franja-prueba" role="note">MODO PRUEBA — no se mueve dinero<small>Demostración del pago con QR de Cootransrural</small></div>
+  <div class="franja-prueba" role="note">MODO PRUEBA — no se mueve dinero<small id="franja-detalle">Demostración del pago con QR</small></div>
+  <p class="franja-propuesta" id="franja-propuesta" role="note" hidden></p>
 
   <main class="pago">
     <div class="pago-tarjeta" id="tarjeta" aria-live="polite">
       <div class="procesando"><div class="anillo"></div><b>Cargando el cobro…</b></div>
     </div>
     <p class="pago-nota">¿Prefieres pagar en efectivo? Díselo al conductor.</p>
-    <p class="pago-nota"><a href="../">Cootransrural</a> · <a href="../privacidad/">Privacidad</a></p>
+    <p class="pago-nota pago-pie" id="pie"></p>
   </main>
 
   <noscript><p style="text-align:center;padding:20px">Para ver el pago de prueba activa JavaScript.</p></noscript>
-  <script type="module" src="../web/pagar.js?v=61798090ae"></script>
+  <script>
+    // Si el núcleo no carga la ficha (cooperativa que no existe o sin señal), el
+    // módulo de pago no arranca: aquí se dice qué pasó en vez de quedar «Cargando…».
+    (function () {
+      var hecho = false;
+      function revisar() {
+        if (hecho) return;
+        var t = document.getElementById('tarjeta');
+        if (!t || !/Cargando el cobro/.test(t.textContent)) return;
+        hecho = true;
+        var id = window.CT_EMPRESA || 'cootransrural';
+        function aviso(titulo, texto, reintentar) {
+          t.innerHTML = '<div class="error-pago"><span class="circulo"><svg class="icono"><use href="#i-alerta"/></svg></span><h1>' + titulo + '</h1><p>' + texto + '</p>' +
+            (reintentar ? '<button type="button" class="boton boton-amarillo boton-ancho" onclick="location.reload()">Reintentar</button>' : '') + '</div>';
+        }
+        fetch('../empresas/' + id + '/ficha.json', { method: 'HEAD', cache: 'no-cache' }).then(function (r) {
+          if (r.status === 404) aviso('No reconocemos la cooperativa de este cobro', 'El código QR no corresponde a ninguna cooperativa de la app. Pídele al conductor que te muestre otra vez el código de cobro o, si prefieres, págale en efectivo.');
+          else aviso('No pudimos cargar el cobro', 'Revisa tu conexión a internet e inténtalo de nuevo. Si prefieres, págale al conductor en efectivo.', true);
+        }).catch(function () {
+          aviso('No pudimos cargar el cobro', 'Revisa tu conexión a internet e inténtalo de nuevo. Si prefieres, págale al conductor en efectivo.', true);
+        });
+      }
+      window.addEventListener('error', function () { setTimeout(revisar, 300); });
+      window.addEventListener('unhandledrejection', function () { setTimeout(revisar, 300); });
+      setTimeout(revisar, 8000);
+    })();
+  </script>
+  <script type="module" src="../web/pagar.js?v=ff748781ca"></script>
 </body>
 </html>

@@ -131,6 +131,7 @@ export function horaBogota(fecha = new Date()) {
 
 export function saludo(fecha = new Date()) {
   const { hora } = horaBogota(fecha);
+  if (hora < 5) return 'Buenas noches';
   if (hora < 12) return 'Buenos días';
   if (hora < 19) return 'Buenas tardes';
   return 'Buenas noches';

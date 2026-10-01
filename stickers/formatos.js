@@ -1,87 +1,223 @@
-// Diseños de los 5 formatos de sticker en los 3 estilos de color.
+// Diseños de los 5 formatos de sticker en los estilos de color.
 // Todas las medidas están en milímetros sobre el tamaño final (corte).
 // Lo que toca el borde se extiende EXT mm hacia afuera para el sangrado.
+// Los datos (nombre, lema, teléfono, pueblo, ofertas) salen de la ficha de la
+// cooperativa activa (empresas/<id>/ficha.json): lo que falte no se imprime.
 import * as N from '../nucleo/index.js';
 import { anchoTexto, altoMayus, tamParaAncho, planQR } from './escena.js';
 
 const EXT = 4;
 const E = N.EMPRESA;
+const T = N.TARIFAS || {};
+const ES_PRINCIPAL = N.ID_EMPRESA === 'cootransrural';
 
 // ---------------------------------------------------------------------------
-// Estilos de color (combinan con los tres diseños de la app)
+// Datos de la cooperativa, ya listos para imprimir
 // ---------------------------------------------------------------------------
-export const ESTILOS = {
-  clasico: {
-    id: 'clasico',
-    nombre: 'Clásico amarillo/negro',
-    corto: 'Clásico',
-    muestra: ['#FFCC00', '#111111', '#FFFFFF'],
-    fondo: '#FFCC00',
-    fondoDegradado: null,
-    tinta: '#111111',
-    tintaSuave: '#3A3000',
-    panel: '#111111',
+const limpio = (v) => (typeof v === 'string' ? v.trim() : v == null ? '' : String(v).trim());
+const sinTildes = (t) => limpio(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const digitos = (t) => limpio(t).replace(/\D/g, '');
+
+// «3209042977» → «320 904 2977»; «573125847257» → «312 584 7257».
+function telefonoVisible(numero) {
+  let d = digitos(numero);
+  if (d.length === 12 && d.startsWith('57')) d = d.slice(2);
+  if (d.length === 10) return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`;
+  if (d.length === 7) return `${d.slice(0, 3)} ${d.slice(3)}`;
+  return d;
+}
+
+const ABREVIATURAS_DEPTO = { cundinamarca: 'Cund.', boyaca: 'Boy.', antioquia: 'Ant.', tolima: 'Tol.', santander: 'Sant.', 'valle del cauca': 'Valle' };
+
+export const DATOS = (() => {
+  const pueblo = limpio(E.pueblo) || limpio(E.municipio).split(',')[0].trim();
+  const depto = limpio(E.municipio).split(',').slice(1).join(',').trim();
+  const deptoCorto = ABREVIATURAS_DEPTO[sinTildes(depto)] || depto;
+
+  // Teléfono de la central y WhatsApp (pueden faltar los dos).
+  const tel = limpio(E.telefonoVisible) || telefonoVisible(E.telefono);
+  const wa = digitos(E.whatsapp);
+  const mismoWhatsApp = Boolean(tel && wa && wa.endsWith(digitos(E.telefono || E.telefonoVisible)));
+  let contacto = null;
+  if (tel) contacto = { numero: tel, etiqueta: 'CENTRAL', conWhatsApp: mismoWhatsApp };
+  else if (wa) contacto = { numero: telefonoVisible(wa), etiqueta: 'WHATSAPP', conWhatsApp: false };
+
+  // Dirección corta: «Carrera 8 No. 12-38, Barrio San Carlos, El Rosal, Cundinamarca» → «Cra. 8 No. 12-38, San Carlos».
+  const fuera = new Set([sinTildes(pueblo), sinTildes(depto)]);
+  const direccion = limpio(E.direccion)
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => s && !fuera.has(sinTildes(s)))
+    .join(', ')
+    .replace(/^Carrera\b/i, 'Cra.')
+    .replace(/^Calle\b/i, 'Cl.')
+    .replace(/^Avenida\b/i, 'Av.')
+    .replace(/^Transversal\b/i, 'Tv.')
+    .replace(/^Diagonal\b/i, 'Dg.')
+    .replace(/\bBarrio\s+/i, '');
+
+  // Ofertas de la app (de las tarifas de la cooperativa).
+  const pct = (x) => `${Math.round(x * 100)} %`;
+  const ofertas = [];
+  if (T.descuentoProgramado > 0 && T.horasAnticipacion > 0) {
+    ofertas.push({ grande: `−${pct(T.descuentoProgramado)}`, icono: 'calendario', texto: `Programa tu viaje con ${T.horasAnticipacion} horas de anticipación.` });
+  }
+  if (T.viajesFidelidad > 0 && T.descuentoFidelidad > 0) {
+    const premio = T.descuentoFidelidad >= 1 ? 'el siguiente es gratis' : T.descuentoFidelidad === 0.5 ? 'el siguiente a mitad de precio' : `el siguiente con ${pct(T.descuentoFidelidad)} de descuento`;
+    ofertas.push({ grande: T.descuentoFidelidad >= 1 ? 'Gratis' : pct(T.descuentoFidelidad), icono: 'regalo', texto: `Cada ${T.viajesFidelidad} viajes, ${premio}.` });
+  }
+
+  return {
+    nombre: limpio(E.nombre) || limpio(E.nombreCorto) || 'Taxis',
+    lema: limpio(E.lema),
+    pueblo,
+    municipio: [pueblo, depto].filter(Boolean).join(', '),
+    // «EL ROSAL · CUND.»
+    lugarCorto: [pueblo, deptoCorto].filter(Boolean).join(' · ').toUpperCase(),
+    deptoMayus: depto.toUpperCase(),
+    contacto,
+    correo: limpio(E.correo),
+    direccion,
+    servicio24h: E.servicio24h !== false,
+    ofertas,
+  };
+})();
+
+// ---------------------------------------------------------------------------
+// Colores
+// ---------------------------------------------------------------------------
+const HEX = /^#[0-9a-f]{6}$/i;
+function rgb(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+// Luminancia relativa (WCAG), de 0 (negro) a 1 (blanco).
+export function luminancia(hex) {
+  const [r, g, b] = rgb(hex).map((v) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+function mezclar(a, b, t) {
+  const [x, y] = [rgb(a), rgb(b)];
+  return '#' + x.map((v, i) => Math.round(v + (y[i] - v) * t).toString(16).padStart(2, '0')).join('').toUpperCase();
+}
+
+// Estilo con los colores de la cooperativa (ficha.colores).
+function estiloCooperativa() {
+  const C = N.COLORES || {};
+  const claro = HEX.test(C.primario2 || '') ? C.primario2 : HEX.test(C.primario || '') ? C.primario : '#1D4E89';
+  let oscuro = HEX.test(C.oscuro || '') ? C.oscuro : mezclar(claro, '#000000', 0.55);
+  if (luminancia(oscuro) > 0.06) oscuro = mezclar(oscuro, '#000000', 0.5);
+  const acento = HEX.test(C.acento || '') ? C.acento : '#FFD54A';
+  const panel = mezclar(oscuro, '#000000', 0.2);
+  const fondoOscuro = luminancia(claro) < 0.3;
+  return {
+    id: 'cooperativa',
+    nombre: 'Color de la cooperativa',
+    corto: 'Cooperativa',
+    muestra: [claro, acento, '#FFFFFF'],
+    fondo: claro,
+    fondoDegradado: [claro, oscuro],
+    tinta: fondoOscuro ? '#FFFFFF' : '#111111',
+    tintaSuave: fondoOscuro ? mezclar(claro, '#FFFFFF', 0.8) : mezclar(claro, '#000000', 0.7),
+    panel,
     sobrePanel: '#FFFFFF',
-    destacado: '#FFCC00',
-    cuadros: ['#111111', '#FFFFFF'],
+    destacado: acento,
+    cuadros: [acento, panel],
     tarjeta: '#FFFFFF',
-    modulo: '#000000',
+    // Los módulos del QR tienen que ser oscuros para que se lea bien.
+    modulo: oscuro,
     bordeTarjeta: null,
-    insignia: '#111111',
-    sobreInsignia: '#FFCC00',
-    titulo: { familia: 'Sora', peso: 800 },
-    negrita: { familia: 'Plus Jakarta Sans', peso: 800 },
-    texto: { familia: 'Plus Jakarta Sans', peso: 700 },
-    suave: { familia: 'Plus Jakarta Sans', peso: 500 },
-  },
-  verde: {
-    id: 'verde',
-    nombre: 'Verde cooperativa',
-    corto: 'Verde',
-    muestra: ['#0E7A43', '#FFD54A', '#FFFFFF'],
-    fondo: '#0B6B3A',
-    fondoDegradado: ['#0E7A43', '#05391F'],
-    tinta: '#FFFFFF',
-    tintaSuave: '#CFEBDC',
-    panel: '#05331C',
-    sobrePanel: '#FFFFFF',
-    destacado: '#FFD54A',
-    cuadros: ['#FFD54A', '#05331C'],
-    tarjeta: '#FFFFFF',
-    modulo: '#04261A',
-    bordeTarjeta: null,
-    insignia: '#FFD54A',
-    sobreInsignia: '#05331C',
+    insignia: acento,
+    sobreInsignia: luminancia(acento) > 0.35 ? panel : '#FFFFFF',
     titulo: { familia: 'Plus Jakarta Sans', peso: 800 },
     negrita: { familia: 'Plus Jakarta Sans', peso: 800 },
     texto: { familia: 'Plus Jakarta Sans', peso: 700 },
     suave: { familia: 'Plus Jakarta Sans', peso: 500 },
-  },
-  neon: {
-    id: 'neon',
-    nombre: 'Oscuro neón',
-    corto: 'Neón',
-    muestra: ['#0B1024', '#FFE14D', '#2EE6FF'],
-    fondo: '#0B1024',
-    fondoDegradado: ['#141B3C', '#070A17'],
-    tinta: '#FFFFFF',
-    tintaSuave: '#B9C3E6',
-    panel: '#05070F',
-    sobrePanel: '#FFFFFF',
-    destacado: '#FFE14D',
-    segundo: '#2EE6FF',
-    cuadros: ['#FFE14D', '#05070F'],
-    tarjeta: '#FFFFFF',
-    modulo: '#070A17',
-    bordeTarjeta: '#2EE6FF',
-    insignia: '#FFE14D',
-    sobreInsignia: '#070A17',
-    titulo: { familia: 'Outfit', peso: 800 },
-    negrita: { familia: 'Outfit', peso: 700 },
-    texto: { familia: 'Outfit', peso: 600 },
-    suave: { familia: 'Outfit', peso: 400 },
-  },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Estilos de color (combinan con los tres diseños de la app). Cootransrural
+// usa su verde («Verde cooperativa»); las demás cooperativas, además de los
+// tres de siempre, tienen «Color de la cooperativa» con los colores de su ficha.
+// ---------------------------------------------------------------------------
+const CLASICO = {
+  id: 'clasico',
+  nombre: 'Clásico amarillo/negro',
+  corto: 'Clásico',
+  muestra: ['#FFCC00', '#111111', '#FFFFFF'],
+  fondo: '#FFCC00',
+  fondoDegradado: null,
+  tinta: '#111111',
+  tintaSuave: '#3A3000',
+  panel: '#111111',
+  sobrePanel: '#FFFFFF',
+  destacado: '#FFCC00',
+  cuadros: ['#111111', '#FFFFFF'],
+  tarjeta: '#FFFFFF',
+  modulo: '#000000',
+  bordeTarjeta: null,
+  insignia: '#111111',
+  sobreInsignia: '#FFCC00',
+  titulo: { familia: 'Sora', peso: 800 },
+  negrita: { familia: 'Plus Jakarta Sans', peso: 800 },
+  texto: { familia: 'Plus Jakarta Sans', peso: 700 },
+  suave: { familia: 'Plus Jakarta Sans', peso: 500 },
 };
+
+const VERDE = {
+  id: 'verde',
+  nombre: ES_PRINCIPAL ? 'Verde cooperativa' : 'Verde campo',
+  corto: 'Verde',
+  muestra: ['#0E7A43', '#FFD54A', '#FFFFFF'],
+  fondo: '#0B6B3A',
+  fondoDegradado: ['#0E7A43', '#05391F'],
+  tinta: '#FFFFFF',
+  tintaSuave: '#CFEBDC',
+  panel: '#05331C',
+  sobrePanel: '#FFFFFF',
+  destacado: '#FFD54A',
+  cuadros: ['#FFD54A', '#05331C'],
+  tarjeta: '#FFFFFF',
+  modulo: '#04261A',
+  bordeTarjeta: null,
+  insignia: '#FFD54A',
+  sobreInsignia: '#05331C',
+  titulo: { familia: 'Plus Jakarta Sans', peso: 800 },
+  negrita: { familia: 'Plus Jakarta Sans', peso: 800 },
+  texto: { familia: 'Plus Jakarta Sans', peso: 700 },
+  suave: { familia: 'Plus Jakarta Sans', peso: 500 },
+};
+
+const NEON = {
+  id: 'neon',
+  nombre: 'Oscuro neón',
+  corto: 'Neón',
+  muestra: ['#0B1024', '#FFE14D', '#2EE6FF'],
+  fondo: '#0B1024',
+  fondoDegradado: ['#141B3C', '#070A17'],
+  tinta: '#FFFFFF',
+  tintaSuave: '#B9C3E6',
+  panel: '#05070F',
+  sobrePanel: '#FFFFFF',
+  destacado: '#FFE14D',
+  segundo: '#2EE6FF',
+  cuadros: ['#FFE14D', '#05070F'],
+  tarjeta: '#FFFFFF',
+  modulo: '#070A17',
+  bordeTarjeta: '#2EE6FF',
+  insignia: '#FFE14D',
+  sobreInsignia: '#070A17',
+  titulo: { familia: 'Outfit', peso: 800 },
+  negrita: { familia: 'Outfit', peso: 700 },
+  texto: { familia: 'Outfit', peso: 600 },
+  suave: { familia: 'Outfit', peso: 400 },
+};
+
+export const ESTILOS = ES_PRINCIPAL ? { clasico: CLASICO, verde: VERDE, neon: NEON } : { clasico: CLASICO, cooperativa: estiloCooperativa(), verde: VERDE, neon: NEON };
 
 // ---------------------------------------------------------------------------
 // Formatos (tamaños reales exactos, en mm)
@@ -148,7 +284,7 @@ function fondo(est, w, h) {
     ops.push({ t: 'circulo', cx: w * 0.92, cy: h * 0.08, r: Math.max(w, h) * 0.55, relleno: { tipo: 'radial', cx: w * 0.92, cy: h * 0.08, r: Math.max(w, h) * 0.55, paradas: [[0, '#2EE6FF', 0.22], [1, '#2EE6FF', 0]] } });
     ops.push({ t: 'circulo', cx: w * 0.05, cy: h * 0.95, r: Math.max(w, h) * 0.5, relleno: { tipo: 'radial', cx: w * 0.05, cy: h * 0.95, r: Math.max(w, h) * 0.5, paradas: [[0, '#FF3DA5', 0.16], [1, '#FF3DA5', 0]] } });
   }
-  if (est.id === 'verde') {
+  if (est.id === 'verde' || est.id === 'cooperativa') {
     ops.push({ t: 'circulo', cx: w * 0.95, cy: -h * 0.05, r: Math.max(w, h) * 0.6, relleno: { tipo: 'radial', cx: w * 0.95, cy: -h * 0.05, r: Math.max(w, h) * 0.6, paradas: [[0, '#FFFFFF', 0.12], [1, '#FFFFFF', 0]] } });
   }
   return ops;
@@ -283,8 +419,8 @@ function disenoTaxi({ est, url, movil }) {
   ops.push({ t: 'rect', x: xc, y: yMov, w: wc, h: hMov, r: 3, relleno: est.tarjeta });
   if (est.bordeTarjeta) ops.push({ t: 'rect', x: xc, y: yMov, w: wc, h: hMov, r: 3, relleno: null, trazo: est.bordeTarjeta, grosor: 0.6 });
   const tintaTarjeta = est.id === 'clasico' ? '#111111' : est.modulo;
-  const etiqueta = movil ? 'MÓVIL' : 'SERVICIO';
-  const grande = movil || '24 h';
+  const etiqueta = movil ? 'MÓVIL' : DATOS.servicio24h ? 'SERVICIO' : 'APP';
+  const grande = movil || (DATOS.servicio24h ? '24 h' : 'GRATIS');
   const tamEt = Math.min(4, (wc - 6) / (anchoTexto(etiqueta, { ...est.negrita, tam: 1 }) + 0.16 * (etiqueta.length - 1)));
   const tamNum = tamParaAncho(grande, { ...est.titulo, espaciadoEm: -0.03 }, wc - 3.4, 17);
   const altoNum = altoMayus(est.titulo.familia, est.titulo.peso) * tamNum;
@@ -293,7 +429,9 @@ function disenoTaxi({ est, url, movil }) {
   ops.push(texto(cx, yBloque + altoMayus(est.negrita.familia, est.negrita.peso) * tamEt, etiqueta, est.negrita, tamEt, tintaTarjeta, { alinear: 'centro', espaciadoEm: 0.16 }));
   ops.push(texto(cx, yBloque + altoBloque, grande, est.titulo, tamNum, tintaTarjeta, { alinear: 'centro', espaciadoEm: -0.03 }));
 
-  // Pie: central telefónica 24 horas.
+  // Pie: central telefónica (si la cooperativa no tiene teléfono, va su nombre en grande).
+  const D = DATOS;
+  const C = D.contacto;
   const yBanda = yFinQR + 3.5;
   const hBanda = H - yBanda;
   ops.push({ t: 'rect', x: -EXT, y: yBanda, w: W + 2 * EXT, h: hBanda + EXT, relleno: est.panel });
@@ -301,19 +439,33 @@ function disenoTaxi({ est, url, movil }) {
   const cyB = yBanda + hBanda / 2 + (est.id !== 'clasico' ? 0.4 : 0);
   const rIco = Math.min(5.4, hBanda / 2 - 2);
   ops.push({ t: 'circulo', cx: M + rIco, cy: cyB, r: rIco, relleno: est.destacado });
-  ops.push(icono('telefono', M + rIco - rIco * 0.6, cyB - rIco * 0.6, rIco * 1.2, est.panel));
+  if (C) ops.push(icono('telefono', M + rIco - rIco * 0.6, cyB - rIco * 0.6, rIco * 1.2, est.panel));
+  else if (D.servicio24h) ops.push(...reloj(M + rIco, cyB, rIco * 0.58, est.panel, rIco * 0.15));
+  else ops.push(icono('escanear', M + rIco - rIco * 0.6, cyB - rIco * 0.6, rIco * 1.2, est.panel));
   const xTel = M + rIco * 2 + 3.4;
   const tamTel = Math.min(7.6, (hBanda - 4) * 0.62);
   const tamEtTel = Math.min(2.7, tamTel * 0.37);
-  const altoTel = altoMayus(est.titulo.familia, est.titulo.peso) * tamTel;
-  const altoEtTel = altoMayus(est.negrita.familia, est.negrita.peso) * tamEtTel;
-  const yTexto = cyB - (altoTel + altoEtTel + 2.2) / 2;
-  ops.push(texto(xTel, yTexto + altoEtTel, 'CENTRAL 24 HORAS', est.negrita, tamEtTel, est.sobrePanel, { espaciadoEm: 0.16 }));
-  ops.push(texto(xTel, yTexto + altoEtTel + 2.2 + altoTel, E.telefonoVisible, est.titulo, tamTel, est.destacado, { espaciadoEm: 0.01 }));
   const tamMarca = Math.min(4.8, tamTel * 0.62);
-  const altoMarca = altoMayus(est.titulo.familia, est.titulo.peso) * tamMarca;
-  ops.push(texto(W - M, yTexto + altoMarca, E.nombre, est.titulo, tamMarca, est.sobrePanel, { alinear: 'der' }));
-  ops.push(texto(W - M, yTexto + altoEtTel + 2.2 + altoTel, 'EL ROSAL · CUND.', est.negrita, tamEtTel, est.destacado, { alinear: 'der', espaciadoEm: 0.14 }));
+  const altoEtTel = altoMayus(est.negrita.familia, est.negrita.peso) * tamEtTel;
+  // Bloque derecho: con teléfono, nombre y lugar; sin teléfono, solo el lugar.
+  const der1 = C ? D.nombre : D.pueblo.toUpperCase();
+  const der2 = C ? D.lugarCorto : D.deptoMayus;
+  const etiquetaIzq = C ? `${C.etiqueta}${D.servicio24h ? ' 24 HORAS' : ''}` : D.servicio24h ? 'SERVICIO 24 HORAS' : 'SERVICIO DE TAXI';
+  const grandeIzq = C ? C.numero : D.nombre;
+  const anchoDerMax = Math.max(ancho(der1, est.titulo, tamMarca), ancho(der2, est.negrita, tamEtTel, 0.14));
+  const anchoIzqDisp = W - M - xTel - Math.min(anchoDerMax, 52) - 5;
+  const tamGrande = tamParaAncho(grandeIzq, { ...est.titulo, espaciadoEm: 0.01 }, anchoIzqDisp, tamTel);
+  const altoTel = altoMayus(est.titulo.familia, est.titulo.peso) * tamTel;
+  const yTexto = cyB - (altoTel + altoEtTel + 2.2) / 2;
+  const yBase = yTexto + altoEtTel + 2.2 + altoTel;
+  ops.push(textoAjustado(xTel, yTexto + altoEtTel, etiquetaIzq, est.negrita, tamEtTel, anchoIzqDisp, est.sobrePanel, { espaciadoEm: 0.16 }).op);
+  ops.push(texto(xTel, yBase, grandeIzq, est.titulo, tamGrande, est.destacado, { espaciadoEm: 0.01 }));
+  const xFinIzq = xTel + Math.max(ancho(etiquetaIzq, est.negrita, tamEtTel, 0.16), ancho(grandeIzq, est.titulo, tamGrande, 0.01));
+  const anchoDer = W - M - xFinIzq - 5;
+  const marca = textoAjustado(W - M, 0, der1, est.titulo, tamMarca, anchoDer, est.sobrePanel, { alinear: 'der' });
+  marca.op.y = yTexto + altoMayus(est.titulo.familia, est.titulo.peso) * marca.tam;
+  ops.push(marca.op);
+  if (der2) ops.push(textoAjustado(W - M, yBase, der2, est.negrita, tamEtTel, anchoDer, est.destacado, { alinear: 'der', espaciadoEm: 0.14 }).op);
 
   return { ancho: W, alto: H, ops, qr: { nivel: plan.nivel, lado, modulos: plan.n } };
 }
@@ -390,8 +542,9 @@ function disenoIman({ est, url, movil }) {
   // Marca.
   const ic = 8;
   ops.push(...iconoApp(est, M, M - 0.5, ic));
-  ops.push(texto(M + ic + 2, M + 3.4, E.nombre, est.titulo, 3.4, est.tinta));
-  ops.push(texto(M + ic + 2, M + 6.9, 'EL ROSAL', est.texto, 2.0, est.id === 'clasico' ? est.tintaSuave : est.destacado, { espaciadoEm: 0.2 }));
+  const anchoMarca = xPanel - 2.4 - (M + ic + 2) - 1.5;
+  ops.push(textoAjustado(M + ic + 2, M + 3.4, DATOS.nombre, est.titulo, 3.4, anchoMarca, est.tinta).op);
+  ops.push(textoAjustado(M + ic + 2, M + 6.9, DATOS.pueblo.toUpperCase(), est.texto, 2.0, anchoMarca, est.id === 'clasico' ? est.tintaSuave : est.destacado, { espaciadoEm: 0.2 }).op);
 
   // Titular.
   const anchoTexto1 = xPanel - 2.4 - M - 3;
@@ -399,16 +552,22 @@ function disenoIman({ est, url, movil }) {
   ops.push(t1.op);
   ops.push(textoAjustado(M, 31.4, 'a un toque', est.titulo, t1.tam, anchoTexto1, est.tinta, { espaciadoEm: -0.02 }).op);
 
-  // Teléfono en píldora.
+  // Teléfono en píldora (sin teléfono: «Descarga la app gratis»).
   const yTel = 35.2;
   const hTel = 8;
   ops.push({ t: 'rect', x: M, y: yTel, w: anchoTexto1, h: hTel, r: hTel / 2, relleno: est.insignia });
-  ops.push(icono('telefono', M + 2.2, yTel + 1.9, 4.2, est.sobreInsignia));
-  ops.push(textoAjustado(M + 7.6, baseCentrada(yTel, hTel, est.titulo, 4.2), E.telefonoVisible, est.titulo, 4.2, anchoTexto1 - 10, est.sobreInsignia).op);
+  ops.push(icono(DATOS.contacto ? 'telefono' : 'escanear', M + 2.2, yTel + 1.9, 4.2, est.sobreInsignia));
+  const enPildora = DATOS.contacto ? DATOS.contacto.numero : 'Descarga la app gratis';
+  const tamPildora = DATOS.contacto ? 4.2 : 3.4;
+  ops.push(textoAjustado(M + 7.6, baseCentrada(yTel, hTel, est.titulo, tamPildora), enPildora, est.titulo, tamPildora, anchoTexto1 - 10, est.sobreInsignia).op);
 
   // Servicio 24 horas.
-  ops.push(...reloj(M + 1.9, 49.3, 1.75, est.tinta, 0.5));
-  ops.push(texto(M + 5.3, 50.4, 'Servicio 24 horas', est.negrita, 3.1, est.tinta));
+  if (DATOS.servicio24h) {
+    ops.push(...reloj(M + 1.9, 49.3, 1.75, est.tinta, 0.5));
+    ops.push(textoAjustado(M + 5.3, 50.4, 'Servicio 24 horas', est.negrita, 3.1, anchoTexto1 - 5.3, est.tinta).op);
+  } else {
+    ops.push(textoAjustado(M, 50.4, `Taxis de ${DATOS.pueblo}`, est.negrita, 3.1, anchoTexto1, est.tinta).op);
+  }
 
   return { ancho: W, alto: H, ops, qr: { nivel: plan.nivel, lado, modulos: plan.n } };
 }
@@ -426,13 +585,19 @@ function disenoAfiche({ est, url, movil }) {
   const hEnc = 26;
   ops.push({ t: 'rect', x: -EXT, y: -EXT, w: W + 2 * EXT, h: hEnc + EXT, relleno: est.panel });
   const ic = 16;
-  ops.push(...iconoApp(est, M, (hEnc - ic) / 2, ic));
-  ops.push(texto(M + ic + 4, 12.9, E.nombre, est.titulo, 6.8, est.sobrePanel, { espaciadoEm: -0.01 }));
-  ops.push(texto(M + ic + 4, 19.2, E.lema, est.texto, 3.3, est.destacado));
   const rB = 7.6;
-  ops.push({ t: 'circulo', cx: W - M - rB, cy: hEnc / 2, r: rB, relleno: est.destacado });
-  ops.push(texto(W - M - rB, hEnc / 2 + 1.2, '24 h', est.titulo, 4.9, est.panel, { alinear: 'centro' }));
-  ops.push(texto(W - M - rB, hEnc / 2 + 4.4, 'SERVICIO', est.negrita, 1.6, est.panel, { alinear: 'centro', espaciadoEm: 0.12 }));
+  ops.push(...iconoApp(est, M, (hEnc - ic) / 2, ic));
+  const xNom = M + ic + 4;
+  const anchoNom = (DATOS.servicio24h ? W - M - 2 * rB - 4 : W - M) - xNom;
+  const nom = textoAjustado(xNom, 12.9, DATOS.nombre, est.titulo, 6.8, anchoNom, est.sobrePanel, { espaciadoEm: -0.01 });
+  if (!DATOS.lema) nom.op.y = baseCentrada(0, hEnc, est.titulo, nom.tam);
+  ops.push(nom.op);
+  if (DATOS.lema) ops.push(textoAjustado(xNom, 19.2, DATOS.lema, est.texto, 3.3, anchoNom, est.destacado).op);
+  if (DATOS.servicio24h) {
+    ops.push({ t: 'circulo', cx: W - M - rB, cy: hEnc / 2, r: rB, relleno: est.destacado });
+    ops.push(texto(W - M - rB, hEnc / 2 + 1.2, '24 h', est.titulo, 4.9, est.panel, { alinear: 'centro' }));
+    ops.push(texto(W - M - rB, hEnc / 2 + 4.4, 'SERVICIO', est.negrita, 1.6, est.panel, { alinear: 'centro', espaciadoEm: 0.12 }));
+  }
   ops.push(cuadros(-EXT, hEnc, W + 2 * EXT, 5, 2.5, est.cuadros));
 
   // Titular.
@@ -488,39 +653,51 @@ function disenoAfiche({ est, url, movil }) {
     ops.push(...parrafo(xT, yP + 10.4, detalle, est.suave, 2.9, est.tinta, wT, 1.3).ops);
   });
 
-  // Ofertas.
-  const yO = yEsc + hEsc + 8.6;
-  const etiquetaO = 'OFERTAS DE LA COOPERATIVA';
-  const wEt = ancho(etiquetaO, est.negrita, 2.9, 0.16);
-  ops.push(texto(M, yO, etiquetaO, est.negrita, 2.9, est.tinta, { espaciadoEm: 0.16 }));
-  ops.push({ t: 'rect', x: M + wEt + 3, y: yO - 1.25, w: W - 2 * M - wEt - 3, h: 0.45, relleno: est.tinta, opacidad: 0.45 });
-  const yC = yO + 3.4;
-  const hC = 23.5;
-  const wC = (W - 2 * M - 5) / 2;
-  const ofertas = [
-    { grande: '−10 %', icono: 'calendario', texto: 'Programa tu viaje con 24 horas de anticipación.' },
-    { grande: '50 %', icono: 'regalo', texto: 'Cada 10 viajes, el siguiente a mitad de precio.' },
-  ];
-  ofertas.forEach((o, i) => {
-    const x = M + i * (wC + 5);
-    ops.push({ t: 'rect', x, y: yC, w: wC, h: hC, r: 3, relleno: est.panel });
-    if (est.bordeTarjeta) ops.push({ t: 'rect', x, y: yC, w: wC, h: hC, r: 3, relleno: null, trazo: i ? '#FF3DA5' : est.bordeTarjeta, grosor: 0.5 });
-    ops.push(icono(o.icono, x + wC - 9.4, yC + 3.4, 5.8, est.destacado));
-    ops.push(texto(x + 4, yC + 10.8, o.grande, est.titulo, 8.4, est.destacado, { espaciadoEm: -0.02 }));
-    ops.push(...parrafo(x + 4, yC + 16.2, o.texto, est.texto, 2.7, est.sobrePanel, wC - 8, 1.3).ops);
-  });
+  // Ofertas (de las tarifas de la cooperativa).
+  const ofertas = DATOS.ofertas;
+  let yPie = yEsc + hEsc + 8.6;
+  if (ofertas.length) {
+    const yO = yEsc + hEsc + 8.6;
+    const etiquetaO = 'OFERTAS DE LA COOPERATIVA';
+    const wEt = ancho(etiquetaO, est.negrita, 2.9, 0.16);
+    ops.push(texto(M, yO, etiquetaO, est.negrita, 2.9, est.tinta, { espaciadoEm: 0.16 }));
+    ops.push({ t: 'rect', x: M + wEt + 3, y: yO - 1.25, w: W - 2 * M - wEt - 3, h: 0.45, relleno: est.tinta, opacidad: 0.45 });
+    const yC = yO + 3.4;
+    const hC = 23.5;
+    const wC = ofertas.length > 1 ? (W - 2 * M - 5) / 2 : W - 2 * M;
+    ofertas.slice(0, 2).forEach((o, i) => {
+      const x = M + i * (wC + 5);
+      ops.push({ t: 'rect', x, y: yC, w: wC, h: hC, r: 3, relleno: est.panel });
+      if (est.bordeTarjeta) ops.push({ t: 'rect', x, y: yC, w: wC, h: hC, r: 3, relleno: null, trazo: i ? '#FF3DA5' : est.bordeTarjeta, grosor: 0.5 });
+      ops.push(icono(o.icono, x + wC - 9.4, yC + 3.4, 5.8, est.destacado));
+      ops.push(textoAjustado(x + 4, yC + 10.8, o.grande, est.titulo, 8.4, wC - 15, est.destacado, { espaciadoEm: -0.02 }).op);
+      ops.push(...parrafo(x + 4, yC + 16.2, o.texto, est.texto, 2.7, est.sobrePanel, wC - 8, 1.3).ops);
+    });
+    yPie = yC + hC + 5;
+  }
 
-  // Pie de contacto.
-  const yPie = yC + hC + 5;
+  // Pie de contacto (sin teléfono: «Pide tu taxi con la app» en grande).
+  const C = DATOS.contacto;
   ops.push({ t: 'rect', x: M, y: yPie, w: W - 2 * M, h: 0.4, relleno: est.tinta, opacidad: 0.3 });
   const yL = yPie + 8.2;
   ops.push({ t: 'circulo', cx: M + 4.2, cy: yL - 2, r: 4.2, relleno: est.insignia });
-  ops.push(icono('telefono', M + 1.7, yL - 4.5, 5, est.sobreInsignia));
-  ops.push(texto(M + 11, yL - 3.6, 'CENTRAL Y WHATSAPP · 24 HORAS', est.negrita, 2.1, est.tinta, { espaciadoEm: 0.12 }));
-  ops.push(texto(M + 11, yL + 2.3, E.telefonoVisible, est.titulo, 5.4, est.tinta));
-  ops.push(texto(W - M, yL - 3.6, E.correo, est.texto, 2.4, est.tinta, { alinear: 'der' }));
-  ops.push(texto(W - M, yL - 0.1, 'Cra. 8 No. 12-38, San Carlos', est.suave, 2.4, est.tinta, { alinear: 'der' }));
-  ops.push(texto(W - M, yL + 3.4, 'El Rosal, Cundinamarca', est.suave, 2.4, est.tinta, { alinear: 'der' }));
+  ops.push(icono(C ? 'telefono' : 'escanear', M + 1.7, yL - 4.5, 5, est.sobreInsignia));
+  const etiquetaPie = C ? `${C.etiqueta}${C.conWhatsApp ? ' Y WHATSAPP' : ''}${DATOS.servicio24h ? ' · 24 HORAS' : ''}` : DATOS.servicio24h ? 'SERVICIO 24 HORAS' : `TAXIS DE ${DATOS.pueblo.toUpperCase()}`;
+  const grandePie = C ? C.numero : 'Pide tu taxi con la app';
+  // Columna derecha: correo, dirección y municipio (solo los que existan).
+  const lineas = [DATOS.correo, DATOS.direccion, DATOS.municipio].filter(Boolean);
+  const estiloLinea = (i) => (i === 0 && DATOS.correo ? est.texto : est.suave);
+  const anchoLineas = Math.min(56, Math.max(0, ...lineas.map((l, i) => ancho(l, estiloLinea(i), 2.4))));
+  const xIzq = M + 11;
+  const anchoIzq = W - M - xIzq - (lineas.length ? anchoLineas + 5 : 0);
+  ops.push(textoAjustado(xIzq, yL - 3.6, etiquetaPie, est.negrita, 2.1, anchoIzq, est.tinta, { espaciadoEm: 0.12 }).op);
+  const grande = textoAjustado(xIzq, yL + 2.3, grandePie, est.titulo, 5.4, anchoIzq, est.tinta);
+  ops.push(grande.op);
+  const anchoDer = W - M - (xIzq + Math.max(ancho(etiquetaPie, est.negrita, 2.1, 0.12), ancho(grandePie, est.titulo, grande.tam))) - 5;
+  lineas.forEach((l, i) => {
+    const y = yL - 0.1 + (i - (lineas.length - 1) / 2) * 3.5;
+    ops.push(textoAjustado(W - M, y, l, estiloLinea(i), 2.4, anchoDer, est.tinta, { alinear: 'der' }).op);
+  });
 
   return { ancho: W, alto: H, ops, qr: { nivel: plan.nivel, lado, modulos: plan.n }, finContenido: yL + 4.5 };
 }
@@ -549,8 +726,10 @@ function disenoTarjeta({ est, url, movil }) {
   const wIzq = xQR - M - 4;
   const ic = 7.4;
   ops.push(...iconoApp(est, M, M - 0.6, ic));
-  ops.push(texto(M + ic + 1.8, M + 2.9, E.nombre, est.titulo, 3.2, est.tinta));
-  ops.push(textoAjustado(M + ic + 1.8, M + 6.1, E.lema, est.suave, 1.95, wIzq - ic - 1.8, est.id === 'clasico' ? est.tinta : est.destacado).op);
+  const nom = textoAjustado(M + ic + 1.8, M + 2.9, DATOS.nombre, est.titulo, 3.2, wIzq - ic - 1.8, est.tinta);
+  if (!DATOS.lema) nom.op.y = baseCentrada(M - 0.6, ic, est.titulo, nom.tam);
+  ops.push(nom.op);
+  if (DATOS.lema) ops.push(textoAjustado(M + ic + 1.8, M + 6.1, DATOS.lema, est.suave, 1.95, wIzq - ic - 1.8, est.id === 'clasico' ? est.tinta : est.destacado).op);
 
   // Titular.
   const t1 = textoAjustado(M, 20.4, 'Pide tu taxi', est.titulo, 6.6, wIzq, est.tinta, { espaciadoEm: -0.02 });
@@ -561,10 +740,16 @@ function disenoTarjeta({ est, url, movil }) {
   const yTel = 31;
   const hTel = 7;
   ops.push({ t: 'rect', x: M, y: yTel, w: wIzq, h: hTel, r: hTel / 2, relleno: est.insignia });
-  ops.push(icono('telefono', M + 2, yTel + 1.7, 3.6, est.sobreInsignia));
-  ops.push(textoAjustado(M + 6.8, baseCentrada(yTel, hTel, est.titulo, 3.7), E.telefonoVisible, est.titulo, 3.7, wIzq - 9, est.sobreInsignia).op);
-  ops.push(...reloj(M + 1.5, 42.2, 1.35, est.tinta, 0.4));
-  ops.push(texto(M + 4.2, 43.1, 'Servicio 24 horas · El Rosal', est.texto, 2.3, est.tinta));
+  ops.push(icono(DATOS.contacto ? 'telefono' : 'escanear', M + 2, yTel + 1.7, 3.6, est.sobreInsignia));
+  const enPildora = DATOS.contacto ? DATOS.contacto.numero : 'Descarga la app gratis';
+  const tamPildora = DATOS.contacto ? 3.7 : 3.0;
+  ops.push(textoAjustado(M + 6.8, baseCentrada(yTel, hTel, est.titulo, tamPildora), enPildora, est.titulo, tamPildora, wIzq - 9, est.sobreInsignia).op);
+  if (DATOS.servicio24h) {
+    ops.push(...reloj(M + 1.5, 42.2, 1.35, est.tinta, 0.4));
+    ops.push(textoAjustado(M + 4.2, 43.1, `Servicio 24 horas · ${DATOS.pueblo}`, est.texto, 2.3, wIzq - 4.2, est.tinta).op);
+  } else {
+    ops.push(textoAjustado(M, 43.1, `Taxis de ${DATOS.pueblo}`, est.texto, 2.3, wIzq, est.tinta).op);
+  }
 
   return { ancho: W, alto: H, ops, qr: { nivel: plan.nivel, lado, modulos: plan.n } };
 }

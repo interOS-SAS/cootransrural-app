@@ -5,6 +5,7 @@ import * as C from './comun.js';
 
 export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirEscaner }) {
   const { icono, esc } = C;
+  const E = C.empresa;
   const perfil = () => p.perfil || {};
 
   const cabeza = (titulo, subtitulo = '', volver = null) => `<header class="c-pantalla-cabeza${volver ? ' c-con-volver' : ''}">
@@ -82,7 +83,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
   function tarjetaFidelidad() {
     const f = N.progresoFidelidad(p.viajesCompletados());
     return `<div class="c-fidelidad" aria-label="Tarjeta de fidelidad: ${f.completados} de ${f.meta} viajes">
-      <div class="c-fidelidad-cabeza"><div><small>Tarjeta de fidelidad</small><strong>Cootransrural</strong></div><img src="../img/icono.svg" alt="" width="40" height="40"></div>
+      <div class="c-fidelidad-cabeza"><div><small>Tarjeta de fidelidad</small><strong>${esc(E.nombre)}</strong></div>${C.iconoAppHTML(40, 'fid')}</div>
       <div class="c-fidelidad-sellos">${Array.from({ length: f.meta }, (_, i) => `<span class="${i < f.completados ? 'c-lleno' : ''}">${icono('taxi')}</span>`).join('')}</div>
       <p>${f.siguienteConDescuento ? '<strong>¡Tu próximo viaje va al 50 %!</strong>' : `<strong>${f.completados} de ${f.meta}</strong> viajes · te faltan ${f.faltan} para un viaje al <strong>50 %</strong>`}</p>
     </div>`;
@@ -139,11 +140,11 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
         ${fila('sub', 'tarifa', 'Tarifas y rutas', 'Valores de ejemplo y rutas fijas', 'data-sub="tarifas"')}
         ${fila('tab', 'regalo', 'Promociones y fidelidad', '10 % programando · cada 10 viajes, uno al 50 %', 'data-tab="billetera"')}
         ${fila('sub', 'ajustes', 'Ajustes', 'Diseño, sala, simulación, sonido, instalar', 'data-sub="ajustes"')}
-        ${fila('sub', 'ayuda', 'Ayuda y central', `Llama o escribe al ${esc(N.EMPRESA.telefonoVisible)}`, 'data-sub="ayuda"')}
-        <a class="c-fila-menu" href="../conductor/">${icono('volante')}<span><strong>Soy conductor</strong><small>Abrir la app de los conductores</small></span>${icono('chevron')}</a>
+        ${fila('sub', 'ayuda', 'Ayuda y central', E.telefono ? `Llama o escribe al ${esc(E.telefonoVisible)}` : E.whatsapp ? 'Escríbenos por WhatsApp' : 'Preguntas frecuentes y datos de la cooperativa', 'data-sub="ayuda"')}
+        <a class="c-fila-menu" href="${esc(C.urlCooperativa('conductor/'))}">${icono('volante')}<span><strong>Soy conductor</strong><small>Abrir la app de los conductores</small></span>${icono('chevron')}</a>
         <button type="button" class="c-fila-menu c-fila-peligro" data-accion="cerrar-sesion">${icono('salir')}<span><strong>Cerrar sesión</strong><small>Tu nombre y tu celular se borran de este equipo</small></span></button>
       </div>
-      <p class="c-pie-marca">${esc(N.EMPRESA.razonSocial)} · desde ${N.EMPRESA.fundada}<br>«${esc(N.EMPRESA.lema)}»</p>
+      ${C.pieMarcaHTML()}
     </section>`;
   }
 
@@ -152,7 +153,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
     return `<section class="c-pantalla c-pantalla-tarifas" aria-label="Tarifas y rutas">
       ${cabeza('Tarifas y rutas', 'Para que sepas cuánto pagas antes de subir', 'volver-perfil')}
       <div class="c-aviso-ejemplo">${icono('info')}<span><strong>Valores de ejemplo.</strong> La cooperativa publicará las tarifas oficiales.</span></div>
-      <h2 class="c-seccion-titulo">Dentro de El Rosal</h2>
+      <h2 class="c-seccion-titulo">${E.pueblo ? `Dentro de ${esc(E.pueblo)}` : 'Dentro del municipio'}</h2>
       <div class="c-reglas">
         <div class="c-regla"><small>Carrera mínima</small><strong>${N.pesos(T.minimaUrbana)}</strong></div>
         <div class="c-regla"><small>Banderazo</small><strong>${N.pesos(T.banderazo)}</strong></div>
@@ -162,7 +163,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
         <div class="c-regla c-regla-promo"><small>Programando con ${T.horasAnticipacion} h</small><strong>−${Math.round(T.descuentoProgramado * 100)} %</strong></div>
         <div class="c-regla c-regla-promo"><small>Cada ${T.viajesFidelidad} viajes, el siguiente</small><strong>−${Math.round(T.descuentoFidelidad * 100)} %</strong></div>
       </div>
-      <h2 class="c-seccion-titulo">Rutas con tarifa fija desde El Rosal</h2>
+      <h2 class="c-seccion-titulo">Rutas con tarifa fija${E.pueblo ? ` desde ${esc(E.pueblo)}` : ''}</h2>
       <div class="c-bloque">
         <table class="c-tabla">
           <thead><tr><th scope="col">Destino</th><th scope="col">Distancia</th><th scope="col">Valor</th></tr></thead>
@@ -184,7 +185,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
       ${cabeza('Ajustes', '', 'volver-perfil')}
       <h2 class="c-seccion-titulo">Diseño de la app</h2>
       <div class="c-disenos" role="radiogroup" aria-label="Diseño">
-        ${[['a', 'Diseño A', 'Ámbar Urbano'], ['b', 'Diseño B', 'Verde Rosal'], ['c', 'Diseño C', 'Noche Neón']]
+        ${C.nombresDisenos()
           .map(([id, t, s]) => `<button type="button" role="radio" aria-checked="${d === id}" class="c-diseno c-diseno-${id}" data-accion="diseno" data-d="${id}"><span class="c-diseno-muestra" aria-hidden="true"></span><strong>${t}</strong><small>${s}</small></button>`)
           .join('')}
       </div>
@@ -215,34 +216,42 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
       <div class="c-lista">
         <div class="c-fila-ajuste">${icono('instalar')}<div><strong>Instalar la app</strong><small>${instalada ? 'Ya está instalada en este celular.' : 'Tenla en tu pantalla de inicio, como una app.'}</small></div>${instalada ? '' : `<button type="button" class="c-boton" data-accion="instalar">Instalar</button>`}</div>
       </div>
+      <h2 class="c-seccion-titulo">Acerca de</h2>
+      ${C.acercaDeHTML()}
     </section>`;
   }
 
   function htmlAyuda() {
-    const E = N.EMPRESA;
-    const oficina = N.LUGARES.find((l) => l.id === 'oficina');
+    // Oficina: el lugar de la ficha, sus coordenadas o, si no hay, la dirección escrita.
+    const oficina = N.LUGARES.find((l) => l.id === 'oficina') || (N.EMPRESA?.oficina?.lat ? N.EMPRESA.oficina : null);
+    const enlaceOficina = oficina ? N.enlaceNavegacion(oficina) : E.direccion ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(E.direccion)}` : '';
+    const privacidad = C.urlPrivacidad();
     const preguntas = [
       ['¿Cómo sé que es mi taxi?', 'En la app ves el número de móvil, la placa, el nombre y la calificación del conductor. Antes de subir dile tu código de abordaje de 4 dígitos: si el conductor lo confirma, es tu taxi.'],
       ['¿Cómo pago?', 'Por ahora le pagas al conductor en efectivo o con QR. El pago con QR de la app es una prueba y no mueve dinero real.'],
       ['¿Puedo programar un viaje?', 'Sí. Si lo programas con 24 horas de anticipación te descontamos el 10 %.'],
-      ['¿Qué hago en una emergencia?', 'Toca SOS durante el viaje: puedes llamar al 123, a la central o avisarle a tu contacto de emergencia.'],
+      ['¿Qué hago en una emergencia?', `Toca SOS durante el viaje: puedes llamar al 123${E.telefono ? ', a la central' : ''} o avisarle a tu contacto de emergencia.`],
     ];
-    return `<section class="c-pantalla c-pantalla-ayuda" aria-label="Ayuda">
-      ${cabeza('Ayuda', 'Estamos contigo las 24 horas', 'volver-perfil')}
-      <div class="c-central c-borde-neon">
-        <div><small>Central Cootransrural</small><strong>${esc(E.telefonoVisible)}</strong><span>Servicio 24 horas</span></div>
-        <div class="c-central-botones">
+    const central = E.telefono
+      ? `<div><small>Central ${esc(E.nombre)}</small><strong>${esc(E.telefonoVisible)}</strong>${E.servicio24h ? '<span>Servicio 24 horas</span>' : ''}</div>
+        <div class="c-central-botones${E.whatsapp ? '' : ' c-central-uno'}">
           <a class="c-boton" href="tel:${esc(E.telefono)}">${icono('telefono')} Llamar</a>
-          <a class="c-boton c-boton-cian" href="${esc(N.enlaceWhatsApp(E.whatsapp, 'Hola, Cootransrural. Necesito ayuda con la app.'))}" target="_blank" rel="noopener">${icono('chat')} WhatsApp</a>
-        </div>
-      </div>
-      <div class="c-lista">
-        <a class="c-fila-menu" href="mailto:${esc(E.correo)}">${icono('nota')}<span><strong>Correo</strong><small>${esc(E.correo)}</small></span>${icono('chevron')}</a>
-        <a class="c-fila-menu" href="${esc(N.enlaceNavegacion(oficina || N.CENTRO))}" target="_blank" rel="noopener">${icono('pin')}<span><strong>Oficina</strong><small>${esc(E.direccion)}</small></span>${icono('chevron')}</a>
-      </div>
+          ${E.whatsapp ? `<a class="c-boton c-boton-cian" href="${esc(N.enlaceWhatsApp(E.whatsapp, `Hola, ${E.nombre}. Necesito ayuda con la app.`))}" target="_blank" rel="noopener">${icono('chat')} WhatsApp</a>` : ''}
+        </div>`
+      : `<div><small>Central ${esc(E.nombre)}</small><strong class="c-central-pronto">Teléfono de la central: pronto</strong><span>Mientras tanto, pide tu taxi desde la app${E.servicio24h ? ', las 24 horas' : ''}.</span></div>
+        ${E.whatsapp ? `<div class="c-central-botones c-central-uno"><a class="c-boton c-boton-cian" href="${esc(N.enlaceWhatsApp(E.whatsapp, `Hola, ${E.nombre}. Necesito ayuda con la app.`))}" target="_blank" rel="noopener">${icono('chat')} WhatsApp</a></div>` : ''}`;
+    const filas = [
+      E.correo ? `<a class="c-fila-menu" href="mailto:${esc(E.correo)}">${icono('nota')}<span><strong>Correo</strong><small>${esc(E.correo)}</small></span>${icono('chevron')}</a>` : '',
+      E.direccion && enlaceOficina ? `<a class="c-fila-menu" href="${esc(enlaceOficina)}" target="_blank" rel="noopener">${icono('pin')}<span><strong>Oficina</strong><small>${esc(E.direccion)}</small></span>${icono('chevron')}</a>` : '',
+      E.sitioOficial ? `<a class="c-fila-menu" href="${esc(E.sitioOficial)}" target="_blank" rel="noopener">${icono('info')}<span><strong>Página oficial de la cooperativa</strong><small>${esc(E.sitioOficial.replace(/^https?:\/\//, '').replace(/\/$/, ''))}</small></span>${icono('chevron')}</a>` : '',
+    ].filter(Boolean);
+    return `<section class="c-pantalla c-pantalla-ayuda" aria-label="Ayuda">
+      ${cabeza('Ayuda', E.servicio24h ? 'Estamos contigo las 24 horas' : 'Estamos para ayudarte', 'volver-perfil')}
+      <div class="c-central c-borde-neon">${central}</div>
+      ${filas.length ? `<div class="c-lista">${filas.join('')}</div>` : ''}
       <h2 class="c-seccion-titulo">Preguntas frecuentes</h2>
       <div class="c-lista">${preguntas.map(([q, r]) => `<details class="c-pregunta"><summary>${esc(q)}${icono('abajo')}</summary><p>${esc(r)}</p></details>`).join('')}</div>
-      <p class="c-pie-marca"><a href="../privacidad/">Política de privacidad</a></p>
+      <p class="c-pie-marca">${privacidad ? `<a href="${esc(privacidad)}">Política de privacidad</a>` : 'Política de privacidad: en preparación'}<br><span class="c-pie-proveedor">App desarrollada por ${esc(E.proveedor)}</span></p>
     </section>`;
   }
 

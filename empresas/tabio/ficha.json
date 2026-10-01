@@ -23,14 +23,25 @@
     "servicio24h": true,
     "placaPrefijo": "TAB",
     "vehiculo": "Kia Picanto",
-    "colorTaxi": "Amarillo"
+    "colorTaxi": "Amarillo",
+    "region": "Sabana Centro",
+    "datosPendientes": [
+      "correo",
+      "año de fundación",
+      "número de taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.918547,
+      "lng": -74.098264
+    }
   },
   "colores": {
-    "primario": "#0E6E6E",
-    "primario2": "#13898A",
-    "oscuro": "#06393A",
-    "acento": "#FFC107",
-    "rojo": "#D84315"
+    "primario": "#0F5F63",
+    "primario2": "#17807F",
+    "oscuro": "#06363A",
+    "acento": "#F2B33D",
+    "rojo": "#C62828"
   },
   "CENTRO": {
     "lat": 4.916396,
@@ -127,162 +138,74 @@
     {
       "id": "parque",
       "nombre": "Parque Principal",
-      "detalle": "Tabio",
+      "detalle": "Centro, Tabio",
       "cat": "centro",
       "lat": 4.916391,
       "lng": -74.099053
     },
     {
-      "id": "inspeccion-de-policia",
-      "nombre": "Inspección de Policía",
-      "detalle": "Tabio",
-      "cat": "centro",
-      "lat": 4.916495,
-      "lng": -74.099456
-    },
-    {
-      "id": "postres-antojos-santa-gema",
-      "nombre": "Postres Antojos Santa Gema",
-      "detalle": "Tabio",
-      "cat": "comida",
-      "lat": 4.916004,
-      "lng": -74.099242
-    },
-    {
       "id": "alcaldia",
-      "nombre": "Alcaldía",
-      "detalle": "Tabio",
+      "nombre": "Alcaldía Municipal",
+      "detalle": "Parque Principal, Tabio",
       "cat": "centro",
       "lat": 4.916524,
       "lng": -74.099502
     },
     {
-      "id": "italica",
-      "nombre": "Italica",
-      "detalle": "Tabio",
-      "cat": "comida",
-      "lat": 4.916778,
-      "lng": -74.098821
-    },
-    {
-      "id": "oasis",
-      "nombre": "Oasis",
-      "detalle": "Tabio",
-      "cat": "comida",
-      "lat": 4.9166,
-      "lng": -74.098472
-    },
-    {
-      "id": "polideportivo",
-      "nombre": "Polideportivo",
-      "detalle": "Tabio",
+      "id": "oficina",
+      "nombre": "Oficina Cooptranstermales",
+      "detalle": "Calle 7 # 5-00, Tabio",
       "cat": "centro",
-      "lat": 4.916697,
-      "lng": -74.099695
+      "lat": 4.918547,
+      "lng": -74.098264
     },
     {
-      "id": "alcaldia-municipal",
-      "nombre": "Alcaldía Municipal",
-      "detalle": "Tabio",
-      "cat": "centro",
-      "lat": 4.91682,
-      "lng": -74.098559
-    },
-    {
-      "id": "catedral",
-      "nombre": "Catedral",
-      "detalle": "Tabio",
+      "id": "iglesia",
+      "nombre": "Iglesia del Parque Principal",
+      "detalle": "Centro, Tabio",
       "cat": "centro",
       "lat": 4.915909,
       "lng": -74.098561
     },
     {
-      "id": "la-estancia",
-      "nombre": "La Estancia",
-      "detalle": "Tabio",
-      "cat": "comida",
-      "lat": 4.916717,
-      "lng": -74.098385
+      "id": "inspeccion-policia",
+      "nombre": "Inspección de Policía",
+      "detalle": "Parque Principal, Tabio",
+      "cat": "centro",
+      "lat": 4.916495,
+      "lng": -74.099456
     },
     {
-      "id": "los-andes",
-      "nombre": "Los Andes",
-      "detalle": "Tabio",
-      "cat": "comercio",
-      "lat": 4.9169,
-      "lng": -74.098228
+      "id": "polideportivo",
+      "nombre": "Polideportivo",
+      "detalle": "Centro, Tabio",
+      "cat": "centro",
+      "lat": 4.916697,
+      "lng": -74.099695
     },
     {
-      "id": "bancolombia",
-      "nombre": "Bancolombia",
+      "id": "coliseo",
+      "nombre": "Coliseo Municipal",
       "detalle": "Tabio",
-      "cat": "comercio",
-      "lat": 4.915849,
-      "lng": -74.098152
+      "cat": "centro",
+      "lat": 4.922301,
+      "lng": -74.099617
     },
     {
-      "id": "banco-de-bogota",
-      "nombre": "Banco de Bogotá",
+      "id": "cic",
+      "nombre": "Centro de Integración Ciudadana",
       "detalle": "Tabio",
-      "cat": "comercio",
-      "lat": 4.915916,
-      "lng": -74.098108
+      "cat": "centro",
+      "lat": 4.919627,
+      "lng": -74.094919
     },
     {
-      "id": "alegria-de-vivir",
-      "nombre": "Alegria de Vivir",
-      "detalle": "Tabio",
-      "cat": "educacion",
-      "lat": 4.915523,
-      "lng": -74.098282
-    },
-    {
-      "id": "restaurante-el-girasol",
-      "nombre": "Restaurante El Girasol",
-      "detalle": "Tabio",
-      "cat": "comida",
-      "lat": 4.917301,
-      "lng": -74.098125
-    },
-    {
-      "id": "hospital-nuestra-senora-del-carmen-de-ta",
-      "nombre": "Hospital Nuestra Señora del Carmen de Tabio",
+      "id": "hospital",
+      "nombre": "Hospital Nuestra Señora del Carmen",
       "detalle": "Tabio",
       "cat": "salud",
       "lat": 4.914707,
       "lng": -74.099627
-    },
-    {
-      "id": "gimnasio-moderno-santa-barbara",
-      "nombre": "Gimnasio Moderno Santa Bárbara",
-      "detalle": "Tabio",
-      "cat": "educacion",
-      "lat": 4.914571,
-      "lng": -74.099293
-    },
-    {
-      "id": "colegio-san-francisco-de-asis",
-      "nombre": "Colegio San Francisco de Asís",
-      "detalle": "Tabio",
-      "cat": "educacion",
-      "lat": 4.918464,
-      "lng": -74.098731
-    },
-    {
-      "id": "plaza-artesanos",
-      "nombre": "Plaza artesanos",
-      "detalle": "Tabio",
-      "cat": "turismo",
-      "lat": 4.918974,
-      "lng": -74.099253
-    },
-    {
-      "id": "santa-barbara",
-      "nombre": "Santa Barbara",
-      "detalle": "Tabio",
-      "cat": "centro",
-      "lat": 4.919345,
-      "lng": -74.097014
     },
     {
       "id": "colegio-departamental",
@@ -293,20 +216,36 @@
       "lng": -74.099079
     },
     {
-      "id": "colegio-jose-de-san-martin-sede-camilo-t",
-      "nombre": "Colegio José de San Martin - Sede Camilo Torres",
+      "id": "jose-de-san-martin-camilo-torres",
+      "nombre": "Colegio José de San Martín, sede Camilo Torres",
       "detalle": "Tabio",
       "cat": "educacion",
       "lat": 4.918766,
       "lng": -74.095313
     },
     {
-      "id": "jardin-botanico",
-      "nombre": "Jardin Botanico",
+      "id": "jose-de-san-martin-lourdes",
+      "nombre": "Colegio José de San Martín, sede Lourdes",
+      "detalle": "Variante Tabio - Tenjo",
+      "cat": "educacion",
+      "lat": 4.904855,
+      "lng": -74.095441
+    },
+    {
+      "id": "colegio-san-francisco",
+      "nombre": "Colegio San Francisco de Asís",
       "detalle": "Tabio",
-      "cat": "centro",
-      "lat": 4.920972,
-      "lng": -74.100528
+      "cat": "educacion",
+      "lat": 4.918464,
+      "lng": -74.098731
+    },
+    {
+      "id": "gimnasio-moderno-santa-barbara",
+      "nombre": "Gimnasio Moderno Santa Bárbara",
+      "detalle": "Tabio",
+      "cat": "educacion",
+      "lat": 4.914571,
+      "lng": -74.099293
     },
     {
       "id": "liceo-san-jorge",
@@ -317,36 +256,100 @@
       "lng": -74.10408
     },
     {
-      "id": "centro-de-integracion-ciudadana",
-      "nombre": "Centro de Integración Ciudadana",
+      "id": "gimnasio-andino",
+      "nombre": "Gimnasio Andino Campestre",
       "detalle": "Tabio",
-      "cat": "centro",
-      "lat": 4.919627,
-      "lng": -74.094919
+      "cat": "educacion",
+      "lat": 4.912206,
+      "lng": -74.093392
     },
     {
-      "id": "coliseo-municipal",
-      "nombre": "Coliseo Municipal",
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Centro, Tabio",
+      "cat": "comercio",
+      "lat": 4.915849,
+      "lng": -74.098152
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Centro, Tabio",
+      "cat": "comercio",
+      "lat": 4.915916,
+      "lng": -74.098108
+    },
+    {
+      "id": "supermercado-los-andes",
+      "nombre": "Supermercado Los Andes",
+      "detalle": "Centro, Tabio",
+      "cat": "comercio",
+      "lat": 4.9169,
+      "lng": -74.098228
+    },
+    {
+      "id": "terpel",
+      "nombre": "Estación Terpel",
+      "detalle": "Vía a Chía",
+      "cat": "comercio",
+      "lat": 4.923444,
+      "lng": -74.082232
+    },
+    {
+      "id": "el-girasol",
+      "nombre": "Restaurante El Girasol",
+      "detalle": "Centro, Tabio",
+      "cat": "comida",
+      "lat": 4.917301,
+      "lng": -74.098125
+    },
+    {
+      "id": "la-estancia",
+      "nombre": "Restaurante La Estancia",
+      "detalle": "Centro, Tabio",
+      "cat": "comida",
+      "lat": 4.916717,
+      "lng": -74.098385
+    },
+    {
+      "id": "italica",
+      "nombre": "Itálica",
+      "detalle": "Centro, Tabio",
+      "cat": "comida",
+      "lat": 4.916778,
+      "lng": -74.098821
+    },
+    {
+      "id": "yuraj",
+      "nombre": "Yuraj Cocina Abierta",
       "detalle": "Tabio",
-      "cat": "centro",
-      "lat": 4.922301,
-      "lng": -74.099617
+      "cat": "comida",
+      "lat": 4.922952,
+      "lng": -74.097741
+    },
+    {
+      "id": "el-parador-paisa",
+      "nombre": "El Parador Paisa",
+      "detalle": "Tabio",
+      "cat": "comida",
+      "lat": 4.909238,
+      "lng": -74.09899
     },
     {
       "id": "el-hato",
       "nombre": "El Hato",
-      "detalle": "Tabio",
+      "detalle": "Barrio de Tabio",
       "cat": "barrio",
       "lat": 4.919048,
       "lng": -74.092081
     },
     {
-      "id": "balnearios-tabio-termales",
-      "nombre": "balnearios.Tabio termales",
-      "detalle": "Tabio",
-      "cat": "turismo",
-      "lat": 4.922847,
-      "lng": -74.105169
+      "id": "santa-barbara",
+      "nombre": "Santa Bárbara",
+      "detalle": "Sector de Tabio",
+      "cat": "barrio",
+      "lat": 4.926603,
+      "lng": -74.094017
     },
     {
       "id": "parcelacion-termales",
@@ -357,36 +360,36 @@
       "lng": -74.104253
     },
     {
-      "id": "chicu",
-      "nombre": "Chicu",
-      "detalle": "Tabio",
-      "cat": "vereda",
-      "lat": 4.906575,
-      "lng": -74.097093
-    },
-    {
       "id": "reserva-de-san-jose",
       "nombre": "Reserva de San José",
-      "detalle": "Tabio",
+      "detalle": "Conjunto residencial",
       "cat": "barrio",
       "lat": 4.907349,
       "lng": -74.104811
     },
     {
-      "id": "el-salitre",
-      "nombre": "El Salitre",
-      "detalle": "Tabio",
-      "cat": "vereda",
-      "lat": 4.926592,
-      "lng": -74.102534
-    },
-    {
       "id": "villa-olga",
       "nombre": "Villa Olga",
-      "detalle": "Tabio · a 1,2 km",
+      "detalle": "Tabio",
       "cat": "barrio",
       "lat": 4.906863,
       "lng": -74.104721
+    },
+    {
+      "id": "chicu",
+      "nombre": "Chicú",
+      "detalle": "Vereda de Tabio",
+      "cat": "vereda",
+      "lat": 4.906575,
+      "lng": -74.097093
+    },
+    {
+      "id": "el-salitre",
+      "nombre": "El Salitre",
+      "detalle": "Vereda de Tabio",
+      "cat": "vereda",
+      "lat": 4.926592,
+      "lng": -74.102534
     },
     {
       "id": "palo-verde",
@@ -397,68 +400,76 @@
       "lng": -74.098345
     },
     {
-      "id": "el-centro",
-      "nombre": "El Centro",
-      "detalle": "Vereda de Tabio",
-      "cat": "vereda",
-      "lat": 4.927213,
-      "lng": -74.089966
-    },
-    {
-      "id": "vereda-santuario-de-juaica",
-      "nombre": "Vereda Santuario de Juaica",
-      "detalle": "Tabio · a 1,7 km",
-      "cat": "barrio",
-      "lat": 4.904109,
-      "lng": -74.108957
-    },
-    {
-      "id": "terpel",
-      "nombre": "Terpel",
-      "detalle": "Tabio · a 2,0 km",
-      "cat": "comercio",
-      "lat": 4.923444,
-      "lng": -74.082232
-    },
-    {
-      "id": "carbon",
-      "nombre": "Carbon",
-      "detalle": "Vereda de Tabio",
-      "cat": "vereda",
-      "lat": 4.926127,
-      "lng": -74.120533
-    },
-    {
       "id": "rio-frio-oriental",
-      "nombre": "Rio Frio Oriental",
+      "nombre": "Río Frío Oriental",
       "detalle": "Vereda de Tabio",
       "cat": "vereda",
       "lat": 4.936213,
       "lng": -74.085466
     },
     {
-      "id": "alto-de-canica",
-      "nombre": "Alto de Canica",
+      "id": "rio-frio",
+      "nombre": "Río Frío",
       "detalle": "Vereda de Tabio",
       "cat": "vereda",
-      "lat": 4.935996,
-      "lng": -74.115841
+      "lat": 4.941488,
+      "lng": -74.084069
     },
     {
-      "id": "poveda",
-      "nombre": "Poveda",
+      "id": "juaica",
+      "nombre": "Santuario de Juaica",
       "detalle": "Vereda de Tabio",
       "cat": "vereda",
-      "lat": 4.893232,
-      "lng": -74.087793
+      "lat": 4.904109,
+      "lng": -74.108957
     },
     {
-      "id": "alto-de-chia",
-      "nombre": "Alto de Chia",
-      "detalle": "Tabio · a 2,9 km",
+      "id": "termales-el-zipa",
+      "nombre": "Termales El Zipa",
+      "detalle": "Vereda El Salitre, Tabio",
       "cat": "turismo",
-      "lat": 4.897826,
-      "lng": -74.080759
+      "lat": 4.923594,
+      "lng": -74.104903
+    },
+    {
+      "id": "balnearios-termales",
+      "nombre": "Balnearios termales de Tabio",
+      "detalle": "Carrera 6, vereda El Salitre",
+      "cat": "turismo",
+      "lat": 4.922847,
+      "lng": -74.105169
+    },
+    {
+      "id": "plaza-artesanos",
+      "nombre": "Plaza de los Artesanos",
+      "detalle": "Centro, Tabio",
+      "cat": "turismo",
+      "lat": 4.918974,
+      "lng": -74.099253
+    },
+    {
+      "id": "jardin-botanico",
+      "nombre": "Jardín Botánico",
+      "detalle": "Tabio",
+      "cat": "turismo",
+      "lat": 4.920972,
+      "lng": -74.100528
+    },
+    {
+      "id": "capilla-santa-barbara",
+      "nombre": "Capilla de Santa Bárbara",
+      "detalle": "Tabio",
+      "cat": "turismo",
+      "lat": 4.919345,
+      "lng": -74.097014
+    },
+    {
+      "id": "pena-de-juaica",
+      "nombre": "Peña de Juaica",
+      "detalle": "Cerro entre Tabio y Tenjo",
+      "cat": "turismo",
+      "lat": 4.904975,
+      "lng": -74.128469
     },
     {
       "id": "tenjo",
@@ -649,8 +660,30 @@
       "calificacion": 4.6
     }
   ],
+  "textos": {
+    "historia": "Cooptranstermales —la Cooperativa Multiactiva de Transportadores Ltda., conocida como Transtermales— presta el servicio de taxi en Tabio, el municipio de los termales en la Sabana Centro. Desde su oficina en la Calle 7 # 5-00 atiende el casco urbano, las veredas y los viajes a los municipios vecinos.\n\nCon la app, la cooperativa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa, también cuando vas o vuelves de los termales.",
+    "mision": "Prestar el servicio de taxi en Tabio y sus veredas con conductores asociados que conocen el municipio, con seguridad, puntualidad y buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Tabio: un taxi a un toque, con tarifa clara y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Viajes a los termales",
+      "Viajes a Tenjo, Chía, Cajicá y la Sabana",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Taxis de Tabio, tierra de termales"
+  },
   "fuentes": [
     "https://infotaxicolombia.com.co/empresas-taxi/servicio-de-taxis-trantermales-tabio-cundinamarca-colombia-2/",
-    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-transtermales"
+    "https://www.yellowpages.com.co/phone-57-3143519920-servicio-de-taxis-Tabio-COEN358318.html",
+    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-transtermales",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Teléfono 314 351 9920 y servicio 24 horas: directorios de taxis (infotaxicolombia, páginas amarillas) bajo «Servicio de Taxis Trantermales».",
+    "Razón social, NIT 832.001.434-6 y dirección Calle 7 # 5-00: directorios empresariales (informacolombia). Los directorios también registran el fijo 601 021 9120.",
+    "Sin sitio web oficial. Colores propios de interOS (agua termal y dorado).",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
   ]
 }

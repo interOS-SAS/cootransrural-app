@@ -251,6 +251,9 @@
 .c-tarjeta-pagar > .c-desplazable { gap: 12px; }
 .c-pagar-cabeza { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; }
 .c-pagar-cabeza .c-muted { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Con el aviso de demostración (propuestas) las etiquetas ocupan su fila y el texto baja. */
+.c-pagar-cabeza, .c-enviaje-cabeza { flex-wrap: wrap; row-gap: 8px; }
+.c-pagar-cabeza .c-muted { min-width: 0; }
 .c-pagar-titulo { text-align: center; color: var(--c-texto-2); font-size: 15px; margin-top: 4px !important; }
 .c-pagar-sub { text-align: center; color: var(--c-texto-2); font-size: 14px; }
 .c-pagar-botones { display: grid; gap: 10px; margin-top: 4px; }
@@ -260,6 +263,9 @@
 .c-otro-celular[open] summary .c-ico:last-child { transform: rotate(180deg); }
 .c-otro-cuerpo { display: grid; gap: 10px; justify-items: center; text-align: center; font-size: 13.5px; color: var(--c-texto-2); padding-bottom: 6px; }
 .c-qr-blanco { width: 210px; padding: 12px; border-radius: 22px; background: #fff; box-shadow: 0 0 0 3px rgba(34, 211, 238, .5), 0 0 40px rgba(34, 211, 238, .35); }
+/* Con la tarjeta Bre-B dentro (marca, valor, comercio y llave) hace falta más
+   ancho: a 210 px «Bre-B» y la llave se partían en dos renglones. */
+.c-qr-blanco:has(.ct-breb) { width: min(100%, 300px); padding: 5px; border-radius: 27px; }
 .c-qr-blanco svg { display: block; width: 100%; height: auto; }/* Calificar */
 .c-calificar-conductor { display: grid; justify-items: center; gap: 10px; text-align: center; margin-top: 4px; }
 .c-calificar-conductor h2 { font-size: 20px; font-weight: 700; }
@@ -276,7 +282,7 @@
 .c-fidelidad-cabeza { display: flex; justify-content: space-between; align-items: center; }
 .c-fidelidad-cabeza small { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .14em; color: var(--c-texto-2); }
 .c-fidelidad-cabeza strong { font-size: 22px; font-weight: 800; }
-.c-fidelidad-cabeza img { border-radius: 12px; }
+.c-fidelidad-cabeza .c-icono-app { flex: none; border-radius: 12px; }
 .c-fidelidad-sellos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
 .c-fidelidad-sellos span { aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; border: 1.5px dashed rgba(255, 255, 255, .25); color: rgba(255, 255, 255, .25); }
 .c-fidelidad-sellos .c-ico { width: 22px; height: 22px; }
@@ -340,6 +346,8 @@ button.c-billetera:active { transform: scale(.97); }
 .c-central span { color: var(--c-texto-2); font-size: 14px; }
 .c-central-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .c-central-botones .c-boton { min-height: 50px; font-size: 16px; }
+.c-central-botones.c-central-uno { grid-template-columns: 1fr; }
+.c-central strong.c-central-pronto { font-size: 21px; line-height: 1.2; color: var(--c-texto); text-shadow: none; margin: 4px 0 2px; }
 .c-pregunta { border-radius: 20px; background: rgba(255, 255, 255, .045); border: 1px solid var(--c-borde); }
 .c-pregunta summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 58px; padding: 12px 16px; font-weight: 600; cursor: pointer; }
 .c-pregunta summary::-webkit-details-marker { display: none; }
@@ -375,6 +383,7 @@ button.c-billetera:active { transform: scale(.97); }
 .c-registro { min-height: 100%; display: flex; flex-direction: column; }
 .c-bienvenida { background: radial-gradient(90% 50% at 50% 0%, rgba(34, 211, 238, .14), transparent 70%), radial-gradient(70% 40% at 100% 60%, rgba(255, 77, 157, .1), transparent 70%), var(--c-fondo); }
 .c-bienvenida-arte { position: relative; height: 290px; flex: none; overflow: hidden; }
+.c-con-franja .c-bienvenida-arte { height: 262px; }
 .c-ilus-ruta { position: absolute; inset: 0; width: 100%; height: 100%; }
 .c-ilus-trazo { stroke-dasharray: 420; stroke-dashoffset: 420; animation: c-dibujar 2.2s .2s cubic-bezier(.6, .1, .2, 1) forwards; }
 @keyframes c-dibujar { to { stroke-dashoffset: 0; } }
@@ -441,6 +450,7 @@ button.c-billetera:active { transform: scale(.97); }
   .c-pildora-busqueda { min-height: 60px; }
   .c-pildora-ico { width: 44px; height: 44px; }
   .c-bienvenida-arte { height: 230px; }
+  .c-con-franja .c-bienvenida-arte { height: 210px; }
   .c-bienvenida h1 { font-size: 31px; }
   .c-total { font-size: 48px; }
   .c-accion { min-height: 58px; }

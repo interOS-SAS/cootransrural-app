@@ -1,0 +1,19 @@
+{
+  "name": "Cootransmadrid — Pide tu taxi",
+  "short_name": "Cootransmadrid",
+  "description": "Pide tu taxi de Cootransmadrid en Madrid con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2E2A25",
+  "theme_color": "#2E2A25",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/madrid/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/madrid/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/madrid/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

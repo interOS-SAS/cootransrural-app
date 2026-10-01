@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cooperativas · App de taxis de {{proveedor.nombre}}</title>
+  <meta name="description" content="Índice interno de {{proveedor.nombre}}: la app de taxis con la marca y los colores de cada cooperativa.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0B0F14">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{RAIZ}}{{icono.favicon}}">
+  <link rel="stylesheet" href="{{RAIZ}}fuentes/fuentes.css">
+  <link rel="stylesheet" href="{{RAIZ}}web/cooperativas.css">
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+    <symbol id="i-taxi" viewBox="0 0 24 24"><path d="M10 2h4"/><path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.65 5H8.4a2 2 0 0 0-1.9 1.26L5 10 3 8"/><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M7 14h.01M17 14h.01M5 18v2M19 18v2"/></symbol>
+    <symbol id="i-volante" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 14v7M10 12H3.5M14 12h6.5"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20.5 14v.01M14 20.5h.01M17.5 20.5h3v-3"/></symbol>
+    <symbol id="i-paleta" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.6-.8 1.6-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.8-1.7 1.7-1.7h2A5.5 5.5 0 0 0 22 11c0-5-4.5-9-10-9z"/></symbol>
+    <symbol id="i-descargar" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+  </svg>
+
+  <header class="cabeza">
+    <div class="cabeza-interna">
+      <a class="marca-interos" href="{{proveedor.web}}" target="_blank" rel="noopener"><span>i</span>{{proveedor.nombre}} · App de taxis para cooperativas</a>
+      <h1>Cooperativas</h1>
+      <p>La misma app de taxis con la marca, los colores, las tarifas y los lugares de cada cooperativa: web, app del pasajero, app del conductor, stickers QR y vitrina de diseños. Escanea el código o toca los enlaces para mostrarla.</p>
+      <p class="nota"><svg class="icono" aria-hidden="true"><use href="#i-info"/></svg><span>Las marcadas como <b>Propuesta</b> son demostraciones preparadas por {{proveedor.nombre}} con datos públicos: no son páginas oficiales ni están autorizadas por la cooperativa.</span></p>
+    </div>
+  </header>
+
+  <main class="rejilla" id="cooperativas">
+{{#cada cooperativas}}    <article class="coop" id="coop-{{id}}" style="--p:{{primario}};--o:{{oscuro}};--a:{{acento}}" data-ruta="{{ruta}}" data-color="{{color_qr}}">
+      <header class="coop-cabeza">
+        <img src="{{RAIZ}}{{icono}}" alt="" width="58" height="58" loading="lazy">
+        <div><h2>{{nombre}}</h2><p>{{pueblo}}<span class="estado {{estado}}">{{estado_texto}}</span></p></div>
+      </header>
+      <div class="coop-cuerpo">
+        <p class="razon">{{razonSocial}}{{#si lema}} · «{{lema}}»{{/si}}</p>
+        <ul class="colores" aria-label="Colores de {{nombre}}"><li><i style="--c:{{primario}}"></i></li><li><i style="--c:{{oscuro}}"></i></li><li><i style="--c:{{acento}}"></i></li><li>{{primario}}</li></ul>
+        <div class="coop-qr"><div class="qr" aria-hidden="true"></div><div><b>Escanea para abrir su web</b><small class="qr-url">{{url_publica}}</small></div></div>
+        <ul class="datos">
+{{#si flota}}          <li><b>{{flota.valor}}</b> {{flota.texto}}</li>
+{{/si}}          <li><b>{{n_rutas}}</b> rutas con tarifa</li>
+          <li><b>{{n_lugares}}</b> lugares en el mapa</li>
+{{#si tel_visible}}          <li>Central: <b>{{tel_visible}}</b></li>
+{{/si}}        </ul>
+        <nav class="enlaces" aria-label="Enlaces de {{nombre}}">
+          <a class="web" href="{{RAIZ}}{{ruta}}"><svg class="icono"><use href="#i-web"/></svg>Página web</a>
+          <a href="{{RAIZ}}{{ruta}}app/"><svg class="icono"><use href="#i-taxi"/></svg>Pasajero</a>
+          <a href="{{RAIZ}}{{ruta}}conductor/"><svg class="icono"><use href="#i-volante"/></svg>Conductor</a>
+          <a href="{{RAIZ}}{{stickers_ruta}}"><svg class="icono"><use href="#i-qr"/></svg>Stickers QR</a>
+          <a href="{{RAIZ}}{{ruta}}disenos/"><svg class="icono"><use href="#i-paleta"/></svg>Vitrina</a>
+          <a href="{{RAIZ}}{{ruta}}descargar/"><svg class="icono"><use href="#i-descargar"/></svg>Descargar</a>
+          <a href="{{RAIZ}}{{ruta}}privacidad/"><svg class="icono"><use href="#i-info"/></svg>Privacidad</a>
+        </nav>
+      </div>
+    </article>
+{{/cada}}  </main>
+
+  <footer class="pie">
+    <p>Desarrollado por <a href="{{proveedor.web}}" target="_blank" rel="noopener">{{proveedor.nombre}}</a> · <a href="{{RAIZ}}">Volver a {{EMPRESA.nombre}}</a></p>
+  </footer>
+
+  <script type="module">
+    // QR de cada cooperativa hacia su web (con la dirección desde donde se abre
+    // esta página: en GitHub Pages es la pública).
+    import { qrSVG } from '{{RAIZ}}nucleo/index.js';
+    const raiz = new URL('{{RAIZ}}', location.href);
+    for (const tarjeta of document.querySelectorAll('.coop')) {
+      const url = new URL(tarjeta.dataset.ruta, raiz).href;
+      tarjeta.querySelector('.qr').innerHTML = qrSVG(url, { margen: 1, color: tarjeta.dataset.color || '#10161D' });
+      tarjeta.querySelector('.qr-url').textContent = url.replace(/^https?:\/\//, '');
+    }
+  </script>
+</body>
+</html>

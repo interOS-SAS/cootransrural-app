@@ -1,0 +1,621 @@
+{
+  "id": "la-vega",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootransvillaleal",
+    "nombreCorto": "Cootransvillaleal",
+    "razonSocial": "Cooperativa de Transportes y Servicios Cootransvillaleal",
+    "lema": "Taxis en La Vega, de la laguna a la autopista",
+    "municipio": "La Vega, Cundinamarca",
+    "pueblo": "La Vega",
+    "telefono": "3103178318",
+    "telefonoVisible": "310 317 8318",
+    "whatsapp": "573103178318",
+    "correo": "cooptransvillaleal@gmail.com",
+    "direccion": "Carrera 4A # 20-03, Autopista Medellín, La Vega, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://www.cootransvillaleal.com.co",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "LVG",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Gualivá",
+    "datosPendientes": [
+      "año de fundación",
+      "número de taxis"
+    ],
+    "oficina": {
+      "lat": 4.99921,
+      "lng": -74.340936
+    }
+  },
+  "colores": {
+    "primario": "#0C3C60",
+    "primario2": "#147285",
+    "oscuro": "#062134",
+    "acento": "#FFCB05",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.999712,
+    "lng": -74.339522
+  },
+  "ZONA": {
+    "sur": 4.68,
+    "norte": 5.32,
+    "oeste": -74.66,
+    "este": -74.02
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "nocaima",
+      "destino": "Nocaima",
+      "valor": 23000,
+      "km": 11,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "san-francisco",
+      "destino": "San Francisco",
+      "valor": 29000,
+      "km": 15,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "villeta",
+      "destino": "Villeta",
+      "valor": 45000,
+      "km": 26,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "supata",
+      "destino": "Supatá",
+      "valor": 51000,
+      "km": 30,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "sasaima",
+      "destino": "Sasaima",
+      "valor": 64000,
+      "km": 38,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 72000,
+      "km": 44,
+      "min": 70,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 92000,
+      "km": 57,
+      "min": 95,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 101000,
+      "km": 64,
+      "min": 105,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Carrera 3A # 19-29, La Vega",
+      "cat": "centro",
+      "lat": 4.999712,
+      "lng": -74.339522
+    },
+    {
+      "id": "alcaldia",
+      "nombre": "Alcaldía Municipal",
+      "detalle": "Parque Principal, La Vega",
+      "cat": "centro",
+      "lat": 4.999562,
+      "lng": -74.340015
+    },
+    {
+      "id": "oficina",
+      "nombre": "Oficina Cootransvillaleal",
+      "detalle": "Carrera 4A # 20-03, Autopista Medellín",
+      "cat": "centro",
+      "lat": 4.99921,
+      "lng": -74.340936
+    },
+    {
+      "id": "iglesia",
+      "nombre": "Parroquia San Juan Bautista",
+      "detalle": "Carrera 3 # 19-71, La Vega",
+      "cat": "centro",
+      "lat": 4.999729,
+      "lng": -74.339907
+    },
+    {
+      "id": "policia",
+      "nombre": "Estación de Policía",
+      "detalle": "La Vega",
+      "cat": "centro",
+      "lat": 4.998346,
+      "lng": -74.340587
+    },
+    {
+      "id": "colectivos-naguy",
+      "nombre": "Paradero de colectivos a Nagüy",
+      "detalle": "Centro, La Vega",
+      "cat": "centro",
+      "lat": 5.000756,
+      "lng": -74.339467
+    },
+    {
+      "id": "flota-aguila",
+      "nombre": "Flota Águila (buses)",
+      "detalle": "La Vega",
+      "cat": "centro",
+      "lat": 4.999168,
+      "lng": -74.340427
+    },
+    {
+      "id": "hospital",
+      "nombre": "Hospital San Antonio de La Vega",
+      "detalle": "La Vega",
+      "cat": "salud",
+      "lat": 4.997411,
+      "lng": -74.340785
+    },
+    {
+      "id": "ied-ricardo-hinestrosa",
+      "nombre": "IED Ricardo Hinestrosa Daza",
+      "detalle": "La Vega",
+      "cat": "educacion",
+      "lat": 4.992094,
+      "lng": -74.332876
+    },
+    {
+      "id": "escuela-naguy",
+      "nombre": "Escuela vereda Nagüy",
+      "detalle": "Vereda Nagüy",
+      "cat": "educacion",
+      "lat": 5.017845,
+      "lng": -74.31561
+    },
+    {
+      "id": "escuela-petaqueros",
+      "nombre": "Escuela Rural Petaqueros",
+      "detalle": "Vereda Petaquero",
+      "cat": "educacion",
+      "lat": 5.037441,
+      "lng": -74.373458
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Centro, La Vega",
+      "cat": "comercio",
+      "lat": 5.000573,
+      "lng": -74.339755
+    },
+    {
+      "id": "el-rey",
+      "nombre": "Supertiendas El Rey",
+      "detalle": "Centro, La Vega",
+      "cat": "comercio",
+      "lat": 5.000997,
+      "lng": -74.340176
+    },
+    {
+      "id": "la-carolina",
+      "nombre": "Supermercado La Carolina",
+      "detalle": "La Vega",
+      "cat": "comercio",
+      "lat": 4.998296,
+      "lng": -74.340064
+    },
+    {
+      "id": "la-canasta",
+      "nombre": "La Canasta",
+      "detalle": "Centro, La Vega",
+      "cat": "comercio",
+      "lat": 5.000821,
+      "lng": -74.339509
+    },
+    {
+      "id": "fonda-veguna",
+      "nombre": "Fonda Veguna",
+      "detalle": "Centro, La Vega",
+      "cat": "comida",
+      "lat": 5.000729,
+      "lng": -74.340075
+    },
+    {
+      "id": "el-novillo-de-daniel",
+      "nombre": "El Novillo de Daniel",
+      "detalle": "Parque Principal, La Vega",
+      "cat": "comida",
+      "lat": 4.999843,
+      "lng": -74.338925
+    },
+    {
+      "id": "las-delicias",
+      "nombre": "Las Delicias",
+      "detalle": "La Vega",
+      "cat": "comida",
+      "lat": 5.000052,
+      "lng": -74.3411
+    },
+    {
+      "id": "zoraida",
+      "nombre": "Zoraida",
+      "detalle": "Sector de La Vega",
+      "cat": "barrio",
+      "lat": 4.990062,
+      "lng": -74.341828
+    },
+    {
+      "id": "el-acomodo",
+      "nombre": "El Acomodo",
+      "detalle": "Vereda de La Vega",
+      "cat": "vereda",
+      "lat": 5.013389,
+      "lng": -74.340896
+    },
+    {
+      "id": "santo-domingo",
+      "nombre": "Santo Domingo",
+      "detalle": "Vereda de La Vega",
+      "cat": "vereda",
+      "lat": 5.006763,
+      "lng": -74.353726
+    },
+    {
+      "id": "ceilan",
+      "nombre": "Ceilán",
+      "detalle": "Vereda de La Vega",
+      "cat": "vereda",
+      "lat": 5.008455,
+      "lng": -74.365569
+    },
+    {
+      "id": "san-juan",
+      "nombre": "San Juan",
+      "detalle": "Vereda de La Vega",
+      "cat": "vereda",
+      "lat": 4.979468,
+      "lng": -74.318821
+    },
+    {
+      "id": "la-patria",
+      "nombre": "La Patria",
+      "detalle": "Vereda de La Vega",
+      "cat": "vereda",
+      "lat": 5.018747,
+      "lng": -74.296061
+    },
+    {
+      "id": "patio-bonito",
+      "nombre": "Patio Bonito",
+      "detalle": "Vereda de La Vega",
+      "cat": "vereda",
+      "lat": 5.032281,
+      "lng": -74.320593
+    },
+    {
+      "id": "hoya-grande",
+      "nombre": "Hoya Grande",
+      "detalle": "Vereda de La Vega",
+      "cat": "vereda",
+      "lat": 5.035947,
+      "lng": -74.290845
+    },
+    {
+      "id": "la-esperanza",
+      "nombre": "La Esperanza",
+      "detalle": "Vereda de La Vega",
+      "cat": "vereda",
+      "lat": 5.029462,
+      "lng": -74.283091
+    },
+    {
+      "id": "la-ceiba",
+      "nombre": "La Ceiba",
+      "detalle": "Vereda de La Vega",
+      "cat": "vereda",
+      "lat": 5.038767,
+      "lng": -74.365287
+    },
+    {
+      "id": "laguna-el-tabacal",
+      "nombre": "Laguna El Tabacal",
+      "detalle": "La Vega · a 3,6 km",
+      "cat": "turismo",
+      "lat": 5.029484,
+      "lng": -74.327575
+    },
+    {
+      "id": "cascadas-el-chupal",
+      "nombre": "Cascadas El Chupal",
+      "detalle": "Vereda Chupal, La Vega",
+      "cat": "turismo",
+      "lat": 5.045029,
+      "lng": -74.310051
+    },
+    {
+      "id": "hotel-casa-morebo",
+      "nombre": "Hotel Casa Morebo",
+      "detalle": "La Vega",
+      "cat": "turismo",
+      "lat": 5.001457,
+      "lng": -74.341386
+    },
+    {
+      "id": "ecohotel-monteverde",
+      "nombre": "Ecohotel Monteverde",
+      "detalle": "La Vega · a 1,7 km",
+      "cat": "turismo",
+      "lat": 4.999968,
+      "lng": -74.355073
+    },
+    {
+      "id": "san-francisco",
+      "nombre": "San Francisco",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.953252,
+      "lng": -74.264573
+    },
+    {
+      "id": "villeta",
+      "nombre": "Villeta",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.011258,
+      "lng": -74.47023
+    },
+    {
+      "id": "sasaima",
+      "nombre": "Sasaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.964577,
+      "lng": -74.433115
+    },
+    {
+      "id": "nocaima",
+      "nombre": "Nocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.069767,
+      "lng": -74.377522
+    },
+    {
+      "id": "supata",
+      "nombre": "Supatá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.062167,
+      "lng": -74.236402
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Nelson Pinzón",
+      "placa": "LVG 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 2263,
+      "desde": 2021,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-08",
+      "movil": "008",
+      "nombre": "Carlos Rodríguez",
+      "placa": "LVG 608",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2274,
+      "desde": 2010,
+      "tel": "3000000008"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "LVG 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1370,
+      "desde": 2012,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-18",
+      "movil": "018",
+      "nombre": "Diana Forero",
+      "placa": "LVG 618",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1233,
+      "desde": 2010,
+      "tel": "3000000018"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Yolanda Prieto",
+      "placa": "LVG 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1064,
+      "desde": 2019,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Fabio Cruz",
+      "placa": "LVG 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 640,
+      "desde": 2020,
+      "tel": "3000000026"
+    },
+    {
+      "id": "demo-27",
+      "movil": "027",
+      "nombre": "Rubén Sarmiento",
+      "placa": "LVG 627",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 945,
+      "desde": 2007,
+      "tel": "3000000027"
+    },
+    {
+      "id": "demo-30",
+      "movil": "030",
+      "nombre": "Héctor Bernal",
+      "placa": "LVG 630",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 605,
+      "desde": 2015,
+      "tel": "3000000030"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootransvillaleal, la Cooperativa de Transportes y Servicios de La Vega, está habilitada por la Alcaldía de La Vega para el servicio de taxi individual desde la Resolución 0227 del 8 de abril de 2005, y para el servicio mixto con la Resolución 0187 de 2005.\n\nAdemás de los taxis, cubre rutas diarias a las veredas San Juan, Petaquero, Naguy, Hoya Grande, La Patria, Cacahual, Chupal y Patio Bonito. Su oficina está sobre la Autopista Medellín, en la Carrera 4A # 20-03.",
+    "mision": "Garantizar el servicio óptimo de transporte terrestre de pasajeros a nivel nacional, con un equipo humano competente y comprometido con la satisfacción de las necesidades de sus asociados, sus familias y la comunidad, exaltando la excelencia y la calidad del servicio para generar beneficios a usuarios, colaboradores y asociados.",
+    "vision": "Ser para la comunidad de La Vega la empresa de transporte que satisfaga las necesidades de asociados y usuarios, con proyección de servicio a nivel nacional de la mejor calidad, y brindar la mejor opción de transporte con un parque automotor en óptimas condiciones que garantice comodidad y bajos índices de accidentalidad.",
+    "servicios": [
+      "Taxi individual",
+      "Servicio mixto a las veredas",
+      "Rutas diarias a San Juan, Petaquero, Naguy, La Patria y Chupal",
+      "Viajes a los municipios vecinos y a Bogotá"
+    ],
+    "frase": "Cooperamos para el desarrollo de La Vega",
+    "linea_tiempo": [
+      {
+        "b": "2005",
+        "s": "Habilitada para taxi individual y servicio mixto."
+      },
+      {
+        "b": "Hoy",
+        "s": "Taxis y rutas diarias a ocho veredas."
+      },
+      {
+        "b": "Con la app",
+        "s": "Tu taxi desde el celular, con GPS y tarifa clara."
+      }
+    ]
+  },
+  "imagenes": {
+    "hero": "img/web/hero-calido.jpg"
+  },
+  "fuentes": [
+    "https://www.cootransvillaleal.com.co/nosotros",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Habilitaciones (Res. 0227 del 8-abr-2005 taxi; Res. 0187 de 2005 mixto), NIT 832.004.158-1, misión, visión, rutas a veredas, dirección, celular y correo: su sitio oficial (Wix). La misión y la visión van con ajustes mínimos de ortografía.",
+    "Gerente según su web (2023): Guillermo Nieto Bello.",
+    "Colores tomados de su sitio: azul marino #0C3C60, turquesa #147285/#1EABC7 y amarillo #FFCB05 de su paleta.",
+    "Otras páginas consultadas del mismo sitio: https://www.cootransvillaleal.com.co/proyectos, https://www.cootransvillaleal.com.co/contactenos."
+  ]
+}

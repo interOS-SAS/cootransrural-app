@@ -1,0 +1,761 @@
+{
+  "id": "madrid",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootransmadrid",
+    "nombreCorto": "Cootransmadrid",
+    "razonSocial": "Cooperativa Multiactiva de Transportadores de Madrid (Cootransmadrid)",
+    "lema": "Bienestar, seguridad y comodidad en cada viaje",
+    "municipio": "Madrid, Cundinamarca",
+    "pueblo": "Madrid",
+    "telefono": "6018443594",
+    "telefonoVisible": "601 844 3594",
+    "whatsapp": "573138043438",
+    "correo": "secretaria.cootransmadrid@gmail.com",
+    "direccion": "Carrera 9 # 6-27, barrio San Luis, Madrid, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://cootransmadrid.com.co",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "vehiculos": "100+",
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "MDR",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana de Occidente",
+    "datosPendientes": [
+      "año de fundación",
+      "número de taxis"
+    ],
+    "oficina": {
+      "lat": 4.732772,
+      "lng": -74.266061
+    }
+  },
+  "colores": {
+    "primario": "#2E2A25",
+    "primario2": "#4A433A",
+    "oscuro": "#1E1810",
+    "acento": "#FFB100",
+    "rojo": "#D92D20"
+  },
+  "CENTRO": {
+    "lat": 4.730613,
+    "lng": -74.264037
+  },
+  "ZONA": {
+    "sur": 4.41,
+    "norte": 5.05,
+    "oeste": -74.58,
+    "este": -73.94
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "mosquera",
+      "destino": "Mosquera",
+      "valor": 16000,
+      "km": 7,
+      "min": 10,
+      "radioKm": 4
+    },
+    {
+      "id": "funza",
+      "destino": "Funza",
+      "valor": 21000,
+      "km": 10,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "bojaca",
+      "destino": "Bojacá",
+      "valor": 24000,
+      "km": 12,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 28000,
+      "km": 15,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "el-rosal",
+      "destino": "El Rosal",
+      "valor": 32000,
+      "km": 17,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 38000,
+      "km": 22,
+      "min": 40,
+      "radioKm": 3
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 43000,
+      "km": 25,
+      "min": 40,
+      "radioKm": 3
+    },
+    {
+      "id": "subachoque",
+      "destino": "Subachoque",
+      "valor": 46000,
+      "km": 27,
+      "min": 50,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal Pedro Fernández Madrid",
+      "detalle": "Centro, Madrid",
+      "cat": "centro",
+      "lat": 4.730613,
+      "lng": -74.264037
+    },
+    {
+      "id": "alcaldia",
+      "nombre": "Alcaldía Municipal",
+      "detalle": "Calle 5 # 4-74, Parque Principal",
+      "cat": "centro",
+      "lat": 4.731067,
+      "lng": -74.263815
+    },
+    {
+      "id": "oficina",
+      "nombre": "Oficina Cootransmadrid",
+      "detalle": "Carrera 9 # 6-27, barrio San Luis",
+      "cat": "centro",
+      "lat": 4.732772,
+      "lng": -74.266061
+    },
+    {
+      "id": "iglesia",
+      "nombre": "Parroquia San Francisco de Paula",
+      "detalle": "Parque Principal, Madrid",
+      "cat": "centro",
+      "lat": 4.729906,
+      "lng": -74.263954
+    },
+    {
+      "id": "policia",
+      "nombre": "Estación de Policía",
+      "detalle": "Madrid",
+      "cat": "centro",
+      "lat": 4.731568,
+      "lng": -74.265071
+    },
+    {
+      "id": "biblioteca",
+      "nombre": "Biblioteca de Madrid",
+      "detalle": "Madrid",
+      "cat": "centro",
+      "lat": 4.735061,
+      "lng": -74.265057
+    },
+    {
+      "id": "coliseo",
+      "nombre": "Coliseo Municipal",
+      "detalle": "Madrid",
+      "cat": "centro",
+      "lat": 4.734981,
+      "lng": -74.262811
+    },
+    {
+      "id": "polideportivo-alcaparros",
+      "nombre": "Polideportivo Alcaparros",
+      "detalle": "Madrid",
+      "cat": "centro",
+      "lat": 4.735932,
+      "lng": -74.262245
+    },
+    {
+      "id": "obelisco-bolivar",
+      "nombre": "Obelisco a Bolívar",
+      "detalle": "Centro, Madrid",
+      "cat": "centro",
+      "lat": 4.733761,
+      "lng": -74.26437
+    },
+    {
+      "id": "cementerio",
+      "nombre": "Cementerio de Madrid",
+      "detalle": "Madrid",
+      "cat": "centro",
+      "lat": 4.726604,
+      "lng": -74.265511
+    },
+    {
+      "id": "hospital",
+      "nombre": "E.S.E. Hospital Santa Matilde",
+      "detalle": "Carrera 6 # 11-45",
+      "cat": "salud",
+      "lat": 4.735533,
+      "lng": -74.259827
+    },
+    {
+      "id": "centro-ambulatorio",
+      "nombre": "Centro Ambulatorio Gustavo Escallón Cayzedo",
+      "detalle": "Madrid",
+      "cat": "salud",
+      "lat": 4.736587,
+      "lng": -74.274396
+    },
+    {
+      "id": "colegio-antonio-narino",
+      "nombre": "Colegio Antonio Nariño",
+      "detalle": "Madrid",
+      "cat": "educacion",
+      "lat": 4.729575,
+      "lng": -74.264322
+    },
+    {
+      "id": "ied-serrezuela",
+      "nombre": "IED Serrezuela",
+      "detalle": "Madrid",
+      "cat": "educacion",
+      "lat": 4.727795,
+      "lng": -74.263536
+    },
+    {
+      "id": "ied-maria-teresa-ortiz",
+      "nombre": "IED María Teresa Ortiz",
+      "detalle": "El Sosiego, Madrid",
+      "cat": "educacion",
+      "lat": 4.731235,
+      "lng": -74.276333
+    },
+    {
+      "id": "instituto-zoraida-cadavid",
+      "nombre": "Instituto Zoraida Cadavid",
+      "detalle": "Madrid",
+      "cat": "educacion",
+      "lat": 4.731012,
+      "lng": -74.265074
+    },
+    {
+      "id": "colegio-san-pedro",
+      "nombre": "Colegio San Pedro",
+      "detalle": "Madrid",
+      "cat": "educacion",
+      "lat": 4.739748,
+      "lng": -74.25329
+    },
+    {
+      "id": "liceo-casablanca",
+      "nombre": "Liceo Casablanca",
+      "detalle": "Hacienda Casablanca, Madrid",
+      "cat": "educacion",
+      "lat": 4.724523,
+      "lng": -74.256991
+    },
+    {
+      "id": "surtimax",
+      "nombre": "Surtimax Madrid",
+      "detalle": "Madrid",
+      "cat": "comercio",
+      "lat": 4.735062,
+      "lng": -74.26536
+    },
+    {
+      "id": "cc-los-pinos",
+      "nombre": "Centro Comercial Los Pinos",
+      "detalle": "Madrid",
+      "cat": "comercio",
+      "lat": 4.734046,
+      "lng": -74.263917
+    },
+    {
+      "id": "cc-madrid",
+      "nombre": "Centro Comercial Madrid",
+      "detalle": "Madrid",
+      "cat": "comercio",
+      "lat": 4.733054,
+      "lng": -74.262798
+    },
+    {
+      "id": "d1",
+      "nombre": "Tiendas D1",
+      "detalle": "Madrid",
+      "cat": "comercio",
+      "lat": 4.734056,
+      "lng": -74.261134
+    },
+    {
+      "id": "texaco",
+      "nombre": "Estación Texaco",
+      "detalle": "Madrid",
+      "cat": "comercio",
+      "lat": 4.742122,
+      "lng": -74.258037
+    },
+    {
+      "id": "maria-jose-parrilla",
+      "nombre": "María José Parrilla",
+      "detalle": "Madrid",
+      "cat": "comida",
+      "lat": 4.73022,
+      "lng": -74.259591
+    },
+    {
+      "id": "panaderia-la-roa",
+      "nombre": "Cafetería y Panadería La Roa",
+      "detalle": "Madrid",
+      "cat": "comida",
+      "lat": 4.729654,
+      "lng": -74.25845
+    },
+    {
+      "id": "lucy-y-panda",
+      "nombre": "Lucy y Panda",
+      "detalle": "Madrid",
+      "cat": "comida",
+      "lat": 4.731875,
+      "lng": -74.261575
+    },
+    {
+      "id": "san-luis",
+      "nombre": "San Luis",
+      "detalle": "Barrio de Madrid",
+      "cat": "barrio",
+      "lat": 4.734052,
+      "lng": -74.267365
+    },
+    {
+      "id": "la-lorena",
+      "nombre": "La Lorena",
+      "detalle": "Barrio de Madrid",
+      "cat": "barrio",
+      "lat": 4.735325,
+      "lng": -74.266088
+    },
+    {
+      "id": "alameda-del-rio",
+      "nombre": "Alameda del Río",
+      "detalle": "Barrio de Madrid",
+      "cat": "barrio",
+      "lat": 4.735611,
+      "lng": -74.264515
+    },
+    {
+      "id": "gabriel-echavarria",
+      "nombre": "Gabriel Echavarría",
+      "detalle": "Barrio de Madrid",
+      "cat": "barrio",
+      "lat": 4.738287,
+      "lng": -74.265315
+    },
+    {
+      "id": "los-alcaparros",
+      "nombre": "Hacienda Los Alcaparros",
+      "detalle": "Barrio de Madrid",
+      "cat": "barrio",
+      "lat": 4.736638,
+      "lng": -74.263171
+    },
+    {
+      "id": "escallon",
+      "nombre": "Escallón",
+      "detalle": "Barrio de Madrid",
+      "cat": "barrio",
+      "lat": 4.739131,
+      "lng": -74.262923
+    },
+    {
+      "id": "el-amparito",
+      "nombre": "El Amparito",
+      "detalle": "Barrio de Madrid",
+      "cat": "barrio",
+      "lat": 4.740179,
+      "lng": -74.26406
+    },
+    {
+      "id": "serrezuela",
+      "nombre": "Serrezuela",
+      "detalle": "Barrio de Madrid",
+      "cat": "barrio",
+      "lat": 4.734149,
+      "lng": -74.268496
+    },
+    {
+      "id": "lusitania",
+      "nombre": "Lusitania",
+      "detalle": "Barrio de Madrid",
+      "cat": "barrio",
+      "lat": 4.728608,
+      "lng": -74.266446
+    },
+    {
+      "id": "el-sosiego",
+      "nombre": "El Sosiego",
+      "detalle": "Barrio de Madrid",
+      "cat": "barrio",
+      "lat": 4.73661,
+      "lng": -74.276511
+    },
+    {
+      "id": "casablanca",
+      "nombre": "Casablanca",
+      "detalle": "Barrio de Madrid",
+      "cat": "barrio",
+      "lat": 4.72681,
+      "lng": -74.261114
+    },
+    {
+      "id": "el-riachuelo",
+      "nombre": "El Riachuelo",
+      "detalle": "Vereda de Madrid",
+      "cat": "vereda",
+      "lat": 4.746076,
+      "lng": -74.251509
+    },
+    {
+      "id": "boyero",
+      "nombre": "Boyero",
+      "detalle": "Vereda de Madrid",
+      "cat": "vereda",
+      "lat": 4.743012,
+      "lng": -74.243299
+    },
+    {
+      "id": "san-pedro",
+      "nombre": "San Pedro",
+      "detalle": "Vereda de Madrid",
+      "cat": "vereda",
+      "lat": 4.734193,
+      "lng": -74.241096
+    },
+    {
+      "id": "laguna-larga",
+      "nombre": "Laguna Larga",
+      "detalle": "Vereda de Madrid",
+      "cat": "vereda",
+      "lat": 4.755827,
+      "lng": -74.281597
+    },
+    {
+      "id": "la-estancia",
+      "nombre": "La Estancia",
+      "detalle": "Vereda de Madrid",
+      "cat": "vereda",
+      "lat": 4.709702,
+      "lng": -74.269993
+    },
+    {
+      "id": "marsella",
+      "nombre": "Marsella",
+      "detalle": "Vereda de Madrid",
+      "cat": "vereda",
+      "lat": 4.755135,
+      "lng": -74.239855
+    },
+    {
+      "id": "puente-de-piedra",
+      "nombre": "Puente de Piedra",
+      "detalle": "Vereda de Madrid",
+      "cat": "vereda",
+      "lat": 4.817501,
+      "lng": -74.224084
+    },
+    {
+      "id": "estacion-del-tren",
+      "nombre": "Estación del Tren de Madrid",
+      "detalle": "Centro, Madrid",
+      "cat": "turismo",
+      "lat": 4.733683,
+      "lng": -74.262833
+    },
+    {
+      "id": "hacienda-casablanca",
+      "nombre": "Hacienda Casablanca (sendero)",
+      "detalle": "Madrid",
+      "cat": "turismo",
+      "lat": 4.726279,
+      "lng": -74.255794
+    },
+    {
+      "id": "mural-madrid",
+      "nombre": "Mural en homenaje a Madrid",
+      "detalle": "Madrid",
+      "cat": "turismo",
+      "lat": 4.73384,
+      "lng": -74.261373
+    },
+    {
+      "id": "hotel-sahara",
+      "nombre": "Hotel Sahara",
+      "detalle": "Madrid",
+      "cat": "turismo",
+      "lat": 4.737977,
+      "lng": -74.255485
+    },
+    {
+      "id": "piedras-chivo-negro",
+      "nombre": "Piedras de Chivo Negro",
+      "detalle": "Bojacá, vía Madrid - Bojacá",
+      "cat": "turismo",
+      "lat": 4.716751,
+      "lng": -74.322862
+    },
+    {
+      "id": "mosquera",
+      "nombre": "Mosquera",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.7002,
+      "lng": -74.238506
+    },
+    {
+      "id": "funza",
+      "nombre": "Funza",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.717747,
+      "lng": -74.203155
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    },
+    {
+      "id": "el-rosal",
+      "nombre": "El Rosal",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.85257,
+      "lng": -74.26059
+    },
+    {
+      "id": "bojaca",
+      "nombre": "Bojacá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.732482,
+      "lng": -74.341674
+    },
+    {
+      "id": "subachoque",
+      "nombre": "Subachoque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.927969,
+      "lng": -74.173964
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Jairo Moreno",
+      "placa": "MDR 601",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 643,
+      "desde": 2014,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-02",
+      "movil": "002",
+      "nombre": "Édgar Molina",
+      "placa": "MDR 602",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2197,
+      "desde": 2018,
+      "tel": "3000000002"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Martha Garzón",
+      "placa": "MDR 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1966,
+      "desde": 2015,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Sandra Patiño",
+      "placa": "MDR 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1982,
+      "desde": 2006,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Yolanda Prieto",
+      "placa": "MDR 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1133,
+      "desde": 2007,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Rubén Sarmiento",
+      "placa": "MDR 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 525,
+      "desde": 2010,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Diana Forero",
+      "placa": "MDR 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 2281,
+      "desde": 2009,
+      "tel": "3000000028"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Luz Marina Rojas",
+      "placa": "MDR 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1427,
+      "desde": 2016,
+      "tel": "3000000029"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootransmadrid, la Cooperativa Multiactiva de Transportadores de Madrid, lleva más de 30 años al servicio de la comunidad madrileña en transporte público de pasajeros, en las modalidades individual, mixto y especial.\n\nCuenta con más de 100 vehículos entre taxis y camionetas y más de 150 conductores verificados, atiende reservas las 24 horas y en 2022 obtuvo las certificaciones ISO 9001:2015 e ISO 45001:2018.",
+    "mision": "Somos una cooperativa madrileña que incentiva el trabajo solidario, dedicada al servicio de transporte individual, mixto y especial con cubrimiento nacional, urbano e interveredal, cumpliendo estándares de seguridad, comodidad y confiabilidad para asegurar un servicio de calidad.",
+    "vision": "Para 2030, ser una empresa que satisfaga las necesidades de sus asociados, con proyección a particulares, y que brinde la mejor opción en transporte público de pasajeros y servicio especial, con altos estándares de calidad, un parque automotor moderno y de alta tecnología, puntualidad, máxima comodidad y bajos índices de accidentalidad.",
+    "servicios": [
+      "Taxi y camioneta las 24 horas",
+      "Minivan",
+      "Transporte especial de 18 a 40 pasajeros",
+      "Transporte empresarial con vales",
+      "Transporte escolar y turístico",
+      "Traslados al aeropuerto",
+      "Traslado de mascotas",
+      "Encomiendas exprés"
+    ],
+    "frase": "Tu empresa de toda la vida en Madrid",
+    "linea_tiempo": [
+      {
+        "b": "+30 años",
+        "s": "Al servicio de la comunidad madrileña."
+      },
+      {
+        "b": "2022",
+        "s": "Certificación ISO 9001 e ISO 45001."
+      },
+      {
+        "b": "Hoy",
+        "s": "Más de 100 vehículos y 150 conductores verificados."
+      }
+    ]
+  },
+  "fuentes": [
+    "https://cootransmadrid.com.co/index.php/about/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "OJO para la venta: ya usa un sistema de despacho y app de Autocab (empresa inglesa) desde julio de 2019, con app de pasajero «Taxis y Camionetas Madrid» en Google Play y reservas web en eb3.autocab.net. La propuesta debe compararse con eso.",
+    "Cifras (100+ vehículos, 150+ conductores, 1.000+ clientes diarios), ISO 2022, servicios, misión y visión 2030: su sitio oficial (la misión y la visión van con ajustes mínimos de redacción y en tuteo neutro).",
+    "Año de fundación sin confirmar: su web dice «34 años de experiencia» y «más de 30 años»; un sitio antiguo (Wix) y un directorio registran el 10 de abril de 1997. NIT 800.201.715-2.",
+    "Teléfonos: reservas 24/7 (601) 844 3594; oficina 601 825 4444 y 601 820 5873; WhatsApp 313 804 3438; correos secretaria.cootransmadrid@gmail.com y gerencia.cootransmadrid@gmail.com.",
+    "Colores tomados de su sitio (ámbar #FFB100 sobre café muy oscuro #1E1810) y de su logo (negro y amarillo).",
+    "Otras páginas consultadas del mismo sitio: https://cootransmadrid.com.co/, https://cootransmadrid.com.co/index.php/contact-us/."
+  ]
+}

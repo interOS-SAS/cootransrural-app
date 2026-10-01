@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cooperativas · App de taxis de interOS</title>
+  <meta name="description" content="Índice interno de interOS: la app de taxis con la marca y los colores de cada cooperativa.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0B0F14">
+  <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32.png">
+  <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
+  <link rel="stylesheet" href="../web/cooperativas.css?v=817f090cf7">
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+    <symbol id="i-taxi" viewBox="0 0 24 24"><path d="M10 2h4"/><path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.65 5H8.4a2 2 0 0 0-1.9 1.26L5 10 3 8"/><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M7 14h.01M17 14h.01M5 18v2M19 18v2"/></symbol>
+    <symbol id="i-volante" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 14v7M10 12H3.5M14 12h6.5"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20.5 14v.01M14 20.5h.01M17.5 20.5h3v-3"/></symbol>
+    <symbol id="i-paleta" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.6-.8 1.6-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.8-1.7 1.7-1.7h2A5.5 5.5 0 0 0 22 11c0-5-4.5-9-10-9z"/></symbol>
+    <symbol id="i-descargar" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+  </svg>
+
+  <header class="cabeza">
+    <div class="cabeza-interna">
+      <a class="marca-interos" href="https://interos.com.co" target="_blank" rel="noopener"><span>i</span>interOS · App de taxis para cooperativas</a>
+      <h1>Cooperativas</h1>
+      <p>La misma app de taxis con la marca, los colores, las tarifas y los lugares de cada cooperativa: web, app del pasajero, app del conductor, stickers QR y vitrina de diseños. Escanea el código o toca los enlaces para mostrarla.</p>
+      <p class="nota"><svg class="icono" aria-hidden="true"><use href="#i-info"/></svg><span>Las marcadas como <b>Propuesta</b> son demostraciones preparadas por interOS con datos públicos: no son páginas oficiales ni están autorizadas por la cooperativa.</span></p>
+    </div>
+  </header>
+
+  <main class="rejilla" id="cooperativas">
+    <article class="coop" id="coop-cootransrural" style="--p:#0A5C33;--o:#052A17;--a:#FFC107" data-ruta="" data-color="#0A5C33">
+      <header class="coop-cabeza">
+        <img src="../img/icono-192.png" alt="" width="58" height="58" loading="lazy">
+        <div><h2>Cootransrural</h2><p>El Rosal<span class="estado cliente">Cliente</span></p></div>
+      </header>
+      <div class="coop-cuerpo">
+        <p class="razon">Cooperativa de Transportadores Rurales de El Rosal Ltda. · «Más que transporte, confianza»</p>
+        <ul class="colores" aria-label="Colores de Cootransrural"><li><i style="--c:#0A5C33"></i></li><li><i style="--c:#052A17"></i></li><li><i style="--c:#FFC107"></i></li><li>#0A5C33</li></ul>
+        <div class="coop-qr"><div class="qr" aria-hidden="true"></div><div><b>Escanea para abrir su web</b><small class="qr-url">https://interos-sas.github.io/cootransrural-app/</small></div></div>
+        <ul class="datos">
+          <li><b>52</b> taxis Kia Picanto</li>
+          <li><b>14</b> rutas con tarifa</li>
+          <li><b>54</b> lugares en el mapa</li>
+          <li>Central: <b>320 904 2977</b></li>
+        </ul>
+        <nav class="enlaces" aria-label="Enlaces de Cootransrural">
+          <a class="web" href="../"><svg class="icono"><use href="#i-web"/></svg>Página web</a>
+          <a href="../app/"><svg class="icono"><use href="#i-taxi"/></svg>Pasajero</a>
+          <a href="../conductor/"><svg class="icono"><use href="#i-volante"/></svg>Conductor</a>
+          <a href="../stickers/"><svg class="icono"><use href="#i-qr"/></svg>Stickers QR</a>
+          <a href="../disenos/"><svg class="icono"><use href="#i-paleta"/></svg>Vitrina</a>
+          <a href="../descargar/"><svg class="icono"><use href="#i-descargar"/></svg>Descargar</a>
+          <a href="../privacidad/"><svg class="icono"><use href="#i-info"/></svg>Privacidad</a>
+        </nav>
+      </div>
+    </article>
+    <article class="coop" id="coop-subachoque" style="--p:#1D4E89;--o:#0B2545;--a:#FFC107" data-ruta="subachoque/" data-color="#1D4E89">
+      <header class="coop-cabeza">
+        <img src="../empresas/subachoque/icono-192.png" alt="" width="58" height="58" loading="lazy">
+        <div><h2>Coopmultrasub</h2><p>Subachoque<span class="estado cliente">Cliente</span></p></div>
+      </header>
+      <div class="coop-cuerpo">
+        <p class="razon">Cooperativa Multiactiva de Transportadores de Subachoque Ltda. · «Tu taxi de confianza en Subachoque»</p>
+        <ul class="colores" aria-label="Colores de Coopmultrasub"><li><i style="--c:#1D4E89"></i></li><li><i style="--c:#0B2545"></i></li><li><i style="--c:#FFC107"></i></li><li>#1D4E89</li></ul>
+        <div class="coop-qr"><div class="qr" aria-hidden="true"></div><div><b>Escanea para abrir su web</b><small class="qr-url">https://interos-sas.github.io/cootransrural-app/subachoque/</small></div></div>
+        <ul class="datos">
+          <li><b>20</b> taxis (aprox.)</li>
+          <li><b>8</b> rutas con tarifa</li>
+          <li><b>46</b> lugares en el mapa</li>
+        </ul>
+        <nav class="enlaces" aria-label="Enlaces de Coopmultrasub">
+          <a class="web" href="../subachoque/"><svg class="icono"><use href="#i-web"/></svg>Página web</a>
+          <a href="../subachoque/app/"><svg class="icono"><use href="#i-taxi"/></svg>Pasajero</a>
+          <a href="../subachoque/conductor/"><svg class="icono"><use href="#i-volante"/></svg>Conductor</a>
+          <a href="../subachoque/stickers/"><svg class="icono"><use href="#i-qr"/></svg>Stickers QR</a>
+          <a href="../subachoque/disenos/"><svg class="icono"><use href="#i-paleta"/></svg>Vitrina</a>
+          <a href="../subachoque/descargar/"><svg class="icono"><use href="#i-descargar"/></svg>Descargar</a>
+          <a href="../subachoque/privacidad/"><svg class="icono"><use href="#i-info"/></svg>Privacidad</a>
+        </nav>
+      </div>
+    </article>
+    <article class="coop" id="coop-tabio" style="--p:#0F5F63;--o:#06363A;--a:#F2B33D" data-ruta="tabio/" data-color="#0F5F63">
+      <header class="coop-cabeza">
+        <img src="../empresas/tabio/icono-192.png" alt="" width="58" height="58" loading="lazy">
+        <div><h2>Cooptranstermales</h2><p>Tabio<span class="estado propuesta">Propuesta</span></p></div>
+      </header>
+      <div class="coop-cuerpo">
+        <p class="razon">Cooperativa Multiactiva de Transportadores Ltda. (Cooptranstermales) · «Taxis de Tabio, tierra de termales»</p>
+        <ul class="colores" aria-label="Colores de Cooptranstermales"><li><i style="--c:#0F5F63"></i></li><li><i style="--c:#06363A"></i></li><li><i style="--c:#F2B33D"></i></li><li>#0F5F63</li></ul>
+        <div class="coop-qr"><div class="qr" aria-hidden="true"></div><div><b>Escanea para abrir su web</b><small class="qr-url">https://interos-sas.github.io/cootransrural-app/tabio/</small></div></div>
+        <ul class="datos">
+          <li><b>8</b> rutas con tarifa</li>
+          <li><b>50</b> lugares en el mapa</li>
+          <li>Central: <b>314 351 9920</b></li>
+        </ul>
+        <nav class="enlaces" aria-label="Enlaces de Cooptranstermales">
+          <a class="web" href="../tabio/"><svg class="icono"><use href="#i-web"/></svg>Página web</a>
+          <a href="../tabio/app/"><svg class="icono"><use href="#i-taxi"/></svg>Pasajero</a>
+          <a href="../tabio/conductor/"><svg class="icono"><use href="#i-volante"/></svg>Conductor</a>
+          <a href="../tabio/stickers/"><svg class="icono"><use href="#i-qr"/></svg>Stickers QR</a>
+          <a href="../tabio/disenos/"><svg class="icono"><use href="#i-paleta"/></svg>Vitrina</a>
+          <a href="../tabio/descargar/"><svg class="icono"><use href="#i-descargar"/></svg>Descargar</a>
+          <a href="../tabio/privacidad/"><svg class="icono"><use href="#i-info"/></svg>Privacidad</a>
+        </nav>
+      </div>
+    </article>
+    <article class="coop" id="coop-madrid" style="--p:#2E2A25;--o:#1E1810;--a:#FFB100" data-ruta="madrid/" data-color="#2E2A25">
+      <header class="coop-cabeza">
+        <img src="../empresas/madrid/icono-192.png" alt="" width="58" height="58" loading="lazy">
+        <div><h2>Cootransmadrid</h2><p>Madrid<span class="estado propuesta">Propuesta</span></p></div>
+      </header>
+      <div class="coop-cuerpo">
+        <p class="razon">Cooperativa Multiactiva de Transportadores de Madrid (Cootransmadrid) · «Bienestar, seguridad y comodidad en cada viaje»</p>
+        <ul class="colores" aria-label="Colores de Cootransmadrid"><li><i style="--c:#2E2A25"></i></li><li><i style="--c:#1E1810"></i></li><li><i style="--c:#FFB100"></i></li><li>#2E2A25</li></ul>
+        <div class="coop-qr"><div class="qr" aria-hidden="true"></div><div><b>Escanea para abrir su web</b><small class="qr-url">https://interos-sas.github.io/cootransrural-app/madrid/</small></div></div>
+        <ul class="datos">
+          <li><b>100+</b> vehículos</li>
+          <li><b>8</b> rutas con tarifa</li>
+          <li><b>57</b> lugares en el mapa</li>
+          <li>Central: <b>601 844 3594</b></li>
+        </ul>
+        <nav class="enlaces" aria-label="Enlaces de Cootransmadrid">
+          <a class="web" href="../madrid/"><svg class="icono"><use href="#i-web"/></svg>Página web</a>
+          <a href="../madrid/app/"><svg class="icono"><use href="#i-taxi"/></svg>Pasajero</a>
+          <a href="../madrid/conductor/"><svg class="icono"><use href="#i-volante"/></svg>Conductor</a>
+          <a href="../madrid/stickers/"><svg class="icono"><use href="#i-qr"/></svg>Stickers QR</a>
+          <a href="../madrid/disenos/"><svg class="icono"><use href="#i-paleta"/></svg>Vitrina</a>
+          <a href="../madrid/descargar/"><svg class="icono"><use href="#i-descargar"/></svg>Descargar</a>
+          <a href="../madrid/privacidad/"><svg class="icono"><use href="#i-info"/></svg>Privacidad</a>
+        </nav>
+      </div>
+    </article>
+    <article class="coop" id="coop-tenjo" style="--p:#156B2E;--o:#0B3E1A;--a:#E8A020" data-ruta="tenjo/" data-color="#156B2E">
+      <header class="coop-cabeza">
+        <img src="../empresas/tenjo/icono-192.png" alt="" width="58" height="58" loading="lazy">
+        <div><h2>Cootranstenjo</h2><p>Tenjo<span class="estado propuesta">Propuesta</span></p></div>
+      </header>
+      <div class="coop-cuerpo">
+        <p class="razon">Cooperativa de Transportadores de Tenjo (Cootranstenjo) · «Movilidad que conecta y construye»</p>
+        <ul class="colores" aria-label="Colores de Cootranstenjo"><li><i style="--c:#156B2E"></i></li><li><i style="--c:#0B3E1A"></i></li><li><i style="--c:#E8A020"></i></li><li>#156B2E</li></ul>
+        <div class="coop-qr"><div class="qr" aria-hidden="true"></div><div><b>Escanea para abrir su web</b><small class="qr-url">https://interos-sas.github.io/cootransrural-app/tenjo/</small></div></div>
+        <ul class="datos">
+          <li><b>11</b> taxis</li>
+          <li><b>8</b> rutas con tarifa</li>
+          <li><b>49</b> lugares en el mapa</li>
+          <li>Central: <b>312 584 7257</b></li>
+        </ul>
+        <nav class="enlaces" aria-label="Enlaces de Cootranstenjo">
+          <a class="web" href="../tenjo/"><svg class="icono"><use href="#i-web"/></svg>Página web</a>
+          <a href="../tenjo/app/"><svg class="icono"><use href="#i-taxi"/></svg>Pasajero</a>
+          <a href="../tenjo/conductor/"><svg class="icono"><use href="#i-volante"/></svg>Conductor</a>
+          <a href="../tenjo/stickers/"><svg class="icono"><use href="#i-qr"/></svg>Stickers QR</a>
+          <a href="../tenjo/disenos/"><svg class="icono"><use href="#i-paleta"/></svg>Vitrina</a>
+          <a href="../tenjo/descargar/"><svg class="icono"><use href="#i-descargar"/></svg>Descargar</a>
+          <a href="../tenjo/privacidad/"><svg class="icono"><use href="#i-info"/></svg>Privacidad</a>
+        </nav>
+      </div>
+    </article>
+    <article class="coop" id="coop-villeta" style="--p:#8A4513;--o:#3B1E08;--a:#F5C04A" data-ruta="villeta/" data-color="#8A4513">
+      <header class="coop-cabeza">
+        <img src="../empresas/villeta/icono-192.png" alt="" width="58" height="58" loading="lazy">
+        <div><h2>Cootransvi</h2><p>Villeta<span class="estado propuesta">Propuesta</span></p></div>
+      </header>
+      <div class="coop-cuerpo">
+        <p class="razon">Cooperativa de Transportadores de Villeta (Cootransvi) · «Taxis en Villeta, tierra de trapiches y panela»</p>
+        <ul class="colores" aria-label="Colores de Cootransvi"><li><i style="--c:#8A4513"></i></li><li><i style="--c:#3B1E08"></i></li><li><i style="--c:#F5C04A"></i></li><li>#8A4513</li></ul>
+        <div class="coop-qr"><div class="qr" aria-hidden="true"></div><div><b>Escanea para abrir su web</b><small class="qr-url">https://interos-sas.github.io/cootransrural-app/villeta/</small></div></div>
+        <ul class="datos">
+          <li><b>8</b> rutas con tarifa</li>
+          <li><b>49</b> lugares en el mapa</li>
+          <li>Central: <b>601 844 7000</b></li>
+        </ul>
+        <nav class="enlaces" aria-label="Enlaces de Cootransvi">
+          <a class="web" href="../villeta/"><svg class="icono"><use href="#i-web"/></svg>Página web</a>
+          <a href="../villeta/app/"><svg class="icono"><use href="#i-taxi"/></svg>Pasajero</a>
+          <a href="../villeta/conductor/"><svg class="icono"><use href="#i-volante"/></svg>Conductor</a>
+          <a href="../villeta/stickers/"><svg class="icono"><use href="#i-qr"/></svg>Stickers QR</a>
+          <a href="../villeta/disenos/"><svg class="icono"><use href="#i-paleta"/></svg>Vitrina</a>
+          <a href="../villeta/descargar/"><svg class="icono"><use href="#i-descargar"/></svg>Descargar</a>
+          <a href="../villeta/privacidad/"><svg class="icono"><use href="#i-info"/></svg>Privacidad</a>
+        </nav>
+      </div>
+    </article>
+    <article class="coop" id="coop-la-vega" style="--p:#0C3C60;--o:#062134;--a:#FFCB05" data-ruta="la-vega/" data-color="#0C3C60">
+      <header class="coop-cabeza">
+        <img src="../empresas/la-vega/icono-192.png" alt="" width="58" height="58" loading="lazy">
+        <div><h2>Cootransvillaleal</h2><p>La Vega<span class="estado propuesta">Propuesta</span></p></div>
+      </header>
+      <div class="coop-cuerpo">
+        <p class="razon">Cooperativa de Transportes y Servicios Cootransvillaleal · «Taxis en La Vega, de la laguna a la autopista»</p>
+        <ul class="colores" aria-label="Colores de Cootransvillaleal"><li><i style="--c:#0C3C60"></i></li><li><i style="--c:#062134"></i></li><li><i style="--c:#FFCB05"></i></li><li>#0C3C60</li></ul>
+        <div class="coop-qr"><div class="qr" aria-hidden="true"></div><div><b>Escanea para abrir su web</b><small class="qr-url">https://interos-sas.github.io/cootransrural-app/la-vega/</small></div></div>
+        <ul class="datos">
+          <li><b>8</b> rutas con tarifa</li>
+          <li><b>40</b> lugares en el mapa</li>
+          <li>Central: <b>310 317 8318</b></li>
+        </ul>
+        <nav class="enlaces" aria-label="Enlaces de Cootransvillaleal">
+          <a class="web" href="../la-vega/"><svg class="icono"><use href="#i-web"/></svg>Página web</a>
+          <a href="../la-vega/app/"><svg class="icono"><use href="#i-taxi"/></svg>Pasajero</a>
+          <a href="../la-vega/conductor/"><svg class="icono"><use href="#i-volante"/></svg>Conductor</a>
+          <a href="../la-vega/stickers/"><svg class="icono"><use href="#i-qr"/></svg>Stickers QR</a>
+          <a href="../la-vega/disenos/"><svg class="icono"><use href="#i-paleta"/></svg>Vitrina</a>
+          <a href="../la-vega/descargar/"><svg class="icono"><use href="#i-descargar"/></svg>Descargar</a>
+          <a href="../la-vega/privacidad/"><svg class="icono"><use href="#i-info"/></svg>Privacidad</a>
+        </nav>
+      </div>
+    </article>
+  </main>
+
+  <footer class="pie">
+    <p>Desarrollado por <a href="https://interos.com.co" target="_blank" rel="noopener">interOS</a> · <a href="../">Volver a Cootransrural</a></p>
+  </footer>
+
+  <script type="module">
+    // QR de cada cooperativa hacia su web (con la dirección desde donde se abre
+    // esta página: en GitHub Pages es la pública).
+    import { qrSVG } from '../nucleo/index.js';
+    const raiz = new URL('../', location.href);
+    for (const tarjeta of document.querySelectorAll('.coop')) {
+      const url = new URL(tarjeta.dataset.ruta, raiz).href;
+      tarjeta.querySelector('.qr').innerHTML = qrSVG(url, { margen: 1, color: tarjeta.dataset.color || '#10161D' });
+      tarjeta.querySelector('.qr-url').textContent = url.replace(/^https?:\/\//, '');
+    }
+  </script>
+</body>
+</html>

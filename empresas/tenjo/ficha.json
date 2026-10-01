@@ -4,12 +4,12 @@
   "EMPRESA": {
     "nombre": "Cootranstenjo",
     "nombreCorto": "Cootranstenjo",
-    "razonSocial": "Cooperativa de Transportadores de Tenjo",
+    "razonSocial": "Cooperativa de Transportadores de Tenjo (Cootranstenjo)",
     "lema": "Movilidad que conecta y construye",
     "municipio": "Tenjo, Cundinamarca",
     "pueblo": "Tenjo",
-    "telefono": "6018658928",
-    "telefonoVisible": "601 865 8928",
+    "telefono": "3125847257",
+    "telefonoVisible": "312 584 7257",
     "whatsapp": "573125847257",
     "correo": "recepcion@cootranstenjo.com",
     "direccion": "Carrera 2 # 4-55, local 204, C.C. Achuá, Tenjo, Cundinamarca",
@@ -17,19 +17,28 @@
     "sitioOficial": "https://cootranstenjo.com.co",
     "fundada": 1996,
     "taxisIniciales": null,
-    "taxis": null,
+    "taxis": 11,
     "microbuses": null,
     "asociados": null,
     "servicio24h": true,
     "placaPrefijo": "TNJ",
     "vehiculo": "Kia Picanto",
-    "colorTaxi": "Amarillo"
+    "colorTaxi": "Amarillo",
+    "region": "Sabana Centro",
+    "datosPendientes": [
+      "misión y visión oficiales",
+      "modelo de los taxis"
+    ],
+    "oficina": {
+      "lat": 4.87324,
+      "lng": -74.144656
+    }
   },
   "colores": {
-    "primario": "#14532D",
-    "primario2": "#166534",
-    "oscuro": "#052E16",
-    "acento": "#FACC15",
+    "primario": "#156B2E",
+    "primario2": "#1B8438",
+    "oscuro": "#0B3E1A",
+    "acento": "#E8A020",
     "rojo": "#DC2626"
   },
   "CENTRO": {
@@ -129,88 +138,56 @@
       "nombre": "Parque Principal",
       "detalle": "Centro, Tenjo",
       "cat": "centro",
-      "lat": 4.871304,
-      "lng": -74.147325
-    },
-    {
-      "id": "inaia-sue",
-      "nombre": "Inaia Sue",
-      "detalle": "Tenjo",
-      "cat": "barrio",
-      "lat": 4.873106,
-      "lng": -74.147788
-    },
-    {
-      "id": "davivienda",
-      "nombre": "Davivienda",
-      "detalle": "Tenjo",
-      "cat": "comercio",
-      "lat": 4.871731,
-      "lng": -74.145386
-    },
-    {
-      "id": "alcaldia-municipal-de-tenjo",
-      "nombre": "Alcaldía Municipal de Tenjo",
-      "detalle": "Tenjo",
-      "cat": "centro",
-      "lat": 4.871569,
-      "lng": -74.145336
-    },
-    {
-      "id": "hacienda-el-recreo",
-      "nombre": "Hacienda El Recreo",
-      "detalle": "Tenjo",
-      "cat": "barrio",
-      "lat": 4.872884,
-      "lng": -74.148898
-    },
-    {
-      "id": "parque",
-      "nombre": "Parque",
-      "detalle": "Tenjo",
-      "cat": "centro",
       "lat": 4.872011,
       "lng": -74.145022
     },
     {
-      "id": "paella-de-tenjo",
-      "nombre": "Paella de Tenjo",
-      "detalle": "Tenjo",
-      "cat": "comida",
-      "lat": 4.871631,
-      "lng": -74.144725
+      "id": "alcaldia",
+      "nombre": "Alcaldía Municipal",
+      "detalle": "Parque Principal, Tenjo",
+      "cat": "centro",
+      "lat": 4.871604,
+      "lng": -74.145338
     },
     {
-      "id": "parroquia-santiago-apostol",
-      "nombre": "Parroquia Santiago Apostol",
-      "detalle": "Tenjo",
+      "id": "oficina",
+      "nombre": "Oficina Cootranstenjo",
+      "detalle": "C.C. Achuá, Carrera 2 # 4-55, local 204",
       "cat": "centro",
-      "lat": 4.872241,
+      "lat": 4.87324,
+      "lng": -74.144656
+    },
+    {
+      "id": "iglesia",
+      "nombre": "Parroquia Santiago Apóstol",
+      "detalle": "Parque Principal, Tenjo",
+      "cat": "centro",
+      "lat": 4.872237,
       "lng": -74.144433
     },
     {
-      "id": "museo-de-arte-religioso-de-tenjo",
-      "nombre": "Museo de Arte Religioso de Tenjo",
+      "id": "policia",
+      "nombre": "Estación de Policía",
       "detalle": "Tenjo",
-      "cat": "turismo",
-      "lat": 4.872071,
-      "lng": -74.144267
+      "cat": "centro",
+      "lat": 4.874748,
+      "lng": -74.144285
     },
     {
-      "id": "hospital-santa-rosa-de-tenjo",
-      "nombre": "Hospital Santa Rosa de Tenjo",
+      "id": "centro-cultural",
+      "nombre": "Centro Cultural Nohora Matallana Forero",
       "detalle": "Tenjo",
-      "cat": "salud",
-      "lat": 4.87017,
-      "lng": -74.144135
+      "cat": "centro",
+      "lat": 4.868022,
+      "lng": -74.154093
     },
     {
-      "id": "cc-santiago-apostol",
-      "nombre": "CC Santiago Apostol",
+      "id": "complejo-deportivo",
+      "nombre": "Complejo Deportivo de Tenjo",
       "detalle": "Tenjo",
-      "cat": "comercio",
-      "lat": 4.872243,
-      "lng": -74.143934
+      "cat": "centro",
+      "lat": 4.874877,
+      "lng": -74.138117
     },
     {
       "id": "parque-la-felicidad",
@@ -221,36 +198,76 @@
       "lng": -74.147042
     },
     {
-      "id": "iglesia-de-dios-pentecostal-mi",
-      "nombre": "Iglesia de Dios Pentecostal MI",
+      "id": "cementerio",
+      "nombre": "Cementerio Santiago Apóstol",
       "detalle": "Tenjo",
       "cat": "centro",
-      "lat": 4.874325,
-      "lng": -74.144527
+      "lat": 4.87604,
+      "lng": -74.142239
     },
     {
-      "id": "caminos-del-bosque",
-      "nombre": "Caminos del Bosque",
-      "detalle": "Tenjo",
-      "cat": "barrio",
-      "lat": 4.875622,
-      "lng": -74.147269
+      "id": "hospital",
+      "nombre": "Hospital Santa Rosa de Tenjo",
+      "detalle": "Calle 3, Tenjo",
+      "cat": "salud",
+      "lat": 4.87017,
+      "lng": -74.144135
     },
     {
-      "id": "miraflores-i",
-      "nombre": "Miraflores I",
-      "detalle": "Tenjo",
-      "cat": "barrio",
-      "lat": 4.868916,
-      "lng": -74.143438
+      "id": "escuela-el-estanco",
+      "nombre": "Escuela El Estanco",
+      "detalle": "Camellón El Estanco",
+      "cat": "educacion",
+      "lat": 4.857687,
+      "lng": -74.171583
     },
     {
-      "id": "estacion-de-policia-de-tenjo",
-      "nombre": "Estación de Policía de Tenjo",
+      "id": "colegio-lerner-klein",
+      "nombre": "Colegio Lerner & Klein",
+      "detalle": "Vía La Punta, Tenjo",
+      "cat": "educacion",
+      "lat": 4.828627,
+      "lng": -74.162028
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Parque Principal, Tenjo",
+      "cat": "comercio",
+      "lat": 4.871731,
+      "lng": -74.145386
+    },
+    {
+      "id": "cc-santiago-apostol",
+      "nombre": "Centro Comercial Santiago Apóstol",
+      "detalle": "Centro, Tenjo",
+      "cat": "comercio",
+      "lat": 4.872243,
+      "lng": -74.143934
+    },
+    {
+      "id": "cc-achua",
+      "nombre": "Centro Comercial Achuá",
+      "detalle": "Carrera 2 # 4-55, Tenjo",
+      "cat": "comercio",
+      "lat": 4.87324,
+      "lng": -74.144656
+    },
+    {
+      "id": "mobil",
+      "nombre": "Estación Mobil",
       "detalle": "Tenjo",
-      "cat": "centro",
-      "lat": 4.874691,
-      "lng": -74.144246
+      "cat": "comercio",
+      "lat": 4.867085,
+      "lng": -74.142336
+    },
+    {
+      "id": "paella-de-tenjo",
+      "nombre": "Paella de Tenjo",
+      "detalle": "Centro, Tenjo",
+      "cat": "comida",
+      "lat": 4.871631,
+      "lng": -74.144725
     },
     {
       "id": "asadero-las-varas",
@@ -261,9 +278,33 @@
       "lng": -74.142764
     },
     {
+      "id": "la-granja",
+      "nombre": "Restaurante La Granja",
+      "detalle": "Tenjo · a 2,2 km",
+      "cat": "comida",
+      "lat": 4.855969,
+      "lng": -74.134283
+    },
+    {
+      "id": "caminos-del-bosque",
+      "nombre": "Caminos del Bosque",
+      "detalle": "Barrio de Tenjo",
+      "cat": "barrio",
+      "lat": 4.875622,
+      "lng": -74.147269
+    },
+    {
+      "id": "miraflores-i",
+      "nombre": "Miraflores I",
+      "detalle": "Barrio de Tenjo",
+      "cat": "barrio",
+      "lat": 4.868916,
+      "lng": -74.143438
+    },
+    {
       "id": "miraflores-ii",
       "nombre": "Miraflores II",
-      "detalle": "Tenjo",
+      "detalle": "Barrio de Tenjo",
       "cat": "barrio",
       "lat": 4.869058,
       "lng": -74.143177
@@ -271,7 +312,7 @@
     {
       "id": "el-refugio",
       "nombre": "El Refugio",
-      "detalle": "Tenjo",
+      "detalle": "Barrio de Tenjo",
       "cat": "barrio",
       "lat": 4.86921,
       "lng": -74.14283
@@ -279,7 +320,7 @@
     {
       "id": "alameda",
       "nombre": "Alameda",
-      "detalle": "Tenjo",
+      "detalle": "Barrio de Tenjo",
       "cat": "barrio",
       "lat": 4.86883,
       "lng": -74.142622
@@ -287,66 +328,50 @@
     {
       "id": "el-nogal",
       "nombre": "El Nogal",
-      "detalle": "Tenjo",
+      "detalle": "Barrio de Tenjo",
       "cat": "barrio",
       "lat": 4.871206,
       "lng": -74.141897
     },
     {
-      "id": "mobil",
-      "nombre": "Mobil",
-      "detalle": "Tenjo",
-      "cat": "comercio",
-      "lat": 4.867085,
-      "lng": -74.142336
+      "id": "hacienda-de-la-sabana",
+      "nombre": "Hacienda de la Sabana",
+      "detalle": "Barrio de Tenjo",
+      "cat": "barrio",
+      "lat": 4.870665,
+      "lng": -74.141553
     },
     {
-      "id": "centro-cultural-nohora-matallana-forero",
-      "nombre": "Centro Cultural Nohora Matallana Forero",
+      "id": "hacienda-el-recreo",
+      "nombre": "Hacienda El Recreo",
       "detalle": "Tenjo",
-      "cat": "centro",
-      "lat": 4.868022,
-      "lng": -74.154093
+      "cat": "barrio",
+      "lat": 4.872884,
+      "lng": -74.148898
     },
     {
-      "id": "complejo-deportivo-de-tenjo",
-      "nombre": "Complejo Deportivo de Tenjo",
+      "id": "juaica-condominio",
+      "nombre": "Juaica Condominio",
       "detalle": "Tenjo",
-      "cat": "centro",
-      "lat": 4.874877,
-      "lng": -74.138117
+      "cat": "barrio",
+      "lat": 4.876774,
+      "lng": -74.141681
     },
     {
       "id": "churuguaco",
       "nombre": "Churuguaco",
-      "detalle": "Tenjo",
+      "detalle": "Vereda de Tenjo",
       "cat": "vereda",
       "lat": 4.881679,
       "lng": -74.145886
     },
     {
-      "id": "colorada",
-      "nombre": "Colorada",
+      "id": "la-colorada",
+      "nombre": "La Colorada",
       "detalle": "Vereda de Tenjo",
       "cat": "vereda",
       "lat": 4.861733,
       "lng": -74.141636
-    },
-    {
-      "id": "sector-pan-de-azucar",
-      "nombre": "Sector Pan de Azucar",
-      "detalle": "Vereda de Tenjo",
-      "cat": "vereda",
-      "lat": 4.880853,
-      "lng": -74.134797
-    },
-    {
-      "id": "la-nana",
-      "nombre": "La Nana",
-      "detalle": "Vereda de Tenjo",
-      "cat": "vereda",
-      "lat": 4.861578,
-      "lng": -74.159945
     },
     {
       "id": "chucua",
@@ -355,22 +380,6 @@
       "cat": "vereda",
       "lat": 4.864371,
       "lng": -74.13155
-    },
-    {
-      "id": "churuangualo",
-      "nombre": "Churuangualo",
-      "detalle": "Tenjo · a 2,2 km",
-      "cat": "turismo",
-      "lat": 4.890706,
-      "lng": -74.1513
-    },
-    {
-      "id": "la-granja",
-      "nombre": "La Granja",
-      "detalle": "Tenjo · a 2,2 km",
-      "cat": "comida",
-      "lat": 4.855969,
-      "lng": -74.134283
     },
     {
       "id": "chinche",
@@ -389,36 +398,68 @@
       "lng": -74.140705
     },
     {
-      "id": "vivero-tirra",
-      "nombre": "Vivero Tirrá",
-      "detalle": "Tenjo · a 2,7 km",
-      "cat": "comida",
-      "lat": 4.852149,
-      "lng": -74.132996
-    },
-    {
-      "id": "santuario",
-      "nombre": "Santuario",
+      "id": "la-nana",
+      "nombre": "La Nana",
       "detalle": "Vereda de Tenjo",
       "cat": "vereda",
-      "lat": 4.887956,
-      "lng": -74.165221
+      "lat": 4.861578,
+      "lng": -74.159945
     },
     {
-      "id": "el-recreo",
-      "nombre": "El Recreo",
-      "detalle": "Tenjo · a 2,8 km",
-      "cat": "comida",
-      "lat": 4.850334,
-      "lng": -74.132739
+      "id": "pan-de-azucar-sector",
+      "nombre": "Pan de Azúcar",
+      "detalle": "Sector de Tenjo",
+      "cat": "vereda",
+      "lat": 4.880853,
+      "lng": -74.134797
     },
     {
-      "id": "escuela-el-estanco",
-      "nombre": "Escuela El Estanco",
-      "detalle": "Tenjo · a 3,1 km",
-      "cat": "educacion",
-      "lat": 4.857687,
-      "lng": -74.171583
+      "id": "el-chacal",
+      "nombre": "El Chacal",
+      "detalle": "Vereda de Tenjo",
+      "cat": "vereda",
+      "lat": 4.837528,
+      "lng": -74.168014
+    },
+    {
+      "id": "la-punta",
+      "nombre": "La Punta",
+      "detalle": "Vereda de Tenjo",
+      "cat": "vereda",
+      "lat": 4.809443,
+      "lng": -74.189582
+    },
+    {
+      "id": "museo-arte-religioso",
+      "nombre": "Museo de Arte Religioso de Tenjo",
+      "detalle": "Parque Principal, Tenjo",
+      "cat": "turismo",
+      "lat": 4.872071,
+      "lng": -74.144267
+    },
+    {
+      "id": "cerro-pan-de-azucar",
+      "nombre": "Cerro Pan de Azúcar",
+      "detalle": "Tenjo",
+      "cat": "turismo",
+      "lat": 4.883091,
+      "lng": -74.135144
+    },
+    {
+      "id": "mirador-churuangualo",
+      "nombre": "Mirador Churuangualo",
+      "detalle": "Tenjo",
+      "cat": "turismo",
+      "lat": 4.890706,
+      "lng": -74.1513
+    },
+    {
+      "id": "campo-de-vuelo-juaica",
+      "nombre": "Campo de Vuelo Juaica",
+      "detalle": "Tenjo",
+      "cat": "turismo",
+      "lat": 4.875342,
+      "lng": -74.104811
     },
     {
       "id": "tabio",
@@ -487,100 +528,100 @@
   ],
   "CONDUCTORES_DEMO": [
     {
-      "id": "demo-10",
-      "movil": "010",
+      "id": "demo-01",
+      "movil": "001",
       "nombre": "Jorge Castañeda",
-      "placa": "TNJ 610",
+      "placa": "TNJ 601",
       "vehiculo": "Kia Picanto",
       "color": "Amarillo",
       "calificacion": 4.7,
       "viajes": 1350,
       "desde": 2013,
-      "tel": "3000000010"
+      "tel": "3000000001"
     },
     {
-      "id": "demo-12",
-      "movil": "012",
+      "id": "demo-02",
+      "movil": "002",
       "nombre": "Héctor Bernal",
-      "placa": "TNJ 612",
+      "placa": "TNJ 602",
       "vehiculo": "Kia Picanto",
       "color": "Amarillo",
       "calificacion": 4.9,
       "viajes": 1304,
       "desde": 2010,
-      "tel": "3000000012"
+      "tel": "3000000002"
     },
     {
-      "id": "demo-16",
-      "movil": "016",
+      "id": "demo-03",
+      "movil": "003",
       "nombre": "Diana Forero",
-      "placa": "TNJ 616",
+      "placa": "TNJ 603",
       "vehiculo": "Kia Picanto",
       "color": "Amarillo",
       "calificacion": 4.7,
       "viajes": 424,
       "desde": 2021,
-      "tel": "3000000016"
+      "tel": "3000000003"
     },
     {
-      "id": "demo-18",
-      "movil": "018",
+      "id": "demo-05",
+      "movil": "005",
       "nombre": "Luz Marina Rojas",
-      "placa": "TNJ 618",
+      "placa": "TNJ 605",
       "vehiculo": "Kia Picanto",
       "color": "Amarillo",
       "calificacion": 4.8,
       "viajes": 830,
       "desde": 2019,
-      "tel": "3000000018"
+      "tel": "3000000005"
     },
     {
-      "id": "demo-21",
-      "movil": "021",
+      "id": "demo-06",
+      "movil": "006",
       "nombre": "Fabio Cruz",
-      "placa": "TNJ 621",
+      "placa": "TNJ 606",
       "vehiculo": "Kia Picanto",
       "color": "Amarillo",
       "calificacion": 4.7,
       "viajes": 2147,
       "desde": 2017,
-      "tel": "3000000021"
+      "tel": "3000000006"
     },
     {
-      "id": "demo-22",
-      "movil": "022",
+      "id": "demo-07",
+      "movil": "007",
       "nombre": "Sandra Patiño",
-      "placa": "TNJ 622",
+      "placa": "TNJ 607",
       "vehiculo": "Kia Picanto",
       "color": "Amarillo",
       "calificacion": 4.7,
       "viajes": 1831,
       "desde": 2019,
-      "tel": "3000000022"
+      "tel": "3000000007"
     },
     {
-      "id": "demo-25",
-      "movil": "025",
+      "id": "demo-09",
+      "movil": "009",
       "nombre": "Germán Quintero",
-      "placa": "TNJ 625",
+      "placa": "TNJ 609",
       "vehiculo": "Kia Picanto",
       "color": "Amarillo",
       "calificacion": 4.7,
       "viajes": 2045,
       "desde": 2021,
-      "tel": "3000000025"
+      "tel": "3000000009"
     },
     {
-      "id": "demo-29",
-      "movil": "029",
+      "id": "demo-11",
+      "movil": "011",
       "nombre": "Martha Garzón",
-      "placa": "TNJ 629",
+      "placa": "TNJ 611",
       "vehiculo": "Kia Picanto",
       "color": "Amarillo",
       "calificacion": 4.9,
       "viajes": 1813,
       "desde": 2011,
-      "tel": "3000000029"
+      "tel": "3000000011"
     }
   ],
   "PASAJEROS_DEMO": [
@@ -609,8 +650,46 @@
       "calificacion": 4.6
     }
   ],
+  "textos": {
+    "historia": "La Cooperativa de Transportadores de Tenjo, Cootranstenjo, nació en 1996 y lleva más de dos décadas conectando personas, familias y empresas en Tenjo y la región, con responsabilidad, seguridad y sentido humano.\n\nHoy presta tres servicios: transporte urbano, con 18 vehículos; transporte especial empresarial, escolar y turístico, con 16; y taxi, con 11 taxis que cuentan con central de radio, monitoreo GPS en tiempo real y conductores certificados. Con la app, pedir uno de esos taxis queda a un toque.",
+    "mision": "Ofrecer a Tenjo y la región un transporte seguro, puntual y humano, con vehículos en óptimas condiciones, conductores capacitados y una atención cercana antes, durante y después de cada servicio.",
+    "vision": "Seguir conectando a Tenjo con la región y llevar el servicio de la cooperativa al celular de cada usuario, sin perder el trato humano que la distingue.",
+    "servicios": [
+      "Taxi con central de radio y GPS",
+      "Pedidos por WhatsApp",
+      "Transporte urbano",
+      "Transporte especial: empresarial, escolar y turístico",
+      "Despacho las 24 horas"
+    ],
+    "frase": "Responsabilidad, seguridad y sentido humano",
+    "linea_tiempo": [
+      {
+        "b": "1996",
+        "s": "Nace la cooperativa en Tenjo."
+      },
+      {
+        "b": "Hoy",
+        "s": "11 taxis, 16 vehículos de servicio especial y 18 urbanos."
+      },
+      {
+        "b": "Con la app",
+        "s": "Tu taxi desde el celular, con GPS y tarifa clara."
+      }
+    ]
+  },
   "fuentes": [
-    "https://cootranstenjo.com.co/",
-    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-tenjo-ltda"
+    "https://cootranstenjo.com.co/conocenos",
+    "https://www.emis.com/php/company-profile/CO/Cooperativa_De_Transportadores_De_Tenjo_Cootranstenjo_es_8158540.html",
+    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-transportadores-tenjo-ltda",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Flota (11 taxis, 16 de servicio especial, 18 urbanos), central de radio, GPS, despacho 24 h y WhatsApp/teléfono de taxi 312 584 7257: su sitio oficial.",
+    "Fundada el 28 de agosto de 1996: perfil de EMIS. Su web dice «más de dos décadas».",
+    "Fijo de recepción (601) 865 8928 y otro celular 311 804 1978: su sitio oficial. NIT 832.002.211-5 (informacolombia).",
+    "Su web publica las secciones «Misión» y «Visión» vacías: los textos de la ficha son una redacción general de interOS.",
+    "Colores tomados del CSS de su sitio (verde #22A84A–#0B3E1A y dorado #E8A020), oscurecidos para contraste AA.",
+    "Otras páginas consultadas del mismo sitio: https://cootranstenjo.com.co/, https://cootranstenjo.com.co/servicios/taxi."
   ]
 }

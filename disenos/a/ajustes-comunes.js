@@ -1,10 +1,11 @@
 // Bloques de ajustes que comparten el pasajero y el conductor: diseño, sala de
-// prueba, sonido, notificaciones, conexión en vivo e instalación de la app.
-import { el, esc, icono, modal } from './ui.js';
+// prueba, sonido, notificaciones, conexión en vivo, instalación y «Acerca de».
+import { el, esc, icono, modal, chipPrueba, avisoDemo } from './ui.js';
+import * as EM from './empresa.js';
 
 const DISENOS = [
   { id: 'a', nombre: 'Ámbar Urbano', colores: ['#FFC107', '#121212', '#F4F5F7'] },
-  { id: 'b', nombre: 'Verde Rosal', colores: ['#0B6B3A', '#FBF8F1', '#F2B705'] },
+  { id: 'b', ...EM.DISENO_B },
   { id: 'c', nombre: 'Noche Neón', colores: ['#07090D', '#FFE14D', '#FF4D9D'] },
 ];
 
@@ -54,7 +55,7 @@ export function bloqueSala(N, app) {
   const s = el(`<section class="a-grupo"><h3>Sala de prueba</h3>
     <p class="a-ayuda-txt">Los celulares que estén en la misma sala se ven entre sí (pasajeros y conductores). Úsala para hacer la demo con varias personas.</p>
     <form class="a-sala">
-      <label class="a-campo a-campo-chico"><span>Nombre de la sala</span><input name="sala" value="${esc(sala)}" maxlength="24" autocapitalize="off" spellcheck="false" pattern="[a-zA-Z0-9-]+"></label>
+      <label class="a-campo a-campo-chico"><span>Nombre de la sala</span><input name="sala" value="${esc(sala)}" maxlength="24" autocapitalize="off" spellcheck="false" pattern="[a-zA-Z0-9\\-]+"></label>
       <button class="a-btn a-btn-tinta" type="submit">Cambiar</button>
     </form></section>`);
   s.querySelector('form').addEventListener('submit', async (e) => {
@@ -120,7 +121,7 @@ export function bloqueConexion(N, { simulacion = true } = {}) {
 export function bloqueInstalar(N, app) {
   const s = el(`<section class="a-grupo"><h3>Instalar la app</h3>
     <div class="a-instalar">
-      <img src="../img/icono-192.png" alt="" width="52" height="52">
+      ${EM.marcaIcono(52, { png: true })}
       <span><strong>${N.yaInstalada() ? 'Ya está instalada' : 'Tenla en tu pantalla de inicio'}</strong><small>${N.yaInstalada() ? 'La abriste desde tu pantalla de inicio.' : 'Se abre como una app, sin tienda y sin ocupar espacio.'}</small></span>
       ${N.yaInstalada() ? '' : `<button type="button" class="a-btn a-btn-primario a-btn-chico" data-instalar>${icono('instalar', { tam: 18 })} Instalar</button>`}
     </div></section>`);
@@ -135,4 +136,16 @@ export function bloqueInstalar(N, app) {
     }
   });
   return s;
+}
+
+// «Acerca de»: de qué cooperativa es la app y quién la desarrolló.
+export function bloqueAcerca(N, { que = 'App de pasajeros' } = {}) {
+  return el(`<section class="a-grupo a-acerca" data-acerca><h3>Acerca de la app</h3>
+    <div class="a-acerca-caja">
+      ${EM.marcaIcono(48)}
+      <span><strong>${esc(EM.NOMBRE_LARGO)}</strong><small>${esc(`${que} de ${EM.RAZON_SOCIAL}`)}</small></span>
+    </div>
+    <p class="a-ayuda-txt a-version">${chipPrueba('MODO PRUEBA')}${avisoDemo('a-chip-demo a-chip-demo-claro')}<span>App desarrollada por <b>${esc(EM.PROVEEDOR)}</b></span></p>
+    ${EM.ES_PROPUESTA ? `<p class="a-ayuda-txt">${esc(EM.TEXTO_PROPUESTA)}.</p>` : ''}
+  </section>`);
 }

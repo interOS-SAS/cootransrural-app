@@ -1,5 +1,6 @@
 // Hojas de impresión: reparte los stickers en hojas carta o A4, en tamaño
 // exacto (mm), con marcas de corte y una barra de control de escala.
+import { EMPRESA, ES_PROPUESTA, PROVEEDOR } from '../nucleo/config.js';
 import { escenaASVG } from './escena.js';
 import { medidaTexto } from './formatos.js';
 
@@ -101,10 +102,12 @@ function pie(plan, formato, nHoja, totalHojas, estiloNombre) {
   const espacio = P.alto - (plan.y0 + plan.altoGrilla);
   if (espacio < 12) return '';
   const y = P.alto - Math.min(7, espacio / 2 - 1);
-  const texto = `Cootransrural · ${formato.nombre} · ${medidaTexto(formato)} · ${estiloNombre} · Hoja ${nHoja} de ${totalHojas} · Imprime al 100 % (tamaño real)`;
+  // En las propuestas, la hoja (fuera del corte) dice que es una demostración.
+  const propuesta = ES_PROPUESTA ? ` · Propuesta de demostración de ${PROVEEDOR.nombre}` : '';
+  const texto = `${EMPRESA.nombre}${propuesta} · ${formato.nombre} · ${medidaTexto(formato)} · ${estiloNombre} · Hoja ${nHoja} de ${totalHojas} · Imprime al 100 % (tamaño real)`;
   const xb = P.ancho - 8 - 50;
   return (
-    `<text x="8" y="${n(y)}" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="2.3" font-weight="500" fill="#555">${texto.replace(/&/g, '&amp;')}</text>` +
+    `<text x="8" y="${n(y)}" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="2.3" font-weight="500" fill="#555">${texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>` +
     `<g class="barra-escala"><rect x="${n(xb)}" y="${n(y - 2.6)}" width="50" height="1.6" fill="#222"/>` +
     `<rect x="${n(xb + 10)}" y="${n(y - 2.6)}" width="10" height="1.6" fill="#fff"/><rect x="${n(xb + 30)}" y="${n(y - 2.6)}" width="10" height="1.6" fill="#fff"/>` +
     `<rect x="${n(xb)}" y="${n(y - 2.6)}" width="50" height="1.6" fill="none" stroke="#222" stroke-width="0.15"/>` +

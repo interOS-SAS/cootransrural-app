@@ -83,7 +83,9 @@
 .a-prog-aviso > span, .a-central > span { flex: 1; min-width: 0; }
 .a-prog-aviso strong, .a-central strong { display: block; font: 700 14.5px/1.3 var(--a-ft); }
 .a-prog-aviso small, .a-central small { color: var(--a-texto-2); font-size: 12.5px; }
-.a-central > svg:first-child { width: 42px; height: 42px; padding: 10px; border-radius: 14px; background: var(--a-marca); color: #fff; }
+.a-central > svg:first-child { width: 42px; height: 42px; padding: 10px; border-radius: 14px; background: var(--a-marca); color: #fff; flex: none; }
+.a-central.a-central-sin { cursor: default; background: var(--a-gris); border-style: dashed; }
+.a-central.a-central-sin small { display: block; }
 .a-bloque { margin-top: 20px; }
 .a-bloque h3 { font: 700 16px var(--a-ft); margin: 0 0 10px; }
 .a-rejilla-lugares { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
@@ -435,11 +437,11 @@
 .a-oferta-grande { background: var(--a-ambar); margin: 0; }
 .a-oferta-sello { width: 62px; height: 62px; border-radius: 50%; background: var(--a-tinta); color: var(--a-ambar); display: grid; place-items: center; font: 800 16px var(--a-ft); flex: none; }
 .a-oferta-grande small { color: rgba(18, 18, 18, .78); }
-.a-tarjeta-fid { border-radius: 26px; overflow: hidden; background: linear-gradient(135deg, #0A5C33, #0E7A43 60%, #0A5C33); color: #fff; padding-bottom: 18px; box-shadow: var(--a-s2); flex: none; }
+.a-tarjeta-fid { border-radius: 26px; overflow: hidden; background: linear-gradient(135deg, var(--a-marca), var(--a-marca-2) 60%, var(--a-marca)); color: #fff; padding-bottom: 18px; box-shadow: var(--a-s2); flex: none; }
 .a-tarjeta-fid-cabeza { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px 10px; }
 .a-tarjeta-fid-cabeza small { display: block; color: rgba(255, 255, 255, .78); font-weight: 800; font-size: 11.5px; text-transform: uppercase; letter-spacing: .1em; }
 .a-tarjeta-fid-cabeza strong { font: 800 23px/1.2 var(--a-ft); }
-.a-tarjeta-fid-cabeza img { border-radius: 11px; }
+.a-tarjeta-fid-cabeza .a-marca-ico { border-radius: 11px; flex: none; }
 .a-tarjeta-fid > p { margin: 12px 18px 0; font-size: 13.5px; color: rgba(255, 255, 255, .9); line-height: 1.45; }
 .a-sellos { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; padding: 4px 18px; }
 .a-sello { aspect-ratio: 1; border-radius: 50%; border: 2px dashed rgba(255, 255, 255, .5); display: grid; place-items: center; font: 700 12px var(--a-ft); color: rgba(255, 255, 255, .78); }
@@ -448,11 +450,15 @@
 .a-sello-premio.a-lleno { background: #fff; color: var(--a-marca); }
 .a-ayuda-cabeza { background: var(--a-ambar); border-radius: 26px; overflow: hidden; display: flex; flex-direction: column; align-items: center; text-align: center; padding-bottom: 18px; gap: 4px; flex: none; }
 .a-ayuda-cabeza .a-cuadros { align-self: stretch; margin-bottom: 14px; }
-.a-ayuda-cabeza img { border-radius: 16px; box-shadow: 0 6px 14px rgba(0, 0, 0, .15); }
+.a-ayuda-cabeza .a-marca-ico { border-radius: 16px; box-shadow: 0 6px 14px rgba(0, 0, 0, .15); }
 .a-ayuda-cabeza strong { font: 800 21px var(--a-ft); margin-top: 6px; }
 .a-ayuda-cabeza span { font-weight: 700; }
 .a-ayuda-cabeza small { font-size: 12.5px; color: rgba(18, 18, 18, .78); padding: 0 16px; }
 .a-contacto { display: flex; flex-direction: column; gap: 8px; }
+.a-sin-telefono { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 18px; background: var(--a-gris); border: 1.5px dashed var(--a-borde); }
+.a-sin-telefono > svg { flex: none; width: 40px; height: 40px; padding: 9px; border-radius: 13px; background: var(--a-marca); color: #fff; }
+.a-sin-telefono strong { display: block; font: 700 15px/1.3 var(--a-ft); }
+.a-sin-telefono small { display: block; margin-top: 2px; color: var(--a-texto-2); font-size: 13px; line-height: 1.4; }
 .a-direccion { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; color: var(--a-texto-2); margin: 0; line-height: 1.4; }
 .a-faq { background: #fff; border-radius: 18px; margin-bottom: 8px; padding: 0 14px; }
 .a-faq summary { min-height: 54px; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; font: 700 14.5px/1.3 var(--a-fb); list-style: none; }

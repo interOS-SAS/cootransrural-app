@@ -7,17 +7,19 @@
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#0A5C33">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230A5C33'/%3E%3Crect x='7' y='13' width='18' height='9' rx='3' fill='%23FFC107'/%3E%3C/svg%3E">
-  <!-- Esta página se sirve en cualquier ruta que no exista, así que no depende
-       de archivos con rutas relativas: los estilos van aquí mismo y un script
-       calcula la raíz del sitio para los enlaces y las fuentes. -->
+  <!-- Esta página se sirve en cualquier ruta que no exista (de cualquier
+       cooperativa), así que no depende de archivos con rutas relativas: los
+       estilos van aquí mismo y un script calcula la raíz del sitio, reconoce
+       la carpeta de la cooperativa y ajusta enlaces, nombre y colores. -->
   <style>
+    :root{--verde:#0A5C33;--verde-2:#0B6B3A;--verde-3:#13874B;--verde-osc:#052A17;--amarillo:#FFC107}
     *,*::before,*::after{box-sizing:border-box}
     html,body{margin:0;min-height:100%}
     body{min-height:100svh;display:grid;place-items:center;padding:28px 20px;font:400 1rem/1.6 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:#fff;text-align:center;
-      background:radial-gradient(600px 380px at 85% 0%,rgba(255,193,7,.28),transparent 60%),radial-gradient(700px 500px at 0% 100%,#13874B,transparent 60%),linear-gradient(160deg,#0B6B3A,#052A17)}
+      background:radial-gradient(600px 380px at 85% 0%,color-mix(in srgb,var(--amarillo) 28%,transparent),transparent 60%),radial-gradient(700px 500px at 0% 100%,var(--verde-3),transparent 60%),linear-gradient(160deg,var(--verde-2),var(--verde-osc))}
     main{width:min(100%,520px)}
     .logo{width:88px;height:88px;margin:0 auto 10px;border-radius:24px;box-shadow:0 16px 40px -10px rgba(0,0,0,.5)}
-    .numero{font:800 clamp(5rem,4rem + 8vw,8.5rem)/1 'Sora',system-ui,sans-serif;letter-spacing:-.06em;color:#FFC107;margin:10px 0 0;text-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .numero{font:800 clamp(5rem,4rem + 8vw,8.5rem)/1 'Sora',system-ui,sans-serif;letter-spacing:-.06em;color:var(--amarillo);margin:10px 0 0;text-shadow:0 10px 30px rgba(0,0,0,.25)}
     h1{margin:6px 0 10px;font:800 clamp(1.5rem,1.2rem + 1.6vw,2.1rem)/1.15 'Sora',system-ui,sans-serif;letter-spacing:-.03em}
     p{margin:0 0 26px;color:rgba(255,255,255,.85);font-size:1.06rem}
     .carretera{position:relative;height:56px;margin:22px auto 26px;max-width:420px;border-radius:14px;background:#1d2b25;overflow:hidden}
@@ -27,18 +29,20 @@
     @media (prefers-reduced-motion:reduce){.taxi{animation:none;left:calc(50% - 32px)}}
     .botones{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
     .boton{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:.85em 1.5em;border-radius:999px;font:800 1.02rem/1.1 'Plus Jakarta Sans',system-ui,sans-serif;text-decoration:none}
-    .amarillo{background:#FFC107;color:#0E1E16;box-shadow:0 12px 28px -10px rgba(255,193,7,.75),inset 0 -3px 0 rgba(0,0,0,.12)}
+    .amarillo{background:var(--amarillo);color:#0E1E16;box-shadow:0 12px 28px -10px rgba(0,0,0,.45),inset 0 -3px 0 rgba(0,0,0,.12)}
     .vidrio{color:#fff;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.08)}
-    .boton:focus-visible{outline:3px solid #FFC107;outline-offset:3px}
-    small{display:block;margin-top:28px;color:rgba(255,255,255,.6)}
+    .boton:focus-visible{outline:3px solid var(--amarillo);outline-offset:3px}
+    small{display:block;margin-top:28px;color:rgba(255,255,255,.7)}
+    small + small{margin-top:10px}
+    [hidden]{display:none!important}
     small a{color:#fff}
   </style>
 </head>
 <body>
   <main>
-    <svg class="logo" viewBox="0 0 512 512" role="img" aria-label="Cootransrural">
+    <svg class="logo" viewBox="0 0 512 512" role="img" aria-label="App de taxis">
       <defs>
-        <linearGradient id="f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E7A43"/><stop offset="1" stop-color="#05391F"/></linearGradient>
+        <linearGradient id="f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--verde-3)"/><stop offset="1" style="stop-color:var(--verde-osc)"/></linearGradient>
         <linearGradient id="t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD54A"/><stop offset="1" stop-color="#F5A400"/></linearGradient>
       </defs>
       <rect width="512" height="512" rx="112" fill="url(#f)"/>
@@ -64,21 +68,31 @@
       <a class="boton amarillo" href="./" data-ruta="">Ir al inicio</a>
       <a class="boton vidrio" href="./app/" data-ruta="app/">Pedir taxi</a>
     </div>
-    <small>¿Necesitas ayuda? Central 24 horas: <a href="tel:+573209042977">320 904 2977</a></small>
+    <small id="ayuda"><span id="ayuda-texto">¿Necesitas ayuda? Central 24 horas:</span> <a id="ayuda-tel" href="tel:+573209042977">320 904 2977</a></small>
+    <small id="propuesta" hidden></small>
   </main>
   <script>
+    // Cooperativas del sitio: si la ruta que no existe está dentro de la carpeta
+    // de una de ellas (p. ej. /tabio/algo), los enlaces llevan a su inicio y la
+    // página toma su nombre y sus colores.
+    const COOPERATIVAS = [{"id": "cootransrural", "ruta": "", "nombre": "Cootransrural", "razonSocial": "Cooperativa de Transportadores Rurales de El Rosal Ltda.", "es_propuesta": false, "servicio24h": true, "tel": "+573209042977", "tel_visible": "320 904 2977", "primario": "#0A5C33", "primario2": "#0B6B3A", "claro": "#13874B", "oscuro": "#052A17", "acento": "#FFC107", "icono": "img/icono-192.png"}, {"id": "subachoque", "ruta": "subachoque/", "nombre": "Coopmultrasub", "razonSocial": "Cooperativa Multiactiva de Transportadores de Subachoque Ltda.", "es_propuesta": false, "servicio24h": true, "tel": "", "tel_visible": "", "primario": "#1D4E89", "primario2": "#2563A8", "claro": "#2B75C5", "oscuro": "#0B2545", "acento": "#FFC107", "icono": "empresas/subachoque/icono-192.png"}, {"id": "tabio", "ruta": "tabio/", "nombre": "Cooptranstermales", "razonSocial": "Cooperativa Multiactiva de Transportadores Ltda. (Cooptranstermales)", "es_propuesta": true, "servicio24h": true, "tel": "+573143519920", "tel_visible": "314 351 9920", "primario": "#0F5F63", "primario2": "#167877", "claro": "#178281", "oscuro": "#06363A", "acento": "#F2B33D", "icono": "empresas/tabio/icono-192.png"}, {"id": "madrid", "ruta": "madrid/", "nombre": "Cootransmadrid", "razonSocial": "Cooperativa Multiactiva de Transportadores de Madrid (Cootransmadrid)", "es_propuesta": true, "servicio24h": true, "tel": "+576018443594", "tel_visible": "601 844 3594", "primario": "#2E2A25", "primario2": "#4A433A", "claro": "#61584C", "oscuro": "#1E1810", "acento": "#FFB100", "icono": "empresas/madrid/icono-192.png"}, {"id": "tenjo", "ruta": "tenjo/", "nombre": "Cootranstenjo", "razonSocial": "Cooperativa de Transportadores de Tenjo (Cootranstenjo)", "es_propuesta": true, "servicio24h": true, "tel": "+573125847257", "tel_visible": "312 584 7257", "primario": "#156B2E", "primario2": "#197C35", "claro": "#1B8538", "oscuro": "#0B3E1A", "acento": "#E8A020", "icono": "empresas/tenjo/icono-192.png"}, {"id": "villeta", "ruta": "villeta/", "nombre": "Cootransvi", "razonSocial": "Cooperativa de Transportadores de Villeta (Cootransvi)", "es_propuesta": true, "servicio24h": true, "tel": "+576018447000", "tel_visible": "601 844 7000", "primario": "#8A4513", "primario2": "#A55817", "claro": "#AF5E18", "oscuro": "#3B1E08", "acento": "#F5C04A", "icono": "empresas/villeta/icono-192.png"}, {"id": "la-vega", "ruta": "la-vega/", "nombre": "Cootransvillaleal", "razonSocial": "Cooperativa de Transportes y Servicios Cootransvillaleal", "es_propuesta": true, "servicio24h": true, "tel": "+573103178318", "tel_visible": "310 317 8318", "primario": "#0C3C60", "primario2": "#147285", "claro": "#167F94", "oscuro": "#062134", "acento": "#FFCB05", "icono": "empresas/la-vega/icono-192.png"}];
     // Busca la raíz del sitio (sirve en GitHub Pages dentro de un subdirectorio):
     // prueba desde la carpeta más profunda hacia arriba dónde está nucleo/config.js.
     (async () => {
       const partes = location.pathname.split('/').filter(Boolean);
       if (partes.length && /\.[a-z0-9]+$/i.test(partes[partes.length - 1])) partes.pop();
       const candidatas = [];
-      for (let i = Math.min(partes.length, 5); i >= 0; i--) candidatas.push('/' + partes.slice(0, i).map((p) => p + '/').join(''));
-      for (const raiz of candidatas) {
+      for (let i = Math.min(partes.length, 5); i >= 0; i--) candidatas.push(partes.slice(0, i));
+      for (const lista of candidatas) {
+        const raiz = '/' + lista.map((p) => p + '/').join('');
         try {
           const r = await fetch(raiz + 'nucleo/config.js', { method: 'HEAD', cache: 'no-store' });
           if (!r.ok) continue;
-          document.querySelectorAll('[data-ruta]').forEach((a) => { a.href = raiz + a.dataset.ruta; });
+          const siguiente = partes[lista.length] || '';
+          const coop = COOPERATIVAS.find((c) => c.ruta && c.ruta === siguiente + '/');
+          const base = raiz + (coop ? coop.ruta : '');
+          document.querySelectorAll('[data-ruta]').forEach((a) => { a.href = base + a.dataset.ruta; });
+          if (coop) adaptar(coop);
           const fuentes = document.createElement('link');
           fuentes.rel = 'stylesheet';
           fuentes.href = raiz + 'fuentes/fuentes.css';
@@ -89,6 +103,33 @@
         }
       }
     })();
+
+    function adaptar(coop) {
+      const raizCss = document.documentElement.style;
+      raizCss.setProperty('--verde', coop.primario);
+      raizCss.setProperty('--verde-2', coop.primario2);
+      raizCss.setProperty('--verde-3', coop.claro);
+      raizCss.setProperty('--verde-osc', coop.oscuro);
+      raizCss.setProperty('--amarillo', coop.acento);
+      document.title = `Página no encontrada · ${coop.nombre}`;
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', coop.primario);
+      const ayuda = document.getElementById('ayuda');
+      if (coop.tel) {
+        const enlace = document.getElementById('ayuda-tel');
+        if (enlace) {
+          enlace.href = `tel:${coop.tel}`;
+          enlace.textContent = coop.tel_visible;
+          document.getElementById('ayuda-texto').textContent = `¿Necesitas ayuda? ${coop.servicio24h ? 'Central 24 horas' : 'Central'}:`;
+        }
+      } else if (ayuda) {
+        ayuda.remove();
+      }
+      if (coop.es_propuesta) {
+        const nota = document.getElementById('propuesta');
+        nota.textContent = `Propuesta de demostración preparada por interOS para ${coop.razonSocial} · No es la página oficial de la cooperativa`;
+        nota.hidden = false;
+      }
+    }
   </script>
 </body>
 </html>

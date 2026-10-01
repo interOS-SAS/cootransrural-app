@@ -12,8 +12,8 @@
   <meta name="apple-mobile-web-app-title" content="Conductor Coopmultrasub">
   <link rel="manifest" href="manifest.webmanifest">
   <script>window.CT_EMPRESA = 'subachoque';</script>
-  <link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32.png">
-  <link rel="apple-touch-icon" href="../../img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../empresas/subachoque/favicon-32.png">
+  <link rel="apple-touch-icon" href="../../empresas/subachoque/apple-touch-icon.png">
   <link rel="stylesheet" href="../../fuentes/fuentes.css?v=d7cb94cf69">
   <style>
     html,body{margin:0;height:100%;background:#1D4E89}
@@ -25,12 +25,23 @@
   </style>
 </head>
 <body>
-  <div id="carga"><div style="text-align:center"><img src="../../img/icono-192.png" alt=""><p>Coopmultrasub<br><small>Tu taxi de confianza en Subachoque</small></p></div></div>
+  <div id="carga"><div style="text-align:center"><img src="../../empresas/subachoque/icono-192.png" alt=""><p>Coopmultrasub<br><small>Tu taxi de confianza en Subachoque</small></p></div></div>
   <div id="app"></div>
-  <noscript>Para usar la app de Cootransrural activa JavaScript.</noscript>
+  <noscript>Para usar la app de Coopmultrasub activa JavaScript.</noscript>
+  <script>
+    // Si en 15 s la app no terminó de cargar (sin señal o sin los datos de la
+    // cooperativa), se dice en pantalla en vez de quedarse cargando.
+    setTimeout(function () {
+      var c = document.getElementById('carga');
+      if (!c || c.classList.contains('oculta')) return;
+      var p = c.querySelector('p');
+      if (p) p.innerHTML = 'No pudimos cargar la app.<br><small>Revisa tu conexión a internet e inténtalo de nuevo.</small><br><button type="button" onclick="location.reload()" style="margin-top:14px;min-height:44px;padding:0 20px;border:0;border-radius:999px;background:#fff;color:#111;font:700 15px system-ui,sans-serif;cursor:pointer">Reintentar</button>';
+      c.querySelector('img') && (c.querySelector('img').style.animation = 'none');
+    }, 15000);
+  </script>
   <script type="module">
     import * as N from '../../nucleo/index.js';
-    const VERSION_DISENOS = 'b959f9a331';
+    const VERSION_DISENOS = '52f6a1bb73';
     const raiz = document.getElementById('app');
     const parametros = new URLSearchParams(location.search);
     const d = N.perfil.disenoElegido();

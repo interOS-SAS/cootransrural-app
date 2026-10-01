@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Página no encontrada · {{EMPRESA.nombre}}</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="{{c.verde}}">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230A5C33'/%3E%3Crect x='7' y='13' width='18' height='9' rx='3' fill='%23FFC107'/%3E%3C/svg%3E">
+  <!-- Esta página se sirve en cualquier ruta que no exista (de cualquier
+       cooperativa), así que no depende de archivos con rutas relativas: los
+       estilos van aquí mismo y un script calcula la raíz del sitio, reconoce
+       la carpeta de la cooperativa y ajusta enlaces, nombre y colores. -->
+  <style>
+    :root{--verde:{{c.verde}};--verde-2:{{c.verde_2}};--verde-3:{{c.verde_3}};--verde-osc:{{c.verde_osc}};--amarillo:{{c.amarillo}}}
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;min-height:100%}
+    body{min-height:100svh;display:grid;place-items:center;padding:28px 20px;font:400 1rem/1.6 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:#fff;text-align:center;
+      background:radial-gradient(600px 380px at 85% 0%,color-mix(in srgb,var(--amarillo) 28%,transparent),transparent 60%),radial-gradient(700px 500px at 0% 100%,var(--verde-3),transparent 60%),linear-gradient(160deg,var(--verde-2),var(--verde-osc))}
+    main{width:min(100%,520px)}
+    .logo{width:88px;height:88px;margin:0 auto 10px;border-radius:24px;box-shadow:0 16px 40px -10px rgba(0,0,0,.5)}
+    .numero{font:800 clamp(5rem,4rem + 8vw,8.5rem)/1 'Sora',system-ui,sans-serif;letter-spacing:-.06em;color:var(--amarillo);margin:10px 0 0;text-shadow:0 10px 30px rgba(0,0,0,.25)}
+    h1{margin:6px 0 10px;font:800 clamp(1.5rem,1.2rem + 1.6vw,2.1rem)/1.15 'Sora',system-ui,sans-serif;letter-spacing:-.03em}
+    p{margin:0 0 26px;color:rgba(255,255,255,.85);font-size:1.06rem}
+    .carretera{position:relative;height:56px;margin:22px auto 26px;max-width:420px;border-radius:14px;background:#1d2b25;overflow:hidden}
+    .carretera::before{content:"";position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;background:repeating-linear-gradient(90deg,#FFC107 0 26px,transparent 26px 48px)}
+    .taxi{position:absolute;top:8px;left:-70px;width:64px;height:40px;animation:pasar 4.5s linear infinite}
+    @keyframes pasar{to{left:110%}}
+    @media (prefers-reduced-motion:reduce){.taxi{animation:none;left:calc(50% - 32px)}}
+    .botones{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+    .boton{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:.85em 1.5em;border-radius:999px;font:800 1.02rem/1.1 'Plus Jakarta Sans',system-ui,sans-serif;text-decoration:none}
+    .amarillo{background:var(--amarillo);color:#0E1E16;box-shadow:0 12px 28px -10px rgba(0,0,0,.45),inset 0 -3px 0 rgba(0,0,0,.12)}
+    .vidrio{color:#fff;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.08)}
+    .boton:focus-visible{outline:3px solid var(--amarillo);outline-offset:3px}
+    small{display:block;margin-top:28px;color:rgba(255,255,255,.7)}
+    small + small{margin-top:10px}
+    [hidden]{display:none!important}
+    small a{color:#fff}
+  </style>
+</head>
+<body>
+  <main>
+    <svg class="logo" viewBox="0 0 512 512" role="img" aria-label="App de taxis">
+      <defs>
+        <linearGradient id="f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--verde-3)"/><stop offset="1" style="stop-color:var(--verde-osc)"/></linearGradient>
+        <linearGradient id="t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD54A"/><stop offset="1" stop-color="#F5A400"/></linearGradient>
+      </defs>
+      <rect width="512" height="512" rx="112" fill="url(#f)"/>
+      <path d="M256 70c-56 0-100 43-100 97 0 70 100 158 100 158s100-88 100-158c0-54-44-97-100-97z" fill="#E53935"/>
+      <circle cx="256" cy="166" r="40" fill="#fff"/>
+      <g transform="translate(96 250)">
+        <rect x="120" y="0" width="80" height="26" rx="8" fill="#1B1B1B"/>
+        <path d="M58 92 L92 34 Q98 24 112 24 H208 Q222 24 228 34 L262 92 Z" fill="url(#t)"/>
+        <path d="M86 88 L108 46 Q112 40 120 40 H200 Q208 40 212 46 L234 88 Z" fill="#14324A"/>
+        <rect x="22" y="86" width="276" height="96" rx="34" fill="url(#t)"/>
+        <rect x="22" y="132" width="276" height="16" fill="#1B1B1B" opacity=".9"/>
+        <circle cx="74" cy="118" r="20" fill="#FFF8D6"/><circle cx="246" cy="118" r="20" fill="#FFF8D6"/>
+        <rect x="34" y="174" width="52" height="40" rx="12" fill="#1B1B1B"/><rect x="234" y="174" width="52" height="40" rx="12" fill="#1B1B1B"/>
+      </g>
+    </svg>
+    <div class="numero">404</div>
+    <h1>Esta calle no aparece en el mapa</h1>
+    <p>La página que buscas no existe o cambió de lugar. Pero tranquilo: te llevamos de vuelta.</p>
+    <div class="carretera" aria-hidden="true">
+      <svg class="taxi" viewBox="0 0 64 40"><rect x="22" y="2" width="20" height="7" rx="2" fill="#111"/><path d="M14 18 L20 8 H44 L50 18 Z" fill="#FFC107"/><path d="M19 17 L23 11 H41 L45 17 Z" fill="#14324A"/><rect x="4" y="16" width="56" height="16" rx="6" fill="#FFC107"/><rect x="4" y="24" width="56" height="3" fill="#111"/><circle cx="16" cy="33" r="5" fill="#111"/><circle cx="48" cy="33" r="5" fill="#111"/><circle cx="58" cy="20" r="2" fill="#FFF8D6"/></svg>
+    </div>
+    <div class="botones">
+      <a class="boton amarillo" href="./" data-ruta="">Ir al inicio</a>
+      <a class="boton vidrio" href="./app/" data-ruta="app/">Pedir taxi</a>
+    </div>
+{{#si tiene_telefono}}    <small id="ayuda"><span id="ayuda-texto">¿Necesitas ayuda? {{#si EMPRESA.servicio24h}}Central 24 horas{{/si}}{{#no EMPRESA.servicio24h}}Central{{/no}}:</span> <a id="ayuda-tel" href="tel:{{tel}}">{{tel_visible}}</a></small>
+{{/si}}    <small id="propuesta" hidden></small>
+  </main>
+  <script>
+    // Cooperativas del sitio: si la ruta que no existe está dentro de la carpeta
+    // de una de ellas (p. ej. /tabio/algo), los enlaces llevan a su inicio y la
+    // página toma su nombre y sus colores.
+    const COOPERATIVAS = {{{cooperativas_json}}};
+    // Busca la raíz del sitio (sirve en GitHub Pages dentro de un subdirectorio):
+    // prueba desde la carpeta más profunda hacia arriba dónde está nucleo/config.js.
+    (async () => {
+      const partes = location.pathname.split('/').filter(Boolean);
+      if (partes.length && /\.[a-z0-9]+$/i.test(partes[partes.length - 1])) partes.pop();
+      const candidatas = [];
+      for (let i = Math.min(partes.length, 5); i >= 0; i--) candidatas.push(partes.slice(0, i));
+      for (const lista of candidatas) {
+        const raiz = '/' + lista.map((p) => p + '/').join('');
+        try {
+          const r = await fetch(raiz + 'nucleo/config.js', { method: 'HEAD', cache: 'no-store' });
+          if (!r.ok) continue;
+          const siguiente = partes[lista.length] || '';
+          const coop = COOPERATIVAS.find((c) => c.ruta && c.ruta === siguiente + '/');
+          const base = raiz + (coop ? coop.ruta : '');
+          document.querySelectorAll('[data-ruta]').forEach((a) => { a.href = base + a.dataset.ruta; });
+          if (coop) adaptar(coop);
+          const fuentes = document.createElement('link');
+          fuentes.rel = 'stylesheet';
+          fuentes.href = raiz + 'fuentes/fuentes.css';
+          document.head.appendChild(fuentes);
+          return;
+        } catch {
+          /* sin red: se dejan los enlaces relativos */
+        }
+      }
+    })();
+
+    function adaptar(coop) {
+      const raizCss = document.documentElement.style;
+      raizCss.setProperty('--verde', coop.primario);
+      raizCss.setProperty('--verde-2', coop.primario2);
+      raizCss.setProperty('--verde-3', coop.claro);
+      raizCss.setProperty('--verde-osc', coop.oscuro);
+      raizCss.setProperty('--amarillo', coop.acento);
+      document.title = `Página no encontrada · ${coop.nombre}`;
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', coop.primario);
+      const ayuda = document.getElementById('ayuda');
+      if (coop.tel) {
+        const enlace = document.getElementById('ayuda-tel');
+        if (enlace) {
+          enlace.href = `tel:${coop.tel}`;
+          enlace.textContent = coop.tel_visible;
+          document.getElementById('ayuda-texto').textContent = `¿Necesitas ayuda? ${coop.servicio24h ? 'Central 24 horas' : 'Central'}:`;
+        }
+      } else if (ayuda) {
+        ayuda.remove();
+      }
+      if (coop.es_propuesta) {
+        const nota = document.getElementById('propuesta');
+        nota.textContent = `Propuesta de demostración preparada por {{proveedor.nombre}} para ${coop.razonSocial} · No es la página oficial de la cooperativa`;
+        nota.hidden = false;
+      }
+    }
+  </script>
+</body>
+</html>

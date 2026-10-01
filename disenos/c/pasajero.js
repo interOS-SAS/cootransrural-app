@@ -11,10 +11,43 @@ import { montarRegistro } from './pasajero-registro.js';
 import { crearSecciones } from './pasajero-secciones.js';
 
 const { icono, esc } = C;
+// Placa y móvil sin partirse al final del renglón («SUB» arriba y «609» abajo).
+const sinCorte = (t) => esc(t).replace(/ /g, '&nbsp;');
 const AMARILLO = '#FFE14D';
 const CIAN = '#22D3EE';
 
+// El núcleo guarda el viaje en curso en sessionStorage con la misma clave para
+// todas las cooperativas ('ct.viaje.pasajero'): si en la misma pestaña se pasa
+// de Subachoque a Tabio con un viaje por pagar, Tabio lo retomaría con el
+// conductor de Subachoque. Antes de crear el pasajero se aparta el viaje de la
+// otra cooperativa (queda guardado para cuando vuelva) y se trae el de esta.
+const CLAVE_VIAJE = 'ct.viaje.pasajero';
+const CLAVE_DUENO = 'ct.c.viaje.empresa';
+function separarViajeGuardado(id) {
+  try {
+    const dueno = sessionStorage.getItem(CLAVE_DUENO);
+    // Sin dueño anotado (versiones anteriores u otro diseño) se deja como está.
+    if (dueno && dueno !== id) {
+      const otro = sessionStorage.getItem(CLAVE_VIAJE);
+      if (otro) sessionStorage.setItem(`ct.c.viaje.${dueno}`, otro);
+      sessionStorage.removeItem(CLAVE_VIAJE);
+      const mio = sessionStorage.getItem(`ct.c.viaje.${id}`);
+      if (mio) sessionStorage.setItem(CLAVE_VIAJE, mio);
+    }
+    sessionStorage.removeItem(`ct.c.viaje.${id}`);
+    sessionStorage.setItem(CLAVE_DUENO, id);
+  } catch {
+    /* sessionStorage bloqueado: el núcleo tampoco podrá guardar el viaje */
+  }
+}
+
 export async function montar(raiz, { N, vitrina = false } = {}) {
+  // Datos de la cooperativa activa (nombre, teléfonos, cifras) para las piezas comunes.
+  C.usarNucleo(N);
+  const E = C.empresa;
+  separarViajeGuardado(E.id);
+  // «de Subachoque», o «de tu municipio» si la ficha no trae el pueblo.
+  const dePueblo = E.pueblo ? `de ${E.pueblo}` : 'de tu municipio';
   raiz.innerHTML = C.escenaHTML({
     tipo: 'pasajero',
     contenido: `<div class="c-app c-pasajero" data-vista="carga">
@@ -364,9 +397,12 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
 
   function botonesSeguridad({ cancelar = true, llamar = true } = {}) {
     const cd = p.estado.conductor || {};
-    const wa = N.enlaceWhatsApp(cd.tel, `Hola ${N.primerNombre(cd.nombre || '')}, soy ${primerNombre()}, tu pasajero de Cootransrural.`);
+    // Se llama al conductor o, si no hay su número, a la central (si la cooperativa lo tiene).
+    const tel = String(cd.tel || '').replace(/\D/g, '') || E.telefono;
+    if (!tel) llamar = false;
+    const wa = N.enlaceWhatsApp(cd.tel || E.whatsapp, `Hola ${N.primerNombre(cd.nombre || '')}, soy ${primerNombre()}, tu pasajero de ${E.nombre}.`);
     return `<div class="c-acciones-viaje${llamar ? '' : ' c-acciones-dos'}">
-      ${llamar ? `<a class="c-accion" href="tel:${esc(cd.tel || N.EMPRESA.telefono)}">${icono('telefono')}<span>Llamar</span></a>
+      ${llamar ? `<a class="c-accion" href="tel:${esc(tel)}">${icono('telefono')}<span>Llamar</span></a>
       <a class="c-accion" href="${esc(wa)}" target="_blank" rel="noopener">${icono('chat')}<span>WhatsApp</span></a>` : ''}
       <button type="button" class="c-accion" data-accion="compartir">${icono('compartir')}<span>Compartir</span></button>
       <button type="button" class="c-accion c-accion-sos" data-accion="sos">${icono('escudo')}<span>SOS</span></button>
@@ -396,7 +432,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
                 <div class="c-recogida-texto"><small>Te recogemos en</small><strong data-dir-titulo>${esc(ui.origen.titulo)}</strong><span data-dir-detalle>${esc(ui.origen.detalle || '')}</span></div>
                 <button type="button" class="c-boton-icono c-boton-icono-chico" data-accion="mi-ubicacion" aria-label="Volver a mi ubicación">${icono('mira')}</button>
               </div>
-              <p class="c-nota-gps" data-sin-gps hidden>${icono('alerta')}<span>Usamos el centro de El Rosal; mueve el mapa para ubicar tu punto.</span></p>
+              <p class="c-nota-gps" data-sin-gps hidden>${icono('alerta')}<span>Usamos el centro ${esc(dePueblo)}; mueve el mapa para ubicar tu punto.</span></p>
               <div class="c-atajos" role="list" aria-label="Destinos rápidos">
                 ${atajosLista.map((a, i) => `<button type="button" role="listitem" class="c-chip c-atajo" data-accion="atajo" data-i="${i}">${icono(a.icono)}<span>${esc(a.texto)}</span></button>`).join('')}
               </div>
@@ -610,7 +646,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
         m.quitarTaxi('asignado');
         m.quitarOrigen();
         if (v?.origen) centrarEnPin(v.origen, 16);
-        const mensajes = ['Avisando a los móviles cercanos…', 'Buscando el taxi más cercano a ti…', 'Confirmando tu punto de recogida…', 'Los conductores de El Rosal ya ven tu solicitud…', 'Ya casi: un móvil está por aceptar…'];
+        const mensajes = ['Avisando a los móviles cercanos…', 'Buscando el taxi más cercano a ti…', 'Confirmando tu punto de recogida…', `Los conductores ${dePueblo} ya ven tu solicitud…`, 'Ya casi: un móvil está por aceptar…'];
         let i = 0;
         const t = setInterval(() => {
           const el = contenido.querySelector('[data-msg]');
@@ -694,7 +730,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
           cuerpo: `<section class="c-tarjeta c-vidrio c-tarjeta-enviaje c-entrar" aria-label="Viaje en curso">
             <div class="c-enviaje-cabeza">
               <div><small>En viaje hacia</small><h2>${esc(v.destino?.titulo || 'Destino a convenir')}</h2></div>
-              ${v.simulado ? '<span class="c-etiqueta">Modo prueba</span>' : ''}
+              ${v.simulado ? C.etiquetasPrueba() : ''}
             </div>
             <div class="c-progreso-viaje">
               <div class="c-progreso-pista" role="progressbar" aria-label="Avance del viaje" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-progreso-barra>
@@ -707,7 +743,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
               <div><strong data-hora-llegada>–</strong><small>llegada aprox.</small></div>
               <div><strong>${N.pesos(v.tarifa?.total || 0)}</strong><small>${v.metodoPago === 'efectivo' ? 'en efectivo' : 'con QR'}</small></div>
             </div>
-            <div class="c-conductor-mini">${C.avatarHTML(cd.nombre, 'c-avatar-chico')}<div><strong>${esc(cd.nombre)}</strong><span>Móvil ${esc(cd.movil)} · ${esc(cd.vehiculo || 'Kia Picanto')}</span></div>${C.placaHTML(cd.placa)}</div>
+            <div class="c-conductor-mini">${C.avatarHTML(cd.nombre, 'c-avatar-chico')}<div><strong>${esc(cd.nombre)}</strong><span>Móvil ${esc(cd.movil)} · ${esc(cd.vehiculo || E.vehiculo)}</span></div>${C.placaHTML(cd.placa)}</div>
             ${botonesSeguridad({ cancelar: false, llamar: false })}
           </section>`,
         };
@@ -754,7 +790,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
         return {
           cabeza: filaArriba(chipFase('Llegaste a tu destino', 'check')),
           cuerpo: `<section class="c-tarjeta c-vidrio c-borde-neon c-tarjeta-pagar c-entrar" aria-label="Pagar el viaje"><div class="c-desplazable">
-            <div class="c-pagar-cabeza"><span class="c-etiqueta">Modo prueba</span><span class="c-muted">${esc(v.destino?.titulo || 'Fin del viaje')}</span></div>
+            <div class="c-pagar-cabeza">${C.etiquetasPrueba()}<span class="c-muted">${esc(v.destino?.titulo || 'Fin del viaje')}</span></div>
             <p class="c-pagar-titulo">Total a pagar</p>
             <strong class="c-total" data-total>${N.pesos(valor)}</strong>
             <p class="c-pagar-sub">Móvil ${esc(cd.movil)} · ${esc(N.primerNombre(cd.nombre || ''))}${e.kmFinal ? ` · ${N.kmTexto(e.kmFinal)}` : ''}</p>
@@ -862,12 +898,12 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
     const v = e.viaje;
     const llego = fase === 'llego';
     const digitos = String(v.codigo || '').split('').map((d) => `<span>${esc(d)}</span>`).join('');
-    const prueba = v.simulado ? '<span class="c-etiqueta">Modo prueba</span>' : '';
+    const prueba = v.simulado ? C.etiquetasPrueba() : '';
     return `<section class="c-tarjeta c-vidrio c-borde-neon c-tarjeta-conductor${llego ? ' c-llego' : ''} c-entrar" aria-labelledby="c-titulo-viaje"><div class="c-desplazable">
       ${llego
         ? `<div class="c-alerta-puerta" role="alert">
             <span class="c-alerta-ico">${icono('campana')}</span>
-            <div><h2 id="c-titulo-viaje">¡Tu taxi está en la puerta!</h2><p>Busca el <strong>móvil ${esc(cd.movil)}</strong> · placa <strong>${esc(cd.placa)}</strong></p>${prueba}</div>
+            <div><h2 id="c-titulo-viaje">¡Tu taxi está en la puerta!</h2><p>Busca el <strong>${sinCorte(`móvil ${cd.movil}`)}</strong> · placa <strong>${sinCorte(cd.placa)}</strong></p>${prueba}</div>
           </div>`
         : `<div class="c-eta-fila">
             ${C.anillo({ tam: 80, grosor: 7, id: 'c-anillo-eta', contenido: '<strong class="c-eta-num" data-eta-num>–</strong><small class="c-eta-min">min</small>', etiqueta: 'Tiempo estimado de llegada' })}
@@ -880,7 +916,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
       </div>
       <div class="c-vehiculo-fila">
         ${C.placaHTML(cd.placa)}
-        <span class="c-vehiculo-texto"><strong>${esc(cd.vehiculo || 'Kia Picanto')}</strong><small>${esc(cd.color || 'Amarillo')}</small></span>
+        <span class="c-vehiculo-texto"><strong>${esc(cd.vehiculo || E.vehiculo)}</strong><small>${esc(cd.color || E.colorTaxi)}</small></span>
       </div>
       <div class="c-codigo-fila" role="group" aria-label="Código de abordaje ${esc(String(v.codigo || '').split('').join(' '))}">
         <div class="c-codigo-texto"><small>${icono('candado')} Tu código</small><p><strong>Díselo al conductor</strong> antes de subir.</p></div>
@@ -903,9 +939,9 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
       vistos.add(r.titulo);
       lista.push({ texto: r.titulo, icono: 'reloj', punto: r });
     }
-    for (const id of ['parque', 'tierra-grata', 'rotonda', 'oficina']) {
-      const l = N.LUGARES.find((x) => x.id === id);
-      if (!l || vistos.has(l.nombre) || lista.length >= 5) continue;
+    // Lugares destacados de la cooperativa (parque principal y sitios a distancia de taxi).
+    for (const l of C.lugaresDestacados()) {
+      if (vistos.has(l.nombre) || lista.length >= 5) continue;
       lista.push({ texto: l.nombre, icono: 'pin', punto: { titulo: l.nombre, detalle: l.detalle, lat: l.lat, lng: l.lng } });
     }
     if (!g.casa) lista.push({ texto: 'Agregar casa', icono: 'casa', guardar: 'casa' });
@@ -945,8 +981,11 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
       for (const r of recientes) html += filaLugar(r, agregar(r), { ico: 'reloj' });
       html += '</div>';
     }
+    // Solo las categorías con lugares en este municipio.
+    const categorias = Object.entries(N.CATEGORIAS).filter(([id]) => N.LUGARES.some((l) => l.cat === id));
+    if (categorias.length && !categorias.some(([id]) => id === ui.categoria)) ui.categoria = categorias[0][0];
     html += `<h3 class="c-seccion-titulo">Lugares frecuentes</h3>
-      <div class="c-categorias" role="tablist" aria-label="Categorías">${Object.entries(N.CATEGORIAS)
+      <div class="c-categorias" role="tablist" aria-label="Categorías">${categorias
         .map(([id, c]) => `<button type="button" role="tab" class="c-chip${ui.categoria === id ? ' c-activa' : ''}" aria-selected="${ui.categoria === id}" data-accion="categoria" data-cat="${id}">${C.iconoCategoria(id)}<span>${esc(c.nombre)}</span></button>`)
         .join('')}</div><div class="c-lista-lugares" role="tabpanel">`;
     for (const l of N.LUGARES.filter((x) => x.cat === ui.categoria)) {
@@ -1067,6 +1106,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
       const d = await Promise.race([N.direccionDe(punto).catch(() => null), new Promise((r) => setTimeout(() => r(null), 3000))]);
       if (ui.origen === punto) ui.origen = { ...punto, titulo: d?.titulo || 'Punto marcado en el mapa', detalle: d?.detalle || '' };
     }
+    // El permiso de notificaciones es del navegador (no de la cooperativa): clave común.
     if (!localStorage.getItem('ct.c.permisoPasajero')) {
       localStorage.setItem('ct.c.permisoPasajero', '1');
       N.pedirPermisoNotificaciones();
@@ -1132,8 +1172,8 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
       } else {
         const cobro = N.leerCobro(texto);
         if (cobro) decir(`Cobro de <strong>${N.pesos(cobro.valor)}</strong>${cobro.movil ? ` del móvil ${esc(cobro.movil)}` : ''}. Cuando estés pagando un viaje lo puedes escanear aquí.`, 'c-ok', 'qr');
-        else if (/\/descargar\//.test(texto)) decir('Es un sticker de Cootransrural: ¡ya tienes la app! Pide tu taxi desde Inicio.', 'c-ok', 'check');
-        else decir(`Leímos: «${esc(texto.slice(0, 80))}». No es un cobro de Cootransrural.`, 'c-error', 'alerta');
+        else if (/\/descargar\//.test(texto)) decir(`Es un sticker de ${esc(E.nombre)}: ¡ya tienes la app! Pide tu taxi desde Inicio.`, 'c-ok', 'check');
+        else decir(`Leímos: «${esc(texto.slice(0, 80))}». No es un cobro de ${esc(E.nombre)}.`, 'c-error', 'alerta');
       }
       acciones.hidden = false;
       acciones.innerHTML = `<button type="button" class="c-boton c-boton-fantasma c-boton-ancho" data-accion="reescanear" data-modo="${modo}">${icono('camara')} Escanear otra vez</button>`;
@@ -1178,7 +1218,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
   /* Compartir y SOS                                                    */
   /* ------------------------------------------------------------------ */
   function abrirCompartir() {
-    const texto = p.textoCompartir() || `Voy en un taxi de Cootransrural (${N.EMPRESA.telefonoVisible}).`;
+    const texto = p.textoCompartir() || `Voy en un taxi de ${E.nombre}${E.telefono ? ` (${E.telefonoVisible})` : ''}.`;
     const contacto = p.perfil?.contactoEmergencia;
     C.abrirHoja(app, {
       titulo: 'Compartir mi viaje',
@@ -1200,9 +1240,9 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
       titulo: 'Emergencia',
       clase: 'c-hoja-sos',
       persistente: true,
-      contenido: `<p>Si estás en peligro, llama a la línea de emergencias. ${cd ? `Tu viaje: <strong>móvil ${esc(cd.movil)}</strong> · placa <strong>${esc(cd.placa)}</strong>.` : ''}</p>
+      contenido: `<p>Si estás en peligro, llama a la línea de emergencias. ${cd ? `Tu viaje: <strong>${sinCorte(`móvil ${cd.movil}`)}</strong> · placa <strong>${sinCorte(cd.placa)}</strong>.` : ''}</p>
         <a class="c-opcion c-opcion-peligro c-opcion-sos" href="tel:123">${icono('telefono')}<span>Llamar al 123<small>Línea nacional de emergencias</small></span></a>
-        <a class="c-opcion" href="tel:${esc(N.EMPRESA.telefono)}">${icono('taxi')}<span>Llamar a la central Cootransrural<small>${esc(N.EMPRESA.telefonoVisible)} · 24 horas</small></span></a>
+        ${E.telefono ? `<a class="c-opcion" href="tel:${esc(E.telefono)}">${icono('taxi')}<span>Llamar a la central ${esc(E.nombre)}<small>${esc(E.telefonoVisible)}${E.servicio24h ? ' · 24 horas' : ''}</small></span></a>` : ''}
         ${contacto?.celular
           ? `<a class="c-opcion" href="${esc(N.enlaceWhatsApp(contacto.celular, texto))}" target="_blank" rel="noopener">${icono('usuarios')}<span>Avisar a ${esc(contacto.nombre)}<small>Le enviamos tu viaje y ubicación por WhatsApp</small></span></a>`
           : `<a class="c-opcion" href="${esc(N.enlaceWhatsApp('', texto))}" target="_blank" rel="noopener">${icono('chat')}<span>Enviar mi viaje por WhatsApp<small>Agrega un contacto de emergencia en Perfil › Ajustes</small></span></a>`}`,
@@ -1243,7 +1283,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
       b.classList.add('c-girando-boton');
       const pos = await p.actualizarMiPosicion();
       b.classList.remove('c-girando-boton');
-      if (!pos.real) avisar({ titulo: 'No pudimos leer tu GPS', cuerpo: 'Usamos el centro de El Rosal; mueve el mapa para ubicar tu punto.', tipo: 'alerta' });
+      if (!pos.real) avisar({ titulo: 'No pudimos leer tu GPS', cuerpo: `Usamos el centro ${dePueblo}; mueve el mapa para ubicar tu punto.`, tipo: 'alerta' });
       else m.ponerYo(pos);
       ui.origen = { lat: pos.lat, lng: pos.lng, titulo: 'Ubicando…', detalle: '' };
       pintarDireccionOrigen();
@@ -1334,7 +1374,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
     compartir: abrirCompartir,
     'compartir-nativo': async () => {
       try {
-        await navigator.share({ title: 'Mi viaje en Cootransrural', text: p.textoCompartir() });
+        await navigator.share({ title: `Mi viaje en ${E.nombre}`, text: p.textoCompartir() });
       } catch {
         /* el usuario cerró el diálogo */
       }

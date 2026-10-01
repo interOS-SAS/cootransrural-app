@@ -1,16 +1,26 @@
 // Página de pago DE PRUEBA. Se abre cuando el pasajero escanea el QR de cobro
 // del conductor con la cámara normal del celular:
-//   pagar/?v=valor&id=viaje&m=movil&c=conductorId&s=sala
+//   pagar/?e=cooperativa&v=valor&id=viaje&m=movil&b=llave&c=conductorId&s=sala
+// (sin ?e= es Cootransrural). pagar/index.html fija window.CT_EMPRESA desde ?e=
+// antes de cargar este módulo, así el núcleo lee la ficha de esa cooperativa y
+// el bus usa SU canal: el pago solo le llega a un conductor de esa cooperativa.
 // No mueve dinero: solo avisa al conductor (por el bus de la sala) que el pago
 // de prueba se hizo, para que la demostración se vea completa.
 // Solo se cargan los módulos del núcleo que hacen falta (página ligera).
+import { ID_EMPRESA, EMPRESA, COLORES, ES_PROPUESTA, PROVEEDOR, urlEmpresa } from '../nucleo/config.js';
 import { Bus, enVivoActivo } from '../nucleo/bus.js';
 import { BILLETERAS } from '../nucleo/datos.js';
 import { pesos, horaTexto, fechaTexto, escaparHTML, esperar } from '../nucleo/util.js';
+import { icono as iconoApp } from '../stickers/icono.js';
 
 const tarjeta = document.getElementById('tarjeta');
 const parametros = new URLSearchParams(location.search);
-const CLAVE_PAGOS = 'ct.pagosPrueba';
+// Cada cooperativa guarda sus comprobantes aparte (Cootransrural conserva la clave de siempre).
+const CLAVE_PAGOS = ID_EMPRESA === 'cootransrural' ? 'ct.pagosPrueba' : `ct.${ID_EMPRESA}.pagosPrueba`;
+const NOMBRE = EMPRESA.nombre || EMPRESA.nombreCorto || 'la cooperativa';
+const URL_APP = urlEmpresa('app/');
+// ¿La cooperativa del enlace es la que se cargó? (si la ficha no existe, el núcleo cae en Cootransrural).
+const empresaReconocida = !window.CT_EMPRESA_INVALIDA && (window.CT_EMPRESA_PEDIDA || 'cootransrural') === ID_EMPRESA;
 
 const valor = Math.round(Number(parametros.get('v')));
 const viajeId = (parametros.get('id') || '').trim().slice(0, 80);
@@ -24,11 +34,39 @@ const llaveBreB = /^@[a-z0-9]{3,40}$/i.test(parametros.get('b') || '') ? paramet
 const billeteras = BILLETERAS?.length ? BILLETERAS : [{ id: 'breb', nombre: 'Bre-B', color: '#0B5FFF' }];
 const valorValido = Number.isFinite(valor) && valor > 0 && valor <= 5000000;
 
+/* ---------------- Marca de la cooperativa ---------------- */
+
+const HEX = /^#[0-9a-f]{6}$/i;
+// Colores de la ficha en las variables de web/paginas.css.
+function aplicarColores() {
+  const raiz = document.documentElement.style;
+  const poner = (variable, color) => HEX.test(color || '') && raiz.setProperty(variable, color);
+  poner('--verde', COLORES.primario);
+  poner('--verde-2', COLORES.primario2 || COLORES.primario);
+  poner('--verde-3', COLORES.primario2 || COLORES.primario);
+  poner('--verde-osc', COLORES.oscuro);
+  poner('--amarillo', COLORES.acento);
+  if (HEX.test(COLORES.primario || '')) document.querySelector('meta[name="theme-color"]')?.setAttribute('content', COLORES.primario);
+}
+
+let iconoURL = '../img/icono-192.png';
 function cabecera() {
+  const lugar = EMPRESA.pueblo ? ` · ${escaparHTML(EMPRESA.pueblo)}` : '';
   return `<div class="pago-cabeza">
-    <img src="../img/icono-192.png" alt="" width="46" height="46">
-    <span><b>Cootransrural${movil ? ` · Móvil ${movil}` : ''}</b><small>Cobro del viaje · El Rosal</small>${llaveBreB ? `<small class="pago-llave">Llave Bre-B: <b>${escaparHTML(llaveBreB)}</b> (ejemplo)</small>` : ''}</span>
+    <img class="pago-icono" src="${iconoURL}" alt="" width="46" height="46">
+    <span><b>${escaparHTML(NOMBRE)}${movil ? ` · Móvil ${movil}` : ''}</b><small>Cobro del viaje${lugar}</small>${llaveBreB ? `<small class="pago-llave">Llave Bre-B: <b>${escaparHTML(llaveBreB)}</b> (ejemplo)</small>` : ''}</span>
   </div>`;
+}
+
+function pintarMarco() {
+  aplicarColores();
+  document.getElementById('franja-detalle').textContent = `Demostración del pago con QR de ${NOMBRE}`;
+  if (ES_PROPUESTA) {
+    const franja = document.getElementById('franja-propuesta');
+    franja.innerHTML = `<b>Propuesta de demostración</b> preparada por ${escaparHTML(PROVEEDOR.nombre)} para ${escaparHTML(EMPRESA.razonSocial || NOMBRE)} · No es la página oficial de la cooperativa`;
+    franja.hidden = false;
+  }
+  document.getElementById('pie').innerHTML = `<a href="${escaparHTML(URL_APP)}">App de ${escaparHTML(NOMBRE)}</a> · Desarrollado por <a href="${escaparHTML(PROVEEDOR.web)}" rel="noopener">${escaparHTML(PROVEEDOR.nombre)}</a>`;
 }
 
 function esClaro(hex) {
@@ -67,26 +105,53 @@ function mostrarError() {
   const faltan = [];
   if (!valorValido) faltan.push('el valor del viaje');
   if (!viajeId) faltan.push('el número del viaje');
-  document.title = 'Enlace de pago incompleto · Cootransrural';
+  document.title = `Enlace de pago incompleto · ${NOMBRE}`;
   tarjeta.innerHTML = `${cabecera()}
     <div class="error-pago">
       <span class="circulo"><svg class="icono"><use href="#i-alerta"/></svg></span>
       <h1>Este enlace de pago está incompleto</h1>
       <p>Falta ${faltan.join(' y ')}. Pídele al conductor que te muestre otra vez el código QR de cobro o, si prefieres, págale en efectivo.</p>
-      <a class="boton boton-amarillo boton-ancho" href="../app/">Ir a la app de Cootransrural</a>
+      <a class="boton boton-amarillo boton-ancho" href="${escaparHTML(URL_APP)}">Ir a la app de ${escaparHTML(NOMBRE)}</a>
     </div>`;
 }
 
-if (!valorValido || !viajeId) {
-  mostrarError();
-} else {
-  iniciar();
+// El QR trae una cooperativa que no existe en la app: no se paga (el aviso
+// iría al canal equivocado).
+function mostrarEmpresaDesconocida() {
+  document.title = 'Cooperativa no reconocida · Pago de prueba';
+  document.getElementById('franja-detalle').textContent = 'Demostración del pago con QR';
+  document.getElementById('pie').innerHTML = `Desarrollado por <a href="${escaparHTML(PROVEEDOR.web)}" rel="noopener">${escaparHTML(PROVEEDOR.nombre)}</a>`;
+  tarjeta.innerHTML = `<div class="error-pago">
+      <span class="circulo"><svg class="icono"><use href="#i-alerta"/></svg></span>
+      <h1>No reconocemos la cooperativa de este cobro</h1>
+      <p>El código QR no corresponde a ninguna cooperativa de la app. Pídele al conductor que te muestre otra vez el código de cobro o, si prefieres, págale en efectivo.</p>
+    </div>`;
 }
+
+async function arrancar() {
+  if (!empresaReconocida) {
+    mostrarEmpresaDesconocida();
+    return;
+  }
+  pintarMarco();
+  // Ícono de la app con los colores de la cooperativa (si falla, queda el de siempre).
+  if (ID_EMPRESA !== 'cootransrural') {
+    try {
+      iconoURL = (await iconoApp()).url;
+    } catch {
+      /* se queda el ícono por defecto */
+    }
+  }
+  if (!valorValido || !viajeId) mostrarError();
+  else iniciar();
+}
+
+arrancar();
 
 /* ---------------- Pago ---------------- */
 
 function iniciar() {
-  document.title = `Pagar ${pesos(valor)} (prueba) · Cootransrural`;
+  document.title = `Pagar ${pesos(valor)} (prueba) · ${NOMBRE}`;
   // El bus se abre de una vez para que alcance a conectarse mientras el pasajero elige.
   const bus = new Bus(sala ? { sala } : {});
   let confirmado = false;
@@ -190,7 +255,7 @@ function iniciar() {
         </dl>
         <p class="estado-envio" id="estado-envio"><span class="punto"></span><span id="texto-envio">Avisándole al conductor…</span></p>
         <div class="acciones">
-          <a class="boton boton-amarillo boton-ancho" href="../app/">Volver a la app</a>
+          <a class="boton boton-amarillo boton-ancho" href="${escaparHTML(URL_APP)}">Volver a la app</a>
           <button class="boton boton-borde boton-ancho" id="reenviar" type="button">Reenviar la confirmación</button>
         </div>
         <p class="sello-agua">Comprobante de prueba · sin valor</p>

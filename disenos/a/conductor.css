@@ -26,6 +26,7 @@
 .a-cbarra .a-insignia { border-color: var(--a-tinta); }
 .a-chip-red-clara { top: calc(var(--a-sup) + 84px); background: rgba(255, 255, 255, .96); color: var(--a-tinta); }
 .a-chip-red-clara b { color: var(--a-ambar-osc); border-left-color: rgba(18, 18, 18, .18); }
+.a-chip-red-clara .a-chip-demo { color: rgba(18, 18, 18, .72); }
 .a-app[data-vista="cobrando"] .a-chip-red,
 .a-app[data-vista="calificar"] .a-chip-red { opacity: 0; }
 

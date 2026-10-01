@@ -5,8 +5,9 @@
 import {
   el, esc, $, $$, icono, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos, modal, elegirOpcion,
   abrirMenu, estrellas, casillasCodigo, deslizador, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
-  panelEscritorio, nombreCorto,
+  panelEscritorio, nombreCorto, avisoDemo,
 } from './ui.js';
+import * as EM from './empresa.js';
 import { taxiLateral } from './ilustraciones.js';
 import { abrirGanancias, abrirHistorial, abrirDocumentos, abrirMiTaxi, abrirAjustesConductor, abrirAvisosConductor } from './conductor-secciones.js';
 
@@ -16,22 +17,31 @@ const PASO_DE_FASE = { confirmando: 0, hacia_origen: 0, en_origen: 1, en_viaje: 
 export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
   raiz.innerHTML = '';
   raiz.classList.add('a-raiz', 'a-raiz-conductor');
+  if (EM.FICHA_EQUIVOCADA) {
+    EM.pantallaSinFicha(raiz);
+    return;
+  }
+  EM.aplicarColores();
+  EM.aplicarFoto(raiz, { conductor: true });
+  EM.marcarNoIndexar();
   if (!vitrina) {
     raiz.append(panelEscritorio({
-      titulo: 'La app de los <em>conductores</em> de Cootransrural.',
+      titulo: `La app de los <em>conductores</em> de ${esc(EM.NOMBRE)}.`,
       texto: 'Recibe servicios cerca de ti, navega hasta el pasajero, verifica su código y cobra con QR de prueba o en efectivo.',
       puntos: ['Conéctate y desconéctate con un toque', 'Solicitudes con cuenta regresiva', 'Código de abordaje para viajar seguros', 'Ganancias del día y documentos al día'],
+      // El QR abre la app de conductores de esta cooperativa con el mismo diseño.
+      url: N.urlEmpresa(`conductor/?d=${encodeURIComponent(diseno)}`),
     }));
   }
 
   const app = el(`<div class="a-app a-conductor" data-vista="carga">
     <header class="a-cbarra">
       <button class="a-cbarra-menu" type="button" data-menu aria-label="Abrir menú"><span data-avatar>${avatar('')}</span><span class="a-barra-menu-ico">${icono('menu', { tam: 13, grosor: 3 })}</span></button>
-      <div class="a-cbarra-txt"><strong data-movil>Conductor</strong><small data-nombre>Cootransrural</small></div>
+      <div class="a-cbarra-txt"><strong data-movil>Conductor</strong><small data-nombre>${esc(EM.NOMBRE)}</small></div>
       <span class="a-chip-gps" data-gps title="Fuente de la ubicación"><span class="a-led"></span><span data-gps-txt>GPS…</span></span>
       <button class="a-icono-btn a-cbarra-campana" type="button" data-campana aria-label="Avisos">${icono('campana')}<span class="a-insignia" data-insignia hidden></span></button>
     </header>
-    <div class="a-chip-red a-chip-red-clara" data-conexion><span class="a-led"></span><span data-conexion-txt>Solo este equipo</span><b>MODO PRUEBA</b></div>
+    <div class="a-chip-red a-chip-red-clara${EM.ES_PROPUESTA ? ' a-chip-red-demo' : ''}" data-conexion><span class="a-led"></span><span data-conexion-txt>Solo este equipo</span><b>MODO PRUEBA</b>${avisoDemo()}</div>
     <button class="a-flotante a-btn-ubicacion" type="button" data-centrar aria-label="Centrar el mapa en mi taxi">${icono('mira')}</button>
     <button class="a-fab-simular" type="button" data-simular hidden>${icono('chispa', { tam: 20 })}<span>Simular solicitud (demo)</span></button>
   </div>`);
@@ -146,7 +156,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
     const yo = N.perfil.conductor();
     $(app, '[data-avatar]').innerHTML = avatar(yo?.nombre || '');
     ponerTexto(app, '[data-movil]', yo ? `Móvil ${yo.movil}` : 'Conductor');
-    ponerTexto(app, '[data-nombre]', yo ? [yo.nombre, yo.placa].filter(Boolean).join(' · ') || 'Cootransrural' : 'Cootransrural');
+    ponerTexto(app, '[data-nombre]', yo ? [yo.nombre, yo.placa].filter(Boolean).join(' · ') || EM.NOMBRE : EM.NOMBRE);
   }
 
   function abrirMenuConductor() {
@@ -170,8 +180,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
         { icono: 'usuario', texto: 'App del pasajero', detalle: 'Abrir la app para pedir taxi', href: `../app/?d=${encodeURIComponent(diseno)}`, clase: 'a-menu-marca' },
         { icono: 'salir', texto: 'Cerrar sesión', accion: cerrarSesion, clase: 'a-menu-peligro' },
       ],
-      pie: `<div class="a-menu-pie-marca"><img src="../img/icono.svg" width="30" height="30" alt=""><div><strong>${esc(N.EMPRESA.nombre)} · Conductores</strong><small>${esc(N.EMPRESA.lema)}</small></div></div>
-        <div class="a-menu-pie-estado">${chipPrueba('MODO PRUEBA')}<span><span class="a-led ${c?.estado.conexion === 'en-vivo' ? 'a-led-vivo' : ''}"></span>${c?.estado.conexion === 'en-vivo' ? 'En vivo' : 'Solo este equipo'} · sala «${esc(c?.estado.sala || N.salaActual())}»</span></div>`,
+      pie: `<div class="a-menu-pie-marca">${EM.marcaIcono(30)}<div><strong>${esc(EM.NOMBRE)} · Conductores</strong>${EM.LEMA ? `<small>${esc(EM.LEMA)}</small>` : ''}</div></div>
+        <div class="a-menu-pie-estado">${chipPrueba('MODO PRUEBA')}${avisoDemo('a-chip-demo a-chip-demo-claro')}<span><span class="a-led ${c?.estado.conexion === 'en-vivo' ? 'a-led-vivo' : ''}"></span>${c?.estado.conexion === 'en-vivo' ? 'En vivo' : 'Solo este equipo'} · sala «${esc(c?.estado.sala || N.salaActual())}»</span></div>`,
     });
   }
 
@@ -201,20 +211,20 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
     const capa = el(`<div class="a-ingreso" role="dialog" aria-modal="true" aria-label="Ingreso de conductores">
       <div class="a-ingreso-arte">
         ${franjaCuadros()}
-        <div class="a-marca a-marca-clara"><img src="../img/icono.svg" alt="" width="38" height="38"><span><strong>Cootransrural</strong><small>App de conductores</small></span></div>
-        <div class="a-ingreso-taxi" aria-hidden="true">${taxiLateral({ ancho: 270, movil: '023' })}</div>
+        <div class="a-marca a-marca-clara">${EM.marcaIcono(38)}<span><strong>${esc(EM.NOMBRE)}</strong><small>App de conductores</small></span></div>
+        <div class="a-ingreso-taxi" aria-hidden="true">${taxiLateral({ ancho: 270, movil: EM.MOVIL_DEMO })}</div>
         <div class="a-ingreso-carretera" aria-hidden="true"></div>
       </div>
       <form class="a-ingreso-form" novalidate>
         <h1>Empieza tu turno</h1>
         <p class="a-sub">Ingresa con tu número de móvil y tu PIN de 4 dígitos.</p>
         <label class="a-campo">
-          <span>Número de móvil (001 a ${String(N.EMPRESA.taxis).padStart(3, '0')})</span>
-          <span class="a-campo-tel"><span class="a-prefijo">MÓVIL</span><input name="movil" inputmode="numeric" maxlength="3" placeholder="023" autocomplete="username" required></span>
+          <span>${EM.MOVIL_MAXIMO < 999 ? `Número de móvil (001 a ${String(EM.MOVIL_MAXIMO).padStart(3, '0')})` : 'Número de móvil (3 dígitos)'}</span>
+          <span class="a-campo-tel"><span class="a-prefijo">MÓVIL</span><input name="movil" inputmode="numeric" maxlength="3" placeholder="${esc(EM.MOVIL_DEMO)}" autocomplete="username" required></span>
         </label>
         <p class="a-hola" data-hola aria-live="polite"></p>
         <div class="a-campo"><span id="a-pin-txt">PIN de 4 dígitos</span><div data-pin></div></div>
-        <div class="a-pista">${icono('info', { tam: 18 })}<span>Demo: móvil <b>023</b>, PIN <b>1234</b> (cualquier PIN de 4 dígitos sirve).</span></div>
+        <div class="a-pista">${icono('info', { tam: 18 })}<span>Demo: móvil <b data-movil-demo>${esc(EM.MOVIL_DEMO)}</b>, PIN <b>1234</b> (cualquier PIN de 4 dígitos sirve).</span></div>
         <p class="a-error" data-error role="alert"></p>
         <button type="submit" class="a-btn a-btn-primario a-btn-grande">${icono('volante', { tam: 20 })}<span>Ingresar</span></button>
         <a class="a-btn-texto" href="../app/?d=${encodeURIComponent(diseno)}">¿Eres pasajero? Abre la app para pedir taxi</a>
@@ -236,8 +246,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
       e.preventDefault();
       const error = $(capa, '[data-error]');
       const n = Number(f.movil.value);
-      if (!f.movil.value || !Number.isInteger(n) || n < 1 || n > N.EMPRESA.taxis) {
-        error.textContent = `Escribe un número de móvil entre 001 y ${String(N.EMPRESA.taxis).padStart(3, '0')}.`;
+      if (!f.movil.value || !Number.isInteger(n) || n < 1 || n > EM.MOVIL_MAXIMO) {
+        error.textContent = `Escribe un número de móvil entre 001 y ${String(EM.MOVIL_MAXIMO).padStart(3, '0')}.`;
         f.movil.classList.add('a-invalido');
         f.movil.focus();
         return;
@@ -257,7 +267,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
       ui.vista = null;
       pintar();
     });
-    setTimeout(() => f.movil.focus({ preventScroll: true }), 300);
+    // Foco inicial en el móvil, salvo que la persona ya esté escribiendo (si no, el
+    // foco tardío le quitaría el PIN a quien escribe rápido).
+    setTimeout(() => {
+      if (!capa.contains(document.activeElement)) f.movil.focus({ preventScroll: true });
+    }, 300);
   }
 
   /* ---------------- piezas ---------------- */
@@ -280,7 +294,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
     if (!cel) return '';
     return `<div class="a-nav a-nav-contacto">
       <a class="a-nav-btn" href="tel:${esc(cel)}">${icono('telefono', { tam: 18 })}<span>Llamar</span></a>
-      <a class="a-nav-btn" href="${esc(N.enlaceWhatsApp(cel, `Hola ${nombreCorto(v.pasajero.nombre)}, soy el conductor del móvil ${N.perfil.conductor()?.movil} de Cootransrural.`))}" target="_blank" rel="noopener">${icono('chat', { tam: 18 })}<span>WhatsApp</span></a>
+      <a class="a-nav-btn" href="${esc(N.enlaceWhatsApp(cel, `Hola ${nombreCorto(v.pasajero.nombre)}, soy el conductor del móvil ${N.perfil.conductor()?.movil || ''} de ${EM.NOMBRE}.`))}" target="_blank" rel="noopener">${icono('chat', { tam: 18 })}<span>WhatsApp</span></a>
     </div>`;
   }
   function tarjetaPasajero(v) {
@@ -420,7 +434,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
           </div>
           <div data-corte></div>
           <button type="button" class="a-tarjeta-taxi" data-mi-taxi>
-            ${placa(yo?.placa || '', 'EL ROSAL')}
+            ${placa(yo?.placa || '')}
             <span><strong>Móvil ${esc(yo?.movil || '')} · ${esc(yo?.vehiculo || '')}</strong><small class="${alDia ? 'a-ok-txt' : 'a-mal-txt'}">${icono(alDia ? 'check' : 'alerta', { tam: 14 })} ${alDia ? 'Documentos al día' : 'Revisa tus documentos'}</small></span>
             ${icono('adelante', { tam: 18 })}
           </button>
@@ -840,7 +854,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
   // El núcleo del conductor no guarda el servicio al recargar la página: se pierde
   // sin aviso y, si era un pasajero real, este se queda esperando. Aquí se anota el
   // servicio en curso para avisar al volver y liberar al pasajero.
-  const CLAVE_SERVICIO = 'ct.a.servicio';
+  const CLAVE_SERVICIO = EM.clave('servicio');
   function recordarServicio(e) {
     try {
       if (e.viaje) sessionStorage.setItem(CLAVE_SERVICIO, JSON.stringify({ id: e.viaje.id, fase: e.viaje.fase, simulado: e.viaje.simulado, pasajero: e.viaje.pasajero?.nombre || '', guardado: Date.now() }));

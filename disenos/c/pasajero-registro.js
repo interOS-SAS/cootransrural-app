@@ -1,7 +1,7 @@
 // Bienvenida y registro obligatorio del pasajero (diseño C).
 // Pasos: bienvenida → datos (nombre y celular) → código SMS simulado → seguridad
 // (contacto de emergencia opcional y términos). Sin registro no se puede pedir.
-import { icono, esc, montarCasillas, ilustracionTaxi, ilustracionRuta, formatoCelular, montarCelular, soloCelular } from './comun.js';
+import { icono, esc, montarCasillas, ilustracionTaxi, ilustracionRuta, formatoCelular, montarCelular, soloCelular, empresa, marcaHTML, cifrasEmpresa, franjaPropuestaHTML, urlCooperativa, urlPrivacidad } from './comun.js';
 
 export function montarRegistro(capa, { N, alTerminar }) {
   const datos = { nombre: '', celular: '', codigo: '', contactoNombre: '', contactoCelular: '' };
@@ -13,13 +13,16 @@ export function montarRegistro(capa, { N, alTerminar }) {
   function pintar() {
     capa.dataset.paso = paso;
     if (paso === 'bienvenida') {
-      capa.innerHTML = `<section class="c-registro c-bienvenida">
+      // Solo las cifras que la cooperativa sí tiene (taxis, 24 h, año).
+      const cifras = cifrasEmpresa();
+      capa.innerHTML = `<section class="c-registro c-bienvenida${empresa.esPropuesta ? ' c-con-franja' : ''}">
+        ${franjaPropuestaHTML()}
         <div class="c-bienvenida-arte">
           ${ilustracionRuta('bv')}
           <div class="c-bienvenida-taxi">${ilustracionTaxi('bvt')}</div>
         </div>
         <div class="c-bienvenida-texto c-entrar">
-          <span class="c-marca"><img src="../img/icono.svg" alt="" width="34" height="34">Cootransrural <span class="c-etiqueta c-etiqueta-cian">El Rosal</span></span>
+          ${marcaHTML({ etiqueta: empresa.pueblo, id: 'bv' })}
           <h1>Tu taxi de confianza, <em>a un toque</em>.</h1>
           <p class="c-muted">Pídelo con tu ubicación exacta, mira quién te recoge y llega seguro a tu destino.</p>
           <ul class="c-beneficios">
@@ -27,15 +30,11 @@ export function montarRegistro(capa, { N, alTerminar }) {
             <li><span>${icono('escudo')}</span><div><strong>Viaja seguro</strong><small>Móvil, placa, código de abordaje y botón SOS.</small></div></li>
             <li><span>${icono('qr')}</span><div><strong>Tarifas claras</strong><small>Mira el valor antes de pedir y paga con QR o efectivo.</small></div></li>
           </ul>
-          <div class="c-cifras">
-            <div><strong>${N.EMPRESA.taxis}</strong><small>taxis</small></div>
-            <div><strong>24 h</strong><small>servicio</small></div>
-            <div><strong>${N.EMPRESA.fundada}</strong><small>desde</small></div>
-          </div>
+          ${cifras.length ? `<div class="c-cifras" style="grid-template-columns:repeat(${cifras.length},1fr)">${cifras.map(([v, t]) => `<div><strong>${esc(v)}</strong><small>${esc(t)}</small></div>`).join('')}</div>` : ''}
         </div>
         <div class="c-reg-pie">
           <button type="button" class="c-boton c-boton-grande c-boton-ancho" data-reg="a-datos">Crear mi cuenta ${icono('flecha')}</button>
-          <a class="c-enlace" href="../conductor/">${icono('volante')} Soy conductor</a>
+          <a class="c-enlace" href="${esc(urlCooperativa('conductor/'))}">${icono('volante')} Soy conductor</a>
         </div>
       </section>`;
       return;
@@ -115,7 +114,7 @@ export function montarRegistro(capa, { N, alTerminar }) {
             <label class="c-check">
               <input type="checkbox" id="c-reg-acepto">
               <span class="c-check-caja" aria-hidden="true">${icono('check')}</span>
-              <span>Acepto los <a href="../privacidad/" target="_blank" rel="noopener">términos y la política de privacidad</a> de Cootransrural.</span>
+              <span>${textoTerminos()}</span>
             </label>
             <p class="c-error" data-error hidden></p>
             <button type="submit" class="c-boton c-boton-grande c-boton-ancho" data-terminar disabled>Empezar a viajar ${icono('flecha')}</button>
@@ -126,6 +125,14 @@ export function montarRegistro(capa, { N, alTerminar }) {
       const acepto = capa.querySelector('#c-reg-acepto');
       acepto.addEventListener('change', () => (capa.querySelector('[data-terminar]').disabled = !acepto.checked));
     }
+  }
+
+  // Términos: enlazan la política de la cooperativa; si aún no tiene página
+  // propia, se dice que está en preparación (no se enlaza la de otra).
+  function textoTerminos() {
+    const url = urlPrivacidad();
+    const terminos = url ? `<a href="${esc(url)}" target="_blank" rel="noopener">términos y la política de privacidad</a>` : 'términos y la política de privacidad';
+    return `Acepto los ${terminos} de ${esc(empresa.nombre)}.${url ? '' : ' <small class="c-opcional">(texto en preparación)</small>'}`;
   }
 
   function mostrarError(texto) {

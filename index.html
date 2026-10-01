@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="es-CO">
+<html lang="es-CO" data-icono="./img/icono-192.png">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Cootransrural · Pide tu taxi en El Rosal desde el celular</title>
-  <meta name="description" content="Cooperativa de Transportadores Rurales de El Rosal, Cundinamarca. Pide tu taxi con tu ubicación exacta, mira la tarifa antes de subir y sigue el móvil en el mapa. Servicio 24 horas: 320 904 2977.">
+  <meta name="description" content="Cootransrural, taxis en El Rosal, Cundinamarca. Pide tu taxi con tu ubicación exacta, mira la tarifa antes de subir y sigue el móvil en el mapa. Servicio 24 horas: 320 904 2977.">
   <meta name="theme-color" content="#0A5C33">
   <meta name="color-scheme" content="light">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32.png">
   <link rel="icon" type="image/svg+xml" href="img/icono.svg">
-  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="./img/apple-touch-icon.png">
 
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_CO">
@@ -25,63 +25,93 @@
   <meta name="twitter:image" content="https://interos-sas.github.io/cootransrural-app/img/web/hero.jpg">
   <link rel="canonical" href="https://interos-sas.github.io/cootransrural-app/">
 
-  <link rel="preload" href="fuentes/sora-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fuentes/plus-jakarta-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="fuentes/fuentes.css?v=d7cb94cf69">
-  <link rel="stylesheet" href="web/estilos.css?v=5683779202">
+  <link rel="preload" href="./fuentes/sora-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./fuentes/plus-jakarta-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./fuentes/fuentes.css?v=d7cb94cf69">
+  <link rel="stylesheet" href="./web/estilos.css?v=33a1ba7e74">
+  <!-- Colores de la cooperativa (de su ficha). -->
+  <style>:root{--verde:#0A5C33;--verde-2:#0B6B3A;--verde-3:#13874B;--verde-osc:#052A17;--verde-tinte:#E6F2EA;--verde-tinte-2:#EAF3EC;--verde-tinte-3:#E3EFE6;--verde-linea:#D5E6DA;--exito-tinte:#E8F7EE;--b-claro:#A7D7B8;--fondo-oscuro:#0B1A12;--noche-1:#10241A;--noche-2:#04110A;--fondo-vitrina:#07140D;--amarillo:#FFC107;--amarillo-2:#FFD54F;--amarillo-osc:#C99400;--amarillo-texto:#926A00;--rojo:#D32F2F;--amarillo-vivo:#FFC107;--velo:#031E10;--velo-2:#042615;--velo-3:#031A0E;--noche:#030E09;--verde-rgb:10, 92, 51;--verde-3-rgb:19, 135, 75;--verde-osc-rgb:5, 42, 23;--amarillo-rgb:255, 193, 7;--velo-rgb:3, 30, 16;--velo-2-rgb:4, 38, 21;--velo-3-rgb:3, 26, 14;--noche-rgb:3, 14, 9;--rojo-rgb:211, 47, 47}</style>
   <script>
     // Las animaciones solo se activan si el script de la página arranca; si no
     // carga (red lenta o navegador viejo), el contenido se muestra igual.
     document.documentElement.classList.add('js');
     setTimeout(function () { if (!window.ctSitioListo) document.documentElement.classList.remove('js'); }, 4000);
+    // Cooperativa de esta página: el núcleo carga su ficha (empresas/cootransrural/ficha.json).
+    window.CT_EMPRESA = 'cootransrural';
   </script>
 
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "LocalBusiness",
-        "@id": "#cooperativa",
-        "name": "Cootransrural",
-        "legalName": "Cooperativa de Transportadores Rurales de El Rosal Ltda.",
-        "slogan": "Más que transporte, confianza",
-        "description": "Cooperativa de taxis y microbuses de El Rosal, Cundinamarca. Transporte urbano e intermunicipal las 24 horas.",
-        "foundingDate": "1999",
-        "url": "https://interos-sas.github.io/cootransrural-app/",
-        "image": "https://interos-sas.github.io/cootransrural-app/img/web/hero.jpg",
-        "logo": "https://interos-sas.github.io/cootransrural-app/img/icono-512.png",
-        "telephone": "+57 320 904 2977",
-        "email": "recepcion@cootransrural.com",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "Carrera 8 No. 12-38, Barrio San Carlos",
-          "addressLocality": "El Rosal",
-          "addressRegion": "Cundinamarca",
-          "addressCountry": "CO"
-        },
-        "geo": { "@type": "GeoCoordinates", "latitude": 4.855106, "longitude": -74.26222 },
-        "openingHoursSpecification": {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-          "opens": "00:00",
-          "closes": "23:59"
-        },
-        "areaServed": ["El Rosal", "Sabana de Occidente", "Cundinamarca"]
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": "#cooperativa",
+      "name": "Cootransrural",
+      "legalName": "Cooperativa de Transportadores Rurales de El Rosal Ltda.",
+      "slogan": "Más que transporte, confianza",
+      "description": "Cooperativa de taxis y microbuses de El Rosal, Cundinamarca. Transporte urbano e intermunicipal las 24 horas.",
+      "foundingDate": "1999",
+      "url": "https://interos-sas.github.io/cootransrural-app/",
+      "image": "https://interos-sas.github.io/cootransrural-app/img/web/hero.jpg",
+      "logo": "https://interos-sas.github.io/cootransrural-app/img/icono-512.png",
+      "telephone": "+57 320 904 2977",
+      "email": "recepcion@cootransrural.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Carrera 8 No. 12-38, Barrio San Carlos",
+        "addressLocality": "El Rosal",
+        "addressRegion": "Cundinamarca",
+        "addressCountry": "CO"
       },
-      {
-        "@type": "TaxiService",
-        "name": "Taxis Cootransrural",
-        "serviceType": "Taxi urbano e intermunicipal",
-        "provider": { "@id": "#cooperativa" },
-        "areaServed": { "@type": "City", "name": "El Rosal, Cundinamarca" },
-        "availableChannel": {
-          "@type": "ServiceChannel",
-          "servicePhone": { "@type": "ContactPoint", "telephone": "+57 320 904 2977", "contactType": "central de taxis", "availableLanguage": "es" }
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 4.854931,
+        "longitude": -74.263286
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "00:00",
+        "closes": "23:59"
+      },
+      "areaServed": [
+        "El Rosal",
+        "Sabana de Occidente",
+        "Cundinamarca"
+      ]
+    },
+    {
+      "@type": "TaxiService",
+      "name": "Taxis Cootransrural",
+      "serviceType": "Taxi urbano e intermunicipal",
+      "provider": {
+        "@id": "#cooperativa"
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "El Rosal, Cundinamarca"
+      },
+      "availableChannel": {
+        "@type": "ServiceChannel",
+        "servicePhone": {
+          "@type": "ContactPoint",
+          "telephone": "+57 320 904 2977",
+          "contactType": "central de taxis",
+          "availableLanguage": "es"
         }
       }
-    ]
-  }
+    }
+  ]
+}
   </script>
 </head>
 <body>
@@ -133,7 +163,7 @@
   <header class="barra" id="barra">
     <div class="contenedor">
       <a class="marca" href="./" aria-label="Cootransrural, inicio">
-        <img src="img/icono-192.png" alt="" width="42" height="42">
+        <img src="./img/icono-192.png" alt="" width="42" height="42">
         <span><b>Cootransrural</b><small>Más que transporte, confianza</small></span>
       </a>
       <nav class="menu" id="menu" aria-label="Menú principal">
@@ -156,11 +186,11 @@
   <main id="contenido">
     <!-- ============ HERO ============ -->
     <section class="hero" id="inicio" aria-labelledby="titulo-hero">
-      <img class="hero-foto" src="img/web/hero.jpg" alt="" width="1600" height="900" fetchpriority="high" decoding="async" onerror="this.hidden=true">
+      <img class="hero-foto" src="./img/web/hero.jpg" alt="" width="1600" height="900" fetchpriority="high" decoding="async" onerror="this.hidden=true">
       <div class="contenedor hero-rejilla">
         <div class="hero-anim">
           <span class="pildora"><span class="punto" aria-hidden="true"></span><span>El Rosal<span class="solo-ancho">, Cundinamarca</span> · Servicio 24 horas</span></span>
-          <h1 id="titulo-hero">Pide tu taxi en El Rosal <span class="resaltado">desde el celular<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 80 4, 200 2, 296 10"/></svg></span></h1>
+          <h1 id="titulo-hero">Pide tu taxi en El Rosal <span class="resaltado">desde el celular<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 80 4, 200 2, 296 10"/></svg></span></h1>
           <p class="hero-texto">Marca tu ubicación exacta, mira la tarifa antes de pedir y sigue tu móvil en el mapa hasta la puerta de tu casa o tu negocio. Con los conductores de siempre: los de Cootransrural.</p>
           <div class="botones">
             <a class="boton boton-amarillo boton-grande" href="app/"><svg class="icono"><use href="#i-taxi"/></svg>Pedir taxi ahora</a>
@@ -277,7 +307,7 @@
       <div class="contenedor avisos-rejilla">
         <figure class="foto-marco retrato revelar desde-izq">
           <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-campana"/></svg></span>
-          <img src="img/web/pasajera.jpg" alt="Pasajera revisando en el celular la llegada de su taxi" width="800" height="1000" loading="lazy" decoding="async" onerror="this.hidden=true">
+          <img src="./img/web/pasajera.jpg" alt="Pasajera revisando en el celular la llegada de su taxi" width="800" height="1000" loading="lazy" decoding="async" onerror="this.hidden=true">
           <figcaption class="foto-nota"><span class="circulo"><svg class="icono"><use href="#i-campana"/></svg></span><span><b>Avisos con sonido y vibración</b><small>No tienes que estar pendiente de la pantalla.</small></span></figcaption>
         </figure>
         <div>
@@ -399,10 +429,11 @@
           <h2 id="titulo-tarifas">Sabes cuánto pagas antes de subirte</h2>
           <p class="lead">La app calcula la tarifa con la ruta real. Para los viajes más comunes desde El Rosal hay tarifa fija.</p>
           <p class="aviso-ejemplo"><svg class="icono"><use href="#i-info"/></svg>Valores de ejemplo, sujetos a confirmación de la cooperativa.</p>
+
         </div>
         <figure class="foto-marco banda-sabana revelar">
           <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-ruta"/></svg></span>
-          <img src="img/web/sabana.jpg" alt="Paisaje de la Sabana de Occidente cerca de El Rosal" width="1600" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
+          <img src="./img/web/sabana.jpg" alt="Paisaje de la Sabana de Occidente cerca de El Rosal" width="1600" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
           <figcaption><b>De El Rosal a toda la Sabana</b><span>Subachoque, Madrid, Facatativá, Mosquera, Funza, Tenjo, Chía, Bogotá y el aeropuerto.</span></figcaption>
         </figure>
         <div class="tarifas-rejilla">
@@ -446,7 +477,7 @@
         </div>
         <div class="disenos revelar">
           <article class="diseno" data-d="a">
-            <div class="diseno-vista" aria-hidden="true"><span class="diseno-letra">A</span><div class="mini"><div class="mini-pantalla"><img class="mini-captura" src="web/disenos/a.jpg" alt="" width="390" height="844" loading="lazy" decoding="async" onerror="this.hidden=true"><span class="mini-ruta"></span><span class="mini-taxi"></span><div class="mini-hoja"><i></i><i></i><i></i></div></div></div></div>
+            <div class="diseno-vista" aria-hidden="true"><span class="diseno-letra">A</span><div class="mini"><div class="mini-pantalla"><img class="mini-captura" src="./web/disenos/a.jpg" alt="" width="390" height="844" loading="lazy" decoding="async" onerror="this.hidden=true"><span class="mini-ruta"></span><span class="mini-taxi"></span><div class="mini-hoja"><i></i><i></i><i></i></div></div></div></div>
             <div class="diseno-cuerpo">
               <div class="paleta" aria-hidden="true"><i style="--c:#FFC107"></i><i style="--c:#1A1A1A"></i><i style="--c:#FFF8E1"></i></div>
               <h3>Ámbar Urbano</h3>
@@ -455,7 +486,7 @@
             </div>
           </article>
           <article class="diseno" data-d="b">
-            <div class="diseno-vista" aria-hidden="true"><span class="diseno-letra">B</span><div class="mini"><div class="mini-pantalla"><img class="mini-captura" src="web/disenos/b.jpg" alt="" width="390" height="844" loading="lazy" decoding="async" onerror="this.hidden=true"><span class="mini-ruta"></span><span class="mini-taxi"></span><div class="mini-hoja"><i></i><i></i><i></i></div></div></div></div>
+            <div class="diseno-vista" aria-hidden="true"><span class="diseno-letra">B</span><div class="mini"><div class="mini-pantalla"><img class="mini-captura" src="./web/disenos/b.jpg" alt="" width="390" height="844" loading="lazy" decoding="async" onerror="this.hidden=true"><span class="mini-ruta"></span><span class="mini-taxi"></span><div class="mini-hoja"><i></i><i></i><i></i></div></div></div></div>
             <div class="diseno-cuerpo">
               <div class="paleta" aria-hidden="true"><i style="--c:#0A5C33"></i><i style="--c:#A7D7B8"></i><i style="--c:#FFFBF2"></i></div>
               <h3>Verde Rosal</h3>
@@ -464,7 +495,7 @@
             </div>
           </article>
           <article class="diseno" data-d="c">
-            <div class="diseno-vista" aria-hidden="true"><span class="diseno-letra">C</span><div class="mini"><div class="mini-pantalla"><img class="mini-captura" src="web/disenos/c.jpg" alt="" width="390" height="844" loading="lazy" decoding="async" onerror="this.hidden=true"><span class="mini-ruta"></span><span class="mini-taxi"></span><div class="mini-hoja"><i></i><i></i><i></i></div></div></div></div>
+            <div class="diseno-vista" aria-hidden="true"><span class="diseno-letra">C</span><div class="mini"><div class="mini-pantalla"><img class="mini-captura" src="./web/disenos/c.jpg" alt="" width="390" height="844" loading="lazy" decoding="async" onerror="this.hidden=true"><span class="mini-ruta"></span><span class="mini-taxi"></span><div class="mini-hoja"><i></i><i></i><i></i></div></div></div></div>
             <div class="diseno-cuerpo">
               <div class="paleta" aria-hidden="true"><i style="--c:#0A0B14"></i><i style="--c:#00E5FF"></i><i style="--c:#FF4FA3"></i></div>
               <h3>Noche Neón</h3>
@@ -499,7 +530,7 @@
           </div>
           <figure class="foto-marco foto-real revelar desde-der">
             <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-taxi"/></svg></span>
-            <img src="img/web/flota-1.jpg" alt="Taxis Kia Picanto amarillos de Cootransrural, los móviles 046 y 047, frente a la sede en El Rosal" width="1600" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
+            <img src="./img/web/flota-1.jpg" alt="Taxis Kia Picanto amarillos de Cootransrural, los móviles 046 y 047, frente a la sede en El Rosal" width="1600" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
             <span class="insignia-foto"><svg class="icono" aria-hidden="true"><use href="#i-taxi"/></svg>Nuestra flota, móviles 046 y 047</span>
             <figcaption class="lema-flotante">«Más que transporte, confianza»<small>Nuestra sede: Carrera 8 No. 12-38, Barrio San Carlos</small></figcaption>
           </figure>
@@ -518,7 +549,7 @@
         </div>
         <figure class="foto-marco flota revelar">
           <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-taxi"/></svg></span>
-          <img src="img/web/flota-plaza.jpg" alt="Taxis amarillos en fila frente a la iglesia y el parque principal de un pueblo de la Sabana, con las montañas al fondo" width="1600" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
+          <img src="./img/web/flota-plaza.jpg" alt="Taxis amarillos en fila frente a la iglesia y el parque principal de un pueblo de la Sabana, con las montañas al fondo" width="1600" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
           <figcaption class="flota-nota"><b>52 taxis Kia Picanto</b><span>Cada uno con su número de móvil, el mismo que verás en la app. Listos en El Rosal y la Sabana, de día y de noche.</span></figcaption>
         </figure>
       </div>
@@ -529,7 +560,7 @@
       <div class="contenedor conductores-rejilla">
         <figure class="foto-marco retrato revelar desde-izq">
           <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-volante"/></svg></span>
-          <img src="img/web/conductor.jpg" alt="Conductor de Cootransrural en su taxi" width="800" height="1000" loading="lazy" decoding="async" onerror="this.hidden=true">
+          <img src="./img/web/conductor.jpg" alt="Conductor de Cootransrural en su taxi" width="800" height="1000" loading="lazy" decoding="async" onerror="this.hidden=true">
           <span class="insignia-app"><svg class="icono"><use href="#i-volante"/></svg>App del conductor</span>
         </figure>
         <div>
@@ -560,11 +591,11 @@
         <div class="collage revelar zoom">
           <figure class="foto-marco apaisado">
             <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-taxi"/></svg></span>
-            <img src="img/web/sticker-taxi.jpg" alt="Sticker con código QR pegado en el vidrio trasero de un taxi amarillo" width="1200" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
+            <img src="./img/web/sticker-taxi.jpg" alt="Sticker con código QR pegado en el vidrio trasero de un taxi amarillo" width="1200" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
           </figure>
           <figure class="foto-marco apaisado">
             <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-nevera"/></svg></span>
-            <img src="img/web/nevera.jpg" alt="Imán amarillo y verde con código QR en la puerta de una nevera" width="1200" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
+            <img src="./img/web/nevera.jpg" alt="Imán amarillo y verde con código QR en la puerta de una nevera" width="1200" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
           </figure>
           <div class="sticker" aria-hidden="true">
             <b>¿Necesitas taxi?<br>Escanéame</b>
@@ -584,7 +615,7 @@
             <li><svg class="icono"><use href="#i-check"/></svg><span>En neveras, restaurantes y porterías de conjuntos residenciales.</span></li>
           </ul>
           <div class="botones revelar">
-            <a class="boton boton-verde boton-grande" href="stickers/"><svg class="icono"><use href="#i-impresora"/></svg>Imprime los stickers para tu taxi</a>
+            <a class="boton boton-verde boton-grande" href="./stickers/"><svg class="icono"><use href="#i-impresora"/></svg>Imprime los stickers para tu taxi</a>
           </div>
         </div>
       </div>
@@ -592,7 +623,7 @@
 
     <!-- ============ 24 HORAS ============ -->
     <section class="banda-noche" aria-labelledby="titulo-noche">
-      <img src="img/web/noche.jpg" alt="" width="1600" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
+      <img src="./img/web/noche.jpg" alt="" width="1600" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
       <div class="contenedor revelar">
         <span class="pildora"><svg class="icono"><use href="#i-luna"/></svg>Servicio 24 horas</span>
         <h2 id="titulo-noche">De día y de noche, siempre hay un taxi para ti</h2>
@@ -722,13 +753,13 @@
               <li class="dato-ancho"><a class="dato" href="mailto:recepcion@cootransrural.com"><span class="circulo"><svg class="icono"><use href="#i-correo"/></svg></span><span><span>Correo</span><b>recepcion@cootransrural.com</b></span></a></li>
               <li class="dato-ancho"><div class="dato"><span class="circulo"><svg class="icono"><use href="#i-pin"/></svg></span><span><span>Oficina</span><b>Carrera 8 No. 12-38, Barrio San Carlos, El Rosal</b></span></div></li>
             </ul>
-            <div class="mapa-oficina" id="mapa-oficina" role="region" aria-label="Mapa de la oficina de Cootransrural">
+            <div class="mapa-oficina" id="mapa-oficina" role="region" aria-label="Mapa de la oficina de Cootransrural" data-lat="4.854931" data-lng="-74.263286" data-titulo="Oficina Cootransrural" data-direccion="Carrera 8 No. 12-38, Barrio San Carlos">
               <div class="mapa-respaldo"><div><b>Oficina Cootransrural</b><br>Carrera 8 No. 12-38, El Rosal</div></div>
             </div>
-            <a class="enlace-mapa" href="https://www.google.com/maps/search/?api=1&amp;query=4.855106,-74.26222" target="_blank" rel="noopener"><svg class="icono"><use href="#i-mapa"/></svg>Cómo llegar con Google Maps</a>
+            <a class="enlace-mapa" href="https://www.google.com/maps/search/?api=1&amp;query=4.854931,-74.263286" target="_blank" rel="noopener"><svg class="icono"><use href="#i-mapa"/></svg>Cómo llegar con Google Maps</a>
           </div>
 
-          <form class="formulario revelar desde-der" id="formulario" novalidate>
+          <form class="formulario revelar desde-der" id="formulario" novalidate data-whatsapp="573209042977">
             <h3>Programa tu servicio</h3>
             <p>Llena los datos y te abrimos WhatsApp con el mensaje listo para la central.</p>
             <div class="campos">
@@ -738,7 +769,7 @@
                 <select id="f-servicio" name="servicio" required>
                   <option>Taxi</option>
                   <option>Taxi al aeropuerto</option>
-                  <option>Microbús (grupos)</option>
+                  <option>Microbús para grupos</option>
                   <option>Transporte especial de pasajeros</option>
                   <option>Ruta intermunicipal</option>
                 </select>
@@ -761,7 +792,7 @@
     <div class="contenedor">
       <div class="pie-rejilla">
         <div>
-          <a class="marca" href="./"><img src="img/icono-192.png" alt="" width="42" height="42" loading="lazy"><span><b>Cootransrural</b><small>Cooperativa de Transportadores Rurales de El Rosal Ltda.</small></span></a>
+          <a class="marca" href="./"><img src="./img/icono-192.png" alt="" width="42" height="42" loading="lazy"><span><b>Cootransrural</b><small>Cooperativa de Transportadores Rurales de El Rosal Ltda.</small></span></a>
           <p class="lema-pie">Más que transporte, confianza.</p>
           <p>Taxis y microbuses en El Rosal y la Sabana de Occidente desde 1999.</p>
         </div>
@@ -772,7 +803,7 @@
             <li><a href="descargar/">Descargar la app</a></li>
             <li><a href="conductor/">App del conductor</a></li>
             <li><a href="disenos/">Diseños de la app</a></li>
-            <li><a href="stickers/">Stickers QR</a></li>
+            <li><a href="./stickers/">Stickers QR</a></li>
           </ul>
         </div>
         <div>
@@ -797,10 +828,11 @@
       <div class="pie-base">
         <span>© <span id="anio">2026</span> Cootransrural. Todos los derechos reservados.</span>
         <span>App en demostración: tarifas de ejemplo y pagos de prueba. <a href="privacidad/">Privacidad</a></span>
+        <span class="pie-interos">Desarrollado por <a href="https://interos.com.co" target="_blank" rel="noopener">interOS</a> · <a class="discreto" href="cooperativas/">Cooperativas</a></span>
       </div>
     </div>
   </footer>
 
-  <script type="module" src="web/sitio.js?v=44c352328e"></script>
+  <script type="module" src="./web/sitio.js?v=cdf1624fef"></script>
 </body>
 </html>

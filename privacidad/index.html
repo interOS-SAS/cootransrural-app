@@ -9,7 +9,8 @@
   <meta name="theme-color" content="#0A5C33">
   <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32.png">
   <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
-  <link rel="stylesheet" href="../web/paginas.css?v=b1a3c9a75f">
+  <link rel="stylesheet" href="../web/paginas.css?v=0c6f16149a">
+  <style>:root{--verde:#0A5C33;--verde-2:#0B6B3A;--verde-3:#13874B;--verde-osc:#052A17;--verde-tinte:#E6F2EA;--verde-tinte-2:#EAF3EC;--verde-tinte-3:#E3EFE6;--verde-linea:#D5E6DA;--exito-tinte:#E8F7EE;--b-claro:#A7D7B8;--fondo-oscuro:#0B1A12;--noche-1:#10241A;--noche-2:#04110A;--fondo-vitrina:#07140D;--amarillo:#FFC107;--amarillo-2:#FFD54F;--amarillo-osc:#C99400;--amarillo-texto:#926A00;--rojo:#D32F2F;--amarillo-vivo:#FFC107;--velo:#031E10;--velo-2:#042615;--velo-3:#031A0E;--noche:#030E09;--verde-rgb:10, 92, 51;--verde-3-rgb:19, 135, 75;--verde-osc-rgb:5, 42, 23;--amarillo-rgb:255, 193, 7;--velo-rgb:3, 30, 16;--velo-2-rgb:4, 38, 21;--velo-3-rgb:3, 26, 14;--noche-rgb:3, 14, 9;--rojo-rgb:211, 47, 47}</style>
 </head>
 <body>
   <main class="documento">
@@ -21,6 +22,7 @@
     <h1>Política de privacidad y términos de uso de la app</h1>
     <p class="fecha">Versión de demostración · borrador del 1 de octubre de 2026</p>
     <p class="aviso-borrador"><b>BORRADOR PARA REVISIÓN DE LA COOPERATIVA.</b> Este texto describe cómo funciona la demostración de la app y debe ser revisado y aprobado por Cootransrural (y por su asesor jurídico) antes de publicar la app en las tiendas o de usarla con pasajeros reales.</p>
+
 
     <nav class="indice" aria-label="Contenido">
       <ol>
@@ -111,6 +113,7 @@
         <li>Las <b>tarifas y rutas son valores de ejemplo</b>, sujetos a confirmación de la cooperativa.</li>
         <li>Si ningún conductor real acepta el servicio, la app muestra un <b>conductor simulado</b> con datos inventados, para que se vea el recorrido completo.</li>
         <li>Para pedir un taxi real en este momento, llama o escribe a la central: <a href="tel:+573209042977">320 904 2977</a>.</li>
+
         <li>En caso de emergencia, comunícate con la <b>línea 123</b>.</li>
         <li>Úsala con respeto: el pasajero y el conductor se califican mutuamente para cuidar la convivencia.</li>
       </ul>
@@ -120,22 +123,29 @@
       <h2>10. Contacto</h2>
       <p>Para consultas, reclamos o para ejercer tus derechos sobre tus datos, escríbenos a <a href="mailto:recepcion@cootransrural.com">recepcion@cootransrural.com</a> o visítanos en la Carrera 8 No. 12-38, Barrio San Carlos, El Rosal. Responderemos dentro de los plazos de ley (10 días hábiles para consultas y 15 días hábiles para reclamos).</p>
       <p><a href="../">Volver a la página de Cootransrural</a></p>
+      <p class="interos">App desarrollada por <a href="https://interos.com.co" target="_blank" rel="noopener">interOS</a> para la cooperativa.</p>
     </section>
   </main>
 
   <script>
-    // Borra todo lo que la app guarda en este navegador (claves que empiezan por «ct.»).
+    // Borra lo que la app de esta cooperativa guarda en este navegador. La principal
+    // usa las claves «ct.…»; las demás cooperativas, «ct.<id>.…» (no se tocan las de otras).
+    const ID = 'cootransrural';
+    const PRINCIPAL = true;
+    const OTRAS = ["la-vega", "madrid", "subachoque", "tabio", "tenjo", "villeta"];
+    const esDeEsta = (k) => (PRINCIPAL ? k.startsWith('ct.') && !OTRAS.some((o) => k.startsWith(`ct.${o}.`)) : k.startsWith(`ct.${ID}.`));
     document.getElementById('borrar').addEventListener('click', () => {
       if (!confirm('¿Borrar tu registro, tu historial y tus ajustes de la app en este celular?')) return;
       const claves = [];
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
-        if (k && k.startsWith('ct.')) claves.push(k);
+        if (k && esDeEsta(k)) claves.push(k);
       }
       claves.forEach((k) => localStorage.removeItem(k));
       const aviso = document.getElementById('borrado');
       aviso.hidden = false;
-      aviso.textContent = claves.length ? `Listo: se borraron ${claves.length} datos de la app en este celular.` : 'No había datos de la app guardados en este celular.';
+      aviso.textContent = claves.length === 1 ? 'Listo: se borró 1 dato de la app en este celular.'
+        : claves.length ? `Listo: se borraron ${claves.length} datos de la app en este celular.` : 'No había datos de la app guardados en este celular.';
     });
   </script>
 </body>

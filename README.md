@@ -1,10 +1,40 @@
-# Cootransrural — App de taxis (demo)
+# App de taxis para cooperativas (demo) · interOS
 
-Demo de la app de taxis de **Cootransrural** (Cooperativa de Transportadores
-Rurales de El Rosal, Cundinamarca): app del pasajero, app del conductor, web
-renovada y generador de stickers QR para los taxis.
+Plataforma de demostración para cooperativas de taxis de Cundinamarca: app del
+pasajero, app del conductor (3 diseños), web de cada cooperativa, stickers QR y
+pago QR Bre-B **de prueba**. Desarrollado por interOS.
 
 **Sitio de pruebas:** https://interos-sas.github.io/cootransrural-app/
+**Todas las cooperativas:** https://interos-sas.github.io/cootransrural-app/cooperativas/
+
+| Cooperativa | Pueblo | Estado | Ruta |
+| --- | --- | --- | --- |
+| Cootransrural | El Rosal | cliente | `./` (raíz) |
+| Coopmultrasub | Subachoque | cliente | `subachoque/` |
+| Cooptranstermales | Tabio | propuesta | `tabio/` |
+| Cootranstenjo | Tenjo | propuesta | `tenjo/` |
+| Cootransmadrid | Madrid | propuesta | `madrid/` |
+| Cootransvi | Villeta | propuesta | `villeta/` |
+| Cootransvillaleal | La Vega | propuesta | `la-vega/` |
+
+Las «propuestas» muestran una franja de demostración, no se indexan en
+buscadores y no usan logos de la cooperativa: aún no son clientes.
+
+## Varias cooperativas
+
+- **Ficha:** `empresas/<id>/ficha.json` tiene todo lo propio de cada cooperativa:
+  nombre, teléfonos, colores, lugares del pueblo, rutas, tarifas de ejemplo,
+  textos y datos pendientes por confirmar.
+- **Nueva cooperativa:** agregarla a `herramientas/cooperativas.json` y correr
+  `python3 herramientas/crear-ficha.py <id>`. El script saca de OpenStreetMap el
+  centro del pueblo y sus lugares, y de OSRM la distancia por carretera a los
+  municipios vecinos. Después hay que revisar la ficha y completar los textos.
+- **Páginas:** salen de `plantillas/` con `python3 herramientas/generar-empresas.py`.
+  Cootransrural queda en la raíz y las demás en `<id>/`. Íconos y capturas de
+  cada cooperativa: `node herramientas/iconos-empresas.mjs`.
+- **Núcleo:** cada página fija la cooperativa con `window.CT_EMPRESA`, y el
+  núcleo carga su ficha. El almacenamiento del celular, los canales en vivo, los
+  enlaces de descarga y el pago van separados por cooperativa.
 
 | Página | Para qué |
 | --- | --- |
@@ -73,7 +103,7 @@ ver ganancias del día, historial y documentos del vehículo.
 
 ## Desarrollo
 
-Antes de cada commit: `python3 herramientas/versionar.py` (pone `?v=` a los CSS
+Antes de cada commit: `python3 herramientas/generar-empresas.py && python3 herramientas/versionar.py` (pone `?v=` a los CSS
 y JS para que el navegador no muestre una versión vieja; GitHub Pages guarda los
 archivos 10 minutos).
 
@@ -82,9 +112,11 @@ http://localhost:8765/. Pruebas automáticas con Chromium (playwright-core):
 
 ```
 node pruebas/probar-nucleo.mjs http://localhost:8765/
-node pruebas/diseno-a.mjs http://localhost:8765/   # y b, c
+node pruebas/diseno-a.mjs http://localhost:8765/ --empresa=subachoque   # y b, c; sin --empresa = Cootransrural
 node pruebas/web.mjs http://localhost:8765/
+node pruebas/web-empresas.mjs http://localhost:8765/                     # todas las cooperativas
 node pruebas/stickers.mjs http://localhost:8765/
+node pruebas/stickers-empresas.mjs http://localhost:8765/
 ```
 
 Librerías incluidas en `vendor/`: Leaflet (BSD-2), MQTT.js (MIT),

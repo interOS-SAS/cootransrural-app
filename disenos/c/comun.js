@@ -12,6 +12,275 @@ export const CAPA_MAPA = 'oscuro';
 export const $ = (sel, raiz = document) => raiz.querySelector(sel);
 export const $$ = (sel, raiz = document) => [...raiz.querySelectorAll(sel)];
 
+/* ------------------------------------------------------------------ */
+/* Cooperativa activa: la misma app sirve para varias cooperativas.   */
+/* ------------------------------------------------------------------ */
+// Este archivo no importa el núcleo (con otra ?v= se cargaría dos veces):
+// cada app se lo pasa al montar con usarNucleo(N). Todo lo que se muestra de
+// la cooperativa (nombre, teléfonos, cifras) sale de su ficha; si un dato
+// falta, se oculta o se dice con honestidad, nunca «null» ni «undefined».
+let NUC = null;
+export function usarNucleo(N) {
+  NUC = N;
+}
+const EMP = () => NUC?.EMPRESA || {};
+const ID_PRINCIPAL = 'cootransrural';
+
+// Texto limpio: '' si el dato viene vacío, null o como «null»/«undefined».
+export function dato(v) {
+  if (v == null) return '';
+  const t = String(v).trim();
+  return /^(null|undefined|nan)$/i.test(t) ? '' : t;
+}
+const numero = (v) => (Number.isFinite(Number(v)) && Number(v) > 0 && dato(v) !== '' ? Number(v) : null);
+const digitos = (v) => dato(v).replace(/\D/g, '');
+
+export const empresa = {
+  get id() {
+    return NUC?.ID_EMPRESA || ID_PRINCIPAL;
+  },
+  get esPrincipal() {
+    return this.id === ID_PRINCIPAL;
+  },
+  get esPropuesta() {
+    return Boolean(NUC?.ES_PROPUESTA);
+  },
+  get nombre() {
+    return dato(EMP().nombreCorto) || dato(EMP().nombre) || 'la cooperativa';
+  },
+  get nombreLargo() {
+    return dato(EMP().nombre) || this.nombre;
+  },
+  get razonSocial() {
+    return dato(EMP().razonSocial) || this.nombreLargo;
+  },
+  get lema() {
+    return dato(EMP().lema);
+  },
+  get pueblo() {
+    return dato(EMP().pueblo) || dato(EMP().municipio).split(',')[0].trim();
+  },
+  get telefono() {
+    return digitos(EMP().telefono);
+  },
+  get telefonoVisible() {
+    const t = dato(EMP().telefonoVisible);
+    if (t) return t;
+    const d = this.telefono;
+    return d.length === 10 ? `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}` : d;
+  },
+  get whatsapp() {
+    return digitos(EMP().whatsapp);
+  },
+  get correo() {
+    return /@/.test(dato(EMP().correo)) ? dato(EMP().correo) : '';
+  },
+  get direccion() {
+    return dato(EMP().direccion);
+  },
+  get sitioOficial() {
+    const s = dato(EMP().sitioOficial) || dato(EMP().web);
+    return /^https?:\/\//.test(s) ? s : '';
+  },
+  get fundada() {
+    return numero(EMP().fundada);
+  },
+  get taxis() {
+    return numero(EMP().taxis);
+  },
+  // Flota escrita como texto (p. ej. «100+») cuando no se sabe el número exacto de taxis.
+  get vehiculos() {
+    const v = dato(EMP().vehiculos);
+    return /\d/.test(v) && !/^0+$/.test(v) ? v : '';
+  },
+  get microbuses() {
+    return numero(EMP().microbuses);
+  },
+  get asociados() {
+    return numero(EMP().asociados);
+  },
+  get servicio24h() {
+    return EMP().servicio24h === true;
+  },
+  get colorTaxi() {
+    return dato(EMP().colorTaxi) || 'Amarillo';
+  },
+  get vehiculo() {
+    return dato(EMP().vehiculo) || 'Kia Picanto';
+  },
+  get proveedor() {
+    return dato(NUC?.PROVEEDOR?.nombre) || 'interOS';
+  },
+  get proveedorWeb() {
+    const w = dato(NUC?.PROVEEDOR?.web);
+    return /^https?:\/\//.test(w) ? w : '';
+  },
+};
+
+// Claves propias del diseño en localStorage: Cootransrural conserva la de
+// siempre; las demás cooperativas guardan lo suyo aparte.
+export function claveLocal(nombre) {
+  return empresa.esPrincipal ? `ct.c.${nombre}` : `ct.${empresa.id}.c.${nombre}`;
+}
+
+// Enlace a otra página de la misma cooperativa (app/, conductor/…). Conserva
+// el diseño (?d=) y la sala de prueba si vienen en la dirección actual.
+export function urlCooperativa(ruta) {
+  const u = new URL(NUC ? NUC.urlEmpresa(ruta) : `../${ruta}`, location.href);
+  const actual = new URLSearchParams(location.search);
+  for (const k of ['d', 'sala']) if (actual.get(k)) u.searchParams.set(k, actual.get(k));
+  return u.href;
+}
+
+// Página de privacidad de la cooperativa: el generador la escribe junto a su
+// app (plantillas/privacidad → <id>/privacidad/; Cootransrural, en la raíz).
+// Nunca se enlaza la de otra cooperativa.
+export function urlPrivacidad() {
+  if (empresa.esPrincipal) return '../privacidad/';
+  return NUC ? NUC.urlEmpresa('privacidad/') : '';
+}
+
+// Cifras de la cooperativa que sí se conocen (las que faltan no se muestran).
+export function cifrasEmpresa({ conDesde = true } = {}) {
+  const lista = [];
+  if (empresa.taxis) lista.push([String(empresa.taxis), 'taxis']);
+  else if (empresa.vehiculos) lista.push([empresa.vehiculos, 'vehículos']);
+  if (empresa.servicio24h) lista.push(['24 h', 'servicio']);
+  if (conDesde && empresa.fundada) lista.push([String(empresa.fundada), 'desde']);
+  return lista;
+}
+
+// Etiqueta «Modo prueba» y, en las propuestas, el aviso de demostración.
+export function etiquetasPrueba(texto = 'Modo prueba') {
+  return `<span class="c-etiquetas-prueba"><span class="c-etiqueta">${esc(texto)}</span>${empresa.esPropuesta ? `<span class="c-etiqueta c-etiqueta-demo">Demostración para ${esc(empresa.nombreLargo)}</span>` : ''}</span>`;
+}
+
+// Franja de las propuestas (no son clientes ni han autorizado nada).
+export function franjaPropuestaHTML() {
+  if (!empresa.esPropuesta) return '';
+  return `<p class="c-franja-propuesta" role="note">${icono('info')}<span>Propuesta de demostración preparada por ${esc(empresa.proveedor)} para ${esc(empresa.razonSocial)} · No es la app oficial de la cooperativa.</span></p>`;
+}
+
+// «Acerca de» para Ajustes: quién hizo la app y, en propuestas, que es una demostración.
+export function acercaDeHTML() {
+  const prov = esc(empresa.proveedor);
+  return `<div class="c-bloque c-acerca">
+    <div class="c-acerca-marca">${iconoAppHTML(44, 'acerca')}<div><strong>${esc(empresa.nombreLargo)}</strong><small>${esc(empresa.razonSocial)}</small></div></div>
+    <p class="c-acerca-proveedor">App desarrollada por ${empresa.proveedorWeb ? `<a href="${esc(empresa.proveedorWeb)}" target="_blank" rel="noopener">${prov}</a>` : prov}</p>
+    ${empresa.esPropuesta ? `<p class="c-acerca-demo">${icono('info')}<span>Demostración para ${esc(empresa.nombreLargo)}: no es la app oficial de la cooperativa.</span></p>` : ''}
+  </div>`;
+}
+
+// Pie con la cooperativa y el proveedor.
+export function pieMarcaHTML({ conDesde = true } = {}) {
+  const linea1 = `${esc(empresa.razonSocial)}${conDesde && empresa.fundada ? ` · desde ${empresa.fundada}` : ''}`;
+  return `<p class="c-pie-marca">${linea1}${empresa.lema ? `<br>«${esc(empresa.lema)}»` : ''}<br><span class="c-pie-proveedor">Desarrollado por ${esc(empresa.proveedor)}</span></p>`;
+}
+
+// Nombres de los tres diseños (el B lleva el nombre de El Rosal solo allí).
+export function nombresDisenos() {
+  return [
+    ['a', 'Diseño A', 'Ámbar Urbano'],
+    ['b', 'Diseño B', empresa.esPrincipal ? 'Verde Rosal' : 'Color de la cooperativa'],
+    ['c', 'Diseño C', 'Noche Neón'],
+  ];
+}
+
+// Variables CSS con los colores de la cooperativa (para detalles discretos).
+export function coloresEmpresaCSS() {
+  const c = NUC?.COLORES || {};
+  const ok = (v) => /^#[0-9a-f]{3,8}$/i.test(dato(v));
+  return [
+    ok(c.primario) ? `--c-coop-primario:${c.primario}` : '',
+    ok(c.oscuro) ? `--c-coop-oscuro:${c.oscuro}` : '',
+    ok(c.acento) ? `--c-coop-acento:${c.acento}` : '',
+  ].filter(Boolean).join(';');
+}
+
+// Ícono de la app. Cootransrural usa su ícono de siempre; las demás, el ícono
+// generado para su app (empresas/<id>/icono-192.png: el mismo dibujo de pin y
+// taxi con sus colores, no es el logo de ninguna cooperativa), igual al de la
+// pantalla de carga y al del celular. Si ese archivo faltara, se dibuja aquí.
+export function iconoAppHTML(tam = 34, id = 'ic') {
+  if (empresa.esPrincipal || !NUC) {
+    const src = NUC ? NUC.urlDelSitio('img/icono.svg') : '../img/icono.svg';
+    return `<img class="c-icono-app" src="${esc(src)}" alt="" width="${tam}" height="${tam}">`;
+  }
+  const src = NUC.urlDelSitio(`empresas/${empresa.id}/icono-192.png`);
+  const respaldo = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(iconoSVG(tam, id))}`;
+  return `<img class="c-icono-app" src="${esc(src)}" alt="" width="${tam}" height="${tam}" onerror="${esc(`this.onerror=null;this.src='${respaldo}'`)}">`;
+}
+
+// Dibujo del ícono (pin y taxi) con los colores de la cooperativa activa.
+function iconoSVG(tam, id) {
+  const c = NUC?.COLORES || {};
+  const color = (v, otro) => (/^#[0-9a-f]{3,8}$/i.test(dato(v)) ? v : otro);
+  const g = `c-ico-${id}`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" class="c-icono-app" viewBox="0 0 512 512" width="${tam}" height="${tam}" aria-hidden="true" focusable="false">
+    <defs><linearGradient id="${g}-f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${color(c.primario2 || c.primario, '#1D4E89')}"/><stop offset="1" stop-color="${color(c.oscuro, '#0B2545')}"/></linearGradient>
+    <linearGradient id="${g}-t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD54A"/><stop offset="1" stop-color="#F5A400"/></linearGradient></defs>
+    <rect width="512" height="512" rx="112" fill="url(#${g}-f)"/>
+    <circle cx="256" cy="232" r="168" fill="#fff" opacity=".06"/>
+    <path d="M256 70c-56 0-100 43-100 97 0 70 100 158 100 158s100-88 100-158c0-54-44-97-100-97z" fill="${color(c.rojo, '#E53935')}"/>
+    <circle cx="256" cy="166" r="40" fill="#fff"/>
+    <g transform="translate(96 250)">
+      <rect x="120" y="0" width="80" height="26" rx="8" fill="#1B1B1B"/>
+      <path d="M58 92 L92 34 Q98 24 112 24 H208 Q222 24 228 34 L262 92 Z" fill="url(#${g}-t)"/>
+      <path d="M86 88 L108 46 Q112 40 120 40 H200 Q208 40 212 46 L234 88 Z" fill="#14324A"/>
+      <rect x="22" y="86" width="276" height="96" rx="34" fill="url(#${g}-t)"/>
+      <rect x="22" y="132" width="276" height="16" fill="#1B1B1B" opacity=".9"/>
+      <circle cx="74" cy="118" r="20" fill="#FFF8D6"/><circle cx="246" cy="118" r="20" fill="#FFF8D6"/>
+      <rect x="118" y="152" width="84" height="22" rx="5" fill="#fff"/>
+      <rect x="34" y="174" width="52" height="40" rx="12" fill="#1B1B1B"/><rect x="234" y="174" width="52" height="40" rx="12" fill="#1B1B1B"/>
+    </g>
+  </svg>`;
+}
+
+// Marca en las pantallas de bienvenida: ícono, nombre y una etiqueta.
+export function marcaHTML({ etiqueta = '', clase = 'c-etiqueta-cian', id = 'mc' } = {}) {
+  return `<span class="c-marca">${iconoAppHTML(34, id)}<span class="c-marca-nombre">${esc(empresa.nombre)}</span>${etiqueta ? ` <span class="c-etiqueta ${clase}">${esc(etiqueta)}</span>` : ''}</span>`;
+}
+
+// Lugares destacados para los atajos del inicio y para la prueba: los de
+// siempre si existen (Cootransrural) y, si no, lugares a distancia de taxi
+// (0,8 a 2,5 km del centro; si no hay, de 0,4 a 4 km) con nombre corto e
+// inconfundible. Se eligen variados: primero uno por categoría, en el orden en
+// que más se piden (salud, turismo, comercio…), y luego el resto.
+const PRIORIDAD_ATAJOS = ['salud', 'turismo', 'comercio', 'centro', 'educacion', 'barrio', 'vereda', 'comida'];
+export function lugaresDestacados(max = 4) {
+  const L = NUC?.LUGARES || [];
+  const lista = [];
+  // La oficina va de última (como en El Rosal): queda casi en el parque, así
+  // que el segundo atajo, el que se ve sin deslizar, es un destino útil.
+  const oficina = L.find((x) => x.id === 'oficina');
+  const cupo = max - (oficina ? 1 : 0);
+  const agregar = (l) => {
+    if (l && !lista.includes(l) && lista.length < cupo) lista.push(l);
+  };
+  for (const id of ['parque', 'tierra-grata', 'rotonda']) agregar(L.find((x) => x.id === id));
+  const centro = NUC?.CENTRO;
+  if (centro && lista.length < cupo) {
+    const unico = (l) => !L.some((o) => o !== l && `${o.nombre} ${o.detalle || ''}`.toLowerCase().includes(String(l.nombre).toLowerCase()));
+    const apto = (l) => l !== oficina && PRIORIDAD_ATAJOS.includes(l.cat) && String(l.nombre).length <= 24 && unico(l);
+    for (const [desde, hasta] of [[0.8, 2.5], [0.4, 4]]) {
+      const candidatos = L.filter((l) => {
+        if (lista.includes(l) || !apto(l)) return false;
+        const km = NUC.distanciaKm(centro, l);
+        return km >= desde && km <= hasta;
+      }).sort((a, b) => PRIORIDAD_ATAJOS.indexOf(a.cat) - PRIORIDAD_ATAJOS.indexOf(b.cat));
+      const categorias = new Set(lista.map((l) => l.cat));
+      for (const l of candidatos) {
+        if (categorias.has(l.cat)) continue;
+        categorias.add(l.cat);
+        agregar(l);
+      }
+      for (const l of candidatos) agregar(l);
+    }
+  }
+  if (oficina && lista.length < max) lista.push(oficina);
+  return lista;
+}
+
 // Marca como inertes (sin foco ni lector de pantalla) las capas tapadas por
 // una pantalla completa o por una hoja, y las devuelve al quitarla.
 export function inerte(elementos, si) {
@@ -274,8 +543,8 @@ export function fijarAnillo(el, fraccion) {
 /* ------------------------------------------------------------------ */
 /* Placa colombiana (amarilla con letras negras), avatar y estrellas  */
 /* ------------------------------------------------------------------ */
-export function placaHTML(placa = '', municipio = 'EL ROSAL') {
-  return `<span class="c-placa" role="img" aria-label="Placa ${esc(placa)}"><span class="c-placa-num">${esc(placa)}</span><span class="c-placa-mun">${esc(municipio)}</span></span>`;
+export function placaHTML(placa = '', municipio = empresa.pueblo.toUpperCase()) {
+  return `<span class="c-placa" role="img" aria-label="Placa ${esc(placa)}"><span class="c-placa-num">${esc(placa)}</span>${municipio ? `<span class="c-placa-mun">${esc(municipio)}</span>` : ''}</span>`;
 }
 
 export function avatarHTML(nombre = '', clase = '') {
@@ -453,9 +722,18 @@ function rueda(cx, cy) {
     <circle cx="${cx}" cy="${cy}" r="4" fill="#FFE14D"/>
   </g>`;
 }
-export function ilustracionTaxi(id = 'tx', { movil = '023' } = {}) {
+// Móvil de muestra para las ilustraciones: el 023 en Cootransrural; en las
+// demás, el primer conductor de su ficha (para no dibujar un móvil que no existe).
+function movilDeMuestra() {
+  if (empresa.esPrincipal) return '023';
+  return NUC?.CONDUCTORES_DEMO?.[0]?.movil || '001';
+}
+export function ilustracionTaxi(id = 'tx', { movil = movilDeMuestra() } = {}) {
   const cuerpo = 'M40 132 L34 128 Q30 125 30 119 L30 104 Q30 98 35 96 L39 94 L45 70 Q49 58 63 56 L180 52 Q192 52 200 58 L236 86 Q240 89 247 89.6 L294 94 Q311 97 316 108 L318 120 Q318 128 311 130.5 L300 132 L281 132 A27 27 0 0 0 227 132 L119 132 A27 27 0 0 0 65 132 Z';
-  return `<svg class="c-ilus-taxi" viewBox="0 0 340 172" role="img" aria-label="Taxi amarillo de Cootransrural, móvil ${esc(movil)}">
+  // El nombre de la cooperativa va en la puerta; si es largo, se ajusta al espacio.
+  const rotulo = empresa.nombre.toUpperCase();
+  const ajuste = rotulo.length > 13 ? ` textLength="${Math.min(70, 5.3 * rotulo.length)}" lengthAdjust="spacingAndGlyphs"` : '';
+  return `<svg class="c-ilus-taxi" viewBox="0 0 340 172" role="img" aria-label="Taxi ${esc(empresa.colorTaxi.toLowerCase())} de ${esc(empresa.nombre)}${movil ? `, móvil ${esc(movil)}` : ''}">
   <defs>
     <linearGradient id="${id}-carro" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF08A"/><stop offset=".45" stop-color="#FFD60A"/><stop offset="1" stop-color="#E2A100"/></linearGradient>
     <linearGradient id="${id}-vidrio" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22324F"/><stop offset=".55" stop-color="#0B1220"/><stop offset="1" stop-color="#22D3EE" stop-opacity=".6"/></linearGradient>
@@ -493,7 +771,7 @@ export function ilustracionTaxi(id = 'tx', { movil = '023' } = {}) {
   <path d="M218 89 l9 -7 h6 v8 z" fill="#0B0D12"/>
   <rect x="120" y="114.5" width="26" height="12" rx="4" fill="#0B0D12"/>
   <text x="133" y="123.6" font-family="Outfit, Arial, sans-serif" font-size="8.4" font-weight="800" fill="#FFE14D" text-anchor="middle" letter-spacing=".5">${esc(movil)}</text>
-  <text x="185.5" y="123.4" font-family="Outfit, Arial, sans-serif" font-size="7.2" font-weight="800" fill="#0B0D12" text-anchor="middle" letter-spacing=".7">COOTRANSRURAL</text>
+  <text x="185.5" y="123.4" font-family="Outfit, Arial, sans-serif" font-size="7.2" font-weight="800" fill="#0B0D12" text-anchor="middle" letter-spacing=".7"${ajuste}>${esc(rotulo)}</text>
   <path d="M296 98.5 Q309 100.5 314 107.5 L302 108 Q295 105 296 98.5 Z" fill="#FFF6C2"/>
   <rect x="300" y="117" width="16" height="5" rx="2.5" fill="#0B0D12" opacity=".8"/>
   <rect x="33" y="73" width="7" height="19" rx="3" fill="#FF4D9D"/>
@@ -532,17 +810,43 @@ export function ilustracionRuta(id = 'rt') {
 /* ------------------------------------------------------------------ */
 export function escenaHTML({ tipo = 'pasajero', contenido }) {
   const pasajero = tipo === 'pasajero';
-  return `<div class="c-escena">
-    <aside class="c-lateral" aria-label="Sobre Cootransrural">
-      <div class="c-lateral-marca"><img src="../img/icono.svg" alt="" width="56" height="56"><div><strong>Cootransrural</strong><span>Más que transporte, confianza</span></div></div>
-      <h2>${pasajero ? 'Tu taxi de El Rosal, <em>en tu celular</em>.' : 'La cabina del conductor, <em>en tu celular</em>.'}</h2>
+  const E = empresa;
+  const pie = [
+    E.taxis ? `${E.taxis} taxis` : E.vehiculos ? `${E.vehiculos} vehículos` : '',
+    E.microbuses ? `${E.microbuses} ${E.microbuses === 1 ? 'microbús' : 'microbuses'}` : '',
+    E.asociados ? `${E.asociados} asociados` : '',
+    E.servicio24h ? 'servicio 24 horas' : '',
+  ].filter(Boolean).join(' · ');
+  const url = urlParaCelular(pasajero ? 'app/' : 'conductor/');
+  const qr = NUC?.qrSVG ? NUC.qrSVG(url, { redondeado: true, color: '#07090D', fondo: '#FFFFFF', margen: 2 }) : '';
+  return `<div class="c-escena" style="${coloresEmpresaCSS()}">
+    <aside class="c-lateral" aria-label="Sobre ${esc(E.nombre)}">
+      <div class="c-lateral-marca">${iconoAppHTML(56, 'lat')}<div><strong>${esc(E.nombre)}</strong>${E.lema ? `<span>${esc(E.lema)}</span>` : ''}</div></div>
+      ${E.esPropuesta ? `<p class="c-lateral-demo">${icono('info')}<span>Demostración para ${esc(E.nombreLargo)} · no es la app oficial de la cooperativa.</span></p>` : ''}
+      <h2>${pasajero ? `Tu taxi${E.pueblo ? ` de ${esc(E.pueblo)}` : ''}, <em>en tu celular</em>.` : 'La cabina del conductor, <em>en tu celular</em>.'}</h2>
       <ul>
         ${pasajero
           ? `<li>${icono('pin')}Pide con tu ubicación exacta</li><li>${icono('escudo')}Móvil, placa y código de abordaje</li><li>${icono('qr')}Paga con QR o en efectivo</li>`
           : `<li>${icono('rayo')}Solicitudes cercanas al instante</li><li>${icono('navegar')}Ruta al pasajero y al destino</li><li>${icono('qr')}Cobro con QR y ganancias del día</li>`}
       </ul>
-      <p class="c-lateral-pie">52 taxis · 3 microbuses · 105 asociados · servicio 24 horas</p>
+      ${qr
+        ? `<div class="c-lateral-qr" data-url="${esc(url)}"><div class="c-lateral-qr-codigo">${qr}</div><div><strong>Ábrela en tu celular</strong><small>Escanea el código con la cámara.</small></div></div>`
+        : ''}
+      ${pie ? `<p class="c-lateral-pie">${esc(pie)}</p>` : ''}
+      <p class="c-lateral-pie c-lateral-proveedor">Desarrollado por ${esc(E.proveedor)}</p>
     </aside>
     ${contenido}
   </div>`;
+}
+
+// Dirección para abrir esta misma app en el celular (QR del panel lateral):
+// la de esta cooperativa, con el diseño C y la sala de prueba si no es la de siempre.
+export function urlParaCelular(ruta) {
+  const u = new URL(NUC ? NUC.urlEmpresa(ruta) : location.href, location.href);
+  u.search = '';
+  u.hash = '';
+  u.searchParams.set('d', 'c');
+  const sala = NUC?.salaActual?.();
+  if (sala && sala !== (NUC.SALA_POR_DEFECTO || 'demo')) u.searchParams.set('sala', sala);
+  return u.href;
 }

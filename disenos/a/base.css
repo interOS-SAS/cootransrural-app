@@ -23,7 +23,10 @@
   --a-rojo: #E53935;
   --a-rojo-txt: #C62828;
   --a-rojo-claro: #FDECEC;
+  /* Color de marca de la cooperativa (detalles): la app lo cambia con el de la
+     ficha (empresas/<id>/ficha.json). El ámbar y la tinta del diseño no cambian. */
   --a-marca: #0A5C33;
+  --a-marca-2: #0E7A43;
   --a-marca-claro: #E4F2EA;
   --a-s1: 0 1px 2px rgba(18, 18, 18, .06), 0 3px 10px rgba(18, 18, 18, .06);
   --a-s2: 0 10px 30px rgba(18, 18, 18, .14), 0 2px 6px rgba(18, 18, 18, .06);
@@ -94,26 +97,29 @@ html[data-vitrina="1"] .a-escritorio { display: none !important; }
 @media (min-width: 1000px) {
   .a-escritorio { display: flex; }
   /* Foto nueva de la web (taxi en la Sabana) detrás del panel; solo en pantallas anchas
-     y fuera de la vitrina, así en el celular no se descarga. Si falta, queda el fondo oscuro. */
+     y fuera de la vitrina, así en el celular no se descarga. Si falta, queda el fondo oscuro.
+     Si la ficha de la cooperativa trae sus imágenes, la app pone --a-foto (empresa.js). */
   html:not([data-vitrina="1"]) .a-raiz {
     background:
       linear-gradient(90deg, rgba(18, 18, 18, .95) 0%, rgba(18, 18, 18, .86) 34%, rgba(18, 18, 18, .5) 62%, rgba(18, 18, 18, .72) 100%),
       linear-gradient(0deg, rgba(18, 18, 18, .85), transparent 40%),
-      url('../../img/web/hero.jpg') 70% 55% / cover no-repeat,
+      var(--a-foto, url('../../img/web/hero.jpg')) 70% 55% / cover no-repeat,
       #121212;
   }
   html:not([data-vitrina="1"]) .a-raiz-conductor {
     background:
       linear-gradient(90deg, rgba(18, 18, 18, .95) 0%, rgba(18, 18, 18, .86) 34%, rgba(18, 18, 18, .5) 62%, rgba(18, 18, 18, .72) 100%),
       linear-gradient(0deg, rgba(18, 18, 18, .85), transparent 40%),
-      url('../../img/web/noche.jpg') 70% 55% / cover no-repeat,
+      var(--a-foto, url('../../img/web/noche.jpg')) 70% 55% / cover no-repeat,
       #121212;
   }
   .a-escritorio h1, .a-escritorio > p, .a-escritorio li { text-shadow: 0 2px 14px rgba(0, 0, 0, .55); }
   .a-escritorio-qr { background: rgba(18, 18, 18, .55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 }
 .a-escritorio-marca { display: flex; gap: 14px; align-items: center; }
-.a-escritorio-marca img { border-radius: 14px; }
+.a-escritorio-marca .a-marca-ico { border-radius: 14px; flex: none; }
+.a-escritorio > .a-escritorio-propuesta { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 4px; padding: 12px 14px; border-radius: 16px; background: rgba(255, 193, 7, .14); border: 1px solid rgba(255, 193, 7, .5); color: #FFE7A3; font-size: 13.5px; line-height: 1.45; font-weight: 600; }
+.a-escritorio > .a-escritorio-propuesta svg { flex: none; color: var(--a-ambar); margin-top: 1px; }
 .a-escritorio-marca strong { display: block; font: 800 22px/1.2 var(--a-ft); }
 .a-escritorio-marca span { color: rgba(255, 255, 255, .7); font-size: 14px; }
 .a-escritorio h1 { font: 800 44px/1.08 var(--a-ft); letter-spacing: -.03em; margin: 10px 0 0; }
@@ -389,7 +395,7 @@ html[data-vitrina="1"] .a-escritorio { display: none !important; }
 .a-menu-sep { height: 1px; background: var(--a-gris-2); margin: 8px 12px; }
 .a-menu-pie { margin-top: auto; padding: 16px 20px calc(18px + var(--a-inf)); border-top: 1px solid var(--a-gris-2); display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: var(--a-texto-2); }
 .a-menu-pie-marca { display: flex; gap: 10px; align-items: center; }
-.a-menu-pie-marca img { border-radius: 9px; }
+.a-menu-pie-marca .a-marca-ico { border-radius: 9px; flex: none; }
 .a-menu-pie-marca strong { display: block; color: var(--a-tinta); font: 700 14px var(--a-ft); }
 .a-menu-pie-estado { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .a-menu-pie-estado > span:last-child { display: inline-flex; align-items: center; gap: 6px; }
@@ -483,11 +489,17 @@ html[data-vitrina="1"] .a-escritorio { display: none !important; }
 .a-sala { display: flex; gap: 8px; align-items: flex-end; }
 .a-sala .a-campo { flex: 1; }
 .a-instalar { display: flex; gap: 12px; align-items: center; background: #fff; border-radius: 20px; padding: 14px; }
-.a-instalar img { border-radius: 14px; flex: none; }
+.a-instalar .a-marca-ico { border-radius: 14px; flex: none; }
 .a-instalar > span { flex: 1; min-width: 0; }
 .a-instalar strong { display: block; font: 700 15px/1.3 var(--a-ft); }
 .a-instalar small { font-size: 12.5px; color: var(--a-texto-2); }
 .a-version { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.a-acerca-caja { display: flex; gap: 12px; align-items: center; background: #fff; border-radius: 20px; padding: 14px; margin-bottom: 10px; }
+.a-acerca-caja .a-marca-ico { border-radius: 13px; flex: none; }
+.a-acerca-caja > span { flex: 1; min-width: 0; }
+.a-acerca-caja strong { display: block; font: 700 15px/1.3 var(--a-ft); }
+.a-acerca-caja small { display: block; font-size: 12.5px; color: var(--a-texto-2); line-height: 1.4; }
+.a-acerca .a-version b { color: var(--a-tinta); }
 .a-lista-avisos { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
 .a-aviso-item { display: flex; gap: 12px; align-items: flex-start; background: #fff; padding: 12px 14px; border-radius: 16px; }
 .a-aviso-item > span:nth-child(2) { flex: 1; min-width: 0; }
@@ -521,6 +533,10 @@ html[data-vitrina="1"] .a-escritorio { display: none !important; }
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
 }
 .a-chip-red b { color: var(--a-ambar); font-weight: 800; letter-spacing: .05em; padding-left: 7px; border-left: 1px solid rgba(255, 255, 255, .28); }
+/* Propuestas: «Demostración para …» en una segunda línea del chip (no tapa nada más). */
+.a-chip-red.a-chip-red-demo { flex-wrap: wrap; row-gap: 4px; max-width: calc(100% - 32px); border-radius: 14px; }
+.a-chip-red .a-chip-demo { flex-basis: 100%; padding-left: 15px; font: 700 10.5px/1.2 var(--a-fb); color: rgba(255, 255, 255, .8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.a-chip-demo-claro { display: inline-flex; align-items: center; padding: 4px 9px; border-radius: 999px; background: var(--a-marca-claro); color: var(--a-marca); font: 800 11px/1.2 var(--a-fb); }
 .a-app[data-vista="llego"] .a-chip-red,
 .a-app[data-hoja="completa"] .a-chip-red { opacity: 0; pointer-events: none; }
 .a-btn-ubicacion { right: 14px; bottom: calc(var(--hoja-alto, 300px) + 14px); }
@@ -555,7 +571,7 @@ html[data-vitrina="1"] .a-escritorio { display: none !important; }
 .a-etiqueta[aria-pressed="true"] { background: var(--a-tinta); color: #fff; border-color: var(--a-tinta); }
 .a-calificar .a-campo { width: 100%; text-align: left; }
 .a-marca { display: flex; align-items: center; gap: 10px; }
-.a-marca img { border-radius: 11px; box-shadow: 0 4px 10px rgba(0, 0, 0, .15); }
+.a-marca .a-marca-ico { border-radius: 11px; box-shadow: 0 4px 10px rgba(0, 0, 0, .15); flex: none; }
 .a-marca strong { display: block; font: 800 16px/1.15 var(--a-ft); }
 .a-marca small { display: block; font-size: 11.5px; font-weight: 700; color: rgba(18, 18, 18, .72); }
 .a-sub { margin: 0; color: var(--a-texto-2); line-height: 1.45; }
@@ -597,3 +613,10 @@ html[data-vitrina="1"] .a-escritorio { display: none !important; }
 
 /* Cobro con QR Bre-B de prueba (tarjeta del núcleo) */
 .a-cobro-breb { margin: 14px auto 10px; max-width: 300px; }
+
+/* Sin los datos de la cooperativa (la ficha no cargó): aviso con «Reintentar». */
+.a-sin-ficha { min-height: 100vh; min-height: 100dvh; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 32px 28px; background: #fff; color: var(--a-tinta); text-align: center; font-family: var(--a-fb); }
+.a-sin-ficha svg { color: var(--a-ambar-oscuro, #B26A00); }
+.a-sin-ficha h1 { margin: 0; font: 800 24px/1.2 var(--a-ft); }
+.a-sin-ficha p { margin: 0 0 8px; max-width: 320px; color: rgba(18, 18, 18, .72); font-size: 16px; line-height: 1.5; }
+.a-sin-ficha .a-btn { max-width: 320px; }

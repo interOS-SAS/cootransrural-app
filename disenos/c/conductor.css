@@ -42,6 +42,7 @@
 @keyframes c-zona-pulso { 50% { fill-opacity: .2; stroke-opacity: 1; } }
 .c-app .c-zona-etiqueta { background: none; border: 0; }
 .c-app .c-zona-etiqueta span { display: inline-grid; transform: translate(-50%, calc(-100% - 26px)); white-space: nowrap; text-align: center; padding: 5px 10px; border-radius: 12px; font: 700 12px/1.15 var(--c-fuente); color: #fff; background: rgba(7, 9, 13, .72); box-shadow: inset 0 0 0 1px var(--zona), 0 0 16px color-mix(in srgb, var(--zona) 45%, transparent); }
+.c-app .c-zona-etiqueta-abajo span { transform: translate(-50%, 30px); }
 .c-app .c-zona-etiqueta b { font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--zona); }
 .c-app:not([data-vista="tab-tablero"]) .c-zona-etiqueta { display: none; }
 /* Durante el viaje las zonas de demanda estorban: se ocultan */
@@ -50,6 +51,9 @@
 /* ---------------- Tablero ---------------- */
 .c-demanda { position: absolute; z-index: 11; left: 14px; top: calc(var(--c-seg-arriba) + 88px); display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: 999px; font-size: 13px; color: var(--c-texto-2); box-shadow: 0 8px 24px rgba(0, 0, 0, .4) !important; }
 .c-demanda strong { color: var(--c-texto); }
+.c-demanda { max-width: calc(100% - 28px); }
+.c-demanda-punto { flex: none; }
+.c-demanda-texto { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .c-demanda { transition: opacity .25s ease; }
 .c-con-solicitud .c-demanda { opacity: 0; }
 .c-demanda-punto { width: 8px; height: 8px; border-radius: 50%; background: var(--c-magenta); box-shadow: 0 0 10px var(--c-magenta); animation: c-parpadeo 1.4s ease-in-out infinite; }
@@ -138,6 +142,7 @@
 .c-panel-cobro { max-height: calc(100% - var(--c-seg-arriba) - 110px); }
 .c-panel-cobro > .c-desplazable { justify-items: center; text-align: center; gap: 12px; }
 .c-cobro-cabeza { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; font-size: 14px; }
+.c-cobro-cabeza { flex-wrap: wrap; row-gap: 8px; }
 .c-qr-neon {
   width: min(232px, 64%); padding: 14px; border-radius: 26px; background: #fff;
   box-shadow: 0 0 0 3px rgba(34, 211, 238, .7), 0 0 40px rgba(34, 211, 238, .55), 0 0 90px rgba(255, 77, 157, .3);
@@ -181,6 +186,7 @@
 .c-capa-ingreso { position: absolute; inset: 0; z-index: 40; overflow-y: auto; overscroll-behavior: contain; background: radial-gradient(80% 45% at 50% 18%, rgba(255, 77, 157, .14), transparent 70%), radial-gradient(70% 40% at 0% 70%, rgba(34, 211, 238, .12), transparent 70%), var(--c-fondo); }
 .c-ingreso { min-height: 100%; display: flex; flex-direction: column; padding-bottom: calc(var(--c-seg-abajo) + 12px); }
 .c-ingreso-arte { position: relative; height: 252px; flex: none; margin-top: calc(var(--c-seg-arriba) + 6px); }
+.c-con-franja .c-ingreso-arte { margin-top: 4px; height: 232px; }
 .c-ingreso-tablero { position: absolute; left: 50%; top: 4px; transform: translateX(-50%); opacity: .9; }
 .c-ingreso-tablero .c-anillo-valor { animation: c-ingreso-anillo 2.4s cubic-bezier(.4, .1, .2, 1) both; }
 @keyframes c-ingreso-anillo { from { stroke-dashoffset: 700; } }
@@ -252,6 +258,7 @@
   .c-qr-neon { width: min(200px, 56%); }
   .c-total-cobro { font-size: 38px; }
   .c-ingreso-arte { height: 200px; }
+  .c-con-franja .c-ingreso-arte { height: 190px; }
   .c-ingreso-tablero .c-anillo { --tam: 180px !important; }
 }
 @media (max-width: 370px) {

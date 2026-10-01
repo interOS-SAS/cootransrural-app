@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es-CO">
+<html lang="es-CO" data-icono="../img/icono-192.png">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -17,7 +17,10 @@
   <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
   <link rel="preload" href="../fuentes/sora-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
-  <link rel="stylesheet" href="../web/paginas.css?v=b1a3c9a75f">
+  <link rel="stylesheet" href="../web/paginas.css?v=0c6f16149a">
+  <style>:root{--verde:#0A5C33;--verde-2:#0B6B3A;--verde-3:#13874B;--verde-osc:#052A17;--verde-tinte:#E6F2EA;--verde-tinte-2:#EAF3EC;--verde-tinte-3:#E3EFE6;--verde-linea:#D5E6DA;--exito-tinte:#E8F7EE;--b-claro:#A7D7B8;--fondo-oscuro:#0B1A12;--noche-1:#10241A;--noche-2:#04110A;--fondo-vitrina:#07140D;--amarillo:#FFC107;--amarillo-2:#FFD54F;--amarillo-osc:#C99400;--amarillo-texto:#926A00;--rojo:#D32F2F;--amarillo-vivo:#FFC107;--velo:#031E10;--velo-2:#042615;--velo-3:#031A0E;--noche:#030E09;--verde-rgb:10, 92, 51;--verde-3-rgb:19, 135, 75;--verde-osc-rgb:5, 42, 23;--amarillo-rgb:255, 193, 7;--velo-rgb:3, 30, 16;--velo-2-rgb:4, 38, 21;--velo-3-rgb:3, 26, 14;--noche-rgb:3, 14, 9;--rojo-rgb:211, 47, 47}</style>
+  <!-- Cooperativa de esta página: el núcleo carga su ficha (empresas/cootransrural/ficha.json). -->
+  <script>window.CT_EMPRESA = 'cootransrural';</script>
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -37,6 +40,7 @@
       <img src="../img/icono-192.png" alt="Cootransrural" width="92" height="92">
       <h1>Bienvenido a Cootransrural</h1>
       <p>Más que transporte, confianza</p>
+
       <p class="chip-movil" id="chip-movil" hidden><span>Escaneaste el sticker del móvil</span><b id="numero-movil">000</b></p>
     </header>
 
@@ -81,12 +85,14 @@
     <footer class="pie-simple">
       <p>Central 24 horas: <a href="tel:+573209042977">320 904 2977</a></p>
       <p><a href="../">Página de la cooperativa</a> · <a href="../privacidad/">Privacidad</a></p>
+      <p class="interos">Desarrollado por <a href="https://interos.com.co" target="_blank" rel="noopener">interOS</a></p>
     </footer>
   </main>
 
   <script type="module">
     // Solo se cargan los módulos necesarios (página ligera para datos móviles).
     import { instalar, instruccionesInstalacion, registrarServiceWorker, yaInstalada, esIOS } from '../nucleo/pwa.js';
+    import { EMPRESA } from '../nucleo/config.js';
 
     const parametros = new URLSearchParams(location.search);
     const crudo = (parametros.get('movil') || '').replace(/\D/g, '').slice(0, 3);
@@ -97,7 +103,7 @@
     if (movil) {
       document.getElementById('numero-movil').textContent = movil;
       document.getElementById('chip-movil').hidden = false;
-      document.title = `Móvil ${movil} · Cootransrural`;
+      document.title = `Móvil ${movil} · ${EMPRESA.nombre}`;
     }
 
     const botonInstalar = document.getElementById('instalar');
@@ -115,7 +121,7 @@
         const r = await instalar();
         if (r === 'aceptada') {
           resultado.hidden = false;
-          resultado.textContent = '¡Listo! Ya tienes Cootransrural en tu pantalla de inicio.';
+          resultado.textContent = `¡Listo! Ya tienes ${EMPRESA.nombre} en tu pantalla de inicio.`;
           botonInstalar.hidden = true;
         } else if (r === 'rechazada') {
           resultado.hidden = false;

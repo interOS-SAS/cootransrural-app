@@ -1,12 +1,19 @@
 // Ilustraciones propias (SVG) del diseño A: bienvenida, estados vacíos y
 // tarjeta de fidelidad. Sin fotos: todo vectorial, liviano y nítido.
 import * as N from '../../nucleo/index.js';
+import * as EM from './empresa.js';
+
+const esc = (t) => N.escaparHTML(t ?? '');
+// Detalles de la cooperativa en los dibujos: color de marca, placa y conductor de ejemplo.
+const MARCA = EM.COLORES.marca;
+const CONDUCTOR_EJEMPLO = (N.CONDUCTORES_DEMO || [])[0]?.nombre || 'Conductor';
+const PLACA_EJEMPLO = `${String(N.EMPRESA?.placaPrefijo || 'TAX').slice(0, 3).toUpperCase()}·623`;
 
 let serie = 0;
 const id = (b) => `${b}${++serie}`;
 
 // Kia Picanto amarillo visto de lado (mirando a la derecha).
-export function taxiLateral({ ancho = 220, movil = '023' } = {}) {
+export function taxiLateral({ ancho = 220, movil = EM.MOVIL_DEMO } = {}) {
   const c = id('cq');
   return `<svg viewBox="0 0 220 112" width="${ancho}" height="${(ancho * 112) / 220}" aria-hidden="true">
   <defs>
@@ -33,7 +40,7 @@ export function taxiLateral({ ancho = 220, movil = '023' } = {}) {
 // 1) Pide con tu ubicación exacta.
 export function ilustracionUbicacion() {
   const r = id('rec');
-  return `<svg class="a-ilus" viewBox="0 0 320 250" role="img" aria-label="Mapa de El Rosal con tu punto de recogida y un taxi en camino">
+  return `<svg class="a-ilus" viewBox="0 0 320 250" role="img" aria-label="${esc(`Mapa de ${EM.PUEBLO} con tu punto de recogida y un taxi en camino`)}">
   <defs><clipPath id="${r}"><rect x="34" y="26" width="252" height="184" rx="28"/></clipPath></defs>
   <g transform="rotate(-5 160 118)">
     <rect x="38" y="34" width="252" height="184" rx="28" fill="#121212" opacity=".12"/>
@@ -76,12 +83,12 @@ export function ilustracionSeguridad() {
   <rect x="140" y="28" width="44" height="7" rx="3.5" fill="#121212"/>
   <rect x="112" y="46" width="100" height="56" rx="14" fill="#F4F5F7"/>
   <circle cx="132" cy="66" r="12" fill="#FFC107"/>
-  <text x="132" y="70" font-family="Sora, Arial, sans-serif" font-size="10" font-weight="800" fill="#121212" text-anchor="middle">CR</text>
+  <text x="132" y="70" font-family="Sora, Arial, sans-serif" font-size="10" font-weight="800" fill="#121212" text-anchor="middle">${esc(N.iniciales(CONDUCTOR_EJEMPLO) || 'TX')}</text>
   <rect x="150" y="58" width="48" height="6" rx="3" fill="#121212"/>
   <text x="150" y="80" font-family="Arial, sans-serif" font-size="9" fill="#E0A100">★★★★★</text>
   <rect x="120" y="86" width="44" height="12" rx="3" fill="#121212"/>
   <rect x="121.5" y="87.5" width="41" height="9" rx="2" fill="#FFC107"/>
-  <text x="142" y="95" font-family="Sora, Arial, sans-serif" font-size="7" font-weight="800" fill="#121212" text-anchor="middle">VAK·623</text>
+  <text x="142" y="95" font-family="Sora, Arial, sans-serif" font-size="7" font-weight="800" fill="#121212" text-anchor="middle">${esc(PLACA_EJEMPLO)}</text>
   <text x="162" y="122" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="8" font-weight="700" fill="#555B66" text-anchor="middle">CÓDIGO DE ABORDAJE</text>
   ${['4', '8', '2', '1'].map((d, i) => `<rect x="${118 + i * 23}" y="130" width="19" height="25" rx="6" fill="#FFF4CC" stroke="#FFB300" stroke-width="1.5"/><text x="${127.5 + i * 23}" y="148" font-family="Sora, Arial, sans-serif" font-size="13" font-weight="800" fill="#121212" text-anchor="middle">${d}</text>`).join('')}
   <rect x="112" y="168" width="100" height="26" rx="13" fill="#FFC107"/>
@@ -97,7 +104,7 @@ export function ilustracionSeguridad() {
     <text x="40" y="32" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="9" font-weight="800" fill="#121212">en la puerta</text>
   </g></g>
   <g transform="translate(236 118)"><g class="a-ilus-escudo">
-    <path d="M34 0 6 11v21c0 18 12 32 28 38 16-6 28-20 28-38V11z" fill="#0A5C33"/>
+    <path d="M34 0 6 11v21c0 18 12 32 28 38 16-6 28-20 28-38V11z" fill="${MARCA}"/>
     <path d="m21 35 9 9 17-18" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
   </g></g>
   <g transform="translate(232 40)"><circle cx="22" cy="22" r="22" fill="#fff"/><text x="22" y="29" font-family="Sora, Arial, sans-serif" font-size="18" font-weight="800" fill="#121212" text-anchor="middle">4,9</text></g>
@@ -107,7 +114,7 @@ export function ilustracionSeguridad() {
 
 // 3) Paga con QR o en efectivo y gana descuentos.
 export function ilustracionPago() {
-  const qr = N.qrSVG('https://cootransrural.com', { redondeado: true, color: '#121212', margen: 1 }).replace('<svg ', '<svg x="110" y="52" width="100" height="100" ');
+  const qr = N.qrSVG(N.urlDescarga({ origen: 'bienvenida' }), { redondeado: true, color: '#121212', margen: 1 }).replace('<svg ', '<svg x="110" y="52" width="100" height="100" ');
   return `<svg class="a-ilus" viewBox="0 0 320 250" role="img" aria-label="Código QR de cobro, monedas y descuentos de 50 % y 10 %">
   <g transform="rotate(4 160 120)">
     <rect x="94" y="30" width="132" height="182" rx="24" fill="#121212" opacity=".12" transform="translate(5 7)"/>
@@ -126,7 +133,7 @@ export function ilustracionPago() {
     <text x="18" y="23.5" font-family="Sora, Arial, sans-serif" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">$</text>
   </g></g>
   <g transform="translate(222 18) rotate(10 42 42)"><g class="a-ilus-sello">
-    <path d="M42 0l9 9 12-3 3 12 12 3-3 12 9 9-9 9 3 12-12 3-3 12-12-3-9 9-9-9-12 3-3-12-12-3 3-12-9-9 9-9-3-12 12-3 3-12 12 3z" fill="#0A5C33"/>
+    <path d="M42 0l9 9 12-3 3 12 12 3-3 12 9 9-9 9 3 12-12 3-3 12-12-3-9 9-9-9-12 3-3-12-12-3 3-12-9-9 9-9-3-12 12-3 3-12 12 3z" fill="${MARCA}"/>
     <text x="42" y="44" font-family="Sora, Arial, sans-serif" font-size="19" font-weight="800" fill="#fff" text-anchor="middle">50 %</text>
     <text x="42" y="58" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFE082" text-anchor="middle">VIAJE 11</text>
   </g></g>

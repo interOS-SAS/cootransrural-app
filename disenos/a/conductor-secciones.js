@@ -2,7 +2,8 @@
 // Ajustes y la lista de avisos.
 import { el, esc, icono, abrirPanel, chipPrueba, decimal, placa, franjaCuadros } from './ui.js';
 import { ilustracionVacia, taxiLateral } from './ilustraciones.js';
-import { bloqueDiseno, bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar } from './ajustes-comunes.js';
+import { bloqueDiseno, bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca } from './ajustes-comunes.js';
+import * as EM from './empresa.js';
 
 // Colores validados para las dos categorías (QR / efectivo) sobre fondo claro.
 const COLOR_QR = '#1E7B4A';
@@ -161,7 +162,7 @@ export function abrirMiTaxi({ N, app }) {
           <div class="a-mi-taxi-arte">${taxiLateral({ ancho: 250, movil: yo.movil })}</div>
           ${placa(yo.placa)}
           <h3>${esc(yo.nombre)}</h3>
-          <p>${icono('estrella', { tam: 15 })} ${decimal(yo.calificacion)} · ${Number(yo.viajes || 0).toLocaleString('es-CO')} viajes · asociado desde ${esc(yo.desde)}</p>
+          <p>${icono('estrella', { tam: 15 })} ${esc(EM.unir([decimal(yo.calificacion), `${Number(yo.viajes || 0).toLocaleString('es-CO')} viajes`, Number(yo.desde) > 1900 ? `asociado desde ${yo.desde}` : '']))}</p>
         </section>
         <div class="a-reglas">
           <div class="a-regla"><small>Móvil</small><strong>${esc(yo.movil)}</strong></div>
@@ -172,7 +173,7 @@ export function abrirMiTaxi({ N, app }) {
         <section class="a-grupo"><h3>Tu sticker con QR</h3>
           <div class="a-sticker">
             <div class="a-sticker-qr">${N.qrSVG(url, { redondeado: true })}</div>
-            <span><strong>Va en las dos puertas traseras</strong><small>Quien lo escanea descarga la app de Cootransrural y queda registrado que llegó por el móvil ${esc(yo.movil)}.</small></span>
+            <span><strong>Va en las dos puertas traseras</strong><small>${esc(`Quien lo escanea descarga la app de ${EM.NOMBRE} y queda registrado que llegó por el móvil ${yo.movil}.`)}</small></span>
           </div>
         </section>`;
     },
@@ -187,8 +188,8 @@ export function abrirAjustesConductor({ N, app, c, avisos, diseno }) {
       const valor = actual === true ? 'simulado' : actual === false ? 'real' : 'auto';
       const gps = el(`<section class="a-grupo"><h3>Ubicación del taxi</h3>
         <div class="a-tarjeta-lista"><div class="a-radios" role="radiogroup" aria-label="Fuente de la ubicación">
-          <label class="a-opcion"><input type="radio" name="a-gps" value="auto" ${valor === 'auto' ? 'checked' : ''}><span class="a-opcion-marca" aria-hidden="true"></span><span><strong>Automática</strong><small>GPS real si estás en la zona; si no, simulado en El Rosal.</small></span></label>
-          <label class="a-opcion"><input type="radio" name="a-gps" value="simulado" ${valor === 'simulado' ? 'checked' : ''}><span class="a-opcion-marca" aria-hidden="true"></span><span><strong>GPS simulado</strong><small>Para la demo: el taxi se mueve solo por las calles de El Rosal.</small></span></label>
+          <label class="a-opcion"><input type="radio" name="a-gps" value="auto" ${valor === 'auto' ? 'checked' : ''}><span class="a-opcion-marca" aria-hidden="true"></span><span><strong>Automática</strong><small>${esc(`GPS real si estás en la zona; si no, simulado en ${EM.PUEBLO}.`)}</small></span></label>
+          <label class="a-opcion"><input type="radio" name="a-gps" value="simulado" ${valor === 'simulado' ? 'checked' : ''}><span class="a-opcion-marca" aria-hidden="true"></span><span><strong>GPS simulado</strong><small>${esc(`Para la demo: el taxi se mueve solo por las calles de ${EM.PUEBLO}.`)}</small></span></label>
           <label class="a-opcion"><input type="radio" name="a-gps" value="real" ${valor === 'real' ? 'checked' : ''}><span class="a-opcion-marca" aria-hidden="true"></span><span><strong>GPS real</strong><small>Usa la ubicación del celular.</small></span></label>
         </div></div>
         <p class="a-ayuda-txt" data-gps-estado>Ahora: ${c?.estado.gpsReal ? 'GPS real' : 'GPS simulado'}.</p></section>`);
@@ -205,7 +206,7 @@ export function abrirAjustesConductor({ N, app, c, avisos, diseno }) {
         bloqueSala(N, app),
         bloqueDiseno(N, diseno),
         bloqueInstalar(N, app),
-        el(`<p class="a-ayuda-txt a-version">${chipPrueba('MODO PRUEBA')} App de conductores de ${esc(N.EMPRESA.razonSocial)}.</p>`),
+        bloqueAcerca(N, { que: 'App de conductores' }),
       );
     },
   });

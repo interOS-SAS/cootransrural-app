@@ -1,14 +1,26 @@
-// Generador de stickers QR imprimibles de Cootransrural.
+// Generador de stickers QR imprimibles, para cualquier cooperativa.
+// La página fija la cooperativa con window.CT_EMPRESA (o ?e=id) antes de
+// cargar este módulo; nombre, colores, teléfono y número de taxis salen de su
+// ficha (empresas/<id>/ficha.json).
 // Vista previa, descarga PNG (300 ppp) y SVG (vectorial), e impresión en hoja
 // carta o A4 con marcas de corte, todo en el tamaño real exacto.
 import * as N from '../nucleo/index.js';
-import { prepararFuentes, prepararImagenes, escenaASVG, escenaAPNG, escenaACanvas, fuentesIncrustadas, matrizQR } from './escena.js';
+import { prepararFuentes, prepararImagenes, escenaASVG, escenaAPNG, escenaACanvas, fuentesIncrustadas, matrizQR, IMAGENES } from './escena.js';
 import { ESTILOS, FORMATOS, crearEscena, medidaTexto } from './formatos.js';
 import { PAPELES, imponer, construirHojas, reglaPagina } from './impresion.js';
 
 const $ = (sel) => document.querySelector(sel);
-const CLAVE = 'ct.stickers';
+// Cada cooperativa recuerda sus opciones aparte (Cootransrural conserva la clave de siempre).
+const CLAVE = N.ID_EMPRESA === 'cootransrural' ? 'ct.stickers' : `ct.${N.ID_EMPRESA}.stickers`;
 const MAX_MOVILES = 999;
+// Nombre corto para archivos y ejemplos de dominio: «Coopmultrasub» → «coopmultrasub».
+const SLUG = String(N.EMPRESA.nombreCorto || N.EMPRESA.nombre || N.ID_EMPRESA)
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[^a-z0-9]/g, '') || N.ID_EMPRESA;
+const EJEMPLO_URL = `https://app.${SLUG}.com/descargar/`;
+// Taxis de la cooperativa; si no se sabe cuántos son, 30.
+const TAXIS = Number.isInteger(N.EMPRESA.taxis) && N.EMPRESA.taxis > 0 ? Math.min(N.EMPRESA.taxis, MAX_MOVILES) : 30;
 
 // ---------------------------------------------------------------------------
 // Estado (se recuerda en este navegador)
@@ -18,7 +30,7 @@ const PREDETERMINADO = {
   estilo: 'clasico',
   modo: 'rango',
   desde: 1,
-  hasta: N.EMPRESA.taxis || 52,
+  hasta: TAXIS,
   lista: '',
   imprimirMovil: true,
   urlBase: '',
@@ -91,7 +103,7 @@ function validarBase(texto) {
     if (!/^https?:$/.test(u.protocol)) throw new Error('protocolo');
     return { base: u, error: '' };
   } catch {
-    return { base: null, error: 'La URL debe empezar por https:// (por ejemplo https://app.cootransrural.com/descargar/). Mientras tanto se usa la de esta app.' };
+    return { base: null, error: `La URL debe empezar por https:// (por ejemplo ${EJEMPLO_URL}). Mientras tanto se usa la de esta app.` };
   }
 }
 
@@ -122,7 +134,7 @@ function movilActual() {
 function nombreArchivo(movil, extension) {
   const f = FORMATOS[estado.formato];
   const medida = `${f.ancho / 10}x${f.alto / 10}cm`.replace(/\./g, ',');
-  return `cootransrural-${f.id}-${medida}-${estado.estilo}${movil ? `-movil-${movil}` : '-generico'}.${extension}`;
+  return `${SLUG}-${f.id}-${medida}-${estado.estilo}${movil ? `-movil-${movil}` : '-generico'}.${extension}`;
 }
 
 function descargar(blob, nombre) {
@@ -156,7 +168,7 @@ async function generarSVG(movil = movilActual()) {
   const escena = escenaDe(movil);
   const fuentes = await fuentesIncrustadas(escena);
   const f = FORMATOS[estado.formato];
-  const svg = escenaASVG(escena, { incrustarFuentes: fuentes, imagenesEmbebidas: true, etiqueta: `Cootransrural · ${f.nombre} · ${medidaTexto(f)}${movil ? ` · Móvil ${movil}` : ''}` });
+  const svg = escenaASVG(escena, { incrustarFuentes: fuentes, imagenesEmbebidas: true, etiqueta: `${N.EMPRESA.nombre} · ${f.nombre} · ${medidaTexto(f)}${movil ? ` · Móvil ${movil}` : ''}` });
   return { svg: `<?xml version="1.0" encoding="UTF-8"?>\n${svg}\n`, url: escena.url, nombre: nombreArchivo(movil, 'svg') };
 }
 
@@ -210,6 +222,7 @@ function pintarFormatos() {
 function pintarEstilos() {
   const cont = $('#estilos');
   cont.innerHTML = '';
+  cont.dataset.cantidad = String(Object.keys(ESTILOS).length);
   for (const e of Object.values(ESTILOS)) {
     const b = document.createElement('button');
     b.type = 'button';
@@ -553,7 +566,14 @@ function enlazar() {
 }
 
 async function iniciar() {
+  $('#url-base').placeholder = EJEMPLO_URL;
   await Promise.all([prepararFuentes(), prepararImagenes()]);
+  // El ícono de la barra, con los colores de la cooperativa (como en los stickers).
+  const marca = $('#marca-icono');
+  if (marca && IMAGENES.icono) {
+    marca.src = IMAGENES.icono.url;
+    marca.style.visibility = '';
+  }
   pintarFormatos();
   pintarEstilos();
   enlazar();
@@ -562,7 +582,7 @@ async function iniciar() {
 }
 
 // Para las pruebas automáticas y para usar desde la consola.
-window.stickers = { estado, urlQR, generarPNG, generarSVG, prepararImpresion, leerMoviles, escenaDe, actualizar, matrizQR, FORMATOS, ESTILOS };
+window.stickers = { estado, urlQR, generarPNG, generarSVG, prepararImpresion, leerMoviles, escenaDe, actualizar, matrizQR, FORMATOS, ESTILOS, empresa: N.ID_EMPRESA, clave: CLAVE };
 
 iniciar().catch((e) => {
   console.error(e);

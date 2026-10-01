@@ -9,13 +9,43 @@ import { crearSeccionesConductor } from './conductor-secciones.js';
 const { icono, esc } = C;
 const AMARILLO = '#FFE14D';
 
-// Zonas de demanda decorativas (Parque Principal y Rotonda de El Rosal).
-const ZONAS = [
-  { nombre: 'Parque Principal', nivel: 'alta', lat: 4.85257, lng: -74.260592, radio: 280, color: '#FF4D9D' },
-  { nombre: 'Rotonda', nivel: 'media', lat: 4.851749, lng: -74.271537, radio: 300, color: '#FFE14D' },
-];
+// Zonas de demanda decorativas: el parque principal del municipio y otro punto
+// concurrido cercano (en El Rosal, la rotonda), tomados de la ficha.
+function zonasDemanda(N) {
+  const L = N.LUGARES || [];
+  const parque = L.find((l) => l.id === 'parque') || { nombre: 'Centro', ...N.CENTRO };
+  const cerca = (l) => {
+    const km = N.distanciaKm(parque, l);
+    return km >= 0.45 && km <= 1.6;
+  };
+  const otra = L.find((l) => l.id === 'rotonda') || L.find((l) => ['comercio', 'salud', 'centro', 'educacion', 'barrio', 'comida'].includes(l.cat) && String(l.nombre).length <= 18 && cerca(l));
+  // Nombres cortos para las etiquetas del mapa (p. ej. «Parque Principal Pedro
+  // Fernández Madrid» ocuparía media pantalla).
+  const corto = (l) => (l.id === 'rotonda' ? 'Rotonda' : l.id === 'parque' && String(l.nombre).length > 20 ? 'Parque Principal' : l.nombre);
+  const zonas = [
+    { nombre: corto(parque), nivel: 'alta', lat: parque.lat, lng: parque.lng, radio: 280, color: '#FF4D9D' },
+    otra ? { nombre: corto(otra), nivel: 'media', lat: otra.lat, lng: otra.lng, radio: 300, color: '#FFE14D' } : null,
+  ].filter(Boolean);
+  // Las etiquetas van encima de cada zona. Si las dos zonas quedan casi una
+  // sobre otra (menos de 1 km de lado a lado), la etiqueta de la que está más
+  // al sur pasa debajo para que no se tapen (en El Rosal no cambia nada).
+  if (zonas.length === 2) {
+    const [a, b] = zonas;
+    const dx = Math.abs(a.lng - b.lng) * 111.32 * Math.cos((a.lat * Math.PI) / 180);
+    if (dx < 1) (a.lat < b.lat ? a : b).abajo = true;
+  }
+  return zonas;
+}
 
 export async function montar(raiz, { N, vitrina = false } = {}) {
+  // Datos de la cooperativa activa para las piezas comunes (marca, placa, lateral).
+  C.usarNucleo(N);
+  const E = C.empresa;
+  const ZONAS = zonasDemanda(N);
+  // Móvil de la demo: el 023 en Cootransrural; en las demás, el primer conductor de su ficha.
+  const maxMovil = E.taxis || 999;
+  const demos = N.CONDUCTORES_DEMO || [];
+  const MOVIL_DEMO = (demos.find((x) => x.movil === '023') || demos.find((x) => Number(x.movil) <= maxMovil) || { movil: '001' }).movil;
   raiz.innerHTML = C.escenaHTML({
     tipo: 'conductor',
     contenido: `<div class="c-app c-conductor" data-vista="carga">
@@ -59,7 +89,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
     const circulo = m.L.circle([z.lat, z.lng], { radius: z.radio, color: z.color, weight: 1.5, opacity: 0.8, fillColor: z.color, fillOpacity: 0.09, className: `c-zona c-zona-${z.nivel}`, interactive: false }).addTo(m.mapa);
     circulosZona.push(circulo);
     m.L.marker([z.lat, z.lng], {
-      icon: m.L.divIcon({ className: 'c-zona-etiqueta', html: `<span style="--zona:${z.color}">${esc(z.nombre)}<b>Demanda ${z.nivel}</b></span>`, iconSize: [0, 0] }),
+      icon: m.L.divIcon({ className: `c-zona-etiqueta${z.abajo ? ' c-zona-etiqueta-abajo' : ''}`, html: `<span style="--zona:${z.color}">${esc(z.nombre)}<b>Demanda ${z.nivel}</b></span>`, iconSize: [0, 0] }),
       interactive: false,
       keyboard: false,
     }).addTo(m.mapa);
@@ -73,7 +103,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
     sub: null,
     llegada: false,
     calif: { estrellas: 0, etiquetas: new Set() },
-    meta: Number(localStorage.getItem('ct.c.meta')) || 150000,
+    meta: Number(localStorage.getItem(C.claveLocal('meta'))) || 150000,
     solicitudVista: null,
     rutaDibujada: null,
     simulando: false,
@@ -260,28 +290,29 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
   /* Ingreso (C1)                                                       */
   /* ------------------------------------------------------------------ */
   function pintarIngreso() {
-    capaIngreso.innerHTML = `<section class="c-ingreso">
+    capaIngreso.innerHTML = `<section class="c-ingreso${E.esPropuesta ? ' c-con-franja' : ''}">
+      ${C.franjaPropuestaHTML()}
       <div class="c-ingreso-arte" aria-hidden="true">
         <div class="c-ingreso-tablero">${C.anillo({ tam: 230, grosor: 10, id: 'c-anillo-ingreso', degradado: ['#FFE14D', '#FF4D9D'] })}</div>
-        <div class="c-ingreso-taxi">${C.ilustracionTaxi('ing', { movil: '023' })}</div>
+        <div class="c-ingreso-taxi">${C.ilustracionTaxi('ing', { movil: MOVIL_DEMO })}</div>
       </div>
       <div class="c-ingreso-texto c-entrar">
-        <span class="c-marca"><img src="../img/icono.svg" alt="" width="34" height="34">Cootransrural <span class="c-etiqueta c-etiqueta-amarilla">Conductores</span></span>
+        ${C.marcaHTML({ etiqueta: 'Conductores', clase: 'c-etiqueta-amarilla', id: 'ing' })}
         <h1>Tu cabina de <em>trabajo</em>.</h1>
         <p class="c-muted">Recibe servicios cerca, navega hasta el pasajero y cobra con QR.</p>
       </div>
       <form class="c-ingreso-form c-vidrio c-entrar" novalidate>
         <label class="c-campo-etiqueta">Número de móvil
-          <span class="c-input-prefijo"><span>${icono('taxi')}</span><input class="c-input" id="c-movil" inputmode="numeric" maxlength="3" autocomplete="username" placeholder="001 a 052" required></span>
+          <span class="c-input-prefijo"><span>${icono('taxi')}</span><input class="c-input" id="c-movil" inputmode="numeric" maxlength="3" autocomplete="username" placeholder="${E.taxis ? `001 a ${String(E.taxis).padStart(3, '0')}` : `Ej.: ${MOVIL_DEMO}`}" required></span>
         </label>
         <label class="c-campo-etiqueta">PIN de 4 dígitos
           <span class="c-input-prefijo"><span>${icono('candado')}</span><input class="c-input c-input-pin" id="c-pin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" placeholder="••••" required></span>
         </label>
-        <p class="c-pista">${icono('info')}<span>Demo: móvil <strong>023</strong>, PIN <strong>1234</strong></span></p>
+        <p class="c-pista">${icono('info')}<span>Demo: móvil <strong>${esc(MOVIL_DEMO)}</strong>, PIN <strong>1234</strong></span></p>
         <p class="c-error" data-error hidden></p>
         <button type="submit" class="c-boton c-boton-grande c-boton-ancho">Ingresar ${icono('flecha')}</button>
       </form>
-      <a class="c-enlace c-ingreso-pasajero" href="../app/">${icono('perfil')} Soy pasajero</a>
+      <a class="c-enlace c-ingreso-pasajero" href="${esc(C.urlCooperativa('app/'))}">${icono('perfil')} Soy pasajero</a>
     </section>`;
     C.fijarAnillo(capaIngreso.querySelector('.c-anillo'), 0.68);
     const form = capaIngreso.querySelector('form');
@@ -296,7 +327,8 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
         error.hidden = false;
         error.innerHTML = `${icono('alerta')}<span>${esc(t)}</span>`;
       };
-      if (!movil.value || !Number.isInteger(n) || n < 1 || n > N.EMPRESA.taxis) return mostrar(`El número de móvil va del 001 al ${String(N.EMPRESA.taxis).padStart(3, '0')}.`);
+      // Si la ficha no trae cuántos taxis hay, se acepta cualquier móvil de 001 a 999.
+      if (!movil.value || !Number.isInteger(n) || n < 1 || n > maxMovil) return mostrar(`El número de móvil va del 001 al ${String(maxMovil).padStart(3, '0')}.`);
       if (!/^\d{4}$/.test(pin.value)) return mostrar('El PIN tiene 4 dígitos.');
       const cd = N.perfil.ingresarConductor({ movil: String(n).padStart(3, '0'), pin: pin.value });
       avisar({ titulo: `¡Hola, ${N.primerNombre(cd.nombre)}!`, cuerpo: `Móvil ${cd.movil} · ${cd.placa}. Conéctate para recibir servicios.`, tipo: 'exito' });
@@ -369,7 +401,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
     ];
     if (contacto) {
       items.push(`<a class="c-accion" href="tel:${esc(contacto)}">${icono('telefono')}<span>Llamar</span></a>`);
-      items.push(`<a class="c-accion" href="${esc(N.enlaceWhatsApp(contacto, `Hola, soy ${N.primerNombre(yo().nombre || '')}, tu conductor de Cootransrural (móvil ${yo().movil}).`))}" target="_blank" rel="noopener">${icono('chat')}<span>WhatsApp</span></a>`);
+      items.push(`<a class="c-accion" href="${esc(N.enlaceWhatsApp(contacto, `Hola, soy ${N.primerNombre(yo().nombre || '')}, tu conductor de ${E.nombre} (móvil ${yo().movil}).`))}" target="_blank" rel="noopener">${icono('chat')}<span>WhatsApp</span></a>`);
     }
     return `<div class="c-acciones-viaje${items.length === 2 ? ' c-acciones-dos' : ''}">${items.join('')}</div>`;
   }
@@ -404,7 +436,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
       html() {
         return {
           cabeza: hudBarra(),
-          cuerpo: `<div class="c-demanda c-vidrio" aria-hidden="true"><span class="c-demanda-punto"></span>Alta demanda: <strong>Parque Principal</strong> · Rotonda</div>
+          cuerpo: `<div class="c-demanda c-vidrio" aria-hidden="true"><span class="c-demanda-punto"></span><span class="c-demanda-texto">Alta demanda: <strong>${esc(ZONAS[0].nombre)}</strong>${ZONAS[1] ? ` · ${esc(ZONAS[1].nombre)}` : ''}</span></div>
           <section class="c-tablero c-vidrio c-entrar" aria-label="Tablero del día">
             <div class="c-tablero-fila">
               ${C.anillo({ tam: 150, grosor: 12, id: 'c-anillo-ganancias', degradado: ['#FFE14D', '#FF4D9D'], etiqueta: 'Ganancias del día contra la meta', contenido: `<small class="c-anillo-hoy">Hoy</small><strong class="c-anillo-valor-texto" data-ganado>$0</strong><span class="c-anillo-meta" data-meta>de ${N.pesos(ui.meta)}</span>` })}
@@ -427,11 +459,12 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
         m.quitarOrigen();
         m.quitarDestino();
         const pos = c.estado.pos || N.CENTRO;
-        // Se incluye el círculo completo de cada zona (y su etiqueta, arriba).
-        const bordes = circulosZona.flatMap((z) => {
+        // Se incluye el círculo completo de cada zona (y su etiqueta, arriba o abajo).
+        const bordes = circulosZona.flatMap((z, i) => {
           const b = z.getBounds();
           const alto = b.getNorth() - b.getSouth();
-          return [{ lat: b.getNorth() + alto * 0.35, lng: b.getWest() }, { lat: b.getSouth(), lng: b.getEast() }];
+          const abajo = ZONAS[i]?.abajo ? alto * 0.35 : 0;
+          return [{ lat: b.getNorth() + (abajo ? 0 : alto * 0.35), lng: b.getWest() }, { lat: b.getSouth() - abajo, lng: b.getEast() }];
         });
         encuadrar([pos, ...bordes], 16);
       },
@@ -610,7 +643,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
         return {
           cabeza: hudViaje('Cobro del viaje', { numeros: false }),
           cuerpo: `<section class="c-panel c-panel-cobro c-vidrio c-borde-neon c-entrar" aria-label="Cobro con QR"><div class="c-desplazable">
-            <div class="c-cobro-cabeza"><span class="c-etiqueta">Cobro de prueba</span><span class="c-muted">${esc(v.pasajero?.nombre || 'El pasajero')} prefiere <strong>${v.metodoPago === 'efectivo' ? 'efectivo' : 'QR'}</strong></span></div>
+            <div class="c-cobro-cabeza">${C.etiquetasPrueba('Cobro de prueba')}<span class="c-muted">${esc(v.pasajero?.nombre || 'El pasajero')} prefiere <strong>${v.metodoPago === 'efectivo' ? 'efectivo' : 'QR'}</strong></span></div>
             <div class="c-qr-breb" data-qr>${N.tarjetaBreB({ url: v.urlCobro, valor: v.valor, movil: c.perfil?.movil, compacta: true })}</div>
             <p class="c-cobro-ayuda">Muéstrale este QR Bre-B al pasajero para que lo escanee con su app o con la cámara.</p>
             <p class="c-esperando"><span class="c-girando"></span><span>Esperando el pago…</span></p>
@@ -785,6 +818,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
         if (!c.desconectar()) avisar({ titulo: 'Tienes un servicio en curso', cuerpo: 'Termínalo antes de desconectarte.', tipo: 'error' });
         else avisar({ titulo: 'Te desconectaste', cuerpo: 'No te llegarán solicitudes.', tipo: 'info' });
       } else {
+        // El permiso de notificaciones es del navegador (no de la cooperativa): clave común.
         if (!localStorage.getItem('ct.c.permisoConductor')) {
           localStorage.setItem('ct.c.permisoConductor', '1');
           N.pedirPermisoNotificaciones();

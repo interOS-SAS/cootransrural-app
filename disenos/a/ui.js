@@ -3,6 +3,7 @@
 // lateral, estrellas, placa, casillas de código y «deslizar para aceptar».
 // Las comparten la app del pasajero y la del conductor.
 import * as N from '../../nucleo/index.js';
+import * as EM from './empresa.js';
 
 export const esc = (t) => N.escaparHTML(t ?? '');
 export const $ = (raiz, sel) => raiz.querySelector(sel);
@@ -126,8 +127,8 @@ export function avatar(nombre = '', clase = '') {
   return `<span class="a-avatar ${clase}" aria-hidden="true">${esc(N.iniciales(nombre) || '·')}</span>`;
 }
 
-// Placa estilo colombiano: letras negras y el municipio abajo.
-export function placa(texto = '', municipio = 'EL ROSAL', clase = '') {
+// Placa estilo colombiano: letras negras y el municipio de la cooperativa abajo.
+export function placa(texto = '', municipio = EM.MUNICIPIO_PLACA, clase = '') {
   return `<span class="a-placa ${clase}" role="img" aria-label="Placa ${esc(texto)}"><b>${esc(String(texto).replace(' ', '·'))}</b><small>${esc(municipio)}</small></span>`;
 }
 
@@ -138,6 +139,11 @@ export function estrellasTexto(n) {
 
 export function chipPrueba(texto = 'PRUEBA') {
   return `<span class="a-chip-prueba">${esc(texto)}</span>`;
+}
+
+// En las propuestas (cooperativas que no son clientes), aviso discreto junto a «MODO PRUEBA».
+export function avisoDemo(clase = 'a-chip-demo') {
+  return EM.ES_PROPUESTA ? `<span class="${clase}">Demostración para ${esc(EM.NOMBRE_LARGO)}</span>` : '';
 }
 
 // Cuadros de colores tipo «tablero de taxi» (detalle de marca).
@@ -738,15 +744,17 @@ export function puntoVisible(m, p, { arriba = 90, abajo = 0, lados = 30 } = {}) 
 /* Panel de escritorio (fuera de la vitrina): QR para abrir en el celular */
 /* ------------------------------------------------------------------ */
 export function panelEscritorio({ titulo, texto, puntos = [], url = location.href }) {
+  const propuesta = EM.ES_PROPUESTA ? `<p class="a-escritorio-propuesta">${icono('info', { tam: 18 })}<span>${esc(EM.TEXTO_PROPUESTA)}</span></p>` : '';
   return el(`<aside class="a-escritorio" aria-label="Información de la demo">
-    <div class="a-escritorio-marca"><img src="../img/icono.svg" alt="" width="52" height="52"><div><strong>Cootransrural</strong><span>${esc(N.EMPRESA.lema)}</span></div></div>
+    ${propuesta}
+    <div class="a-escritorio-marca">${EM.marcaIcono(52)}<div><strong>${esc(EM.NOMBRE)}</strong>${EM.LEMA ? `<span>${esc(EM.LEMA)}</span>` : ''}</div></div>
     <h1>${titulo}</h1>
     <p>${esc(texto)}</p>
-    <ul>${puntos.map((p) => `<li>${icono('check', { tam: 18 })}<span>${esc(p)}</span></li>`).join('')}</ul>
+    <ul>${puntos.filter(Boolean).map((p) => `<li>${icono('check', { tam: 18 })}<span>${esc(p)}</span></li>`).join('')}</ul>
     <div class="a-escritorio-qr">
       <div class="a-escritorio-qr-img">${N.qrSVG(url, { redondeado: true, color: '#121212' })}</div>
       <div><strong>Ábrela en tu celular</strong><span>Escanea el código con la cámara.</span></div>
     </div>
-    <small>Demo · ${esc(N.EMPRESA.razonSocial)} · ${esc(N.EMPRESA.telefonoVisible)}</small>
+    <small>${esc(EM.unir(['Demo', EM.RAZON_SOCIAL, EM.TELEFONO_VISIBLE]))}<br>App desarrollada por ${esc(EM.PROVEEDOR)}</small>
   </aside>`);
 }

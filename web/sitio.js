@@ -1,9 +1,18 @@
-// Comportamiento de la página de inicio de Cootransrural: menú, animaciones al
-// hacer scroll, códigos QR, tabla de tarifas, cotizador, mapa de la oficina y
-// formulario «Programa tu servicio» (arma el mensaje de WhatsApp para la central).
+// Comportamiento de la página de inicio de cada cooperativa: menú, animaciones
+// al hacer scroll, códigos QR, tabla de tarifas, cotizador, mapa de la oficina,
+// formulario «Programa tu servicio» (arma el mensaje de WhatsApp para la central)
+// y calculadora de costos. La cooperativa la fija la página con
+// window.CT_EMPRESA; sus datos salen de la ficha que carga el núcleo.
 import * as N from '../nucleo/index.js';
 
 window.ctSitioListo = true;
+
+// Ícono de la cooperativa (ruta relativa a la página, la pone la plantilla).
+const ICONO = document.documentElement.dataset.icono || 'img/icono-192.png';
+const E = N.EMPRESA;
+// Oferta de servicio programado (de las tarifas de la ficha).
+const DESCUENTO = Math.round((N.TARIFAS.descuentoProgramado ?? 0.1) * 100);
+const HORAS = N.TARIFAS.horasAnticipacion ?? 24;
 
 const $ = (sel, raiz = document) => raiz.querySelector(sel);
 const $$ = (sel, raiz = document) => [...raiz.querySelectorAll(sel)];
@@ -20,6 +29,19 @@ function intentar(nombre, fn) {
 }
 
 /* ---------------- Barra superior y menú ---------------- */
+
+/* ---------------- Franja de propuesta ---------------- */
+
+// La franja fija de las propuestas puede ocupar una, dos o tres líneas: su alto
+// real corre la barra y el menú hacia abajo.
+function franjaPropuesta() {
+  const franja = $('#franja');
+  if (!franja) return;
+  const medir = () => document.documentElement.style.setProperty('--alto-franja', `${Math.ceil(franja.getBoundingClientRect().height)}px`);
+  medir();
+  if ('ResizeObserver' in window) new ResizeObserver(medir).observe(franja);
+  else window.addEventListener('resize', medir);
+}
 
 function barraSuperior() {
   const barra = $('#barra');
@@ -84,12 +106,15 @@ function contadores() {
       if (!e.isIntersecting) continue;
       observador.unobserve(e.target);
       const meta = Number(e.target.dataset.contar);
+      // Solo cambia el número: el sufijo («+», «h») va en un <small> aparte y se conserva.
+      const numero = [...e.target.childNodes].find((n) => n.nodeType === Node.TEXT_NODE)
+        || e.target.insertBefore(document.createTextNode(''), e.target.firstChild);
       const t0 = performance.now();
       const duracion = 1300;
       const paso = (t) => {
         const avance = Math.min(1, (t - t0) / duracion);
         const suave = 1 - (1 - avance) ** 3;
-        e.target.textContent = String(Math.round(meta * suave));
+        numero.textContent = String(Math.round(meta * suave));
         if (avance < 1) requestAnimationFrame(paso);
       };
       requestAnimationFrame(paso);
@@ -100,14 +125,32 @@ function contadores() {
 
 /* ---------------- Códigos QR ---------------- */
 
+// Color de los QR: el de la cooperativa si es bastante oscuro (los lectores
+// necesitan contraste); si no, su tono oscuro.
+function colorQR() {
+  const luz = (hex) => {
+    const m = /^#?([0-9a-f]{6})$/i.exec(hex || '');
+    if (!m) return 1;
+    const [r, g, b] = [0, 2, 4].map((i) => parseInt(m[1].slice(i, i + 2), 16) / 255)
+      .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const { primario, oscuro } = N.COLORES || {};
+  if (primario && luz(primario) < 0.18) return primario;
+  if (oscuro && luz(oscuro) < 0.18) return oscuro;
+  return '#0E1E16';
+}
+
 function codigosQR() {
   const urlDescarga = N.urlDescarga({ origen: 'web' });
   const caja = $('#qr-descarga');
   // Módulos cuadrados: el estilo redondeado no siempre lo lee jsQR (el lector de la app en iPhone).
-  caja.innerHTML = N.qrSVG(urlDescarga, { nivel: 'H', color: '#0A5C33', margen: 1 }) + '<img class="qr-logo" src="img/icono-192.png" alt="" width="48" height="48">';
+  caja.innerHTML = N.qrSVG(urlDescarga, { nivel: 'H', color: colorQR(), margen: 1 }) + `<img class="qr-logo" src="${ICONO}" alt="" width="48" height="48">`;
   const enlace = $('#qr-descarga-url');
   enlace.href = urlDescarga;
-  enlace.textContent = urlDescarga.replace(/^https?:\/\//, '').replace(/\?.*$/, '');
+  // La dirección completa solo en la cooperativa principal: en las demás, la del
+  // sitio de pruebas lleva el nombre del repositorio y confunde; queda el texto del enlace.
+  if (N.ID_EMPRESA === 'cootransrural') enlace.textContent = urlDescarga.replace(/^https?:\/\//, '').replace(/\?.*$/, '');
 
   // QR de cobro de muestra: si lo escaneas, abre la página de pago de prueba.
   const valor = 12000;
@@ -134,15 +177,20 @@ function horasTexto(h) {
 }
 
 function tarifas() {
-  const T = N.TARIFAS;
+  const T = N.TARIFAS || {};
   const urbanas = $('#urbanas');
-  urbanas.innerHTML = `
+  // Si la ficha no trae todas las tarifas, se deja lo que puso la plantilla (sin «NaN»).
+  const completas = ['minimaUrbana', 'banderazo', 'porKm', 'recargoNocturno', 'recargoDominical', 'nocheDesde', 'nocheHasta']
+    .every((k) => Number.isFinite(T[k]));
+  if (completas) urbanas.innerHTML = `
     <div class="urbana"><span>Carrera mínima</span><b>${N.pesos(T.minimaUrbana)}</b><small>Dentro del casco urbano</small></div>
     <div class="urbana"><span>Por recorrido</span><b>${N.pesos(T.banderazo)}</b><small>de arranque + ${N.pesos(T.porKm)} por km</small></div>
     <div class="urbana"><span>Recargo nocturno</span><b>+${N.pesos(T.recargoNocturno)}</b><small>De ${horasTexto(T.nocheDesde)} a ${horasTexto(T.nocheHasta)}</small></div>
     <div class="urbana"><span>Domingos y festivos</span><b>+${N.pesos(T.recargoDominical)}</b><small>Todo el día</small></div>`;
 
   const rutas = [...N.RUTAS].sort((a, b) => a.valor - b.valor || a.km - b.km);
+  // Sin rutas con tarifa fija en la ficha: no se muestra una tabla vacía.
+  if (!rutas.length) $('.tabla-caja')?.setAttribute('hidden', '');
   $('#tabla-rutas').innerHTML = rutas.map((r) => `
     <tr>
       <td><span class="destino"><svg class="icono"><use href="#i-pin"/></svg>${N.escaparHTML(r.destino)}</span></td>
@@ -156,7 +204,7 @@ function tarifas() {
   const programado = $('#cotizar-programado');
   const salida = $('#cotizacion');
   const lugares = new Map(N.LUGARES.map((l) => [l.id, l]));
-  select.innerHTML = '<option value="urbano">Dentro de El Rosal (carrera mínima)</option>' +
+  select.innerHTML = `<option value="urbano">Dentro de ${N.escaparHTML(E.pueblo)} (carrera mínima)</option>` +
     rutas.map((r) => `<option value="${r.id}">${N.escaparHTML(r.destino)}</option>`).join('');
   select.value = rutas.find((r) => r.id === 'aeropuerto') ? 'aeropuerto' : rutas[0]?.id || 'urbano';
 
@@ -165,6 +213,10 @@ function tarifas() {
     const destino = select.value === 'urbano' ? (lugares.get('alcaldia') || origen) : lugares.get(select.value);
     if (!destino) return;
     const t = N.calcularTarifa({ origen, destino, programado: programado.checked, km: select.value === 'urbano' ? 0.5 : undefined });
+    if (!Number.isFinite(t.total)) {
+      salida.textContent = 'La cooperativa está confirmando sus tarifas. Muy pronto podrás calcular tu viaje aquí.';
+      return;
+    }
     salida.innerHTML = `
       <div class="cotizacion-total"><span>Total estimado</span><b>${N.pesos(t.total)}</b></div>
       <ul>${t.detalle.map((d) => `<li class="${d.valor < 0 ? 'menos' : ''}"><span>${N.escaparHTML(d.concepto)}</span><span>${d.valor < 0 ? '−' + N.pesos(-d.valor) : N.pesos(d.valor)}</span></li>`).join('')}</ul>`;
@@ -178,7 +230,7 @@ function tarifas() {
     const normal = N.calcularTarifa({ origen, destino: aeropuerto, fecha });
     const con = N.calcularTarifa({ origen, destino: aeropuerto, fecha, programado: true });
     if (con.total < normal.total) {
-      ejemplo.innerHTML = `<span>Ejemplo: El Rosal → Aeropuerto</span><s>${N.pesos(normal.total)}</s><b>${N.pesos(con.total)}</b>`;
+      ejemplo.innerHTML = `<span>Ejemplo: ${N.escaparHTML(E.pueblo)} → Aeropuerto</span><s>${N.pesos(normal.total)}</s><b>${N.pesos(con.total)}</b>`;
       ejemplo.hidden = false;
     }
   }
@@ -192,7 +244,12 @@ function tarifas() {
 
 function mapaOficina() {
   const caja = $('#mapa-oficina');
-  const oficina = N.LUGARES.find((l) => l.id === 'oficina') || { lat: 4.855106, lng: -74.26222 };
+  if (!caja) return;
+  // La plantilla pone la ubicación (EMPRESA.oficina, el lugar «oficina» o el centro del pueblo).
+  const d = caja.dataset;
+  const oficina = Number(d.lat) && Number(d.lng) ? { lat: Number(d.lat), lng: Number(d.lng) } : (E.oficina || N.LUGARES.find((l) => l.id === 'oficina') || N.CENTRO);
+  const titulo = d.titulo || `Oficina ${E.nombre}`;
+  const direccion = d.direccion || '';
   let creado = false;
   const crear = async () => {
     if (creado) return;
@@ -205,9 +262,9 @@ function mapaOficina() {
       mapa.scrollWheelZoom.disable();
       if (matchMedia('(pointer: coarse)').matches) mapa.dragging.disable();
       L.marker([oficina.lat, oficina.lng], {
-        icon: L.divIcon({ className: 'ct-marcador', html: '<div class="pin-oficina"><img src="img/icono-192.png" alt=""></div>', iconSize: [52, 52], iconAnchor: [26, 56] }),
-        title: 'Oficina Cootransrural',
-      }).addTo(mapa).bindPopup('<b>Oficina Cootransrural</b><br>Carrera 8 No. 12-38, Barrio San Carlos');
+        icon: L.divIcon({ className: 'ct-marcador', html: `<div class="pin-oficina"><img src="${ICONO}" alt=""></div>`, iconSize: [52, 52], iconAnchor: [26, 56] }),
+        title: titulo,
+      }).addTo(mapa).bindPopup(`<b>${N.escaparHTML(titulo)}</b>${direccion ? `<br>${N.escaparHTML(direccion)}` : ''}`);
       setTimeout(() => m.refrescar(), 300);
     } catch (e) {
       console.warn('[web] mapa:', e.message);
@@ -232,6 +289,9 @@ function aFechaLocal(fecha) {
 
 function formulario() {
   const form = $('#formulario');
+  // Sin WhatsApp de la central, la plantilla muestra otra tarjeta (programar desde la app).
+  if (!form) return;
+  const whatsapp = form.dataset.whatsapp || E.whatsapp;
   const fecha = $('#f-fecha');
   const pista = $('#f-pista');
   const enviado = $('#f-enviado');
@@ -253,8 +313,8 @@ function formulario() {
   };
   const revisarDescuento = () => {
     const f = fecha.value ? new Date(fecha.value) : null;
-    if (f && !Number.isNaN(f.getTime()) && N.aplicaDescuentoProgramado(f)) textoPista('<b>¡Aplica el 10 % de descuento!</b> Lo programas con más de 24 horas de anticipación.', true);
-    else textoPista('Programa con 24 horas de anticipación y recibe 10 % de descuento.', false);
+    if (f && !Number.isNaN(f.getTime()) && N.aplicaDescuentoProgramado(f)) textoPista(`<b>¡Aplica el ${DESCUENTO} % de descuento!</b> Lo programas con más de ${HORAS} horas de anticipación.`, true);
+    else textoPista(`Programa con ${HORAS} horas de anticipación y recibe ${DESCUENTO} % de descuento.`, false);
   };
   fecha.addEventListener('input', revisarDescuento);
   revisarDescuento();
@@ -303,7 +363,7 @@ function formulario() {
     const cuando = new Date(datos.fecha);
     const descuento = N.aplicaDescuentoProgramado(cuando);
     const lineas = [
-      'Hola, Cootransrural. Quiero programar un servicio:',
+      `Hola, ${E.nombre}. Quiero programar un servicio:`,
       `• Nombre: ${datos.nombre.trim()}`,
       `• Teléfono: ${datos.telefono.trim()}`,
       `• Servicio: ${datos.servicio}`,
@@ -311,8 +371,8 @@ function formulario() {
       `• Destino: ${datos.destino.trim()}`,
       `• Fecha y hora: ${N.fechaTexto(cuando)}, ${N.horaTexto(cuando)}`,
     ];
-    if (descuento) lineas.push('', 'Lo estoy programando con 24 horas de anticipación (10 % de descuento).');
-    const url = N.enlaceWhatsApp(N.EMPRESA.whatsapp, lineas.join('\n'));
+    if (descuento) lineas.push('', `Lo estoy programando con ${HORAS} horas de anticipación (${DESCUENTO} % de descuento).`);
+    const url = N.enlaceWhatsApp(whatsapp, lineas.join('\n'));
     const ventana = window.open(url, '_blank');
     if (ventana) ventana.opener = null;
     enviado.hidden = false;
@@ -382,6 +442,7 @@ function calculadoraCostos() {
 
 /* ---------------- Arranque ---------------- */
 
+intentar('franja', franjaPropuesta);
 intentar('barra', barraSuperior);
 intentar('revelar', revelarAlVer);
 intentar('contadores', contadores);
