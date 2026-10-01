@@ -1,0 +1,19 @@
+{
+  "name": "Coptaxi — Pide tu taxi",
+  "short_name": "Coptaxi",
+  "description": "Pide tu taxi de Coptaxi en Facatativá con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0E8104",
+  "theme_color": "#0E8104",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/facatativa/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/facatativa/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/facatativa/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

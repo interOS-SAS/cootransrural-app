@@ -36,7 +36,7 @@
     <symbol id="i-celular" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
   </svg>
 
-{{#si es_propuesta}}  <p class="franja-pagina" role="note"><b>Propuesta de demostración</b> preparada por {{proveedor.nombre}} para {{franja_para}} · No es la página oficial de la cooperativa</p>
+{{#si es_propuesta}}  <p class="franja-pagina" role="note"><b>Propuesta de demostración</b> preparada por {{proveedor.nombre}} para {{franja_para}} · No es la página oficial de la {{tipo}}</p>
 {{/si}}  <main class="descarga">
     <header class="descarga-cabeza">
       <img src="{{RAIZ}}{{icono.i192}}" alt="{{EMPRESA.nombre}}" width="92" height="92">
@@ -78,7 +78,7 @@
       <section class="tarjeta">
         <a class="enlace-conductor" href="../conductor/">
           <span class="circulo"><svg class="icono"><use href="#i-volante"/></svg></span>
-          <span><b>¿Eres conductor de la cooperativa?</b><small>Abre la app del conductor</small></span>
+          <span><b>¿Eres conductor de la {{tipo}}?</b><small>Abre la app del conductor</small></span>
           <svg class="icono"><use href="#i-flecha"/></svg>
         </a>
       </section>
@@ -87,7 +87,7 @@
     <footer class="pie-simple">
 {{#si tiene_telefono}}      <p>{{#si EMPRESA.servicio24h}}Central 24 horas{{/si}}{{#no EMPRESA.servicio24h}}Central{{/no}}: <a href="tel:{{tel}}">{{tel_visible}}</a></p>
 {{/si}}{{#si pendiente.telefono}}      <p>Teléfono de la central: <i class="pronto">pronto</i></p>
-{{/si}}      <p><a href="../">Página de la cooperativa</a> · <a href="../privacidad/">Privacidad</a></p>
+{{/si}}      <p><a href="../">Página de la {{tipo}}</a> · <a href="../privacidad/">Privacidad</a></p>
       <p class="interos">Desarrollado por <a href="{{proveedor.web}}" target="_blank" rel="noopener">{{proveedor.nombre}}</a></p>
     </footer>
   </main>

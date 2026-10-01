@@ -306,6 +306,10 @@ def datos_de_empresa(base, ficha):
     ficha['estado'] = base.get('estado', 'propuesta')
     ficha['EMPRESA'] = base['EMPRESA']
     ficha['colores'] = base['colores']
+    # Tarifas propias de cooperativas.json (p. ej. la carrera mínima oficial): mandan
+    # sobre las de la ficha, también cuando los lugares ya fueron revisados a mano.
+    if base.get('tarifas'):
+        ficha['TARIFAS'] = dict(ficha.get('TARIFAS') or {}, **base['tarifas'])
     for campo in CAMPOS_BASE:
         if base.get(campo):
             ficha[campo] = base[campo]

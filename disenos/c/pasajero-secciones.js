@@ -140,7 +140,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
         ${fila('sub', 'tarifa', 'Tarifas y rutas', 'Valores de ejemplo y rutas fijas', 'data-sub="tarifas"')}
         ${fila('tab', 'regalo', 'Promociones y fidelidad', '10 % programando · cada 10 viajes, uno al 50 %', 'data-tab="billetera"')}
         ${fila('sub', 'ajustes', 'Ajustes', 'Diseño, sala, simulación, sonido, instalar', 'data-sub="ajustes"')}
-        ${fila('sub', 'ayuda', 'Ayuda y central', E.telefono ? `Llama o escribe al ${esc(E.telefonoVisible)}` : E.whatsapp ? 'Escríbenos por WhatsApp' : 'Preguntas frecuentes y datos de la cooperativa', 'data-sub="ayuda"')}
+        ${fila('sub', 'ayuda', 'Ayuda y central', E.telefono ? `Llama o escribe al ${esc(E.telefonoVisible)}` : E.whatsapp ? 'Escríbenos por WhatsApp' : `Preguntas frecuentes y datos de la ${E.tipo}`, 'data-sub="ayuda"')}
         <a class="c-fila-menu" href="${esc(C.urlCooperativa('conductor/'))}">${icono('volante')}<span><strong>Soy conductor</strong><small>Abrir la app de los conductores</small></span>${icono('chevron')}</a>
         <button type="button" class="c-fila-menu c-fila-peligro" data-accion="cerrar-sesion">${icono('salir')}<span><strong>Cerrar sesión</strong><small>Tu nombre y tu celular se borran de este equipo</small></span></button>
       </div>
@@ -152,7 +152,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
     const T = N.TARIFAS;
     return `<section class="c-pantalla c-pantalla-tarifas" aria-label="Tarifas y rutas">
       ${cabeza('Tarifas y rutas', 'Para que sepas cuánto pagas antes de subir', 'volver-perfil')}
-      <div class="c-aviso-ejemplo">${icono('info')}<span><strong>Valores de ejemplo.</strong> La cooperativa publicará las tarifas oficiales.</span></div>
+      <div class="c-aviso-ejemplo">${icono('info')}<span><strong>Valores de ejemplo.</strong> La ${E.tipo} publicará las tarifas oficiales.</span></div>
       <h2 class="c-seccion-titulo">${E.pueblo ? `Dentro de ${esc(E.pueblo)}` : 'Dentro del municipio'}</h2>
       <div class="c-reglas">
         <div class="c-regla"><small>Carrera mínima</small><strong>${N.pesos(T.minimaUrbana)}</strong></div>
@@ -243,7 +243,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
     const filas = [
       E.correo ? `<a class="c-fila-menu" href="mailto:${esc(E.correo)}">${icono('nota')}<span><strong>Correo</strong><small>${esc(E.correo)}</small></span>${icono('chevron')}</a>` : '',
       E.direccion && enlaceOficina ? `<a class="c-fila-menu" href="${esc(enlaceOficina)}" target="_blank" rel="noopener">${icono('pin')}<span><strong>Oficina</strong><small>${esc(E.direccion)}</small></span>${icono('chevron')}</a>` : '',
-      E.sitioOficial ? `<a class="c-fila-menu" href="${esc(E.sitioOficial)}" target="_blank" rel="noopener">${icono('info')}<span><strong>Página oficial de la cooperativa</strong><small>${esc(E.sitioOficial.replace(/^https?:\/\//, '').replace(/\/$/, ''))}</small></span>${icono('chevron')}</a>` : '',
+      E.sitioOficial ? `<a class="c-fila-menu" href="${esc(E.sitioOficial)}" target="_blank" rel="noopener">${icono('info')}<span><strong>Página oficial de la ${E.tipo}</strong><small>${esc(E.sitioOficial.replace(/^https?:\/\//, '').replace(/\/$/, ''))}</small></span>${icono('chevron')}</a>` : '',
     ].filter(Boolean);
     return `<section class="c-pantalla c-pantalla-ayuda" aria-label="Ayuda">
       ${cabeza('Ayuda', E.servicio24h ? 'Estamos contigo las 24 horas' : 'Estamos para ayudarte', 'volver-perfil')}

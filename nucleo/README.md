@@ -12,8 +12,9 @@ import * as N from '../../nucleo/index.js';
 
 Antes de cargar los módulos, la página fija `window.CT_EMPRESA = '<id>'` (o `?e=<id>`).
 `config.js` carga `empresas/<id>/ficha.json` y exporta `FICHA`, `ID_EMPRESA`,
-`EMPRESA`, `COLORES`, `CENTRO`, `ZONA`, `ES_PROPUESTA` (todo lo que no sea
-`estado: "cliente"`) y `PROVEEDOR`. `datos.js` toma de la ficha `LUGARES`,
+`EMPRESA`, `TIPO_EMPRESA` (`'cooperativa'` o `'empresa'`, de `EMPRESA.tipo`: los
+textos dicen «la ${TIPO_EMPRESA}»), `COLORES`, `CENTRO`, `ZONA`, `ES_PROPUESTA`
+(todo lo que no sea `estado: "cliente"`) y `PROVEEDOR`. `datos.js` toma de la ficha `LUGARES`,
 `RUTAS`, `TARIFAS` (completadas con valores de ejemplo) y `CONDUCTORES_DEMO`.
 Si la ficha no carga, el módulo falla (nunca muestra otra cooperativa) y la
 pantalla de carga avisa a los 15 s.

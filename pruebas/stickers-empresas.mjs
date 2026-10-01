@@ -153,14 +153,14 @@ for (const F of A_PROBAR) {
   ok(pag.desde === 1 && pag.hasta === taxis && pag.opciones === taxis, `móviles 001–${String(taxis).padStart(3, '0')} por defecto (${pag.opciones} en el selector)`);
   ok(pag.clave === (esPrincipal ? 'ct.stickers' : `ct.${id}.stickers`), `opciones guardadas aparte (${pag.clave})`);
   if (esPrincipal) ok(pag.estilos.join() === 'clasico,verde,neon', `estilos de siempre: ${pag.nombresEstilos.join(', ')}`);
-  else ok(pag.estilos.join() === 'clasico,cooperativa,verde,neon' && pag.nombresEstilos[1] === 'Color de la cooperativa', `4 estilos: ${pag.nombresEstilos.join(', ')}`);
+  else ok(pag.estilos.join() === 'clasico,cooperativa,verde,neon' && pag.nombresEstilos[1] === `Color de la ${E.tipo === 'empresa' ? 'empresa' : 'cooperativa'}`, `4 estilos: ${pag.nombresEstilos.join(', ')}`);
   ok(pag.enlaceApp === `${BASE}${pref}app/`, `«Abrir la app» lleva a ${pag.enlaceApp}`);
   ok(pag.iconoVisible === 'visible' && (esPrincipal ? /img\/icono\.svg/.test(pag.iconoSrc) : pag.iconoSrc.startsWith('blob:')), `ícono de la barra ${esPrincipal ? 'de siempre' : 'con los colores de la cooperativa'}`);
   if (!esPrincipal) ok(pag.colorPaso === rgbDe(F.colores.primario), `la página usa el color primario (${pag.colorPaso})`);
   ok(/Desarrollado por interOS/.test(pag.pie), 'pie «Desarrollado por interOS»');
   if (esPropuesta) {
     ok(pag.robots === 'noindex', 'propuesta: <meta name="robots" content="noindex">');
-    ok(pag.franjaVisible && pag.franja.includes(`Propuesta de demostración preparada por interOS para ${E.razonSocial}`) && /No es la página oficial de la cooperativa/.test(pag.franja), 'propuesta: franja «Propuesta de demostración … No es la página oficial»');
+    ok(pag.franjaVisible && pag.franja.includes(`Propuesta de demostración preparada por interOS para ${E.razonSocial}`) && /No es la página oficial de la (cooperativa|empresa)/.test(pag.franja) && pag.franja.includes(`la ${E.tipo === 'empresa' ? 'empresa' : 'cooperativa'}`), 'propuesta: franja «Propuesta de demostración … No es la página oficial»');
     ok(pag.marcaAgua, 'propuesta: marca de agua «PROPUESTA» en la vista previa');
     // Aun con la marca de agua, el QR de la pantalla se lee (foto de la vista previa).
     const foto = await (await p.$('#vista')).screenshot();
@@ -239,7 +239,7 @@ for (const F of A_PROBAR) {
     }
   }
   if (E.servicio24h) ok(del('iman').includes('Servicio 24 horas') && del('afiche').includes('24 h'), 'servicio 24 horas en imán y afiche');
-  ok(del('afiche').includes('OFERTAS DE LA COOPERATIVA') && del('afiche').includes('−10 %') && del('afiche').includes('50 %'), 'afiche: ofertas de la cooperativa (−10 % programado, 50 % fidelidad)');
+  ok(del('afiche').includes(`OFERTAS DE LA ${E.tipo === 'empresa' ? 'EMPRESA' : 'COOPERATIVA'}`) && del('afiche').includes('−10 %') && del('afiche').includes('50 %'), 'afiche: ofertas de la cooperativa (−10 % programado, 50 % fidelidad)');
   // Textos dentro del sticker y sin encimarse en el mismo renglón.
   const fuera = [];
   const encimados = [];

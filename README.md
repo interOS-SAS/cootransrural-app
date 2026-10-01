@@ -16,6 +16,7 @@ pago QR Bre-B **de prueba**. Desarrollado por interOS.
 | Cootransmadrid | Madrid | propuesta | `madrid/` |
 | Cootransvi | Villeta | propuesta | `villeta/` |
 | Cootransvillaleal | La Vega | propuesta | `la-vega/` |
+| Coptaxi (S.A.S.) | Facatativá | propuesta | `facatativa/` |
 
 Las «propuestas» muestran una franja de demostración, no se indexan en
 buscadores y no usan logos de la cooperativa: aún no son clientes.
@@ -24,7 +25,11 @@ buscadores y no usan logos de la cooperativa: aún no son clientes.
 
 - **Ficha:** `empresas/<id>/ficha.json` tiene todo lo propio de cada cooperativa:
   nombre, teléfonos, colores, lugares del pueblo, rutas, tarifas de ejemplo,
-  textos y datos pendientes por confirmar.
+  textos y datos pendientes por confirmar. Si no es una cooperativa (por ejemplo
+  una S.A.S.), `EMPRESA.tipo: "empresa"` hace que la web y la app digan «la
+  empresa» y «afiliados» en vez de «la cooperativa» y «asociados». Las tarifas
+  que sean oficiales se explican en `TARIFAS.nota` (sale en la web en vez de
+  «Valores de ejemplo…»), y el horario nocturno sale de `nocheDesde`/`nocheHasta`.
 - **Nueva cooperativa:** agregarla a `herramientas/cooperativas.json` y correr
   `python3 herramientas/crear-ficha.py <id>`. El script saca de OpenStreetMap el
   centro del pueblo y sus lugares, y de OSRM la distancia por carretera a los
@@ -45,6 +50,7 @@ buscadores y no usan logos de la cooperativa: aún no son clientes.
 | `stickers/` | Stickers QR imprimibles (taxi, nevera, afiche, tarjeta) |
 | `descargar/` | Página a la que lleva el QR de los stickers |
 | `pagar/` | Pago con QR **de prueba** (no mueve dinero) |
+| `propuesta/` | Propuesta comercial de interOS (6 hojas carta, imprimible; no se indexa) |
 
 ## Los 3 diseños
 
@@ -117,6 +123,8 @@ node pruebas/web.mjs http://localhost:8765/
 node pruebas/web-empresas.mjs http://localhost:8765/                     # todas las cooperativas
 node pruebas/stickers.mjs http://localhost:8765/
 node pruebas/stickers-empresas.mjs http://localhost:8765/
+node herramientas/propuestas-pdf.mjs http://localhost:8765/              # PDF de cada propuesta en /tmp/cootrans/propuestas/<id>/ (no van al repo)
+node pruebas/propuestas.mjs http://localhost:8765/                       # propuestas web y PDF (datos, precios, QR)
 ```
 
 Librerías incluidas en `vendor/`: Leaflet (BSD-2), MQTT.js (MIT),

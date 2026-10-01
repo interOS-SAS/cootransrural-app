@@ -7,7 +7,7 @@
 // No mueve dinero: solo avisa al conductor (por el bus de la sala) que el pago
 // de prueba se hizo, para que la demostración se vea completa.
 // Solo se cargan los módulos del núcleo que hacen falta (página ligera).
-import { ID_EMPRESA, EMPRESA, COLORES, ES_PROPUESTA, PROVEEDOR, urlEmpresa } from '../nucleo/config.js';
+import { ID_EMPRESA, EMPRESA, TIPO_EMPRESA, COLORES, ES_PROPUESTA, PROVEEDOR, urlEmpresa } from '../nucleo/config.js';
 import { Bus, enVivoActivo } from '../nucleo/bus.js';
 import { BILLETERAS } from '../nucleo/datos.js';
 import { pesos, horaTexto, fechaTexto, escaparHTML, esperar } from '../nucleo/util.js';
@@ -63,7 +63,7 @@ function pintarMarco() {
   document.getElementById('franja-detalle').textContent = `Demostración del pago con QR de ${NOMBRE}`;
   if (ES_PROPUESTA) {
     const franja = document.getElementById('franja-propuesta');
-    franja.innerHTML = `<b>Propuesta de demostración</b> preparada por ${escaparHTML(PROVEEDOR.nombre)} para ${escaparHTML(EMPRESA.razonSocial || NOMBRE)} · No es la página oficial de la cooperativa`;
+    franja.innerHTML = `<b>Propuesta de demostración</b> preparada por ${escaparHTML(PROVEEDOR.nombre)} para ${escaparHTML(EMPRESA.razonSocial || NOMBRE)} · No es la página oficial de la ${TIPO_EMPRESA}`;
     franja.hidden = false;
   }
   document.getElementById('pie').innerHTML = `<a href="${escaparHTML(URL_APP)}">App de ${escaparHTML(NOMBRE)}</a> · Desarrollado por <a href="${escaparHTML(PROVEEDOR.web)}" rel="noopener">${escaparHTML(PROVEEDOR.nombre)}</a>`;

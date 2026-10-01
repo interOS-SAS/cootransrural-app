@@ -40,6 +40,9 @@ export const ID_EMPRESA = ficha.id;
 // Sin «estado» explícito se trata como propuesta (franja y sin indexar): más seguro.
 export const ES_PROPUESTA = ficha.estado !== 'cliente';
 export const EMPRESA = ficha.EMPRESA;
+// «cooperativa» o «empresa» (S.A.S. y similares: EMPRESA.tipo = "empresa"). Las dos
+// son femeninas: los textos dicen «la ${TIPO_EMPRESA}» sin cambiar nada más.
+export const TIPO_EMPRESA = ficha.EMPRESA?.tipo === 'empresa' ? 'empresa' : 'cooperativa';
 export const COLORES = ficha.colores || {};
 export const CENTRO = ficha.CENTRO;
 export const ZONA = ficha.ZONA;

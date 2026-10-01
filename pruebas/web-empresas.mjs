@@ -172,7 +172,7 @@ async function revisarPagina(p, ficha, nombre, { franjaSel, pie = true } = {}) {
   if (franjaSel) {
     if (propuesta) {
       const esperado = `Propuesta de demostración preparada por interOS para ${ficha.EMPRESA.razonSocial || ficha.EMPRESA.nombre}`;
-      ok(r.franja.includes(esperado) && r.franja.includes('No es la página oficial de la cooperativa'), `${nombre}: franja de propuesta («${r.franja.slice(0, 90)}…»)`);
+      ok(r.franja.includes(esperado) && r.franja.includes(`No es la página oficial de la ${ficha.EMPRESA.tipo === 'empresa' ? 'empresa' : 'cooperativa'}`), `${nombre}: franja de propuesta («${r.franja.slice(0, 90)}…»)`);
     } else {
       ok(!r.franja, `${nombre}: sin franja de propuesta (es cliente)`);
     }

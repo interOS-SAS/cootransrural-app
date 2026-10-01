@@ -33,6 +33,8 @@ export function pantallaSinFicha(raiz) {
 }
 
 // Nombres.
+// «cooperativa» o «empresa» (ver nucleo/config.js).
+export const TIPO = N.TIPO_EMPRESA || 'cooperativa';
 export const NOMBRE = limpio(E.nombreCorto) || limpio(E.nombre) || 'la cooperativa';
 export const NOMBRE_LARGO = limpio(E.nombre) || NOMBRE;
 export const RAZON_SOCIAL = limpio(E.razonSocial) || NOMBRE_LARGO;
@@ -130,7 +132,7 @@ export const COLORES = {
 // que usa la vitrina, o el que traiga la ficha en disenos.b.nombre).
 const NOMBRE_B_FICHA = limpio(N.FICHA?.disenos?.b?.nombre);
 export const DISENO_B = {
-  nombre: NOMBRE_B_FICHA || (ES_PRINCIPAL ? 'Verde Rosal' : 'Color de la cooperativa'),
+  nombre: NOMBRE_B_FICHA || (ES_PRINCIPAL ? 'Verde Rosal' : `Color de la ${TIPO}`),
   colores: ES_PRINCIPAL ? ['#0B6B3A', '#FBF8F1', '#F2B705'] : [color(C.primario2, PRIMARIO), '#FBF8F1', COLORES.acento],
 };
 
@@ -193,7 +195,7 @@ export function marcaIcono(tam = 40, { clase = '', png = false } = {}) {
 /* ------------------------------------------------------------------ */
 /* Propuestas y almacenamiento                                          */
 /* ------------------------------------------------------------------ */
-export const TEXTO_PROPUESTA = `Propuesta de demostración preparada por ${PROVEEDOR} para ${RAZON_SOCIAL} · No es la página oficial de la cooperativa`;
+export const TEXTO_PROPUESTA = `Propuesta de demostración preparada por ${PROVEEDOR} para ${RAZON_SOCIAL} · No es la página oficial de la ${TIPO}`;
 
 // Las propuestas no se indexan (la plantilla debería traerlo; si no, se agrega aquí).
 export function marcarNoIndexar() {

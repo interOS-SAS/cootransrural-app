@@ -4,7 +4,7 @@
 // ficha (empresas/<id>/ficha.json, vía el núcleo). En Cootransrural se ve igual
 // que siempre (verde del escudo); en las demás toma los colores de la cooperativa.
 import {
-  escaparHTML, iniciales, qrSVG, EMPRESA, COLORES, ID_EMPRESA, ES_PROPUESTA, PROVEEDOR, CONDUCTORES_DEMO, urlEmpresa,
+  escaparHTML, iniciales, qrSVG, EMPRESA, TIPO_EMPRESA, COLORES, ID_EMPRESA, ES_PROPUESTA, PROVEEDOR, CONDUCTORES_DEMO, urlEmpresa,
 } from '../../nucleo/index.js';
 
 /* ------------------------------------------------------------------ */
@@ -31,6 +31,8 @@ export const MARCA = Object.freeze({
   id: ID_EMPRESA,
   principal: ID_EMPRESA === 'cootransrural',
   propuesta: Boolean(ES_PROPUESTA),
+  // «cooperativa» o «empresa» (ver nucleo/config.js).
+  tipo: TIPO_EMPRESA || 'cooperativa',
   nombre: dato(FE.nombreCorto) || dato(FE.nombre) || 'la cooperativa',
   nombreLargo: dato(FE.nombre) || dato(FE.nombreCorto) || 'la cooperativa',
   razonSocial: dato(FE.razonSocial) || dato(FE.nombre) || dato(FE.nombreCorto),
@@ -58,7 +60,7 @@ export const MARCA = Object.freeze({
 });
 
 // Nombre del diseño B: en Cootransrural es «Verde Rosal»; en las demás, «Color de la cooperativa».
-export const NOMBRE_DISENO = MARCA.principal ? 'Verde Rosal' : 'Color de la cooperativa';
+export const NOMBRE_DISENO = MARCA.principal ? 'Verde Rosal' : `Color de la ${MARCA.tipo}`;
 
 // «en El Rosal» / «en Subachoque» (o vacío si la ficha no trae el pueblo).
 export function enPueblo(prefijo = 'en', { sinCortar = false } = {}) {
@@ -69,7 +71,7 @@ export function enPueblo(prefijo = 'en', { sinCortar = false } = {}) {
 // «Desde 1999 · El Rosal» (sin año si no se conoce; con el departamento si es largo).
 export function lineaMarca({ largo = false } = {}) {
   const partes = [MARCA.fundada ? `Desde ${MARCA.fundada}` : '', largo ? MARCA.municipio : MARCA.pueblo].filter(Boolean);
-  return partes.join(' · ') || 'Taxis de la cooperativa';
+  return partes.join(' · ') || `Taxis de la ${MARCA.tipo}`;
 }
 
 // Cifras conocidas de la cooperativa: «52 taxis», «3 microbuses», «105 asociados»
@@ -161,7 +163,7 @@ export function demoPara() {
 // Nota honesta para las cooperativas a las que solo se les muestra una propuesta.
 export function notaPropuesta(clase = '') {
   if (!MARCA.propuesta) return '';
-  return `<p class="vb-nota-propuesta ${clase}">${ic('info', 16)}<span>Propuesta de demostración preparada por ${esc(MARCA.proveedor)} para ${esc(MARCA.razonSocial)} · No es la app oficial de la cooperativa.</span></p>`;
+  return `<p class="vb-nota-propuesta ${clase}">${ic('info', 16)}<span>Propuesta de demostración preparada por ${esc(MARCA.proveedor)} para ${esc(MARCA.razonSocial)} · No es la app oficial de la ${MARCA.tipo}.</span></p>`;
 }
 
 // «App desarrollada por interOS».
@@ -245,7 +247,9 @@ function calcularPaleta() {
   const osc = ajustarHasta(ajustarHasta(P, BLANCO, 4.6, '#000000'), claro, 4.6, '#000000');
   const prof = ajustarHasta(mezclar(P, O, 0.5), BLANCO, 8, '#000000');
   const oscuro = ajustarHasta(O, BLANCO, 12, '#000000');
-  const vivo = ajustarHasta(mezclar(verde, BLANCO, 0.1), BLANCO, 4.6, '#000000');
+  // 4,8:1 (no 4,6): encima va texto blanco al 96 % de opacidad («Llega a tu puerta en
+  // minutos», «Viaje terminado»), que con 4,6 quedaría en 4,4:1.
+  const vivo = ajustarHasta(mezclar(verde, BLANCO, 0.1), BLANCO, 4.8, '#000000');
   const oro = ajustarHasta(A, TEXTO, 4.6, BLANCO);
   const oroOsc = mezclar(oro, '#000000', 0.25);
   // Texto dorado sobre el color de la cooperativa (cabeceras, carné, «Tu taxi llega en»).
@@ -872,7 +876,7 @@ export function ladoMarco({ titulo, texto, puntos = [], enlaceQR, textoQR }) {
     <p>${esc(texto)}</p>
     <ul>${puntos.map((p) => `<li>${ic('check', 20)}<span>${esc(p)}</span></li>`).join('')}</ul>
     ${qr ? `<div class="vb-lado-qr" data-enlace-qr="${esc(enlaceQR)}"><div class="vb-lado-qr-img">${qr}</div><span>${esc(textoQR || 'Escanea para abrirla en tu celular')}</span></div>` : ''}
-    ${MARCA.principal ? '' : `<p class="vb-lado-pie">${MARCA.propuesta ? `Propuesta de demostración preparada por ${esc(MARCA.proveedor)} para ${esc(MARCA.razonSocial)} · No es la app oficial de la cooperativa.` : `App desarrollada por ${esc(MARCA.proveedor)}.`}</p>`}
+    ${MARCA.principal ? '' : `<p class="vb-lado-pie">${MARCA.propuesta ? `Propuesta de demostración preparada por ${esc(MARCA.proveedor)} para ${esc(MARCA.razonSocial)} · No es la app oficial de la ${MARCA.tipo}.` : `App desarrollada por ${esc(MARCA.proveedor)}.`}</p>`}
   </aside>`;
 }
 

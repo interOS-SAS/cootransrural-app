@@ -153,7 +153,7 @@ export function crearSeccionesConductor({ N, c, app, ui, avisar, irATab, repinta
           </article>`;
         }).join('')}
       </div>
-      <p class="c-nota-prueba">${icono('info')} Fechas de ejemplo. La cooperativa las actualizará con los documentos reales.</p>
+      <p class="c-nota-prueba">${icono('info')} Fechas de ejemplo. La ${E.tipo} las actualizará con los documentos reales.</p>
     </section>`;
   }
 

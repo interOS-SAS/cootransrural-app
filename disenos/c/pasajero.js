@@ -566,7 +566,7 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
               <div class="c-precio"><small>Tarifa estimada</small><strong data-total><span class="c-esqueleto"></span></strong><span class="c-etiqueta c-etiqueta-amarilla">Tarifa de ejemplo</span></div>
               <div class="c-metricas"><div><strong data-km>–</strong><small>distancia</small></div><div><strong data-min>–</strong><small>tiempo</small></div></div>
             </div>
-            <details class="c-detalle-tarifa"><summary>Ver detalle de la tarifa ${icono('abajo')}</summary><ul data-detalle></ul><p>Valores de ejemplo: la cooperativa confirmará las tarifas oficiales.</p></details>
+            <details class="c-detalle-tarifa"><summary>Ver detalle de la tarifa ${icono('abajo')}</summary><ul data-detalle></ul><p>Valores de ejemplo: la ${E.tipo} confirmará las tarifas oficiales.</p></details>
             <div class="c-segmentado" role="radiogroup" aria-label="Método de pago">
               <button type="button" role="radio" aria-checked="${ui.metodoPago === 'qr'}" data-accion="pago" data-pago="qr">${icono('qr')} QR <small>(prueba)</small></button>
               <button type="button" role="radio" aria-checked="${ui.metodoPago === 'efectivo'}" data-accion="pago" data-pago="efectivo">${icono('efectivo')} Efectivo</button>

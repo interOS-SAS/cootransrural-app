@@ -25,6 +25,8 @@ const PRINCIPAL = ID === 'cootransrural';
 const FICHA = JSON.parse(readFileSync(new URL(`../empresas/${ID}/ficha.json`, import.meta.url), 'utf8'));
 const E = FICHA.EMPRESA || {};
 const NOMBRE = E.nombreCorto || E.nombre;
+// «cooperativa» o «empresa» (EMPRESA.tipo; las S.A.S. dicen «la empresa»).
+const TIPO = E.tipo === 'empresa' ? 'empresa' : 'cooperativa';
 const PROPUESTA = FICHA.estado === 'propuesta';
 const TEL = String(E.telefono || '').replace(/\D/g, '');
 const PRE = PRINCIPAL ? '' : `${ID}/`;
@@ -638,7 +640,7 @@ async function probarPasajero(navegador) {
   await revisarTexto(pg, 'ajustes');
   await revisarContraste(pg, 'ajustes');
   const disenoB = (await pg.textContent('.vb-disenos .d-b b')).trim();
-  ok(disenoB === (PRINCIPAL ? 'Verde Rosal' : 'Color de la cooperativa'), `ajustes: el diseño B se llama «${disenoB}»`);
+  ok(disenoB === (PRINCIPAL ? 'Verde Rosal' : `Color de la ${TIPO}`), `ajustes: el diseño B se llama «${disenoB}»`);
   ok(/App desarrollada por interOS/.test(await pg.textContent('[data-acerca]')), 'ajustes: «App desarrollada por interOS»');
   if (PROPUESTA) ok(await pg.isVisible('.vb-ajustes .vb-nota-propuesta'), 'ajustes: aviso de propuesta de demostración');
   await pg.click('[data-accion="volver"]');
@@ -869,7 +871,7 @@ async function probarConductor(navegador) {
   await foto(pg, 'c15b-perfil-acerca');
   await revisarTexto(pg, 'perfil del conductor (ajustes)');
   await revisarContraste(pg, 'perfil del conductor (ajustes)');
-  ok((await pg.textContent('.vb-c-perfil .vb-disenos .d-b b')).trim() === (PRINCIPAL ? 'Verde Rosal' : 'Color de la cooperativa'), 'conductor: nombre del diseño B según la cooperativa');
+  ok((await pg.textContent('.vb-c-perfil .vb-disenos .d-b b')).trim() === (PRINCIPAL ? 'Verde Rosal' : `Color de la ${TIPO}`), 'conductor: nombre del diseño B según la cooperativa');
   ok(/App desarrollada por interOS/.test(await pg.textContent('.vb-c-perfil [data-acerca]')), 'conductor: «App desarrollada por interOS»');
   if (TEL) ok(await pg.locator(`.vb-c-perfil a[href="tel:+57${TEL}"]`).count() === 1, 'conductor: llamar a la central');
   else ok(await pg.isVisible('.vb-c-perfil [data-sin-telefono]'), 'conductor: sin teléfono, «Teléfono de la central: pronto»');

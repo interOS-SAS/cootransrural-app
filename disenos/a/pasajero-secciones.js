@@ -137,7 +137,7 @@ export function abrirTarifas({ N, app }) {
             <tbody>${rutas.map((r) => `<tr><th scope="row">${esc(r.destino)}</th><td>${hay(r.km) ? `${r.km} km` : '—'}</td><td>${hay(r.min) ? esc(N.minutosTexto(r.min)) : '—'}</td><td><b>${N.pesos(r.valor)}</b></td></tr>`).join('')}</tbody>
           </table>
         </section>` : ''}
-        ${ofertas.length ? `<section class="a-grupo"><h3>Ofertas de la cooperativa</h3>${ofertas.join('')}</section>` : ''}`;
+        ${ofertas.length ? `<section class="a-grupo"><h3>Ofertas de la ${EM.TIPO}</h3>${ofertas.join('')}</section>` : ''}`;
     },
   });
 }

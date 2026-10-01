@@ -545,5 +545,148 @@
       "Otras páginas consultadas del mismo sitio: https://www.cootransvillaleal.com.co/proyectos, https://www.cootransvillaleal.com.co/contactenos."
     ],
     "lugaresRevisados": true
+  },
+  "facatativa": {
+    "estado": "propuesta",
+    "pueblo_osm": "Facatativá",
+    "EMPRESA": {
+      "nombre": "Coptaxi",
+      "nombreCorto": "Coptaxi",
+      "razonSocial": "Coptaxi S.A.S.",
+      "tipo": "empresa",
+      "lema": "Movemos a Facatativá con seguridad, respeto y confianza",
+      "municipio": "Facatativá, Cundinamarca",
+      "pueblo": "Facatativá",
+      "telefono": "6018924400",
+      "telefonoVisible": "601 892 4400",
+      "whatsapp": "573024444747",
+      "correo": "empresacoptaxis.a.s@gmail.com",
+      "direccion": "Carrera 6A # 7A-13, barrio San José, Facatativá, Cundinamarca",
+      "web": "",
+      "sitioOficial": "https://coptaxi.com.co",
+      "fundada": null,
+      "taxisIniciales": null,
+      "taxis": null,
+      "microbuses": null,
+      "asociados": null,
+      "servicio24h": true,
+      "placaPrefijo": "FAC",
+      "vehiculo": "Kia Picanto",
+      "colorTaxi": "Amarillo",
+      "region": "Sabana de Occidente",
+      "datosPendientes": [
+        "año de fundación",
+        "número de taxis"
+      ],
+      "oficina": {
+        "lat": 4.814225,
+        "lng": -74.352925
+      },
+      "alternativas": [
+        {
+          "nombre": "Transportes Villetax S.A.",
+          "por_que_no": "Nació en Villeta (1970); en Facatativá desde 1992. Oscar la descartó: no es la empresa de taxis propia de Faca.",
+          "telefono": "601 842 1463",
+          "whatsapp": "300 558 9371",
+          "correo": "transportesvilletaxsa@hotmail.com",
+          "web": "https://www.transportesvilletaxsa.com"
+        },
+        {
+          "nombre": "Terminal Radio Taxi Facatativá 24 h",
+          "por_que_no": "Central de radio taxi; en directorios comparte el fijo 601 892 4400 con Coptaxi (puede ser la misma central).",
+          "telefono": "601 892 0044"
+        },
+        {
+          "nombre": "Taxis Facatativá (Facebook)",
+          "por_que_no": "Página de Facebook sin razón social ni datos de empresa.",
+          "web": "https://www.facebook.com/p/Taxis-Facatativ%C3%A1-100057787114559/"
+        },
+        {
+          "nombre": "Auto Faca S.A.S.",
+          "por_que_no": "Sobre todo transporte intermunicipal y urbano; los taxis («TaxiExpress») son una línea más.",
+          "whatsapp": "313 200 1330",
+          "web": "https://www.autofaca.com"
+        }
+      ]
+    },
+    "colores": {
+      "primario": "#0E8104",
+      "primario2": "#00A504",
+      "oscuro": "#005709",
+      "acento": "#F4C908",
+      "rojo": "#D32F2F"
+    },
+    "destinos": [
+      "Zipacón",
+      "El Rosal",
+      "Bojacá",
+      "Madrid",
+      "Subachoque",
+      "Mosquera",
+      "Funza",
+      "portal-80",
+      "aeropuerto"
+    ],
+    "tarifas": {
+      "ejemplo": true,
+      "minimaUrbana": 6000,
+      "recargoNocturno": 800,
+      "nocheDesde": 18,
+      "nocheHasta": 6,
+      "nota": "La carrera mínima ($6.000 de día y $6.800 de noche) es la del Decreto 080 de 2024 de Facatativá; los demás valores son de ejemplo, sujetos a confirmación de la empresa."
+    },
+    "fuentes": [
+      "https://coptaxi.com.co/",
+      "https://directorio-empresas.einforma.co/informacion-empresa/coptaxi-sas",
+      "https://empresas.larepublica.co/colombia/cundinamarca/facatativa/coptaxi-s-a-s-900463985",
+      "https://www.somospais.co/ver/coptaxi-facatativa-6345159fc2ba6",
+      "https://www.facebook.com/p/Coptaxi-Facatativ%C3%A1-100063259508726/",
+      "https://play.google.com/store/apps/details?id=com.coptaxi.app",
+      "https://radiowebfyc.com/facatativa/atencion-nuevas-tarifas-de-transporte-publico-en-facatativa/",
+      "https://www.openstreetmap.org/"
+    ],
+    "textos": {
+      "historia": "Coptaxi S.A.S. es la empresa de taxis de Facatativá que reúne a conductores y propietarios de taxi del municipio. Lleva más de 15 años moviendo a la ciudad con seguridad, respeto y confianza desde su oficina en la Carrera 6A # 7A-13, en el barrio San José: taxi las 24 horas, traslados al aeropuerto El Dorado, transporte corporativo con facturación mensual y hasta traslado de mascotas, con conductores capacitados y monitoreo por GPS.\n\nCon esta app, Coptaxi puede dar el siguiente paso con su propia marca: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+      "mision": "La empresa presta el servicio de transporte público de pasajeros en vehículos tipo taxi con los mejores estándares de calidad y seguridad, con el compromiso de respetar la vida de todos los actores de la movilidad. Está orientada al liderazgo en el transporte puerta a puerta a nivel local y en comunicaciones, y forma a su gente con solidaridad, principios éticos, excelencia y trabajo en equipo.",
+      "vision": "En 2030 la empresa será reconocida en la ciudad y el departamento por sus acciones de prevención y seguridad vial, con cero accidentes y cero pérdidas de vidas humanas, y como una empresa de vanguardia en comunicaciones y transporte.",
+      "servicios": [
+        "Taxi las 24 horas",
+        "Traslados al aeropuerto El Dorado",
+        "Transporte corporativo con facturación mensual",
+        "Traslado de mascotas",
+        "Traslados de turismo",
+        "Viajes intermunicipales bajo reserva"
+      ],
+      "frase": "Tu tranquilidad, nuestro mejor destino",
+      "linea_tiempo": [
+        {
+          "b": "+15 años",
+          "s": "Moviendo a Facatativá con seguridad."
+        },
+        {
+          "b": "24/7",
+          "s": "Taxi, aeropuerto, empresas y mascotas."
+        },
+        {
+          "b": "Con la app",
+          "s": "Tu taxi desde el celular, con GPS y tarifa clara."
+        }
+      ]
+    },
+    "notas": [
+      "Propuesta: no es cliente ni ha autorizado nada.",
+      "Escogida por indicación de Oscar: Coptaxi S.A.S. es la empresa de taxis propia de Facatativá (solo taxis, servicio 24 horas). Es una S.A.S., no una cooperativa: NIT 900.463.985-0, constituida el 8 de septiembre de 2011 (einforma y RUES/La República), actividad «transporte de pasajeros» y «otras actividades de telecomunicaciones». Su sitio habla de «más de 15 años»; el año de fundación queda por confirmar.",
+      "Representante legal: Gentil Ramírez González (según la política de privacidad de su sitio, https://coptaxi.com.co/politica-privacidad/). Su app de Google Play se actualizó el 4 de agosto de 2026.",
+      "OJO para la venta: ya usa Autocab (la misma plataforma inglesa de Cootransmadrid). Tiene la app «Coptaxi» en Google Play (10 mil+ descargas, 4,5 estrellas con 243 reseñas; su política de privacidad está en book.autocab.net/32115) y reservas web en eb3.autocab.net/#/32115. Con ellos la propuesta es mejorar lo que ya tienen (marca propia, pago QR Bre-B, stickers QR, código de abordaje, panel propio), no empezar de cero.",
+      "Contacto (sitio oficial, página Contacto): WhatsApp 302 444 4747 y 322 222 7645; fijos (601) 892 4400 y (601) 951 1420; correos contacto@coptaxi.com.co y empresacoptaxis.a.s@gmail.com; oficina de 8:00 a 17:00. El 311 267 0336 que dan somospais y Google NO aparece en su sitio: confirmarlo antes de usarlo. Otro directorio da coptaxi@hotmail.com. Se usa empresacoptaxis.a.s@gmail.com (también de su página Contacto) porque coptaxi.com.co no tiene registro MX (revisado el 1-oct-2026): lo que se escriba a contacto@coptaxi.com.co probablemente rebota.",
+      "El fijo 601 892 4400 también aparece en directorios junto al 601 892 0044 como «Terminal Radio Taxi 24 Horas» de Facatativá: parece la misma central (por confirmar).",
+      "Misión y visión: las oficiales de su página «Nosotros», con ajustes mínimos de redacción. Lema y frase: también de su sitio.",
+      "Colores medidos: sitio (Elementor) primario #005709, texto #0E8104, botones #00A504; logo verde #00C600, asfalto #3B4343 y amarillo #F4C908. En la propuesta no se usa su logo.",
+      "Tarifas: carrera mínima urbana de $6.000 de día (lunes a sábado, 6:00 a. m. a 6:00 p. m.) y $6.800 de noche (6:00 p. m. a 6:00 a. m.), según el Decreto 080 del 9 de febrero de 2024 de Facatativá (nota de Radio Web FyC). De día, la mínima por llamada telefónica es $6.800. Banderazo, valor por km, recargo dominical y rutas siguen siendo de EJEMPLO; puede haber un decreto más reciente (2025 o 2026): confirmarlo.",
+      "Alternativas en Facatativá (no escogidas): Transportes Villetax S.A. (nació en Villeta en 1970 y presta servicio en Facatativá desde 1992; individual urbano y colectivo; Cra 3 # 9-35 piso 2, barrio Santa Rita; 601 842 1463; WhatsApp 300 558 9371; transportesvilletaxsa@hotmail.com; https://www.transportesvilletaxsa.com). Terminal Radio Taxi Facatativá 24 h (601 892 0044). «Taxis Facatativá» (página de Facebook, https://www.facebook.com/p/Taxis-Facatativ%C3%A1-100057787114559/). Auto Faca S.A.S. (sobre todo intermunicipal; taxis por radio «TaxiExpress», WhatsApp 313 200 1330, https://www.autofaca.com). En directorios también salen Transgalaxia (Cra 1 Sur # 5-02) y Siquima Express.",
+      "Oficina ubicada en el mapa por el cruce de la Carrera 6A con la Calle 7A (OpenStreetMap); el barrio San José no aparece en OSM. Lugares revisados a mano desde OpenStreetMap: las «terminales» Calle 80 y Calle 13 son los puntos de salida de buses a Bogotá que marca OSM.",
+      "Otras páginas consultadas del sitio de Coptaxi: https://coptaxi.com.co/nosotros/ (misión y visión), https://coptaxi.com.co/servicios/ y https://coptaxi.com.co/contacto/ (teléfonos, correos, dirección y horario)."
+    ],
+    "lugaresRevisados": true
   }
 }

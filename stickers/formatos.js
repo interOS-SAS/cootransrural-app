@@ -10,6 +10,8 @@ const EXT = 4;
 const E = N.EMPRESA;
 const T = N.TARIFAS || {};
 const ES_PRINCIPAL = N.ID_EMPRESA === 'cootransrural';
+// «cooperativa» o «empresa» (ver nucleo/config.js).
+const TIPO = N.TIPO_EMPRESA || 'cooperativa';
 
 // ---------------------------------------------------------------------------
 // Datos de la cooperativa, ya listos para imprimir
@@ -115,8 +117,8 @@ function estiloCooperativa() {
   const fondoOscuro = luminancia(claro) < 0.3;
   return {
     id: 'cooperativa',
-    nombre: 'Color de la cooperativa',
-    corto: 'Cooperativa',
+    nombre: `Color de la ${TIPO}`,
+    corto: TIPO === 'empresa' ? 'Empresa' : 'Cooperativa',
     muestra: [claro, acento, '#FFFFFF'],
     fondo: claro,
     fondoDegradado: [claro, oscuro],
@@ -658,7 +660,7 @@ function disenoAfiche({ est, url, movil }) {
   let yPie = yEsc + hEsc + 8.6;
   if (ofertas.length) {
     const yO = yEsc + hEsc + 8.6;
-    const etiquetaO = 'OFERTAS DE LA COOPERATIVA';
+    const etiquetaO = `OFERTAS DE LA ${TIPO.toUpperCase()}`;
     const wEt = ancho(etiquetaO, est.negrita, 2.9, 0.16);
     ops.push(texto(M, yO, etiquetaO, est.negrita, 2.9, est.tinta, { espaciadoEm: 0.16 }));
     ops.push({ t: 'rect', x: M + wEt + 3, y: yO - 1.25, w: W - 2 * M - wEt - 3, h: 0.45, relleno: est.tinta, opacidad: 0.45 });

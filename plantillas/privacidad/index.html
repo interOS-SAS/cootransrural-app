@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Privacidad y términos (borrador) · {{EMPRESA.nombre}}</title>
-  <meta name="description" content="Política de privacidad y términos de uso de la demostración de la app de {{EMPRESA.nombre}}. Borrador para revisión de la cooperativa.">
+  <meta name="description" content="Política de privacidad y términos de uso de la demostración de la app de {{EMPRESA.nombre}}. Borrador para revisión de la {{tipo}}.">
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="{{c.verde}}">
   <link rel="icon" type="image/png" sizes="32x32" href="{{RAIZ}}{{icono.favicon}}">
@@ -13,7 +13,7 @@
   <style>{{{estilo_colores}}}</style>
 </head>
 <body>
-{{#si es_propuesta}}  <p class="franja-pagina" role="note"><b>Propuesta de demostración</b> preparada por {{proveedor.nombre}} para {{franja_para}} · No es la página oficial de la cooperativa</p>
+{{#si es_propuesta}}  <p class="franja-pagina" role="note"><b>Propuesta de demostración</b> preparada por {{proveedor.nombre}} para {{franja_para}} · No es la página oficial de la {{tipo}}</p>
 {{/si}}  <main class="documento">
     <div class="doc-barra">
       <a href="../"><img src="{{RAIZ}}{{icono.i192}}" alt="" width="38" height="38">{{EMPRESA.nombre}}</a>
@@ -22,8 +22,8 @@
 
     <h1>Política de privacidad y términos de uso de la app</h1>
     <p class="fecha">Versión de demostración · borrador del 1 de octubre de 2026</p>
-    <p class="aviso-borrador"><b>BORRADOR PARA REVISIÓN DE LA COOPERATIVA.</b> Este texto describe cómo funciona la demostración de la app y debe ser revisado y aprobado por {{EMPRESA.nombre}} (y por su asesor jurídico) antes de publicar la app en las tiendas o de usarla con pasajeros reales.</p>
-{{#si es_propuesta}}    <p class="aviso-propuesta"><b>Esta es una propuesta de demostración</b> preparada por {{proveedor.nombre}} para {{franja_para}}. La cooperativa aún no la ha aprobado: los datos de contacto son públicos y deben confirmarse, y en esta versión no se recogen datos de pasajeros reales.</p>
+    <p class="aviso-borrador"><b>BORRADOR PARA REVISIÓN DE LA {{tipo_mayus}}.</b> Este texto describe cómo funciona la demostración de la app y debe ser revisado y aprobado por {{EMPRESA.nombre}} (y por su asesor jurídico) antes de publicar la app en las tiendas o de usarla con pasajeros reales.</p>
+{{#si es_propuesta}}    <p class="aviso-propuesta"><b>Esta es una propuesta de demostración</b> preparada por {{proveedor.nombre}} para {{franja_para_sin_punto}}. La {{tipo}} aún no la ha aprobado: los datos de contacto son públicos y deben confirmarse, y en esta versión no se recogen datos de pasajeros reales.</p>
 {{/si}}
 
     <nav class="indice" aria-label="Contenido">
@@ -43,7 +43,7 @@
 
     <section id="responsable">
       <h2>1. Quién es el responsable</h2>
-      <p>El responsable del tratamiento de los datos es la <b>{{razon_con_nombre}}</b>{{#si tiene_direccion}}, con oficina en la {{EMPRESA.direccion}}{{/si}}.{{#si tiene_telefono}} Teléfono {{tel_visible}}{{#si tiene_correo}},{{/si}}{{#no tiene_correo}}.{{/no}}{{/si}}{{#si tiene_correo}} {{#no tiene_telefono}}Correo{{/no}}{{#si tiene_telefono}}correo{{/si}} <a href="mailto:{{EMPRESA.correo}}">{{EMPRESA.correo}}</a>.{{/si}}{{#si pendiente.telefono}} Los datos de contacto de la central (teléfono, WhatsApp y correo) estarán aquí <i class="pronto">pronto</i>.{{/si}}</p>
+      <p>El responsable del tratamiento de los datos es {{razon_articulo}}<b>{{razon_con_nombre}}</b>{{#si tiene_direccion}}, con oficina en la {{EMPRESA.direccion}}{{/si}}.{{#si tiene_telefono}} Teléfono {{tel_visible}}{{#si tiene_correo}},{{/si}}{{#no tiene_correo}}.{{/no}}{{/si}}{{#si tiene_correo}} {{#no tiene_telefono}}Correo{{/no}}{{#si tiene_telefono}}correo{{/si}} <a href="mailto:{{EMPRESA.correo}}">{{EMPRESA.correo}}</a>.{{/si}}{{#si pendiente.telefono}} Los datos de contacto de la central (teléfono, WhatsApp y correo) estarán aquí <i class="pronto">pronto</i>.{{/si}}</p>
     </section>
 
     <section id="datos">
@@ -59,7 +59,7 @@
 
     <section id="celular">
       <h2>3. Dónde se guardan: solo en tu celular</h2>
-      <p>En esta demostración <b>no hay un servidor de la cooperativa</b>. Tu registro, tu historial de viajes y tus ajustes se guardan únicamente en el almacenamiento del navegador de tu celular. Si borras los datos del navegador o tocas el botón de abajo, esa información desaparece y la cooperativa no conserva una copia.</p>
+      <p>En esta demostración <b>no hay un servidor de la {{tipo}}</b>. Tu registro, tu historial de viajes y tus ajustes se guardan únicamente en el almacenamiento del navegador de tu celular. Si borras los datos del navegador o tocas el botón de abajo, esa información desaparece y la {{tipo}} no conserva una copia.</p>
       <div class="caja-borrar">
         <p><b>Borrar mis datos de este celular.</b> Elimina el registro, el historial, los lugares guardados y los ajustes de la app en este navegador.</p>
         <button class="boton" id="borrar" type="button">Borrar mis datos</button>
@@ -74,8 +74,8 @@
 
     <section id="prueba">
       <h2>5. Modo prueba: los mensajes pasan por relés públicos</h2>
-      <p>Para que un pasajero y un conductor se encuentren desde celulares distintos, la demostración envía los mensajes del viaje (solicitud, aceptación, ubicación, cobro y calificación) a través de <b>relés MQTT públicos y gratuitos</b>, que no pertenecen a la cooperativa. Cualquier persona que conozca la «sala» de la demostración podría ver esos mensajes.</p>
-      <p><b>Por eso, en modo prueba no escribas datos sensibles</b> (direcciones privadas exactas, documentos, datos médicos o de pago). Usa nombres y lugares de prueba cuando enseñes la app. Antes de salir a producción, la cooperativa deberá usar un servidor propio y protegido.</p>
+      <p>Para que un pasajero y un conductor se encuentren desde celulares distintos, la demostración envía los mensajes del viaje (solicitud, aceptación, ubicación, cobro y calificación) a través de <b>relés MQTT públicos y gratuitos</b>, que no pertenecen a la {{tipo}}. Cualquier persona que conozca la «sala» de la demostración podría ver esos mensajes.</p>
+      <p><b>Por eso, en modo prueba no escribas datos sensibles</b> (direcciones privadas exactas, documentos, datos médicos o de pago). Usa nombres y lugares de prueba cuando enseñes la app. Antes de salir a producción, la {{tipo}} deberá usar un servidor propio y protegido.</p>
     </section>
 
     <section id="pagos">
@@ -111,11 +111,11 @@
     <section id="terminos">
       <h2>9. Términos de uso de la demostración</h2>
       <ul>
-        <li>Esta versión es una <b>demostración</b> para enseñar la app a la cooperativa y a los usuarios.</li>
-        <li>Las <b>tarifas y rutas son valores de ejemplo</b>, sujetos a confirmación de la cooperativa.</li>
+        <li>Esta versión es una <b>demostración</b> para enseñar la app a la {{tipo}} y a los usuarios.</li>
+        <li>Las <b>tarifas y rutas son valores de ejemplo</b>, sujetos a confirmación de la {{tipo}}.</li>
         <li>Si ningún conductor real acepta el servicio, la app muestra un <b>conductor simulado</b> con datos inventados, para que se vea el recorrido completo.</li>
 {{#si tiene_telefono}}        <li>Para pedir un taxi real en este momento, {{#si wa_igual_tel}}llama o escribe a la central: <a href="tel:{{tel}}">{{tel_visible}}</a>{{/si}}{{#no wa_igual_tel}}llama a la central: <a href="tel:{{tel}}">{{tel_visible}}</a>{{#si tiene_whatsapp}}, o escríbele por <a href="https://wa.me/{{wa}}" target="_blank" rel="noopener">WhatsApp</a>{{/si}}{{/no}}.</li>
-{{/si}}{{#no tiene_telefono}}        <li>Para pedir un taxi real en este momento, {{#si tiene_whatsapp}}escríbele a la central por <a href="https://wa.me/{{wa}}" target="_blank" rel="noopener">WhatsApp</a>{{/si}}{{#no tiene_whatsapp}}acércate a la oficina de la cooperativa{{#si tiene_direccion}} ({{direccion_corta}}){{/si}}{{/no}}.</li>
+{{/si}}{{#no tiene_telefono}}        <li>Para pedir un taxi real en este momento, {{#si tiene_whatsapp}}escríbele a la central por <a href="https://wa.me/{{wa}}" target="_blank" rel="noopener">WhatsApp</a>{{/si}}{{#no tiene_whatsapp}}acércate a la oficina de la {{tipo}}{{#si tiene_direccion}} ({{direccion_corta}}){{/si}}{{/no}}.</li>
 {{/no}}
         <li>En caso de emergencia, comunícate con la <b>línea 123</b>.</li>
         <li>Úsala con respeto: el pasajero y el conductor se califican mutuamente para cuidar la convivencia.</li>
@@ -124,9 +124,9 @@
 
     <section id="contacto">
       <h2>10. Contacto</h2>
-      <p>Para consultas, reclamos o para ejercer tus derechos sobre tus datos, {{#si tiene_correo}}escríbenos a <a href="mailto:{{EMPRESA.correo}}">{{EMPRESA.correo}}</a>{{#si tiene_direccion}} o {{/si}}{{/si}}{{#no tiene_correo}}{{#si tiene_telefono}}llámanos al <a href="tel:{{tel}}">{{tel_visible}}</a>{{#si tiene_direccion}} o {{/si}}{{/si}}{{/no}}{{#si tiene_direccion}}visítanos en la {{direccion_corta}}{{/si}}{{#no tiene_correo}}{{#no tiene_telefono}}{{#no tiene_direccion}}comunícate con la cooperativa{{/no}}{{/no}}{{/no}}. Responderemos dentro de los plazos de ley (10 días hábiles para consultas y 15 días hábiles para reclamos).</p>
+      <p>Para consultas, reclamos o para ejercer tus derechos sobre tus datos, {{#si tiene_correo}}escríbenos a <a href="mailto:{{EMPRESA.correo}}">{{EMPRESA.correo}}</a>{{#si tiene_direccion}} o {{/si}}{{/si}}{{#no tiene_correo}}{{#si tiene_telefono}}llámanos al <a href="tel:{{tel}}">{{tel_visible}}</a>{{#si tiene_direccion}} o {{/si}}{{/si}}{{/no}}{{#si tiene_direccion}}visítanos en la {{direccion_corta}}{{/si}}{{#no tiene_correo}}{{#no tiene_telefono}}{{#no tiene_direccion}}comunícate con la {{tipo}}{{/no}}{{/no}}{{/no}}. Responderemos dentro de los plazos de ley (10 días hábiles para consultas y 15 días hábiles para reclamos).</p>
       <p><a href="../">Volver a la página de {{EMPRESA.nombre}}</a></p>
-      <p class="interos">App desarrollada por <a href="{{proveedor.web}}" target="_blank" rel="noopener">{{proveedor.nombre}}</a> para la cooperativa.</p>
+      <p class="interos">App desarrollada por <a href="{{proveedor.web}}" target="_blank" rel="noopener">{{proveedor.nombre}}</a> para la {{tipo}}.</p>
     </section>
   </main>
 

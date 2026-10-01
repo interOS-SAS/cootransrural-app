@@ -214,7 +214,7 @@ function tarifas() {
     if (!destino) return;
     const t = N.calcularTarifa({ origen, destino, programado: programado.checked, km: select.value === 'urbano' ? 0.5 : undefined });
     if (!Number.isFinite(t.total)) {
-      salida.textContent = 'La cooperativa está confirmando sus tarifas. Muy pronto podrás calcular tu viaje aquí.';
+      salida.textContent = `La ${N.TIPO_EMPRESA || 'cooperativa'} está confirmando sus tarifas. Muy pronto podrás calcular tu viaje aquí.`;
       return;
     }
     salida.innerHTML = `

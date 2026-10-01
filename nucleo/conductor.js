@@ -18,6 +18,9 @@ import { urlPago } from './qr.js';
 import * as perfil from './perfil.js';
 import { Emisor, hashCorto, distanciaKm, pesos, kmTexto, minutosTexto } from './util.js';
 
+// Distancia máxima (km) al pasajero para poder marcar «Llegué» con GPS real.
+const DISTANCIA_LLEGADA_KM = 0.15;
+
 export async function crearConductor(opciones = {}) {
   const ctl = new ControladorConductor(opciones);
   await ctl.arrancar();
@@ -265,16 +268,27 @@ class ControladorConductor extends Emisor {
 
   /* ---------------- viaje ---------------- */
 
+  // Con GPS real, «Llegué» solo vale si el taxi está de verdad en el punto de
+  // recogida: así nadie puede «simular estar en el punto» desde otro lado.
   llegue() {
     const v = this.estado.viaje;
-    if (!v || !['hacia_origen'].includes(v.fase)) return;
+    if (!v || !['hacia_origen'].includes(v.fase)) return false;
+    if (this.estado.gpsReal && !v.simulado && this.estado.pos) {
+      const d = distanciaKm(this.estado.pos, v.origen);
+      if (d > DISTANCIA_LLEGADA_KM) {
+        this.#avisar({ titulo: 'Aún no estás en el punto', cuerpo: `Estás a ${kmTexto(d)} del pasajero. Marca «Llegué» cuando estés en la puerta.`, tipo: 'error' });
+        return false;
+      }
+    }
     this.recorrido?.detener();
     this.recorrido = null;
-    this.#moverA({ ...v.origen, rumbo: this.estado.pos?.rumbo || 0 });
+    // Solo la simulación «salta» al punto; con GPS real manda la posición del celular.
+    if (!this.estado.gpsReal || v.simulado) this.#moverA({ ...v.origen, rumbo: this.estado.pos?.rumbo || 0 });
     this.#faseViaje('en_origen');
     if (!v.simulado) this.bus.publicar('estado', { viajeId: v.id, conductorId: this.perfil.id, fase: 'llego' });
     this.#avisar({ titulo: 'Le avisamos al pasajero', cuerpo: 'Ya sabe que estás en la puerta.', tipo: 'info' });
     this.pasajeroSim?.alLlegarConductor();
+    return true;
   }
 
   // Verifica el código de 4 dígitos que dice el pasajero y arranca el viaje.

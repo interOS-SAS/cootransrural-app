@@ -16,7 +16,7 @@
   {{/no}}<style id="estilo-pagina">@page { size: 215.9mm 279.4mm; margin: 0; }</style>
 </head>
 <body>
-  {{#si es_propuesta}}<p class="franja-propuesta" role="note"><b>Propuesta de demostración</b> preparada por {{proveedor.nombre}} para {{franja_para}} · No es la página oficial de la cooperativa</p>
+  {{#si es_propuesta}}<p class="franja-propuesta" role="note"><b>Propuesta de demostración</b> preparada por {{proveedor.nombre}} para {{franja_para}} · No es la página oficial de la {{tipo}}</p>
   {{/si}}<header class="barra">
     <a class="marca" href="{{RAIZ_EMPRESA}}app/" title="Abrir la app del pasajero">
       <img id="marca-icono" src="{{RAIZ}}img/icono.svg" alt="" width="40" height="40"{{#no es_principal}} style="visibility:hidden"{{/no}}>
@@ -142,7 +142,7 @@
   </main>
 
   <footer class="pie-pagina">
-    {{#si es_propuesta}}<p>Propuesta de demostración preparada por {{proveedor.nombre}} para {{franja_para}}. No es la página oficial de la cooperativa. La marca de agua «PROPUESTA» solo se ve en la vista previa.</p>
+    {{#si es_propuesta}}<p>Propuesta de demostración preparada por {{proveedor.nombre}} para {{franja_para_sin_punto}}. No es la página oficial de la {{tipo}}. La marca de agua «PROPUESTA» solo se ve en la vista previa.</p>
     {{/si}}<p><a href="{{RAIZ_EMPRESA}}app/">App de {{EMPRESA.nombre}}</a> · Desarrollado por <a href="{{proveedor.web}}" rel="noopener">{{proveedor.nombre}}</a></p>
   </footer>
 

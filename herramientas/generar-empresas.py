@@ -30,6 +30,7 @@ Uso:  python3 herramientas/generar-empresas.py
 import colorsys
 import html
 import json
+import math
 import pathlib
 import re
 from urllib.parse import urlparse
@@ -38,7 +39,9 @@ RAIZ = pathlib.Path(__file__).resolve().parent.parent
 PLANTILLAS = RAIZ / 'plantillas'
 PRINCIPAL = 'cootransrural'  # la que vive en la raíz del sitio
 URL_PUBLICA = 'https://interos-sas.github.io/cootransrural-app/'
-PROVEEDOR = {'nombre': 'interOS', 'web': 'https://interos.com.co'}
+PROVEEDOR = {'nombre': 'interOS', 'web': 'https://interos.com.co',
+             # Contacto comercial que firma las propuestas (plantillas/propuesta/).
+             'contacto': 'Oscar Bernal', 'correo': 'oscaradrianbernal@gmail.com'}
 
 # ---------------------------------------------------------------------------
 # Motor de plantillas
@@ -175,6 +178,12 @@ def lista_natural(partes, y='y'):
     if len(partes) == 1:
         return partes[0]
     return ', '.join(partes[:-1]) + f' {y} ' + partes[-1]
+
+
+def hora12(h):
+    """20 → «8:00 p. m.»; 6 → «6:00 a. m.»; 0 → «12:00 a. m.»."""
+    h = int(h) % 24
+    return f"{h % 12 or 12}:00 {'a.' if h < 12 else 'p.'} m."
 
 
 def mayuscula(t):
@@ -511,13 +520,20 @@ def jsonld(ficha, d):
     return json.dumps(datos, ensure_ascii=False, indent=2).replace('</', '<\\/')
 
 
+def tipo_empresa(E):
+    """«cooperativa» (por defecto) o «empresa» (S.A.S. y similares: EMPRESA.tipo = "empresa").
+    Las dos palabras son femeninas, así que «la cooperativa» → «la empresa» sin tocar el resto."""
+    return 'empresa' if str(E.get('tipo') or '').strip().lower() == 'empresa' else 'cooperativa'
+
+
 def nombres_disenos(ficha):
     E = ficha['EMPRESA']
+    tipo = tipo_empresa(E)
     if ficha['id'] == PRINCIPAL:
         b = {'nombre': 'Verde Rosal', 'corto': 'Verde', 'texto': 'El verde de la cooperativa y los tonos de la Sabana. Cercano, tranquilo y con el sello de Cootransrural.',
              'texto_vitrina': 'El verde de la cooperativa y los tonos de la Sabana. Cercano y tranquilo.'}
     else:
-        b = {'nombre': 'Color de la cooperativa', 'corto': 'Cooperativa', 'texto': f"Los colores de {E['nombre']}, letra grande y pedido por pasos. Cercano, tranquilo y pensado para todas las edades.",
+        b = {'nombre': f'Color de la {tipo}', 'corto': tipo.capitalize(), 'texto': f"Los colores de {E['nombre']}, letra grande y pedido por pasos. Cercano, tranquilo y pensado para todas las edades.",
              'texto_vitrina': f"Los colores de {E['nombre']}, letra grande y pedido por pasos. Cercano y tranquilo."}
     personal = (ficha.get('disenos') or {}).get('b') or {}
     b.update({k: v for k, v in personal.items() if isinstance(v, str) and v})
@@ -556,7 +572,11 @@ def derivados(ficha):
     region = E.get('region') or ('Sabana de Occidente' if es_principal else '')
     textos = ficha.get('textos') or {}
     pal = paleta(ficha)
-    p = {}
+    tipo = tipo_empresa(E)
+    p = {'tipo': tipo, 'tipo_titulo': tipo.capitalize(), 'tipo_mayus': tipo.upper(),
+         # En una cooperativa los conductores son «asociados»; en una empresa, «afiliados».
+         'miembro': 'asociado' if tipo == 'cooperativa' else 'afiliado',
+         'miembros': 'asociados' if tipo == 'cooperativa' else 'afiliados'}
 
     # Contacto
     tel = digitos(E.get('telefono'))
@@ -631,8 +651,12 @@ def derivados(ficha):
     })
     p['c'] = {k.replace('-', '_'): v for k, v in pal.items()}  # paleta con claves legibles en plantillas
     p['franja_para'] = E.get('razonSocial') or E['nombre']
+    # Para cerrar la frase con punto sin repetirlo («Coptaxi S.A.S.» + «.»).
+    p['franja_para_sin_punto'] = p['franja_para'].rstrip('.')
+    # «es la Cooperativa …» pero «es Coptaxi S.A.S.» (sin artículo ante el nombre de una empresa).
+    p['razon_articulo'] = 'la ' if tipo == 'cooperativa' else ''
     razon = E.get('razonSocial') or ''
-    p['razon_con_nombre'] = razon if E['nombre'].lower() in razon.lower() else (f"{razon} ({E['nombre']})" if razon else f"cooperativa {E['nombre']}")
+    p['razon_con_nombre'] = razon if E['nombre'].lower() in razon.lower() else (f"{razon} ({E['nombre']})" if razon else f"{tipo} {E['nombre']}")
     p['nombre_largo'] = len(E['nombre']) > 14
     # Nombre del pueblo sin cortes de línea («La Vega», «El Rosal») para el título.
     p['pueblo_junto'] = pueblo.replace(' ', '\u00a0')
@@ -681,8 +705,8 @@ def derivados(ficha):
     p['taxis_calc'] = taxis or 30
     p['plan_b_flota'] = pesos(p['taxis_calc'] * 27000)
     p['plan_b_ejemplo'] = f"{taxis} taxis" if taxis else 'Con 30 taxis'
-    p['stickers_taxis'] = (('En las dos puertas de cada taxi de la cooperativa: cerca de ' if aprox else 'En las dos puertas de los ')
-                           + f"{taxis} taxis" + ('.' if aprox else ' de la cooperativa.')) if taxis else 'En las dos puertas de cada taxi de la cooperativa.'
+    p['stickers_taxis'] = ((f'En las dos puertas de cada taxi de la {tipo}: cerca de ' if aprox else 'En las dos puertas de los ')
+                           + f"{taxis} taxis" + ('.' if aprox else f' de la {tipo}.')) if taxis else f'En las dos puertas de cada taxi de la {tipo}.'
     p['lugar_parque'] = next((l['nombre'] for l in ficha.get('LUGARES') or [] if l.get('id') == 'parque'), 'Parque Principal')
 
     # Ofertas (de la tarifa de la ficha)
@@ -694,12 +718,15 @@ def derivados(ficha):
     p['oferta'] = {
         'descuento': desc, 'horas': horas, 'viajes': viajes, 'siguiente': viajes + 1, 'descuento_fidelidad': desc_fid,
         'sellos': [{'lleno': i < llenos} for i in range(viajes)],
-        'intro': 'Dos beneficios que la cooperativa ya ofrece, ahora también desde la app.' if es_principal else 'Dos beneficios que la cooperativa puede ofrecer desde la app.',
+        'intro': 'Dos beneficios que la cooperativa ya ofrece, ahora también desde la app.' if es_principal else f'Dos beneficios que la {tipo} puede ofrecer desde la app.',
     }
     p['tarifas_ejemplo'] = bool(T.get('ejemplo', True))
+    # Aviso de las tarifas: TARIFAS.nota de la ficha (p. ej. qué valor es oficial y de dónde sale).
+    p['tarifas_nota'] = str(T.get('nota') or '').strip() or f'Valores de ejemplo, sujetos a confirmación de la {tipo}.'
     p['tarifa_inicial'] = {
         'minima': pesos(T.get('minimaUrbana') or 0), 'banderazo': pesos(T.get('banderazo') or 0),
         'km': pesos(T.get('porKm') or 0), 'nocturno': pesos(T.get('recargoNocturno') or 0), 'dominical': pesos(T.get('recargoDominical') or 0),
+        'horario_nocturno': f"De {hora12(T.get('nocheDesde', 20))} a {hora12(T.get('nocheHasta', 6))}",
     }
 
     # Rutas para el pie de la foto de la Sabana
@@ -732,9 +759,9 @@ def derivados(ficha):
         historia = parrafos(textos.get('historia'))
     if not historia:
         historia = [
-            f"{nombre} es la cooperativa de taxis de {pueblo}. Sus conductores conocen cada calle y cada vereda del municipio"
+            f"{nombre} es la {tipo} de taxis de {pueblo}. Sus conductores conocen cada calle y cada vereda del municipio"
             + (", y te llevan a donde necesites, de día y de noche." if E.get('servicio24h') else ", y te llevan a donde necesites."),
-            'Ahora la cooperativa puede dar un paso más: llevar el servicio de siempre a tu celular. Pides el taxi con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa hasta tu puerta.',
+            f'Ahora la {tipo} puede dar un paso más: llevar el servicio de siempre a tu celular. Pides el taxi con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa hasta tu puerta.',
         ]
     p['historia'] = historia
     propia = [x for x in (textos.get('linea_tiempo') or []) if isinstance(x, dict) and x.get('b') and x.get('s')]
@@ -754,7 +781,7 @@ def derivados(ficha):
         if E.get('asociados'):
             hoy.append(f"{E['asociados']} asociados")
         p['linea_tiempo'] = [
-            {'b': str(E['fundada']), 's': f'Nace la cooperativa en {pueblo}.'} if E.get('fundada') else {'b': 'Siempre', 's': f'Los taxis de la cooperativa en {pueblo} y sus veredas.'},
+            {'b': str(E['fundada']), 's': f'Nace la {tipo} en {pueblo}.'} if E.get('fundada') else {'b': 'Siempre', 's': f'Los taxis de la {tipo} en {pueblo} y sus veredas.'},
             {'b': 'Hoy', 's': (lista_natural(hoy) + '.') if hoy else ('Servicio las 24 horas en ' + pueblo + ' y la región.' if E.get('servicio24h') else f'Servicio en {pueblo} y la región.')},
             {'b': 'Con la app', 's': 'Tu taxi desde el celular, con GPS y tarifa clara.'},
         ]
@@ -809,7 +836,7 @@ def derivados(ficha):
     else:
         p['pie_texto'] = f"{vehiculos} en {pueblo}{' y la ' + region if region else ''}{' desde ' + str(E['fundada']) if E.get('fundada') else ''}."
     p['descripcion_corta'] = (
-        f"Cooperativa de {vehiculos.lower()} de {municipio}. Transporte urbano e intermunicipal"
+        f"{tipo.capitalize()} de {vehiculos.lower()} de {municipio}. Transporte urbano e intermunicipal"
         + (' las 24 horas.' if E.get('servicio24h') else '.')
     )
     p['descripcion_meta'] = (
@@ -817,10 +844,331 @@ def derivados(ficha):
         + (f" Servicio 24 horas: {tel_visible}." if E.get('servicio24h') and tel else (' Servicio 24 horas.' if E.get('servicio24h') else ''))
     )
     p['og_descripcion'] = (
-        f"Taxis de la cooperativa con ubicación exacta, código de abordaje, tarifas claras{' y servicio 24 horas' if E.get('servicio24h') else ''} en {municipio}."
+        f"Taxis de la {tipo} con ubicación exacta, código de abordaje, tarifas claras{' y servicio 24 horas' if E.get('servicio24h') else ''} en {municipio}."
     )
     p['jsonld'] = jsonld(ficha, p)
+    p['propuesta'] = datos_propuesta(ficha, p)
     return p
+
+
+# ---------------------------------------------------------------------------
+# Propuesta comercial (plantillas/propuesta/ → <id>/propuesta/)
+# ---------------------------------------------------------------------------
+
+FECHA_PROPUESTA = (2026, 10, 1)  # fija: así la página no cambia cada vez que se genera
+MESES = ('enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto',
+         'septiembre', 'octubre', 'noviembre', 'diciembre')
+CUOTA_DIA = 900  # Plan B, por taxi (los mismos valores de la sección «Costos» de la web)
+CUOTA_MES = CUOTA_DIA * 30
+PLAN_A = 0.019
+PLAN_A_EJEMPLO = 10_000_000  # lo facturado por la app en el mes, para el ejemplo del Plan A
+CATEGORIA_LUGAR = {'centro': 'Centro', 'salud': 'Salud', 'educacion': 'Educación', 'comercio': 'Comercio',
+                   'comida': 'Restaurante', 'barrio': 'Barrio', 'vereda': 'Vereda', 'turismo': 'Turismo'}
+PENDIENTE_AMABLE = {
+    'teléfono de la central': 'El teléfono de la central de taxis',
+    'whatsapp': 'El número de WhatsApp de la central',
+    'correo': 'El correo de la cooperativa',
+    'año de fundación': 'El año de fundación',
+    'número de taxis': 'El número de taxis de la flota',
+    'número exacto de taxis': 'El número exacto de taxis de la flota',
+    'misión y visión oficiales': 'La misión y la visión oficiales',
+    'modelo de los taxis': 'El modelo de los taxis',
+}
+
+
+def plano_km(centro, punto):
+    """Desplazamiento aproximado (este, norte) en km de un punto respecto al centro."""
+    lat0 = math.radians((centro['lat'] + punto['lat']) / 2)
+    return (punto['lng'] - centro['lng']) * 111.32 * math.cos(lat0), (punto['lat'] - centro['lat']) * 110.57
+
+
+def minutos_texto(m):
+    m = round(m or 0)
+    if m < 60:
+        return f'{m} min'
+    return f'{m // 60} h' + (f' {m % 60} min' if m % 60 else '')
+
+
+def radar_svg(ficha, lugares, rutas, pal):
+    """Esquema (no a escala) del pueblo: sus lugares alrededor del centro y las rutas
+    a los municipios vecinos según su rumbo. Escala radial con raíz cuadrada (y los
+    lugares más lejanos, al borde) para que el casco urbano no quede amontonado."""
+    E = ficha['EMPRESA']
+    centro = ficha['CENTRO']
+    W, H, cx, cy, R = 520, 470, 260, 232, 148
+    esc = lambda t: html.escape(str(t), quote=True)
+    locales = [l for l in ficha.get('LUGARES') or [] if l.get('cat') not in ('municipio', 'bogota')]
+    puntos = [(l, *plano_km(centro, l)) for l in locales]
+    distancias = sorted(math.hypot(x, y) for _, x, y in puntos) or [1]
+    referencia = distancias[min(len(distancias) - 1, int(len(distancias) * 0.85))]
+    tope = next((e for e in (1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30) if e >= referencia), math.ceil(referencia))
+
+    def pos(x, y, radio=None):
+        r = math.hypot(x, y)
+        if r < 1e-9:
+            return cx, cy
+        rr = radio if radio is not None else R * 0.94 * math.sqrt(min(r, tope) / tope)
+        return cx + x / r * rr, cy - y / r * rr
+
+    verde, osc, tinte, linea = pal['verde'], pal['verde-osc'], pal['verde-tinte'], pal['verde-linea']
+    acento, gris = pal['amarillo'], '#6F7A74'
+    por_id = {l.get('id'): l for l in ficha.get('LUGARES') or []}
+    ids_destacadas = {r.get('id') for r in rutas}
+    rayos = []
+    for r in ficha.get('RUTAS') or []:
+        destino = por_id.get(r.get('id'))
+        if destino:
+            x, y = plano_km(centro, destino)
+            if math.hypot(x, y) > 1e-6:
+                rayos.append((r, x, y, r.get('id') in ids_destacadas))
+    angulos = [math.degrees(math.atan2(y, x)) for _, x, y, _ in rayos]
+
+    s = [f'<svg class="radar" viewBox="0 0 {W} {H}" role="img" aria-label="Esquema de {esc(E.get("pueblo"))}: sus lugares y las rutas a los municipios vecinos">']
+    s.append(f'<circle cx="{cx}" cy="{cy}" r="{R}" fill="{tinte}"/>')
+    # Anillos de distancia; su etiqueta va donde no hay rutas.
+    anillos = [1] if tope > 1.5 else []
+    medio = [e for e in (2, 3, 5, 10) if 1 < e < tope * 0.7]
+    anillos += medio[-1:] + [tope]
+    def separacion(a):
+        return min([abs((a - b + 180) % 360 - 180) for b in angulos] + [180])
+    angulo_etiqueta = max((45, 135, -45, -135, 90, -90, 0, 180), key=separacion)
+    ca, sa = math.cos(math.radians(angulo_etiqueta)), math.sin(math.radians(angulo_etiqueta))
+    for a in anillos:
+        rr = R * 0.94 * math.sqrt(a / tope) if a != tope else R
+        s.append(f'<circle cx="{cx}" cy="{cy}" r="{rr:.1f}" fill="none" stroke="{linea}" stroke-width="1.4"'
+                 + ('' if a == tope else ' stroke-dasharray="4 5"') + '/>')
+        tx, ty = cx + ca * rr, cy - sa * rr
+        s.append(f'<text x="{tx:.1f}" y="{ty + 4:.1f}" text-anchor="middle" class="r-anillo" fill="{gris}" '
+                 f'paint-order="stroke" stroke="{tinte if a != tope else "#fff"}" stroke-width="5" stroke-linejoin="round">{a} km</text>')
+    # Rutas: rayos que salen del borde hacia el rumbo de cada destino. Las destacadas
+    # van primero (su etiqueta tiene prioridad) y en dos renglones: destino y km.
+    etiquetas = []
+    # Los rayos también ocupan lugar: ninguna etiqueta se monta encima de uno.
+    for r, x, y, destacada in rayos:
+        (ax, ay), (bx, by) = pos(x, y, R + 3), pos(x, y, R + (24 if destacada else 14))
+        etiquetas.append((min(ax, bx) - 4, min(ay, by) - 4, max(ax, bx) + 4, max(ay, by) + 4))
+    for r, x, y, destacada in sorted(rayos, key=lambda t: not t[3]):
+        largo = 24 if destacada else 14
+        x1, y1 = pos(x, y, R + 3)
+        x2, y2 = pos(x, y, R + largo)
+        color = osc if destacada else '#B5BFBA'
+        s.append(f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" stroke="{color}" stroke-width="{3.2 if destacada else 1.8}" stroke-linecap="round"/>')
+        s.append(f'<circle cx="{x2:.1f}" cy="{y2:.1f}" r="{4.6 if destacada else 3.2}" fill="{color}"/>')
+        nombre = re.sub(r'\s*\(.*\)$', '', r.get('destino') or '')
+        if destacada:
+            # Nombres largos en dos renglones («Aeropuerto / El Dorado») y debajo los km.
+            palabras, renglones = nombre.split(), []
+            for pal in palabras:
+                if renglones and len(renglones[-1]) + 1 + len(pal) <= 12:
+                    renglones[-1] += ' ' + pal
+                else:
+                    renglones.append(pal)
+            renglones.append(f"{r['km']} km")
+        else:
+            renglones = [nombre]
+        tam = 13.5 if destacada else 12
+        ancho = max(len(x) for x in renglones) * tam * (0.6 if destacada else 0.55)
+        alto = tam * 1.15 * len(renglones)
+        ux, uy = (x2 - cx) / (R + largo), (y2 - cy) / (R + largo)
+        propia = 'start' if ux > 0.3 else ('end' if ux < -0.3 else 'middle')
+        colocada = None
+        for empuje in (0, 10, 20, 30, 40):
+            for ancla in [propia] + [a for a in ('middle', 'start', 'end') if a != propia]:
+                for corrimiento in (0, -0.5, 0.5, -1, 1, -1.5, 1.5):
+                    lx, ly = pos(x, y, R + largo + 6 + empuje)
+                    izq = lx if ancla == 'start' else (lx - ancho if ancla == 'end' else lx - ancho / 2)
+                    izq = min(max(izq, 2), W - 2 - ancho) if ancla == 'middle' else izq
+                    arriba = (ly if uy > 0.55 else (ly - alto if uy < -0.55 else ly - alto / 2)) + corrimiento * alto
+                    caja = (izq - 2, arriba - 1, izq + ancho + 2, arriba + alto + 1)
+                    dentro = caja[0] >= 1 and caja[2] <= W - 1 and caja[1] >= 1 and caja[3] <= H - 1
+                    choca = any(not (caja[2] < c[0] or caja[0] > c[2] or caja[3] < c[1] or caja[1] > c[3]) for c in etiquetas)
+                    # Que no se monte sobre el círculo del pueblo.
+                    cerca = math.hypot(min(max(cx, caja[0]), caja[2]) - cx, min(max(cy, caja[1]), caja[3]) - cy)
+                    if dentro and not choca and cerca > R + 3:
+                        colocada = (ancla, izq, arriba, caja)
+                        break
+                if colocada:
+                    break
+            if colocada:
+                break
+        if colocada:
+            ancla, izq, arriba, caja = colocada
+            etiquetas.append(caja)
+            clase, relleno = ('r-ruta-d', osc) if destacada else ('r-ruta', gris)
+            tx = izq if ancla == 'start' else (izq + ancho if ancla == 'end' else izq + ancho / 2)
+            ultimo = len(renglones) - 1
+            lineas = ''.join(f'<tspan x="{tx:.1f}" y="{arriba + tam * 0.9 + i * tam * 1.15:.1f}"'
+                             + (' class="r-km"' if destacada and i == ultimo else '') + f'>{esc(txt)}</tspan>'
+                             for i, txt in enumerate(renglones))
+            s.append(f'<text text-anchor="{ancla}" class="{clase}" fill="{relleno}">{lineas}</text>')
+    # Lugares del pueblo (puntos) y los destacados (números), separados para que no se tapen.
+    numeros = {l.get('id'): i + 1 for i, l in enumerate(lugares)}
+    for l, x, y in puntos:
+        if l.get('id') not in numeros:
+            px, py = pos(x, y)
+            s.append(f'<circle cx="{px:.1f}" cy="{py:.1f}" r="3.7" fill="{verde}" fill-opacity=".5"/>')
+    marcas = [[*pos(x, y), numeros[l.get('id')]] for l, x, y in puntos if l.get('id') in numeros]
+    # Puntos fijos que los números no deben tapar: el centro y el nombre del pueblo.
+    medio_nombre = len(E.get('pueblo') or '') * 14 * 0.62 / 2
+    fijos = [(cx, cy - 4, 0)] + [(cx + d, cy + 26, 0) for d in range(-int(medio_nombre), int(medio_nombre) + 1, 14)]
+    for _ in range(60):
+        for i, a in enumerate(marcas):
+            for b in fijos + marcas[i + 1:]:
+                dx, dy = a[0] - b[0], a[1] - b[1]
+                d = math.hypot(dx, dy) or 0.01
+                minimo = 26 if b[2] == 0 else 27
+                if d < minimo:
+                    empuje = (minimo - d) / (2 if b[2] else 1)
+                    if d < 0.02:
+                        dx, dy = math.cos(a[2] * 2.1), math.sin(a[2] * 2.1)
+                        d = 1
+                    a[0] += dx / d * empuje
+                    a[1] += dy / d * empuje
+                    if b[2]:
+                        b[0] -= dx / d * empuje
+                        b[1] -= dy / d * empuje
+    s.append(f'<circle cx="{cx}" cy="{cy}" r="16" fill="{verde}" fill-opacity=".16"/>')
+    s.append(f'<circle cx="{cx}" cy="{cy}" r="7.5" fill="{osc}" stroke="#fff" stroke-width="2.6"/>')
+    s.append(f'<text x="{cx}" y="{cy + 31}" text-anchor="middle" class="r-pueblo" fill="{osc}">{esc(E.get("pueblo"))}</text>')
+    for px, py, n in marcas:
+        s.append(f'<g class="r-marca"><circle cx="{px:.1f}" cy="{py:.1f}" r="12.5" fill="{acento}" stroke="#fff" stroke-width="3"/>'
+                 f'<text x="{px:.1f}" y="{py + 4.7:.1f}" text-anchor="middle" fill="#17130A">{n}</text></g>')
+    # Norte
+    s.append(f'<g class="r-norte" transform="translate(22 30)"><path d="M0 -15 L7.5 6 L0 2 L-7.5 6 Z" fill="{osc}"/>'
+             f'<text x="0" y="22" text-anchor="middle" fill="{osc}">N</text></g>')
+    s.append('</svg>')
+    return ''.join(s)
+
+
+def datos_propuesta(ficha, p):
+    """Lo que necesita plantillas/propuesta/: fecha, planes con la flota, demo,
+    lugares y rutas de ejemplo, datos por confirmar (todo sale de la ficha)."""
+    E = ficha['EMPRESA']
+    pueblo = E.get('pueblo') or ''
+    nombre = E['nombre']
+    razon = E.get('razonSocial') or nombre
+    pend_lista = [str(x).strip() for x in E.get('datosPendientes') or [] if str(x).strip()]
+    pend = ' '.join(pend_lista).lower()
+    T = dict(tarifas_base(), **{k: v for k, v in (ficha.get('TARIFAS') or {}).items() if v is not None})
+    anio, mes, dia = FECHA_PROPUESTA
+
+    # Plan B con la flota de la ficha (o ejemplos si no se sabe cuántos taxis tiene).
+    n = cantidad(E.get('taxis'))
+    ejemplos = []
+    if n:
+        aprox = 'exacto de taxis' in pend or n[1] == '+'
+        quien = ('más de ' if n[1] == '+' else 'unos ') if aprox else 'sus '
+        ejemplos.append({'titulo': f'Con {quien}{n[0]} taxis', 'taxis': n[0], 'mes': pesos(n[0] * CUOTA_MES), 'dia': pesos(n[0] * CUOTA_DIA)})
+        flota_texto = f"Para la flota de {nombre}"
+    elif cantidad(E.get('vehiculos')):
+        ejemplos.append({'titulo': 'Por cada 10 taxis', 'taxis': 10, 'mes': pesos(10 * CUOTA_MES), 'dia': pesos(10 * CUOTA_DIA)})
+        flota_texto = 'Ejemplo según el tamaño de la flota'
+    else:
+        for k in (20, 50):
+            ejemplos.append({'titulo': f'Con {k} taxis', 'taxis': k, 'mes': pesos(k * CUOTA_MES), 'dia': pesos(k * CUOTA_DIA)})
+        flota_texto = 'Ejemplos según el tamaño de la flota'
+
+    # Móvil de la demo del conductor: el mismo que sugieren los tres diseños.
+    moviles = [str(c.get('movil') or '').zfill(3) for c in ficha.get('CONDUCTORES_DEMO') or []]
+    moviles = [m for m in moviles if re.fullmatch(r'\d{3}', m) and m != '000']
+    tope = n[0] if n else 999
+    movil = '023' if '023' in moviles else next((m for m in moviles if int(m) <= tope), moviles[0] if moviles else '001')
+
+    base = p['url_publica']
+    tipo = p.get('tipo') or 'cooperativa'  # «empresa» si no es cooperativa (por ejemplo, una S.A.S.)
+    enlaces = [
+        {'clave': 'web', 'icono': 'i-web', 'titulo': f'Web de la {tipo}', 'texto': 'Rutas, tarifas, contacto y el botón para pedir.', 'url': base},
+        {'clave': 'app', 'icono': 'i-cel', 'titulo': 'App del pasajero', 'texto': 'Un viaje completo con un conductor de prueba.', 'url': base + 'app/'},
+        {'clave': 'conductor', 'icono': 'i-volante', 'titulo': 'App del conductor', 'texto': f'Demo: móvil {movil}, PIN 1234.', 'url': base + 'conductor/'},
+        {'clave': 'stickers', 'icono': 'i-qr', 'titulo': 'Stickers QR', 'texto': 'Taxi, nevera, afiche y tarjeta, listos para imprimir.', 'url': URL_PUBLICA + p['stickers_ruta']},
+        {'clave': 'vitrina', 'icono': 'i-capas', 'titulo': 'Vitrina de diseños', 'texto': 'Los tres diseños lado a lado.', 'url': base + 'disenos/'},
+    ]
+    for e in enlaces:
+        e['corta'] = e['url'].replace('https://', '')
+        # Trozos que no se parten por dentro (la dirección se corta solo después de «/»).
+        e['trozos'] = [x + '/' for x in e['corta'].rstrip('/').split('/')]
+
+    # Tres lugares de ejemplo, de categorías distintas (la oficina no cuenta).
+    locales = [l for l in ficha.get('LUGARES') or [] if l.get('cat') not in ('municipio', 'bogota')]
+    elegidos = []
+    for cat in ('salud', 'turismo', 'vereda', 'educacion', 'comercio', 'comida', 'barrio', 'centro'):
+        l = next((x for x in locales if x.get('cat') == cat and x.get('id') != 'oficina'), None)
+        if l:
+            elegidos.append(l)
+        if len(elegidos) == 3:
+            break
+    lugares = []
+    for i, l in enumerate(elegidos):
+        categoria = CATEGORIA_LUGAR.get(l.get('cat'), 'Lugar')
+        detalle = l.get('detalle') or pueblo
+        # Sin repetir la categoría: «Vereda de Tabio», no «Vereda · Vereda de Tabio».
+        texto_lugar = detalle if detalle.lower().startswith(categoria.lower()) else f'{categoria} · {detalle}'
+        lugares.append({'numero': i + 1, 'nombre': l['nombre'], 'categoria': categoria, 'detalle': detalle, 'texto': texto_lugar})
+
+    # Tres rutas: la más cercana, una intermedia y Bogotá o el aeropuerto.
+    rutas = [r for r in ficha.get('RUTAS') or [] if r.get('km') and r.get('valor') and r.get('destino')]
+    elegidas = []
+    if rutas:
+        elegidas.append(min(rutas, key=lambda r: r['km']))
+        capital = (next((r for r in rutas if 'aeropuerto' in r['destino'].lower()), None)
+                   or next((r for r in rutas if 'bogotá' in r['destino'].lower()), None))
+        resto = sorted((r for r in rutas if r not in elegidas and r is not capital), key=lambda r: r['km'])
+        if resto:
+            elegidas.append(resto[len(resto) // 2])
+        if capital and capital not in elegidas:
+            elegidas.append(capital)
+        elif len(resto) > 1 and resto[-1] not in elegidas:
+            elegidas.append(resto[-1])
+    elegidas.sort(key=lambda r: r['km'])
+    rutas_ej = [{'id': r.get('id'), 'destino': r['destino'], 'km': f"{r['km']} km", 'min': minutos_texto(r.get('min')),
+                 'valor': pesos(r['valor'])} for r in elegidas]
+
+    # Datos por confirmar (redactados amables) + lo que siempre hace falta para producción.
+    confirmar = [PENDIENTE_AMABLE.get(x.lower(), mayuscula(x)).replace('la cooperativa', f'la {tipo}') for x in pend_lista]
+    if T.get('ejemplo', True):
+        confirmar.append('Las tarifas oficiales (las de la demo son de ejemplo)')
+    confirmar.append('La lista de conductores, con sus móviles y placas')
+
+    notas = ' '.join(str(x) for x in ficha.get('notas') or []).lower()
+    region = p['region']
+    n_locales = len(locales)
+    n_rutas = len(ficha.get('RUTAS') or [])
+    return {
+        'fecha': f'{dia} de {MESES[mes - 1]} de {anio}',
+        'titulo': f'Propuesta: app de taxis para {razon}',
+        'para': razon,
+        'etiqueta': 'Propuesta comercial' if p['es_cliente'] else 'Propuesta de demostración',
+        'ubicacion': (E.get('municipio') or pueblo) + (f' · {mayuscula(region)}' if region else ''),
+        'nombre_corto': E.get('nombreCorto') or nombre,
+        'archivo_pdf': 'Propuesta-app-taxis-' + re.sub(r'[^A-Za-z0-9]+', '-', html.unescape(E.get('nombreCorto') or nombre)).strip('-') + '.pdf',
+        'movil_demo': movil,
+        'enlaces': enlaces,
+        'lugares': lugares,
+        'rutas': rutas_ej,
+        'n_lugares': n_locales,
+        'n_rutas': n_rutas,
+        'radar': radar_svg(ficha, elegidos, elegidas, p['paleta']),
+        'confirmar': confirmar,
+        'ya_tiene_despacho': 'autocab' in notas or 'sistema de despacho' in notas,
+        # Anexo «Lo que dicen los usuarios de su app actual» (solo si la ficha trae «competencia»).
+        'total_hojas': 7 if (ficha.get('competencia') or {}).get('quejas') else 6,
+        'quejas_html': ''.join(
+            f'<tr><th scope="row">{html.escape(q.get("tema", ""))}</th>'
+            f'<td><q>{html.escape(q.get("cita", ""))}</q><small>{html.escape(q.get("fecha", ""))}</small></td>'
+            f'<td>{html.escape(q.get("solucion", ""))}</td></tr>'
+            for q in (ficha.get('competencia') or {}).get('quejas') or []),
+        'positivas_txt': ', '.join(f'«{html.escape(x)}»' for x in (ficha.get('competencia') or {}).get('positivas') or []),
+        'cifras': [x for x in (
+            {'valor': '3', 'texto': 'diseños de app para elegir'},
+            {'valor': str(n_locales), 'texto': f'lugares de {pueblo} ya cargados'} if n_locales else None,
+            {'valor': str(n_rutas), 'texto': 'destinos con tarifa'} if n_rutas else None,
+            {'valor': '7', 'texto': 'días o menos para tenerla'},
+        ) if x],
+        'plan_a': {'porcentaje': f'{PLAN_A * 100:.1f}'.replace('.', ','), 'ejemplo_base': pesos(PLAN_A_EJEMPLO),
+                   'ejemplo_valor': pesos(PLAN_A_EJEMPLO * PLAN_A)},
+        'plan_b': {'dia': pesos(CUOTA_DIA), 'mes': pesos(CUOTA_MES), 'ejemplos': ejemplos, 'flota_texto': flota_texto},
+        'tarifas_ejemplo': bool(T.get('ejemplo', True)),
+    }
 
 
 _CACHE = {}

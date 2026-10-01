@@ -32,7 +32,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
       titulo: `Pide tu taxi en <em>${esc(EM.PUEBLO)}</em>, sin llamar.`,
       texto: `Demo de la app de ${EM.NOMBRE}: ubicación exacta, seguimiento en vivo, código de abordaje y pago con QR de prueba.`,
       puntos: [
-        EM.unir([EM.textoTaxis(), EM.SERVICIO_24H ? 'servicio 24 horas' : ''], ' y ').replace(/^s/, 'S') || 'Taxis de la cooperativa cerca de ti',
+        EM.unir([EM.textoTaxis(), EM.SERVICIO_24H ? 'servicio 24 horas' : ''], ' y ').replace(/^s/, 'S') || `Taxis de la ${EM.TIPO} cerca de ti`,
         'Sabes quién llega: móvil, placa y código', 'Programa con 24 h y ahorra 10 %', 'Cada 10 viajes, el siguiente al 50 %',
       ],
       // El QR abre la app de esta cooperativa (no la de otra) con el mismo diseño.
@@ -262,7 +262,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
         { icono: 'reloj', texto: 'Mis viajes', detalle: completados ? `${completados} ${completados === 1 ? 'viaje completado' : 'viajes completados'}` : 'Tu historial', accion: () => abrirMisViajes(ctx()) },
         { icono: 'calendario', texto: 'Programados', detalle: 'Con 24 h: 10 % menos', insignia: programados ? String(programados) : '', accion: () => abrirProgramados(ctx()) },
         { icono: 'ruta', texto: 'Tarifas y rutas', detalle: 'Valores de ejemplo', accion: () => abrirTarifas(ctx()) },
-        { icono: 'regalo', texto: 'Promociones', detalle: !fid ? 'Ofertas de la cooperativa' : fid.siguienteConDescuento ? '¡Tu próximo viaje va al 50 %!' : `Tarjeta de viajes: ${fid.completados}/${fid.meta}`, accion: () => abrirPromociones(ctx()) },
+        { icono: 'regalo', texto: 'Promociones', detalle: !fid ? `Ofertas de la ${EM.TIPO}` : fid.siguienteConDescuento ? '¡Tu próximo viaje va al 50 %!' : `Tarjeta de viajes: ${fid.completados}/${fid.meta}`, accion: () => abrirPromociones(ctx()) },
         { icono: 'ajustes', texto: 'Ajustes', detalle: 'Diseño, sala, sonido, instalar', accion: () => abrirAjustes(ctx()) },
         { icono: 'ayuda', texto: 'Ayuda', detalle: EM.TELEFONO ? `Central${EM.SERVICIO_24H ? ' 24 h' : ''} · ${EM.TELEFONO_VISIBLE}` : 'Preguntas frecuentes y contacto', accion: () => abrirAyuda(ctx()) },
         { separador: true },
@@ -1212,7 +1212,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false }) {
     ponerTexto(c, '[data-ruta-datos]', rt ? `${N.kmTexto(rt.km)} · ${N.minutosTexto(rt.min)} de viaje · llegas a las ${N.horaTexto((ui.programar && ui.fecha ? ui.fecha.getTime() : Date.now()) + rt.min * 60000 + 5 * 60000)}` : 'El conductor te cobra según el recorrido (mínima de ejemplo).');
     $(c, '[data-detalle-lista]').innerHTML = `<ul>${tarifa.detalle.map((d) => `<li class="${d.valor < 0 ? 'a-descuento' : ''}"><span>${esc(d.concepto)}</span><b>${d.valor < 0 ? '−' : ''}${N.pesos(Math.abs(d.valor))}</b></li>`).join('')}
       <li class="a-detalle-total"><span>Total estimado</span><b>${N.pesos(tarifa.total)}</b></li></ul>
-      <p>${icono('info', { tam: 14 })} Tarifas de ejemplo: la cooperativa confirmará las oficiales. Con taxímetro o ruta fija, el valor final puede variar.</p>`;
+      <p>${icono('info', { tam: 14 })} Tarifas de ejemplo: la ${EM.TIPO} confirmará las oficiales. Con taxímetro o ruta fija, el valor final puede variar.</p>`;
     const info = $(c, '[data-programar-info]');
     if (info) {
       if (ui.programar && ui.fecha) {

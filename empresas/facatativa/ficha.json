@@ -1,0 +1,901 @@
+{
+  "id": "facatativa",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Coptaxi",
+    "nombreCorto": "Coptaxi",
+    "razonSocial": "Coptaxi S.A.S.",
+    "tipo": "empresa",
+    "lema": "Movemos a Facatativá con seguridad, respeto y confianza",
+    "municipio": "Facatativá, Cundinamarca",
+    "pueblo": "Facatativá",
+    "telefono": "6018924400",
+    "telefonoVisible": "601 892 4400",
+    "whatsapp": "573024444747",
+    "correo": "empresacoptaxis.a.s@gmail.com",
+    "direccion": "Carrera 6A # 7A-13, barrio San José, Facatativá, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://coptaxi.com.co",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "vehiculos": "30+",
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "FAC",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana de Occidente",
+    "datosPendientes": [
+      "año de fundación",
+      "número exacto de taxis (su web dice «más de 30 vehículos»)"
+    ],
+    "oficina": {
+      "lat": 4.814225,
+      "lng": -74.352925
+    },
+    "alternativas": [
+      {
+        "nombre": "Transportes Villetax S.A.",
+        "por_que_no": "Nació en Villeta (1970); en Facatativá desde 1992. Oscar la descartó: no es la empresa de taxis propia de Faca.",
+        "telefono": "601 842 1463",
+        "whatsapp": "300 558 9371",
+        "correo": "transportesvilletaxsa@hotmail.com",
+        "web": "https://www.transportesvilletaxsa.com"
+      },
+      {
+        "nombre": "Terminal Radio Taxi Facatativá 24 h",
+        "por_que_no": "Central de radio taxi; en directorios comparte el fijo 601 892 4400 con Coptaxi (puede ser la misma central).",
+        "telefono": "601 892 0044"
+      },
+      {
+        "nombre": "Taxis Facatativá (Facebook)",
+        "por_que_no": "Página de Facebook sin razón social ni datos de empresa.",
+        "web": "https://www.facebook.com/p/Taxis-Facatativ%C3%A1-100057787114559/"
+      },
+      {
+        "nombre": "Auto Faca S.A.S.",
+        "por_que_no": "Sobre todo transporte intermunicipal y urbano; los taxis («TaxiExpress») son una línea más.",
+        "whatsapp": "313 200 1330",
+        "web": "https://www.autofaca.com"
+      }
+    ]
+  },
+  "colores": {
+    "primario": "#0E8104",
+    "primario2": "#00A504",
+    "oscuro": "#005709",
+    "acento": "#F4C908",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.809728,
+    "lng": -74.354184
+  },
+  "ZONA": {
+    "sur": 4.49,
+    "norte": 5.13,
+    "oeste": -74.67,
+    "este": -74.03
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 6000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 800,
+    "recargoDominical": 1000,
+    "nocheDesde": 18,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima ($6.000 de día y $6.800 de noche) es la del Decreto 080 de 2024 de Facatativá; los demás valores son de ejemplo, sujetos a confirmación de la empresa."
+  },
+  "RUTAS": [
+    {
+      "id": "bojaca",
+      "destino": "Bojacá",
+      "valor": 23000,
+      "km": 11,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "el-rosal",
+      "destino": "El Rosal",
+      "valor": 26000,
+      "km": 14,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "zipacon",
+      "destino": "Zipacón",
+      "valor": 29000,
+      "km": 15,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "madrid",
+      "destino": "Madrid",
+      "valor": 28000,
+      "km": 15,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "mosquera",
+      "destino": "Mosquera",
+      "valor": 37000,
+      "km": 21,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "funza",
+      "destino": "Funza",
+      "valor": 42000,
+      "km": 24,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "subachoque",
+      "destino": "Subachoque",
+      "valor": 47000,
+      "km": 28,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 59000,
+      "km": 35,
+      "min": 55,
+      "radioKm": 3
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 64000,
+      "km": 39,
+      "min": 60,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Facatativá",
+      "cat": "centro",
+      "lat": 4.809724,
+      "lng": -74.35417
+    },
+    {
+      "id": "alcaldia",
+      "nombre": "Alcaldía de Facatativá",
+      "detalle": "Parque Principal",
+      "cat": "centro",
+      "lat": 4.810356,
+      "lng": -74.353924
+    },
+    {
+      "id": "oficina",
+      "nombre": "Oficina Coptaxi",
+      "detalle": "Carrera 6A # 7A-13, barrio San José",
+      "cat": "centro",
+      "lat": 4.814225,
+      "lng": -74.352925
+    },
+    {
+      "id": "catedral",
+      "nombre": "Catedral de Facatativá",
+      "detalle": "Parque Principal",
+      "cat": "centro",
+      "lat": 4.809254,
+      "lng": -74.353673
+    },
+    {
+      "id": "policia",
+      "nombre": "Estación de Policía",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.809833,
+      "lng": -74.349795
+    },
+    {
+      "id": "parque-santander",
+      "nombre": "Parque Santander",
+      "detalle": "Centro, Facatativá",
+      "cat": "centro",
+      "lat": 4.807146,
+      "lng": -74.351043
+    },
+    {
+      "id": "terminal-calle-80",
+      "nombre": "Terminal de buses Calle 80",
+      "detalle": "Buses a Bogotá por la Calle 80",
+      "cat": "centro",
+      "lat": 4.814423,
+      "lng": -74.359846
+    },
+    {
+      "id": "terminal-calle-13",
+      "nombre": "Terminal de buses Calle 13",
+      "detalle": "Buses a Bogotá por la Calle 13",
+      "cat": "centro",
+      "lat": 4.816335,
+      "lng": -74.362038
+    },
+    {
+      "id": "coliseo",
+      "nombre": "Coliseo Deportivo",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.813538,
+      "lng": -74.350576
+    },
+    {
+      "id": "estadio",
+      "nombre": "Estadio Municipal",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.813174,
+      "lng": -74.347168
+    },
+    {
+      "id": "villa-olimpica",
+      "nombre": "Villa Olímpica",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.822412,
+      "lng": -74.363461
+    },
+    {
+      "id": "hospital",
+      "nombre": "Hospital San Rafael",
+      "detalle": "E.S.E. Hospital San Rafael de Facatativá",
+      "cat": "salud",
+      "lat": 4.80682,
+      "lng": -74.349844
+    },
+    {
+      "id": "clinica-santa-ana",
+      "nombre": "Clínica Santa Ana",
+      "detalle": "Centro, Facatativá",
+      "cat": "salud",
+      "lat": 4.809518,
+      "lng": -74.351269
+    },
+    {
+      "id": "clinica-cafam",
+      "nombre": "Clínica Cafam Facatativá",
+      "detalle": "Facatativá",
+      "cat": "salud",
+      "lat": 4.819463,
+      "lng": -74.36045
+    },
+    {
+      "id": "clinica-medilaser",
+      "nombre": "Clínica Medilaser",
+      "detalle": "Facatativá",
+      "cat": "salud",
+      "lat": 4.81935,
+      "lng": -74.357879
+    },
+    {
+      "id": "centro-salud-cartagenita",
+      "nombre": "Centro de Salud Manablanca-Cartagenita",
+      "detalle": "Hospital San Rafael, Cartagenita",
+      "cat": "salud",
+      "lat": 4.791071,
+      "lng": -74.337996
+    },
+    {
+      "id": "universidad-de-cundinamarca",
+      "nombre": "Universidad de Cundinamarca",
+      "detalle": "Sede Facatativá",
+      "cat": "educacion",
+      "lat": 4.828872,
+      "lng": -74.355422
+    },
+    {
+      "id": "sena",
+      "nombre": "SENA Facatativá",
+      "detalle": "Facatativá",
+      "cat": "educacion",
+      "lat": 4.811252,
+      "lng": -74.340381
+    },
+    {
+      "id": "unad",
+      "nombre": "UNAD Facatativá",
+      "detalle": "Facatativá",
+      "cat": "educacion",
+      "lat": 4.811196,
+      "lng": -74.34
+    },
+    {
+      "id": "seminario",
+      "nombre": "Colegio Seminario San Juan Apóstol",
+      "detalle": "Facatativá",
+      "cat": "educacion",
+      "lat": 4.812494,
+      "lng": -74.349964
+    },
+    {
+      "id": "itif",
+      "nombre": "Instituto Técnico Industrial (ITIF)",
+      "detalle": "Sede académica, Facatativá",
+      "cat": "educacion",
+      "lat": 4.814147,
+      "lng": -74.355885
+    },
+    {
+      "id": "emilio-cifuentes",
+      "nombre": "Colegio Nacional Emilio Cifuentes",
+      "detalle": "Facatativá",
+      "cat": "educacion",
+      "lat": 4.813084,
+      "lng": -74.345593
+    },
+    {
+      "id": "ie-santa-rita",
+      "nombre": "IEM Técnico Comercial Santa Rita",
+      "detalle": "Facatativá",
+      "cat": "educacion",
+      "lat": 4.818377,
+      "lng": -74.352973
+    },
+    {
+      "id": "policarpa",
+      "nombre": "IEM Técnico Policarpa Salavarrieta",
+      "detalle": "Facatativá",
+      "cat": "educacion",
+      "lat": 4.833446,
+      "lng": -74.38803
+    },
+    {
+      "id": "cc-nova-plaza",
+      "nombre": "Centro Comercial Nova Plaza",
+      "detalle": "Facatativá",
+      "cat": "comercio",
+      "lat": 4.81862,
+      "lng": -74.351862
+    },
+    {
+      "id": "cc-el-portico",
+      "nombre": "Centro Comercial El Pórtico",
+      "detalle": "Facatativá",
+      "cat": "comercio",
+      "lat": 4.81825,
+      "lng": -74.358263
+    },
+    {
+      "id": "exito",
+      "nombre": "Éxito Facatativá",
+      "detalle": "Facatativá",
+      "cat": "comercio",
+      "lat": 4.818111,
+      "lng": -74.358143
+    },
+    {
+      "id": "cc-los-portones",
+      "nombre": "Centro Comercial Los Portones",
+      "detalle": "Centro, Facatativá",
+      "cat": "comercio",
+      "lat": 4.81098,
+      "lng": -74.35402
+    },
+    {
+      "id": "colsubsidio",
+      "nombre": "Supermercado Colsubsidio",
+      "detalle": "Facatativá",
+      "cat": "comercio",
+      "lat": 4.826155,
+      "lng": -74.351761
+    },
+    {
+      "id": "mercacentro",
+      "nombre": "Supermercado Mercacentro",
+      "detalle": "Centro, Facatativá",
+      "cat": "comercio",
+      "lat": 4.812462,
+      "lng": -74.354473
+    },
+    {
+      "id": "piedras-del-tunjo",
+      "nombre": "Parque Arqueológico Piedras del Tunjo",
+      "detalle": "Parque Arqueológico Nacional",
+      "cat": "turismo",
+      "lat": 4.816661,
+      "lng": -74.34579
+    },
+    {
+      "id": "estacion-del-tren",
+      "nombre": "Estación del Tren de Facatativá",
+      "detalle": "Monumento Nacional, Centro",
+      "cat": "turismo",
+      "lat": 4.808569,
+      "lng": -74.35526
+    },
+    {
+      "id": "torre-del-vigia",
+      "nombre": "Betel · La Torre del Vigía",
+      "detalle": "Facatativá · a 2,6 km",
+      "cat": "turismo",
+      "lat": 4.832883,
+      "lng": -74.3526
+    },
+    {
+      "id": "virgen-de-la-roca",
+      "nombre": "Virgen de la Roca",
+      "detalle": "Facatativá",
+      "cat": "turismo",
+      "lat": 4.804345,
+      "lng": -74.347792
+    },
+    {
+      "id": "centro",
+      "nombre": "Centro",
+      "detalle": "Barrio de Facatativá",
+      "cat": "barrio",
+      "lat": 4.81098,
+      "lng": -74.353221
+    },
+    {
+      "id": "santa-rita",
+      "nombre": "Santa Rita",
+      "detalle": "Barrio de Facatativá",
+      "cat": "barrio",
+      "lat": 4.815433,
+      "lng": -74.357175
+    },
+    {
+      "id": "chapinero",
+      "nombre": "Chapinero",
+      "detalle": "Barrio de Facatativá",
+      "cat": "barrio",
+      "lat": 4.811367,
+      "lng": -74.3507
+    },
+    {
+      "id": "la-arboleda",
+      "nombre": "La Arboleda",
+      "detalle": "Barrio de Facatativá",
+      "cat": "barrio",
+      "lat": 4.80951,
+      "lng": -74.345057
+    },
+    {
+      "id": "manablanca",
+      "nombre": "Manablanca",
+      "detalle": "Barrio de Facatativá",
+      "cat": "barrio",
+      "lat": 4.802628,
+      "lng": -74.346724
+    },
+    {
+      "id": "cartagenita",
+      "nombre": "Cartagenita",
+      "detalle": "Barrio de Facatativá",
+      "cat": "barrio",
+      "lat": 4.786022,
+      "lng": -74.334788
+    },
+    {
+      "id": "el-llanito",
+      "nombre": "El Llanito",
+      "detalle": "Barrio de Facatativá",
+      "cat": "barrio",
+      "lat": 4.82576,
+      "lng": -74.35254
+    },
+    {
+      "id": "berlin",
+      "nombre": "Berlín",
+      "detalle": "Barrio de Facatativá",
+      "cat": "barrio",
+      "lat": 4.828347,
+      "lng": -74.353645
+    },
+    {
+      "id": "brasilia",
+      "nombre": "Brasilia",
+      "detalle": "Barrio de Facatativá",
+      "cat": "barrio",
+      "lat": 4.818907,
+      "lng": -74.366037
+    },
+    {
+      "id": "san-rafael-barrio",
+      "nombre": "San Rafael",
+      "detalle": "Barrio de Facatativá",
+      "cat": "barrio",
+      "lat": 4.80588,
+      "lng": -74.348442
+    },
+    {
+      "id": "pueblo-viejo",
+      "nombre": "Pueblo Viejo",
+      "detalle": "Vereda de Facatativá",
+      "cat": "vereda",
+      "lat": 4.806429,
+      "lng": -74.382805
+    },
+    {
+      "id": "mancilla",
+      "nombre": "Mancilla",
+      "detalle": "Vereda de Facatativá",
+      "cat": "vereda",
+      "lat": 4.847808,
+      "lng": -74.339003
+    },
+    {
+      "id": "san-rafael",
+      "nombre": "San Rafael",
+      "detalle": "Vereda de Facatativá",
+      "cat": "vereda",
+      "lat": 4.850916,
+      "lng": -74.361265
+    },
+    {
+      "id": "la-selva",
+      "nombre": "La Selva",
+      "detalle": "Vereda de Facatativá",
+      "cat": "vereda",
+      "lat": 4.856158,
+      "lng": -74.385177
+    },
+    {
+      "id": "los-manzanos",
+      "nombre": "Los Manzanos",
+      "detalle": "Vereda de Facatativá",
+      "cat": "vereda",
+      "lat": 4.837137,
+      "lng": -74.390141
+    },
+    {
+      "id": "moyano",
+      "nombre": "Moyano",
+      "detalle": "Vereda de Facatativá",
+      "cat": "vereda",
+      "lat": 4.811682,
+      "lng": -74.308448
+    },
+    {
+      "id": "prado",
+      "nombre": "Prado",
+      "detalle": "Vereda de Facatativá",
+      "cat": "vereda",
+      "lat": 4.795037,
+      "lng": -74.325775
+    },
+    {
+      "id": "el-corzo",
+      "nombre": "El Corzo",
+      "detalle": "Vereda de Facatativá",
+      "cat": "vereda",
+      "lat": 4.777229,
+      "lng": -74.320186
+    },
+    {
+      "id": "la-tribuna",
+      "nombre": "La Tribuna",
+      "detalle": "Vereda de Facatativá",
+      "cat": "vereda",
+      "lat": 4.868152,
+      "lng": -74.403742
+    },
+    {
+      "id": "zipacon",
+      "nombre": "Zipacón",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.752766,
+      "lng": -74.379569
+    },
+    {
+      "id": "el-rosal",
+      "nombre": "El Rosal",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.85257,
+      "lng": -74.26059
+    },
+    {
+      "id": "bojaca",
+      "nombre": "Bojacá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.732482,
+      "lng": -74.341674
+    },
+    {
+      "id": "madrid",
+      "nombre": "Madrid",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.730613,
+      "lng": -74.264037
+    },
+    {
+      "id": "subachoque",
+      "nombre": "Subachoque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.927969,
+      "lng": -74.173964
+    },
+    {
+      "id": "mosquera",
+      "nombre": "Mosquera",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.7002,
+      "lng": -74.238506
+    },
+    {
+      "id": "funza",
+      "nombre": "Funza",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.717747,
+      "lng": -74.203155
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Héctor Bernal",
+      "placa": "FAC 604",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1833,
+      "desde": 2018,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Carlos Rodríguez",
+      "placa": "FAC 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2006,
+      "desde": 2007,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Luz Marina Rojas",
+      "placa": "FAC 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 853,
+      "desde": 2020,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Jairo Moreno",
+      "placa": "FAC 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 850,
+      "desde": 2013,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Martha Garzón",
+      "placa": "FAC 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1436,
+      "desde": 2010,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Diana Forero",
+      "placa": "FAC 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1552,
+      "desde": 2011,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Wilson Gómez",
+      "placa": "FAC 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 991,
+      "desde": 2013,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-30",
+      "movil": "030",
+      "nombre": "Germán Quintero",
+      "placa": "FAC 630",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 816,
+      "desde": 2020,
+      "tel": "3000000030"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Coptaxi S.A.S. es la empresa de taxis de Facatativá que reúne a conductores y propietarios de taxi del municipio. Lleva más de 15 años moviendo a la ciudad con seguridad, respeto y confianza desde su oficina en la Carrera 6A # 7A-13, en el barrio San José: taxi las 24 horas, traslados al aeropuerto El Dorado, transporte corporativo con facturación mensual y hasta traslado de mascotas, con conductores capacitados y monitoreo por GPS.\n\nCon esta app, Coptaxi puede dar el siguiente paso con su propia marca: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "La empresa presta el servicio de transporte público de pasajeros en vehículos tipo taxi con los mejores estándares de calidad y seguridad, con el compromiso de respetar la vida de todos los actores de la movilidad. Está orientada al liderazgo en el transporte puerta a puerta a nivel local y en comunicaciones, y forma a su gente con solidaridad, principios éticos, excelencia y trabajo en equipo.",
+    "vision": "En 2030 la empresa será reconocida en la ciudad y el departamento por sus acciones de prevención y seguridad vial, con cero accidentes y cero pérdidas de vidas humanas, y como una empresa de vanguardia en comunicaciones y transporte.",
+    "servicios": [
+      "Taxi las 24 horas",
+      "Traslados al aeropuerto El Dorado",
+      "Transporte corporativo con facturación mensual",
+      "Traslado de mascotas",
+      "Traslados de turismo",
+      "Viajes intermunicipales bajo reserva"
+    ],
+    "frase": "Tu tranquilidad, nuestro mejor destino",
+    "linea_tiempo": [
+      {
+        "b": "+15 años",
+        "s": "Moviendo a Facatativá con seguridad."
+      },
+      {
+        "b": "24/7",
+        "s": "Taxi, aeropuerto, empresas y mascotas."
+      },
+      {
+        "b": "Con la app",
+        "s": "Tu taxi desde el celular, con GPS y tarifa clara."
+      }
+    ]
+  },
+  "fuentes": [
+    "https://coptaxi.com.co/",
+    "https://directorio-empresas.einforma.co/informacion-empresa/coptaxi-sas",
+    "https://empresas.larepublica.co/colombia/cundinamarca/facatativa/coptaxi-s-a-s-900463985",
+    "https://www.somospais.co/ver/coptaxi-facatativa-6345159fc2ba6",
+    "https://www.facebook.com/p/Coptaxi-Facatativ%C3%A1-100063259508726/",
+    "https://play.google.com/store/apps/details?id=com.coptaxi.app",
+    "https://radiowebfyc.com/facatativa/atencion-nuevas-tarifas-de-transporte-publico-en-facatativa/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Escogida por indicación de Oscar: Coptaxi S.A.S. es la empresa de taxis propia de Facatativá (solo taxis, servicio 24 horas). Es una S.A.S., no una cooperativa: NIT 900.463.985-0, constituida el 8 de septiembre de 2011 (einforma y RUES/La República), actividad «transporte de pasajeros» y «otras actividades de telecomunicaciones». Su sitio habla de «más de 15 años»; el año de fundación queda por confirmar.",
+    "Representante legal: Gentil Ramírez González (según la política de privacidad de su sitio, https://coptaxi.com.co/politica-privacidad/). Su app de Google Play se actualizó el 4 de agosto de 2026.",
+    "OJO para la venta: ya usa Autocab (la misma plataforma inglesa de Cootransmadrid). Tiene la app «Coptaxi» en Google Play (10 mil+ descargas, 4,5 estrellas con 243 reseñas; su política de privacidad está en book.autocab.net/32115) y reservas web en eb3.autocab.net/#/32115. Con ellos la propuesta es mejorar lo que ya tienen (marca propia, pago QR Bre-B, stickers QR, código de abordaje, panel propio), no empezar de cero.",
+    "Contacto (sitio oficial, página Contacto): WhatsApp 302 444 4747 y 322 222 7645; fijos (601) 892 4400 y (601) 951 1420; correos contacto@coptaxi.com.co y empresacoptaxis.a.s@gmail.com; oficina de 8:00 a 17:00. El 311 267 0336 que dan somospais y Google NO aparece en su sitio: confirmarlo antes de usarlo. Otro directorio da coptaxi@hotmail.com. Se usa empresacoptaxis.a.s@gmail.com (también de su página Contacto) porque coptaxi.com.co no tiene registro MX (revisado el 1-oct-2026): lo que se escriba a contacto@coptaxi.com.co probablemente rebota.",
+    "El fijo 601 892 4400 también aparece en directorios junto al 601 892 0044 como «Terminal Radio Taxi 24 Horas» de Facatativá: parece la misma central (por confirmar).",
+    "Misión y visión: las oficiales de su página «Nosotros», con ajustes mínimos de redacción. Lema y frase: también de su sitio.",
+    "Colores medidos: sitio (Elementor) primario #005709, texto #0E8104, botones #00A504; logo verde #00C600, asfalto #3B4343 y amarillo #F4C908. En la propuesta no se usa su logo.",
+    "Tarifas: carrera mínima urbana de $6.000 de día (lunes a sábado, 6:00 a. m. a 6:00 p. m.) y $6.800 de noche (6:00 p. m. a 6:00 a. m.), según el Decreto 080 del 9 de febrero de 2024 de Facatativá (nota de Radio Web FyC). De día, la mínima por llamada telefónica es $6.800. Banderazo, valor por km, recargo dominical y rutas siguen siendo de EJEMPLO; puede haber un decreto más reciente (2025 o 2026): confirmarlo.",
+    "Alternativas en Facatativá (no escogidas): Transportes Villetax S.A. (nació en Villeta en 1970 y presta servicio en Facatativá desde 1992; individual urbano y colectivo; Cra 3 # 9-35 piso 2, barrio Santa Rita; 601 842 1463; WhatsApp 300 558 9371; transportesvilletaxsa@hotmail.com; https://www.transportesvilletaxsa.com). Terminal Radio Taxi Facatativá 24 h (601 892 0044). «Taxis Facatativá» (página de Facebook, https://www.facebook.com/p/Taxis-Facatativ%C3%A1-100057787114559/). Auto Faca S.A.S. (sobre todo intermunicipal; taxis por radio «TaxiExpress», WhatsApp 313 200 1330, https://www.autofaca.com). En directorios también salen Transgalaxia (Cra 1 Sur # 5-02) y Siquima Express.",
+    "Oficina ubicada en el mapa por el cruce de la Carrera 6A con la Calle 7A (OpenStreetMap); el barrio San José no aparece en OSM. Lugares revisados a mano desde OpenStreetMap: las «terminales» Calle 80 y Calle 13 son los puntos de salida de buses a Bogotá que marca OSM.",
+    "Otras páginas consultadas del sitio de Coptaxi: https://coptaxi.com.co/nosotros/ (misión y visión), https://coptaxi.com.co/servicios/ y https://coptaxi.com.co/contacto/ (teléfonos, correos, dirección y horario)."
+  ],
+  "competencia": {
+    "app": {
+      "nombre": "Coptaxi",
+      "tienda": "Google Play",
+      "calificacion": "4,5",
+      "opiniones": 243,
+      "descargas": "más de 10.000",
+      "consulta": "1 de octubre de 2026",
+      "url": "https://play.google.com/store/apps/details?id=com.coptaxi.app"
+    },
+    "positivas": [
+      "muy rápido",
+      "genial, puntual y todo",
+      "siempre ha sido muy eficiente"
+    ],
+    "quejas": [
+      {
+        "tema": "Tiempos de llegada que no se cumplen",
+        "cita": "dicen que están a 1 min y se demoran más de 10",
+        "fecha": "nov. 2024",
+        "solucion": "El tiempo de llegada sale de la ruta real por las calles y el pasajero ve el taxi moverse en el mapa. El aviso «está llegando» solo aparece cuando el taxi de verdad está a menos de 300 m."
+      },
+      {
+        "tema": "El taxi «simula» estar en el punto",
+        "cita": "El taxi no llega, simula estar en el punto",
+        "fecha": "feb. 2024",
+        "solucion": "El conductor solo puede marcar «Llegué» si su GPS está a menos de 150 m del pasajero, y el viaje solo arranca con el código de 4 dígitos que tiene el pasajero en su celular."
+      },
+      {
+        "tema": "Servicios que nadie acepta",
+        "cita": "muchos carros trabajando y ninguno acepta el recorrido",
+        "fecha": "dic. 2025",
+        "solucion": "La solicitud les llega a los conductores conectados con alarma, vibración y cuenta regresiva. En el panel de la empresa, la central ve los servicios que nadie ha tomado y los puede asignar a mano."
+      },
+      {
+        "tema": "Servicios que no llegan",
+        "cita": "me decía que solo tardaba 2 minutos… el servicio nunca llegó",
+        "fecha": "sep. 2026",
+        "solucion": "El pasajero ve en todo momento quién va por él (nombre, móvil, placa y recorrido) y puede llamarlo o escribirle por WhatsApp. Si el conductor cancela, la app busca otro taxi sola."
+      },
+      {
+        "tema": "Precios que sorprenden",
+        "cita": "me están cobrando demasiado… 60 mil pesos",
+        "fecha": "mar. 2026",
+        "solucion": "La tarifa estimada se ve antes de pedir, con su detalle, y los destinos de siempre tienen tarifa fija publicada en la app y en la web."
+      },
+      {
+        "tema": "Registro largo y mapa perdido",
+        "cita": "me pidió toda clase de datos · cuando se abre la aplicación aparece en otro continente",
+        "fecha": "2024 – 2026",
+        "solucion": "Registro con solo nombre, celular y un código. El mapa abre en la ubicación del pasajero o, si no hay GPS, en el centro de Facatativá."
+      }
+    ],
+    "fuente": "Opiniones públicas de la app «Coptaxi» en Google Play, consultadas el 1 de octubre de 2026."
+  }
+}

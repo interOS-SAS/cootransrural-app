@@ -132,7 +132,7 @@
     // usa las claves «ct.…»; las demás cooperativas, «ct.<id>.…» (no se tocan las de otras).
     const ID = 'cootransrural';
     const PRINCIPAL = true;
-    const OTRAS = ["la-vega", "madrid", "subachoque", "tabio", "tenjo", "villeta"];
+    const OTRAS = ["facatativa", "la-vega", "madrid", "subachoque", "tabio", "tenjo", "villeta"];
     const esDeEsta = (k) => (PRINCIPAL ? k.startsWith('ct.') && !OTRAS.some((o) => k.startsWith(`ct.${o}.`)) : k.startsWith(`ct.${ID}.`));
     document.getElementById('borrar').addEventListener('click', () => {
       if (!confirm('¿Borrar tu registro, tu historial y tus ajustes de la app en este celular?')) return;

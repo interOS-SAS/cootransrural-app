@@ -45,6 +45,10 @@ export const empresa = {
   get esPropuesta() {
     return Boolean(NUC?.ES_PROPUESTA);
   },
+  // «cooperativa» o «empresa» (ver nucleo/config.js).
+  get tipo() {
+    return NUC?.TIPO_EMPRESA || 'cooperativa';
+  },
   get nombre() {
     return dato(EMP().nombreCorto) || dato(EMP().nombre) || 'la cooperativa';
   },
@@ -158,7 +162,7 @@ export function etiquetasPrueba(texto = 'Modo prueba') {
 // Franja de las propuestas (no son clientes ni han autorizado nada).
 export function franjaPropuestaHTML() {
   if (!empresa.esPropuesta) return '';
-  return `<p class="c-franja-propuesta" role="note">${icono('info')}<span>Propuesta de demostración preparada por ${esc(empresa.proveedor)} para ${esc(empresa.razonSocial)} · No es la app oficial de la cooperativa.</span></p>`;
+  return `<p class="c-franja-propuesta" role="note">${icono('info')}<span>Propuesta de demostración preparada por ${esc(empresa.proveedor)} para ${esc(empresa.razonSocial)} · No es la app oficial de la ${empresa.tipo}.</span></p>`;
 }
 
 // «Acerca de» para Ajustes: quién hizo la app y, en propuestas, que es una demostración.
@@ -167,7 +171,7 @@ export function acercaDeHTML() {
   return `<div class="c-bloque c-acerca">
     <div class="c-acerca-marca">${iconoAppHTML(44, 'acerca')}<div><strong>${esc(empresa.nombreLargo)}</strong><small>${esc(empresa.razonSocial)}</small></div></div>
     <p class="c-acerca-proveedor">App desarrollada por ${empresa.proveedorWeb ? `<a href="${esc(empresa.proveedorWeb)}" target="_blank" rel="noopener">${prov}</a>` : prov}</p>
-    ${empresa.esPropuesta ? `<p class="c-acerca-demo">${icono('info')}<span>Demostración para ${esc(empresa.nombreLargo)}: no es la app oficial de la cooperativa.</span></p>` : ''}
+    ${empresa.esPropuesta ? `<p class="c-acerca-demo">${icono('info')}<span>Demostración para ${esc(empresa.nombreLargo)}: no es la app oficial de la ${empresa.tipo}.</span></p>` : ''}
   </div>`;
 }
 
@@ -181,7 +185,7 @@ export function pieMarcaHTML({ conDesde = true } = {}) {
 export function nombresDisenos() {
   return [
     ['a', 'Diseño A', 'Ámbar Urbano'],
-    ['b', 'Diseño B', empresa.esPrincipal ? 'Verde Rosal' : 'Color de la cooperativa'],
+    ['b', 'Diseño B', empresa.esPrincipal ? 'Verde Rosal' : `Color de la ${empresa.tipo}`],
     ['c', 'Diseño C', 'Noche Neón'],
   ];
 }
@@ -822,7 +826,7 @@ export function escenaHTML({ tipo = 'pasajero', contenido }) {
   return `<div class="c-escena" style="${coloresEmpresaCSS()}">
     <aside class="c-lateral" aria-label="Sobre ${esc(E.nombre)}">
       <div class="c-lateral-marca">${iconoAppHTML(56, 'lat')}<div><strong>${esc(E.nombre)}</strong>${E.lema ? `<span>${esc(E.lema)}</span>` : ''}</div></div>
-      ${E.esPropuesta ? `<p class="c-lateral-demo">${icono('info')}<span>Demostración para ${esc(E.nombreLargo)} · no es la app oficial de la cooperativa.</span></p>` : ''}
+      ${E.esPropuesta ? `<p class="c-lateral-demo">${icono('info')}<span>Demostración para ${esc(E.nombreLargo)} · no es la app oficial de la ${E.tipo}.</span></p>` : ''}
       <h2>${pasajero ? `Tu taxi${E.pueblo ? ` de ${esc(E.pueblo)}` : ''}, <em>en tu celular</em>.` : 'La cabina del conductor, <em>en tu celular</em>.'}</h2>
       <ul>
         ${pasajero

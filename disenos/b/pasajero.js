@@ -902,7 +902,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
           <div class="vb-tarifa-cab"><h2 id="vb-tarifa-t">Tarifa estimada</h2><span class="vb-chip-ejemplo">Tarifa de ejemplo</span></div>
           <div class="vb-tarifa-total" data-tarifa-total><span class="vb-esqueleto"></span></div>
           <details class="vb-detalle"><summary>Ver cómo se calcula</summary><ul data-tarifa-detalle></ul></details>
-          <p class="vb-letra-chica">Valores de ejemplo mientras la cooperativa publica sus tarifas oficiales.</p>
+          <p class="vb-letra-chica">Valores de ejemplo mientras la ${MARCA.tipo} publica sus tarifas oficiales.</p>
         </section>
 
         <section class="vb-bloque" aria-labelledby="vb-pago-t">
@@ -1056,7 +1056,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         <div class="vb-carne-datos">
           <h2>${esc(c.nombre)}</h2>
           <p class="vb-carne-cal">${ic('estrella', 18)} <b>${decimal(c.calificacion)}</b> · ${numeroMiles(c.viajes)} viajes</p>
-          ${c.desde ? `<p class="vb-carne-desde">En la cooperativa desde ${esc(c.desde)}</p>` : ''}
+          ${c.desde ? `<p class="vb-carne-desde">En la ${MARCA.tipo} desde ${esc(c.desde)}</p>` : ''}
         </div>
         ${selloVerificado()}
         <span class="vb-verificado">${ic('check', 16)} Verificado por ${esc(MARCA.nombre)}</span>
@@ -1456,7 +1456,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     const T = N.TARIFAS;
     return `<div class="vb-desliza vb-tarifas">
       ${cabSeccion('Tarifas y rutas', 'Para que sepas cuánto vale antes de subir')}
-      <p class="vb-aviso-ejemplo">${ic('info', 22)}<span><b>Tarifas de ejemplo.</b> Son valores de prueba para esta demostración; los oficiales los define la cooperativa.</span></p>
+      <p class="vb-aviso-ejemplo">${ic('info', 22)}<span><b>Tarifas de ejemplo.</b> Son valores de prueba para esta demostración; los oficiales los define la ${MARCA.tipo}.</span></p>
       <section class="vb-ofertas">
         <button type="button" class="vb-oferta oro" data-accion="programar"><span class="vb-oferta-num">−10 %</span><span><b>Programa con 24 h</b><small>Pide con un día de anticipación y paga menos.</small></span>${ic('flecha')}</button>
         <button type="button" class="vb-oferta verde" data-accion="ir" data-pantalla="fidelidad"><span class="vb-oferta-num">50 %</span><span><b>Cada 10 viajes</b><small>El siguiente viaje va a mitad de precio.</small></span>${ic('flecha')}</button>

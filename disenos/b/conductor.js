@@ -22,7 +22,7 @@ const DOCUMENTOS = [
   ['soat', 'SOAT', 'Seguro obligatorio'],
   ['tecnomecanica', 'Revisión técnico-mecánica', 'Certificado vigente'],
   ['licencia', 'Licencia de conducción', 'Categoría C1 · servicio público'],
-  ['tarjetaControl', 'Tarjeta de control', 'Expedida por la cooperativa'],
+  ['tarjetaControl', 'Tarjeta de control', `Expedida por la ${MARCA.tipo}`],
 ];
 const COLOR_RUTA = PALETA.verde;
 
@@ -678,7 +678,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
             <span>${pago.metodo === 'qr' ? `${pago.billetera ? `${esc(pago.billetera)} · ` : ''}${pago.ref ? `Ref. ${esc(pago.ref)}` : ''}` : 'Recibido en mano'}</span></div>
           ${pago.metodo === 'qr' ? '<span class="vb-prueba">Prueba</span>' : ''}
         </section>
-        <div class="vb-calif-quien">${avatarHTML(p.nombre, 'grande')}<h1 tabindex="-1">¿Cómo te fue con ${esc(nombreCorto(p.nombre || 'el pasajero'))}?</h1><p>Tu calificación ayuda a cuidar a la cooperativa.</p></div>
+        <div class="vb-calif-quien">${avatarHTML(p.nombre, 'grande')}<h1 tabindex="-1">¿Cómo te fue con ${esc(nombreCorto(p.nombre || 'el pasajero'))}?</h1><p>Tu calificación ayuda a cuidar a la ${MARCA.tipo}.</p></div>
         <div class="vb-estrellas-elegir" role="radiogroup" aria-label="Calificación del pasajero">
           ${[1, 2, 3, 4, 5].map((i) => `<button type="button" role="radio" aria-checked="${ui.estrellas === i}" aria-label="${i} estrella${i > 1 ? 's' : ''}" data-accion="estrella" data-n="${i}" class="${i <= ui.estrellas ? 'llena' : ''}">${ic('estrella', 46)}</button>`).join('')}
         </div>
@@ -782,7 +782,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     const gps = a.gpsSimulado === true ? 'sim' : a.gpsSimulado === false ? 'real' : 'auto';
     const disenos = [['a', 'Ámbar Urbano', 'Amarillo y directo'], ['b', NOMBRE_DISENO, 'Este diseño'], ['c', 'Noche Neón', 'Modo oscuro']];
     return `<div class="vb-desliza vb-c-perfil">
-      ${cabSeccion('Mi taxi', 'Tus datos en la cooperativa')}
+      ${cabSeccion('Mi taxi', `Tus datos en la ${MARCA.tipo}`)}
       <article class="vb-c-mi-taxi">
         <div class="vb-c-mi-taxi-ilus">${taxiLado({ movil: yo.movil || MARCA.movilDemo })}</div>
         <div class="vb-c-mi-taxi-datos">
@@ -821,7 +821,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         <a class="vb-menu-item" href="${esc(enlaceSeccion('app/', diseno))}"><span class="vb-menu-ic">${ic('usuario', 24)}</span><span><b>App del pasajero</b><small>Para pedir un taxi</small></span>${ic('flecha', 20)}</a>
         ${MARCA.telefono
           ? `<a class="vb-menu-item" href="${telCentral()}"><span class="vb-menu-ic">${ic('telefono', 24)}</span><span><b>Llamar a la central</b><small>${esc(MARCA.telefonoVisible)}</small></span>${ic('flecha', 20)}</a>`
-          : `<div class="vb-menu-item sin-enlace" data-sin-telefono><span class="vb-menu-ic">${ic('telefono', 24)}</span><span><b>Central de la cooperativa</b><small>Teléfono de la central: pronto</small></span></div>`}
+          : `<div class="vb-menu-item sin-enlace" data-sin-telefono><span class="vb-menu-ic">${ic('telefono', 24)}</span><span><b>Central de la ${MARCA.tipo}</b><small>Teléfono de la central: pronto</small></span></div>`}
         <button type="button" class="vb-menu-item rojo" data-accion="salir"><span class="vb-menu-ic">${ic('salir', 24)}</span><span><b>Cerrar sesión</b><small>Terminar el turno en este celular</small></span></button>
       </div>
     </div>`;
