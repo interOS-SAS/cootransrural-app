@@ -325,7 +325,7 @@ function formulario() {
 /* ---------------- Costos: calculadora de los dos planes ---------------- */
 
 const PLAN_A_COMISION = 0.019; // 1,9 % de cada viaje pedido por la app
-const PLAN_B_CUOTA = 30000; // por taxi al mes
+const PLAN_B_CUOTA = 20000; // por taxi al mes
 
 function calculadoraCostos() {
   const form = $('#calculadora');
