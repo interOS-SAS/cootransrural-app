@@ -349,11 +349,11 @@ function calculadoraCostos() {
     const planB = taxis * cuotaMes;
     $('#calc-b-titulo').textContent = `Plan B · ${N.pesos(cuota)} ${porDia ? 'al día' : 'al mes'} por taxi`;
     $('#calc-app-texto').textContent = porcentaje(app * 100);
-    $('#calc-flota').textContent = `La flota hace unos ${viajesMes.toLocaleString('es-CO')} viajes al mes (${N.pesos(flota)}). Por la app: ${Math.round(viajesMes * app).toLocaleString('es-CO')} viajes.`;
+    $('#calc-flota').innerHTML = `La flota hace unos ${viajesMes.toLocaleString('es-CO')} viajes al mes (${N.pesos(flota)}). Por la app: ${Math.round(viajesMes * app).toLocaleString('es-CO')} viajes, que suman <b>${N.pesos(flota * app)}</b>.`;
     const a = $('#calc-a');
     const b = $('#calc-b');
     a.querySelector('b').textContent = `${N.pesos(planA)} al mes`;
-    a.querySelector('small').textContent = `${N.pesos(planA / taxis / 30)} por taxi al día`;
+    a.querySelector('small').textContent = `1,9 % de ${N.pesos(flota * app)} facturados por la app`;
     b.querySelector('b').textContent = `${N.pesos(planB)} al mes`;
     b.querySelector('small').textContent = porDia ? `${N.pesos(cuotaMes)} al mes por taxi` : `${N.pesos(cuotaMes / 30)} por taxi al día`;
     a.classList.toggle('mas-barato', planA < planB);

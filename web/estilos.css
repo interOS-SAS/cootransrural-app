@@ -868,3 +868,4 @@ a.dato:hover { border-color: var(--verde-3); transform: translateY(-2px); }
   .destacado-900 { grid-template-columns: 1fr; text-align: center; }
   .destacado-precio { justify-self: center; }
 }
+.calc-nota b { color: var(--amarillo); font-weight: 800; }
