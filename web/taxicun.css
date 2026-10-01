@@ -1,0 +1,52 @@
+/* App única TaxiCun: pantalla de carga y lista de municipios. Lo demás lo pinta
+   el diseño de cada cooperativa. */
+html, body { margin: 0; min-height: 100%; background: #0A2552; }
+.tc-carga {
+  position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; padding: 24px;
+  background: radial-gradient(120% 80% at 50% 10%, #1A4FA0 0%, #0A2552 60%, #061733 100%);
+  color: #fff; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; text-align: center;
+  transition: opacity .4s;
+}
+.tc-carga.oculta { opacity: 0; pointer-events: none; }
+.tc-carga-icono { border-radius: 26px; box-shadow: 0 16px 40px rgba(0, 0, 0, .35); animation: tc-latido 1.5s ease-in-out infinite; }
+.tc-carga-marca { margin: 18px 0 4px; font: 800 34px/1 'Sora', system-ui, sans-serif; letter-spacing: -.03em; }
+.tc-carga-marca span { color: #FFC21A; }
+.tc-carga-texto { margin: 10px 0 0; min-height: 1.4em; font-size: 16px; font-weight: 600; color: rgba(255, 255, 255, .88); }
+.tc-carga-texto small { font-weight: 500; color: rgba(255, 255, 255, .7); }
+.tc-carga-pie { position: fixed; left: 0; right: 0; bottom: max(18px, env(safe-area-inset-bottom)); margin: 0; font-size: 12px; color: rgba(255, 255, 255, .6); }
+@keyframes tc-latido { 50% { transform: scale(1.05); } }
+@media (prefers-reduced-motion: reduce) { .tc-carga-icono { animation: none; } }
+
+.tc-boton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; margin-top: 14px; padding: 0 22px;
+  border: 0; border-radius: 999px; background: #FFC21A; color: #0A2552; font: 800 16px/1 'Sora', system-ui, sans-serif; cursor: pointer;
+}
+.tc-boton svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.tc-boton:focus-visible, .tc-lista button:focus-visible { outline: 3px solid #FFC21A; outline-offset: 3px; }
+.tc-boton:disabled { opacity: .7; }
+
+.tc-elegir {
+  min-height: 100dvh; box-sizing: border-box; padding: max(28px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+  max-width: 520px; margin: 0 auto; color: #fff; font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+.tc-elegir-cabeza { text-align: center; }
+.tc-elegir-cabeza img { width: 200px; height: auto; }
+.tc-elegir-cabeza h1 { margin: 22px 0 8px; font: 800 26px/1.15 'Sora', system-ui, sans-serif; letter-spacing: -.02em; }
+.tc-elegir-cabeza p { margin: 0 auto; max-width: 30em; color: rgba(255, 255, 255, .82); font-size: 16px; line-height: 1.45; }
+.tc-rol { margin-top: 10px !important; display: inline-block; padding: 6px 12px; border-radius: 999px; background: rgba(255, 194, 26, .16); color: #FFC21A !important; font-weight: 800; font-size: 13px !important; }
+.tc-boton-ubicacion { width: 100%; margin: 22px 0 18px; }
+.tc-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.tc-lista button {
+  width: 100%; display: flex; align-items: center; gap: 14px; min-height: 72px; padding: 12px 16px; box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, .14); border-left: 6px solid var(--c, #FFC21A); border-radius: 18px;
+  background: rgba(255, 255, 255, .07); color: #fff; text-align: left; cursor: pointer; font: inherit;
+}
+.tc-lista button:hover { background: rgba(255, 255, 255, .12); }
+.tc-lista img { width: 48px; height: 48px; border-radius: 13px; flex: none; }
+.tc-lista-texto { flex: 1; min-width: 0; display: grid; gap: 3px; }
+.tc-lista-texto b { font: 800 18px/1.15 'Sora', system-ui, sans-serif; }
+.tc-lista-texto small { color: rgba(255, 255, 255, .75); font-size: 14px; }
+.tc-demo { flex: none; padding: 4px 9px; border-radius: 999px; background: rgba(255, 255, 255, .14); font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: rgba(255, 255, 255, .85); }
+.tc-flecha { width: 22px; height: 22px; flex: none; fill: none; stroke: rgba(255, 255, 255, .7); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.tc-elegir-pie { margin: 26px 0 0; text-align: center; font-size: 12px; color: rgba(255, 255, 255, .55); }
+.tc-error { color: #fff; font: 16px system-ui, sans-serif; padding: 24px; }

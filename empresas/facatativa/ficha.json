@@ -1,6 +1,7 @@
 {
   "id": "facatativa",
   "estado": "propuesta",
+  "diseno": "b",
   "EMPRESA": {
     "nombre": "Coptaxi",
     "nombreCorto": "Coptaxi",

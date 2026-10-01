@@ -1,6 +1,7 @@
 {
   "id": "madrid",
   "estado": "propuesta",
+  "diseno": "b",
   "EMPRESA": {
     "nombre": "Cootransmadrid",
     "nombreCorto": "Cootransmadrid",

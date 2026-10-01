@@ -1,6 +1,7 @@
 {
   "id": "tenjo",
   "estado": "propuesta",
+  "diseno": "b",
   "EMPRESA": {
     "nombre": "Cootranstenjo",
     "nombreCorto": "Cootranstenjo",

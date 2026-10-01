@@ -1,6 +1,7 @@
 {
   "id": "cootransrural",
   "estado": "cliente",
+  "diseno": "b",
   "EMPRESA": {
     "nombre": "Cootransrural",
     "razonSocial": "Cooperativa de Transportadores Rurales de El Rosal Ltda.",

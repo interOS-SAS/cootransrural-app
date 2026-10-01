@@ -1,0 +1,23 @@
+{
+  "name": "TaxiCun",
+  "short_name": "TaxiCun",
+  "description": "Pide tu taxi en tu municipio de Cundinamarca con tu ubicación, sigue el móvil en el mapa y paga con QR. Desarrollada por interOS.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A2552",
+  "theme_color": "#0A2552",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../img/taxicun/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../img/taxicun/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../img/taxicun/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Soy conductor", "url": "./conductor/" },
+    { "name": "Cambiar de municipio", "url": "./?elegir=1" }
+  ]
+}

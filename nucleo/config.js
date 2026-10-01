@@ -47,8 +47,22 @@ export const COLORES = ficha.colores || {};
 export const CENTRO = ficha.CENTRO;
 export const ZONA = ficha.ZONA;
 
-// Quién hizo la app (pie de página y franja de propuesta).
+// Quién desarrolla la app (pie de página y franja de propuesta).
 export const PROVEEDOR = { nombre: 'interOS', web: 'https://interos.com.co' };
+
+// La app única de todas las cooperativas se llama TaxiCun (desarrollada por interOS).
+export const MARCA = {
+  nombre: 'TaxiCun',
+  desarrollador: 'interOS',
+  lema: 'Tu taxi de confianza en Cundinamarca',
+  colores: { azul: '#0A2552', azul2: '#1A4FA0', amarillo: '#FFC21A', amarilloOscuro: '#F2A900' },
+  icono: 'img/taxicun/icono-192.png',
+  logo: 'img/taxicun/logo.svg',
+  logoBlanco: 'img/taxicun/logo-blanco.svg',
+};
+
+// ¿La página es la app única TaxiCun (taxicun/), que elige la cooperativa por GPS?
+export const EN_TAXICUN = Boolean(globalThis.CT_TAXICUN);
 
 // Relés MQTT públicos para conectar celulares distintos en la demo.
 // Se usan TODOS a la vez y se descartan los mensajes repetidos: así, si una red
@@ -118,4 +132,21 @@ export const RAIZ_EMPRESA = ID_EMPRESA === 'cootransrural' ? RAIZ : new URL(`${I
 
 export function urlEmpresa(ruta = '') {
   return new URL(ruta, RAIZ_EMPRESA).href;
+}
+
+// Enlace a la app del pasajero ('pasajero') o del conductor ('conductor').
+// Dentro de TaxiCun se queda en TaxiCun (con la cooperativa en ?e=); fuera,
+// va a las páginas propias de la cooperativa.
+export function urlApp(rol = 'pasajero', extra = {}) {
+  const u = EN_TAXICUN
+    ? new URL(rol === 'conductor' ? 'taxicun/conductor/' : 'taxicun/', RAIZ)
+    : new URL(rol === 'conductor' ? 'conductor/' : 'app/', RAIZ_EMPRESA);
+  if (EN_TAXICUN) u.searchParams.set('e', ID_EMPRESA);
+  for (const [k, v] of Object.entries(extra)) if (v != null && v !== '') u.searchParams.set(k, v);
+  return u.href;
+}
+
+// Cambiar de municipio dentro de TaxiCun (muestra la lista de cooperativas).
+export function urlElegirMunicipio(rol = 'pasajero') {
+  return new URL(rol === 'conductor' ? 'taxicun/conductor/?elegir=1' : 'taxicun/?elegir=1', RAIZ).href;
 }

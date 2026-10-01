@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>TaxiCun · Conductores</title>
+  <meta name="description" content="TaxiCun para conductores: recibe servicios de tu cooperativa, navega hasta el pasajero y cobra con QR. Desarrollada por interOS.">
+  <meta name="theme-color" content="#0A2552">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TaxiCun">
+  <link rel="manifest" href="{{RAIZ}}taxicun/manifest.webmanifest">
+  <script>window.CT_TAXICUN = true; window.CT_ROL = 'conductor';</script>
+  <link rel="icon" type="image/png" sizes="32x32" href="{{RAIZ}}img/taxicun/favicon-32.png">
+  <link rel="apple-touch-icon" href="{{RAIZ}}img/taxicun/apple-touch-icon.png">
+  <link rel="stylesheet" href="{{RAIZ}}fuentes/fuentes.css">
+  <link rel="stylesheet" href="{{RAIZ}}web/taxicun.css">
+</head>
+<body>
+  <div id="carga" class="tc-carga" role="status" aria-live="polite">
+    <div class="tc-carga-centro">
+      <img class="tc-carga-icono" src="{{RAIZ}}img/taxicun/icono-192.png" alt="" width="104" height="104">
+      <p class="tc-carga-marca">Taxi<span>Cun</span></p>
+      <p class="tc-carga-texto" id="carga-texto">Buscando tu municipio…</p>
+      <p class="tc-carga-pie">Desarrollada por interOS</p>
+    </div>
+  </div>
+  <div id="elegir" class="tc-elegir" hidden></div>
+  <div id="app"></div>
+  <noscript>Para usar TaxiCun activa JavaScript.</noscript>
+  <script>
+    // Si en 20 s no terminó de cargar (sin señal), se dice en pantalla.
+    setTimeout(function () {
+      var c = document.getElementById('carga');
+      if (!c || c.classList.contains('oculta') || !document.getElementById('elegir').hidden) return;
+      document.getElementById('carga-texto').innerHTML = 'No pudimos cargar TaxiCun.<br><small>Revisa tu conexión a internet e inténtalo de nuevo.</small><br><button type="button" class="tc-boton" onclick="location.reload()">Reintentar</button>';
+    }, 20000);
+  </script>
+  <script type="module">
+    import { iniciarTaxiCun } from '{{RAIZ}}web/taxicun.js';
+    const VERSION_DISENOS = '';
+    iniciarTaxiCun({ rol: 'conductor', version: VERSION_DISENOS });
+  </script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+{
+ "marca": "TaxiCun",
+ "cooperativas": [
+  {
+   "id": "cootransrural",
+   "nombre": "Cootransrural",
+   "razonSocial": "Cooperativa de Transportadores Rurales de El Rosal Ltda.",
+   "tipo": "cooperativa",
+   "pueblo": "El Rosal",
+   "municipio": "El Rosal, Cundinamarca",
+   "estado": "cliente",
+   "diseno": "b",
+   "centro": {
+    "lat": 4.85257,
+    "lng": -74.26059
+   },
+   "radioKm": 9,
+   "color": "#0A5C33",
+   "icono": "img/icono-192.png",
+   "ruta": ""
+  },
+  {
+   "id": "facatativa",
+   "nombre": "Coptaxi",
+   "razonSocial": "Coptaxi S.A.S.",
+   "tipo": "empresa",
+   "pueblo": "Facatativá",
+   "municipio": "Facatativá, Cundinamarca",
+   "estado": "propuesta",
+   "diseno": "b",
+   "centro": {
+    "lat": 4.809728,
+    "lng": -74.354184
+   },
+   "radioKm": 9,
+   "color": "#0E8104",
+   "icono": "empresas/facatativa/icono-192.png",
+   "ruta": "facatativa/"
+  },
+  {
+   "id": "la-vega",
+   "nombre": "Cootransvillaleal",
+   "razonSocial": "Cooperativa de Transportes y Servicios Cootransvillaleal",
+   "tipo": "cooperativa",
+   "pueblo": "La Vega",
+   "municipio": "La Vega, Cundinamarca",
+   "estado": "propuesta",
+   "diseno": "b",
+   "centro": {
+    "lat": 4.999712,
+    "lng": -74.339522
+   },
+   "radioKm": 9,
+   "color": "#0C3C60",
+   "icono": "empresas/la-vega/icono-192.png",
+   "ruta": "la-vega/"
+  },
+  {
+   "id": "madrid",
+   "nombre": "Cootransmadrid",
+   "razonSocial": "Cooperativa Multiactiva de Transportadores de Madrid (Cootransmadrid)",
+   "tipo": "cooperativa",
+   "pueblo": "Madrid",
+   "municipio": "Madrid, Cundinamarca",
+   "estado": "propuesta",
+   "diseno": "b",
+   "centro": {
+    "lat": 4.730613,
+    "lng": -74.264037
+   },
+   "radioKm": 9,
+   "color": "#2E2A25",
+   "icono": "empresas/madrid/icono-192.png",
+   "ruta": "madrid/"
+  },
+  {
+   "id": "subachoque",
+   "nombre": "Coopmultrasub",
+   "razonSocial": "Cooperativa Multiactiva de Transportadores de Subachoque Ltda.",
+   "tipo": "cooperativa",
+   "pueblo": "Subachoque",
+   "municipio": "Subachoque, Cundinamarca",
+   "estado": "cliente",
+   "diseno": "b",
+   "centro": {
+    "lat": 4.927969,
+    "lng": -74.173964
+   },
+   "radioKm": 9,
+   "color": "#1D4E89",
+   "icono": "empresas/subachoque/icono-192.png",
+   "ruta": "subachoque/"
+  },
+  {
+   "id": "tabio",
+   "nombre": "Cooptranstermales",
+   "razonSocial": "Cooperativa Multiactiva de Transportadores Ltda. (Cooptranstermales)",
+   "tipo": "cooperativa",
+   "pueblo": "Tabio",
+   "municipio": "Tabio, Cundinamarca",
+   "estado": "propuesta",
+   "diseno": "b",
+   "centro": {
+    "lat": 4.916396,
+    "lng": -74.099095
+   },
+   "radioKm": 9,
+   "color": "#0F5F63",
+   "icono": "empresas/tabio/icono-192.png",
+   "ruta": "tabio/"
+  },
+  {
+   "id": "tenjo",
+   "nombre": "Cootranstenjo",
+   "razonSocial": "Cooperativa de Transportadores de Tenjo (Cootranstenjo)",
+   "tipo": "cooperativa",
+   "pueblo": "Tenjo",
+   "municipio": "Tenjo, Cundinamarca",
+   "estado": "propuesta",
+   "diseno": "b",
+   "centro": {
+    "lat": 4.871304,
+    "lng": -74.147325
+   },
+   "radioKm": 9,
+   "color": "#156B2E",
+   "icono": "empresas/tenjo/icono-192.png",
+   "ruta": "tenjo/"
+  },
+  {
+   "id": "villeta",
+   "nombre": "Cootransvi",
+   "razonSocial": "Cooperativa de Transportadores de Villeta (Cootransvi)",
+   "tipo": "cooperativa",
+   "pueblo": "Villeta",
+   "municipio": "Villeta, Cundinamarca",
+   "estado": "propuesta",
+   "diseno": "b",
+   "centro": {
+    "lat": 5.011258,
+    "lng": -74.47023
+   },
+   "radioKm": 9,
+   "color": "#8A4513",
+   "icono": "empresas/villeta/icono-192.png",
+   "ruta": "villeta/"
+  }
+ ]
+}

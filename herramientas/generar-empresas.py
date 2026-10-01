@@ -1279,7 +1279,39 @@ def generar():
                 destino.write_text(salida, encoding='utf-8')
                 escritos += 1
                 print('generado:', destino_rel)
+    escritos += escribir_indice(lista)
     print(f'{escritos} archivo(s) escritos para {len(lista)} cooperativa(s)')
+
+
+def escribir_indice(lista):
+    """empresas/indice.json: lo mínimo para que la app TaxiCun escoja la cooperativa
+    por GPS (o en la lista) antes de cargar el núcleo."""
+    indice = []
+    for f in lista:
+        E = f['EMPRESA']
+        indice.append({
+            'id': f['id'],
+            'nombre': E.get('nombre') or f['id'],
+            'razonSocial': E.get('razonSocial') or '',
+            'tipo': E.get('tipo') or 'cooperativa',
+            'pueblo': E.get('pueblo') or '',
+            'municipio': E.get('municipio') or '',
+            'estado': f.get('estado') or 'propuesta',
+            'diseno': f.get('diseno') or 'b',
+            'centro': f.get('CENTRO'),
+            # Distancia máxima (km) desde el centro del pueblo para escogerla por GPS.
+            'radioKm': f.get('radioKm') or 9,
+            'color': (f.get('colores') or {}).get('primario') or '#0A5C33',
+            'icono': iconos(f['id'])['i192'],
+            'ruta': '' if f['id'] == PRINCIPAL else f"{f['id']}/",
+        })
+    texto = json.dumps({'marca': 'TaxiCun', 'cooperativas': indice}, ensure_ascii=False, indent=1) + '\n'
+    destino = RAIZ / 'empresas' / 'indice.json'
+    if destino.exists() and destino.read_text(encoding='utf-8') == texto:
+        return 0
+    destino.write_text(texto, encoding='utf-8')
+    print('generado: empresas/indice.json')
+    return 1
     revisar_imagenes(lista)
 
 

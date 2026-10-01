@@ -2,7 +2,7 @@
 // el registro, el historial y los ajustes viven solo en este navegador.
 import { uid } from './util.js';
 import { CONDUCTORES_DEMO } from './datos.js';
-import { ID_EMPRESA, EMPRESA } from './config.js';
+import { ID_EMPRESA, EMPRESA, FICHA } from './config.js';
 
 // Cada cooperativa guarda lo suyo aparte (mismo sitio, varias cooperativas).
 // Cootransrural conserva las claves de siempre.
@@ -170,7 +170,8 @@ export function guardarAjustes(cambios) {
 export function disenoElegido() {
   const p = new URLSearchParams(location.search).get('d');
   if (p && /^[abc]$/.test(p)) return p;
-  return localStorage.getItem(k('diseno')) || 'a';
+  // Lo que el usuario escogió en Ajustes; si no, el diseño que eligió la cooperativa (ficha).
+  return localStorage.getItem(k('diseno')) || (/^[abc]$/.test(FICHA.diseno || '') ? FICHA.diseno : 'b');
 }
 
 export function elegirDiseno(d) {
