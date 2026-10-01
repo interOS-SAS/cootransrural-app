@@ -82,9 +82,14 @@ export class Bus extends Emisor {
           clean: true,
         });
         cliente.on('connect', () => {
-          cliente.subscribe(`${this.tema}/#`, { qos: 0 });
-          this.conectados.add(url);
-          this.emit('conexion', this.conexion);
+          // Se anuncia «en vivo» cuando la suscripción ya quedó activa, para no
+          // perder las respuestas a lo que se publique enseguida.
+          cliente.subscribe(`${this.tema}/#`, { qos: 0 }, (error) => {
+            if (error) return;
+            const nuevo = !this.conectados.has(url);
+            this.conectados.add(url);
+            if (nuevo) this.emit('conexion', this.conexion);
+          });
         });
         const caer = () => {
           if (this.conectados.delete(url)) this.emit('conexion', this.conexion);
