@@ -294,11 +294,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       const fuera = ocultaDesde ? Date.now() - ocultaDesde : 0;
       ocultaDesde = 0;
       if (fuera < 20000 || !p || p.estado.fase !== 'inicio' || ui.modo !== 'inicio') return;
-      const pos = await p.actualizarMiPosicion();
-      m.ponerYo(pos);
-      if (pos.real === false || ui.pinAMano || p.estado.fase !== 'inicio' || ui.modo !== 'inicio') return;
-      Object.assign(ui, { origen: null, centrado: false });
-      renderVista('inicio', true);
+      // El GPS se afina unos segundos; 'posicion_afinada' mueve el pin si no se movió a mano.
+      p.afinarPosicion();
     };
     document.addEventListener('visibilitychange', () => (document.hidden ? alOcultar() : alVolver()));
     try {
@@ -313,9 +310,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   $(app, '[data-mi-ubicacion]').addEventListener('click', async () => {
     const b = $(app, '[data-mi-ubicacion]');
     b.classList.add('a-girando');
-    const pos = p ? await p.actualizarMiPosicion() : await N.obtenerPosicion();
-    b.classList.remove('a-girando');
     ui.pinAMano = false;
+    // Con lo último que se sabe se centra de una vez; el GPS se afina unos segundos más.
+    const ultima = p?.estado.miPosicion;
+    const pos = ultima?.real ? ultima : p ? await p.actualizarMiPosicion() : await N.obtenerPosicion();
+    if (p) {
+      p.afinarPosicion();
+      setTimeout(() => b.classList.remove('a-girando'), 1500);
+    } else b.classList.remove('a-girando');
     m.ponerYo(pos);
     if (pos.real === false) avisos.mostrar({ titulo: 'No tenemos tu GPS', cuerpo: EM.TEXTO_SIN_GPS, tipo: 'info' });
     if (app.dataset.pin) centrarVisible(pos, 17, ui.pinY);
@@ -1991,6 +1993,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       p.on('aviso', (a) => avisos.mostrar(a, { silencioso: p.estado.fase === 'llego' && /puerta/i.test(a.titulo) }));
       // Modo revisor (revisores de las tiendas, desde otro país): el núcleo cambió la posición al
       // paradero de taxis; si aún no hay un punto de recogida en la zona, el mapa y el pin van allá.
+      // El GPS se afinó (al abrir, al volver o con «mi ubicación»): si el pin de recogida no se
+      // movió a mano y quedó a más de 40 m de la lectura buena, se lleva a donde está la persona.
+      p.on('posicion_afinada', (pos) => {
+        if (p.estado.fase !== 'inicio' || ui.modo !== 'inicio' || ui.pinAMano || !pos?.real) return;
+        if (ui.origen && N.distanciaKm(ui.origen, pos) <= 0.04) return;
+        Object.assign(ui, { origen: null, centrado: false });
+        renderVista('inicio', true);
+      });
       p.on('revision_lejos', () => {
         if (p.estado.fase !== 'inicio' || (ui.origen && !N.fueraDeZona(ui.origen))) return;
         Object.assign(ui, { origen: null, destino: undefined, destinoProvisional: null, cotizacion: null, centrado: false, modo: 'inicio' });
