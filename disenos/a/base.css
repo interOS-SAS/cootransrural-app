@@ -413,7 +413,7 @@ html[data-vitrina="1"] .a-escritorio { display: none !important; }
 .a-campo textarea { padding: 12px 16px; min-height: 72px; resize: vertical; line-height: 1.4; }
 .a-campo input::placeholder, .a-campo textarea::placeholder { color: #737985; font-weight: 500; }
 .a-campo input:focus, .a-campo textarea:focus { border-color: var(--a-tinta); background: #fff; outline: none; box-shadow: 0 0 0 4px rgba(255, 193, 7, .55); }
-.a-campo-chico input { min-height: 48px; font-size: 15px; }
+.a-campo-chico input { min-height: 48px; font-size: 16px; }
 .a-invalido { border-color: var(--a-rojo) !important; background: var(--a-rojo-claro) !important; }
 .a-error { color: var(--a-rojo-txt); font-weight: 700; font-size: 14px; margin: 0; min-height: 1.2em; }
 .a-error:empty { min-height: 0; }
@@ -703,3 +703,8 @@ html[data-vitrina="1"] .a-escritorio { display: none !important; }
    suben por encima del teclado. */
 html.con-teclado :is(.a-ingreso, .a-registro, .a-hoja-contenido, .a-panel-cuerpo, .a-buscador-cuerpo, .a-sol-cuerpo, .a-menu) { padding-bottom: calc(24px + var(--a-teclado, 0px)); }
 html.con-teclado .a-modal-capa { padding-bottom: var(--a-teclado, 0px); }
+
+/* iPhone: con letra de menos de 16 px, iOS agranda la página al tocar un campo y la deja corrida
+   hacia los lados. Los campos van a 16 px (además del maximum-scale=1 de las páginas de la app)
+   y nada puede desplazar la app de lado. */
+html, body { overflow-x: hidden; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }

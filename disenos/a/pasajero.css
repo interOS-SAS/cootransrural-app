@@ -189,7 +189,7 @@
 .a-programar-info:empty { display: none; }
 .a-descuento-chip { background: var(--a-verde-txt); color: #fff; font: 800 12px var(--a-ft); padding: 3px 7px; border-radius: 7px; flex: none; }
 .a-campo-nota { display: flex; align-items: center; gap: 10px; min-height: 54px; padding: 0 14px; border-radius: 16px; background: var(--a-gris); margin-top: 10px; color: var(--a-texto-2); }
-.a-campo-nota input { flex: 1; min-width: 0; border: 0; background: none; font: 600 15px var(--a-fb); color: var(--a-tinta); outline: none; min-height: 50px; box-shadow: none !important; }
+.a-campo-nota input { flex: 1; min-width: 0; border: 0; background: none; font: 600 16px var(--a-fb); color: var(--a-tinta); outline: none; min-height: 50px; box-shadow: none !important; }
 .a-campo-nota:focus-within { box-shadow: 0 0 0 2px var(--a-tinta), 0 0 0 6px var(--a-ambar); background: #fff; }
 .a-fid-linea { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
 .a-fid-barra { height: 8px; border-radius: 4px; background: var(--a-gris-2); overflow: hidden; }
