@@ -20,7 +20,7 @@
 import { crearBus } from './bus.js';
 import { TIEMPOS, CENTRO, EMPRESA } from './config.js';
 import { LUGARES } from './datos.js';
-import { calcularRuta, obtenerPosicion, fueraDeZona } from './geo.js';
+import { calcularRuta, obtenerPosicion, seguirPosicion, fueraDeZona } from './geo.js';
 import { calcularTarifa } from './tarifas.js';
 import { avisar } from './avisos.js';
 import { TaxisAmbiente, ConductorSimulado } from './simulador.js';
@@ -129,6 +129,8 @@ class ControladorPasajero extends Emisor {
     }
     const pos = this.#paraRevision(await obtenerPosicion({ espera: 6000 }));
     this.estado.miPosicion = pos;
+    // La primera lectura del teléfono suele ser aproximada o vieja: se afina unos segundos.
+    if (pos.real) this.afinarPosicion();
     if (this.usarAmbiente) {
       const centroSim = pos.real && !fueraDeZona(pos) ? pos : pos.real ? pos : CENTRO;
       this.ambiente = new TaxisAmbiente(centroSim, { cantidad: 5 });
@@ -169,6 +171,34 @@ class ControladorPasajero extends Emisor {
     const viajesPrevios = this.real ? 0 : this.viajesCompletados();
     const tarifa = calcularTarifa({ origen, destino, km: ruta?.km, fecha, programado, viajesPrevios });
     return { ruta, tarifa };
+  }
+
+  // Afina la ubicación con el GPS continuo durante unos segundos: cada lectura mejor (más
+  // precisa, o que se movió) actualiza miPosicion y emite 'posicion_afinada'. Se detiene con una
+  // lectura buena (≤ 25 m) o a los 25 s, para no gastar batería.
+  afinarPosicion({ duracion = 25000, buena = 25 } = {}) {
+    this.detenerAfinado?.();
+    let mejor = this.estado.miPosicion?.real ? this.estado.miPosicion : null;
+    let detenerGps = () => {};
+    let reloj = null;
+    const fin = () => {
+      clearTimeout(reloj);
+      detenerGps();
+      if (this.detenerAfinado === fin) this.detenerAfinado = null;
+    };
+    this.detenerAfinado = fin;
+    reloj = setTimeout(fin, duracion);
+    detenerGps = seguirPosicion((p) => {
+      const pos = this.#paraRevision({ lat: p.lat, lng: p.lng, precision: p.precision, real: true });
+      const precision = pos.precision ?? 999;
+      const mejora = !mejor || !mejor.real || precision <= (mejor.precision ?? 999) || distanciaKm(pos, mejor) > 0.05;
+      if (!mejora) return;
+      mejor = pos;
+      this.#cambiar({ miPosicion: pos });
+      this.emit('posicion_afinada', pos);
+      if (precision <= buena) fin();
+    });
+    return fin;
   }
 
   async actualizarMiPosicion() {
