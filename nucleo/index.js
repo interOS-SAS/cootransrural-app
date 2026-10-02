@@ -18,3 +18,5 @@ export * as perfil from './perfil.js';
 export * from './plataforma.js';
 export * as servidor from './servidor.js';
 export { textoError, ErrorServidor } from './servidor.js';
+// App nativa 1.2: notificaciones push y Face ID / huella como N.nativo.* (sin los plugins, no hace nada).
+export * as nativo from './nativo.js';

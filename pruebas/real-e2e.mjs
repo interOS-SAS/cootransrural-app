@@ -250,7 +250,8 @@ async function preparar() {
   }, { cuentas: [PASAJERO, CONDUCTOR].map(({ correo, codigo }) => ({ correo, codigo })), empresa: EMPRESA });
   await ctx.close();
   VERSION = String(r.salud.cuerpo?.version || '');
-  await debe(r.salud.estado === 200 && /^0\.2\./.test(r.salud.cuerpo?.version || ''), `el servidor local responde por el proxy (${BASE}api/salud → ${r.salud.cuerpo?.version || r.salud.estado})`);
+  // 0.3.x (app 1.2: push y Face ID) es retrocompatible: sin teléfonos registrados se comporta como la 0.2.
+  await debe(r.salud.estado === 200 && /^0\.[23]\./.test(r.salud.cuerpo?.version || ''), `el servidor local responde por el proxy (${BASE}api/salud → ${r.salud.cuerpo?.version || r.salud.estado})`);
   for (const c of r.cuentas) {
     await debe(c.borrada, `cuenta de prueba ${c.correo} limpia${c.cancelados ? ` (se canceló ${c.cancelados} viaje que quedó de antes)` : ''}${c.error ? ` (error ${c.error}: ¿está en CUENTAS_PRUEBA?)` : ''}`);
   }

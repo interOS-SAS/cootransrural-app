@@ -112,6 +112,30 @@ m.ajustar([p1, p2], { margenAbajo }); m.centrar(p, zoom); m.centro(); m.alMovers
 - `N.pesos(v)`, `N.minutosTexto(m)`, `N.kmTexto(km)`, `N.horaTexto(t)`, `N.saludo()`, `N.enlaceWhatsApp(n, texto)`, `N.enlaceNavegacion(p, 'waze')`
 - `N.perfil.*`: historial, lugares guardados, recientes, programados, ajustes (`simulacion: 'auto'|'real'`), diseño elegido.
 
+## App nativa 1.2 (`N.nativo`)
+
+Notificaciones push y Face ID / huella de la app de las tiendas (`nucleo/nativo.js`). Todo va
+detrás de `ES_NATIVA && Capacitor.isPluginAvailable('PushNotifications' | 'NativeBiometric')`:
+en la web, en las demos y en la app 1.0 (sin esos plugins) no hace nada.
+
+- Push: `pushDisponible()`, `permisoPush()`, `registrarPush(app, { pedir })` (permiso →
+  `register` → `PUT yo/dispositivo { app, plataforma, token, entorno: 'production' }`),
+  `reanudarPush(app)` (sin pedir permiso, al tener sesión), `reintentarPush()` (al reconectar),
+  `olvidarPush()` (`DELETE yo/dispositivo { token }`, antes de cerrar sesión o eliminar la cuenta),
+  `alTocarAviso(fn)` (`{ tipo, viajeId }` al tocar una notificación; si la app se abrió desde
+  ella, llega apenas el diseño se suscribe) y `eventos.on('recibida', fn)` (con la app abierta).
+- Face ID: `biometria()` (`{ disponible, nombre: 'Face ID' | 'Touch ID' | 'tu huella' | …, icono }`),
+  `llaveGuardada()`, `crearLlave({ correo })` (`verifyIdentity` → `POST yo/llave` →
+  `setCredentials` con server `taxicun.com`), `entrarConLlave()` (`verifyIdentity` →
+  `getCredentials` → `POST auth/llave`; `llave_invalida` borra las credenciales), `borrarLlave()`,
+  `olvidarLlave()`, `verificar({ razon, respaldo })`, `bloqueoActivo()` / `fijarBloqueo(v)`,
+  `vigilarBloqueo(fn)` (al abrir y al volver tras más de 60 s) y `olvidarTodo()` (al eliminar la cuenta).
+- Cerrar sesión conserva la llave (para volver con Face ID); eliminar la cuenta la borra.
+
+El diseño A lo usa en `disenos/a/nativa.js` (modales en el momento justo, «Entrar con Face ID»,
+capa de bloqueo) y en Ajustes («Seguridad» y las notificaciones del celular). Prueba con
+Capacitor y servidor simulados: `node pruebas/nativo-v12.mjs http://localhost:8823/`.
+
 ## Red
 
 Sin servidor propio. Las pestañas del mismo navegador se hablan por

@@ -175,6 +175,12 @@ export class Bus extends Emisor {
  *   'error'           { codigo } errores del servidor ya conectado (sin viajeId)
  * El cierre 4400 («falta_hola») no es definitivo: llega cuando el saludo tardó más de
  * 10 s (red muy lenta o app suspendida justo al abrir) y se reintenta como cualquier corte.
+ *
+ * App nativa 1.2: bus.cerrarAlOcultar = () => boolean (lo pone quien abre el bus). Si al pasar
+ * a segundo plano devuelve true, el WebSocket se cierra ya (sin «disponible: false») y se abre
+ * otra vez al volver: la central sabe de una vez que no hay conexión y avisa por push (si no,
+ * tarda hasta ~50 s en notarlo y lo que mande en ese rato se pierde en el socket viejo).
+ * Sin esa función (la web, la app 1.0) nada cambia.
  */
 const ESPERAS_MS = [1000, 2000, 5000, 10000];
 const CIERRES_FINALES = { 4401: 'sin_sesion', 4403: 'conductor_no_aprobado', 4404: 'empresa_desconocida' };
@@ -214,9 +220,22 @@ export class BusServidor extends Emisor {
     this.yo = null;
     this.real = true;
     this.url = URL_BUS;
+    this.cerrarAlOcultar = null;
     // Al volver a la app (o al recuperar la red) se reintenta ya, sin esperar el turno.
     const alOcultar = () => {
       if (!this.#ocultaDesde) this.#ocultaDesde = Date.now();
+      let cerrar = false;
+      try {
+        cerrar = this.#estado === 'en_linea' && Boolean(this.cerrarAlOcultar?.());
+      } catch {
+        cerrar = false;
+      }
+      if (cerrar) {
+        // Queda «reconectando» sin reloj: al volver, #reintentarYa() lo abre de una vez.
+        clearTimeout(this.#reintento);
+        this.#soltar(4000, 'segundo_plano');
+        this.#fijarEstado('reconectando');
+      }
     };
     const alVolver = () => {
       const oculta = this.#ocultaDesde ? Date.now() - this.#ocultaDesde : 0;

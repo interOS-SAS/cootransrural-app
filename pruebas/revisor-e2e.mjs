@@ -154,7 +154,8 @@ async function preparar() {
   await ctx.close();
   const v = String(r.salud.cuerpo?.version || '');
   const [, menor = 0, parche = 0] = v.split('.').map(Number);
-  await debe(r.salud.estado === 200 && v.startsWith('0.2.') && (menor > 2 || parche >= 4), `el servidor local responde por el proxy (${BASE}api/salud → ${v || r.salud.estado}; hace falta 0.2.4+)`);
+  // 0.2.4 o más nueva (la 0.3.x de la app 1.2 también trae el modo revisor).
+  await debe(r.salud.estado === 200 && v.startsWith('0.') && (menor > 2 || (menor === 2 && parche >= 4)), `el servidor local responde por el proxy (${BASE}api/salud → ${v || r.salud.estado}; hace falta 0.2.4+)`);
   await debe(r.revision === true, `la cuenta ${REVISOR.correo} es revisora (bienvenida.revision)${r.error ? ` (error ${r.error}: ¿está en CUENTAS_PRUEBA?)` : r.revision === false ? ' (¿está en REVISORES?)' : ''}`);
   await debe(r.borrada, `cuenta revisora ${REVISOR.correo} limpia`);
 }

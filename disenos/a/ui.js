@@ -108,6 +108,9 @@ const TRAZOS = {
   copiar: '<rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/>',
   ojo: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/>',
   potencia: '<path d="M12 3v8"/><path d="M6.5 6.5a7.5 7.5 0 1 0 11 0"/>',
+  // App nativa 1.2: Face ID (marco con cara) y huella.
+  rostro: '<path d="M4 8V6.5A2.5 2.5 0 0 1 6.5 4H8M16 4h1.5A2.5 2.5 0 0 1 20 6.5V8M20 16v1.5a2.5 2.5 0 0 1-2.5 2.5H16M8 20H6.5A2.5 2.5 0 0 1 4 17.5V16"/><path d="M9 9.5v1.5M15 9.5v1.5M12.2 9.5v3.8h-1M9.4 15.8a4 4 0 0 0 5.2 0"/>',
+  huella: '<path d="M5.2 9.5a7.5 7.5 0 0 1 13.6 0"/><path d="M6.5 17.5a12 12 0 0 1-.5-3.5 6 6 0 0 1 12 0v.8"/><path d="M9.6 20.2A13 13 0 0 1 9 14a3 3 0 0 1 6 0c0 2.4-.3 4.3-1 6"/><path d="M12 14c0 2.8-.4 4.9-1.2 6.6M17.6 18.4c.2-.8.3-1.6.4-2.4"/>',
 };
 
 export function icono(nombre, { tam = 24, clase = '', grosor = 2 } = {}) {

@@ -3,8 +3,11 @@
 // En modo real (EM.MODO_REAL) el registro es la cuenta de TaxiCun en el servidor:
 // correo → código de 6 dígitos que llega al correo → completar nombre y celular
 // (PATCH /api/yo) → listo. El contacto de emergencia sigue solo en el celular.
+// App nativa 1.2: si el teléfono tiene una llave guardada, el ingreso muestra «Entrar con
+// Face ID»; después de entrar con el código se ofrece activarlo (disenos/a/nativa.js).
 import { el, esc, icono, casillasCodigo, celularTexto, franjaCuadros, nombreCorto, modal } from './ui.js';
 import { ilustracionUbicacion, ilustracionSeguridad, ilustracionPago } from './ilustraciones.js';
+import { ingresoBiometria, ofrecerBiometria } from './nativa.js';
 import * as EM from './empresa.js';
 
 const DIAPOSITIVAS = [
@@ -43,8 +46,9 @@ export function mostrarBienvenida(app, { N, alTerminar, paso = null, usuario = n
   const datos = { nombre: '', celular: '', contacto: { nombre: '', celular: '' } };
   let codigo = '';
   let relojReenvio = null;
-  // Modo real: correo con el que se ingresa y si ya aceptó los términos.
-  const cuenta = { correo: '', terminos: false };
+  // Modo real: correo con el que se ingresa, si ya aceptó los términos y cómo entró
+  // ('codigo' | 'llave'; tras el código se ofrece Face ID en la app nativa).
+  const cuenta = { correo: '', terminos: false, via: null };
   // Primer paso del registro: el formulario de la demo o el ingreso con correo.
   const empezarRegistro = () => (EM.MODO_REAL ? ingresoCorreo() : registro());
 
@@ -262,6 +266,23 @@ export function mostrarBienvenida(app, { N, alTerminar, paso = null, usuario = n
     const f = capa.querySelector('form');
     const error = capa.querySelector('[data-error]');
     const boton = capa.querySelector('[data-enviar]');
+    // App nativa 1.2: «Entrar con Face ID» arriba del correo si hay una llave guardada (sin
+    // abrir el teclado del correo mientras se revisa).
+    const conBio = Boolean(EM.ES_NATIVA && N.nativo?.biometriaPosible?.());
+    ingresoBiometria({
+      N,
+      alEntrar: (r) => trasEntrar(r, 'llave'),
+      alError: (texto) => {
+        error.textContent = texto;
+        f.correo.focus({ preventScroll: true });
+      },
+    }).then((bloque) => {
+      if (!f.isConnected) return;
+      if (bloque) {
+        f.querySelector('.a-campo')?.before(bloque);
+        bloque.querySelector('[data-entrar-bio]')?.focus({ preventScroll: true });
+      } else if (conBio && !aviso) f.correo.focus({ preventScroll: true });
+    }).catch(() => {});
     f.addEventListener('input', (e) => {
       e.target.classList?.remove('a-invalido');
       if (!f.querySelector('.a-invalido')) error.textContent = '';
@@ -299,7 +320,7 @@ export function mostrarBienvenida(app, { N, alTerminar, paso = null, usuario = n
         error.textContent = EM.textoError(err);
       }
     });
-    if (!aviso) f.correo.focus({ preventScroll: true });
+    if (!aviso && !conBio) f.correo.focus({ preventScroll: true });
   }
 
   function codigoCorreo({ aviso = '' } = {}) {
@@ -336,11 +357,7 @@ export function mostrarBienvenida(app, { N, alTerminar, paso = null, usuario = n
       verificando.hidden = false;
       try {
         const r = await N.servidor.entrar(cuenta.correo, v);
-        clearInterval(relojReenvio);
-        const usuario = r?.usuario || {};
-        N.perfil.fijarPasajeroServidor(usuario);
-        if (usuario.nombre && usuario.celular) listoReal(usuario, { nuevo: false });
-        else completarPerfil(usuario);
+        trasEntrar(r, 'codigo');
       } catch (err) {
         verificando.hidden = true;
         cas.desactivar(false);
@@ -401,6 +418,17 @@ export function mostrarBienvenida(app, { N, alTerminar, paso = null, usuario = n
     setTimeout(() => cas.enfocar(), 350);
   }
 
+  // Ya hay sesión (con el código del correo o con Face ID): el perfil decide el paso.
+  function trasEntrar(r, via) {
+    clearInterval(relojReenvio);
+    cuenta.via = via;
+    const usuario = r?.usuario || {};
+    if (usuario.correo) cuenta.correo = usuario.correo;
+    N.perfil.fijarPasajeroServidor(usuario);
+    if (usuario.nombre && usuario.celular) listoReal(usuario, { nuevo: false });
+    else completarPerfil(usuario);
+  }
+
   // Sesión abierta pero sin nombre o sin celular: se completan en el servidor
   // (PATCH /api/yo). El contacto de emergencia queda solo en este celular.
   function completarPerfil(usuario = {}) {
@@ -453,6 +481,8 @@ export function mostrarBienvenida(app, { N, alTerminar, paso = null, usuario = n
     });
     capa.querySelector('[data-otro-correo]').addEventListener('click', async (e) => {
       ocupar(e.currentTarget, true);
+      // App nativa 1.2: este teléfono deja de recibir los avisos de esta cuenta.
+      await N.nativo?.olvidarPush?.();
       await N.servidor.salir();
       N.perfil.cerrarSesionPasajero();
       cuenta.correo = '';
@@ -471,6 +501,7 @@ export function mostrarBienvenida(app, { N, alTerminar, paso = null, usuario = n
       if (!ok) return;
       ocupar(b, true);
       try {
+        await N.nativo?.olvidarPush?.();
         await N.servidor.eliminarCuenta();
       } catch (err) {
         ocupar(b, false);
@@ -478,6 +509,8 @@ export function mostrarBienvenida(app, { N, alTerminar, paso = null, usuario = n
         error.textContent = `No pudimos eliminar tu cuenta. ${EM.textoError(err)}`;
         return;
       }
+      // La cuenta ya no existe: tampoco su llave de Face ID ni el bloqueo en este teléfono.
+      await N.nativo?.olvidarTodo?.();
       N.perfil.borrarDatosLocales();
       cuenta.correo = '';
       ingresoCorreo({ aviso: `Tu cuenta se eliminó. Borramos tus datos de ${EM.APP} y de este celular.` });
@@ -526,6 +559,9 @@ export function mostrarBienvenida(app, { N, alTerminar, paso = null, usuario = n
       texto: nuevo ? `Tu cuenta de ${EM.APP} quedó lista. Ya puedes pedir tu taxi de ${EM.NOMBRE}.` : `Entraste a tu cuenta de ${EM.APP}. Ya puedes pedir tu taxi de ${EM.NOMBRE}.`,
       boton: nuevo ? 'Pedir mi primer taxi' : 'Pedir mi taxi',
     });
+    // App nativa 1.2: tras entrar con el código, «¿Entrar con Face ID la próxima vez?».
+    if (cuenta.via === 'codigo') ofrecerBiometria(app, { N, correo: usuario.correo || cuenta.correo }).catch(() => {});
+    cuenta.via = null;
   }
 
   /* ---------- listo ---------- */

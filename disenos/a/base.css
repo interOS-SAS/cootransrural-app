@@ -708,3 +708,35 @@ html.con-teclado .a-modal-capa { padding-bottom: var(--a-teclado, 0px); }
    hacia los lados. Los campos van a 16 px (además del maximum-scale=1 de las páginas de la app)
    y nada puede desplazar la app de lado. */
 html, body { overflow-x: hidden; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+/* ---------------- app nativa 1.2: avisos, Face ID y bloqueo ----------------
+   Solo aparecen en la app de las tiendas con los plugins nuevos (disenos/a/nativa.js). */
+.a-nat-ico { width: 72px; height: 72px; border-radius: 24px; background: var(--a-ambar-claro); color: var(--a-tinta); display: grid; place-items: center; box-shadow: 0 0 0 8px rgba(255, 193, 7, .16); }
+.a-modal-nativa .a-modal { text-align: center; }
+.a-modal-nativa .a-modal-acciones { flex-direction: column; }
+.a-modal-nativa .a-modal-acciones .a-btn { width: 100%; flex: none; }
+.a-bio-ingreso { display: flex; flex-direction: column; gap: 10px; animation: a-aparece .3s; }
+.a-btn-bio { gap: 12px; }
+.a-btn-bio .a-ico { color: var(--a-ambar); }
+.a-bio-cuenta { margin: -2px 0 0; display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--a-texto-2); font: 600 13px var(--a-fb); overflow-wrap: anywhere; }
+.a-separador-o { display: flex; align-items: center; gap: 12px; margin: 4px 0 0; color: var(--a-texto-3); font: 700 12.5px var(--a-fb); }
+.a-separador-o::before, .a-separador-o::after { content: ''; flex: 1; height: 1px; background: var(--a-borde); }
+.a-bloqueo {
+  position: absolute; inset: 0; z-index: 200;
+  background: var(--a-tinta); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  padding: calc(var(--a-sup) + 34px) 26px calc(var(--a-inf) + 24px);
+  animation: a-aparece .25s; transition: opacity .28s;
+}
+.a-bloqueo.a-sale { opacity: 0; pointer-events: none; }
+.a-bloqueo-cuadros { position: absolute; top: var(--a-sup); left: 0; right: 0; }
+.a-bloqueo-caja { width: 100%; max-width: 380px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.a-bloqueo-marca .a-tc-ico { display: block; border-radius: 20px; box-shadow: 0 14px 34px rgba(0, 0, 0, .45); }
+.a-bloqueo-candado { width: 42px; height: 42px; margin: -30px 0 0 58px; border-radius: 50%; background: var(--a-ambar); color: var(--a-tinta); display: grid; place-items: center; box-shadow: 0 0 0 4px var(--a-tinta); }
+.a-bloqueo h1 { font: 800 25px/1.15 var(--a-ft); margin: 8px 0 0; letter-spacing: -.02em; outline: none; }
+.a-bloqueo-texto { margin: 0 0 8px; color: rgba(255, 255, 255, .78); line-height: 1.45; }
+.a-bloqueo-error { margin: 0; color: var(--a-ambar-3); font-weight: 600; font-size: 14px; line-height: 1.4; }
+.a-bloqueo-error:empty { display: none; }
+.a-bloqueo .a-btn-texto { color: rgba(255, 255, 255, .78); text-decoration-color: rgba(255, 255, 255, .35); }
+/* Modo real: los diálogos van encima de la bienvenida y del ingreso (Face ID tras el código). */
+html[data-modo="real"] .a-pasajero > .a-modal-capa { z-index: 110; }

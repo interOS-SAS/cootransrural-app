@@ -6,6 +6,8 @@
 // con correo y código, tiempo real con el servidor (p.bus) y solo pago en
 // efectivo. No hay QR de prueba, programados, «MODO PRUEBA», sala ni simulación.
 // Sin el modo real todo sigue como en la demo.
+// App nativa 1.2 (con los plugins nuevos, ver disenos/a/nativa.js): al pedir el primer taxi
+// se ofrecen los avisos; tocar uno trae el viaje a la vista; bloqueo opcional con Face ID.
 import {
   el, esc, $, $$, icono, ICONO_CATEGORIA, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos,
   modal, elegirOpcion, abrirMenu, estrellas, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
@@ -13,6 +15,7 @@ import {
 } from './ui.js';
 import * as EM from './empresa.js';
 import { mostrarBienvenida } from './registro.js';
+import { ofrecerAvisos, montarBloqueo } from './nativa.js';
 import { abrirMisViajes, abrirProgramados, abrirTarifas, abrirPromociones, abrirAjustes, abrirAyuda, abrirAvisos, abrirMiCuenta } from './pasajero-secciones.js';
 
 const REAL = EM.MODO_REAL;
@@ -351,9 +354,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         acciones: [{ texto: 'Cancelar', valor: false }, { texto: 'Cerrar sesión', valor: true, clase: 'a-btn-peligro' }],
       });
       if (!ok) return;
-      conSesion = false;
       const quitar = procesando('Cerrando sesión…');
-      await N.servidor.salir();
+      await salirDelServidor();
       quitar();
       alTerminar?.();
       terminarSesionLocal();
@@ -390,6 +392,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     conSesion = false;
     const quitar = procesando('Eliminando tu cuenta…');
     try {
+      // App nativa 1.2: este teléfono deja de recibir avisos (el servidor también los borra con la cuenta).
+      await N.nativo?.olvidarPush?.();
       await N.servidor.eliminarCuenta();
     } catch (err) {
       quitar();
@@ -403,10 +407,20 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       avisos.mostrar({ titulo: 'No pudimos eliminar tu cuenta', cuerpo: EM.textoError(err), tipo: 'error' });
       return;
     }
+    // La cuenta ya no existe: tampoco su llave de Face ID ni el bloqueo en este teléfono.
+    await N.nativo?.olvidarTodo?.();
     quitar();
     alTerminar?.();
     terminarSesionLocal({ borrarTodo: true });
     avisos.mostrar({ titulo: 'Tu cuenta se eliminó', cuerpo: `Borramos tus datos de ${EM.APP} y de este celular.`, tipo: 'exito' });
+  }
+
+  // Cierra la sesión en el servidor. Antes, el teléfono deja de recibir los avisos de esta
+  // cuenta (app nativa 1.2). La llave de Face ID se conserva para volver a entrar con ella.
+  async function salirDelServidor() {
+    conSesion = false;
+    await N.nativo?.olvidarPush?.();
+    await N.servidor.salir();
   }
 
   // Capa de espera sobre la app (cerrar sesión, eliminar cuenta). Devuelve cómo quitarla.
@@ -1487,7 +1501,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const b = $(hoja.pie, '[data-pedir]');
     b.disabled = true;
     b.classList.add('a-ocupado');
-    if (!localStorage.getItem('ct.a.permisoPedido')) {
+    // App nativa 1.2: los avisos del celular se ofrecen después de pedir (no se demora el taxi).
+    const pushNativo = REAL && Boolean(N.nativo?.pushDisponible?.());
+    if (!pushNativo && !localStorage.getItem('ct.a.permisoPedido')) {
       localStorage.setItem('ct.a.permisoPedido', '1');
       N.pedirPermisoNotificaciones();
     }
@@ -1496,7 +1512,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       if (r?.programado) {
         reiniciarUI();
         pintar();
-      }
+      } else if (pushNativo) ofrecerAvisos(app, { N, rol: 'pasajero' }).catch(() => {});
     } catch (err) {
       avisos.mostrar({ titulo: 'No pudimos pedir el taxi', cuerpo: REAL && err?.codigo ? EM.textoError(err) : err.message, tipo: 'error' });
       b.disabled = false;
@@ -1693,6 +1709,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   // llegue en ese momento no abre otro ingreso encima.
   let conSesion = false;
   let reintentoYo = null;
+  let bloqueo = null; // capa «TaxiCun está bloqueada» (app nativa 1.2)
+  let avisoTocado = null; // notificación tocada antes de tener sesión y pasajero listos
   let fallosYo = 0; // reintentos seguidos de GET /api/yo sin red (el aviso sale solo la primera vez)
 
   function abrirBienvenida(op = {}) {
@@ -1718,6 +1736,33 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     clearTimeout(reintentoYo);
     pintarBarra();
     conectarBus();
+    // App nativa 1.2: con el permiso ya dado, este teléfono queda registrado para los avisos.
+    if (REAL) N.nativo?.reanudarPush?.('pasajero');
+    atenderAvisoTocado();
+  }
+
+  // App nativa 1.2: se tocó una notificación del viaje (aceptado, en la puerta, terminado,
+  // cancelado). El viaje queda a la vista y, si el tiempo real estaba caído (la app venía de
+  // segundo plano o estaba cerrada), se reconecta ya: con la bienvenida llega el viaje_actual.
+  function alTocarAviso(a) {
+    avisoTocado = a || null;
+    atenderAvisoTocado();
+  }
+  function atenderAvisoTocado() {
+    if (!avisoTocado || !conSesion || !p) return;
+    const a = avisoTocado;
+    avisoTocado = null;
+    if (Date.now() - (a.cuando || Date.now()) > 2 * 60 * 1000) return; // de hace rato: ya no aplica
+    app.querySelectorAll('.a-panel, .a-menu-capa, .a-buscador').forEach((n) => n.remove());
+    reconectarCentral();
+  }
+  // El servidor manda push solo cuando no ve el WebSocket del pasajero: si el bus dice «en
+  // línea», esa conexión ya murió sin aviso (app en segundo plano); se abre otra ya. Con la
+  // bienvenida llega el viaje_actual y la pantalla queda en la fase de verdad.
+  function reconectarCentral() {
+    if (!conSesion || !p?.bus) return;
+    if (p.bus.estado === 'en_linea') p.bus.reconectar();
+    else p.bus.conectar();
   }
 
   // El tiempo real se abre solo con sesión y datos completos (el servidor toma el
@@ -1748,7 +1793,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     if (!N.servidor.haySesion()) {
       N.perfil.cerrarSesionPasajero();
       pintarBarra();
-      abrirBienvenida();
+      // App nativa 1.2: con Face ID guardado, directo al ingreso (con «Entrar con Face ID»).
+      const llave = EM.ES_NATIVA && N.nativo ? await N.nativo.llaveGuardada().catch(() => null) : null;
+      abrirBienvenida(llave ? { paso: 'correo' } : {});
       return;
     }
     try {
@@ -1797,6 +1844,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   function terminarSesionLocal({ borrarTodo = false } = {}) {
     conSesion = false;
     clearTimeout(reintentoYo);
+    avisoTocado = null;
+    bloqueo?.quitar();
     p?.bus?.cerrar?.();
     if (borrarTodo) N.perfil.borrarDatosLocales();
     else N.perfil.cerrarSesionPasajero();
@@ -1812,6 +1861,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     b.on('conexion', pintarConexion);
     b.on('estado_conexion', pintarConexion);
     b.on('bienvenida', pintarConexion);
+    // App nativa 1.2: si el token de los avisos no alcanzó a llegar al servidor, sale ahora.
+    b.on('bienvenida', () => N.nativo?.reintentarPush?.());
     b.on('rechazo', (d) => {
       pintarConexion();
       const codigo = d?.codigo || 'sin_sesion';
@@ -1827,6 +1878,21 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   renderVista('carga');
   if (REAL) {
     N.servidor.sesion.on('cerrada', sesionCerrada);
+    // App nativa 1.2 (sin los plugins no hace nada): bloqueo con Face ID y avisos tocados.
+    if (EM.ES_NATIVA && N.nativo) {
+      bloqueo = montarBloqueo(app, {
+        N,
+        // «¿No puedes? Cierra sesión» en la capa: ya lo confirmó ahí, no se pregunta otra vez.
+        alSalir: async () => {
+          await salirDelServidor();
+          terminarSesionLocal();
+        },
+      });
+      N.nativo.alTocarAviso(alTocarAviso);
+      // Llegó un aviso con la app abierta: la central cree que no hay conexión; se reconecta ya
+      // (el aviso no se repite en pantalla: lo que cambió llega por el tiempo real).
+      N.nativo.eventos.on('recibida', () => reconectarCentral());
+    }
     prepararSesion();
   } else if (!N.perfil.pasajero()?.nombre) mostrarBienvenida(app, { N, alTerminar: alRegistrarse });
 
@@ -1898,12 +1964,19 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         Object.assign(ui, { origen: null, destino: undefined, destinoProvisional: null, cotizacion: null, centrado: false, modo: 'inicio' });
         renderVista('inicio', true);
       });
-      if (REAL) escucharBus();
+      if (REAL) {
+        escucharBus();
+        // App nativa 1.2: con los avisos del celular listos, el WebSocket se cierra al minimizar
+        // y la central avisa por push (aceptación, «llegó», final); al volver se reconecta.
+        p.bus.cerrarAlOcultar = () => Boolean(N.nativo?.pushListo?.());
+      }
       ui.origen = null;
       ui.vista = null;
       pintarAhora();
-      if (REAL) conectarBus();
-      else if (p.registrado) await retomarTrasRecarga();
+      if (REAL) {
+        conectarBus();
+        atenderAvisoTocado();
+      } else if (p.registrado) await retomarTrasRecarga();
       avisarMunicipioPorGps();
     } catch (err) {
       console.error(err);

@@ -2,6 +2,9 @@
 // Barra superior oscura, interruptor grande de turno, solicitud entrante como
 // hoja amarilla con cuenta regresiva y «deslizar para aceptar», barra de pasos
 // del servicio y cobro con QR grande. La lógica vive en el núcleo (N).
+// App nativa 1.2 (con los plugins nuevos, ver disenos/a/nativa.js): «Entrar con Face ID»,
+// avisos de servicios nuevos con la app cerrada (se ofrecen al ponerse en turno la primera
+// vez; tocar uno vuelve a poner en turno y trae la oferta) y bloqueo opcional con Face ID.
 import {
   el, esc, $, $$, icono, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos, modal, elegirOpcion,
   abrirMenu, estrellas, casillasCodigo, deslizador, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
@@ -10,6 +13,7 @@ import {
 import * as EM from './empresa.js';
 import { taxiLateral } from './ilustraciones.js';
 import { abrirGanancias, abrirHistorial, abrirDocumentos, abrirMiTaxi, abrirAjustesConductor, abrirAvisosConductor } from './conductor-secciones.js';
+import { ofrecerAvisos, ofrecerBiometria, ingresoBiometria, montarBloqueo } from './nativa.js';
 
 // Foto de portada del ingreso (generada para la web, sin marcas: ver img/web/creditos.json).
 const FOTO_CONDUCTOR = new URL('./img/conductor.jpg', import.meta.url).href;
@@ -18,6 +22,8 @@ const FOTO_CONDUCTOR = new URL('./img/conductor.jpg', import.meta.url).href;
 const PLACA_VALIDA = /^[A-Z]{3}\d{3}$|^[A-Z]{3}\d{2}[A-Z]$/;
 
 const PASOS = ['Recoger', 'Llegué', 'Viaje', 'Cobrar'];
+// App nativa 1.2: una notificación tocada hace más que esto ya no pone en turno.
+const AVISO_VIGENTE_MS = 2 * 60 * 1000;
 const PASO_DE_FASE = { confirmando: 0, hacia_origen: 0, en_origen: 1, en_viaje: 2, cobrando: 3, calificar: 3 };
 
 export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun = null }) {
@@ -125,6 +131,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     saludado: false,
     firmaYo: '',
     claveRevision: '',
+    // App nativa 1.2: notificación tocada antes de tener el controlador, reloj de la oferta
+    // que se espera tras tocarla y la capa de bloqueo.
+    avisoTocado: null,
+    relojOferta: null,
+    bloqueo: null,
   };
 
   /* ---------------- utilidades de mapa ---------------- */
@@ -464,6 +475,26 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     caja.querySelector('[data-cambiar-municipio]')?.addEventListener('click', cambiarMunicipio);
     const f = $(caja, 'form');
     const error = $(caja, '[data-error]');
+    // App nativa 1.2: «Entrar con Face ID» arriba del correo si hay una llave guardada (sin
+    // abrir el teclado del correo mientras se revisa).
+    const conBio = Boolean(NATIVA && N.nativo?.biometriaPosible?.());
+    ingresoBiometria({
+      N,
+      alEntrar: (r) => {
+        // Como tras el código: el perfil local lo vuelve a llenar la central.
+        N.perfil.cerrarSesionConductor();
+        seguirConCuenta(r, { recienEntra: true });
+      },
+      alError: (texto) => {
+        error.textContent = texto;
+      },
+    }).then((bloque) => {
+      if (!f.isConnected) return;
+      if (bloque) {
+        $(f, '.a-campo')?.before(bloque);
+        bloque.querySelector('[data-entrar-bio]')?.focus({ preventScroll: true });
+      } else if (conBio) enfocar(f.correo, 0);
+    }).catch(() => {});
     f.correo.addEventListener('input', () => {
       f.correo.classList.remove('a-invalido');
       error.textContent = '';
@@ -494,7 +525,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         if (err?.codigo === 'correo_invalido') f.correo.classList.add('a-invalido');
       }
     });
-    enfocar(f.correo);
+    if (!conBio) enfocar(f.correo);
   }
 
   // Paso 2: código de 6 dígitos que llegó al correo.
@@ -523,6 +554,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         // Otra persona pudo usar este celular: el perfil local lo vuelve a llenar la central.
         N.perfil.cerrarSesionConductor();
         seguirConCuenta(r, { recienEntra: true });
+        // App nativa 1.2: «¿Entrar con Face ID la próxima vez?».
+        ofrecerBiometria(app, { N, correo: r?.usuario?.correo || correo, avisar: (a) => avisos.mostrar(a) }).catch(() => {});
       } catch (err) {
         enviando = false;
         entrarBtn.classList.remove('a-ocupado');
@@ -880,12 +913,18 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     if (!ctl || ctl !== c || ui.pantalla !== 'app') return;
     if (ctl.real) ctl.bus.conectar();
     pintar();
+    // App nativa 1.2: con el permiso ya dado, este teléfono queda registrado para los avisos;
+    // y si se abrió tocando «Nuevo servicio», se atiende ahora.
+    if (REAL) N.nativo?.reanudarPush?.('conductor');
+    if (ui.avisoTocado) alTocarAviso(ui.avisoTocado);
   }
 
   // Suelta el controlador (cierra el bus sin reintentos) y deja la pantalla de carga.
   function soltarControlador() {
     const viejo = c;
     c = null;
+    ui.avisoTocado = null;
+    clearInterval(ui.relojOferta);
     if (viejo) {
       try { viejo.desconectar(); } catch { /* ya estaba desconectado */ }
       try { viejo.destruir(); } catch (err) { console.error(err); }
@@ -909,6 +948,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   async function cerrarSesionReal() {
     ui.saliendo = true;
     soltarControlador();
+    // App nativa 1.2: este teléfono deja de recibir los avisos de esta cuenta. La llave de
+    // Face ID se conserva para volver a entrar con ella.
+    await N.nativo?.olvidarPush?.();
     await servidor.salir();
     N.perfil.cerrarSesionConductor();
     const correo = ui.cuenta?.usuario?.correo || '';
@@ -935,6 +977,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     // El servidor cierra el bus con «sesión cerrada»: no es un cierre inesperado.
     ui.saliendo = true;
     try {
+      await N.nativo?.olvidarPush?.();
       await servidor.eliminarCuenta();
     } catch (err) {
       ui.saliendo = false;
@@ -948,6 +991,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       return false;
     }
     soltarControlador();
+    // La cuenta ya no existe: tampoco su llave de Face ID ni el bloqueo en este teléfono.
+    await N.nativo?.olvidarTodo?.();
     N.perfil.borrarDatosLocales?.();
     ui.cuenta = null;
     ui.saliendo = false;
@@ -960,6 +1005,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   // La central dijo que la sesión no sirve (HTTP 401 o cierre 4401): de vuelta al ingreso.
   function sesionCerrada({ cuerpo = 'Ingresa de nuevo con tu correo.' } = {}) {
     if (ui.saliendo || ui.pantalla === 'ingreso') return;
+    ui.bloqueo?.quitar();
     soltarControlador();
     N.perfil.cerrarSesionConductor();
     const correo = ui.cuenta?.usuario?.correo || '';
@@ -998,6 +1044,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   // Bienvenida de la central: el núcleo ya guardó el conductor (id c_…) en el perfil.
   function alBienvenida() {
     pintarBarra();
+    // App nativa 1.2: si el token de los avisos no alcanzó a llegar al servidor, sale ahora.
+    N.nativo?.reintentarPush?.();
     const yo = yoConductor();
     const firma = JSON.stringify([yo?.movil, yo?.placa, yo?.vehiculo, yo?.nombre]);
     // La primera vez la tarjeta del taxi pudo pintarse sin datos: se vuelve a pintar.
@@ -1745,6 +1793,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   async function conectarTurnoReal() {
     if (!c || turnoBloqueado(c.estado)) return;
     const ctl = c;
+    // App nativa 1.2: la primera vez, «Te avisamos de servicios nuevos…» antes de quedar en turno.
+    if (NATIVA && N.nativo?.pushDisponible?.()) {
+      await ofrecerAvisos(app, { N, rol: 'conductor' }).catch(() => {});
+      if (ctl !== c || turnoBloqueado(ctl.estado) || ctl.estado.conectado) return;
+    }
     try {
       await ctl.conectar();
     } catch (err) {
@@ -1754,6 +1807,63 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       if (ctl === c && ui.vista === 'libre') pintarPildoraReal(ctl.estado);
     }
   }
+  /* ---------------- app nativa 1.2: notificaciones ----------------
+   * Se tocó una notificación. «Nuevo servicio» (tipo solicitud): el conductor estaba en turno
+   * con la app cerrada; vuelve a quedar en turno con la central (presencia + consulta_solicitudes)
+   * y la oferta aparece como siempre, en la hoja amarilla. Si en 10 s no aparece, otro la tomó o
+   * el pasajero la canceló. Otros avisos (cancelación): el tiempo real trae lo que cambió. */
+  function alTocarAviso(a) {
+    if (!a) return;
+    if (!REAL || ui.pantalla !== 'app' || !c) {
+      ui.avisoTocado = a;
+      return;
+    }
+    ui.avisoTocado = null;
+    // Uno que esperó mucho (por ejemplo, mientras se volvía a ingresar) ya no pone en turno.
+    if (Date.now() - (a.cuando || Date.now()) > AVISO_VIGENTE_MS) return;
+    abrirAviso(a);
+  }
+  async function abrirAviso(a) {
+    const ctl = c;
+    if (!ctl?.real) return;
+    $$(app, '.a-panel, .a-menu-capa').forEach((x) => x.remove());
+    if (a.tipo !== 'solicitud' || ctl.estado.viaje) {
+      reconectarCentral(ctl);
+      return;
+    }
+    esperarOferta(ctl, a.viajeId);
+    if (!ctl.estado.conectado) {
+      // Con la central aún saludando, la presencia y la consulta salen con la bienvenida.
+      await ctl.conectar();
+      if (ctl === c && ui.vista === 'libre') pintarPildoraReal(ctl.estado);
+      return;
+    }
+    // En turno: con la bienvenida salen otra vez la presencia y consulta_solicitudes.
+    reconectarCentral(ctl);
+  }
+  // La central manda push solo cuando no ve el WebSocket de este conductor: si el bus dice
+  // «en línea», esa conexión ya murió sin aviso (app en segundo plano); se abre otra ya.
+  function reconectarCentral(ctl = c) {
+    if (!ctl?.real) return;
+    if (ctl.bus.estado === 'en_linea') ctl.bus.reconectar();
+    else ctl.bus.conectar();
+  }
+  function esperarOferta(ctl, viajeId) {
+    clearInterval(ui.relojOferta);
+    if (!viajeId) return;
+    const hasta = Date.now() + 10000;
+    ui.relojOferta = setInterval(() => {
+      if (ctl !== c) return clearInterval(ui.relojOferta);
+      const vista = ctl.estado.solicitudes.some((x) => x.viajeId === viajeId) || ctl.estado.viaje?.id === viajeId;
+      if (vista) return clearInterval(ui.relojOferta);
+      if (Date.now() < hasta) return;
+      clearInterval(ui.relojOferta);
+      if (!ctl.estado.viaje) {
+        avisos.mostrar({ titulo: 'Ese servicio ya no está disponible', cuerpo: 'Otro conductor lo tomó o el pasajero lo canceló. Sigue en turno para recibir los nuevos.', tipo: 'info' });
+      }
+    }, 500);
+  }
+
   // Chip de conexión con la central y píldora (el estado del bus cambia sin «cambio»).
   function pintarConexionReal() {
     const est = estadoCentral();
@@ -1863,6 +1973,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         });
         c.on('vencida', () => vigente() && avisos.mostrar({ titulo: 'La solicitud venció', cuerpo: 'No se respondió a tiempo. Sigue atento a las nuevas.', tipo: 'info' }));
         if (REAL && c.real) {
+          // App nativa 1.2: en turno, libre y con los avisos del celular listos, el WebSocket se
+          // cierra al minimizar: la central lo deja «en turno en segundo plano» y le manda las
+          // solicitudes por push (con un viaje en curso sigue abierto, como hoy).
+          c.bus.cerrarAlOcultar = () => Boolean(N.nativo?.pushListo?.()) && nuevo.estado.conectado && !nuevo.estado.viaje;
           c.on('bienvenida', () => vigente() && alBienvenida());
           c.bus.on('rechazo', (d) => vigente() && alRechazo(d || {}));
           c.bus.on('conexion', () => vigente() && pintarConexionReal());
@@ -1902,6 +2016,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     setInterval(() => {
       if (c) pintarConexionReal();
     }, 1000);
+    // App nativa 1.2 (sin los plugins no hace nada): bloqueo con Face ID y avisos tocados.
+    if (NATIVA && N.nativo) {
+      // «¿No puedes? Cierra sesión» en la capa: ya lo confirmó ahí, no se pregunta otra vez.
+      ui.bloqueo = montarBloqueo(app, { N, alSalir: () => cerrarSesionReal() });
+      N.nativo.alTocarAviso(alTocarAviso);
+      // Llegó un aviso con la app abierta: la central cree que no hay conexión (lo manda por
+      // push solo sin WebSocket); se reconecta ya y con la bienvenida sale la consulta.
+      N.nativo.eventos.on('recibida', () => {
+        if (ui.pantalla === 'app') reconectarCentral();
+      });
+    }
     arrancarReal();
     return;
   }

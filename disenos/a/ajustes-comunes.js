@@ -1,6 +1,6 @@
 // Bloques de ajustes que comparten el pasajero y el conductor: municipio (solo
 // dentro de TaxiCun), diseño, sala de prueba, sonido, notificaciones, conexión en
-// vivo, instalación, cuenta (modo real) y «Acerca de».
+// vivo, instalación, cuenta (modo real), seguridad (Face ID, app nativa 1.2) y «Acerca de».
 // En modo real (EM.MODO_REAL) no se muestra nada de la demo: ni sala, ni relés, ni
 // simulación, ni «MODO PRUEBA», ni «Instalar» (en la web la app instalada abriría la
 // demo). En la app nativa (EM.ES_NATIVA) tampoco las notificaciones del navegador (el
@@ -31,10 +31,21 @@ export function interruptor({ id, titulo, detalle = '', icono: ico, activo = fal
     <button type="button" role="switch" class="a-interruptor" aria-checked="${activo}" aria-labelledby="${id}"><span></span></button>
   </div>`);
   const b = fila.querySelector('button');
-  b.addEventListener('click', () => {
+  b.addEventListener('click', async () => {
+    if (b.disabled) return;
     const v = b.getAttribute('aria-checked') !== 'true';
     b.setAttribute('aria-checked', String(v));
-    alCambiar(v);
+    // alCambiar puede ser asíncrono (Face ID, servidor): si devuelve false, vuelve a como estaba.
+    const r = alCambiar(v);
+    if (!r || typeof r.then !== 'function') return;
+    b.disabled = true;
+    try {
+      if ((await r) === false) b.setAttribute('aria-checked', String(!v));
+    } catch {
+      b.setAttribute('aria-checked', String(!v));
+    } finally {
+      b.disabled = false;
+    }
   });
   return fila;
 }
@@ -79,7 +90,8 @@ export function bloqueSala(N, app) {
   return s;
 }
 
-export function bloqueSonidoYAvisos(N) {
+// rol ('pasajero' | 'conductor'): en la app nativa 1.2, para qué sirven las notificaciones.
+export function bloqueSonidoYAvisos(N, { rol = globalThis.CT_ROL === 'conductor' ? 'conductor' : 'pasajero' } = {}) {
   const s = el('<section class="a-grupo"><h3>Avisos</h3><div class="a-tarjeta-lista"></div></section>');
   const lista = s.querySelector('.a-tarjeta-lista');
   lista.append(interruptor({
@@ -89,8 +101,11 @@ export function bloqueSonidoYAvisos(N) {
       if (v) N.sonar('exito');
     },
   }));
-  // En la app nativa no hay notificaciones del navegador (llegarán con el push nativo).
-  if (EM.ES_NATIVA) return s;
+  // En la app nativa no hay notificaciones del navegador: desde la 1.2, las del celular (push).
+  if (EM.ES_NATIVA) {
+    if (EM.MODO_REAL && N.nativo?.pushDisponible()) lista.append(filaAvisosNativos(N, rol));
+    return s;
+  }
   const estado = N.permisoNotificaciones();
   const txt = { granted: 'Activadas', denied: 'Bloqueadas en el navegador', default: 'Sin activar', 'no-soportado': 'Este navegador no las permite' }[estado] || estado;
   const fila = el(`<div class="a-fila-interruptor">
@@ -104,6 +119,87 @@ export function bloqueSonidoYAvisos(N) {
     if (r !== 'default') e.target.remove();
   });
   lista.append(fila);
+  return s;
+}
+
+// Notificaciones del celular (app nativa 1.2): estado del permiso y «Activar» si aún no se decidió.
+function filaAvisosNativos(N, rol) {
+  const fila = el(`<div class="a-fila-interruptor" data-avisos-nativos>
+    <span class="a-fila-ico">${icono('campana', { tam: 20 })}</span>
+    <span class="a-fila-txt"><strong>Notificaciones</strong><small data-estado>Revisando…</small></span>
+  </div>`);
+  const detalle = rol === 'conductor' ? 'Servicios nuevos aunque tengas la app cerrada' : 'Cuando un conductor acepte y cuando llegue tu taxi';
+  const pintar = (permiso) => {
+    fila.querySelector('[data-activar]')?.remove();
+    const txt = {
+      granted: `Activadas · ${detalle}`,
+      denied: 'Desactivadas. Actívalas en los ajustes del celular, en TaxiCun.',
+      prompt: `Sin activar · ${detalle}`,
+    }[permiso] || 'No disponibles en este celular';
+    fila.querySelector('[data-estado]').textContent = txt;
+    if (permiso !== 'prompt') return;
+    const b = el('<button type="button" class="a-btn a-btn-tinta a-btn-chico" data-activar>Activar</button>');
+    b.addEventListener('click', async () => {
+      b.disabled = true;
+      pintar(await N.nativo.registrarPush(rol, { pedir: true }));
+    });
+    fila.append(b);
+  };
+  N.nativo.permisoPush().then(pintar);
+  return fila;
+}
+
+// Solo en la app nativa 1.2 con Face ID o huella: «Entrar con Face ID» (crea o borra la llave
+// de este teléfono) y «Pedir Face ID al abrir la app». Se arma cuando el plugin responde; sin
+// biometría configurada, la sección no aparece.
+export function bloqueSeguridad(N, { correo = '' } = {}) {
+  if (!EM.MODO_REAL || !EM.ES_NATIVA || !N.nativo?.biometriaPosible()) return '';
+  const s = el('<section class="a-grupo a-seguridad" data-seguridad hidden><h3>Seguridad</h3><div class="a-tarjeta-lista"></div><p class="a-ayuda-txt a-error" data-error role="alert"></p></section>');
+  const lista = s.querySelector('.a-tarjeta-lista');
+  const error = s.querySelector('[data-error]');
+  const dueno = String(correo || '').trim().toLowerCase();
+  const fallo = (err) => {
+    if (err?.codigo !== 'cancelada') error.textContent = err?.name === 'ErrorBiometria' ? err.message : EM.textoError(err);
+    return false;
+  };
+  (async () => {
+    const [b, llave] = await Promise.all([N.nativo.biometria(), N.nativo.llaveGuardada()]);
+    if (!b.disponible) return;
+    const propia = Boolean(llave) && (!llave.correo || !dueno || llave.correo === dueno);
+    lista.append(
+      interruptor({
+        id: 'a-aj-bio', titulo: `Entrar con ${b.nombre}`, detalle: 'Sin esperar el código del correo', icono: b.icono, activo: propia,
+        alCambiar: async (v) => {
+          error.textContent = '';
+          try {
+            if (v) await N.nativo.crearLlave({ correo: dueno });
+            else await N.nativo.borrarLlave();
+            return true;
+          } catch (err) {
+            return fallo(err);
+          }
+        },
+      }),
+      interruptor({
+        id: 'a-aj-bloqueo', titulo: `Pedir ${b.nombre} al abrir la app`, detalle: 'Al abrir y al volver después de un minuto. Sirve también el código del celular.', icono: 'candado', activo: N.nativo.bloqueoActivo(),
+        alCambiar: async (v) => {
+          error.textContent = '';
+          if (!v) {
+            N.nativo.fijarBloqueo(false);
+            return true;
+          }
+          try {
+            await N.nativo.verificar({ razon: 'Confirma que eres tú', respaldo: true });
+            N.nativo.fijarBloqueo(true);
+            return true;
+          } catch (err) {
+            return fallo(err);
+          }
+        },
+      }),
+    );
+    s.hidden = false;
+  })();
   return s;
 }
 

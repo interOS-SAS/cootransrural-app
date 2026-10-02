@@ -53,6 +53,8 @@ const TEXTOS = {
   codigo_invalido: 'Ese código no coincide.',
   codigo_vencido: 'El código venció o se acabaron los intentos. Pide uno nuevo.',
   sin_sesion: 'Tu sesión se cerró. Ingresa de nuevo con tu correo.',
+  // Ingreso rápido (Face ID / huella, app 1.2)
+  llave_invalida: 'Tu ingreso rápido ya no sirve. Entra con el código del correo.',
   // Generales
   datos_invalidos: 'Revisa los datos e intenta de nuevo.',
   peticion_invalida: 'Revisa los datos e intenta de nuevo.',
@@ -100,7 +102,9 @@ export class ErrorServidor extends Error {
 
 /* ---------------- HTTP ---------------- */
 
-async function pedir(metodo, ruta, cuerpo, { avisarSesion = true } = {}) {
+// publica: rutas sin sesión (POST auth/llave). Ahí un 401 es «esa llave no sirve», no
+// «tu sesión se cerró»: no se borra nada ni se avisa, y se lanza el código del servidor.
+async function pedir(metodo, ruta, cuerpo, { avisarSesion = true, publica = false } = {}) {
   const cabeceras = { Accept: 'application/json' };
   const t = token();
   if (t) cabeceras.Authorization = `Bearer ${t}`;
@@ -126,6 +130,10 @@ async function pedir(metodo, ruta, cuerpo, { avisarSesion = true } = {}) {
   } catch {
     /* respuesta vacía o que no es JSON (p. ej. la página de error de un proxy) */
   }
+  if (r.status === 401 && publica) {
+    const codigo = typeof datos?.error === 'string' && /^[a-z_]+$/.test(datos.error) ? datos.error : 'llave_invalida';
+    throw new ErrorServidor(codigo, 401);
+  }
   if (r.status === 401) {
     borrarToken();
     if (avisarSesion) sesion.emit('cerrada', { codigo: 'sin_sesion' });
@@ -140,8 +148,9 @@ async function pedir(metodo, ruta, cuerpo, { avisarSesion = true } = {}) {
 }
 
 // ruta relativa a URL_API: 'yo', 'auth/codigo'…
-export function api(metodo, ruta, cuerpo) {
-  return pedir(metodo, ruta, cuerpo);
+// opciones: { avisarSesion: false } para no emitir 'cerrada' con un 401 (p. ej. al salir).
+export function api(metodo, ruta, cuerpo, opciones) {
+  return pedir(metodo, ruta, cuerpo, opciones);
 }
 
 export const pedirCodigo = (correo) => api('POST', 'auth/codigo', { correo: String(correo || '').trim() });
@@ -153,6 +162,26 @@ export async function entrar(correo, codigo) {
     codigo: String(codigo ?? '').replace(/\D/g, ''),
     dispositivo: ES_NATIVA ? 'app' : 'web',
   });
+  if (!r.token) throw new ErrorServidor('error_interno', 200);
+  guardarToken(r.token);
+  return { usuario: r.usuario, conductor: r.conductor ?? null };
+}
+
+/* ---------------- Ingreso rápido (app 1.2: Face ID / huella) ----------------
+ * Una «llave» es un secreto largo que el servidor da UNA vez (POST yo/llave) y que la app
+ * guarda en el llavero del teléfono (nucleo/nativo.js). Con ella se entra sin el código del
+ * correo (POST auth/llave), igual que con entrar(). El servidor guarda solo su huella. */
+export const crearLlave = (nombre) => api('POST', 'yo/llave', nombre ? { nombre: String(nombre).slice(0, 60) } : {}); // → { id, secreto }
+export const borrarLlave = (id) => api('DELETE', `yo/llave/${encodeURIComponent(id)}`, undefined, { avisarSesion: false });
+
+// Entra con una llave guardada y guarda la sesión. Devuelve { usuario, conductor }.
+// Errores: llave_invalida (revocada, borrada o de una cuenta eliminada) y los límites del código.
+export async function entrarConLlave(id, secreto) {
+  const r = await pedir('POST', 'auth/llave', {
+    id: String(id || ''),
+    secreto: String(secreto || ''),
+    dispositivo: ES_NATIVA ? 'app' : 'web',
+  }, { avisarSesion: false, publica: true });
   if (!r.token) throw new ErrorServidor('error_interno', 200);
   guardarToken(r.token);
   return { usuario: r.usuario, conductor: r.conductor ?? null };

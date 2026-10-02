@@ -2,7 +2,7 @@
 // Promociones, Ajustes, Ayuda, la lista de avisos y, en modo real, Mi cuenta.
 import { esc, icono, abrirPanel, modal, chipPrueba, franjaCuadros, celularTexto } from './ui.js';
 import { ilustracionVacia, sellosFidelidad } from './ilustraciones.js';
-import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio, bloqueCuenta, enlacePrivacidad } from './ajustes-comunes.js';
+import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio, bloqueCuenta, enlacePrivacidad, bloqueSeguridad } from './ajustes-comunes.js';
 import * as EM from './empresa.js';
 
 const ESTADOS = {
@@ -260,7 +260,9 @@ export function abrirAjustes(c) {
       const yo = N.perfil.pasajero();
       cuerpo.append(
         bloqueMunicipio(N, { alCambiar: cambiarMunicipio, unica: c.unica }),
-        bloqueSonidoYAvisos(N),
+        bloqueSonidoYAvisos(N, { rol: 'pasajero' }),
+        // App nativa 1.2: Face ID / huella (en la web y en las demos no aparece).
+        bloqueSeguridad(N, { correo: yo?.correo || '' }),
         bloqueConexion(N, { simulacion: true }),
         bloqueSala(N, app),
         bloqueInstalar(N, app),

@@ -7,7 +7,7 @@
 // cuenta. En la app nativa (ctx.nativa), sin «Instalar» ni «Cambiar de municipio».
 import { el, esc, icono, abrirPanel, chipPrueba, decimal, placa, franjaCuadros, celularTexto } from './ui.js';
 import { ilustracionVacia, taxiLateral } from './ilustraciones.js';
-import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio } from './ajustes-comunes.js';
+import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio, bloqueSeguridad } from './ajustes-comunes.js';
 import * as EM from './empresa.js';
 
 // Colores validados para las dos categorías (QR / efectivo) sobre fondo claro.
@@ -254,7 +254,9 @@ export function abrirAjustesConductor({ N, app, c, avisos, diseno, cambiarMunici
           ...[
             nativa ? '' : bloqueMunicipio(N, { alCambiar: cambiarMunicipio, unica }),
             gps,
-            bloqueSonidoYAvisos(N),
+            bloqueSonidoYAvisos(N, { rol: 'conductor' }),
+            // App nativa 1.2: Face ID / huella (en la web no aparece).
+            bloqueSeguridad(N, { correo: cuenta?.usuario?.correo || '' }),
             bloqueCuenta({ cuenta, yo, cerrarSesion, eliminarCuenta, alSalir: cerrarPanel }),
             nativa ? '' : bloqueInstalar(N, app),
             acerca,
@@ -280,7 +282,7 @@ export function abrirAjustesConductor({ N, app, c, avisos, diseno, cambiarMunici
       cuerpo.append(
         bloqueMunicipio(N, { alCambiar: cambiarMunicipio }),
         gps,
-        bloqueSonidoYAvisos(N),
+        bloqueSonidoYAvisos(N, { rol: 'conductor' }),
         bloqueConexion(N, { simulacion: false }),
         bloqueSala(N, app),
         nativa ? '' : bloqueInstalar(N, app),
