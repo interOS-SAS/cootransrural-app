@@ -1386,6 +1386,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             <h2>Pide el código de abordaje</h2>
             <p>${esc(nombreCorto(v.pasajero?.nombre || 'El pasajero'))} te dice los 4 dígitos que ve en su app.</p>
             ${v.codigoSimulado ? `<div class="a-pista">${icono('info', { tam: 18 })}<span>Pista de la demo: el código del pasajero de prueba es <b data-pista>${esc(v.codigoSimulado)}</b></span></div>` : ''}
+            ${v.codigoRevision ? `<div class="a-pista" data-pista-revision>${icono('info', { tam: 18 })}<span>Pasajero automático de prueba: su código de abordaje es <b>${esc(v.codigoRevision)}</b></span></div>` : ''}
             <div data-casillas></div>
             <p class="a-error" data-error role="alert"></p>
           </div>

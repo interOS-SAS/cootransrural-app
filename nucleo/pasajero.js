@@ -13,8 +13,13 @@
 //   'bienvenida' (datos), 'rechazo' ({ codigo, motivo }), 'conexion' (estado del bus:
 //   'sin_conectar'|'conectando'|'en_linea'|'reconectando'|'rechazado'),
 //   'error_servidor' ({ codigo, texto }). El estado lleva además estadoBus.
+// Modo revisor (bienvenida.revision: las cuentas de los revisores de Apple y Google, que prueban
+// desde otro país): si el GPS está lejos de la cooperativa, miPosicion pasa a ser el parque
+// principal (con revision: true), se avisa una vez y se emite 'revision_lejos' (punto) para que el
+// diseño lleve allá el mapa y el punto de recogida. Sin esa bandera, nada cambia.
 import { crearBus } from './bus.js';
 import { TIEMPOS, CENTRO, EMPRESA } from './config.js';
+import { LUGARES } from './datos.js';
 import { calcularRuta, obtenerPosicion, fueraDeZona } from './geo.js';
 import { calcularTarifa } from './tarifas.js';
 import { avisar } from './avisos.js';
@@ -87,6 +92,8 @@ class ControladorPasajero extends Emisor {
       this.relojViajeActual = null;
       this.viajeARevisar = null; // id del viaje que había al llegar la última bienvenida
       this.ultimoRechazo = null;
+      this.revision = false; // modo revisor (bienvenida.revision)
+      this.avisoLejos = false;
     }
   }
 
@@ -120,7 +127,7 @@ class ControladorPasajero extends Emisor {
       // Pide a los conductores en línea que se anuncien ya (sin esperar su turno).
       this.bus.publicar('consulta_presencia', {});
     }
-    const pos = await obtenerPosicion({ espera: 6000 });
+    const pos = this.#paraRevision(await obtenerPosicion({ espera: 6000 }));
     this.estado.miPosicion = pos;
     if (this.usarAmbiente) {
       const centroSim = pos.real && !fueraDeZona(pos) ? pos : pos.real ? pos : CENTRO;
@@ -165,9 +172,28 @@ class ControladorPasajero extends Emisor {
   }
 
   async actualizarMiPosicion() {
-    const pos = await obtenerPosicion({ espera: 8000 });
+    const pos = this.#paraRevision(await obtenerPosicion({ espera: 8000 }));
     this.#cambiar({ miPosicion: pos });
     return pos;
+  }
+
+  // Modo revisor: lejos de la cooperativa (p. ej. en Cupertino), la recogida de la prueba es el
+  // paradero de taxis (en El Rosal el Decreto 89 de 2026 prohíbe recoger en el parque principal).
+  // Devuelve la posición que se usa (la misma si no aplica).
+  #paraRevision(pos) {
+    if (!this.real || !this.revision || !pos || pos.revision || !fueraDeZona(pos)) return pos;
+    const paradero = LUGARES.find((l) => l.id === 'paradero' || /paradero/i.test(l.nombre || ''));
+    const punto = paradero || CENTRO;
+    if (!this.avisoLejos) {
+      this.avisoLejos = true;
+      const pueblo = EMPRESA?.pueblo || 'la cooperativa';
+      this.#avisar({
+        titulo: `Estás lejos de ${pueblo}`,
+        cuerpo: `Para la prueba usamos ${paradero ? 'el paradero de taxis' : `el centro de ${pueblo}`} como punto de recogida. Elige tu destino y pide tu taxi.`,
+        tipo: 'info',
+      });
+    }
+    return { lat: punto.lat, lng: punto.lng, precision: null, real: true, revision: true };
   }
 
   /* ---------------- acciones ---------------- */
@@ -538,6 +564,14 @@ class ControladorPasajero extends Emisor {
 
   #alBienvenida(d) {
     perfil.fijarIdPasajero(d?.pasajeroId);
+    // Modo revisor: con el GPS lejos de la cooperativa, la recogida pasa al parque principal.
+    this.revision = Boolean(d?.revision);
+    const antes = this.estado.miPosicion;
+    const ahora = this.#paraRevision(antes);
+    if (ahora !== antes) {
+      this.#cambiar({ miPosicion: ahora });
+      this.emit('revision_lejos', ahora);
+    }
     // El servidor vuelve a mandar las presencias de los conductores conectados.
     this.reales.clear();
     // Un viaje de otra cuenta (se cerró la sesión y entró otra persona en este celular) no

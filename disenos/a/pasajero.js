@@ -736,7 +736,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
 
   function acciones(c) {
     const yo = N.perfil.pasajero();
-    const tel = String(c.tel || EM.TELEFONO || '').replace(/\D/g, '');
+    // Con la cuenta de los revisores de las tiendas el conductor es automático: sin su celular no se
+    // ofrece la central real de la cooperativa.
+    const tel = String(c.tel || (p?.revision ? '' : EM.TELEFONO) || '').replace(/\D/g, '');
     const wa = c.tel ? N.enlaceWhatsApp(c.tel, `Hola ${nombreCorto(c.nombre)}, soy ${nombreCorto(yo?.nombre || '')}, el pasajero de ${EM.NOMBRE}.`) : '';
     // En modo real el celular es el que manda la central, aunque caiga en el rango de la demo.
     if (!REAL && N.esTelDemo(c.tel)) {
@@ -1853,6 +1855,13 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       p.on('cambio', pintar);
       // «¡Tu taxi está en la puerta!» ya se ve en el banner grande: solo va al historial.
       p.on('aviso', (a) => avisos.mostrar(a, { silencioso: p.estado.fase === 'llego' && /puerta/i.test(a.titulo) }));
+      // Modo revisor (revisores de las tiendas, desde otro país): el núcleo cambió la posición al
+      // parque principal; si aún no hay un punto de recogida en la zona, el mapa y el pin van allá.
+      p.on('revision_lejos', () => {
+        if (p.estado.fase !== 'inicio' || (ui.origen && !N.fueraDeZona(ui.origen))) return;
+        Object.assign(ui, { origen: null, destino: undefined, destinoProvisional: null, cotizacion: null, centrado: false, modo: 'inicio' });
+        renderVista('inicio', true);
+      });
       if (REAL) escucharBus();
       ui.origen = null;
       ui.vista = null;

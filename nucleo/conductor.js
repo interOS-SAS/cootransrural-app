@@ -17,6 +17,10 @@
 // 'rechazado') y 'error_servidor' ({ codigo, texto }). El estado lleva además estadoBus;
 // el viaje en 'confirmando' lleva esperaTexto y esperaHasta; en 'cobrando', pagoAnunciado
 // cuando el pasajero dice que ya pagó (se espera confirmarEfectivo()).
+// Modo revisor (bienvenida.revision: las cuentas de los revisores de Apple y Google): la central
+// manda un «pasajero automático» a ~120 m, con el código de abordaje fijo (codigoAbordaje, 1234).
+// Ese código va en la nota de la solicitud y en viaje.codigoRevision (el diseño lo muestra al
+// pedir el código), y «Llegué» se acepta hasta a 400 m. Sin esa bandera, nada cambia.
 import { crearBus } from './bus.js';
 import { TIEMPOS, CENTRO } from './config.js';
 import { calcularRuta, obtenerPosicion, seguirPosicion, fueraDeZona, direccionDe } from './geo.js';
@@ -30,6 +34,8 @@ import { Emisor, hashCorto, distanciaKm, pesos, kmTexto, minutosTexto } from './
 
 // Distancia máxima (km) al pasajero para poder marcar «Llegué» con GPS real.
 const DISTANCIA_LLEGADA_KM = 0.15;
+// Con el pasajero automático del modo revisor (el GPS bajo techo se mueve decenas de metros).
+const DISTANCIA_LLEGADA_REVISION_KM = 0.4;
 
 // Modo real.
 const CLAVE_VIAJE_REAL = 'tc.real.viaje.conductor'; // localStorage: en la app nativa sessionStorage se pierde
@@ -107,6 +113,7 @@ class ControladorConductor extends Emisor {
       this.aceptadaReciente = null;
       this.cierreRepetido = null; // el último fin que se repitió al reconectar (ver #valorRechazado)
       this.reconexionPorValor = 0; // cuándo se reconectó por un valor_invalido que llegó tarde
+      this.revision = false; // modo revisor (bienvenida.revision)
     }
   }
 
@@ -232,9 +239,30 @@ class ControladorConductor extends Emisor {
     });
   }
 
+  // Modo revisor: el código de abordaje del pasajero automático (null si no aplica).
+  #codigoDePrueba(s) {
+    const codigo = String(s?.codigoAbordaje ?? '');
+    return this.real && this.revision && s?.pasajero?.automatico && /^\d{4}$/.test(codigo) ? codigo : null;
+  }
+
+  // Distancia para «Llegué» (más holgada con el pasajero automático del modo revisor).
+  #distanciaLlegada(v) {
+    return v?.codigoRevision ? DISTANCIA_LLEGADA_REVISION_KM : DISTANCIA_LLEGADA_KM;
+  }
+
+  // Modo revisor: el pasajero automático aparece al lado y, con el teléfono quieto (en un escritorio
+  // no llegan lecturas nuevas del GPS), «Llegué» se resalta sin esperar a que el taxi se mueva.
+  #llegadaSinMoverse() {
+    const v = this.estado.viaje;
+    if (this.real && v?.codigoRevision && this.estado.gpsReal && this.estado.pos) this.#moverA(this.estado.pos);
+  }
+
   async #recibirSolicitud(s) {
     if (!this.estado.conectado || this.estado.viaje) return;
     if (this.estado.solicitudes.some((x) => x.viajeId === s.viajeId)) return;
+    // Modo revisor: el código del pasajero automático se ve en la nota de la solicitud.
+    const codigo = this.#codigoDePrueba(s);
+    if (codigo && !String(s.nota || '').includes(codigo)) s = { ...s, nota: [s.nota, `Código de abordaje: ${codigo}`].filter(Boolean).join(' · ') };
     const pos = this.estado.pos || CENTRO;
     const distanciaAMi = distanciaKm(pos, s.origen);
     const solicitud = { ...s, distanciaAMi, recibida: Date.now(), expira: Date.now() + TIEMPOS.aceptar };
@@ -285,6 +313,7 @@ class ControladorConductor extends Emisor {
       min: s.min,
       codigoHash: s.codigoHash,
       codigoSimulado: s.simulada ? s.codigo : null,
+      codigoRevision: this.#codigoDePrueba(s),
       simulado: Boolean(s.simulada),
       fase: s.simulada ? 'hacia_origen' : 'confirmando',
       aceptado: Date.now(),
@@ -374,7 +403,7 @@ class ControladorConductor extends Emisor {
     if (this.real && v && this.estado.gpsReal) {
       const objetivo = v.fase === 'hacia_origen' ? v.origen : v.fase === 'en_viaje' ? v.destino : null;
       const clave = `${v.id}:${v.fase}`;
-      if (objetivo && this.llegadaAvisada !== clave && distanciaKm(p, objetivo) <= DISTANCIA_LLEGADA_KM) {
+      if (objetivo && this.llegadaAvisada !== clave && distanciaKm(p, objetivo) <= (v.fase === 'hacia_origen' ? this.#distanciaLlegada(v) : DISTANCIA_LLEGADA_KM)) {
         this.llegadaAvisada = clave;
         this.emit('llegada', v.fase);
       }
@@ -399,7 +428,7 @@ class ControladorConductor extends Emisor {
     }
     if (this.estado.gpsReal && !v.simulado && this.estado.pos) {
       const d = distanciaKm(this.estado.pos, v.origen);
-      if (d > DISTANCIA_LLEGADA_KM) {
+      if (d > this.#distanciaLlegada(v)) {
         this.#avisar({ titulo: 'Aún no estás en el punto', cuerpo: `Estás a ${kmTexto(d)} del pasajero. Marca «Llegué» cuando estés en la puerta.`, tipo: 'error' });
         return false;
       }
@@ -833,6 +862,7 @@ class ControladorConductor extends Emisor {
   #alBienvenida(d) {
     // El id c_… de la bienvenida es con el que la central asigna los servicios.
     if (d?.conductor) perfil.fijarConductorServidor(d.conductor);
+    this.revision = Boolean(d?.revision); // modo revisor (cuentas de los revisores de las tiendas)
     // Un servicio de otra cuenta (entró otro conductor en este celular) no se retoma.
     const propio = this.estado.viaje?.conductorId;
     if (propio && d?.conductor?.id && propio !== d.conductor.id) {
@@ -970,6 +1000,7 @@ class ControladorConductor extends Emisor {
       min: d.min ?? null,
       codigoHash: d.codigoHash || null,
       codigoSimulado: null,
+      codigoRevision: this.#codigoDePrueba(d),
       simulado: false,
       fase,
       aceptado: Date.now(),
@@ -1004,6 +1035,7 @@ class ControladorConductor extends Emisor {
       min: s.min,
       codigoHash: d.codigoHash || s.codigoHash || null, // 0.2.1: llega con la asignación
       codigoSimulado: null,
+      codigoRevision: this.#codigoDePrueba(s),
       simulado: false,
       fase: 'hacia_origen',
       aceptado: Date.now(),
@@ -1018,6 +1050,7 @@ class ControladorConductor extends Emisor {
 
   // Ruta desde donde está el taxi hasta el punto de recogida o el destino.
   #rutaHaciaObjetivo() {
+    this.#llegadaSinMoverse();
     const v = this.estado.viaje;
     if (!v || !this.estado.pos) return;
     const objetivo = v.fase === 'hacia_origen' ? v.origen : v.fase === 'en_viaje' ? v.destino : null;
