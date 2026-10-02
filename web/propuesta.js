@@ -1,7 +1,7 @@
 // Propuesta comercial (plantillas/propuesta/): dibuja los códigos QR, ajusta las
 // hojas al ancho de la pantalla y abre la impresión («Guardar como PDF»).
 // Cuando todo está listo marca <html data-listo="si"> (lo espera herramientas/propuestas-pdf.mjs).
-import qrcode from '../vendor/qrcode.mjs';
+import qrcode from '../vendor/qrcode.js';
 
 const COLOR = document.body.dataset.colorQr || '#111111';
 

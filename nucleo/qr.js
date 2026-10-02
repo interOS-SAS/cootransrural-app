@@ -1,5 +1,5 @@
 // Códigos QR: generación (SVG, canvas, PNG) y lectura con la cámara.
-import qrcode from '../vendor/qrcode.mjs';
+import qrcode from '../vendor/qrcode.js';
 import { urlDelSitio, urlEmpresa, EMPRESA, ID_EMPRESA } from './config.js';
 import { pesos, escaparHTML } from './util.js';
 

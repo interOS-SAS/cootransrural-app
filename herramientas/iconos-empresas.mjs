@@ -26,7 +26,7 @@ import { chromium } from '/tmp/cootrans/npm/node_modules/playwright-core/index.m
 import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import qrcode from '../vendor/qrcode.mjs';
+import qrcode from '../vendor/qrcode.js';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const EXE = process.env.CHROMIUM || '/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome';
