@@ -119,6 +119,7 @@ async function entrarApi(c) {
 
 const leerAvisos = () => (existsSync(AVISOS) ? readFileSync(AVISOS, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []);
 let marca = 0; // líneas del archivo antes de la parte actual
+let marcaInicio = 0; // líneas del archivo antes de esta corrida (otras pruebas también escriben ahí)
 const nuevos = () => leerAvisos().slice(marca);
 const resumen = (l) => `${l.app}/${l.datos?.tipo}${l.datos?.fase ? `/${l.datos.fase}` : ''} «${l.cuerpo}»`;
 // La notificación como la entrega @capacitor/push-notifications en iOS: data = userInfo (el cuerpo de APNs con «aps»).
@@ -336,6 +337,7 @@ async function preparar() {
   const salud = await api('GET', 'salud');
   await debe(salud.estado === 200 && /^0\.3\./.test(salud.datos?.version || ''), `servidor de la rama v1.2 por el proxy (${salud.datos?.version || salud.estado})`);
   await debe(existsSync(AVISOS), `el servidor escribe los avisos simulados en ${AVISOS} (PUSH_SIMULADO)`);
+  marcaInicio = leerAvisos().length;
   for (const c of [PAS, CA, CB]) {
     const r = await entrarApi(c);
     await debe(r.estado === 200, `cuenta de prueba ${c.correo} (¿está en CUENTAS_PRUEBA?)`);
@@ -598,7 +600,7 @@ async function comoHoy() {
   await debe(vista(pp, 'inicio', 10000), 'pasajero: cancela y vuelve al inicio');
   await espera(1500);
   ok(nuevos().length === 0, 'cancelar con la app abierta: ningún push');
-  ok(!leerAvisos().some((l) => l.token !== tA && l.token !== tP), 'en todo el archivo solo aparecen los dos teléfonos 1.2');
+  ok(!leerAvisos().slice(marcaInicio).some((l) => l.token !== tA && l.token !== tP), 'en toda la corrida solo aparecen los dos teléfonos 1.2');
 }
 
 /* ------------------------------------------------------------------ */
