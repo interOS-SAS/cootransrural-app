@@ -100,7 +100,11 @@ export function destinoOficial(destino) {
   const conPunto = ubicado(destino);
   const nombre = normalizar(destino.titulo);
   if (nombre) {
-    const iguales = DESTINOS_TARIFA.filter((d) => normalizar(d.destino) === nombre);
+    // Si el nombre coincide letra por letra (mayúsculas incluidas) con uno de la tabla, ese
+    // manda: «Monasterio Trapense» (zona 3) y «Monasterio trapense» (zona 4) solo se distinguen así.
+    const todos = DESTINOS_TARIFA.filter((d) => normalizar(d.destino) === nombre);
+    const exactos = todos.filter((d) => d.destino === String(destino.titulo).trim());
+    const iguales = exactos.length ? exactos : todos;
     if (iguales.length && !conPunto) return { ...iguales[0], por: 'nombre' };
     if (iguales.length) {
       // El mismo nombre en dos zonas (p. ej. el Monasterio Trapense): el más cercano.

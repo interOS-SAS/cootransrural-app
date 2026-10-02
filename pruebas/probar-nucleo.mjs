@@ -42,6 +42,8 @@ const rt = await t.evaluate(() => {
     madrid: resumen(N.calcularTarifa({ origen: par, destino: { ...N.LUGARES.find((l) => l.id === 'madrid'), titulo: 'Madrid' } })),
     sinDestino: resumen(N.calcularTarifa({ origen: par, destino: null })),
     busqueda: N.buscarLocal('escuela buenavista').map((x) => ({ titulo: x.titulo, idTarifa: x.idTarifa || '' })),
+    // El Monasterio Trapense está dos veces (zona 3 $13.000, zona 4 $12.700) en el mismo punto.
+    trapense: ['Monasterio Trapense', 'Monasterio trapense'].map((titulo) => N.calcularTarifa({ origen: par, destino: { lat: 4.87171, lng: -74.262058, titulo } }).total),
   };
 });
 console.log(JSON.stringify(rt, null, 1));
@@ -55,6 +57,7 @@ ok(rt.lejos.tipo === 'estimada' && rt.lejos.total === 4200 + 4 * 1900, `destino 
 ok(rt.madrid.tipo === 'referencia' && rt.madrid.total === 30000 && rt.madrid.etiqueta === 'Precio de referencia', 'otro municipio: precio de referencia (Madrid $30.000, sin cifras nuevas)');
 ok(rt.sinDestino.total === 6100, 'sin destino: desde la mínima oficial ($6.100)');
 ok(rt.busqueda.some((x) => x.titulo === 'Escuela Buenavista' && x.idTarifa), 'la búsqueda de lugares trae los destinos de la tabla oficial');
+ok(rt.trapense[0] === 13000 && rt.trapense[1] === 12700, `mismo nombre en dos zonas: «Monasterio Trapense» $13.000 (zona 3) y «Monasterio trapense» $12.700 (zona 4) (${rt.trapense.join(' / ')})`);
 ok(rt.paradero.lugar === 'Paradero de taxis (Cra. 9, salón cultural)' && rt.paradero.par.lat === 4.85272 && rt.paradero.par.lng === -74.26284 && Boolean(rt.paradero.parque?.noRecoger), 'recogida por defecto: el paradero de la Cra. 9 (no el parque)');
 await t.close();
 

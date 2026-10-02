@@ -1036,7 +1036,9 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
       repintar();
       return;
     }
-    ui.destino = { titulo: punto.titulo, detalle: punto.detalle || '', lat: punto.lat, lng: punto.lng };
+    // idTarifa: destino de la tabla oficial (p. ej. Decreto 05 de 2026 de El Rosal); sin él, el
+    // precio saldría por el nombre, y el Monasterio Trapense está en dos zonas con dos precios.
+    ui.destino = { titulo: punto.titulo, detalle: punto.detalle || '', lat: punto.lat, lng: punto.lng, ...(punto.idTarifa ? { idTarifa: punto.idTarifa } : {}) };
     ui.sinDestino = false;
     ui.q = '';
     irA('confirmar');

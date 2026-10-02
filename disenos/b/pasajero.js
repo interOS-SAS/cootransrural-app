@@ -819,7 +819,9 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
   }
 
   function elegirDestino(lugar) {
-    ui.destino = lugar ? { lat: lugar.lat, lng: lugar.lng, titulo: lugar.titulo, detalle: lugar.detalle || '' } : null;
+    // idTarifa: destino de la tabla oficial (p. ej. Decreto 05 de 2026 de El Rosal); sin él, el
+    // precio saldría por el nombre, y el Monasterio Trapense está en dos zonas con dos precios.
+    ui.destino = lugar ? { lat: lugar.lat, lng: lugar.lng, titulo: lugar.titulo, detalle: lugar.detalle || '', ...(lugar.idTarifa ? { idTarifa: lugar.idTarifa } : {}) } : null;
     irA('paso3');
   }
 
