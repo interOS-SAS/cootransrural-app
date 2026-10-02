@@ -277,11 +277,42 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     abrirAvisos(ctx());
   });
   $(app, '[data-menu]').addEventListener('click', abrirMenuPasajero);
+  // Al volver a la app después de un rato en segundo plano la persona pudo moverse: si está en el
+  // inicio y no movió el pin a mano, se vuelve a leer el GPS y el punto de recogida lo sigue.
+  m.mapa.on('dragstart', () => {
+    if (app.dataset.pin === 'origen') ui.pinAMano = true;
+  });
+  function escucharVueltaALaApp() {
+    let ocultaDesde = 0;
+    const alOcultar = () => {
+      if (!ocultaDesde) ocultaDesde = Date.now();
+    };
+    const alVolver = async () => {
+      const fuera = ocultaDesde ? Date.now() - ocultaDesde : 0;
+      ocultaDesde = 0;
+      if (fuera < 20000 || !p || p.estado.fase !== 'inicio' || ui.modo !== 'inicio') return;
+      const pos = await p.actualizarMiPosicion();
+      m.ponerYo(pos);
+      if (pos.real === false || ui.pinAMano || p.estado.fase !== 'inicio' || ui.modo !== 'inicio') return;
+      Object.assign(ui, { origen: null, centrado: false });
+      renderVista('inicio', true);
+    };
+    document.addEventListener('visibilitychange', () => (document.hidden ? alOcultar() : alVolver()));
+    try {
+      const appNativa = globalThis.Capacitor?.Plugins?.App;
+      appNativa?.addListener?.('pause', alOcultar)?.catch?.(() => {});
+      appNativa?.addListener?.('resume', alVolver)?.catch?.(() => {});
+    } catch {
+      /* sin el plugin App */
+    }
+  }
+
   $(app, '[data-mi-ubicacion]').addEventListener('click', async () => {
     const b = $(app, '[data-mi-ubicacion]');
     b.classList.add('a-girando');
     const pos = p ? await p.actualizarMiPosicion() : await N.obtenerPosicion();
     b.classList.remove('a-girando');
+    ui.pinAMano = false;
     m.ponerYo(pos);
     if (pos.real === false) avisos.mostrar({ titulo: 'No tenemos tu GPS', cuerpo: EM.TEXTO_SIN_GPS, tipo: 'info' });
     if (app.dataset.pin) centrarVisible(pos, 17, ui.pinY);
@@ -1493,6 +1524,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     }
     try {
       const r = await p.solicitar({ origen: ui.origen, destino: ui.destino || null, metodoPago: REAL ? 'efectivo' : ui.metodo, programadoPara: !REAL && ui.programar ? ui.fecha : null, nota: ui.nota.trim() });
+      ui.pinAMano = false; // el próximo viaje vuelve a seguir el GPS
       if (r?.programado) {
         reiniciarUI();
         pintar();
@@ -1899,6 +1931,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         renderVista('inicio', true);
       });
       if (REAL) escucharBus();
+      escucharVueltaALaApp();
       ui.origen = null;
       ui.vista = null;
       pintarAhora();
