@@ -108,7 +108,7 @@ export const SERVICIOS = {
 // 'oscuro' (navegación nocturna), 'navegacion' (navegación de día).
 // Si Mapbox falla, el mapa pasa solo a OpenStreetMap.
 export const MAPBOX = {
-  token: '', // pendiente: GitHub bloquea el token público hasta que se autorice
+  token: 'pk.eyJ1Ijoib3NjYXJhYmMiLCJhIjoiY211cDA5Y244MDRpYjJ3b2x2ODJoNmc1dCJ9.AHvSP--OXLIcCxBUT7ZnAQ', // público (pk.); restringido por URL en mapbox.com
   estilos: {
     claro: 'mapbox/streets-v12',
     suave: 'mapbox/light-v11',
