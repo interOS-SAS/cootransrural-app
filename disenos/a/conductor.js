@@ -1831,6 +1831,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       reconectarCentral(ctl);
       return;
     }
+    // La notificación se queda en el centro de notificaciones: si se toca cuando ese servicio ya
+    // dejó de buscar (datos.hasta, servidor 0.3.0), no se vuelve a poner en turno a nadie solo.
+    if (ofertaVencida(a)) {
+      if (ctl.estado.conectado) reconectarCentral(ctl);
+      avisos.mostrar({
+        titulo: 'Ese servicio ya no está disponible',
+        cuerpo: ctl.estado.conectado ? 'Ya pasó su tiempo. Sigue en turno para recibir los nuevos.' : 'Ya pasó su tiempo. Ponte en turno para recibir los nuevos.',
+        tipo: 'info',
+      });
+      return;
+    }
     esperarOferta(ctl, a.viajeId);
     if (!ctl.estado.conectado) {
       // Con la central aún saludando, la presencia y la consulta salen con la bienvenida.
@@ -1840,6 +1851,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     }
     // En turno: con la bienvenida salen otra vez la presencia y consulta_solicitudes.
     reconectarCentral(ctl);
+  }
+  // datos.hasta: hasta cuándo pudo seguir buscando ese servicio (ms; en Android llega como texto).
+  // Con 2 min de margen por si la hora del celular no está bien. Sin el dato (otro servidor), no vence.
+  function ofertaVencida(a) {
+    const hasta = Number(a?.datos?.hasta);
+    return Number.isFinite(hasta) && hasta > 0 && Date.now() > hasta + AVISO_VIGENTE_MS;
   }
   // La central manda push solo cuando no ve el WebSocket de este conductor: si el bus dice
   // «en línea», esa conexión ya murió sin aviso (app en segundo plano); se abre otra ya.

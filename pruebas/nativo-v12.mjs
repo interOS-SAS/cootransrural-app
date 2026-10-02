@@ -668,9 +668,22 @@ async function conductor() {
   await p.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 15000 }).catch(() => {});
   ok(!(await p.$('.a-modal-nativa')) && (await todas(p, 'push.requestPermissions')) === 1, 'conductor: la segunda vez en turno no vuelve a preguntar');
 
+  // App cerrada y abierta desde una «Nuevo servicio» VIEJA (datos.hasta ya pasó: el servicio dejó
+  // de buscar hace rato; la notificación se quedó en el centro de notificaciones): no pone en turno.
+  srv.ofertas.set('v-viejo', oferta('v-viejo', 'Rosa'));
+  const msjViejo = srv.mensajes.length;
+  await p.evaluate(() => localStorage.setItem('__toqueAlAbrir', JSON.stringify({ tipo: 'solicitud', viajeId: 'v-viejo', hasta: Date.now() - 60 * 60 * 1000 })));
+  await p.reload();
+  ok(Boolean(await intento(p.waitForFunction(() => /ya no está disponible/.test(document.querySelector('.a-avisos')?.innerText || ''), null, { timeout: 30000 }))), 'conductor: notificación vieja (datos.hasta vencido) → «Ese servicio ya no está disponible»');
+  await p.waitForTimeout(1500);
+  ok((await p.getAttribute('[data-conectar]', 'aria-checked').catch(() => null)) === 'false', 'conductor: y no queda en turno por tocarla');
+  ok(!srv.mensajes.slice(msjViejo).some((m) => m.rol === 'conductor' && m.tipo === 'presencia' && m.datos?.disponible === true), 'conductor: sin presencia disponible');
+  ok(!(await p.$('.a-solicitud.a-abierta')), 'conductor: sin la oferta vieja');
+  srv.ofertas.delete('v-viejo');
+
   // App cerrada y abierta desde «Nuevo servicio»: vuelve a quedar en turno y ve la oferta.
   srv.ofertas.set('v-100', oferta('v-100', 'Marta'));
-  await p.evaluate(() => localStorage.setItem('__toqueAlAbrir', JSON.stringify({ tipo: 'solicitud', viajeId: 'v-100' })));
+  await p.evaluate(() => localStorage.setItem('__toqueAlAbrir', JSON.stringify({ tipo: 'solicitud', viajeId: 'v-100', hasta: Date.now() + 5 * 60 * 1000 })));
   await p.reload();
   ok(Boolean(await intento(p.waitForSelector('.a-solicitud.a-abierta', { timeout: 30000 }))), 'conductor: abierta desde la notificación, aparece la oferta');
   ok((await texto(p, '.a-solicitud')).includes('Marta'), 'conductor: es la oferta de la notificación (Marta)');
@@ -732,6 +745,39 @@ async function conductor() {
   ok(Boolean(await hasta(async () => !(await llavero(p)), 6000)), 'conductor: apagarlo borra las credenciales');
   ok(pide('DELETE', `yo/llave/${llaveC?.username}`).length === 1 && srv.llaves.get(llaveC?.username)?.revocada, 'conductor: y revoca la llave en el servidor (DELETE yo/llave/:id)');
   await cerrarPanel(p);
+  await ctx.close();
+}
+
+/* ------------------------------------------------------------------ */
+/* b2) Android sin Firebase: solo NativeBiometric (sin PushNotifications)   */
+/* ------------------------------------------------------------------ */
+// Así sale hoy la app 1.2 de Android (sin google-services.json el plugin de push no entra).
+// La huella sí; los avisos no: ni modal, ni llamadas al plugin, y el WebSocket sigue abierto
+// al minimizar (como en la 1.0).
+async function androidSinFirebase() {
+  const { ctx, p } = await contexto('android sin Firebase', { push: false, bio: true, plataforma: 'android', tipoBio: 3 });
+  await p.goto(`${BASE}taxicun/conductor/`);
+  await p.waitForSelector('.a-ingreso-real input[name=correo]', { timeout: 30000 });
+  await p.fill('.a-ingreso-real input[name=correo]', LUIS);
+  await p.click('.a-ingreso-real [type=submit]');
+  await escribirCodigo(p, '.a-ingreso-real .a-casillas-6', CODIGO);
+  ok(Boolean(await intento(p.waitForSelector('.a-modal-nativa .a-modal h2:has-text("¿Entrar con tu huella la próxima vez?")', { timeout: 15000 }))), 'android sin Firebase: tras el código ofrece «tu huella»');
+  await tocarModal(p, 'Ahora no');
+  await p.waitForSelector('[data-conectar]:not([disabled])', { timeout: 20000 });
+  await p.click('[data-conectar]');
+  ok(Boolean(await intento(p.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 15000 }))), 'android sin Firebase: queda en turno');
+  ok(!(await p.$('.a-modal-nativa')), 'android sin Firebase: sin el modal de los avisos');
+  await p.waitForTimeout(500);
+  const cierres = srv.cierres.filter((x) => x.rol === 'conductor').length;
+  await visibilidad(p, true);
+  await p.waitForTimeout(1500);
+  ok(srv.cierres.filter((x) => x.rol === 'conductor').length === cierres, 'android sin Firebase: al minimizar el WebSocket sigue abierto (como en la 1.0)');
+  await visibilidad(p, false);
+  await abrirAjustes(p);
+  ok(Boolean(await intento(p.waitForSelector('.a-panel.a-abierto [data-seguridad]:not([hidden])', { timeout: 5000 }))), 'android sin Firebase: Ajustes con «Seguridad» (huella)');
+  ok(!(await p.$('.a-panel.a-abierto [data-avisos-nativos]')), 'android sin Firebase: sin la fila de notificaciones del celular');
+  await cerrarPanel(p);
+  ok(!(await llamadas(p, 'push.')).length, 'android sin Firebase: ninguna llamada a PushNotifications');
   await ctx.close();
 }
 
@@ -982,6 +1028,7 @@ try {
   else {
     await pasajero();
     await conductor();
+    await androidSinFirebase();
     const antes = { disp: pide('PUT', 'yo/dispositivo').length, llave: pide('POST', 'yo/llave').length + pide('POST', 'auth/llave').length };
     await sinPlugins('app 1.0 (sin plugins)', { push: false, bio: false, plataforma: 'ios' }, 'taxicun/');
     await sinPlugins('web ?real=1', null, 'taxicun/?real=1');
