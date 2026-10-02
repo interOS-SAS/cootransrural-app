@@ -19,6 +19,12 @@
 //  4) Un conductor SIN token (app 1.0, sin los plugins) se comporta como hoy: al cerrar la app no
 //     queda dormido, nunca aparece en el archivo y recibe la oferta por el tiempo real con la app
 //     abierta. Y el conductor 1.2 que se desconecta a propósito tampoco queda dormido.
+//  5) --pausa (aparte, con el servidor arrancado con TURNO_DORMIDO_MIN=0.1, 6 s): al vencerse el turno
+//     en segundo plano, la central manda UN «Tu turno quedó en pausa» (sin time-sensitive, collapse-id
+//     «turno», datos.hasta y vencimiento a las 2 h); tocarlo abre la app y la vuelve a poner en turno
+//     («Volviste a estar en turno.»); tocar uno vencido no («Ponte en turno para recibir servicios.»);
+//     volver antes del plazo y terminar el turno a propósito no mandan el aviso. El recorrido normal
+//     necesita el plazo normal (con 6 s el turno vencería antes de que el pasajero pida).
 //
 // Servidor (árbol de la rama v1.2), base taxicun_e2e:
 //   PUSH_SIMULADO=/tmp/cootrans/v12/integracion/avisos.jsonl \
@@ -26,6 +32,7 @@
 //   DATABASE_URL=… CLAVE_SERVIDOR=… MODO_CORREO=prueba INDICE_EMPRESAS=… CODIGOS_POR_IP_HORA=100000 PUERTO=3199 node src/index.js
 // Proxy:   node pruebas/servidor-local.mjs --puerto=8799 --api=http://127.0.0.1:3199
 // Prueba:  AVISOS_PUSH=<el mismo .jsonl> DATABASE_URL=… SERVIDOR_TAXICUN=<árbol v1.2> node pruebas/push-e2e-v12.mjs http://localhost:8799/
+// Pausa:   el mismo servidor con TURNO_DORMIDO_MIN=0.1 y … node pruebas/push-e2e-v12.mjs http://localhost:8799/ --pausa
 // Se puede repetir sin reiniciar nada: borra y vuelve a crear las tres cuentas de prueba.
 import { chromium } from '/tmp/cootrans/npm/node_modules/playwright-core/index.mjs';
 import { execFileSync } from 'node:child_process';
@@ -37,6 +44,7 @@ const DIR = (process.env.CAPTURAS || '/tmp/cootrans/capturas/push-e2e-v12').repl
 const AVISOS = process.env.AVISOS_PUSH || '/tmp/cootrans/v12/integracion/avisos.jsonl';
 const BASE_DATOS = process.env.DATABASE_URL || 'postgres://taxicun_prueba:prueba@127.0.0.1:5432/taxicun_e2e';
 const SERVIDOR = process.env.SERVIDOR_TAXICUN || '/root/proyectos/taxicun-servidor';
+const SOLO_PAUSA = process.argv.includes('--pausa');
 mkdirSync(DIR, { recursive: true });
 
 const FICHA = JSON.parse(readFileSync(new URL('../empresas/cootransrural/ficha.json', import.meta.url), 'utf8'));
@@ -97,6 +105,8 @@ const sql = (q) => execFileSync('psql', [BASE_DATOS, '-tAc', q], { encoding: 'ut
 const cita = (t) => `'${String(t).replace(/'/g, "''")}'`;
 const idDe = (correo) => sql(`select id from usuarios where correo = ${cita(correo)} and borrado is null`);
 const dormido = (correo) => sql(`select count(*) from turnos_dormidos t join usuarios u on u.id = t.usuario_id where u.correo = ${cita(correo)}`) === '1';
+// Segundos que le quedan de turno en segundo plano (el TURNO_DORMIDO_MIN con que arrancó el servidor).
+const plazoDormido = (correo) => Number(sql(`select extract(epoch from t.hasta - now()) from turnos_dormidos t join usuarios u on u.id = t.usuario_id where u.correo = ${cita(correo)}`));
 const dispositivosDe = (correo) => sql(`select coalesce(string_agg(d.app || '|' || d.plataforma || '|' || d.entorno || '|' || d.token, ','), '') from dispositivos d join usuarios u on u.id = d.usuario_id where u.correo = ${cita(correo)}`);
 
 async function api(metodo, ruta, cuerpo, token) {
@@ -403,6 +413,8 @@ async function conductorDuerme() {
   await debe(dormidoYa, `conductor 1.2: al minimizar, la app cierra el WebSocket y la central lo deja en turno en segundo plano (${((Date.now() - t0) / 1000).toFixed(1)} s, sin esperar el latido)`);
   const pos = sql(`select pos::text from turnos_dormidos t join usuarios u on u.id = t.usuario_id where u.correo = ${cita(CA.correo)}`);
   ok(/lat/.test(pos), `conductor 1.2: queda con su última posición (${pos.slice(0, 60)})`);
+  const plazo = plazoDormido(CA.correo);
+  await debe(plazo > 120, `conductor 1.2: plazo en segundo plano de ${Math.round(plazo)} s (este recorrido necesita el TURNO_DORMIDO_MIN normal; con uno corto, --pausa)`);
   await pa.close(); // y el sistema mata la app
   await espera(1000);
   ok(dormido(CA.correo), 'conductor 1.2: con la app cerrada sigue en turno en segundo plano');
@@ -663,15 +675,106 @@ async function faceId() {
   ok(await intento(pp.waitForSelector('[data-conexion][data-estado="en_linea"]', { timeout: 1000 })), 'pasajero: en línea con la central');
 }
 
+/* ------------------------------------------------------------------ */
+/* 5) --pausa: «Tu turno quedó en pausa» (TURNO_DORMIDO_MIN corto)       */
+/* ------------------------------------------------------------------ */
+const pausasNuevas = () => nuevos().filter((l) => l.app === 'conductor' && l.datos?.tipo === 'turno_pausa');
+// Minimiza la app del conductor en turno y espera a que la central lo deje dormido.
+async function minimizarEnTurno(p, m) {
+  await p.waitForTimeout(800);
+  await visibilidad(p, true);
+  await debe(hasta(() => dormido(CA.correo), 6000, 100), m);
+}
+async function turnoEnPausa() {
+  marca = leerAvisos().length;
+  A = await contexto({ push: true, bio: true, plataforma: 'ios', tokenPush: TOKEN_A, tipoBio: 2 }, GPS_A);
+  pa = await abrirApp(A, 'conductor 1.2', 'taxicun/conductor/');
+  await debe(entrarConductor(pa, CA, 'Ahora no'), 'pausa · conductor 1.2: entra con el código');
+  await pa.click('[data-conectar]');
+  await debe(pa.waitForSelector('.a-modal-nativa .a-modal h2:has-text("Que no se te pase ningún servicio")', { timeout: 8000 }), 'pausa · conductor 1.2: al ponerse en turno, el modal de los avisos');
+  ok(/Si pasa un rato sin que abras la app, te avisamos que tu turno quedó en pausa/.test(await texto(pa, '.a-modal-nativa')), 'pausa · el modal avisa que el turno queda en pausa si pasa un rato sin abrir la app');
+  await tocarModal(pa, 'Activar avisos');
+  await debe(pa.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 15000 }), 'pausa · conductor 1.2: en turno');
+  await debe(hasta(() => dispositivosDe(CA.correo) === `conductor|ios|production|${tA}`, 8000), 'pausa · conductor 1.2: teléfono registrado');
+
+  // Minimiza y vuelve antes del plazo: sale de dormidos sin aviso (y con la app abierta, nada).
+  await minimizarEnTurno(pa, 'pausa · al minimizar queda dormido');
+  const plazo = plazoDormido(CA.correo);
+  await debe(plazo > 0 && plazo <= 60, `pausa · el servidor tiene un plazo corto (${plazo.toFixed(1)} s; arráncalo con TURNO_DORMIDO_MIN=0.1)`);
+  await visibilidad(pa, false);
+  await debe(hasta(() => !dormido(CA.correo), 6000, 100), 'pausa · vuelve antes del plazo: sale de dormidos');
+  await espera(plazo * 1000 + 7000);
+  ok(pausasNuevas().length === 0, 'pausa · volver a la app antes del plazo: sin aviso de la pausa');
+  ok((await pa.getAttribute('[data-conectar]', 'aria-checked')) === 'true', 'pausa · y sigue en turno con la app abierta');
+
+  // Minimiza otra vez y el sistema mata la app: al vencerse, UN aviso.
+  await minimizarEnTurno(pa, 'pausa · minimiza otra vez: dormido');
+  await pa.close();
+  const t0 = Date.now();
+  const aviso = await hasta(() => pausasNuevas()[0], (plazo + 30) * 1000, 300);
+  await debe(aviso, `central → conductor: «Tu turno quedó en pausa» al vencerse (${((Date.now() - t0) / 1000).toFixed(1)} s después de cerrar; ${aviso ? resumen(aviso) : 'nada'})`);
+  ok(!dormido(CA.correo), 'pausa · ya no está dormido');
+  ok(aviso.plataforma === 'ios' && aviso.token === tA && aviso.entorno === 'production', 'pausa · al iPhone del conductor');
+  ok(aviso.titulo === 'Tu turno quedó en pausa' && aviso.cuerpo === 'Toca aquí para seguir recibiendo servicios.', `pausa · «Tu turno quedó en pausa» / «${aviso.cuerpo}»`);
+  ok(aviso.apns.tema === 'com.taxicun.conductor' && aviso.apns.cuerpo.aps.alert.title === 'Tu turno quedó en pausa', 'pausa · tema com.taxicun.conductor y título en aps');
+  ok(!aviso.urgente && !aviso.apns.cuerpo.aps['interruption-level'] && aviso.apns.cuerpo.aps.sound === 'default', 'pausa · con sonido y sin time-sensitive');
+  ok(aviso.apns.cabeceras['apns-collapse-id'] === 'turno', `pausa · collapse-id fijo «turno» (${aviso.apns.cabeceras['apns-collapse-id']})`);
+  const vale = Number(aviso.datos.hasta) / 1000 - Date.parse(aviso.fecha) / 1000;
+  const vence = Number(aviso.apns.cabeceras['apns-expiration']) - Date.parse(aviso.fecha) / 1000;
+  ok(vale > 7190 && vale <= 7201 && vence > 7190 && vence <= 7201, `pausa · datos.hasta y vencimiento a las 2 h (${Math.round(vale)} s, ${Math.round(vence)} s)`);
+  ok(aviso.datos.tipo === 'turno_pausa' && aviso.apns.cuerpo.tipo === 'turno_pausa' && aviso.apns.cuerpo.hasta === aviso.datos.hasta && !aviso.datos.viajeId, 'pausa · datos { tipo: turno_pausa, hasta } junto a «aps», sin viajeId');
+  await espera(7000);
+  ok(pausasNuevas().length === 1, `pausa · uno solo por vencimiento (${pausasNuevas().length})`);
+
+  // Lo toca: la app abre y vuelve a quedar en turno.
+  pa = await abrirApp(A, 'conductor 1.2', 'taxicun/conductor/', notificacionIos(aviso));
+  await debe(pa.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 30000 }), 'pausa · abierta desde «Tu turno quedó en pausa», vuelve a quedar en turno');
+  ok(await hasta(async () => (await avisosVistos(pa)).some((a) => /Volviste a estar en turno\./.test(a)), 8000), 'pausa · «Volviste a estar en turno.»');
+  await pa.waitForTimeout(1200);
+  await foto(pa, 'k01-pausa-vuelve-al-turno');
+  // La central lo tiene en turno y libre: al minimizar vuelve a quedar dormido (solo pasa si estaba disponible).
+  await minimizarEnTurno(pa, 'pausa · la central lo tiene en turno (al minimizar vuelve a quedar dormido)');
+  await pa.close();
+  const segundo = await hasta(() => pausasNuevas()[1], (plazo + 30) * 1000, 300);
+  await debe(segundo, 'pausa · se vuelve a vencer: otro aviso');
+
+  // Lo toca cuando ya pasó datos.hasta (se quedó en el centro de notificaciones): no lo pone en turno.
+  const viejo = notificacionIos(segundo);
+  viejo.data = { ...viejo.data, hasta: Date.now() - 60 * 1000 };
+  pa = await abrirApp(A, 'conductor 1.2', 'taxicun/conductor/', viejo);
+  ok(await hasta(async () => (await avisosVistos(pa)).some((a) => /Ponte en turno para recibir servicios\./.test(a)), 30000), 'pausa · aviso vencido → «Ponte en turno para recibir servicios.»');
+  await pa.waitForTimeout(1500);
+  await foto(pa, 'k02-pausa-vencida');
+  ok((await pa.getAttribute('[data-conectar]', 'aria-checked')) === 'false', 'pausa · y no queda en turno');
+  ok(!(await avisosVistos(pa)).some((a) => /Volviste a estar en turno/.test(a)), 'pausa · sin «Volviste a estar en turno.»');
+
+  // Se pone en turno, termina el turno a propósito y cierra: ni dormido ni aviso.
+  await pa.click('[data-conectar]');
+  await debe(pa.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 15000 }), 'pausa · se pone en turno con la píldora');
+  await pa.waitForTimeout(800);
+  await pa.click('[data-conectar]');
+  await debe(pa.waitForSelector('[data-conectar][aria-checked="false"]', { timeout: 8000 }), 'pausa · termina el turno a propósito');
+  await pa.waitForTimeout(800);
+  await pa.close();
+  await espera(plazo * 1000 + 7000);
+  ok(!dormido(CA.correo), 'pausa · terminó el turno y cerró: no queda dormido');
+  ok(pausasNuevas().length === 2, `pausa · terminar el turno a propósito no manda el aviso (${pausasNuevas().length} en total)`);
+  ok(nuevos().every((l) => l.app === 'conductor' && l.token === tA && l.datos?.tipo === 'turno_pausa'), `pausa · en el archivo solo los dos avisos de la pausa (${nuevos().map(resumen).join(' | ')})`);
+}
+
 const inicio = Date.now();
 let viajeId = null;
 try {
   await preparar();
-  await conductorSinToken();
-  await conductorDuerme();
-  viajeId = await viaje();
-  await comoHoy();
-  await faceId();
+  if (SOLO_PAUSA) {
+    await turnoEnPausa();
+  } else {
+    await conductorSinToken();
+    await conductorDuerme();
+    viajeId = await viaje();
+    await comoHoy();
+    await faceId();
+  }
 } catch (e) {
   if (!(e instanceof Detener)) {
     console.error(e);
@@ -680,5 +783,5 @@ try {
 }
 ok(!errores.length, `sin errores de JavaScript${errores.length ? `: ${errores.slice(0, 6).join(' | ')}` : ''}`);
 await b.close();
-console.log(`${fallas ? 'FALLÓ' : 'PASÓ'} · push e2e 1.2 (servidor ${BASE}, avisos en ${AVISOS}) · viaje ${viajeId || '—'} · ${bien} ✔ · ${fallas} ✘ · ${Math.round((Date.now() - inicio) / 1000)} s · capturas en ${DIR}`);
+console.log(`${fallas ? 'FALLÓ' : 'PASÓ'} · push e2e 1.2${SOLO_PAUSA ? ' · turno en pausa' : ''} (servidor ${BASE}, avisos en ${AVISOS}) · viaje ${viajeId || '—'} · ${bien} ✔ · ${fallas} ✘ · ${Math.round((Date.now() - inicio) / 1000)} s · capturas en ${DIR}`);
 process.exit(fallas ? 1 : 0);

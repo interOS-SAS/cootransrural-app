@@ -1811,7 +1811,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
    * Se tocó una notificación. «Nuevo servicio» (tipo solicitud): el conductor estaba en turno
    * con la app cerrada; vuelve a quedar en turno con la central (presencia + consulta_solicitudes)
    * y la oferta aparece como siempre, en la hoja amarilla. Si en 10 s no aparece, otro la tomó o
-   * el pasajero la canceló. Otros avisos (cancelación): el tiempo real trae lo que cambió. */
+   * el pasajero la canceló. «Tu turno quedó en pausa» (tipo turno_pausa): pasó el plazo con la app
+   * cerrada y la central dejó de mandarle servicios; vuelve a quedar en turno (ver volverAlTurno).
+   * Otros avisos (cancelación): el tiempo real trae lo que cambió. */
   function alTocarAviso(a) {
     if (!a) return;
     if (!REAL || ui.pantalla !== 'app' || !c) {
@@ -1820,13 +1822,20 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     }
     ui.avisoTocado = null;
     // Uno que esperó mucho (por ejemplo, mientras se volvía a ingresar) ya no pone en turno.
-    if (Date.now() - (a.cuando || Date.now()) > AVISO_VIGENTE_MS) return;
+    if (Date.now() - (a.cuando || Date.now()) > AVISO_VIGENTE_MS) {
+      if (a.tipo === 'turno_pausa' && c.real && !c.estado.conectado && !c.estado.viaje) avisarPonteEnTurno();
+      return;
+    }
     abrirAviso(a);
   }
   async function abrirAviso(a) {
     const ctl = c;
     if (!ctl?.real) return;
     $$(app, '.a-panel, .a-menu-capa').forEach((x) => x.remove());
+    if (a.tipo === 'turno_pausa' && !ctl.estado.viaje) {
+      await volverAlTurno(ctl, a);
+      return;
+    }
     if (a.tipo !== 'solicitud' || ctl.estado.viaje) {
       reconectarCentral(ctl);
       return;
@@ -1857,6 +1866,34 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   function ofertaVencida(a) {
     const hasta = Number(a?.datos?.hasta);
     return Number.isFinite(hasta) && hasta > 0 && Date.now() > hasta + AVISO_VIGENTE_MS;
+  }
+  // «Tu turno quedó en pausa» (servidor 0.3.0). Antes de datos.hasta (el vencimiento + 2 h), tocarlo
+  // lo vuelve a poner en turno por el mismo camino que una «Nuevo servicio» vigente; después, no
+  // (la notificación se pudo quedar horas en el centro de notificaciones): solo se le dice.
+  async function volverAlTurno(ctl, a) {
+    if (ctl.estado.conectado) {
+      // La app seguía viva en segundo plano y en turno: con la bienvenida se anuncia otra vez.
+      reconectarCentral(ctl);
+    } else {
+      if (!pausaVigente(a)) {
+        avisarPonteEnTurno();
+        return;
+      }
+      // Con la central aún saludando, la presencia y la consulta salen con la bienvenida.
+      const enTurno = await ctl.conectar();
+      if (ctl === c && ui.vista === 'libre') pintarPildoraReal(ctl.estado);
+      // Si no se pudo (sin GPS, sin sesión…), el núcleo ya dijo por qué.
+      if (!enTurno || ctl !== c) return;
+      avisos.limpiar(['exito']); // este aviso reemplaza a «Estás en línea»
+    }
+    avisos.mostrar({ titulo: 'Volviste a estar en turno.', cuerpo: 'Te llegarán las solicitudes cercanas.', tipo: 'exito' });
+  }
+  function pausaVigente(a) {
+    const hasta = Number(a?.datos?.hasta);
+    return Number.isFinite(hasta) && hasta > 0 && Date.now() <= hasta;
+  }
+  function avisarPonteEnTurno() {
+    avisos.mostrar({ titulo: 'Ponte en turno para recibir servicios.', cuerpo: 'Tu turno quedó en pausa mientras la app estaba cerrada.', tipo: 'info' });
   }
   // La central manda push solo cuando no ve el WebSocket de este conductor: si el bus dice
   // «en línea», esa conexión ya murió sin aviso (app en segundo plano); se abre otra ya.

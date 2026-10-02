@@ -39,7 +39,7 @@ export async function ofrecerAvisos(app, { N, rol }) {
   const si = await modal(app, {
     titulo: conductor ? 'Que no se te pase ningún servicio' : '¿Te avisamos cuando llegue tu taxi?',
     texto: conductor
-      ? 'Te avisamos de servicios nuevos aunque tengas la app cerrada o el celular bloqueado, mientras sigas en turno.'
+      ? 'Te avisamos de servicios nuevos aunque tengas la app cerrada o el celular bloqueado. Si pasa un rato sin que abras la app, te avisamos que tu turno quedó en pausa.'
       : 'Te avisamos cuando un conductor acepte tu servicio y cuando tu taxi esté en la puerta, aunque tengas la app cerrada.',
     icono: `<span class="a-nat-ico">${icono('campana', { tam: 32 })}</span>`,
     clase: 'a-modal-nativa',

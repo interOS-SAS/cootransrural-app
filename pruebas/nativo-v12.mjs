@@ -17,6 +17,8 @@
 //     vez → «Te avisamos de servicios nuevos…» → PUT yo/dispositivo (app conductor); la app
 //     abierta desde «Nuevo servicio» (toque retenido) vuelve a ponerse en turno y muestra la
 //     oferta; un aviso de una oferta que ya no está → «Ese servicio ya no está disponible»;
+//     «Tu turno quedó en pausa» (tipo turno_pausa): vigente → vuelve a quedar en turno y «Volviste
+//     a estar en turno.»; vencido (datos.hasta pasó) → no lo pone en turno, «Ponte en turno…»;
 //     un aviso con la app abierta reconecta; «¿No puedes? Cierra sesión» desde el bloqueo.
 //  c) sin los plugins (app 1.0, build 221) y en la web (?real=1): nada de esto aparece.
 //
@@ -366,6 +368,9 @@ const llamadas = (p, prefijo) => p.evaluate((x) => (window.__llamadas || []).fil
 const todas = (p, nombre) => p.evaluate((x) => (JSON.parse(localStorage.getItem('__todas') || '[]')).filter((n) => n === x).length, nombre);
 const llavero = (p) => p.evaluate(() => JSON.parse(localStorage.getItem('__llavero') || '{}')['taxicun.com'] || null);
 const ls = (p, k) => p.evaluate((x) => localStorage.getItem(x), k);
+// Los avisos en pantalla que no van de salida.
+const avisosVivos = (p) => p.evaluate(() => [...document.querySelectorAll('.a-avisos .a-toast:not(.a-sale)')].map((t) => t.innerText.replace(/\s+/g, ' ').trim()));
+const conAviso = (p, re, timeout = 30000) => intento(p.waitForFunction((f) => [...document.querySelectorAll('.a-avisos .a-toast:not(.a-sale)')].some((t) => new RegExp(f).test(t.innerText)), re.source, { timeout }));
 async function escribirCodigo(p, selector, codigo) {
   await p.waitForSelector(`${selector} input`, { timeout: 15000 });
   await p.waitForTimeout(400);
@@ -639,6 +644,8 @@ async function conductor() {
   await p.click('[data-conectar]');
   ok(Boolean(await intento(p.waitForSelector('.a-modal-nativa .a-modal h2:has-text("Que no se te pase ningún servicio")', { timeout: 8000 }))), 'conductor: al ponerse en turno la primera vez, el modal de los avisos');
   ok(/Te avisamos de servicios nuevos aunque tengas la app cerrada/.test(await texto(p, '.a-modal-nativa')), 'conductor: «Te avisamos de servicios nuevos aunque tengas la app cerrada…»');
+  const textoModal = await texto(p, '.a-modal-nativa');
+  ok(/Si pasa un rato sin que abras la app, te avisamos que tu turno quedó en pausa/.test(textoModal) && !/mientras sigas en turno/.test(textoModal), 'conductor: el modal no promete de más: «Si pasa un rato sin que abras la app, te avisamos que tu turno quedó en pausa.»');
   await p.waitForTimeout(450);
   await foto(p, 'c01-ofrecer-avisos');
   await tocarModal(p, 'Activar avisos');
@@ -681,6 +688,30 @@ async function conductor() {
   ok(!(await p.$('.a-solicitud.a-abierta')), 'conductor: sin la oferta vieja');
   srv.ofertas.delete('v-viejo');
 
+  // «Tu turno quedó en pausa» (la central lo sacó del turno tras un rato con la app cerrada).
+  // Vencido (datos.hasta ya pasó; se quedó en el centro de notificaciones): no pone en turno.
+  const msjPausaVieja = srv.mensajes.length;
+  await p.evaluate(() => localStorage.setItem('__toqueAlAbrir', JSON.stringify({ tipo: 'turno_pausa', hasta: Date.now() - 60 * 1000 })));
+  await p.reload();
+  ok(await conAviso(p, /Ponte en turno para recibir servicios\./), 'conductor: aviso de la pausa vencido → «Ponte en turno para recibir servicios.»');
+  await p.waitForTimeout(1500);
+  await foto(p, 'c02a-pausa-vencida');
+  ok((await p.getAttribute('[data-conectar]', 'aria-checked').catch(() => null)) === 'false', 'conductor: y no queda en turno por tocarlo');
+  ok(!srv.mensajes.slice(msjPausaVieja).some((m) => m.rol === 'conductor' && m.tipo === 'presencia' && m.datos?.disponible === true), 'conductor: sin presencia disponible');
+  ok(!(await avisosVivos(p)).some((t) => /Volviste a estar en turno/.test(t)), 'conductor: sin «Volviste a estar en turno.»');
+  // Vigente: al abrir tocándolo vuelve a quedar en turno (presencia + consulta_solicitudes), como con
+  // una «Nuevo servicio» vigente, y se le dice.
+  const msjPausa = srv.mensajes.length;
+  await p.evaluate(() => localStorage.setItem('__toqueAlAbrir', JSON.stringify({ tipo: 'turno_pausa', hasta: Date.now() + 2 * 3600 * 1000 })));
+  await p.reload();
+  ok(await conAviso(p, /Volviste a estar en turno\./), 'conductor: aviso de la pausa vigente → «Volviste a estar en turno.»');
+  ok(Boolean(await intento(p.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 10000 }))), 'conductor: vuelve a quedar en turno sin tocar la píldora');
+  ok(Boolean(await hasta(() => srv.mensajes.slice(msjPausa).some((m) => m.rol === 'conductor' && m.tipo === 'presencia' && m.datos?.disponible === true) && srv.mensajes.slice(msjPausa).some((m) => m.rol === 'conductor' && m.tipo === 'consulta_solicitudes'), 6000)), 'conductor: manda presencia disponible + consulta_solicitudes');
+  const vivos = await avisosVivos(p);
+  ok(!vivos.some((t) => /Estás en línea/.test(t)) && !vivos.some((t) => /Ponte en turno/.test(t)), `conductor: un solo aviso en pantalla, sin «Estás en línea» (${vivos.join(' | ')})`);
+  await p.waitForTimeout(1200);
+  await foto(p, 'c02b-pausa-vuelve-al-turno');
+
   // App cerrada y abierta desde «Nuevo servicio»: vuelve a quedar en turno y ve la oferta.
   srv.ofertas.set('v-100', oferta('v-100', 'Marta'));
   await p.evaluate(() => localStorage.setItem('__toqueAlAbrir', JSON.stringify({ tipo: 'solicitud', viajeId: 'v-100', hasta: Date.now() + 5 * 60 * 1000 })));
@@ -701,8 +732,15 @@ async function conductor() {
   await p.evaluate(() => window.__push.recibir({ tipo: 'solicitud', viajeId: 'v-100' }));
   ok(Boolean(await hasta(() => srv.hola.filter((h) => h.rol === 'conductor').length > holas, 6000)), 'conductor: un aviso con la app abierta reconecta el tiempo real');
 
-  // Ajustes → «Entrar con Face ID» (dijo «Ahora no»: está apagado; al encenderlo crea la llave).
+  // «Tu turno quedó en pausa» tocado con la app viva y en turno: reconecta y lo confirma.
   srv.ofertas.clear();
+  const holasPausa = srv.hola.filter((h) => h.rol === 'conductor').length;
+  await p.evaluate(() => window.__push.tocar({ tipo: 'turno_pausa', hasta: Date.now() + 2 * 3600 * 1000 }));
+  ok(Boolean(await hasta(() => srv.hola.filter((h) => h.rol === 'conductor').length > holasPausa, 6000)), 'conductor: pausa tocada con la app en turno → reconecta el tiempo real');
+  ok(await conAviso(p, /Volviste a estar en turno\./, 8000), 'conductor: y «Volviste a estar en turno.»');
+  ok((await p.getAttribute('[data-conectar]', 'aria-checked')) === 'true', 'conductor: sigue en turno');
+
+  // Ajustes → «Entrar con Face ID» (dijo «Ahora no»: está apagado; al encenderlo crea la llave).
   await abrirAjustes(p);
   ok(Boolean(await intento(p.waitForSelector('.a-panel.a-abierto [data-seguridad]:not([hidden])', { timeout: 5000 }))), 'conductor: Ajustes trae «Seguridad»');
   ok((await p.getAttribute('[aria-labelledby="a-aj-bio"]', 'aria-checked')) === 'false', 'conductor: «Entrar con Face ID» apagado');
@@ -962,6 +1000,25 @@ async function real() {
   await pp.click('.a-modal .a-btn-peligro');
   await vista(pp, 'inicio', 10000).catch(() => {});
   ok(Boolean(await intento(pc.waitForSelector('.a-solicitud.a-abierta', { state: 'detached', timeout: 10000 }))), 'real · conductor: se le quita la oferta cancelada');
+  // La app se cierra y se abre tocando «Tu turno quedó en pausa» (vigente): vuelve a quedar en turno.
+  await pc.close();
+  pc = await C.ctx.newPage();
+  pc.on('pageerror', (e) => errores.push(`[conductor real] ${e.message}`));
+  await pc.goto(`${BASE}empresas/indice.json`);
+  await pc.evaluate(() => localStorage.setItem('__toqueAlAbrir', JSON.stringify({ tipo: 'turno_pausa', hasta: Date.now() + 2 * 3600 * 1000 })));
+  await pc.goto(`${BASE}taxicun/conductor/`);
+  ok(await conAviso(pc, /Volviste a estar en turno\./), 'real · conductor: abierta desde «Tu turno quedó en pausa» → «Volviste a estar en turno.»');
+  ok(Boolean(await intento(pc.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 10000 }))), 'real · conductor: en turno sin tocar la píldora');
+  ok(Boolean(await hasta(() => sql(`select count(*) from turnos_dormidos where usuario_id = ${cita(uC())}`) === '0', 6000)), 'real · conductor: conectado, no queda en turnos_dormidos');
+  if (PUSH_CONFIGURADO) {
+    // La central lo tiene en turno y libre: al minimizar vuelve a quedar dormido (solo pasa si estaba disponible).
+    await pc.waitForTimeout(800);
+    await visibilidad(pc, true);
+    ok(Boolean(await hasta(() => sql(`select count(*) from turnos_dormidos where usuario_id = ${cita(uC())}`) === '1', 8000)), 'real · conductor: la central lo tenía en turno (al minimizar vuelve a quedar dormido)');
+    await visibilidad(pc, false, 1000);
+    ok(Boolean(await hasta(() => sql(`select count(*) from turnos_dormidos where usuario_id = ${cita(uC())}`) === '0', 8000)), 'real · conductor: al volver, sale de dormidos');
+  }
+  await foto(pc, 'r02-pausa-vuelve-al-turno');
   await pc.waitForTimeout(800);
   await pc.click('[data-conectar]');
   await pc.waitForSelector('[data-conectar][aria-checked="false"]', { timeout: 8000 }).catch(() => {});
