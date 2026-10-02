@@ -76,6 +76,9 @@ const TEXTOS = {
   viaje_ajeno: 'No pudimos pedir el taxi. Intenta de nuevo.',
   solicitud_invalida: 'No pudimos pedir el taxi. Intenta de nuevo.',
   origen_invalido: 'Mueve el mapa a tu punto e intenta de nuevo.',
+  // Servidor 0.2.2: topes de precio con las tarifas de la cooperativa.
+  tarifa_invalida: 'No pudimos calcular la tarifa de ese viaje. Revisa el destino e intenta de nuevo.',
+  valor_invalido: 'Ese valor no es válido para este viaje. Corrígelo e intenta de nuevo.',
 };
 
 const TEXTO_DESCONOCIDO = 'Algo falló. Intenta de nuevo.';

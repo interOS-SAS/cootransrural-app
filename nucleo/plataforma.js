@@ -41,6 +41,73 @@ if (raiz) {
   if (ES_NATIVA) raiz.dataset.nativa = '1';
 }
 
+/* ---------------- Enlaces en la app nativa ----------------
+ * La app carga taxicun.com dentro del WebView: un enlace del mismo dominio (la política
+ * de privacidad, que se abre «en otra pestaña») reemplazaría la app y en Android no hay
+ * cómo volver. Con el plugin Browser (@capacitor/browser, apps desde 10a0573) esos
+ * enlaces se abren en el navegador dentro de la app (Safari / Chrome Custom Tabs).
+ * Sin el plugin (p. ej. el build 171 de TestFlight) y en la web, todo sigue como hoy.
+ * WhatsApp, Waze, Google Maps y las tiendas siguen yendo a su propia app (el navegador
+ * de adentro no la abriría), y tel:, mailto:, sms: y geo: los atiende el sistema. */
+
+function navegadorDeLaApp() {
+  if (!ES_NATIVA) return null;
+  const c = globalThis.Capacitor;
+  try {
+    return c?.isPluginAvailable?.('Browser') && typeof c?.Plugins?.Browser?.open === 'function' ? c.Plugins.Browser : null;
+  } catch {
+    return null;
+  }
+}
+
+const ABREN_SU_APP = [
+  /(^|\.)wa\.me$/, /(^|\.)whatsapp\.com$/, /(^|\.)waze\.com$/, /^maps\.apple\.com$/, /^maps\.app\.goo\.gl$/,
+  /^apps\.apple\.com$/, /^itunes\.apple\.com$/, /^play\.google\.com$/,
+];
+const esDeMapasDeGoogle = (u) => /^maps\.google\./.test(u.hostname) || (/(^|\.)google\.[a-z.]+$/.test(u.hostname) && u.pathname.startsWith('/maps'));
+
+// La dirección a abrir en el navegador de la app, o null si el enlace sigue como hoy.
+function enlaceParaElNavegador(a) {
+  const href = a.getAttribute('href');
+  if (!href || href.startsWith('#') || a.hasAttribute('download')) return null;
+  let u;
+  try {
+    u = new URL(href, globalThis.location.href);
+  } catch {
+    return null;
+  }
+  // Solo páginas web: tel:, mailto:, sms:, geo:, whatsapp:… se quedan con el sistema.
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+  const mismoSitio = u.origin === globalThis.location.origin;
+  const privacidad = mismoSitio && /\/privacidad(\/(index\.html)?)?$/.test(u.pathname);
+  const otraPestana = (a.getAttribute('target') || '').toLowerCase() === '_blank';
+  if (!privacidad && !otraPestana && mismoSitio) return null; // la navegación de siempre dentro de la app
+  if (!mismoSitio && (ABREN_SU_APP.some((r) => r.test(u.hostname)) || esDeMapasDeGoogle(u))) return null;
+  return u.href;
+}
+
+// Una sola vez aunque el módulo se cargue con dos ?v= distintos (abriría dos veces).
+const MARCA_ENLACES = Symbol.for('taxicun.enlacesNativos');
+if (ES_NATIVA && globalThis.document && !globalThis[MARCA_ENLACES]) {
+  globalThis[MARCA_ENLACES] = true;
+  document.addEventListener('click', (ev) => {
+    if (ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+    const a = ev.target?.closest?.('a[href]');
+    if (!a) return;
+    const navegador = navegadorDeLaApp();
+    const url = navegador && enlaceParaElNavegador(a);
+    if (!url) return;
+    ev.preventDefault();
+    Promise.resolve()
+      .then(() => navegador.open({ url }))
+      .catch(() => {
+        // Si el plugin falla, lo de siempre: otra ventana (el sistema) o aquí mismo.
+        if ((a.getAttribute('target') || '').toLowerCase() === '_blank') globalThis.open?.(url, '_blank', 'noopener');
+        else globalThis.location.assign(url);
+      });
+  });
+}
+
 /* ---------------- GPS ----------------
  * posicion(): una lectura. Devuelve { lat, lng, precision, rumbo, velocidad } o lanza
  * { code } como el navegador: 1 permiso negado, 2 no disponible, 3 se acabó el tiempo.

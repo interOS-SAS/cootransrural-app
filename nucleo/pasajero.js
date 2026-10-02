@@ -738,15 +738,29 @@ class ControladorPasajero extends Emisor {
       }
       this.#avisar({ titulo: 'No pudimos pedir el taxi', cuerpo: servidor.textoError(codigo), tipo: 'error' });
       this.#cerrarViaje('error');
-    } else if (codigo === 'solicitud_invalida' || codigo === 'origen_invalido') {
+    } else if (codigo === 'solicitud_invalida' || codigo === 'origen_invalido' || codigo === 'tarifa_invalida') {
+      // tarifa_invalida (servidor 0.2.2): la tarifa no cabe en las de la cooperativa y la
+      // central no guardó nada; no se vuelve a mandar igual.
       this.#avisar({ titulo: 'No pudimos pedir el taxi', cuerpo: servidor.textoError(codigo), tipo: 'error' });
       this.#cerrarViaje('error');
     }
   }
 
   #cancelacionReal(d) {
-    const { viaje, fase, conductor } = this.estado;
+    const { fase, conductor } = this.estado;
     if (d.por === 'sistema') {
+      // El conductor eliminó su cuenta (servidor 0.2.2): la central canceló el viaje.
+      if (d.motivo === 'cuenta_borrada' && ['asignado', 'llego', 'en_viaje'].includes(fase)) {
+        if (!conductor || (d.conductorId && d.conductorId !== conductor.id)) return;
+        if (fase === 'en_viaje') {
+          perfil.agregarAlHistorialPasajero(this.#resumenViaje('cancelado', { motivo: 'El conductor ya no está disponible' }));
+          this.#avisar({ titulo: 'El conductor ya no está disponible', cuerpo: 'Si necesitas taxi, pídelo de nuevo.', tipo: 'alerta' });
+          this.#cerrarViaje('cancelado');
+          return;
+        }
+        this.#buscarOtroTaxi({ titulo: 'El conductor ya no está disponible', cuerpo: 'Buscamos otro taxi.', tipo: 'alerta' });
+        return;
+      }
       // Pasaron 10 minutos sin que nadie aceptara.
       if (fase !== 'buscando') return;
       perfil.agregarAlHistorialPasajero(this.#resumenViaje('cancelado', { motivo: 'Ningún conductor aceptó' }));
@@ -763,8 +777,14 @@ class ControladorPasajero extends Emisor {
       return;
     }
     if (!['asignado', 'llego'].includes(fase)) return;
-    // El servidor dejó ese viaje cancelado: se busca otro taxi con un id nuevo.
-    this.#avisar({ titulo: 'El conductor canceló', cuerpo: `${d.motivo ? `${d.motivo}. ` : ''}Buscamos otro taxi.`, tipo: 'alerta' });
+    this.#buscarOtroTaxi({ titulo: 'El conductor canceló', cuerpo: `${d.motivo ? `${d.motivo}. ` : ''}Buscamos otro taxi.`, tipo: 'alerta' });
+  }
+
+  // El servidor dejó ese viaje cancelado: se busca otro taxi con un id nuevo (con el
+  // mismo, la central lo ignoraría en silencio).
+  #buscarOtroTaxi(aviso) {
+    const { viaje } = this.estado;
+    this.#avisar(aviso);
     viaje.intentos = (viaje.intentos || 1) + 1;
     this.#idNuevo();
     this.avisosDados.clear();

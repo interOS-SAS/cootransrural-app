@@ -105,6 +105,8 @@ class ControladorConductor extends Emisor {
       this.ultimoRechazo = null;
       this.llegadaAvisada = null;
       this.aceptadaReciente = null;
+      this.cierreRepetido = null; // el último fin que se repitió al reconectar (ver #valorRechazado)
+      this.reconexionPorValor = 0; // cuándo se reconectó por un valor_invalido que llegó tarde
     }
   }
 
@@ -589,6 +591,18 @@ class ControladorConductor extends Emisor {
         break;
       }
       case 'cancelacion': {
+        if (this.real && d.por === 'sistema' && d.motivo === 'cuenta_borrada') {
+          // El pasajero eliminó su cuenta (servidor 0.2.2): la central ya canceló el viaje,
+          // en la fase que sea. Se quita la oferta y se suelta el servicio sin cancelarlo allá.
+          this.rechazar(d.viajeId);
+          if (this.aceptadaReciente?.s?.viajeId === d.viajeId) this.aceptadaReciente = null;
+          if (v && v.id === d.viajeId && v.fase !== 'calificar') {
+            if (v.fase !== 'confirmando') this.#guardarEnHistorial('cancelado', { motivo: 'El pasajero canceló el servicio' });
+            this.#avisar({ titulo: 'El pasajero canceló el servicio', cuerpo: 'Sigue atento a nuevas solicitudes.', tipo: 'alerta' });
+            this.#terminar();
+          }
+          break;
+        }
         if (this.real && d.por === 'sistema') {
           // Nadie lo tomó en 10 min: se quita la oferta (y se suelta si se estaba confirmando).
           this.rechazar(d.viajeId);
@@ -855,7 +869,7 @@ class ControladorConductor extends Emisor {
       // lo que estaba en la cola. Se repite el cierre en vez de retomarlo o cancelarlo.
       const cerrado = perfil.viajeCerrado('conductor', d.viajeId);
       if (cerrado) {
-        this.#repetirCierre(cerrado, d.viajeId);
+        this.#repetirCierre(cerrado, d.viajeId, d);
         return;
       }
       // La oferta que se aceptó y se soltó por tiempo (o al recargar): la central sí la
@@ -925,11 +939,13 @@ class ControladorConductor extends Emisor {
 
   // Repite el cierre de un servicio que este teléfono ya cerró (ver #reconciliar). La
   // central ignora lo que ya no aplica (un fin repetido, una cancelación de algo cerrado).
-  #repetirCierre(cerrado, viajeId) {
+  #repetirCierre(cerrado, viajeId, d = null) {
     const base = { viajeId, conductorId: this.perfil?.id };
     if (cerrado.final === 'cancelado') {
       this.bus.publicar('cancelacion', { ...base, por: 'conductor', motivo: cerrado.motivo || '' });
     } else {
+      // Si la central rechaza ese valor (valor_invalido), el servicio se retoma con estos datos.
+      this.cierreRepetido = { d, cuando: Date.now() };
       this.bus.publicar('estado', { ...base, fase: 'finalizado', valor: cerrado.valor, km: cerrado.km });
       if (cerrado.pago) this.bus.publicar('pago_confirmado', { ...base, metodo: cerrado.pago.metodo, valor: cerrado.pago.valor, billetera: null, ref: null });
       if (cerrado.estrellas) this.bus.publicar('calificacion', { viajeId, de: 'conductor', estrellas: cerrado.estrellas, etiquetas: cerrado.etiquetas || [], comentario: cerrado.comentario || '' });
@@ -939,7 +955,8 @@ class ControladorConductor extends Emisor {
   }
 
   // viaje_actual de un servicio que el teléfono no tiene (servidor 0.2: trae los datos).
-  #rearmar(d) {
+  // aviso: el que se muestra en vez de «Retomamos tu servicio».
+  #rearmar(d, aviso = null) {
     const fase = FASE_DEL_SERVIDOR[d.estado];
     const viaje = {
       id: d.viajeId,
@@ -962,7 +979,7 @@ class ControladorConductor extends Emisor {
     };
     if (fase === 'en_viaje') viaje.inicio = Date.now();
     this.#cambiar({ viaje, solicitudes: [], rutaActual: null, etaMin: null, kmRestantes: null, mensajePasajero: null });
-    this.#avisar({
+    this.#avisar(aviso || {
       titulo: 'Retomamos tu servicio',
       cuerpo: fase === 'en_viaje' ? `Lleva a ${viaje.pasajero.nombre} a ${viaje.destino?.titulo || 'su destino'}.` : `Recoge a ${viaje.pasajero.nombre} en ${viaje.origen?.titulo || 'el punto marcado'}.`,
       tipo: 'info',
@@ -1017,6 +1034,7 @@ class ControladorConductor extends Emisor {
   #alErrorServidor(d) {
     const codigo = d?.codigo || '';
     this.emit('error_servidor', { codigo, texto: servidor.textoError(codigo) });
+    if (codigo === 'valor_invalido') return this.#valorRechazado();
     const v = this.estado.viaje;
     if (!['servicio_no_disponible', 'ya_tienes_un_servicio'].includes(codigo) || v?.fase !== 'confirmando') return;
     clearTimeout(this.temporizadores.get('confirmar'));
@@ -1025,6 +1043,41 @@ class ControladorConductor extends Emisor {
     this.#terminar();
     // La central dice que ya hay un servicio a tu nombre: al reconectar llega con viaje_actual.
     if (codigo === 'ya_tienes_un_servicio') this.bus.reconectar();
+  }
+
+  // La central no aceptó el valor del cobro (servidor 0.2.2: más de 3 veces el máximo de la
+  // tarifa de la cooperativa) y el viaje sigue en curso allá; al pasajero no le llegó el fin.
+  // Se vuelve a «En viaje» para corregir el valor y terminar otra vez: mientras tanto no se
+  // registra el pago ni se califica (piden la fase de cobro).
+  #valorRechazado() {
+    const v = this.estado.viaje;
+    // 'alerta' y no 'error': el diseño A quita los avisos de error al cambiar de pantalla.
+    const aviso = { titulo: 'Revisa el valor del viaje', cuerpo: servidor.textoError('valor_invalido'), tipo: 'alerta' };
+    if (v && !v.simulado && ['cobrando', 'calificar'].includes(v.fase)) {
+      this.#faseViaje('en_viaje', { valor: null, valorRechazado: v.valor ?? null, urlCobro: null, fin: null, pago: null, pagoAnunciado: null });
+      this.#avisar(aviso);
+      // Si sigue en el destino, «Terminar viaje» vuelve a resaltarse.
+      this.llegadaAvisada = null;
+      if (this.estado.gpsReal && this.estado.pos) this.#moverA(this.estado.pos);
+      this.#rutaHaciaObjetivo();
+      return;
+    }
+    // El fin que se repitió al reconectar (el teléfono ya había cerrado el servicio sin
+    // señal, ver #repetirCierre): sin esto la central lo tendría en curso para siempre.
+    const r = this.cierreRepetido;
+    this.cierreRepetido = null;
+    if (v) return;
+    if (r?.d?.origen && FASE_DEL_SERVIDOR[r.d.estado] && Date.now() - r.cuando < 15000) {
+      this.#rearmar({ ...r.d, estado: 'en_viaje' }, aviso);
+      return;
+    }
+    // El fin salió tarde (la conexión se trabó sin cortarse) y el teléfono ya cobró y
+    // calificó: la central lo sigue teniendo en curso y no le manda solicitudes. Se
+    // reconecta para que llegue con viaje_actual y se retome como arriba (una vez cada 30 s).
+    if (Date.now() - (this.reconexionPorValor || 0) > 30000) {
+      this.reconexionPorValor = Date.now();
+      this.bus.reconectar();
+    }
   }
 
   async #avisar(aviso) {

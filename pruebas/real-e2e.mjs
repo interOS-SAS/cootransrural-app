@@ -18,15 +18,24 @@
 //     «Retomamos tu servicio»); al pasajero le llegan el fin y el pago;
 //  e) el pasajero pide, recarga mientras busca (sigue el mismo viaje) y cancela:
 //     al conductor se le quita la oferta; e2) el conductor cancela un servicio
-//     asignado: el pasajero vuelve a buscar con un id de viaje nuevo;
+//     asignado: el pasajero vuelve a buscar con un id de viaje nuevo (con el servidor
+//     0.2.2 esa búsqueda ya no le llega al mismo conductor: 15 min de exclusión);
 //  f) «Eliminar mi cuenta» del pasajero (Mi cuenta): vuelve al ingreso y
 //     GET /api/yo con el token viejo da 401; g) lo mismo para el conductor (menú).
+// Con el servidor 0.2.2, además:
+//  v) valor_invalido: el conductor termina con un valor absurdo → aviso, vuelve a «en
+//     viaje» (el pasajero no ve el fin) y termina otra vez con el valor bueno;
+//  t) tarifa_invalida: la solicitud sale con una tarifa imposible (se cambia en el
+//     WebSocket, como desde la consola) → aviso y el viaje se cierra sin oferta;
+//  x) cuenta_borrada: con un servicio asignado, el pasajero borra su cuenta (DELETE
+//     /api/yo desde Node, como en otro teléfono) → el conductor queda libre con el aviso
+//     y el pasajero vuelve al ingreso; entra de nuevo (cuenta nueva) para lo que sigue.
 // Además: sin «MODO PRUEBA», sala, «Simular solicitud», QR de prueba ni taxis de
 // ambiente; sin relés MQTT; sin errores de JavaScript.
 //
 // Necesita el servidor de TaxiCun en local y el proxy de mismo origen:
 //   1) Base aparte (una vez):  su postgres -c "createdb -O taxicun_prueba taxicun_e2e"
-//   2) Servidor (en /root/proyectos/taxicun-servidor):
+//   2) Servidor (en su árbol, p. ej. /root/proyectos/taxicun-servidor; SERVIDOR_TAXICUN apunta al mismo):
 //        DATABASE_URL=postgres://taxicun_prueba:prueba@127.0.0.1:5432/taxicun_e2e \
 //        CLAVE_SERVIDOR=clave-local-de-pruebas-e2e-0123456789abcdef MODO_CORREO=prueba \
 //        INDICE_EMPRESAS=/root/proyectos/cootransrural-app/empresas/indice.json CODIGOS_POR_IP_HORA=100000 \
@@ -60,6 +69,18 @@ const SEGUNDO = lugar('Puesto de Salud');
 // El pasajero en el parque; el conductor a ~300 m (hacia el norte).
 const GPS_PASAJERO = { latitude: CENTRO.lat, longitude: CENTRO.lng, accuracy: 10 };
 const GPS_CONDUCTOR = { latitude: CENTRO.lat + 0.0027, longitude: CENTRO.lng, accuracy: 10 };
+
+// Versión del servidor (de /api/salud): lo del 0.2.2 solo se prueba desde esa versión.
+let VERSION = '';
+const desde = (v) => {
+  const a = VERSION.split('.').map(Number);
+  const b2 = v.split('.').map(Number);
+  for (let i = 0; i < 3; i++) if ((a[i] || 0) !== (b2[i] || 0)) return (a[i] || 0) > (b2[i] || 0);
+  return true;
+};
+// Un valor que la central no acepta (más de 3 veces el máximo de la tarifa) y que el
+// diálogo del conductor sí deja escribir (hasta 2.000.000).
+const VALOR_ABSURDO = 1999000;
 
 const resultados = [];
 const errores = [];
@@ -228,6 +249,7 @@ async function preparar() {
     return salida;
   }, { cuentas: [PASAJERO, CONDUCTOR].map(({ correo, codigo }) => ({ correo, codigo })), empresa: EMPRESA });
   await ctx.close();
+  VERSION = String(r.salud.cuerpo?.version || '');
   await debe(r.salud.estado === 200 && /^0\.2\./.test(r.salud.cuerpo?.version || ''), `el servidor local responde por el proxy (${BASE}api/salud → ${r.salud.cuerpo?.version || r.salud.estado})`);
   for (const c of r.cuentas) {
     await debe(c.borrada, `cuenta de prueba ${c.correo} limpia${c.cancelados ? ` (se canceló ${c.cancelados} viaje que quedó de antes)` : ''}${c.error ? ` (error ${c.error}: ¿está en CUENTAS_PRUEBA?)` : ''}`);
@@ -520,6 +542,25 @@ async function viajeCompleto() {
   await debe(pc.waitForSelector('.a-modal input[name=valor]', { timeout: 5000 }), 'conductor: «Terminar viaje» pide confirmar el valor del viaje');
   const estimado = Number((await pc.inputValue('.a-modal input[name=valor]')).replace(/\D/g, ''));
   ok(estimado > 0, `conductor: el valor viene con la tarifa estimada (${estimado})`);
+  if (desde('0.2.2')) {
+    // v) Un valor absurdo: la central no cierra el viaje (valor_invalido) y el conductor lo corrige.
+    await pc.fill('.a-modal input[name=valor]', String(VALOR_ABSURDO));
+    await foto(pc, 'c14a-valor-absurdo');
+    await tocarModal(pc, 'Terminar y cobrar');
+    await debe(pc.waitForFunction(() => (window.__avisos || []).some((a) => a.includes('Revisa el valor del viaje')), null, { timeout: 10000 }), `conductor: con un valor absurdo (${VALOR_ABSURDO}) la central responde valor_invalido → «Revisa el valor del viaje»`);
+    const aviso = (await avisosVistos(pc)).find((a) => a.includes('Revisa el valor del viaje')) || '';
+    ok(aviso.includes('Ese valor no es válido para este viaje'), `conductor: el aviso explica qué pasó («${aviso}»)`);
+    await debe(vista(pc, 'en_viaje', 10000), 'conductor: vuelve a «en viaje» (la central no cerró el viaje)');
+    await pc.waitForTimeout(400);
+    ok(await pc.evaluate(() => [...document.querySelectorAll('.a-toast:not(.a-sale)')].some((t) => t.innerText.includes('Revisa el valor del viaje'))), 'conductor: el aviso sigue a la vista en «en viaje» (no se borra al cambiar de pantalla)');
+    ok(!(await pc.$('[data-efectivo]')) && !(await pc.$('.a-estrellas')), 'conductor: mientras tanto, sin «Recibí efectivo» ni calificar');
+    ok(await intento(pc.waitForSelector('[data-terminar].a-resaltar', { timeout: 5000 })), 'conductor: sigue en el destino: «Terminar viaje» resaltado otra vez');
+    await pp.waitForTimeout(1000);
+    ok(await pp.evaluate(() => document.querySelector('.a-app')?.dataset.vista === 'en_viaje'), 'pasajero: sigue «en viaje» (no le llegó el fin con el valor absurdo)');
+    await foto(pc, 'c14c-valor-rechazado');
+    await pc.click('[data-terminar]');
+    await debe(pc.waitForSelector('.a-modal input[name=valor]', { timeout: 5000 }), 'conductor: puede volver a «Terminar viaje» con el diálogo del valor');
+  }
   const corregido = estimado + 2000;
   await pc.fill('.a-modal input[name=valor]', String(corregido));
   await foto(pc, 'c14b-valor');
@@ -691,6 +732,85 @@ async function cancelarBuscando() {
 }
 
 /* ------------------------------------------------------------------ */
+/* t) Tarifa imposible (servidor 0.2.2)                                 */
+/* ------------------------------------------------------------------ */
+// La tarifa la calcula el teléfono; la central la acota con las TARIFAS y RUTAS de la
+// ficha. Aquí la solicitud sale con 100 pesos (cambiada en el WebSocket, como se haría
+// desde la consola): la central responde tarifa_invalida y no guarda nada.
+async function tarifaInvalida() {
+  await pp.evaluate(() => {
+    window.__envio ||= WebSocket.prototype.send;
+    const enviar = window.__envio;
+    WebSocket.prototype.send = function (d) {
+      if (window.__tarifaFalsa && typeof d === 'string' && d.includes('"tipo":"solicitud"')) {
+        const m = JSON.parse(d);
+        m.datos.tarifa = 100;
+        d = JSON.stringify(m);
+      }
+      return enviar.call(this, d);
+    };
+    window.__tarifaFalsa = true;
+  });
+  await debe(pedirTaxi(SEGUNDO), `pasajero: pide un taxi (${SEGUNDO.nombre}) con la tarifa cambiada a $100 [tarifa_invalida]`);
+  await pp.click('[data-pedir]');
+  await debe(pp.waitForFunction(() => (window.__avisos || []).some((a) => a.includes('No pudimos calcular la tarifa')), null, { timeout: 10000 }), 'pasajero: la central responde tarifa_invalida → «No pudimos calcular la tarifa de ese viaje…»');
+  await debe(vista(pp, 'inicio', 10000), 'pasajero: el viaje se cierra sin quedar buscando');
+  await pp.evaluate(() => { window.__tarifaFalsa = false; });
+  ok(!(await pp.evaluate(() => localStorage.getItem('tc.real.viaje.pasajero'))), 'pasajero: no queda un viaje guardado');
+  await pc.waitForTimeout(1500);
+  ok(!(await pc.$('.a-solicitud.a-abierta')), 'conductor: no le llega ninguna oferta (la central no guardó la solicitud)');
+  await foto(pp, 'p19b-tarifa-invalida');
+}
+
+/* ------------------------------------------------------------------ */
+/* x) El pasajero borra su cuenta con un servicio asignado (0.2.2)      */
+/* ------------------------------------------------------------------ */
+// La app no deja eliminar la cuenta con un viaje en curso: se borra desde Node con su
+// token (como si fuera desde otro teléfono). La central cancela el viaje por «sistema»
+// (motivo cuenta_borrada) y se lo avisa al conductor, que queda libre sin cancelar nada.
+async function cuentaBorrada() {
+  await debe(pedirTaxi(SEGUNDO), `pasajero: pide un taxi (${SEGUNDO.nombre}) [cuenta borrada]`);
+  await pp.click('[data-pedir]');
+  await debe(vista(pp, 'buscando', 15000), 'pasajero: buscando [cuenta borrada]');
+  await debe(pc.waitForSelector('.a-solicitud.a-abierta', { timeout: 20000 }), 'conductor: le llega la solicitud [cuenta borrada]');
+  await pc.click('.a-solicitud [data-aceptar]');
+  await debe(vista(pc, 'hacia_origen', 20000), 'conductor: la acepta [cuenta borrada]');
+  await debe(vista(pp, 'asignado', 15000), 'pasajero: conductor asignado [cuenta borrada]');
+  const token = await pp.evaluate(() => localStorage.getItem('taxicun.token'));
+  const borrar = await fetch(`${BASE}api/yo`, { method: 'DELETE', headers: { authorization: `Bearer ${token}` } }).then((r) => r.status, () => 0);
+  await debe(borrar === 200, `el pasajero borra su cuenta con el servicio asignado (DELETE /api/yo → ${borrar})`);
+  await debe(vista(pc, 'libre', 10000), 'conductor: la central canceló el servicio (cuenta_borrada) → queda libre');
+  ok(await pc.waitForFunction(() => (window.__avisos || []).some((a) => a.includes('El pasajero canceló el servicio')), null, { timeout: 5000 }).then(() => true, () => false), 'conductor: aviso «El pasajero canceló el servicio»');
+  ok(!(await pc.evaluate(() => localStorage.getItem('tc.real.viaje.conductor'))), 'conductor: el servicio ya no queda guardado');
+  ok((await pc.getAttribute('[data-conectar]', 'aria-checked')) === 'true', 'conductor: sigue en turno');
+  await foto(pc, 'c20b-cuenta-borrada');
+  await debe(pp.waitForSelector('.a-bienvenida input[name=correo]', { timeout: 15000 }), 'pasajero: su sesión se cerró (cuenta borrada) → vuelve al ingreso');
+  ok(await pp.waitForFunction(() => (window.__avisos || []).some((a) => a.includes('Tu sesión se cerró')), null, { timeout: 5000 }).then(() => true, () => false), 'pasajero: aviso «Tu sesión se cerró»');
+  await foto(pp, 'p19c-sesion-cerrada');
+}
+
+// El pasajero entra otra vez con el mismo correo: es una cuenta nueva (completa sus datos).
+async function reingresarPasajero() {
+  await pp.fill('.a-bienvenida input[name=correo]', PASAJERO.correo);
+  if (await pp.$('.a-bienvenida .a-check')) {
+    const marcada = await pp.evaluate(() => Boolean(document.querySelector('.a-bienvenida .a-check input')?.checked));
+    if (!marcada) await pp.click('.a-bienvenida .a-check');
+  }
+  await pp.click('.a-bienvenida [data-enviar]');
+  await escribirCodigo(pp, '.a-bienvenida .a-casillas-6', PASAJERO.codigo);
+  await debe(pp.waitForSelector('.a-bienvenida input[name=nombre]', { timeout: 15000 }), 'pasajero: entra otra vez → cuenta nueva → «Completa tus datos»');
+  await pp.fill('.a-bienvenida input[name=nombre]', PASAJERO.nombre);
+  await pp.fill('.a-bienvenida input[name=celular]', PASAJERO.celular);
+  await pp.click('.a-bienvenida [data-guardar]');
+  await debe(pp.waitForSelector('.a-bienvenida [data-empezar]', { timeout: 15000 }), 'pasajero: «¡Listo!» con la cuenta nueva');
+  await pp.click('.a-bienvenida [data-empezar]');
+  await debe(vista(pp, 'inicio', 20000), 'pasajero: vuelve al inicio con la cuenta nueva');
+  await debe(pp.waitForSelector('[data-conexion][data-estado="en_linea"]', { timeout: 15000 }), 'pasajero: en línea con la cuenta nueva');
+  await pp.waitForTimeout(3000); // el viaje que había se da por terminado (la central ya no lo tiene)
+  ok(await pp.evaluate(() => document.querySelector('.a-app')?.dataset.vista === 'inicio'), 'pasajero: sin el servicio de la cuenta borrada');
+}
+
+/* ------------------------------------------------------------------ */
 /* e2) El conductor cancela un servicio ya asignado                      */
 /* ------------------------------------------------------------------ */
 // El servidor deja ese viaje cancelado: el pasajero tiene que buscar otro taxi con
@@ -716,9 +836,17 @@ async function cancelaConductor() {
   await pp.waitForTimeout(800);
   const idDespues = await pp.evaluate(() => JSON.parse(localStorage.getItem('tc.real.viaje.pasajero') || 'null')?.estado?.viaje?.id || null);
   ok(idAntes && idDespues && idDespues !== idAntes, `pasajero: busca con un id de viaje nuevo (${idAntes} → ${idDespues})`);
-  // La nueva búsqueda sí llega a los conductores libres (aquí, el mismo conductor).
-  const deNuevo = await intento(pc.waitForSelector('.a-solicitud.a-abierta', { timeout: 20000 }));
-  ok(deNuevo, 'conductor: la nueva búsqueda le llega como otra oferta (el servidor la atiende)');
+  let deNuevo;
+  if (desde('0.2.2')) {
+    // Servidor 0.2.2: al conductor que canceló no le llegan las solicitudes de ese pasajero por 15 min.
+    deNuevo = await intento(pc.waitForSelector('.a-solicitud.a-abierta', { timeout: 6000 }));
+    ok(!deNuevo, 'conductor: la nueva búsqueda de ese pasajero no le llega (15 min de exclusión tras cancelar)');
+    ok(await pp.evaluate(() => document.querySelector('.a-app')?.dataset.vista === 'buscando'), 'pasajero: sigue buscando otro taxi');
+  } else {
+    // La nueva búsqueda sí llega a los conductores libres (aquí, el mismo conductor).
+    deNuevo = await intento(pc.waitForSelector('.a-solicitud.a-abierta', { timeout: 20000 }));
+    ok(deNuevo, 'conductor: la nueva búsqueda le llega como otra oferta (el servidor la atiende)');
+  }
   await foto(pp, 'p20-busca-otro');
   await pp.click('[data-cancelar]');
   await pp.waitForSelector('.a-opciones', { timeout: 5000 });
@@ -798,6 +926,11 @@ try {
   await viajeCompleto();
   await finSinSenal();
   await cancelarBuscando();
+  if (desde('0.2.2')) {
+    await tarifaInvalida();
+    await cuentaBorrada();
+    await reingresarPasajero();
+  }
   await cancelaConductor();
   await eliminarPasajero();
   await eliminarConductor();
