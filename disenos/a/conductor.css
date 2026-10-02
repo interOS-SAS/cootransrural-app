@@ -301,3 +301,80 @@
 }
 /* Avisos oscuros sobre la barra oscura: un filo claro para que se distingan. */
 .a-conductor .a-toast-alerta, .a-conductor .a-toast-solicitud { box-shadow: 0 16px 40px rgba(0, 0, 0, .35), 0 0 0 1.5px rgba(255, 193, 7, .55); }
+
+/* ---------------- modo real (servidor taxicun.com/api) ---------------- */
+/* Todo va con clases que solo existen en modo real (.a-real, .a-ingreso-real,
+   .a-revision, .a-sin-celular…): las demos no cambian. */
+
+/* Avisos y diálogos por encima de la capa de cuenta (ingreso, revisión). */
+.a-real > .a-avisos { z-index: 105; }
+.a-real > .a-modal-capa { z-index: 110; }
+
+/* Código del correo: las 6 casillas (.a-casillas-6) ya las ajusta base.css. */
+
+/* Pasos de la cuenta dentro de la capa .a-ingreso */
+.a-ingreso-paso { flex: 1 0 auto; display: flex; flex-direction: column; }
+.a-ingreso-real .a-ingreso-form { flex: 1 0 auto; }
+.a-ingreso-real .a-fila-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.a-ingreso-real .a-fila-2 > .a-campo { min-width: 0; }
+.a-ingreso-real .a-fila-taxi .a-campo-tel input { min-width: 0; }
+.a-ingreso-real input[name="placa"] { text-transform: uppercase; letter-spacing: .08em; font-weight: 800; }
+.a-ingreso-correo strong { color: var(--a-tinta); overflow-wrap: anywhere; }
+.a-ingreso-cuenta { display: flex; gap: 8px; align-items: center; margin: -4px 0 0; padding: 9px 12px; border-radius: 14px; background: var(--a-gris); font: 700 13.5px var(--a-fb); color: var(--a-texto-2); overflow-wrap: anywhere; }
+.a-ingreso-cuenta > svg { flex: none; }
+.a-ingreso-legal a { color: var(--a-tinta); font-weight: 700; }
+.a-ingreso-acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 6px; }
+.a-ingreso .a-ingreso-acciones .a-btn-texto { align-self: auto; }
+@media (max-width: 360px) {
+  .a-ingreso-real .a-fila-2 { grid-template-columns: 1fr; }
+}
+
+/* «Tu registro está en revisión» / suspendido / sin conexión */
+.a-revision h1 { font-size: 26px; }
+.a-revision-taxi { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 20px; border: 1.5px solid var(--a-borde); background: #fff; }
+.a-revision-taxi > span:nth-child(2) { flex: 1; min-width: 0; }
+.a-revision-taxi strong { display: block; font: 700 14.5px/1.3 var(--a-fb); }
+.a-revision-taxi small { display: block; font-size: 12.5px; color: var(--a-texto-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.a-revision-taxi .a-placa { flex: none; }
+.a-revision-chip { display: inline-block; margin-bottom: 4px; padding: 4px 9px; border-radius: 999px; font: 800 11px/1.2 var(--a-fb); font-style: normal; text-transform: uppercase; letter-spacing: .06em; background: var(--a-ambar-claro); color: var(--a-ambar-osc); }
+.a-revision-suspendido .a-revision-chip { background: var(--a-rojo-claro); color: var(--a-rojo-txt); }
+.a-revision .a-btn + .a-btn { margin-top: -4px; }
+
+/* Turno: la píldora espera a la central */
+.a-pildora[disabled] { cursor: default; background: #4A4D55; }
+.a-pildora[disabled] .a-pildora-perilla { background: #3B3E45; color: #8A8F98; }
+.a-pildora[disabled] .a-pildora-txt small { color: rgba(255, 255, 255, .78); }
+
+/* Chip de conexión con la central reintentando */
+.a-chip-red.a-reintentando .a-led { background: var(--a-ambar); box-shadow: 0 0 0 3px rgba(255, 193, 7, .3); }
+
+/* Pasajero sin celular registrado */
+.a-sin-celular { display: flex; gap: 8px; align-items: center; margin: 10px 0 0; padding: 10px 14px; border-radius: 16px; background: var(--a-gris); color: var(--a-texto-2); font-size: 13.5px; font-weight: 600; }
+
+/* Cobro en efectivo (sin QR) */
+.a-cobro-real { padding-top: 10px; }
+.a-cobro-real > p b { color: var(--a-tinta); }
+.a-pago-anunciado { display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 18px; background: var(--a-verde-claro); color: var(--a-verde-txt); font-weight: 700; font-size: 14px; text-align: left; animation: a-aparece .3s; }
+.a-pago-anunciado > svg { flex: none; }
+
+/* Ajustes: ubicación y «Tu cuenta» */
+.a-gps-info { display: flex; gap: 12px; align-items: center; }
+.a-gps-info strong { display: block; font: 700 14.5px/1.3 var(--a-fb); }
+.a-gps-info small { font-size: 12.5px; color: var(--a-texto-2); }
+.a-regla-ancha { grid-column: 1 / -1; min-width: 0; }
+.a-regla-ancha strong { display: block; font-size: 16px; overflow-wrap: anywhere; }
+.a-cuenta-acciones { display: grid; gap: 8px; margin-top: 10px; }
+.a-cuenta-acciones .a-btn { min-height: 52px; background: #fff; }
+.a-cuenta-acciones .a-btn:hover { background: var(--a-gris-2); }
+
+/* Modo real: en turno pero sin GPS (la central no le manda servicios) */
+.a-pildora.a-pildora-alerta[aria-checked="true"] { background: var(--a-rojo-txt); }
+.a-pildora.a-pildora-alerta[aria-checked="true"] .a-pildora-perilla { color: var(--a-rojo-txt); animation: none; }
+
+/* Modo real: la oferta se está aceptando (la central asigna al primero) */
+.a-solicitud.a-aceptando .a-deslizador { opacity: .55; pointer-events: none; }
+.a-solicitud.a-aceptando [data-aceptar] { opacity: 1; }
+
+/* Modo real: valor del viaje al terminar */
+.a-campo-valor input { font: 800 24px/1.2 var(--a-ft); letter-spacing: .01em; }
+.a-modal [data-valor-ayuda] { margin-top: 6px; }

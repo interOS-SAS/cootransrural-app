@@ -14,6 +14,21 @@ export const ID = N.ID_EMPRESA;
 export const ES_PRINCIPAL = ID === 'cootransrural';
 export const ES_PROPUESTA = Boolean(N.ES_PROPUESTA);
 
+// Modo real (servidor taxicun.com/api) y app nativa (Capacitor). Las decide el
+// núcleo (nucleo/plataforma.js); las pantallas preguntan EM.MODO_REAL igual que
+// preguntan EM.EN_TAXICUN. Sin ?real=1 y fuera de la app nativa, las dos son
+// falsas y todo queda como en la demo.
+export const MODO_REAL = Boolean(N.MODO_REAL);
+export const ES_NATIVA = Boolean(N.ES_NATIVA);
+
+// Texto en español para un error del servidor (ErrorServidor o el código suelto).
+// Lo traduce el núcleo (nucleo/servidor.js); si faltara, una frase genérica.
+export function textoError(e) {
+  const traducir = N.textoError || N.servidor?.textoError;
+  if (typeof traducir === 'function') return traducir(e);
+  return 'Algo falló. Intenta de nuevo.';
+}
+
 // Rodeo de un fallo del núcleo: si la ficha que pide la página (window.CT_EMPRESA o
 // ?e=) no carga, nucleo/config.js cae en silencio a Cootransrural. En la página de
 // otra cooperativa eso mostraría (y guardaría) datos de Cootransrural; mejor un
@@ -84,10 +99,16 @@ export const textoTaxis = (sufijo = '') => {
 
 // Tarjeta de viajes: solo si la ficha trae la regla (viajesFidelidad). Rodea un
 // fallo del núcleo: sin ese dato, N.progresoFidelidad devuelve NaN y undefined.
+// En modo real no hay tarjeta: la cuenta viviría solo en este celular y ni la
+// cooperativa ni la central la respaldan (el núcleo tampoco aplica el descuento).
 export function fidelidad(completados) {
+  if (MODO_REAL) return null;
   const f = N.progresoFidelidad(completados);
   return f && Number.isFinite(f.meta) && f.meta > 0 && Number.isFinite(f.completados) ? f : null;
 }
+
+// ¿Las tarifas de la ficha son de ejemplo (la cooperativa aún no confirma las oficiales)?
+export const TARIFAS_EJEMPLO = Boolean(N.TARIFAS?.ejemplo);
 
 // Une piezas de texto omitiendo las vacías.
 export const unir = (piezas, sep = ' · ') => piezas.filter((x) => x != null && String(x).trim() !== '').join(sep);
@@ -263,6 +284,8 @@ export const clave = (nombre) => (ES_PRINCIPAL ? `ct.a.${nombre}` : `ct.a.${ID}.
 
 // Página de privacidad de la cooperativa (el generador la crea para cada ficha:
 // privacidad/ en la raíz para Cootransrural y <id>/privacidad/ para las demás).
+// En modo real los datos los guarda TaxiCun (interOS) en su servidor: se enlaza la
+// política de TaxiCun, en privacidad/ de la raíz del sitio.
 export function urlPrivacidad() {
-  return N.urlEmpresa('privacidad/');
+  return MODO_REAL ? N.urlDelSitio('privacidad/') : N.urlEmpresa('privacidad/');
 }

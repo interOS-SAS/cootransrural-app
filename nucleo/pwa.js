@@ -1,8 +1,37 @@
 // Instalación como app (PWA): service worker y botón «Instalar».
+// En la app de las tiendas (ES_NATIVA) no hay ni lo uno ni lo otro: ya es una app, y
+// un service worker viejo guardaría copias de la web (y de /api/) dentro de ella.
 import { urlDelSitio } from './config.js';
 import { Emisor } from './util.js';
+import { ES_NATIVA } from './plataforma.js';
 
 export const instalacion = new Emisor();
+
+// ¿Tiene sentido ofrecer «Instalar»? En la app nativa, no.
+export const PUEDE_INSTALARSE = !ES_NATIVA;
+
+// Quita los service workers y las copias que hayan quedado (los APK de prueba de
+// Android alcanzaron a registrar sw.js).
+let limpieza = null;
+function quitarServiceWorkers() {
+  if (!limpieza) {
+    limpieza = (async () => {
+      try {
+        const registros = await navigator.serviceWorker?.getRegistrations?.();
+        await Promise.all((registros || []).map((r) => r.unregister()));
+      } catch {
+        /* sin permiso o sin soporte */
+      }
+      try {
+        if ('caches' in globalThis) await Promise.all((await caches.keys()).map((k) => caches.delete(k)));
+      } catch {
+        /* sin Cache Storage */
+      }
+    })();
+  }
+  return limpieza;
+}
+if (ES_NATIVA) quitarServiceWorkers();
 let eventoInstalar = null;
 
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -18,6 +47,7 @@ window.addEventListener('appinstalled', () => {
 
 export function registrarServiceWorker() {
   if (!('serviceWorker' in navigator)) return Promise.resolve(null);
+  if (ES_NATIVA) return quitarServiceWorkers().then(() => null);
   // En localhost sin https también funciona; en http normal el navegador lo ignora.
   return navigator.serviceWorker.register(urlDelSitio('sw.js'), { scope: urlDelSitio('') }).catch((e) => {
     console.warn('[pwa]', e.message);
@@ -34,6 +64,8 @@ export function esAndroid() {
 }
 
 export function yaInstalada() {
+  // La app nativa ya está instalada: así ningún diseño ofrece «Instalar» dentro de ella.
+  if (ES_NATIVA) return true;
   return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 }
 

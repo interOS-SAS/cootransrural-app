@@ -1,6 +1,6 @@
 // Service worker del sitio (TaxiCun y las páginas de cada cooperativa): permite
 // instalar la app, abrirla sin señal (lo ya visitado) y mostrar notificaciones.
-const VERSION = 'ct-2026-10-02-1';
+const VERSION = 'ct-2026-10-02-2';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
@@ -27,6 +27,9 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET' || url.origin !== self.location.origin) return;
+  // El servidor de TaxiCun (/api/: cuenta, perfil, tiempo real) nunca pasa por aquí ni se
+  // guarda: son datos personales y deben ser los de ahora, no una copia vieja.
+  if (url.pathname.startsWith('/api/')) return;
   // Primero la red (así siempre se ve lo último publicado); sin señal, la copia.
   // cache: 'no-cache' obliga a preguntarle al servidor si cambió (si no, 304).
   const red = e.request.mode === 'navigate' ? fetch(e.request.url, { cache: 'no-cache', credentials: 'same-origin' }) : fetch(e.request, { cache: 'no-cache' });

@@ -17,7 +17,8 @@
    "radioKm": 9,
    "color": "#0A5C33",
    "icono": "img/icono-192.png",
-   "ruta": "el-rosal/"
+   "ruta": "el-rosal/",
+   "real": true
   },
   {
    "id": "agua-de-dios",
@@ -35,7 +36,8 @@
    "radioKm": 9,
    "color": "#33691E",
    "icono": "empresas/agua-de-dios/icono-192.png",
-   "ruta": "agua-de-dios/"
+   "ruta": "agua-de-dios/",
+   "real": false
   },
   {
    "id": "anapoima",
@@ -53,7 +55,8 @@
    "radioKm": 9,
    "color": "#9B1B5A",
    "icono": "empresas/anapoima/icono-192.png",
-   "ruta": "anapoima/"
+   "ruta": "anapoima/",
+   "real": false
   },
   {
    "id": "anolaima",
@@ -71,7 +74,8 @@
    "radioKm": 9,
    "color": "#5E2B83",
    "icono": "empresas/anolaima/icono-192.png",
-   "ruta": "anolaima/"
+   "ruta": "anolaima/",
+   "real": false
   },
   {
    "id": "bojaca",
@@ -89,7 +93,8 @@
    "radioKm": 9,
    "color": "#A16207",
    "icono": "empresas/bojaca/icono-192.png",
-   "ruta": "bojaca/"
+   "ruta": "bojaca/",
+   "real": false
   },
   {
    "id": "cajica-cajitaxi",
@@ -107,7 +112,8 @@
    "radioKm": 9,
    "color": "#283593",
    "icono": "empresas/cajica-cajitaxi/icono-192.png",
-   "ruta": "cajica-cajitaxi/"
+   "ruta": "cajica-cajitaxi/",
+   "real": false
   },
   {
    "id": "cajica-expreso",
@@ -125,7 +131,8 @@
    "radioKm": 9,
    "color": "#A8401A",
    "icono": "empresas/cajica-expreso/icono-192.png",
-   "ruta": "cajica-expreso/"
+   "ruta": "cajica-expreso/",
+   "real": false
   },
   {
    "id": "cajica-fortaleza",
@@ -143,7 +150,8 @@
    "radioKm": 9,
    "color": "#5B4E3C",
    "icono": "empresas/cajica-fortaleza/icono-192.png",
-   "ruta": "cajica-fortaleza/"
+   "ruta": "cajica-fortaleza/",
+   "real": false
   },
   {
    "id": "caqueza",
@@ -161,7 +169,8 @@
    "radioKm": 9,
    "color": "#3F1C7A",
    "icono": "empresas/caqueza/icono-192.png",
-   "ruta": "caqueza/"
+   "ruta": "caqueza/",
+   "real": false
   },
   {
    "id": "chia-autoservicio",
@@ -179,7 +188,8 @@
    "radioKm": 9,
    "color": "#4527A0",
    "icono": "empresas/chia-autoservicio/icono-192.png",
-   "ruta": "chia-autoservicio/"
+   "ruta": "chia-autoservicio/",
+   "real": false
   },
   {
    "id": "chia-cootrasinchia",
@@ -197,7 +207,8 @@
    "radioKm": 9,
    "color": "#00677F",
    "icono": "empresas/chia-cootrasinchia/icono-192.png",
-   "ruta": "chia-cootrasinchia/"
+   "ruta": "chia-cootrasinchia/",
+   "real": false
   },
   {
    "id": "chipaque",
@@ -215,7 +226,8 @@
    "radioKm": 9,
    "color": "#2B6A14",
    "icono": "empresas/chipaque/icono-192.png",
-   "ruta": "chipaque/"
+   "ruta": "chipaque/",
+   "real": false
   },
   {
    "id": "choconta",
@@ -233,7 +245,8 @@
    "radioKm": 9,
    "color": "#005BA6",
    "icono": "empresas/choconta/icono-192.png",
-   "ruta": "choconta/"
+   "ruta": "choconta/",
+   "real": false
   },
   {
    "id": "cota",
@@ -251,7 +264,8 @@
    "radioKm": 9,
    "color": "#4F6B12",
    "icono": "empresas/cota/icono-192.png",
-   "ruta": "cota/"
+   "ruta": "cota/",
+   "real": false
   },
   {
    "id": "el-colegio",
@@ -269,7 +283,8 @@
    "radioKm": 9,
    "color": "#092BAD",
    "icono": "empresas/el-colegio/icono-192.png",
-   "ruta": "el-colegio/"
+   "ruta": "el-colegio/",
+   "real": false
   },
   {
    "id": "facatativa",
@@ -287,7 +302,8 @@
    "radioKm": 9,
    "color": "#0E8104",
    "icono": "empresas/facatativa/icono-192.png",
-   "ruta": "facatativa/"
+   "ruta": "facatativa/",
+   "real": false
   },
   {
    "id": "facatativa-autofaca",
@@ -305,7 +321,8 @@
    "radioKm": 9,
    "color": "#1860B0",
    "icono": "empresas/facatativa-autofaca/icono-192.png",
-   "ruta": "facatativa-autofaca/"
+   "ruta": "facatativa-autofaca/",
+   "real": false
   },
   {
    "id": "facatativa-hycata",
@@ -323,7 +340,8 @@
    "radioKm": 9,
    "color": "#4E342E",
    "icono": "empresas/facatativa-hycata/icono-192.png",
-   "ruta": "facatativa-hycata/"
+   "ruta": "facatativa-hycata/",
+   "real": false
   },
   {
    "id": "facatativa-villetax",
@@ -341,7 +359,8 @@
    "radioKm": 9,
    "color": "#0A5535",
    "icono": "empresas/facatativa-villetax/icono-192.png",
-   "ruta": "facatativa-villetax/"
+   "ruta": "facatativa-villetax/",
+   "real": false
   },
   {
    "id": "funza-coomofu",
@@ -359,7 +378,8 @@
    "radioKm": 9,
    "color": "#0F6935",
    "icono": "empresas/funza-coomofu/icono-192.png",
-   "ruta": "funza-coomofu/"
+   "ruta": "funza-coomofu/",
+   "real": false
   },
   {
    "id": "funza-coopexfun",
@@ -377,7 +397,8 @@
    "radioKm": 9,
    "color": "#0B7A14",
    "icono": "empresas/funza-coopexfun/icono-192.png",
-   "ruta": "funza-coopexfun/"
+   "ruta": "funza-coopexfun/",
+   "real": false
   },
   {
    "id": "fusagasuga-asoind",
@@ -395,7 +416,8 @@
    "radioKm": 9,
    "color": "#5B2C6F",
    "icono": "empresas/fusagasuga-asoind/icono-192.png",
-   "ruta": "fusagasuga-asoind/"
+   "ruta": "fusagasuga-asoind/",
+   "real": false
   },
   {
    "id": "fusagasuga-asotaxis",
@@ -413,7 +435,8 @@
    "radioKm": 9,
    "color": "#08703A",
    "icono": "empresas/fusagasuga-asotaxis/icono-192.png",
-   "ruta": "fusagasuga-asotaxis/"
+   "ruta": "fusagasuga-asotaxis/",
+   "real": false
   },
   {
    "id": "fusagasuga-cootransfusa",
@@ -431,7 +454,8 @@
    "radioKm": 9,
    "color": "#0A3F8A",
    "icono": "empresas/fusagasuga-cootransfusa/icono-192.png",
-   "ruta": "fusagasuga-cootransfusa/"
+   "ruta": "fusagasuga-cootransfusa/",
+   "real": false
   },
   {
    "id": "fusagasuga-fusacatan",
@@ -449,7 +473,8 @@
    "radioKm": 9,
    "color": "#2F4858",
    "icono": "empresas/fusagasuga-fusacatan/icono-192.png",
-   "ruta": "fusagasuga-fusacatan/"
+   "ruta": "fusagasuga-fusacatan/",
+   "real": false
   },
   {
    "id": "fusagasuga-transjardin",
@@ -467,7 +492,8 @@
    "radioKm": 9,
    "color": "#9C1C5B",
    "icono": "empresas/fusagasuga-transjardin/icono-192.png",
-   "ruta": "fusagasuga-transjardin/"
+   "ruta": "fusagasuga-transjardin/",
+   "real": false
   },
   {
    "id": "gachancipa",
@@ -485,7 +511,8 @@
    "radioKm": 9,
    "color": "#7B1F5E",
    "icono": "empresas/gachancipa/icono-192.png",
-   "ruta": "gachancipa/"
+   "ruta": "gachancipa/",
+   "real": false
   },
   {
    "id": "gacheta",
@@ -503,7 +530,8 @@
    "radioKm": 9,
    "color": "#9B1C1F",
    "icono": "empresas/gacheta/icono-192.png",
-   "ruta": "gacheta/"
+   "ruta": "gacheta/",
+   "real": false
   },
   {
    "id": "girardot-central-taxis",
@@ -521,7 +549,8 @@
    "radioKm": 9,
    "color": "#2038A0",
    "icono": "empresas/girardot-central-taxis/icono-192.png",
-   "ruta": "girardot-central-taxis/"
+   "ruta": "girardot-central-taxis/",
+   "real": false
   },
   {
    "id": "girardot-compuexpress",
@@ -539,7 +568,8 @@
    "radioKm": 9,
    "color": "#C80000",
    "icono": "empresas/girardot-compuexpress/icono-192.png",
-   "ruta": "girardot-compuexpress/"
+   "ruta": "girardot-compuexpress/",
+   "real": false
   },
   {
    "id": "girardot-megataxi",
@@ -557,7 +587,8 @@
    "radioKm": 9,
    "color": "#1A2380",
    "icono": "empresas/girardot-megataxi/icono-192.png",
-   "ruta": "girardot-megataxi/"
+   "ruta": "girardot-megataxi/",
+   "real": false
   },
   {
    "id": "girardot-taxistas-unidos",
@@ -575,7 +606,8 @@
    "radioKm": 9,
    "color": "#00796B",
    "icono": "empresas/girardot-taxistas-unidos/icono-192.png",
-   "ruta": "girardot-taxistas-unidos/"
+   "ruta": "girardot-taxistas-unidos/",
+   "real": false
   },
   {
    "id": "guaduas",
@@ -593,7 +625,8 @@
    "radioKm": 9,
    "color": "#9A3412",
    "icono": "empresas/guaduas/icono-192.png",
-   "ruta": "guaduas/"
+   "ruta": "guaduas/",
+   "real": false
   },
   {
    "id": "guasca",
@@ -611,7 +644,8 @@
    "radioKm": 9,
    "color": "#1F2A8C",
    "icono": "empresas/guasca/icono-192.png",
-   "ruta": "guasca/"
+   "ruta": "guasca/",
+   "real": false
   },
   {
    "id": "guatavita",
@@ -629,7 +663,8 @@
    "radioKm": 9,
    "color": "#1E5A4C",
    "icono": "empresas/guatavita/icono-192.png",
-   "ruta": "guatavita/"
+   "ruta": "guatavita/",
+   "real": false
   },
   {
    "id": "la-calera",
@@ -647,7 +682,8 @@
    "radioKm": 9,
    "color": "#2E6E32",
    "icono": "empresas/la-calera/icono-192.png",
-   "ruta": "la-calera/"
+   "ruta": "la-calera/",
+   "real": false
   },
   {
    "id": "la-calera-milenio",
@@ -665,7 +701,8 @@
    "radioKm": 9,
    "color": "#7B1F5A",
    "icono": "empresas/la-calera-milenio/icono-192.png",
-   "ruta": "la-calera-milenio/"
+   "ruta": "la-calera-milenio/",
+   "real": false
   },
   {
    "id": "la-calera-taxglobal",
@@ -683,7 +720,8 @@
    "radioKm": 9,
    "color": "#454B6B",
    "icono": "empresas/la-calera-taxglobal/icono-192.png",
-   "ruta": "la-calera-taxglobal/"
+   "ruta": "la-calera-taxglobal/",
+   "real": false
   },
   {
    "id": "la-calera-transcalera",
@@ -701,7 +739,8 @@
    "radioKm": 9,
    "color": "#007A2B",
    "icono": "empresas/la-calera-transcalera/icono-192.png",
-   "ruta": "la-calera-transcalera/"
+   "ruta": "la-calera-transcalera/",
+   "real": false
   },
   {
    "id": "la-calera-tuc",
@@ -719,7 +758,8 @@
    "radioKm": 9,
    "color": "#4C6B12",
    "icono": "empresas/la-calera-tuc/icono-192.png",
-   "ruta": "la-calera-tuc/"
+   "ruta": "la-calera-tuc/",
+   "real": false
   },
   {
    "id": "la-mesa",
@@ -737,7 +777,8 @@
    "radioKm": 9,
    "color": "#00702B",
    "icono": "empresas/la-mesa/icono-192.png",
-   "ruta": "la-mesa/"
+   "ruta": "la-mesa/",
+   "real": false
   },
   {
    "id": "la-vega",
@@ -755,7 +796,8 @@
    "radioKm": 9,
    "color": "#0C3C60",
    "icono": "empresas/la-vega/icono-192.png",
-   "ruta": "la-vega/"
+   "ruta": "la-vega/",
+   "real": false
   },
   {
    "id": "la-vega-cootransgualiva",
@@ -773,7 +815,8 @@
    "radioKm": 9,
    "color": "#1E6B35",
    "icono": "empresas/la-vega-cootransgualiva/icono-192.png",
-   "ruta": "la-vega-cootransgualiva/"
+   "ruta": "la-vega-cootransgualiva/",
+   "real": false
   },
   {
    "id": "la-vega-occitrans",
@@ -791,7 +834,8 @@
    "radioKm": 9,
    "color": "#14720E",
    "icono": "empresas/la-vega-occitrans/icono-192.png",
-   "ruta": "la-vega-occitrans/"
+   "ruta": "la-vega-occitrans/",
+   "real": false
   },
   {
    "id": "madrid",
@@ -809,7 +853,8 @@
    "radioKm": 9,
    "color": "#2E2A25",
    "icono": "empresas/madrid/icono-192.png",
-   "ruta": "madrid/"
+   "ruta": "madrid/",
+   "real": false
   },
   {
    "id": "mosquera",
@@ -827,7 +872,8 @@
    "radioKm": 9,
    "color": "#00782E",
    "icono": "empresas/mosquera/icono-192.png",
-   "ruta": "mosquera/"
+   "ruta": "mosquera/",
+   "real": false
   },
   {
    "id": "nocaima",
@@ -845,7 +891,8 @@
    "radioKm": 9,
    "color": "#1A5C2A",
    "icono": "empresas/nocaima/icono-192.png",
-   "ruta": "nocaima/"
+   "ruta": "nocaima/",
+   "real": false
   },
   {
    "id": "pacho",
@@ -863,7 +910,8 @@
    "radioKm": 9,
    "color": "#5A2A82",
    "icono": "empresas/pacho/icono-192.png",
-   "ruta": "pacho/"
+   "ruta": "pacho/",
+   "real": false
   },
   {
    "id": "quebradanegra",
@@ -881,7 +929,8 @@
    "radioKm": 9,
    "color": "#1D3F94",
    "icono": "empresas/quebradanegra/icono-192.png",
-   "ruta": "quebradanegra/"
+   "ruta": "quebradanegra/",
+   "real": false
   },
   {
    "id": "san-antonio-del-tequendama",
@@ -899,7 +948,8 @@
    "radioKm": 9,
    "color": "#3B7A16",
    "icono": "empresas/san-antonio-del-tequendama/icono-192.png",
-   "ruta": "san-antonio-del-tequendama/"
+   "ruta": "san-antonio-del-tequendama/",
+   "real": false
   },
   {
    "id": "san-francisco",
@@ -917,7 +967,8 @@
    "radioKm": 9,
    "color": "#3730A3",
    "icono": "empresas/san-francisco/icono-192.png",
-   "ruta": "san-francisco/"
+   "ruta": "san-francisco/",
+   "real": false
   },
   {
    "id": "san-juan-de-rioseco",
@@ -935,7 +986,8 @@
    "radioKm": 9,
    "color": "#0F766E",
    "icono": "empresas/san-juan-de-rioseco/icono-192.png",
-   "ruta": "san-juan-de-rioseco/"
+   "ruta": "san-juan-de-rioseco/",
+   "real": false
   },
   {
    "id": "sasaima",
@@ -953,7 +1005,8 @@
    "radioKm": 9,
    "color": "#530054",
    "icono": "empresas/sasaima/icono-192.png",
-   "ruta": "sasaima/"
+   "ruta": "sasaima/",
+   "real": false
   },
   {
    "id": "sesquile",
@@ -971,7 +1024,8 @@
    "radioKm": 9,
    "color": "#0B4F6C",
    "icono": "empresas/sesquile/icono-192.png",
-   "ruta": "sesquile/"
+   "ruta": "sesquile/",
+   "real": false
   },
   {
    "id": "simijaca",
@@ -989,7 +1043,8 @@
    "radioKm": 9,
    "color": "#1F7A1A",
    "icono": "empresas/simijaca/icono-192.png",
-   "ruta": "simijaca/"
+   "ruta": "simijaca/",
+   "real": false
   },
   {
    "id": "soacha-losdos",
@@ -1007,7 +1062,8 @@
    "radioKm": 9,
    "color": "#7E22CE",
    "icono": "empresas/soacha-losdos/icono-192.png",
-   "ruta": "soacha-losdos/"
+   "ruta": "soacha-losdos/",
+   "real": false
   },
   {
    "id": "soacha-taxisxua",
@@ -1025,7 +1081,8 @@
    "radioKm": 9,
    "color": "#C8202A",
    "icono": "empresas/soacha-taxisxua/icono-192.png",
-   "ruta": "soacha-taxisxua/"
+   "ruta": "soacha-taxisxua/",
+   "real": false
   },
   {
    "id": "sopo-pionono",
@@ -1043,7 +1100,8 @@
    "radioKm": 9,
    "color": "#6D4C2F",
    "icono": "empresas/sopo-pionono/icono-192.png",
-   "ruta": "sopo-pionono/"
+   "ruta": "sopo-pionono/",
+   "real": false
   },
   {
    "id": "sopo-transportes",
@@ -1061,7 +1119,8 @@
    "radioKm": 9,
    "color": "#A1124A",
    "icono": "empresas/sopo-transportes/icono-192.png",
-   "ruta": "sopo-transportes/"
+   "ruta": "sopo-transportes/",
+   "real": false
   },
   {
    "id": "subachoque",
@@ -1079,7 +1138,8 @@
    "radioKm": 9,
    "color": "#1D4E89",
    "icono": "empresas/subachoque/icono-192.png",
-   "ruta": "subachoque/"
+   "ruta": "subachoque/",
+   "real": false
   },
   {
    "id": "suesca",
@@ -1097,7 +1157,8 @@
    "radioKm": 9,
    "color": "#87412F",
    "icono": "empresas/suesca/icono-192.png",
-   "ruta": "suesca/"
+   "ruta": "suesca/",
+   "real": false
   },
   {
    "id": "tabio",
@@ -1115,7 +1176,8 @@
    "radioKm": 9,
    "color": "#0F5F63",
    "icono": "empresas/tabio/icono-192.png",
-   "ruta": "tabio/"
+   "ruta": "tabio/",
+   "real": false
   },
   {
    "id": "tena",
@@ -1133,7 +1195,8 @@
    "radioKm": 9,
    "color": "#3A3F94",
    "icono": "empresas/tena/icono-192.png",
-   "ruta": "tena/"
+   "ruta": "tena/",
+   "real": false
   },
   {
    "id": "tenjo",
@@ -1151,7 +1214,8 @@
    "radioKm": 9,
    "color": "#156B2E",
    "icono": "empresas/tenjo/icono-192.png",
-   "ruta": "tenjo/"
+   "ruta": "tenjo/",
+   "real": false
   },
   {
    "id": "tenjotax",
@@ -1169,7 +1233,8 @@
    "radioKm": 9,
    "color": "#8B1E2D",
    "icono": "empresas/tenjotax/icono-192.png",
-   "ruta": "tenjotax/"
+   "ruta": "tenjotax/",
+   "real": false
   },
   {
    "id": "tocaima-central",
@@ -1187,7 +1252,8 @@
    "radioKm": 9,
    "color": "#01579B",
    "icono": "empresas/tocaima-central/icono-192.png",
-   "ruta": "tocaima-central/"
+   "ruta": "tocaima-central/",
+   "real": false
   },
   {
    "id": "tocancipa-expreso",
@@ -1205,7 +1271,8 @@
    "radioKm": 9,
    "color": "#212B36",
    "icono": "empresas/tocancipa-expreso/icono-192.png",
-   "ruta": "tocancipa-expreso/"
+   "ruta": "tocancipa-expreso/",
+   "real": false
   },
   {
    "id": "tocancipa-transfuturo",
@@ -1223,7 +1290,8 @@
    "radioKm": 9,
    "color": "#1565C0",
    "icono": "empresas/tocancipa-transfuturo/icono-192.png",
-   "ruta": "tocancipa-transfuturo/"
+   "ruta": "tocancipa-transfuturo/",
+   "real": false
   },
   {
    "id": "ubate-cootransvu",
@@ -1241,7 +1309,8 @@
    "radioKm": 9,
    "color": "#2E7D32",
    "icono": "empresas/ubate-cootransvu/icono-192.png",
-   "ruta": "ubate-cootransvu/"
+   "ruta": "ubate-cootransvu/",
+   "real": false
   },
   {
    "id": "ubate-unitaxi",
@@ -1259,7 +1328,8 @@
    "radioKm": 9,
    "color": "#355C7D",
    "icono": "empresas/ubate-unitaxi/icono-192.png",
-   "ruta": "ubate-unitaxi/"
+   "ruta": "ubate-unitaxi/",
+   "real": false
   },
   {
    "id": "utica",
@@ -1277,7 +1347,8 @@
    "radioKm": 9,
    "color": "#0B6E62",
    "icono": "empresas/utica/icono-192.png",
-   "ruta": "utica/"
+   "ruta": "utica/",
+   "real": false
   },
   {
    "id": "villeta",
@@ -1295,7 +1366,8 @@
    "radioKm": 9,
    "color": "#8A4513",
    "icono": "empresas/villeta/icono-192.png",
-   "ruta": "villeta/"
+   "ruta": "villeta/",
+   "real": false
   },
   {
    "id": "villeta-cootransye",
@@ -1313,7 +1385,8 @@
    "radioKm": 9,
    "color": "#9F1239",
    "icono": "empresas/villeta-cootransye/icono-192.png",
-   "ruta": "villeta-cootransye/"
+   "ruta": "villeta-cootransye/",
+   "real": false
   },
   {
    "id": "villeta-villetana",
@@ -1331,7 +1404,8 @@
    "radioKm": 9,
    "color": "#33343F",
    "icono": "empresas/villeta-villetana/icono-192.png",
-   "ruta": "villeta-villetana/"
+   "ruta": "villeta-villetana/",
+   "real": false
   },
   {
    "id": "viota",
@@ -1349,7 +1423,8 @@
    "radioKm": 9,
    "color": "#15803D",
    "icono": "empresas/viota/icono-192.png",
-   "ruta": "viota/"
+   "ruta": "viota/",
+   "real": false
   },
   {
    "id": "zipaquira-cootranszipa",
@@ -1367,7 +1442,8 @@
    "radioKm": 9,
    "color": "#6A1B9A",
    "icono": "empresas/zipaquira-cootranszipa/icono-192.png",
-   "ruta": "zipaquira-cootranszipa/"
+   "ruta": "zipaquira-cootranszipa/",
+   "real": false
   },
   {
    "id": "zipaquira-duarte",
@@ -1385,7 +1461,8 @@
    "radioKm": 9,
    "color": "#1E6B52",
    "icono": "empresas/zipaquira-duarte/icono-192.png",
-   "ruta": "zipaquira-duarte/"
+   "ruta": "zipaquira-duarte/",
+   "real": false
   }
  ]
 }

@@ -1433,6 +1433,9 @@ def escribir_indice(lista):
             'color': (f.get('colores') or {}).get('primario') or '#0A5C33',
             'icono': iconos(f['id'])['i192'],
             'ruta': f"{carpeta(f)}/",
+            # Ya trabaja con el servidor de TaxiCun («real»: true en la ficha). La app de
+            # las tiendas (y ?real=1) solo muestra estas; el servidor solo atiende estas.
+            'real': bool(f.get('real')),
         })
     texto = json.dumps({'marca': 'TaxiCun', 'cooperativas': indice}, ensure_ascii=False, indent=1) + '\n'
     destino = RAIZ / 'empresas' / 'indice.json'
@@ -1469,6 +1472,9 @@ def escribir_redirecciones(lista):
         return 0
     escritos = 0
     for vieja in CARPETAS_VIEJAS_PRINCIPAL:
+        # Si la raíz ya tiene página propia (p. ej. la política de privacidad de TaxiCun), no se pisa.
+        if (PLANTILLAS / '_raiz' / vieja / 'index.html').exists():
+            continue
         destino_rel = f'{vieja}/index.html'
         destino = f'../{carpeta(principal)}/{vieja}/'
         texto = REDIRECCION.format(titulo=f"{principal['EMPRESA']['nombre']} · TaxiCun", destino=destino, destino_texto=f'{carpeta(principal)}/{vieja}/')

@@ -11,5 +11,10 @@ export * from './pwa.js';
 export { crearMapa, cargarLeaflet, svgTaxi } from './mapa.js';
 export { crearPasajero, FASES } from './pasajero.js';
 export { crearConductor } from './conductor.js';
-export { Bus, salaActual, cambiarSala, enVivoActivo, activarEnVivo } from './bus.js';
+export { Bus, BusServidor, crearBus, salaActual, cambiarSala, enVivoActivo, activarEnVivo } from './bus.js';
 export * as perfil from './perfil.js';
+// Modo real: banderas y GPS (ES_NATIVA, MODO_REAL, URL_API, URL_BUS, posicion, seguir),
+// el cliente del servidor como N.servidor.* y, a mano, el texto de los errores.
+export * from './plataforma.js';
+export * as servidor from './servidor.js';
+export { textoError, ErrorServidor } from './servidor.js';

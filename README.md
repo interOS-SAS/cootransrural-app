@@ -147,5 +147,15 @@ node herramientas/propuestas-pdf.mjs http://localhost:8765/ --copiar     # PDF d
 node pruebas/propuestas.mjs http://localhost:8765/                       # propuestas web y PDF (datos, precios, QR)
 ```
 
+Modo real (`?real=1`) de punta a punta contra el servidor de TaxiCun en local
+(repo taxicun-servidor, base aparte `taxicun_e2e`; los comandos completos están
+al comienzo de `pruebas/real-e2e.mjs`):
+
+```
+node src/index.js                                   # en taxicun-servidor, con DATABASE_URL, CLAVE_SERVIDOR, CUENTAS_PRUEBA… y PUERTO=3199
+node pruebas/servidor-local.mjs --puerto=8799 --api=http://127.0.0.1:3199   # sitio + /api (y el WebSocket) en el mismo origen
+node pruebas/real-e2e.mjs http://localhost:8799/    # pasajero y conductor: registro, viaje, recargas, cancelaciones y eliminar cuenta
+```
+
 Librerías incluidas en `vendor/`: Leaflet (BSD-2), MQTT.js (MIT),
 qrcode-generator (MIT) y jsQR (Apache-2.0). Mapas © OpenStreetMap y CARTO.

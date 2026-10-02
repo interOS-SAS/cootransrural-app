@@ -30,12 +30,22 @@
   <div id="app"></div>
   <noscript>Para usar TaxiCun activa JavaScript.</noscript>
   <script>
-    // Si en 20 s no terminó de cargar (sin señal), se dice en pantalla.
-    setTimeout(function () {
-      var c = document.getElementById('carga');
-      if (!c || c.classList.contains('oculta') || !document.getElementById('elegir').hidden) return;
-      document.getElementById('carga-texto').innerHTML = 'No pudimos cargar TaxiCun.<br><small>Revisa tu conexión a internet e inténtalo de nuevo.</small><br><button type="button" class="tc-boton" onclick="location.reload()">Reintentar</button>';
-    }, 20000);
+    // Si en 20 s no terminó de cargar (sin señal), se dice en pantalla. Mientras se
+    // espera el GPS y su permiso (#carga con data-espera, lo pone web/taxicun.js) el
+    // tiempo no cuenta: la persona puede tardar en el diálogo y no es falta de señal.
+    (function () {
+      var segundos = 0;
+      var reloj = setInterval(function () {
+        var c = document.getElementById('carga');
+        // Ya cargó (la carga se quita) o no hay nada que esperar («aún no disponible»).
+        if (!c || c.dataset.espera === 'fin') return clearInterval(reloj);
+        // Con la lista de municipios a la vista no se espera nada; al escoger, sigue contando.
+        if (c.classList.contains('oculta') || !document.getElementById('elegir').hidden || c.dataset.espera) return;
+        if (++segundos < 20) return;
+        clearInterval(reloj);
+        document.getElementById('carga-texto').innerHTML = 'No pudimos cargar TaxiCun.<br><small>Revisa tu conexión a internet e inténtalo de nuevo.</small><br><button type="button" class="tc-boton" onclick="location.reload()">Reintentar</button>';
+      }, 1000);
+    })();
   </script>
   <script type="module">
     import { iniciarTaxiCun } from '{{RAIZ}}web/taxicun.js';

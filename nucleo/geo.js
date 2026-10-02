@@ -3,6 +3,7 @@
 import { CENTRO, ZONA, SERVICIOS } from './config.js';
 import { LUGARES, CATEGORIAS } from './datos.js';
 import { distanciaKm } from './util.js';
+import { posicion, seguir, MODO_REAL } from './plataforma.js';
 
 const cacheDirecciones = new Map();
 let ultimaConsultaNominatim = 0;
@@ -27,27 +28,21 @@ async function pedirJSON(url, ms = 6000) {
 }
 
 // Posición actual. Si el GPS falla o se niega, devuelve el centro del pueblo
-// con real: false para que la interfaz lo diga.
-export function obtenerPosicion({ espera = 8000, precisa = true } = {}) {
-  return new Promise((resolver) => {
-    if (!('geolocation' in navigator)) return resolver({ ...CENTRO, precision: null, real: false, motivo: 'sin-gps' });
-    navigator.geolocation.getCurrentPosition(
-      (p) => resolver({ lat: p.coords.latitude, lng: p.coords.longitude, precision: p.coords.accuracy, real: true }),
-      (e) => resolver({ ...CENTRO, precision: null, real: false, motivo: e.code === 1 ? 'denegado' : 'no-disponible' }),
-      { enableHighAccuracy: precisa, timeout: espera, maximumAge: 15000 },
-    );
-  });
+// con real: false para que la interfaz lo diga. El GPS lo da plataforma.js: en la web,
+// el del navegador con las opciones de siempre; en la app nativa, el del plugin.
+export async function obtenerPosicion({ espera = 8000, precisa = true } = {}) {
+  try {
+    const p = await posicion({ precisa, espera, edad: 15000 });
+    return { lat: p.lat, lng: p.lng, precision: p.precision, real: true };
+  } catch (e) {
+    return { ...CENTRO, precision: null, real: false, motivo: e?.sinGps ? 'sin-gps' : e?.code === 1 ? 'denegado' : 'no-disponible' };
+  }
 }
 
 // Sigue la posición en tiempo real. Devuelve la función para detenerse.
-export function seguirPosicion(fn, { precisa = true } = {}) {
-  if (!('geolocation' in navigator)) return () => {};
-  const id = navigator.geolocation.watchPosition(
-    (p) => fn({ lat: p.coords.latitude, lng: p.coords.longitude, precision: p.coords.accuracy, rumbo: p.coords.heading, velocidad: p.coords.speed, real: true }),
-    () => {},
-    { enableHighAccuracy: precisa, maximumAge: 5000, timeout: 20000 },
-  );
-  return () => navigator.geolocation.clearWatch(id);
+// alFallar({ code }) avisa si se pierde el GPS (1 permiso negado, 2 no disponible, 3 tiempo).
+export function seguirPosicion(fn, { precisa = true, alFallar = () => {} } = {}) {
+  return seguir((p) => fn({ ...p, real: true }), { precisa, alFallar });
 }
 
 // ¿La posición está lejos de la zona de servicio? (por ejemplo, alguien que
@@ -162,7 +157,9 @@ export async function buscarDirecciones(texto, { cerca = CENTRO, limite = 8 } = 
 
 // Ruta por carretera entre dos puntos: { coords: [[lat,lng]...], km, min, aproximada }
 const cacheRutas = new Map();
-const CLAVE_CACHE_RUTAS = 'ct.cache.rutas';
+// En modo real la caché lleva el prefijo «tc.real.»: se borra con los datos de la cuenta
+// (perfil.borrarDatosLocales), porque guarda los puntos de recogida y los destinos.
+const CLAVE_CACHE_RUTAS = MODO_REAL ? 'tc.real.cache.rutas' : 'ct.cache.rutas';
 try {
   for (const [k, v] of JSON.parse(localStorage.getItem(CLAVE_CACHE_RUTAS) || '[]')) cacheRutas.set(k, v);
 } catch {
@@ -173,6 +170,16 @@ function guardarCacheRutas() {
     localStorage.setItem(CLAVE_CACHE_RUTAS, JSON.stringify([...cacheRutas].slice(-40)));
   } catch {
     /* sin espacio */
+  }
+}
+
+// Olvida las rutas consultadas (en memoria y en el celular). Para «Eliminar mi cuenta».
+export function vaciarCacheRutas() {
+  cacheRutas.clear();
+  try {
+    localStorage.removeItem(CLAVE_CACHE_RUTAS);
+  } catch {
+    /* sin almacenamiento */
   }
 }
 

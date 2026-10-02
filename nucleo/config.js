@@ -64,6 +64,10 @@ export const MARCA = {
 // ¿La página es la app única TaxiCun (taxicun/), que elige la cooperativa por GPS?
 export const EN_TAXICUN = Boolean(globalThis.CT_TAXICUN);
 
+// ¿App de las tiendas? ¿Contra el servidor de verdad (taxicun.com/api)? Ver plataforma.js.
+// Fuera de TaxiCun MODO_REAL siempre es false: las páginas de cada cooperativa son la demo.
+export { ES_NATIVA, MODO_REAL, URL_API, URL_BUS } from './plataforma.js';
+
 // Relés MQTT públicos para conectar celulares distintos en la demo.
 // Se usan TODOS a la vez y se descartan los mensajes repetidos: así, si una red
 // bloquea un relé (el DNS de algunas redes responde 0.0.0.0), los otros siguen.

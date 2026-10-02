@@ -1,8 +1,8 @@
 // Secciones del menú del pasajero: Mis viajes, Programados, Tarifas y rutas,
-// Promociones, Ajustes, Ayuda y la lista de avisos.
-import { esc, icono, abrirPanel, modal, chipPrueba, franjaCuadros } from './ui.js';
+// Promociones, Ajustes, Ayuda, la lista de avisos y, en modo real, Mi cuenta.
+import { esc, icono, abrirPanel, modal, chipPrueba, franjaCuadros, celularTexto } from './ui.js';
 import { ilustracionVacia, sellosFidelidad } from './ilustraciones.js';
-import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio } from './ajustes-comunes.js';
+import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio, bloqueCuenta, enlacePrivacidad } from './ajustes-comunes.js';
 import * as EM from './empresa.js';
 
 const ESTADOS = {
@@ -119,20 +119,28 @@ export function abrirTarifas({ N, app }) {
   ].filter(Boolean);
   const rutas = (N.RUTAS || []).filter((r) => r && r.destino && hay(r.valor));
   const ofertas = [
-    hay(T.horasAnticipacion) && hay(T.descuentoProgramado) && `<div class="a-oferta">${icono('calendario', { tam: 22 })}<span><strong>Programa con ${T.horasAnticipacion} h: ${Math.round(T.descuentoProgramado * 100)} % menos</strong><small>Se aplica solo al programar con anticipación.</small></span></div>`,
-    hay(T.viajesFidelidad) && hay(T.descuentoFidelidad) && `<div class="a-oferta">${icono('regalo', { tam: 22 })}<span><strong>Cada ${T.viajesFidelidad} viajes, el siguiente al ${Math.round(T.descuentoFidelidad * 100)} %</strong><small>Los descuentos no se acumulan: se aplica el mayor.</small></span></div>`,
+    !EM.MODO_REAL && hay(T.horasAnticipacion) && hay(T.descuentoProgramado) && `<div class="a-oferta">${icono('calendario', { tam: 22 })}<span><strong>Programa con ${T.horasAnticipacion} h: ${Math.round(T.descuentoProgramado * 100)} % menos</strong><small>Se aplica solo al programar con anticipación.</small></span></div>`,
+    // En modo real no hay tarjeta de viajes (ver EM.fidelidad).
+    !EM.MODO_REAL && hay(T.viajesFidelidad) && hay(T.descuentoFidelidad) && `<div class="a-oferta">${icono('regalo', { tam: 22 })}<span><strong>Cada ${T.viajesFidelidad} viajes, el siguiente al ${Math.round(T.descuentoFidelidad * 100)} %</strong><small>Los descuentos no se acumulan: se aplica el mayor.</small></span></div>`,
   ].filter(Boolean);
+  // Modo real: el aviso de «ejemplo» sale solo mientras la ficha diga que las tarifas
+  // son de ejemplo (T.ejemplo), y sin hablar de «publicar la app».
+  const ejemplo = !EM.MODO_REAL || Boolean(T.ejemplo);
+  const avisoEjemplo = !ejemplo ? ''
+    : EM.MODO_REAL
+      ? `<div class="a-aviso-ejemplo">${icono('info', { tam: 20 })}<span><strong>Valores de ejemplo</strong><small>${esc(`${EM.NOMBRE} todavía no confirma sus tarifas oficiales. El valor final lo confirma el conductor al terminar el viaje.`)}</small></span></div>`
+      : `<div class="a-aviso-ejemplo">${icono('info', { tam: 20 })}<span><strong>Valores de ejemplo</strong><small>${esc(EM.NOMBRE)} debe confirmar las tarifas oficiales antes de publicar la app.</small></span></div>`;
   abrirPanel(app, {
     titulo: 'Tarifas y rutas',
     construir(cuerpo) {
       cuerpo.innerHTML = `
-        <div class="a-aviso-ejemplo">${icono('info', { tam: 20 })}<span><strong>Valores de ejemplo</strong><small>${esc(EM.NOMBRE)} debe confirmar las tarifas oficiales antes de publicar la app.</small></span></div>
+        ${avisoEjemplo}
         ${reglas.length ? `<section class="a-grupo"><h3>${esc(`Dentro de ${EM.PUEBLO}`)}</h3>
           <div class="a-reglas">${reglas.map(([k, v]) => `<div class="a-regla"><small>${esc(k)}</small><strong>${esc(v)}</strong></div>`).join('')}</div>
         </section>` : ''}
         ${rutas.length ? `<section class="a-grupo"><h3>${esc(`Rutas con tarifa fija desde ${EM.PUEBLO}`)}</h3>
           <table class="a-tabla">
-            <caption class="a-solo-lector">Rutas intermunicipales con tarifa fija (valores de ejemplo)</caption>
+            <caption class="a-solo-lector">Rutas intermunicipales con tarifa fija${ejemplo ? ' (valores de ejemplo)' : ''}</caption>
             <thead><tr><th scope="col">Destino</th><th scope="col">Distancia</th><th scope="col">Tiempo</th><th scope="col">Valor</th></tr></thead>
             <tbody>${rutas.map((r) => `<tr><th scope="row">${esc(r.destino)}</th><td>${hay(r.km) ? `${r.km} km` : '—'}</td><td>${hay(r.min) ? esc(N.minutosTexto(r.min)) : '—'}</td><td><b>${N.pesos(r.valor)}</b></td></tr>`).join('')}</tbody>
           </table>
@@ -158,14 +166,14 @@ export function abrirPromociones({ N, app, programarViaje }) {
           ${sellosFidelidad(fid)}
           <p>${fid.siguienteConDescuento ? 'Tu próximo viaje tiene 50 % de descuento. Se aplica solo al pedir.' : `Te ${fid.faltan === 1 ? 'falta 1 viaje' : `faltan ${fid.faltan} viajes`}: al completar ${fid.meta}, el siguiente va al 50 %.`}</p>
         </div>` : ''}
-        <div class="a-oferta a-oferta-grande">
+        ${EM.MODO_REAL ? '' : `<div class="a-oferta a-oferta-grande">
           <span class="a-oferta-sello">−10 %</span>
           <span><strong>Programa con 24 horas</strong><small>Agenda tu taxi con un día de anticipación y paga 10 % menos.</small></span>
         </div>
-        <button type="button" class="a-btn a-btn-tinta a-btn-grande" data-programar>${icono('calendario', { tam: 20 })} Programar un viaje</button>
+        <button type="button" class="a-btn a-btn-tinta a-btn-grande" data-programar>${icono('calendario', { tam: 20 })} Programar un viaje</button>`}
         <div class="a-oferta">${icono('qr', { tam: 22 })}<span><strong>Stickers con QR en los taxis</strong><small>${esc(`Escanea el sticker de cualquier taxi de ${EM.NOMBRE} para descargar la app.`)}</small></span></div>
         <p class="a-ayuda-txt">Llevas ${n} ${n === 1 ? 'viaje completado' : 'viajes completados'} con ${esc(EM.NOMBRE)} en este celular.</p>`;
-      cuerpo.querySelector('[data-programar]').addEventListener('click', () => {
+      cuerpo.querySelector('[data-programar]')?.addEventListener('click', () => {
         cerrar();
         setTimeout(programarViaje, 250);
       });
@@ -173,18 +181,135 @@ export function abrirPromociones({ N, app, programarViaje }) {
   });
 }
 
-export function abrirAjustes({ N, app, diseno, cambiarMunicipio }) {
+// En modo real, sala, conexión y simulación no salen (ajustes-comunes.js las
+// devuelve vacías), «Instalar» tampoco en la app nativa, y aparece «Tu cuenta».
+export function abrirAjustes(c) {
+  const { N, app, cambiarMunicipio } = c;
   abrirPanel(app, {
     titulo: 'Ajustes',
-    construir(cuerpo) {
+    construir(cuerpo, cerrar) {
+      const yo = N.perfil.pasajero();
       cuerpo.append(
-        bloqueMunicipio(N, { alCambiar: cambiarMunicipio }),
+        bloqueMunicipio(N, { alCambiar: cambiarMunicipio, unica: c.unica }),
         bloqueSonidoYAvisos(N),
         bloqueConexion(N, { simulacion: true }),
         bloqueSala(N, app),
         bloqueInstalar(N, app),
+        bloqueCuenta(N, {
+          nombre: yo?.nombre || '',
+          correo: yo?.correo || '',
+          abrir: () => abrirMiCuenta(c),
+          cerrarSesion: c.cerrarSesion ? () => c.cerrarSesion({ alTerminar: cerrar }) : null,
+          eliminar: c.eliminarCuenta ? () => c.eliminarCuenta({ alTerminar: cerrar }) : null,
+        }),
         bloqueAcerca(N, { que: 'App de pasajeros' }),
       );
+    },
+  });
+}
+
+// Solo en modo real: los datos de la cuenta de TaxiCun. El correo no se cambia
+// (es con el que se ingresa); el nombre y el celular se guardan en el servidor
+// (PATCH /api/yo) y el contacto de emergencia solo en este celular.
+//   alActualizar(): la app repinta la barra y reconecta el tiempo real (el
+//   servidor toma nombre y celular al conectarse).
+//   cerrarSesion({alTerminar}) y eliminarCuenta({alTerminar}): de pasajero.js.
+export function abrirMiCuenta({ N, app, avisos, cerrarSesion, eliminarCuenta, alActualizar }) {
+  abrirPanel(app, {
+    titulo: 'Mi cuenta',
+    clase: 'a-mi-cuenta',
+    construir(cuerpo, cerrar) {
+      const yo = N.perfil.pasajero() || {};
+      const contacto = yo.contactoEmergencia || {};
+      cuerpo.innerHTML = `
+        <section class="a-grupo"><h3>Tus datos</h3>
+          <form class="a-mi-cuenta-datos" novalidate>
+            <div class="a-fila-interruptor">
+              <span class="a-fila-ico">${icono('mensaje', { tam: 20 })}</span>
+              <span class="a-fila-txt"><strong>${esc(yo.correo || 'Correo')}</strong><small>Correo verificado · con él ingresas</small></span>
+            </div>
+            <label class="a-campo">
+              <span>Nombre y apellido</span>
+              <input name="nombre" autocomplete="name" autocapitalize="words" maxlength="80" value="${esc(yo.nombre || '')}" required>
+            </label>
+            <label class="a-campo">
+              <span>Celular</span>
+              <span class="a-campo-tel"><span class="a-prefijo">+57</span><input name="celular" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="300 123 4567" maxlength="12" value="${esc(celularTexto(yo.celular || ''))}" required></span>
+            </label>
+            <fieldset class="a-emergencia">
+              <legend>${icono('escudo', { tam: 18 })} Contacto de emergencia <small>(opcional)</small></legend>
+              <p>Queda solo en este celular. Le avisas con un toque desde SOS.</p>
+              <div class="a-fila-2">
+                <label class="a-campo a-campo-chico"><span>Nombre</span><input name="contactoNombre" autocomplete="off" placeholder="Ej.: Mamá" value="${esc(contacto.nombre || '')}"></label>
+                <label class="a-campo a-campo-chico"><span>Celular</span><input name="contactoCelular" type="tel" inputmode="numeric" placeholder="10 dígitos" maxlength="12" value="${esc(celularTexto(contacto.celular || ''))}"></label>
+              </div>
+            </fieldset>
+            <p class="a-error" data-error role="alert"></p>
+            <button class="a-btn a-btn-primario" type="submit" data-guardar><span>Guardar cambios</span></button>
+          </form>
+        </section>
+        <section class="a-grupo"><h3>Sesión</h3>
+          <p class="a-ayuda-txt">${esc(`Cierra tu sesión de ${EM.APP} en este celular. Para volver, ingresas con tu correo.`)}</p>
+          <button type="button" class="a-btn a-btn-suave a-btn-bloque" data-salir>${icono('salir', { tam: 20 })}<span>Cerrar sesión</span></button>
+        </section>
+        <section class="a-grupo"><h3>Eliminar cuenta</h3>
+          <p class="a-ayuda-txt">${esc(`Borramos tu nombre, correo y celular de ${EM.APP} y cerramos tu sesión. Tus viajes quedan sin datos personales para la ${EM.TIPO}. No se puede deshacer.`)}</p>
+          <button type="button" class="a-btn a-btn-peligro a-btn-bloque" data-eliminar>${icono('basura', { tam: 20 })}<span>Eliminar mi cuenta</span></button>
+        </section>`;
+      const f = cuerpo.querySelector('form');
+      const error = cuerpo.querySelector('[data-error]');
+      const boton = cuerpo.querySelector('[data-guardar]');
+      const formatear = (input) => input.addEventListener('input', () => {
+        const d = input.value.replace(/\D/g, '').slice(0, 10);
+        input.value = celularTexto(d) || d;
+      });
+      formatear(f.celular);
+      formatear(f.contactoCelular);
+      f.addEventListener('input', (e) => {
+        e.target.classList?.remove('a-invalido');
+        if (!f.querySelector('.a-invalido')) error.textContent = '';
+      });
+      f.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (boton.disabled) return;
+        const nombre = f.nombre.value.trim().replace(/\s+/g, ' ');
+        const celular = f.celular.value.replace(/\D/g, '');
+        const cNombre = f.contactoNombre.value.trim();
+        const cCel = f.contactoCelular.value.replace(/\D/g, '');
+        f.querySelectorAll('.a-invalido').forEach((x) => x.classList.remove('a-invalido'));
+        const fallo = (campo, msj) => {
+          error.textContent = msj;
+          campo?.classList.add('a-invalido');
+          campo?.focus();
+        };
+        if (nombre.length < 3 || !/[a-záéíóúñ]/i.test(nombre)) return fallo(f.nombre, 'Escribe tu nombre (mínimo 3 letras).');
+        if (!/^3\d{9}$/.test(celular)) return fallo(f.celular, 'El celular debe tener 10 dígitos y empezar por 3.');
+        if (cCel && !/^3\d{9}$/.test(cCel)) return fallo(f.contactoCelular, 'El celular del contacto debe tener 10 dígitos.');
+        if (cCel && cCel === celular) return fallo(f.contactoCelular, 'El contacto de emergencia debe ser otro número.');
+        error.textContent = '';
+        const actual = N.perfil.pasajero() || {};
+        const cambioServidor = nombre !== (actual.nombre || '') || celular !== (actual.celular || '');
+        boton.disabled = true;
+        boton.classList.add('a-ocupado');
+        try {
+          if (cambioServidor) {
+            const r = await N.servidor.actualizarYo({ nombre, celular });
+            N.perfil.fijarPasajeroServidor(r?.usuario || { ...actual, nombre, celular });
+          }
+          N.perfil.registrarPasajero({ contactoEmergencia: cCel ? { nombre: cNombre || 'Contacto de emergencia', celular: cCel } : null });
+          if (cambioServidor) alActualizar?.();
+          avisos.mostrar({ titulo: 'Guardamos tus datos', tipo: 'exito' });
+        } catch (err) {
+          if (err?.codigo === 'nombre_invalido') fallo(f.nombre, EM.textoError(err));
+          else if (err?.codigo === 'celular_invalido') fallo(f.celular, EM.textoError(err));
+          else error.textContent = EM.textoError(err);
+        } finally {
+          boton.disabled = false;
+          boton.classList.remove('a-ocupado');
+        }
+      });
+      cuerpo.querySelector('[data-salir]').addEventListener('click', () => cerrarSesion?.({ alTerminar: cerrar }));
+      cuerpo.querySelector('[data-eliminar]').addEventListener('click', () => eliminarCuenta?.({ alTerminar: cerrar }));
     },
   });
 }
@@ -219,12 +344,16 @@ export function abrirAyuda({ N, app }) {
         <section class="a-grupo"><h3>Preguntas frecuentes</h3>
           ${[
             ['¿Cómo sé que es mi taxi?', 'Antes de subir revisa el número de móvil y la placa que te muestra la app. Dile al conductor tu código de abordaje de 4 dígitos: él lo escribe en su app para iniciar el viaje.'],
-            ['¿Cómo pago?', 'En efectivo al conductor o con QR. El pago con QR de esta demo es de PRUEBA: no se mueve dinero real.'],
+            EM.MODO_REAL
+              ? ['¿Cómo pago?', 'En efectivo, directamente al conductor, al terminar el viaje.']
+              : ['¿Cómo pago?', 'En efectivo al conductor o con QR. El pago con QR de esta demo es de PRUEBA: no se mueve dinero real.'],
             ['¿Qué hago si me siento inseguro?', 'Toca SOS durante el viaje para llamar a la Línea 123 o avisarle a tu contacto de emergencia. También puedes compartir tu viaje por WhatsApp.'],
-            ['¿Cómo funciona la tarjeta de viajes?', 'Cada viaje completado suma un sello. Al completar 10, el siguiente viaje tiene 50 % de descuento.'],
+            !EM.MODO_REAL && ['¿Cómo funciona la tarjeta de viajes?', 'Cada viaje completado suma un sello. Al completar 10, el siguiente viaje tiene 50 % de descuento.'],
             ['¿Puedo pedir para otra persona?', 'Sí: elige el punto de recogida en el mapa y escribe en la nota para quién es el servicio.'],
-          ].map(([p, r]) => `<details class="a-faq"><summary>${esc(p)}${icono('abajo', { tam: 18 })}</summary><p>${esc(r)}</p></details>`).join('')}
-        </section>`;
+            EM.MODO_REAL && ['¿Cómo elimino mi cuenta?', 'En el menú, toca «Mi cuenta» y luego «Eliminar mi cuenta». También está en Ajustes, en «Tu cuenta».'],
+          ].filter(Boolean).map(([p, r]) => `<details class="a-faq"><summary>${esc(p)}${icono('abajo', { tam: 18 })}</summary><p>${esc(r)}</p></details>`).join('')}
+        </section>
+        ${EM.MODO_REAL ? `<section class="a-grupo"><h3>Tus datos</h3>${enlacePrivacidad()}</section>` : ''}`;
     },
   });
 }

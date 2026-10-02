@@ -112,8 +112,10 @@ export function ilustracionSeguridad() {
 </svg>`;
 }
 
-// 3) Paga con QR o en efectivo y gana descuentos.
-export function ilustracionPago() {
+// 3) Paga con QR o en efectivo y gana descuentos. soloEfectivo (modo real): el pago
+// es en efectivo al conductor, sin QR de prueba ni descuentos.
+export function ilustracionPago({ soloEfectivo = false } = {}) {
+  if (soloEfectivo) return ilustracionEfectivo();
   const qr = N.qrSVG(N.urlDescarga({ origen: 'bienvenida' }), { redondeado: true, color: '#121212', margen: 1 }).replace('<svg ', '<svg x="110" y="52" width="100" height="100" ');
   return `<svg class="a-ilus" viewBox="0 0 320 250" role="img" aria-label="Código QR de cobro, monedas y descuentos de 50 % y 10 %">
   <g transform="rotate(4 160 120)">
@@ -140,6 +142,38 @@ export function ilustracionPago() {
   <g transform="translate(228 150) rotate(-8)"><g class="a-ilus-ticket">
     <path d="M0 0h76v12a8 8 0 0 0 0 16v12H0V28a8 8 0 0 0 0-16z" fill="#121212"/>
     <text x="38" y="25" font-family="Sora, Arial, sans-serif" font-size="15" font-weight="800" fill="#FFC107" text-anchor="middle">−10 %</text>
+  </g></g>
+</svg>`;
+}
+
+// Pago en efectivo al conductor (modo real): billete, valor y monedas.
+function ilustracionEfectivo() {
+  return `<svg class="a-ilus" viewBox="0 0 320 250" role="img" aria-label="Pago en efectivo al conductor">
+  <g transform="rotate(4 160 120)">
+    <rect x="94" y="30" width="132" height="182" rx="24" fill="#121212" opacity=".12" transform="translate(5 7)"/>
+    <rect x="94" y="30" width="132" height="182" rx="24" fill="#fff"/>
+    <g transform="translate(112 62)">
+      <rect x="0" y="8" width="96" height="56" rx="8" fill="#2E7D32" opacity=".35" transform="rotate(-8 48 36)"/>
+      <rect x="0" y="8" width="96" height="56" rx="8" fill="#43A047"/>
+      <rect x="6" y="14" width="84" height="44" rx="5" fill="none" stroke="#C8E6C9" stroke-width="2"/>
+      <circle cx="48" cy="36" r="14" fill="#C8E6C9"/>
+      <text x="48" y="42" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="800" fill="#1B5E20" text-anchor="middle">$</text>
+    </g>
+    <text x="160" y="176" font-family="Sora, Arial, sans-serif" font-size="20" font-weight="800" fill="#121212" text-anchor="middle">$9.500</text>
+    <rect x="124" y="186" width="72" height="16" rx="8" fill="#E8F5E9"/>
+    <text x="160" y="197.5" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="8.5" font-weight="800" fill="#1B5E20" text-anchor="middle">EN EFECTIVO</text>
+  </g>
+  <g transform="translate(30 150)"><g class="a-ilus-moneda">
+    <circle cx="26" cy="30" r="24" fill="#E0A100"/><circle cx="26" cy="26" r="24" fill="#FFD54F"/><circle cx="26" cy="26" r="17" fill="none" stroke="#E0A100" stroke-width="3"/>
+    <text x="26" y="33" font-family="Sora, Arial, sans-serif" font-size="20" font-weight="800" fill="#8A5A00" text-anchor="middle">$</text>
+  </g></g>
+  <g transform="translate(56 196)"><g class="a-ilus-moneda a-ilus-moneda-2">
+    <circle cx="18" cy="21" r="16" fill="#E0A100"/><circle cx="18" cy="18" r="16" fill="#FFD54F"/>
+    <text x="18" y="23.5" font-family="Sora, Arial, sans-serif" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">$</text>
+  </g></g>
+  <g transform="translate(236 40)"><g class="a-ilus-moneda a-ilus-moneda-2">
+    <circle cx="22" cy="25" r="20" fill="#E0A100"/><circle cx="22" cy="22" r="20" fill="#FFD54F"/>
+    <text x="22" y="28" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="800" fill="#8A5A00" text-anchor="middle">$</text>
   </g></g>
 </svg>`;
 }

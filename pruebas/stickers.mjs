@@ -10,6 +10,9 @@ import { mkdirSync, readFileSync, writeFileSync, existsSync, readdirSync, unlink
 import { execFileSync } from 'node:child_process';
 
 const BASE = (process.argv[2] || 'http://localhost:8775/').replace(/\/?$/, '/');
+// Cootransrural vive en el-rosal/ desde que la raíz del sitio es TaxiCun (stickers/ redirige ahí):
+// el QR lleva a el-rosal/descargar/.
+const COOP = `${BASE}el-rosal/`;
 const EXE = process.env.CHROMIUM || '/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome';
 const DIR = process.env.CAPTURAS || '/tmp/cootrans/capturas/stickers/';
 const ROSAL = { latitude: 4.8531, longitude: -74.2611 };
@@ -155,7 +158,7 @@ console.log('\n— a) PNG a 300 ppp y lectura del QR —');
 for (const movil of ['001', '023', '052']) {
   await p.selectOption('#movil-actual', movil);
   await p.waitForTimeout(200);
-  const esperado = `${BASE}descargar/?movil=${movil}&o=sticker`;
+  const esperado = `${COOP}descargar/?movil=${movil}&o=sticker`;
   const desdeNucleo = await p.evaluate((m) => window.stickers.urlQR(m), movil);
   const { nombre, bytes } = await descargarCon('#descargar-png');
   const info = infoPNG(bytes);
@@ -180,7 +183,7 @@ const pruebasExtra = [
 ];
 for (const t of pruebasExtra) {
   await poner({ formato: t.formato, estilo: t.estilo, urlBase: t.base, movilActual: t.movil });
-  const esperado = t.base ? `${t.base}?movil=${t.movil}&o=sticker` : `${BASE}descargar/?movil=${t.movil}&o=sticker`;
+  const esperado = t.base ? `${t.base}?movil=${t.movil}&o=sticker` : `${COOP}descargar/?movil=${t.movil}&o=sticker`;
   const enlace = await p.getAttribute('#url-final', 'href');
   ok(enlace === esperado, `${t.formato}: el panel muestra la URL del QR (${enlace})`);
   const { nombre, bytes } = await descargarCon('#descargar-png');
@@ -193,7 +196,7 @@ for (const t of pruebasExtra) {
 // Sticker genérico (sin móvil): el QR no lleva ?movil.
 await poner({ formato: 'iman', estilo: 'clasico', urlBase: '', modo: 'generico' });
 {
-  const esperado = `${BASE}descargar/?o=sticker`;
+  const esperado = `${COOP}descargar/?o=sticker`;
   const { bytes } = await descargarCon('#descargar-png');
   const [leido] = await leerQR(Buffer.from(bytes).toString('base64'));
   ok(leido === esperado, `sticker sin móvil: jsQR lee «${leido}»`);
@@ -213,7 +216,7 @@ await poner({ formato: 'taxi', estilo: 'clasico', modo: 'lista', lista: '3, 7, 1
   ok(visibles.lista && !visibles.desde, 'modo lista: se ve el campo de lista y se esconden «Desde / Hasta»');
   ok(r.moviles.join(',') === '003,007,012,013,014,015,040', `lista «3, 7, 12-15, 40, 7» → ${r.moviles.join(', ')}`);
   ok(r.opciones.length === 7, 'el selector muestra los 7 móviles de la lista');
-  ok(/https:\/\//.test(r.errorUrl) && r.url === `${BASE}descargar/?movil=003&o=sticker`, 'URL base inválida: avisa y el QR sigue con la página de la app');
+  ok(/https:\/\//.test(r.errorUrl) && r.url === `${COOP}descargar/?movil=003&o=sticker`, 'URL base inválida: avisa y el QR sigue con la página de la app');
   ok(/14\s*stickers/.test(r.resumen), `resumen con la lista: ${r.resumen.trim()}`);
   await poner({ lista: '3, siete' });
   ok(!(await p.evaluate(() => document.querySelector('#error-moviles').hidden)), 'avisa si la lista trae algo que no es un número');
@@ -239,7 +242,7 @@ await poner({ formato: 'taxi', estilo: 'clasico', modo: 'rango', urlBase: '', mo
   ok(/@font-face\{font-family:'Sora'/.test(svg) && /data:font\/woff2;base64,/.test(svg), 'SVG con las fuentes incrustadas');
   ok(!/href="(?!data:)[^"#]/.test(svg), 'SVG autónomo (sin enlaces a archivos externos)');
   const [leido] = await leerQR(Buffer.from(svg).toString('base64'), 'image/svg+xml', [1400]);
-  ok(leido === `${BASE}descargar/?movil=023&o=sticker`, `SVG: jsQR lee «${leido}»`);
+  ok(leido === `${COOP}descargar/?movil=023&o=sticker`, `SVG: jsQR lee «${leido}»`);
 }
 
 // ---------------------------------------------------------------------------
@@ -308,7 +311,7 @@ async function pdf(nombre, papel, esperadas) {
   await p.screenshot({ path: DIR + 'impresion-taxi-carta.png', fullPage: true, clip: { x: 0, y: 0, width: 216 * PX_MM, height: 280 * PX_MM } });
   const png = await pdf('taxi-carta', 'carta', { hojas: 8 });
   const [leido] = await leerQR(readFileSync(png).toString('base64'), 'image/png', [null]);
-  ok(leido === `${BASE}descargar/?movil=001&o=sticker`, `PDF taxi: el QR impreso se lee «${leido}»`);
+  ok(leido === `${COOP}descargar/?movil=001&o=sticker`, `PDF taxi: el QR impreso se lee «${leido}»`);
   await p.emulateMedia({ media: 'screen' });
 }
 
@@ -335,7 +338,7 @@ async function pdf(nombre, papel, esperadas) {
   revisarMedidas(r, 'afiche', 'carta', { hojas: 2, stickers: 2 });
   const png = await pdf('afiche-carta', 'carta', { hojas: 2 });
   const [leido] = await leerQR(readFileSync(png).toString('base64'), 'image/png', [null]);
-  ok(leido === `${BASE}descargar/?movil=005&o=sticker`, `PDF afiche: el QR impreso se lee «${leido}»`);
+  ok(leido === `${COOP}descargar/?movil=005&o=sticker`, `PDF afiche: el QR impreso se lee «${leido}»`);
   await p.emulateMedia({ media: 'screen' });
 }
 

@@ -1,6 +1,10 @@
 // Bloques de ajustes que comparten el pasajero y el conductor: municipio (solo
 // dentro de TaxiCun), diseño, sala de prueba, sonido, notificaciones, conexión en
-// vivo, instalación y «Acerca de».
+// vivo, instalación, cuenta (modo real) y «Acerca de».
+// En modo real (EM.MODO_REAL) no se muestra nada de la demo: ni sala, ni relés, ni
+// simulación, ni «MODO PRUEBA», ni «Instalar» (en la web la app instalada abriría la
+// demo). En la app nativa (EM.ES_NATIVA) tampoco las notificaciones del navegador (el
+// WebView no las tiene).
 import { el, esc, icono, modal, chipPrueba, avisoDemo } from './ui.js';
 import * as EM from './empresa.js';
 
@@ -55,6 +59,7 @@ export function bloqueDiseno(N, diseno) {
 }
 
 export function bloqueSala(N, app) {
+  if (EM.MODO_REAL) return '';
   const sala = N.salaActual();
   const s = el(`<section class="a-grupo"><h3>Sala de prueba</h3>
     <p class="a-ayuda-txt">Los celulares que estén en la misma sala se ven entre sí (pasajeros y conductores). Úsala para hacer la demo con varias personas.</p>
@@ -84,6 +89,8 @@ export function bloqueSonidoYAvisos(N) {
       if (v) N.sonar('exito');
     },
   }));
+  // En la app nativa no hay notificaciones del navegador (llegarán con el push nativo).
+  if (EM.ES_NATIVA) return s;
   const estado = N.permisoNotificaciones();
   const txt = { granted: 'Activadas', denied: 'Bloqueadas en el navegador', default: 'Sin activar', 'no-soportado': 'Este navegador no las permite' }[estado] || estado;
   const fila = el(`<div class="a-fila-interruptor">
@@ -101,6 +108,7 @@ export function bloqueSonidoYAvisos(N) {
 }
 
 export function bloqueConexion(N, { simulacion = true } = {}) {
+  if (EM.MODO_REAL) return '';
   const s = el('<section class="a-grupo"><h3>Conexión y simulación</h3><div class="a-tarjeta-lista"></div></section>');
   const lista = s.querySelector('.a-tarjeta-lista');
   lista.append(interruptor({
@@ -124,9 +132,10 @@ export function bloqueConexion(N, { simulacion = true } = {}) {
 
 // Solo dentro de TaxiCun: de qué municipio y cooperativa es la app ahora, y
 // «Cambiar de municipio» (vuelve a la lista de TaxiCun). alCambiar decide si se
-// puede salir (por ejemplo, no con un viaje en curso).
-export function bloqueMunicipio(N, { alCambiar } = {}) {
-  if (!EM.EN_TAXICUN) return '';
+// puede salir (por ejemplo, no con un viaje en curso). unica: en modo real hay una
+// sola cooperativa con servicio y la lista la volvería a abrir (no se ofrece).
+export function bloqueMunicipio(N, { alCambiar, unica = false } = {}) {
+  if (!EM.EN_TAXICUN || (EM.MODO_REAL && unica)) return '';
   const s = el(`<section class="a-grupo a-tc-municipio" data-municipio><h3>Tu municipio</h3>
     <div class="a-tc-municipio-caja">
       ${EM.marcaIcono(44)}
@@ -140,6 +149,9 @@ export function bloqueMunicipio(N, { alCambiar } = {}) {
 }
 
 export function bloqueInstalar(N, app) {
+  // Dentro de la app de la tienda no hay nada que instalar. En el modo real de la web
+  // tampoco: la app instalada abre sin ?real=1, o sea la demo.
+  if (EM.ES_NATIVA || EM.MODO_REAL) return '';
   const s = el(`<section class="a-grupo"><h3>${EM.EN_TAXICUN ? `Instalar ${esc(EM.APP)}` : 'Instalar la app'}</h3>
     <div class="a-instalar">
       ${EM.EN_TAXICUN ? EM.iconoApp(52) : EM.marcaIcono(52, { png: true })}
@@ -170,7 +182,44 @@ export function bloqueAcerca(N, { que = 'App de pasajeros' } = {}) {
       ${EM.iconoApp(48)}
       <span><strong>${EM.palabraApp()}</strong><small>${esc(EM.LEMA_APP)}</small></span>
     </div>
-    <p class="a-ayuda-txt a-version">${chipPrueba('MODO PRUEBA')}${avisoDemo('a-chip-demo a-chip-demo-claro')}<span data-desarrollo>${esc(EM.TEXTO_DESARROLLO).replace(esc(EM.DESARROLLADOR), `<b>${esc(EM.DESARROLLADOR)}</b>`)}</span></p>
+    <p class="a-ayuda-txt a-version">${EM.MODO_REAL ? '' : `${chipPrueba('MODO PRUEBA')}${avisoDemo('a-chip-demo a-chip-demo-claro')}`}<span data-desarrollo>${esc(EM.TEXTO_DESARROLLO).replace(esc(EM.DESARROLLADOR), `<b>${esc(EM.DESARROLLADOR)}</b>`)}</span></p>
+    ${EM.MODO_REAL ? enlacePrivacidad() : ''}
     ${EM.ES_PROPUESTA ? `<p class="a-ayuda-txt">${esc(EM.TEXTO_PROPUESTA)}.</p>` : ''}
   </section>`);
+}
+
+// Modo real: la política de privacidad a mano también con la sesión iniciada (Ajustes y
+// Ayuda), como piden las tiendas.
+export function enlacePrivacidad() {
+  return `<a class="a-btn a-btn-suave a-btn-privacidad" href="${esc(EM.urlPrivacidad())}" target="_blank" rel="noopener" data-privacidad>${icono('candado', { tam: 18 })}<span>Política de privacidad</span></a>`;
+}
+
+// Solo en modo real: la cuenta de TaxiCun (correo con el que entró), «Mi cuenta»,
+// «Cerrar sesión» y «Eliminar mi cuenta». Va en Ajustes para que se encuentre sin
+// ayuda (lo pide la revisión de las tiendas). Lo usan el pasajero y el conductor:
+//   abrir()        abre «Mi cuenta» (opcional)
+//   cerrarSesion() y eliminar(): las acciones de cada app (piden confirmación ellas)
+export function bloqueCuenta(N, { nombre = '', correo = '', abrir = null, cerrarSesion = null, eliminar = null } = {}) {
+  if (!EM.MODO_REAL) return '';
+  const s = el(`<section class="a-grupo a-tu-cuenta" data-cuenta><h3>Tu cuenta</h3>
+    <div class="a-tarjeta-lista">
+      ${abrir
+        ? `<button type="button" class="a-fila-interruptor a-fila-boton" data-mi-cuenta>
+            <span class="a-fila-ico">${icono('usuario', { tam: 20 })}</span>
+            <span class="a-fila-txt"><strong>${esc(nombre || 'Mi cuenta')}</strong><small>${esc(correo || 'Tus datos y tu sesión')}</small></span>
+            ${icono('adelante', { tam: 18 })}
+          </button>`
+        : `<div class="a-fila-interruptor">
+            <span class="a-fila-ico">${icono('usuario', { tam: 20 })}</span>
+            <span class="a-fila-txt"><strong>${esc(nombre || 'Tu cuenta')}</strong>${correo ? `<small>${esc(correo)}</small>` : ''}</span>
+          </div>`}
+    </div>
+    ${cerrarSesion ? `<button type="button" class="a-btn a-btn-suave" data-salir>${icono('salir', { tam: 20 })}<span>Cerrar sesión</span></button>` : ''}
+    ${eliminar ? `<button type="button" class="a-btn a-btn-eliminar" data-eliminar>${icono('basura', { tam: 20 })}<span>Eliminar mi cuenta</span></button>
+      <p class="a-ayuda-txt">${esc(`Borra tu cuenta de ${EM.APP} y tus datos personales. No se puede deshacer.`)}</p>` : ''}
+  </section>`);
+  s.querySelector('[data-mi-cuenta]')?.addEventListener('click', () => abrir?.());
+  s.querySelector('[data-salir]')?.addEventListener('click', () => cerrarSesion?.());
+  s.querySelector('[data-eliminar]')?.addEventListener('click', () => eliminar?.());
+  return s;
 }

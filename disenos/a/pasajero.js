@@ -1,14 +1,21 @@
 // App del pasajero — diseño A «Ámbar Urbano».
 // Mapa a pantalla completa, barra flotante, hoja inferior arrastrable y una
 // vista por fase del viaje. La lógica vive en el núcleo (N); aquí solo se pinta.
+//
+// Modo real (EM.MODO_REAL: app nativa o ?real=1 en TaxiCun): cuenta de TaxiCun
+// con correo y código, tiempo real con el servidor (p.bus) y solo pago en
+// efectivo. No hay QR de prueba, programados, «MODO PRUEBA», sala ni simulación.
+// Sin el modo real todo sigue como en la demo.
 import {
   el, esc, $, $$, icono, ICONO_CATEGORIA, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos,
   modal, elegirOpcion, abrirMenu, estrellas, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
-  panelEscritorio, limitar, nombreCorto, sinMovimiento, avisoDemo,
+  panelEscritorio, limitar, nombreCorto, sinMovimiento, avisoDemo, pintarChipConexion, TEXTO_CONEXION,
 } from './ui.js';
 import * as EM from './empresa.js';
 import { mostrarBienvenida } from './registro.js';
-import { abrirMisViajes, abrirProgramados, abrirTarifas, abrirPromociones, abrirAjustes, abrirAyuda, abrirAvisos } from './pasajero-secciones.js';
+import { abrirMisViajes, abrirProgramados, abrirTarifas, abrirPromociones, abrirAjustes, abrirAyuda, abrirAvisos, abrirMiCuenta } from './pasajero-secciones.js';
+
+const REAL = EM.MODO_REAL;
 
 const MENSAJES_BUSQUEDA = [
   'Avisando a los taxis cercanos…',
@@ -16,8 +23,19 @@ const MENSAJES_BUSQUEDA = [
   'Buscando el móvil más cercano a tu punto',
   'Un conductor está revisando tu servicio',
 ];
+// Modo real: solo lo que la app sabe de verdad (no ve si un conductor está revisando).
+const MENSAJES_BUSQUEDA_REAL = [
+  'Avisando a los taxis cercanos…',
+  'Buscando el móvil más cercano a tu punto',
+  `Esperamos a que un conductor de ${EM.NOMBRE} acepte`,
+];
+const SIN_RED_BUSCANDO = 'Sin conexión: enviaremos tu solicitud al reconectar';
+// Modo real: la tarifa se marca «de ejemplo» solo mientras la ficha lo diga.
+const TARIFA_EJEMPLO = !REAL || Boolean(EM.TARIFAS_EJEMPLO);
 
 export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun = null }) {
+  // Modo real con una sola cooperativa en servicio: «Cambiar de municipio» la volvería a abrir.
+  const UNICA = REAL && Boolean(taxicun?.unica);
   raiz.innerHTML = '';
   raiz.classList.add('a-raiz');
   if (EM.FICHA_EQUIVOCADA) {
@@ -27,7 +45,18 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   EM.aplicarColores();
   EM.aplicarFoto(raiz);
   EM.marcarNoIndexar();
-  if (!vitrina) {
+  // En la app nativa no va el panel de escritorio (es para abrir la web en el celular).
+  if (!vitrina && REAL && !EM.ES_NATIVA) {
+    raiz.append(panelEscritorio({
+      titulo: `Pide tu taxi en <em>${esc(EM.PUEBLO)}</em>, sin llamar.`,
+      texto: `${EM.APP} con los taxis de ${EM.NOMBRE}: ubicación exacta, seguimiento en vivo y código de abordaje. Pagas en efectivo al conductor.`,
+      puntos: [
+        EM.unir([EM.textoTaxis(), EM.SERVICIO_24H ? 'servicio 24 horas' : ''], ' y ').replace(/^s/, 'S') || `Taxis de la ${EM.TIPO} cerca de ti`,
+        'Sabes quién llega: móvil, placa y código', 'Pagas en efectivo, sin sorpresas',
+      ],
+      url: N.urlApp('pasajero', { d: diseno, real: '1' }),
+    }));
+  } else if (!vitrina && !REAL) {
     raiz.append(panelEscritorio({
       titulo: `Pide tu taxi en <em>${esc(EM.PUEBLO)}</em>, sin llamar.`,
       texto: EM.EN_TAXICUN
@@ -57,7 +86,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       ${EM.EN_TAXICUN ? `<span class="a-tc-sello a-tc-sello-barra" title="${esc(`${EM.APP} · ${EM.NOMBRE}`)}">${EM.iconoApp(20)}<span>${EM.palabraApp()}</span></span>` : ''}
       <button class="a-icono-btn a-barra-campana" type="button" data-campana aria-label="Avisos">${icono('campana')}<span class="a-insignia" data-insignia hidden></span></button>
     </header>
-    <div class="a-chip-red${EM.ES_PROPUESTA ? ' a-chip-red-demo' : ''}" data-conexion><span class="a-led"></span><span data-conexion-txt>Solo este equipo</span><b>MODO PRUEBA</b>${avisoDemo()}</div>
+    ${REAL
+      ? `<div class="a-chip-red a-reconectando" data-conexion data-estado="sin_conectar" role="status"><span class="a-led"></span><span data-conexion-txt>${TEXTO_CONEXION.sin_conectar}</span></div>`
+      : `<div class="a-chip-red${EM.ES_PROPUESTA ? ' a-chip-red-demo' : ''}" data-conexion><span class="a-led"></span><span data-conexion-txt>Solo este equipo</span><b>MODO PRUEBA</b>${avisoDemo()}</div>`}
     <div class="a-banner-puerta" data-banner-puerta hidden role="alert"></div>
     <button class="a-flotante a-btn-ubicacion" type="button" data-mi-ubicacion aria-label="Volver a mi ubicación">${icono('mira')}</button>
   </div>`);
@@ -97,7 +128,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     destinoProvisional: null,
     cotizacion: null,
     reqCot: 0,
-    metodo: localStorage.getItem(EM.clave('metodo')) === 'efectivo' ? 'efectivo' : 'qr',
+    // En modo real solo hay efectivo (el QR es de prueba).
+    metodo: REAL || localStorage.getItem(EM.clave('metodo')) === 'efectivo' ? 'efectivo' : 'qr',
     programar: false,
     fecha: null,
     nota: '',
@@ -254,35 +286,64 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const yo = N.perfil.pasajero();
     const completados = N.perfil.viajesCompletadosPasajero();
     const fid = EM.fidelidad(completados);
-    const programados = N.perfil.viajesProgramados().length;
+    const programados = REAL ? 0 : N.perfil.viajesProgramados().length;
     const conexion = p?.estado.conexion === 'en-vivo' ? 'En vivo' : 'Solo este equipo';
+    // Modo real: estado del tiempo real con el servidor (sin sala ni «MODO PRUEBA»).
+    const estadoBus = p?.bus?.estado || 'sin_conectar';
     abrirMenu(app, {
-      cabeza: `${franjaCuadros()}
+      cabeza: REAL
+        ? `${franjaCuadros()}
+        <div class="a-menu-perfil">${avatar(yo?.nombre || '', 'a-avatar-grande')}
+          <div><strong>${esc(yo?.nombre || 'Pasajero')}</strong><span class="a-menu-correo">${esc(yo?.correo || '')}</span>
+          <span class="a-menu-cal">${icono('check', { tam: 14, grosor: 3 })} Correo verificado</span></div>
+        </div>`
+        : `${franjaCuadros()}
         <div class="a-menu-perfil">${avatar(yo?.nombre || '', 'a-avatar-grande')}
           <div><strong>${esc(yo?.nombre || 'Pasajero')}</strong><span>+57 ${esc(celularTexto(yo?.celular || ''))}</span>
           <span class="a-menu-cal">${icono('estrella', { tam: 14 })} ${decimal(yo?.calificacion || 5)} · ${yo?.verificado ? 'Celular verificado' : 'Pasajero'}</span></div>
         </div>`,
       items: [
+        REAL && { icono: 'usuario', texto: 'Mi cuenta', detalle: yo?.correo || 'Tus datos y tu sesión', accion: () => abrirMiCuenta(ctx()) },
         { icono: 'reloj', texto: 'Mis viajes', detalle: completados ? `${completados} ${completados === 1 ? 'viaje completado' : 'viajes completados'}` : 'Tu historial', accion: () => abrirMisViajes(ctx()) },
-        { icono: 'calendario', texto: 'Programados', detalle: 'Con 24 h: 10 % menos', insignia: programados ? String(programados) : '', accion: () => abrirProgramados(ctx()) },
-        { icono: 'ruta', texto: 'Tarifas y rutas', detalle: 'Valores de ejemplo', accion: () => abrirTarifas(ctx()) },
-        { icono: 'regalo', texto: 'Promociones', detalle: !fid ? `Ofertas de la ${EM.TIPO}` : fid.siguienteConDescuento ? '¡Tu próximo viaje va al 50 %!' : `Tarjeta de viajes: ${fid.completados}/${fid.meta}`, accion: () => abrirPromociones(ctx()) },
-        { icono: 'ajustes', texto: 'Ajustes', detalle: 'Diseño, sala, sonido, instalar', accion: () => abrirAjustes(ctx()) },
+        // El servidor no tiene viajes programados: en modo real no se ofrecen.
+        !REAL && { icono: 'calendario', texto: 'Programados', detalle: 'Con 24 h: 10 % menos', insignia: programados ? String(programados) : '', accion: () => abrirProgramados(ctx()) },
+        { icono: 'ruta', texto: 'Tarifas y rutas', detalle: TARIFA_EJEMPLO ? 'Valores de ejemplo' : `Tarifas de ${EM.NOMBRE}`, accion: () => abrirTarifas(ctx()) },
+        // Modo real: sin tarjeta de viajes ni programados, Promociones quedaría vacío.
+        !REAL && { icono: 'regalo', texto: 'Promociones', detalle: !fid ? `Ofertas de la ${EM.TIPO}` : fid.siguienteConDescuento ? '¡Tu próximo viaje va al 50 %!' : `Tarjeta de viajes: ${fid.completados}/${fid.meta}`, accion: () => abrirPromociones(ctx()) },
+        { icono: 'ajustes', texto: 'Ajustes', detalle: !REAL ? 'Diseño, sala, sonido, instalar' : EM.ES_NATIVA ? 'Sonido y tu cuenta' : 'Sonido, avisos y tu cuenta', accion: () => abrirAjustes(ctx()) },
         { icono: 'ayuda', texto: 'Ayuda', detalle: EM.TELEFONO ? `Central${EM.SERVICIO_24H ? ' 24 h' : ''} · ${EM.TELEFONO_VISIBLE}` : 'Preguntas frecuentes y contacto', accion: () => abrirAyuda(ctx()) },
         { separador: true },
-        EM.EN_TAXICUN && { icono: 'pin', texto: 'Cambiar de municipio', detalle: `Ahora: ${EM.PUEBLO} · ${EM.NOMBRE}`, accion: cambiarMunicipio },
-        { icono: 'volante', texto: 'Soy conductor', detalle: 'Abrir la app de conductores', href: EM.urlOtraApp('conductor', diseno), clase: 'a-menu-marca' },
-        { icono: 'salir', texto: 'Cerrar sesión', accion: cerrarSesion, clase: 'a-menu-peligro' },
+        EM.EN_TAXICUN && !UNICA && { icono: 'pin', texto: 'Cambiar de municipio', detalle: `Ahora: ${EM.PUEBLO} · ${EM.NOMBRE}`, accion: cambiarMunicipio },
+        // En la app nativa los conductores tienen su propia app.
+        !EM.ES_NATIVA && { icono: 'volante', texto: 'Soy conductor', detalle: 'Abrir la app de conductores', href: EM.urlOtraApp('conductor', diseno), clase: 'a-menu-marca' },
+        { icono: 'salir', texto: 'Cerrar sesión', accion: () => cerrarSesion(), clase: 'a-menu-peligro' },
       ].filter(Boolean),
       pie: `<div class="a-menu-pie-marca">${EM.marcaIcono(30)}<div><strong>${esc(EM.NOMBRE_LARGO)}</strong>${EM.LEMA ? `<small>${esc(EM.LEMA)}</small>` : ''}</div></div>
         ${EM.EN_TAXICUN ? `<div class="a-menu-pie-tc">${EM.iconoApp(18)}<span>${esc(EM.TEXTO_DESARROLLO)}</span></div>` : ''}
-        <div class="a-menu-pie-estado">${chipPrueba('MODO PRUEBA')}${avisoDemo('a-chip-demo a-chip-demo-claro')}<span><span class="a-led ${p?.estado.conexion === 'en-vivo' ? 'a-led-vivo' : ''}"></span>${conexion} · sala «${esc(p?.estado.sala || N.salaActual())}»</span></div>`,
+        ${REAL
+          ? `<div class="a-menu-pie-estado"><span><span class="a-led ${estadoBus === 'en_linea' ? 'a-led-vivo' : ''}"></span>${esc(TEXTO_CONEXION[estadoBus] || TEXTO_CONEXION.sin_conectar)}</span></div>`
+          : `<div class="a-menu-pie-estado">${chipPrueba('MODO PRUEBA')}${avisoDemo('a-chip-demo a-chip-demo-claro')}<span><span class="a-led ${p?.estado.conexion === 'en-vivo' ? 'a-led-vivo' : ''}"></span>${conexion} · sala «${esc(p?.estado.sala || N.salaActual())}»</span></div>`}`,
     });
   }
 
-  async function cerrarSesion() {
+  async function cerrarSesion({ alTerminar = null } = {}) {
     if (p && !['inicio'].includes(p.estado.fase)) {
       avisos.mostrar({ titulo: 'Tienes un viaje en curso', cuerpo: 'Termínalo o cancélalo antes de cerrar sesión.', tipo: 'alerta' });
+      return;
+    }
+    if (REAL) {
+      const ok = await modal(app, {
+        titulo: '¿Cerrar sesión?',
+        texto: 'Para volver a pedir taxi ingresas con tu correo. Tu historial de viajes se conserva en este celular, salvo que entre otra cuenta.',
+        acciones: [{ texto: 'Cancelar', valor: false }, { texto: 'Cerrar sesión', valor: true, clase: 'a-btn-peligro' }],
+      });
+      if (!ok) return;
+      conSesion = false;
+      const quitar = procesando('Cerrando sesión…');
+      await N.servidor.salir();
+      quitar();
+      alTerminar?.();
+      terminarSesionLocal();
       return;
     }
     const ok = await modal(app, {
@@ -296,6 +357,52 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     mostrarBienvenida(app, { N, alTerminar: alRegistrarse });
   }
 
+  // Solo en modo real: borra la cuenta en el servidor (DELETE /api/yo) y los datos
+  // de este celular, y vuelve al ingreso. Si falla, no se borra nada.
+  async function eliminarCuenta({ alTerminar = null } = {}) {
+    if (p && p.estado.fase !== 'inicio') {
+      avisos.mostrar({ titulo: 'Tienes un viaje en curso', cuerpo: 'Termínalo o cancélalo antes de eliminar tu cuenta.', tipo: 'alerta' });
+      return;
+    }
+    const ok = await modal(app, {
+      titulo: '¿Eliminar tu cuenta?',
+      texto: `Borramos tu nombre, correo y celular de ${EM.APP} y cerramos tu sesión en todos tus equipos. Tus viajes quedan sin datos personales para la ${EM.TIPO}. Esto no se puede deshacer.`,
+      icono: `<span class="a-sos-ico">${icono('basura', { tam: 32 })}</span>`,
+      clase: 'a-modal-sos',
+      acciones: [{ texto: 'Eliminar mi cuenta', valor: true, clase: 'a-btn-peligro', icono: 'basura' }, { texto: 'Cancelar', valor: false, clase: 'a-btn-suave' }],
+    });
+    if (!ok) return;
+    // El servidor cierra el tiempo real con «sesión cerrada»: no es un cierre inesperado.
+    const antes = conSesion;
+    conSesion = false;
+    const quitar = procesando('Eliminando tu cuenta…');
+    try {
+      await N.servidor.eliminarCuenta();
+    } catch (err) {
+      quitar();
+      if (err?.codigo === 'sin_sesion') {
+        alTerminar?.();
+        avisos.mostrar({ titulo: 'Tu sesión se cerró', cuerpo: 'Ingresa de nuevo con tu correo para eliminar tu cuenta.', tipo: 'alerta' });
+        terminarSesionLocal();
+        return;
+      }
+      conSesion = antes;
+      avisos.mostrar({ titulo: 'No pudimos eliminar tu cuenta', cuerpo: EM.textoError(err), tipo: 'error' });
+      return;
+    }
+    quitar();
+    alTerminar?.();
+    terminarSesionLocal({ borrarTodo: true });
+    avisos.mostrar({ titulo: 'Tu cuenta se eliminó', cuerpo: `Borramos tus datos de ${EM.APP} y de este celular.`, tipo: 'exito' });
+  }
+
+  // Capa de espera sobre la app (cerrar sesión, eliminar cuenta). Devuelve cómo quitarla.
+  function procesando(texto) {
+    const capa = el(`<div class="a-procesando" role="status"><div class="a-procesando-caja"><span class="a-girador a-girador-grande"></span><strong>${esc(texto)}</strong></div></div>`);
+    app.append(capa);
+    return () => capa.remove();
+  }
+
   // Solo dentro de TaxiCun: vuelve a la lista de municipios (no con un viaje en curso).
   function cambiarMunicipio() {
     if (p && p.estado.fase !== 'inicio') {
@@ -307,7 +414,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
 
   function ctx() {
     return {
-      N, app, p, avisos, diseno, hoja, cambiarMunicipio,
+      N, app, p, avisos, diseno, hoja, cambiarMunicipio, unica: UNICA,
+      // Modo real: «Mi cuenta» y Ajustes → Tu cuenta.
+      cerrarSesion: REAL ? cerrarSesion : null,
+      eliminarCuenta: REAL ? eliminarCuenta : null,
+      alActualizar: datosActualizados,
       programarViaje: () => {
         ui.programar = true;
         ui.fecha = fechaPorDefecto();
@@ -421,13 +532,30 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       cuerpo.innerHTML = html;
     }
 
-    function resultados(items, { cargando = false } = {}) {
+    // ofrecerMapa (modo real): todavía no se buscó en el mapa; se ofrece hacerlo.
+    function resultados(items, { cargando = false, ofrecerMapa = false } = {}) {
       lista = items;
+      const texto = q.value.trim();
       cuerpo.innerHTML = `<section class="a-grupo">
         <ul class="a-filas" role="list">${items.map((l, i) => filaLugar(l, i)).join('')}</ul>
         ${cargando ? `<p class="a-buscando-mas"><span class="a-girador"></span> Buscando más direcciones en el mapa…</p>` : ''}
-        ${!cargando && !items.length ? `<div class="a-sin-resultados">${icono('buscar', { tam: 28 })}<p>No encontramos «${esc(q.value.trim())}».</p><button type="button" class="a-btn a-btn-suave" data-en-mapa-2>${icono('mapa', { tam: 18 })} Elegir en el mapa</button></div>` : ''}
+        ${ofrecerMapa ? `<button type="button" class="a-btn a-btn-suave a-btn-bloque" data-buscar-mapa>${icono('buscar', { tam: 18 })} Buscar «${esc(texto)}» en el mapa</button>` : ''}
+        ${!cargando && !ofrecerMapa && !items.length ? `<div class="a-sin-resultados">${icono('buscar', { tam: 28 })}<p>No encontramos «${esc(texto)}».</p><button type="button" class="a-btn a-btn-suave" data-en-mapa-2>${icono('mapa', { tam: 18 })} Elegir en el mapa</button></div>` : ''}
       </section>`;
+    }
+
+    // Modo real: el servicio de direcciones de OpenStreetMap (Nominatim) no permite
+    // autocompletar mientras se escribe desde la app. Se busca al tocar «Buscar en el
+    // mapa» o Enter; mientras se escribe, solo los lugares frecuentes de la ficha.
+    let buscadoEnMapa = '';
+    async function buscarEnMapa(texto) {
+      if (texto.length < 3) return;
+      buscadoEnMapa = texto;
+      const n = ++consulta;
+      resultados(N.buscarLocal(texto), { cargando: true });
+      const r = await N.buscarDirecciones(texto, { cerca: ui.origen || N.CENTRO });
+      if (n !== consulta || q.value.trim() !== texto) return;
+      resultados(r);
     }
 
     const buscarRemoto = N.antirrebote ? N.antirrebote(async (texto) => {
@@ -446,11 +574,25 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         return;
       }
       const locales = N.buscarLocal(texto);
+      if (REAL) {
+        consulta++;
+        buscadoEnMapa = '';
+        resultados(locales, { ofrecerMapa: texto.length >= 3 });
+        return;
+      }
       resultados(locales, { cargando: texto.length >= 3 });
       if (texto.length >= 3) buscarRemoto(texto);
     });
     q.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && lista[0] && q.value.trim()) elegir(lista[0]);
+      if (e.key !== 'Enter') return;
+      const texto = q.value.trim();
+      // Modo real: Enter busca en el mapa (si no se ha buscado ese texto todavía).
+      if (REAL && texto.length >= 3 && buscadoEnMapa !== texto) {
+        e.preventDefault();
+        buscarEnMapa(texto);
+        return;
+      }
+      if (lista[0] && texto) elegir(lista[0]);
     });
     $(panel, '[data-limpiar]').addEventListener('click', () => {
       q.value = '';
@@ -460,6 +602,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     panel.addEventListener('click', (e) => {
       const t = e.target;
       if (t.closest('[data-cerrar]')) return salir();
+      if (t.closest('[data-buscar-mapa]')) return buscarEnMapa(q.value.trim());
       const cat = t.closest('[data-cat]');
       if (cat) {
         catActual = cat.dataset.cat;
@@ -560,12 +703,15 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   }
 
   function tarjetaConductor(c) {
+    // En modo real la calificación y los viajes salen del servidor: si no vienen, no se inventan.
+    const conCal = !REAL || Number(c.calificacion) > 0;
+    const conViajes = !REAL || Number.isFinite(Number(c.viajes)) && c.viajes != null;
     return `<div class="a-tarjeta-conductor">
       <div class="a-conductor-fila">
-        <span class="a-conductor-foto">${avatar(c.nombre, 'a-avatar-grande')}<span class="a-conductor-cal">${icono('estrella', { tam: 11 })}${decimal(c.calificacion)}</span></span>
+        <span class="a-conductor-foto">${avatar(c.nombre, 'a-avatar-grande')}${conCal ? `<span class="a-conductor-cal">${icono('estrella', { tam: 11 })}${decimal(c.calificacion)}</span>` : ''}</span>
         <span class="a-conductor-datos">
           <strong>${esc(c.nombre)}</strong>
-          <small>${Number(c.viajes || 0).toLocaleString('es-CO')} viajes · ${esc(c.vehiculo || EM.VEHICULO)} ${esc((c.color || '').toLowerCase())}</small>
+          <small>${conViajes ? `${Number(c.viajes || 0).toLocaleString('es-CO')} viajes · ` : ''}${esc(c.vehiculo || EM.VEHICULO)} ${esc((c.color || '').toLowerCase())}</small>
         </span>
         <span class="a-movil" aria-label="Móvil ${esc(c.movil)}"><small>MÓVIL</small><b>${esc(c.movil)}</b></span>
       </div>
@@ -580,11 +726,20 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     </div>`;
   }
 
+  // Modo real: ¿la solicitud espera conexión? (el bus no está en línea o quedó en la cola)
+  function sinRedBuscando() {
+    return Boolean(p) && (p.bus?.estado !== 'en_linea' || Boolean(p.estado.viaje?.enCola));
+  }
+  function textoBuscandoReal(i) {
+    return sinRedBuscando() ? SIN_RED_BUSCANDO : MENSAJES_BUSQUEDA_REAL[i % MENSAJES_BUSQUEDA_REAL.length];
+  }
+
   function acciones(c) {
     const yo = N.perfil.pasajero();
     const tel = String(c.tel || EM.TELEFONO || '').replace(/\D/g, '');
     const wa = c.tel ? N.enlaceWhatsApp(c.tel, `Hola ${nombreCorto(c.nombre)}, soy ${nombreCorto(yo?.nombre || '')}, el pasajero de ${EM.NOMBRE}.`) : '';
-    if (N.esTelDemo(c.tel)) {
+    // En modo real el celular es el que manda la central, aunque caiga en el rango de la demo.
+    if (!REAL && N.esTelDemo(c.tel)) {
       return `<div class="a-acciones">
       <button type="button" class="a-accion" data-llamada-demo>${icono('telefono')}<span>Llamar</span></button>
       <button type="button" class="a-accion" data-llamada-demo>${icono('chat')}<span>WhatsApp</span></button>
@@ -653,7 +808,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         const g = N.perfil.lugaresGuardados();
         const rec = N.perfil.recientes().slice(0, 3);
         const fid = EM.fidelidad(p.viajesCompletados());
-        const prog = N.perfil.viajesProgramados();
+        const prog = REAL ? [] : N.perfil.viajesProgramados();
         const chips = [
           g.casa ? `<button type="button" class="a-chip" data-lugar="casa">${icono('casa', { tam: 16 })}<span>Casa</span></button>` : `<button type="button" class="a-chip a-chip-vacio" data-guardar="casa">${icono('casa', { tam: 16 })}<span>Casa</span>${icono('mas', { tam: 14 })}</button>`,
           g.trabajo ? `<button type="button" class="a-chip" data-lugar="trabajo">${icono('trabajo', { tam: 16 })}<span>Trabajo</span></button>` : `<button type="button" class="a-chip a-chip-vacio" data-guardar="trabajo">${icono('trabajo', { tam: 16 })}<span>Trabajo</span>${icono('mas', { tam: 14 })}</button>`,
@@ -671,7 +826,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <div class="a-aviso-gps" data-aviso-gps hidden>${icono('info', { tam: 18 })}<span>${esc(`Usamos el centro de ${EM.PUEBLO}; mueve el mapa para ubicar tu punto.`)}</span></div>
           <div class="a-campo-destino">
             <button type="button" class="a-campo-destino-btn" data-buscar>${icono('buscar', { tam: 22, grosor: 2.4 })}<span>¿A dónde vas?</span></button>
-            <button type="button" class="a-campo-prog" data-programar aria-label="Programar un viaje">${icono('calendario', { tam: 18 })}<span>Programar</span></button>
+            ${REAL ? '' : `<button type="button" class="a-campo-prog" data-programar aria-label="Programar un viaje">${icono('calendario', { tam: 18 })}<span>Programar</span></button>`}
           </div>
           <div class="a-chips" role="list">${chips.join('')}</div>
           ${fid ? `<button type="button" class="a-fid-mini" data-promos>
@@ -687,11 +842,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             <button type="button" class="a-btn a-btn-suave a-btn-bloque" data-buscar>${icono('buscar', { tam: 18 })} Ver todos los lugares</button>
           </section>
           <section class="a-bloque">
-            <div class="a-promo">
+            ${REAL ? '' : `<div class="a-promo">
               <span class="a-promo-ico">${icono('calendario', { tam: 22 })}</span>
               <span><strong>Programa con 24 horas</strong><small>y paga 10 % menos en tu viaje.</small></span>
               <button type="button" class="a-btn a-btn-tinta a-btn-chico" data-programar>Programar</button>
-            </div>
+            </div>`}
             ${bloqueCentral()}
           </section>`;
       },
@@ -785,18 +940,20 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <span><h2>Confirma tu viaje</h2><small data-ruta-sub>Calculando la ruta…</small></span>
         </div>
         <div class="a-tarifa" data-arrastre>
-          <span class="a-tarifa-txt"><small>Tarifa estimada</small><strong data-total class="a-esqueleto-txt">$——</strong><span class="a-chip-ejemplo">${icono('info', { tam: 13 })} Tarifa de ejemplo</span></span>
+          <span class="a-tarifa-txt"><small>Tarifa estimada</small><strong data-total class="a-esqueleto-txt">$——</strong>${TARIFA_EJEMPLO ? `<span class="a-chip-ejemplo">${icono('info', { tam: 13 })} Tarifa de ejemplo</span>` : ''}</span>
           <span class="a-tarifa-taxi" aria-hidden="true"><svg viewBox="0 0 40 64" width="30" height="48">${N.svgTaxi ? N.svgTaxi({ tamano: 48 }).replace(/<svg[^>]*>|<\/svg>/g, '') : ''}</svg><small>${esc(EM.VEHICULO)}<br>4 puestos</small></span>
         </div>
         <button type="button" class="a-ver-detalle" data-detalle aria-expanded="false">${icono('lista', { tam: 16 })} Ver detalle de la tarifa ${icono('abajo', { tam: 16 })}</button>
         <div class="a-detalle" data-detalle-lista hidden></div>
-        <div class="a-segmentado" role="radiogroup" aria-label="Método de pago">
+        ${REAL
+          ? `<div class="a-pago-fijo">${icono('efectivo', { tam: 22 })}<span>Pagas en efectivo<small>Directamente al conductor, al terminar el viaje</small></span></div>`
+          : `<div class="a-segmentado" role="radiogroup" aria-label="Método de pago">
           <button type="button" role="radio" data-metodo="qr" aria-checked="${ui.metodo === 'qr'}">${icono('qr', { tam: 20 })}<span>QR <small>prueba</small></span></button>
           <button type="button" role="radio" data-metodo="efectivo" aria-checked="${ui.metodo === 'efectivo'}">${icono('efectivo', { tam: 20 })}<span>Efectivo</span></button>
-        </div>
+        </div>`}
         <div data-corte></div>
         ${trayecto(ui.origen, ui.destino)}
-        <div class="a-fila-interruptor">
+        ${REAL ? '' : `<div class="a-fila-interruptor">
           <span class="a-fila-ico">${icono('calendario', { tam: 20 })}</span>
           <span class="a-fila-txt"><strong>Programar</strong><small>Con 24 h de anticipación: 10 % menos</small></span>
           <button type="button" role="switch" class="a-interruptor" data-programar aria-checked="${ui.programar}" aria-label="Programar el viaje"><span></span></button>
@@ -808,7 +965,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             <button type="button" class="a-chip" data-rapido="2">En 2 horas</button>
           </div>
           <p class="a-programar-info" data-programar-info></p>
-        </div>
+        </div>`}
         <label class="a-campo-nota">${icono('mensaje', { tam: 20 })}<input data-nota maxlength="140" placeholder="Nota para el conductor (opcional)" value="${esc(ui.nota)}" aria-label="Nota para el conductor"></label>
         ${fid ? `<div class="a-fid-linea ${fid.siguienteConDescuento ? 'a-fid-premio' : ''}">
           <span class="a-fid-barra" aria-hidden="true"><span style="width:${(fid.siguienteConDescuento ? 1 : fid.completados / fid.meta) * 100}%"></span></span>
@@ -834,7 +991,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           localStorage.setItem(EM.clave('metodo'), ui.metodo);
           $$(c, '[data-metodo]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
         }));
+        $(c, '[data-nota]').addEventListener('input', (e) => (ui.nota = e.target.value));
+        $(pie, '[data-pedir]').addEventListener('click', pedir);
+        // En modo real no hay programar (el servidor no tiene viajes programados).
         const fecha = $(c, '[data-fecha]');
+        if (!fecha) return;
         const minimo = () => aLocal(new Date(Date.now() + 35 * 60 * 1000));
         fecha.min = minimo();
         if (ui.programar) fecha.value = aLocal(ui.fecha || fechaPorDefecto());
@@ -870,8 +1031,6 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           fecha.value = aLocal(f);
           cotizar();
         }));
-        $(c, '[data-nota]').addEventListener('input', (e) => (ui.nota = e.target.value));
-        $(pie, '[data-pedir]').addEventListener('click', pedir);
       },
       entrar() {
         quitarRadar();
@@ -891,7 +1050,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <div class="a-buscando-anim" aria-hidden="true"><span></span><span></span><svg viewBox="0 0 40 64" width="26" height="42">${N.svgTaxi({ tamano: 42 }).replace(/<svg[^>]*>|<\/svg>/g, '')}</svg></div>
           <div class="a-buscando-txt">
             <h2>Buscando tu taxi</h2>
-            <p data-mensaje aria-live="polite">${MENSAJES_BUSQUEDA[0]}</p>
+            <p data-mensaje aria-live="polite">${REAL ? textoBuscandoReal(0) : MENSAJES_BUSQUEDA[0]}</p>
           </div>
         </div>
         <div class="a-barra-progreso" aria-hidden="true"><span></span></div>
@@ -900,7 +1059,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         ${trayecto(v.origen, v.destino, { datos: false })}
         <div class="a-resumen-pago">
           <span>${icono(v.metodoPago === 'qr' ? 'qr' : 'efectivo', { tam: 18 })} ${v.metodoPago === 'qr' ? 'QR (prueba)' : 'Efectivo'}</span>
-          <strong>${N.pesos(v.tarifa.total)}</strong>
+          <strong>${v.tarifa?.total != null ? N.pesos(v.tarifa.total) : ''}</strong>
         </div>
         ${v.nota ? `<p class="a-nota-viaje">${icono('mensaje', { tam: 16 })} «${esc(v.nota)}»</p>` : ''}`;
       },
@@ -909,12 +1068,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         $(pie, '[data-cancelar]').addEventListener('click', cancelarViaje);
         let i = 0;
         const t = setInterval(() => {
-          i = (i + 1) % MENSAJES_BUSQUEDA.length;
           const nodo = $(c, '[data-mensaje]');
           if (!nodo) return;
+          // Modo real: sin conexión no se rota (la solicitud espera en la cola).
+          const siguiente = REAL ? textoBuscandoReal(sinRedBuscando() ? i : (i = (i + 1) % MENSAJES_BUSQUEDA_REAL.length)) : MENSAJES_BUSQUEDA[(i = (i + 1) % MENSAJES_BUSQUEDA.length)];
+          if (nodo.textContent === siguiente) return;
           nodo.classList.remove('a-entra-txt');
           void nodo.offsetWidth;
-          nodo.textContent = MENSAJES_BUSQUEDA[i];
+          nodo.textContent = siguiente;
           nodo.classList.add('a-entra-txt');
         }, 2600);
         ui.limpiezas.push(() => clearInterval(t));
@@ -1018,7 +1179,29 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       html(e) {
         const v = e.viaje;
         const c = e.conductor;
-        const valor = e.cobro?.valor || v.tarifa.total;
+        const valor = e.cobro?.valor || v.tarifa?.total || 0;
+        // Modo real: solo efectivo (el QR, las billeteras y «otro celular» son de prueba).
+        if (REAL) {
+          return `
+        <div class="a-pago-cabeza">
+          <span class="a-meta-ico" aria-hidden="true">${icono('bandera', { tam: 28 })}</span>
+          <h2>${v.destino ? `Llegaste a ${esc(v.destino.titulo)}` : 'Llegaste a tu destino'}</h2>
+          <p>${esc(`Gracias por viajar con ${EM.NOMBRE}`)}</p>
+        </div>
+        <div class="a-total">
+          <small>Total a pagar</small>
+          <strong data-total-pagar>${N.pesos(valor)}</strong>
+          <span class="a-total-detalle">${esc(EM.unir([e.kmFinal ? N.kmTexto(e.kmFinal) : '', c?.movil ? `Móvil ${c.movil}` : '', nombreCorto(c?.nombre || '')]))}</span>
+        </div>
+        <h3 class="a-subtitulo">Pagas en efectivo</h3>
+        <div class="a-opciones-pago">
+          <button type="button" class="a-op-pago a-op-destacada" data-efectivo>
+            <span class="a-op-ico">${icono('efectivo')}</span>
+            <span class="a-op-txt"><strong>Ya pagué en efectivo</strong><small>Le pagas directamente al conductor</small></span>
+            ${icono('adelante', { tam: 20 })}
+          </button>
+        </div>`;
+        }
         return `
         <div class="a-pago-cabeza">
           <span class="a-meta-ico" aria-hidden="true">${icono('bandera', { tam: 28 })}</span>
@@ -1078,14 +1261,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           if (t.closest('[data-efectivo]')) {
             const ok = await modal(app, {
               titulo: '¿Pagaste en efectivo?',
-              texto: `Confirma que le entregaste ${N.pesos(p.estado.cobro?.valor || p.estado.viaje.tarifa.total)} al conductor.`,
+              texto: `Confirma que le entregaste ${N.pesos(p.estado.cobro?.valor || p.estado.viaje?.tarifa?.total || 0)} al conductor.`,
               acciones: [{ texto: 'Todavía no', valor: false }, { texto: 'Sí, ya pagué', valor: true, clase: 'a-btn-primario' }],
             });
             if (ok) p.pagarEnEfectivo();
           }
           if (t.closest('[data-escanear]')) escanear();
         });
-        $(c, '[data-otro]').addEventListener('toggle', (e) => {
+        $(c, '[data-otro]')?.addEventListener('toggle', (e) => {
           if (!e.target.open) return;
           const url = p.urlCobroActual();
           $(c, '[data-qr-otro]').innerHTML = url
@@ -1176,15 +1359,15 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           : '<span class="a-eta"><strong data-eta-num>—</strong><small data-eta-unidad>min</small></span>'}
         <span class="a-estado-txt"><h2>${llego ? 'Tu taxi está en la puerta' : 'Tu taxi va en camino'}</h2><small data-estado-sub>${llego ? 'Sal y verifica la placa antes de subir' : 'Calculando…'}</small></span>
       </div>
-      ${llego ? codigoAbordaje(v.codigo, true) : ''}
+      ${llego && v.codigo ? codigoAbordaje(v.codigo, true) : ''}
       ${tarjetaConductor(c)}
-      ${llego ? '' : codigoAbordaje(v.codigo)}
+      ${llego || !v.codigo ? '' : codigoAbordaje(v.codigo)}
       ${acciones(c)}
       <div data-corte></div>
       ${trayecto(v.origen, v.destino, { datos: false })}
       <div class="a-resumen-pago">
         <span>${icono(v.metodoPago === 'qr' ? 'qr' : 'efectivo', { tam: 18 })} ${v.metodoPago === 'qr' ? 'QR (prueba)' : 'Efectivo'}</span>
-        <strong>${N.pesos(v.tarifa.total)}</strong>
+        <strong>${v.tarifa?.total != null ? N.pesos(v.tarifa.total) : ''}</strong>
       </div>
       <button type="button" class="a-btn-texto a-texto-peligro" data-cancelar>Cancelar servicio</button>`;
   }
@@ -1234,10 +1417,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     void total.offsetWidth;
     total.classList.add('a-cambia');
     ponerTexto(c, '[data-ruta-sub]', rt ? `${N.kmTexto(rt.km)} · ${N.minutosTexto(rt.min)}${rt.aproximada ? ' (aprox.)' : ''}${tarifa.rutaFija ? ' · ruta con tarifa fija' : ''}` : 'Destino a convenir con el conductor');
-    ponerTexto(c, '[data-ruta-datos]', rt ? `${N.kmTexto(rt.km)} · ${N.minutosTexto(rt.min)} de viaje · llegas a las ${N.horaTexto((ui.programar && ui.fecha ? ui.fecha.getTime() : Date.now()) + rt.min * 60000 + 5 * 60000)}` : 'El conductor te cobra según el recorrido (mínima de ejemplo).');
+    ponerTexto(c, '[data-ruta-datos]', rt ? `${N.kmTexto(rt.km)} · ${N.minutosTexto(rt.min)} de viaje · llegas a las ${N.horaTexto((ui.programar && ui.fecha ? ui.fecha.getTime() : Date.now()) + rt.min * 60000 + 5 * 60000)}` : `El conductor te cobra según el recorrido${TARIFA_EJEMPLO ? ' (mínima de ejemplo)' : ''}.`);
     $(c, '[data-detalle-lista]').innerHTML = `<ul>${tarifa.detalle.map((d) => `<li class="${d.valor < 0 ? 'a-descuento' : ''}"><span>${esc(d.concepto)}</span><b>${d.valor < 0 ? '−' : ''}${N.pesos(Math.abs(d.valor))}</b></li>`).join('')}
       <li class="a-detalle-total"><span>Total estimado</span><b>${N.pesos(tarifa.total)}</b></li></ul>
-      <p>${icono('info', { tam: 14 })} Tarifas de ejemplo: la ${EM.TIPO} confirmará las oficiales. Con taxímetro o ruta fija, el valor final puede variar.</p>`;
+      <p>${icono('info', { tam: 14 })} ${TARIFA_EJEMPLO ? `Tarifas de ejemplo: la ${EM.TIPO} confirmará las oficiales. ` : ''}Con taxímetro o ruta fija, el valor final puede variar.</p>`;
     const info = $(c, '[data-programar-info]');
     if (info) {
       if (ui.programar && ui.fecha) {
@@ -1259,7 +1442,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
 
   async function pedir() {
     if (!p.registrado) {
-      mostrarBienvenida(app, { N, alTerminar: alRegistrarse });
+      if (REAL) abrirIngreso();
+      else mostrarBienvenida(app, { N, alTerminar: alRegistrarse });
       return;
     }
     const b = $(hoja.pie, '[data-pedir]');
@@ -1270,13 +1454,13 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       N.pedirPermisoNotificaciones();
     }
     try {
-      const r = await p.solicitar({ origen: ui.origen, destino: ui.destino || null, metodoPago: ui.metodo, programadoPara: ui.programar ? ui.fecha : null, nota: ui.nota.trim() });
+      const r = await p.solicitar({ origen: ui.origen, destino: ui.destino || null, metodoPago: REAL ? 'efectivo' : ui.metodo, programadoPara: !REAL && ui.programar ? ui.fecha : null, nota: ui.nota.trim() });
       if (r?.programado) {
         reiniciarUI();
         pintar();
       }
     } catch (err) {
-      avisos.mostrar({ titulo: 'No pudimos pedir el taxi', cuerpo: err.message, tipo: 'error' });
+      avisos.mostrar({ titulo: 'No pudimos pedir el taxi', cuerpo: REAL && err?.codigo ? EM.textoError(err) : err.message, tipo: 'error' });
       b.disabled = false;
       b.classList.remove('a-ocupado');
     }
@@ -1399,9 +1583,16 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     VISTAS[ui.vista]?.actualizar?.(e);
     actualizarMapa(e);
     // Indicador de conexión.
+    if (REAL) return pintarConexion();
     const vivo = e.conexion === 'en-vivo';
     $(app, '[data-conexion]').classList.toggle('a-vivo', vivo);
     ponerTexto(app, '[data-conexion-txt]', vivo ? `En vivo · ${e.conductoresReales || 0} conductores` : 'Solo este equipo');
+  }
+
+  // Modo real: «Conectando… / En línea / Sin conexión, reintentando…» según bus.estado.
+  function pintarConexion() {
+    if (!REAL) return;
+    pintarChipConexion($(app, '[data-conexion]'), p?.bus?.estado || 'sin_conectar');
   }
 
   function actualizarMapa(e) {
@@ -1458,24 +1649,165 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     avisos.mostrar({ titulo: `Estás en ${EM.PUEBLO}`, cuerpo: `Te mostramos los taxis de ${EM.NOMBRE}. Si no es tu municipio, cámbialo en el menú.`, tipo: 'info' });
   }
 
+  /* ---------------- modo real: sesión con el servidor ---------------- */
+  // conSesion: hay cuenta lista (token + nombre + celular) y el tiempo real debe
+  // estar conectado. Mientras se ingresa es false: así un «sesión cerrada» que
+  // llegue en ese momento no abre otro ingreso encima.
+  let conSesion = false;
+  let reintentoYo = null;
+  let fallosYo = 0; // reintentos seguidos de GET /api/yo sin red (el aviso sale solo la primera vez)
+
+  function abrirBienvenida(op = {}) {
+    return mostrarBienvenida(app, { N, alTerminar: REAL ? alIngresar : alRegistrarse, ...op });
+  }
+
+  // Pedir sin cuenta lista: sin sesión, la bienvenida; con sesión, completar los datos.
+  function abrirIngreso() {
+    if (N.servidor.haySesion()) abrirBienvenida({ paso: 'perfil', usuario: N.perfil.pasajero() || {} });
+    else abrirBienvenida();
+  }
+
+  function alIngresar() {
+    sesionLista();
+    // Si entró otra cuenta, sus datos locales se borraron: el inicio no debe mostrar los
+    // lugares ni los recientes de la anterior.
+    if (ui.vista === 'inicio') renderVista('inicio', true);
+    alRegistrarse();
+  }
+
+  function sesionLista() {
+    conSesion = true;
+    clearTimeout(reintentoYo);
+    pintarBarra();
+    conectarBus();
+  }
+
+  // El tiempo real se abre solo con sesión y datos completos (el servidor toma el
+  // nombre y el celular en el saludo).
+  function conectarBus() {
+    if (!REAL || !conSesion || !p?.bus) return;
+    p.bus.conectar();
+    pintarConexion();
+  }
+
+  // Tras guardar nombre o celular en «Mi cuenta»: el servidor los congela al
+  // conectar, así que se reconecta si el tiempo real ya estaba abierto.
+  function datosActualizados() {
+    pintarBarra();
+    if (!REAL || !conSesion || !p?.bus) return;
+    if (['en_linea', 'conectando', 'reconectando'].includes(p.bus.estado)) p.bus.reconectar();
+  }
+
+  // Al abrir: sin token → bienvenida; con token → GET /api/yo para saber si la
+  // cuenta sigue viva y si le faltan datos.
+  // ¿Ya se ve «Completa tus datos»? (la persona puede estar escribiendo)
+  function completandoPerfil() {
+    return Boolean(app.querySelector('.a-bienvenida form.a-registro [data-guardar]'));
+  }
+
+  async function prepararSesion() {
+    clearTimeout(reintentoYo);
+    if (!N.servidor.haySesion()) {
+      N.perfil.cerrarSesionPasajero();
+      pintarBarra();
+      abrirBienvenida();
+      return;
+    }
+    try {
+      const r = await N.servidor.yo();
+      const u = r?.usuario || {};
+      fallosYo = 0;
+      N.perfil.fijarPasajeroServidor(u);
+      pintarBarra();
+      if (!u.nombre || !u.celular) {
+        // Si ya está abierto (lo abrió «Pedir» mientras no había red), no se borra lo escrito.
+        if (!completandoPerfil()) abrirBienvenida({ paso: 'perfil', usuario: u });
+        return;
+      }
+      sesionLista();
+    } catch (err) {
+      if (err?.codigo === 'sin_sesion') {
+        N.perfil.cerrarSesionPasajero();
+        pintarBarra();
+        avisos.mostrar({ titulo: 'Tu sesión se cerró', cuerpo: 'Ingresa de nuevo con tu correo.', tipo: 'alerta' });
+        abrirBienvenida({ paso: 'correo' });
+        return;
+      }
+      // Sin señal (u otro fallo): con los datos ya guardados se sigue; el tiempo
+      // real reintenta solo. Si no hay datos, se vuelve a intentar en un rato.
+      const yo = N.perfil.pasajero();
+      if (yo?.nombre && yo?.celular) {
+        sesionLista();
+        return;
+      }
+      // El aviso, solo la primera vez; los reintentos se espacian (8, 16, 30, 60 s…).
+      fallosYo += 1;
+      if (fallosYo === 1) avisos.mostrar({ titulo: 'No pudimos revisar tu cuenta', cuerpo: EM.textoError(err), tipo: 'error' });
+      reintentoYo = setTimeout(prepararSesion, Math.min(60000, 8000 * 2 ** (fallosYo - 1)));
+    }
+  }
+
+  // El servidor dijo «sin sesión» (HTTP 401 o cierre 4401 del tiempo real).
+  function sesionCerrada() {
+    if (!conSesion) return;
+    avisos.mostrar({ titulo: 'Tu sesión se cerró', cuerpo: 'Ingresa de nuevo con tu correo.', tipo: 'alerta' });
+    terminarSesionLocal();
+  }
+
+  // Cierra el tiempo real, borra los datos de la cuenta en este celular y vuelve
+  // al ingreso con correo. borrarTodo (eliminar cuenta): también historial y lugares.
+  function terminarSesionLocal({ borrarTodo = false } = {}) {
+    conSesion = false;
+    clearTimeout(reintentoYo);
+    p?.bus?.cerrar?.();
+    if (borrarTodo) N.perfil.borrarDatosLocales();
+    else N.perfil.cerrarSesionPasajero();
+    app.querySelectorAll('.a-panel, .a-menu-capa, .a-buscador').forEach((n) => n.remove());
+    pintarBarra();
+    pintarConexion();
+    abrirBienvenida({ paso: 'correo' });
+  }
+
+  // Eventos del tiempo real que le importan a la pantalla (el resto lo maneja el núcleo).
+  function escucharBus() {
+    const b = p.bus;
+    b.on('conexion', pintarConexion);
+    b.on('estado_conexion', pintarConexion);
+    b.on('bienvenida', pintarConexion);
+    b.on('rechazo', (d) => {
+      pintarConexion();
+      const codigo = d?.codigo || 'sin_sesion';
+      if (codigo === 'sin_sesion') return sesionCerrada();
+      if (conSesion) avisos.mostrar({ titulo: 'No pudimos conectarte', cuerpo: EM.textoError(codigo), tipo: 'error' });
+    });
+    // Respaldo por si algún cambio de estado no llega como evento.
+    setInterval(pintarConexion, 3000);
+  }
+
   /* ---------------- arranque ---------------- */
   pintarBarra();
   renderVista('carga');
-  if (!N.perfil.pasajero()?.nombre) mostrarBienvenida(app, { N, alTerminar: alRegistrarse });
+  if (REAL) {
+    N.servidor.sesion.on('cerrada', sesionCerrada);
+    prepararSesion();
+  } else if (!N.perfil.pasajero()?.nombre) mostrarBienvenida(app, { N, alTerminar: alRegistrarse });
 
   // Rodeo del núcleo: el viaje en curso se guarda en sessionStorage con la misma
   // clave para todas las cooperativas ('ct.viaje.pasajero'). Si en esta pestaña
   // quedó un viaje de OTRA cooperativa, no se debe retomar aquí. Este diseño anota
   // de qué cooperativa es el viaje activo (CLAVE_VIAJE_DE) y, si no coincide, lo descarta.
+  // En modo real no aplica: el núcleo guarda el viaje en localStorage con claves
+  // propias y lo retoma con el servidor (viaje_actual).
   const CLAVE_VIAJE_DE = 'ct.a.viaje.empresa';
   try {
-    const de = sessionStorage.getItem(CLAVE_VIAJE_DE);
+    const de = REAL ? null : sessionStorage.getItem(CLAVE_VIAJE_DE);
     if (de && de !== N.ID_EMPRESA) {
       sessionStorage.removeItem('ct.viaje.pasajero');
       sessionStorage.removeItem(CLAVE_VIAJE_DE);
     }
   } catch { /* sin sessionStorage */ }
   function anotarViaje(fase) {
+    if (REAL) return;
     try {
       if (fase && fase !== 'inicio') sessionStorage.setItem(CLAVE_VIAJE_DE, N.ID_EMPRESA);
       else sessionStorage.removeItem(CLAVE_VIAJE_DE);
@@ -1485,7 +1817,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   // Viaje que estaba en curso antes de recargar (lo guarda el núcleo en sessionStorage).
   let previo = null;
   try {
-    const g = JSON.parse(sessionStorage.getItem('ct.viaje.pasajero') || 'null');
+    const g = REAL ? null : JSON.parse(sessionStorage.getItem('ct.viaje.pasajero') || 'null');
     if (g && Date.now() - g.guardado < 30 * 60 * 1000 && ['buscando', 'asignado', 'llego', 'en_viaje'].includes(g.fase)) previo = g.estado?.viaje || null;
   } catch { /* sin datos previos */ }
 
@@ -1516,14 +1848,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
 
   (async () => {
     try {
-      p = await N.crearPasajero();
+      // Modo real: sin taxis de ambiente simulados; el tiempo real se abre al tener sesión.
+      p = REAL ? await N.crearPasajero({ ambiente: false }) : await N.crearPasajero();
       p.on('cambio', pintar);
       // «¡Tu taxi está en la puerta!» ya se ve en el banner grande: solo va al historial.
       p.on('aviso', (a) => avisos.mostrar(a, { silencioso: p.estado.fase === 'llego' && /puerta/i.test(a.titulo) }));
+      if (REAL) escucharBus();
       ui.origen = null;
       ui.vista = null;
       pintarAhora();
-      if (p.registrado) await retomarTrasRecarga();
+      if (REAL) conectarBus();
+      else if (p.registrado) await retomarTrasRecarga();
       avisarMunicipioPorGps();
     } catch (err) {
       console.error(err);

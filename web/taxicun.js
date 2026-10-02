@@ -1,9 +1,16 @@
 // App única TaxiCun: escoge la cooperativa (por el enlace del sticker, la
 // elección guardada o el GPS) y después carga el núcleo con esa cooperativa y el
 // diseño que ella eligió. No importa el núcleo antes de saber cuál es: el núcleo
-// lee window.CT_EMPRESA al cargar.
+// lee window.CT_EMPRESA al cargar. plataforma.js sí se puede (no depende de la ficha).
+//
+// En MODO_REAL (app de las tiendas, o ?real=1) solo cuentan las cooperativas que ya
+// trabajan con el servidor («real»: true en el índice); si es una sola, se abre directo,
+// sin pedir el GPS en la carga (el permiso se pide después, en el mapa).
+import { MODO_REAL, posicion } from '../nucleo/plataforma.js';
+
 const RAIZ = new URL('../', import.meta.url);
-const CLAVE = 'taxicun.empresa';
+// El modo real guarda su elección aparte: no cambia lo que abre la demo en este navegador.
+const CLAVE = MODO_REAL ? 'taxicun.real.empresa' : 'taxicun.empresa';
 
 const $ = (id) => document.getElementById(id);
 const escapar = (t = '') => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -14,15 +21,19 @@ function distanciaKm(a, b) {
   return 2 * 6371 * Math.asin(Math.sqrt(s));
 }
 
-function ubicacion(espera = 8000) {
-  return new Promise((ok) => {
-    if (!('geolocation' in navigator)) return ok(null);
-    navigator.geolocation.getCurrentPosition(
-      (p) => ok({ lat: p.coords.latitude, lng: p.coords.longitude }),
-      () => ok(null),
-      { enableHighAccuracy: false, timeout: espera, maximumAge: 5 * 60 * 1000 },
-    );
-  });
+// Mientras se espera el GPS (y su diálogo de permiso), el aviso de «No pudimos cargar»
+// de la página no cuenta el tiempo (ver plantillas/_raiz/taxicun/index.html).
+async function ubicacion(espera = 8000) {
+  const carga = $('carga');
+  if (carga) carga.dataset.espera = 'gps';
+  try {
+    const p = await posicion({ precisa: false, espera, edad: 5 * 60 * 1000 });
+    return { lat: p.lat, lng: p.lng };
+  } catch {
+    return null;
+  } finally {
+    if (carga) delete carga.dataset.espera;
+  }
 }
 
 function texto(t) {
@@ -63,6 +74,18 @@ export async function iniciarTaxiCun({ rol = 'pasajero', version = '' } = {}) {
     texto('No pudimos cargar TaxiCun. Revisa tu conexión.');
     return;
   }
+  if (MODO_REAL) {
+    lista = lista.filter((c) => c.real);
+    if (!lista.length) {
+      // El índice todavía no marca ninguna cooperativa real.
+      texto('TaxiCun aún no está disponible. Inténtalo más tarde.');
+      const carga = $('carga');
+      if (carga) carga.dataset.espera = 'fin';
+      return;
+    }
+    // Una sola cooperativa real: directo, sin GPS en la carga.
+    if (lista.length === 1) return abrir(lista[0], { rol, version, unica: true });
+  }
   const p = new URLSearchParams(location.search);
   const valida = (id) => lista.find((c) => c.id === id);
 
@@ -84,7 +107,10 @@ export async function iniciarTaxiCun({ rol = 'pasajero', version = '' } = {}) {
   return mostrarLista(lista, { rol, version, motivo: 'fuera', pos });
 }
 
-async function abrir(coop, { rol, version, porGps = false }) {
+async function abrir(coop, { rol, version, porGps = false, unica = false }) {
+  // En modo real se guarda siempre la elección (también la del GPS o la del enlace):
+  // así cada arranque de la app no vuelve a esperar el GPS.
+  if (MODO_REAL) localStorage.setItem(CLAVE, coop.id);
   $('elegir').hidden = true;
   $('carga').classList.remove('oculta');
   texto(`${coop.pueblo} · ${coop.nombre}`);
@@ -109,7 +135,8 @@ async function abrir(coop, { rol, version, porGps = false }) {
   document.head.appendChild(css);
   try {
     const { montar } = await import(new URL(`disenos/${d}/${archivo}.js?v=${version}`, RAIZ).href);
-    await montar($('app'), { N, diseno: d, vitrina: false, taxicun: { porGps, cooperativa: coop } });
+    // unica: modo real con una sola cooperativa (no hay «Cambiar de municipio»).
+    await montar($('app'), { N, diseno: d, vitrina: false, taxicun: MODO_REAL ? { porGps, cooperativa: coop, unica } : { porGps, cooperativa: coop } });
   } catch (e) {
     console.error(e);
     $('app').innerHTML = `<p class="tc-error">No se pudo abrir TaxiCun para ${escapar(coop.nombre)}. ${escapar(e.message || '')}</p>`;

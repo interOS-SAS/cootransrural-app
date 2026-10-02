@@ -1,12 +1,17 @@
 // Datos guardados en el celular (localStorage). En la demo no hay servidor:
 // el registro, el historial y los ajustes viven solo en este navegador.
+// En MODO_REAL la cuenta vive en el servidor (taxicun.com/api): aquí queda una copia
+// de lo que dijo el servidor, con otro prefijo para no mezclarse con la demo.
 import { uid } from './util.js';
 import { CONDUCTORES_DEMO } from './datos.js';
 import { ID_EMPRESA, EMPRESA, FICHA } from './config.js';
+import { MODO_REAL } from './plataforma.js';
+import { vaciarCacheRutas } from './geo.js';
 
 // Cada cooperativa guarda lo suyo aparte (mismo sitio, varias cooperativas).
-// Cootransrural conserva las claves de siempre.
-const PREFIJO = ID_EMPRESA === 'cootransrural' ? 'ct.' : `ct.${ID_EMPRESA}.`;
+// Cootransrural conserva las claves de siempre. El modo real usa «tc.real.<id>.».
+const PREFIJO_REAL = 'tc.real.';
+const PREFIJO = MODO_REAL ? `${PREFIJO_REAL}${ID_EMPRESA}.` : ID_EMPRESA === 'cootransrural' ? 'ct.' : `ct.${ID_EMPRESA}.`;
 const k = (nombre) => PREFIJO + nombre;
 
 function leer(clave, porDefecto) {
@@ -45,6 +50,35 @@ export function registrarPasajero(datos) {
 
 export function cerrarSesionPasajero() {
   localStorage.removeItem(k('pasajero'));
+}
+
+/* ---- Modo real: lo que dice el servidor ---- */
+
+// Copia local del usuario del servidor (GET /api/yo, PATCH /api/yo): nombre, celular y
+// correo. El contacto de emergencia es solo de este teléfono y se conserva, salvo que
+// sea otra cuenta (otro correo).
+export function fijarPasajeroServidor(usuario = {}) {
+  fijarDueno(usuario.correo);
+  const antes = pasajero();
+  const otraCuenta = Boolean(antes?.correo && usuario.correo && antes.correo !== usuario.correo);
+  const actual = otraCuenta ? null : antes;
+  const datos = {
+    ...(actual || {}),
+    id: actual?.id || null, // el seudónimo p_… llega con la bienvenida (fijarIdPasajero)
+    creado: actual?.creado || Date.now(),
+    nombre: String(usuario.nombre ?? actual?.nombre ?? '').trim(),
+    celular: String(usuario.celular ?? actual?.celular ?? '').replace(/\D/g, '').slice(-10),
+    correo: String(usuario.correo ?? actual?.correo ?? '').trim(),
+    verificado: true,
+  };
+  if (actual?.contactoEmergencia) datos.contactoEmergencia = actual.contactoEmergencia;
+  return guardar(k('pasajero'), datos);
+}
+
+// El id del pasajero en el tiempo real es el de la bienvenida (p_…).
+export function fijarIdPasajero(id) {
+  if (!id) return pasajero();
+  return guardar(k('pasajero'), { ...(pasajero() || {}), id });
 }
 
 export function lugaresGuardados() {
@@ -133,12 +167,111 @@ export function cerrarSesionConductor() {
   localStorage.removeItem(k('conductor'));
 }
 
+// Modo real: guarda SOLO lo que manda el servidor (bienvenida.conductor o lo que haya de
+// GET /api/yo), sin documentos ni calificación inventada. El id (c_…) es el seudónimo del
+// tiempo real: con él se reconoce la asignación del servicio. null borra el perfil.
+export function fijarConductorServidor(dc) {
+  if (!dc) {
+    localStorage.removeItem(k('conductor'));
+    return null;
+  }
+  const antes = conductor();
+  // Lo anterior solo vale si es del servidor y del mismo conductor.
+  const actual = antes?.real && (!dc.id || !antes.id || antes.id === dc.id) ? antes : null;
+  const texto = (v, previo) => String(v ?? previo ?? '').trim();
+  const datos = {
+    id: dc.id || actual?.id || null,
+    movil: texto(dc.movil, actual?.movil),
+    nombre: texto(dc.nombre, actual?.nombre),
+    placa: texto(dc.placa, actual?.placa).toUpperCase(),
+    vehiculo: texto(dc.vehiculo, actual?.vehiculo),
+    color: texto(dc.color, actual?.color),
+    real: true,
+  };
+  const calificacion = Number.isFinite(dc.calificacion) ? dc.calificacion : actual?.calificacion;
+  const viajes = Number.isFinite(dc.viajes) ? dc.viajes : actual?.viajes;
+  if (Number.isFinite(calificacion)) datos.calificacion = calificacion;
+  if (Number.isFinite(viajes)) datos.viajes = viajes;
+  return guardar(k('conductor'), datos);
+}
+
+// Borra todo lo del modo real en este teléfono (todas las cooperativas): perfil,
+// historial, lugares, ajustes, rutas consultadas y los viajes guardados
+// («tc.real.viaje.pasajero» y «tc.real.viaje.conductor»). Para «Eliminar mi cuenta» y
+// cuando entra otra cuenta en el mismo celular. La sesión la borra servidor.js.
+export function borrarDatosLocales() {
+  const claves = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const c = localStorage.key(i);
+    if (c?.startsWith(PREFIJO_REAL)) claves.push(c);
+  }
+  for (const c of claves) localStorage.removeItem(c);
+  // La cooperativa elegida en TaxiCun (web/taxicun.js) y las rutas que quedaron en memoria.
+  localStorage.removeItem('taxicun.real.empresa');
+  vaciarCacheRutas();
+}
+
+// Modo real: de qué cuenta (correo) es lo guardado en este celular. No se borra al
+// cerrar sesión (la misma persona vuelve y encuentra su historial y sus lugares); si
+// entra OTRA cuenta, lo de la anterior se borra antes de seguir. Devuelve true si borró.
+const CLAVE_DUENO = `${PREFIJO_REAL}dueno`;
+export function fijarDueno(correo) {
+  const nuevo = String(correo || '').trim().toLowerCase();
+  if (!MODO_REAL || !nuevo) return false;
+  const antes = localStorage.getItem(CLAVE_DUENO);
+  const otra = Boolean(antes) && antes !== nuevo;
+  if (otra) borrarDatosLocales();
+  if (otra || !antes) {
+    try {
+      localStorage.setItem(CLAVE_DUENO, nuevo);
+    } catch {
+      /* almacenamiento lleno o bloqueado */
+    }
+  }
+  return otra;
+}
+
+// Modo real: viajes que este teléfono cerró hace poco (terminados o cancelados aquí).
+// Si la central todavía los tiene activos (el cierre salió sin señal, o su viaje_actual
+// se armó antes de leer lo que estaba en cola), los controladores le vuelven a mandar el
+// cierre en vez de retomarlos o cancelarlos. rol: 'pasajero' | 'conductor'.
+// registro: { id, ids?: [otros ids del mismo viaje], final: 'finalizado' | 'cancelado', …lo que haga falta para repetir el cierre }
+const CERRADOS_MAX = 20;
+const CERRADOS_VIDA_MS = 12 * 3600 * 1000;
+const claveCerrados = (rol) => `${PREFIJO_REAL}cerrados.${rol}`;
+
+function viajesCerrados(rol) {
+  const ahora = Date.now();
+  const lista = leer(claveCerrados(rol), []);
+  return Array.isArray(lista) ? lista.filter((c) => c?.id && ahora - (c.cuando || 0) < CERRADOS_VIDA_MS) : [];
+}
+
+export function anotarViajeCerrado(rol, registro) {
+  if (!MODO_REAL || !registro?.id) return;
+  const ids = new Set([registro.id, ...(registro.ids || [])]);
+  const lista = viajesCerrados(rol).filter((c) => !ids.has(c.id));
+  try {
+    guardar(claveCerrados(rol), [{ ...registro, cuando: Date.now() }, ...lista].slice(0, CERRADOS_MAX));
+  } catch {
+    /* almacenamiento lleno o bloqueado */
+  }
+}
+
+export function viajeCerrado(rol, viajeId) {
+  if (!MODO_REAL || !viajeId) return null;
+  return viajesCerrados(rol).find((c) => c.id === viajeId || (c.ids || []).includes(viajeId)) || null;
+}
+
 export function historialConductor() {
   return leer(k('historial.conductor'), []);
 }
 
 export function agregarAlHistorialConductor(viaje) {
-  return guardar(k('historial.conductor'), [viaje, ...historialConductor().filter((v) => v.id !== viaje.id)].slice(0, 100));
+  const antes = historialConductor();
+  // Modo real: un servicio ya cobrado no pasa a «cancelado» (por ejemplo, si la central
+  // lo cerró sin conexión después de que este teléfono lo terminó).
+  if (MODO_REAL && viaje.estado === 'cancelado' && antes.some((v) => v.id === viaje.id && v.estado === 'finalizado')) return antes;
+  return guardar(k('historial.conductor'), [viaje, ...antes.filter((v) => v.id !== viaje.id)].slice(0, 100));
 }
 
 // Resumen del día para el conductor.
@@ -157,7 +290,9 @@ export function resumenDelDia(ahora = new Date()) {
 /* ---------------- Ajustes ---------------- */
 
 export function ajustes() {
-  return leer(k('ajustes'), { simulacion: 'auto', sonido: true });
+  const a = leer(k('ajustes'), { simulacion: 'auto', sonido: true });
+  // En modo real no hay simulación: ni conductor de prueba ni GPS simulado.
+  return MODO_REAL ? { ...a, simulacion: 'real', gpsSimulado: false } : a;
 }
 
 // simulacion: 'auto' (si nadie acepta, acepta un conductor de prueba) o 'real'
@@ -178,6 +313,8 @@ export function disenoPorHora(fecha = new Date()) {
 // de noche) solo se abren si la URL los pide (?d=) o si la ficha de la cooperativa
 // dice otro. Lo que se haya guardado antes en Ajustes ya no cuenta.
 export function disenoPreferido() {
+  // El modo real (servidor de verdad) solo existe en el diseño A: ni ?d= ni la ficha lo cambian.
+  if (MODO_REAL) return 'a';
   const p = new URLSearchParams(location.search).get('d');
   if (p && /^([abc]|auto)$/.test(p)) return p;
   return /^([abc]|auto)$/.test(FICHA.diseno || '') ? FICHA.diseno : 'a';

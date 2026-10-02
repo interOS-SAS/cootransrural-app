@@ -399,6 +399,11 @@
 .a-sms-prueba b { color: var(--a-ambar); font: 800 19px var(--a-ft); letter-spacing: .14em; margin-left: 2px; }
 .a-verificar .a-casillas { margin: 8px 0 0; }
 .a-verificar .a-btn-texto { align-self: center; }
+/* Modo real: ingreso con correo y código de 6 dígitos. */
+.a-correo-txt { overflow-wrap: anywhere; }
+.a-verificando { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; font-weight: 700; color: var(--a-texto-2); }
+.a-verificando .a-girador { width: 18px; height: 18px; border-width: 2.5px; }
+.a-registro > .a-btn-texto { align-self: center; }
 .a-listo { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 24px calc(22px + var(--a-inf)); gap: 12px; overflow: auto; }
 .a-listo > .a-cuadros { align-self: stretch; margin: 0 -24px; }
 .a-listo-check { width: 112px; height: 112px; border-radius: 50%; background: var(--a-verde-txt); color: #fff; display: grid; place-items: center; animation: a-pop-grande .6s var(--a-facil); box-shadow: 0 0 0 12px var(--a-verde-claro); margin-top: calc(var(--a-sup) + 34px); flex: none; }
@@ -483,3 +488,21 @@
 /* ---------------- revisión ---------------- */
 .a-sin-destino-txt { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; padding: 12px 14px; border-radius: 16px; background: var(--a-ambar-claro); font-weight: 700; font-size: 14px; }
 .a-sin-destino-txt svg { color: var(--a-ambar-osc); }
+
+/* ---------------- modo real (servidor TaxiCun) ---------------- */
+/* Confirmar: solo efectivo (sin el selector QR de prueba). */
+.a-pago-fijo { display: flex; align-items: center; gap: 10px; margin-top: 4px; padding: 12px 14px; border-radius: 18px; background: var(--a-gris); font-weight: 700; font-size: 14.5px; }
+.a-pago-fijo > svg { flex: none; color: var(--a-verde-txt); }
+.a-pago-fijo small { display: block; font-weight: 600; font-size: 12.5px; color: var(--a-texto-2); }
+/* «Mi cuenta». */
+.a-mi-cuenta-datos { display: flex; flex-direction: column; gap: 12px; background: #fff; border-radius: 20px; padding: 14px; }
+.a-mi-cuenta-datos .a-fila-interruptor { padding: 0 0 4px; }
+.a-mi-cuenta-datos .a-fila-txt strong { overflow-wrap: anywhere; }
+.a-mi-cuenta-datos .a-emergencia { background: var(--a-marca-claro); }
+.a-mi-cuenta-datos .a-btn { width: 100%; }
+.a-mi-cuenta .a-btn-bloque { margin-top: 2px; }
+.a-mi-cuenta .a-ayuda-txt { margin-top: 0; margin-bottom: 8px; }
+.a-menu-perfil .a-menu-correo { overflow-wrap: anywhere; }
+/* Avisos por encima de la capa de ingreso: «Tu sesión se cerró» y «Tu cuenta se
+   eliminó» salen junto con el ingreso con correo (en la demo no cambia nada). */
+html[data-modo="real"] .a-pasajero > .a-avisos { z-index: 105; }

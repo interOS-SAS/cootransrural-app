@@ -8,7 +8,16 @@
 //   c.llegue(); c.iniciar(codigo); c.finalizar(); …
 //
 // Fases del viaje: confirmando → hacia_origen → en_origen → en_viaje → cobrando → calificar
-import { Bus } from './bus.js';
+//
+// En MODO_REAL (c.real) todo va por el servidor de TaxiCun: GPS siempre real (sin GPS no
+// se puede «Conectarme»), sin solicitudes ni recorridos simulados y cobro solo en efectivo.
+// El tiempo real se abre aparte, con el conductor ya aprobado: c.bus.conectar().
+// Eventos extra en modo real: 'bienvenida' (datos), 'rechazo' ({ codigo, motivo }),
+// 'conexion' (estado del bus: 'sin_conectar'|'conectando'|'en_linea'|'reconectando'|
+// 'rechazado') y 'error_servidor' ({ codigo, texto }). El estado lleva además estadoBus;
+// el viaje en 'confirmando' lleva esperaTexto y esperaHasta; en 'cobrando', pagoAnunciado
+// cuando el pasajero dice que ya pagó (se espera confirmarEfectivo()).
+import { crearBus } from './bus.js';
 import { TIEMPOS, CENTRO } from './config.js';
 import { calcularRuta, obtenerPosicion, seguirPosicion, fueraDeZona, direccionDe } from './geo.js';
 import { calcularTarifa } from './tarifas.js';
@@ -16,10 +25,48 @@ import { avisar } from './avisos.js';
 import { recorrer, duracionSimulada, crearSolicitudSimulada, PasajeroSimulado } from './simulador.js';
 import { urlPago } from './qr.js';
 import * as perfil from './perfil.js';
+import * as servidor from './servidor.js';
 import { Emisor, hashCorto, distanciaKm, pesos, kmTexto, minutosTexto } from './util.js';
 
 // Distancia máxima (km) al pasajero para poder marcar «Llegué» con GPS real.
 const DISTANCIA_LLEGADA_KM = 0.15;
+
+// Modo real.
+const CLAVE_VIAJE_REAL = 'tc.real.viaje.conductor'; // localStorage: en la app nativa sessionStorage se pierde
+const FASES_ACTIVAS = ['confirmando', 'hacia_origen', 'en_origen', 'en_viaje'];
+const FASE_DEL_SERVIDOR = { asignado: 'hacia_origen', llego: 'en_origen', en_viaje: 'en_viaje' };
+const ORDEN_FASES = { confirmando: 0, hacia_origen: 1, en_origen: 2, en_viaje: 3, cobrando: 4, calificar: 5 };
+const ESPERA_VIAJE_ACTUAL_MS = 2500; // el servidor 0.1 solo manda viaje_actual si hay viaje
+const CONFIRMAR_REAL_MS = 15000; // la central decide quién se queda con el servicio
+const VIAJE_GUARDADO_MAX_MS = 12 * 3600 * 1000;
+const MAX_PUNTOS_RUTA = 800; // el servidor corta la ruta de la aceptación en 800 puntos
+// La central asigna al primero que acepta: la aceptación no espera más que esto por la
+// ruta (OSRM puede tardar hasta 7 s con datos lentos); la ruta buena llega después.
+const ESPERA_RUTA_ACEPTAR_MS = 1500;
+// Una aceptación que se soltó por tiempo (o al recargar) todavía se reconoce si la central
+// la asigna o la manda en viaje_actual.
+const ACEPTADA_VIGENTE_MS = 30 * 60 * 1000;
+
+// Ruta para aceptar sin hacer esperar a la central: la de OSRM si llega a tiempo; si no,
+// una aproximada en línea recta (la misma que da calcularRuta sin internet).
+async function rutaRapida(a, b, ms = ESPERA_RUTA_ACEPTAR_MS) {
+  let reloj;
+  const lenta = new Promise((listo) => {
+    reloj = setTimeout(() => listo(null), ms);
+  });
+  const r = await Promise.race([calcularRuta(a, b).catch(() => null), lenta]);
+  clearTimeout(reloj);
+  if (r) return r;
+  const km = distanciaKm(a, b) * 1.35;
+  return { coords: [[a.lat, a.lng], [b.lat, b.lng]], km, min: Math.max(2, (km / 28) * 60), aproximada: true };
+}
+
+// Menos puntos, mismo recorrido (conserva el primero y el último).
+function recortarRuta(coords, max = MAX_PUNTOS_RUTA) {
+  if (!Array.isArray(coords) || coords.length <= max) return coords;
+  const paso = (coords.length - 1) / (max - 1);
+  return Array.from({ length: max }, (_, i) => coords[Math.round(i * paso)]);
+}
 
 export async function crearConductor(opciones = {}) {
   const ctl = new ControladorConductor(opciones);
@@ -30,7 +77,8 @@ export async function crearConductor(opciones = {}) {
 class ControladorConductor extends Emisor {
   constructor() {
     super();
-    this.bus = new Bus();
+    this.bus = crearBus({ rol: 'conductor' });
+    this.real = this.bus.real === true;
     this.estado = {
       conectado: false,
       pos: null,
@@ -50,6 +98,14 @@ class ControladorConductor extends Emisor {
     this.pasajeroSim = null;
     this.recorrido = null;
     this.temporizadores = new Map();
+    if (this.real) {
+      this.estado.estadoBus = this.bus.estado;
+      this.relojViajeActual = null;
+      this.viajeARevisar = null; // id del viaje que había al llegar la última bienvenida
+      this.ultimoRechazo = null;
+      this.llegadaAvisada = null;
+      this.aceptadaReciente = null;
+    }
   }
 
   async arrancar() {
@@ -60,13 +116,19 @@ class ControladorConductor extends Emisor {
     this.bus.on('consulta_presencia', () => {
       if (this.estado.conectado) this.#anunciar();
     });
+    if (this.real) {
+      this.#escucharServidor();
+      this.#retomarReal();
+    }
     await this.#configurarGps();
+    if (this.real && this.estado.viaje) this.#rutaHaciaObjetivo();
   }
 
   async #configurarGps() {
     this.dejarDeSeguir?.();
     this.dejarDeSeguir = null;
     const pos = await obtenerPosicion({ espera: 7000 });
+    if (this.real) return this.#configurarGpsReal(pos);
     const usarSimulado = this.#gpsDebeSimularse(pos);
     this.estado.gpsReal = pos.real && !usarSimulado;
     this.estado.gpsSimulado = !this.estado.gpsReal;
@@ -92,6 +154,8 @@ class ControladorConductor extends Emisor {
   }
 
   get ingresado() {
+    // En modo real: con sesión y con el perfil que mandó el servidor.
+    if (this.real) return servidor.haySesion() && Boolean(perfil.conductor()?.real);
     return Boolean(perfil.conductor());
   }
 
@@ -101,7 +165,9 @@ class ControladorConductor extends Emisor {
 
   /* ---------------- disponibilidad ---------------- */
 
+  // En modo real devuelve una promesa (true si quedó en línea) y nunca lanza: avisa.
   conectar() {
+    if (this.real) return this.#conectarReal();
     if (!this.ingresado) throw new Error('Primero hay que ingresar');
     this.#cambiar({ conectado: true });
     this.#anunciar();
@@ -123,6 +189,18 @@ class ControladorConductor extends Emisor {
   #anunciar() {
     const c = this.perfil;
     if (!c) return;
+    if (this.real) {
+      // Siempre con la posición del GPS de verdad: sin pos el servidor le mandaría al
+      // conductor todas las solicitudes de la cooperativa. Sin GPS, no disponible.
+      const conGps = Boolean(this.estado.gpsReal && this.estado.pos);
+      this.bus.publicar('presencia', {
+        conductorId: c.id,
+        movil: c.movil,
+        disponible: conGps && this.estado.conectado && !this.estado.viaje,
+        ...(conGps ? { pos: this.estado.pos } : {}),
+      });
+      return;
+    }
     this.bus.publicar('presencia', {
       conductorId: c.id,
       movil: c.movil,
@@ -135,6 +213,7 @@ class ControladorConductor extends Emisor {
 
   // Crea una solicitud de un pasajero de prueba cerca del conductor.
   async simularSolicitud() {
+    if (this.real) return false; // en la app real no hay pasajeros de prueba
     if (!this.estado.conectado) this.conectar();
     const s = await crearSolicitudSimulada(this.estado.pos || CENTRO);
     const ruta = await calcularRuta(s.origen, s.destino);
@@ -179,11 +258,19 @@ class ControladorConductor extends Emisor {
   async aceptar(viajeId) {
     const s = this.estado.solicitudes.find((x) => x.viajeId === viajeId);
     if (!s || this.estado.viaje) return false;
-    for (const id of this.temporizadores.keys()) clearTimeout(this.temporizadores.get(id));
-    this.temporizadores.clear();
+    const soltarOfertas = () => {
+      for (const id of this.temporizadores.keys()) clearTimeout(this.temporizadores.get(id));
+      this.temporizadores.clear();
+    };
+    if (!this.real) soltarOfertas();
     const c = this.perfil;
     const pos = this.estado.pos || CENTRO;
-    const hacia = await calcularRuta(pos, s.origen);
+    const hacia = this.real ? await rutaRapida(pos, s.origen) : await calcularRuta(pos, s.origen);
+    if (this.real) {
+      // Mientras se esperaba la ruta pudo irse la oferta (venció, la tomó otro, se canceló).
+      if (this.estado.viaje || !this.estado.solicitudes.some((x) => x.viajeId === viajeId)) return false;
+      soltarOfertas();
+    }
     const viaje = {
       id: s.viajeId,
       pasajero: s.pasajero,
@@ -201,10 +288,28 @@ class ControladorConductor extends Emisor {
       aceptado: Date.now(),
       pago: null,
     };
+    if (this.real) {
+      viaje.esperaTexto = 'Confirmando con la central…';
+      viaje.esperaHasta = Date.now() + CONFIRMAR_REAL_MS;
+      viaje.conductorId = c?.id || null; // de quién es (otra cuenta en este celular no lo retoma)
+      // Por si la asignación llega después de soltarlo por tiempo.
+      this.aceptadaReciente = { s, cuando: Date.now() };
+    }
     this.#cambiar({ viaje, solicitudes: [], rutaActual: hacia.coords, etaMin: hacia.min, kmRestantes: hacia.km, mensajePasajero: null });
     this.#anunciar();
 
-    if (viaje.simulado) {
+    if (this.real) {
+      // El servidor toma los datos del conductor de la base: aquí solo el viaje y la ruta
+      // (la aproximada en línea recta no se manda: el pasajero vería una ruta que no existe).
+      this.bus.publicar('aceptacion', { viajeId, pos, etaMin: hacia.min, ruta: hacia.aproximada ? null : recortarRuta(hacia.coords) });
+      // Quien decide es la central: si no confirma en 15 s, se suelta.
+      this.temporizadores.set('confirmar', setTimeout(() => {
+        if (this.estado.viaje?.fase === 'confirmando' && this.estado.viaje.id === viajeId) {
+          this.#avisar({ titulo: 'La central no confirmó el servicio', cuerpo: 'Sigue atento a nuevas solicitudes.', tipo: 'error' });
+          this.#terminar();
+        }
+      }, CONFIRMAR_REAL_MS));
+    } else if (viaje.simulado) {
       this.pasajeroSim = new PasajeroSimulado({ viaje: { ...viaje, codigo: s.codigo }, entregar: (tipo, d) => this.#manejar(tipo, d, true) });
       this.#avisar({ titulo: 'Servicio asignado', cuerpo: `Recoge a ${s.pasajero.nombre} en ${s.origen.titulo || 'el punto marcado'}.`, tipo: 'exito' });
       this.#conducir(hacia);
@@ -231,6 +336,7 @@ class ControladorConductor extends Emisor {
   #conducir(ruta) {
     this.recorrido?.detener();
     this.recorrido = null;
+    if (this.real) return; // en la app real el taxi lo mueve solo el GPS
     // Con GPS real solo se simula el recorrido si el pasajero es de prueba.
     if (this.estado.gpsReal && !this.estado.viaje?.simulado) return;
     const ms = duracionSimulada(ruta.min, { min: 14000, max: 40000 });
@@ -262,6 +368,15 @@ class ControladorConductor extends Emisor {
         this.estado.etaMin = (km / 25) * 60;
       }
     }
+    // Modo real: 'llegada' cuando el GPS queda en el punto (lo que en la demo hace el recorrido).
+    if (this.real && v && this.estado.gpsReal) {
+      const objetivo = v.fase === 'hacia_origen' ? v.origen : v.fase === 'en_viaje' ? v.destino : null;
+      const clave = `${v.id}:${v.fase}`;
+      if (objetivo && this.llegadaAvisada !== clave && distanciaKm(p, objetivo) <= DISTANCIA_LLEGADA_KM) {
+        this.llegadaAvisada = clave;
+        this.emit('llegada', v.fase);
+      }
+    }
     this.emit('posicion', p);
     this.emit('cambio', this.estado);
   }
@@ -273,6 +388,13 @@ class ControladorConductor extends Emisor {
   llegue() {
     const v = this.estado.viaje;
     if (!v || !['hacia_origen'].includes(v.fase)) return false;
+    // Modo real: sin GPS no se puede comprobar que el taxi está en el punto, y el
+    // pasajero no debe ver su taxi «en la puerta» si no lo está.
+    if (this.real && !v.simulado && (!this.estado.gpsReal || !this.estado.pos)) {
+      this.#avisar({ titulo: 'Activa la ubicación', cuerpo: 'Para avisarle al pasajero que llegaste necesitamos la ubicación del celular.', tipo: 'error' });
+      this.#reintentarGps();
+      return false;
+    }
     if (this.estado.gpsReal && !v.simulado && this.estado.pos) {
       const d = distanciaKm(this.estado.pos, v.origen);
       if (d > DISTANCIA_LLEGADA_KM) {
@@ -319,8 +441,16 @@ class ControladorConductor extends Emisor {
     if (!v || v.fase !== 'en_viaje') return null;
     this.recorrido?.detener();
     this.recorrido = null;
-    if (v.destino && (!this.estado.gpsReal || v.simulado)) this.#moverA({ ...v.destino, rumbo: this.estado.pos?.rumbo || 0 });
+    // Solo la simulación «salta» al destino; en modo real el taxi lo mueve únicamente el GPS.
+    if (v.destino && (v.simulado || (!this.real && !this.estado.gpsReal))) this.#moverA({ ...v.destino, rumbo: this.estado.pos?.rumbo || 0 });
     const valor = Math.round(valorManual || v.tarifa || 8000);
+    if (this.real) {
+      // Sin QR de prueba: el pasajero paga en efectivo y el conductor lo confirma.
+      this.#faseViaje('cobrando', { valor, urlCobro: null, fin: Date.now() });
+      this.#cambiar({ rutaActual: null, etaMin: 0, kmRestantes: 0 });
+      this.bus.publicar('estado', { viajeId: v.id, conductorId: this.perfil?.id, fase: 'finalizado', valor, km: v.km });
+      return { valor, url: null };
+    }
     const url = urlPago({ viaje: v.id, valor, movil: this.perfil.movil, sala: this.bus.sala, conductor: this.perfil.id });
     this.#faseViaje('cobrando', { valor, urlCobro: url, fin: Date.now() });
     this.#cambiar({ rutaActual: null, etaMin: 0, kmRestantes: 0 });
@@ -356,6 +486,13 @@ class ControladorConductor extends Emisor {
     const v = this.estado.viaje;
     if (!v) return;
     if (!v.simulado) this.bus.publicar('calificacion', { viajeId: v.id, de: 'conductor', estrellas, etiquetas, comentario });
+    // Si el cierre salió sin señal, la central lo sigue teniendo en curso un rato: no se retoma.
+    if (this.real && !v.simulado) {
+      perfil.anotarViajeCerrado('conductor', {
+        id: v.id, final: 'finalizado', valor: v.valor ?? null, km: v.km ?? null,
+        pago: v.pago ? { metodo: v.pago.metodo, valor: v.pago.valor } : null, estrellas, etiquetas, comentario,
+      });
+    }
     this.pasajeroSim?.alCalificar();
     this.#guardarEnHistorial('finalizado', { calificacionDada: estrellas });
     // Se espera un momento por si llega la calificación del pasajero simulado.
@@ -366,6 +503,11 @@ class ControladorConductor extends Emisor {
     const v = this.estado.viaje;
     if (!v || ['cobrando', 'calificar'].includes(v.fase)) return;
     if (!v.simulado) this.bus.publicar('cancelacion', { viajeId: v.id, conductorId: this.perfil.id, por: 'conductor', motivo });
+    if (this.real && !v.simulado) {
+      perfil.anotarViajeCerrado('conductor', { id: v.id, final: 'cancelado', motivo });
+      // Si lo canceló mientras se confirmaba, una asignación que llegue tarde no lo retoma.
+      if (this.aceptadaReciente?.s?.viajeId === v.id) this.aceptadaReciente = null;
+    }
     this.#guardarEnHistorial('cancelado', { motivo });
     this.#avisar({ titulo: 'Servicio cancelado', cuerpo: motivo, tipo: 'info' });
     this.#terminar();
@@ -397,6 +539,7 @@ class ControladorConductor extends Emisor {
   #terminar() {
     clearTimeout(this.temporizadores.get('confirmar'));
     this.temporizadores.delete('confirmar');
+    if (this.real) this.llegadaAvisada = null;
     this.recorrido?.detener();
     this.recorrido = null;
     const sim = this.pasajeroSim;
@@ -416,22 +559,45 @@ class ControladorConductor extends Emisor {
         if (!simulado) this.#recibirSolicitud(d);
         break;
       case 'asignacion': {
+        // En modo real el id propio es el seudónimo c_… de la bienvenida.
+        const yo = this.real ? this.bus.id || this.perfil?.id : this.perfil?.id;
+        const reciente = this.real && this.aceptadaReciente && Date.now() - this.aceptadaReciente.cuando < 2 * 60 * 1000;
+        if (reciente && d.conductorId === yo && !v && this.aceptadaReciente.s.viajeId === d.viajeId) {
+          // Se soltó por tiempo pero la central sí lo asignó: se retoma.
+          this.#retomarAsignado(d);
+          break;
+        }
         if (v && v.id === d.viajeId && v.fase === 'confirmando') {
           clearTimeout(this.temporizadores.get('confirmar'));
-          if (d.conductorId === this.perfil?.id) {
-            this.#faseViaje('hacia_origen');
+          if (d.conductorId === yo) {
+            if (this.real) this.aceptadaReciente = null;
+            // El celular del pasajero solo le llega al que ganó (en la solicitud no viene).
+            // Desde el servidor 0.2.1 la huella del código de abordaje también llega solo
+            // aquí (la oferta ya no la trae); con 0.1/0.2.0 se conserva la de la solicitud.
+            this.#faseViaje('hacia_origen', this.real ? { pasajero: { ...v.pasajero, celular: d.pasajero?.celular || '' }, codigoHash: d.codigoHash || v.codigoHash || null, esperaTexto: null, esperaHasta: null } : {});
             this.#avisar({ titulo: 'Servicio confirmado', cuerpo: `Recoge a ${v.pasajero.nombre} en ${v.origen.titulo || 'el punto marcado'}.`, tipo: 'exito' });
-            calcularRuta(this.estado.pos || CENTRO, v.origen).then((r) => this.#conducir(r));
+            // En modo real el taxi lo mueve el GPS: solo se trae la ruta buena (al aceptar pudo ir la aproximada).
+            if (this.real) this.#rutaHaciaObjetivo();
+            else calcularRuta(this.estado.pos || CENTRO, v.origen).then((r) => this.#conducir(r));
           } else {
             this.#avisar({ titulo: 'Otro conductor tomó el servicio', cuerpo: 'Sigue atento a nuevas solicitudes.', tipo: 'info' });
             this.#terminar();
           }
-        } else if (d.conductorId !== this.perfil?.id) {
+        } else if (d.conductorId !== yo) {
           this.rechazar(d.viajeId);
         }
         break;
       }
       case 'cancelacion': {
+        if (this.real && d.por === 'sistema') {
+          // Nadie lo tomó en 10 min: se quita la oferta (y se suelta si se estaba confirmando).
+          this.rechazar(d.viajeId);
+          if (v && v.id === d.viajeId && v.fase === 'confirmando') {
+            this.#avisar({ titulo: 'El servicio ya no está disponible', cuerpo: 'Sigue atento a nuevas solicitudes.', tipo: 'info' });
+            this.#terminar();
+          }
+          break;
+        }
         if (d.por !== 'pasajero') break;
         this.rechazar(d.viajeId);
         if (v && v.id === d.viajeId && !['cobrando', 'calificar'].includes(v.fase)) {
@@ -442,11 +608,29 @@ class ControladorConductor extends Emisor {
         break;
       }
       case 'pago': {
+        if (this.real) {
+          // En efectivo no basta con que el pasajero toque el botón: confirma el conductor.
+          if (v && v.id === d.viajeId && v.fase === 'cobrando') {
+            const valor = d.valor || v.valor;
+            this.#faseViaje('cobrando', { pagoAnunciado: { metodo: d.metodo || 'efectivo', valor } });
+            this.#avisar({ titulo: 'El pasajero dice que pagó en efectivo', cuerpo: `${pesos(valor)}. Confirma cuando lo recibas.`, tipo: 'info' });
+          }
+          break;
+        }
         if (v && v.id === d.viajeId && v.fase === 'cobrando') this.#registrarPago({ metodo: d.metodo, valor: d.valor, billetera: d.billetera, ref: d.ref });
         break;
       }
       case 'calificacion': {
         if (d.de !== 'pasajero') break;
+        if (this.real) {
+          // Solo el promedio nuevo, nunca las estrellas de ese pasajero (para evitar represalias).
+          if (Number.isFinite(d.calificacion)) {
+            perfil.actualizarConductor({ calificacion: d.calificacion });
+            this.#avisar({ titulo: 'Tu calificación se actualizó', cuerpo: `Promedio: ${d.calificacion.toFixed(1).replace('.', ',')} ★`, tipo: 'exito' });
+            this.#cambiar({});
+          }
+          break;
+        }
         if (v && v.id === d.viajeId) {
           this.estado.viaje.calificacionRecibida = d.estrellas;
         } else {
@@ -465,6 +649,384 @@ class ControladorConductor extends Emisor {
     }
   }
 
+  /* ---------------- modo real: servidor ---------------- */
+
+  #escucharServidor() {
+    this.bus.on('estado_conexion', (e) => {
+      this.#cambiar({ estadoBus: e });
+      this.emit('conexion', e);
+    });
+    this.bus.on('bienvenida', (d) => this.#alBienvenida(d));
+    this.bus.on('viaje_actual', (d) => {
+      clearTimeout(this.relojViajeActual);
+      this.#reconciliar(d ?? null);
+    });
+    this.bus.on('error', (d) => this.#alErrorServidor(d));
+    this.bus.on('rechazo', (d) => {
+      this.ultimoRechazo = d?.codigo || null;
+      // Sin la central no se puede estar en línea (el viaje en curso, si hay, se conserva).
+      clearInterval(this.relojPresencia);
+      if (this.estado.conectado && !this.estado.viaje) this.#cambiar({ conectado: false, solicitudes: [] });
+      this.emit('rechazo', d);
+    });
+  }
+
+  #retomarReal() {
+    let g = null;
+    try {
+      g = JSON.parse(localStorage.getItem(CLAVE_VIAJE_REAL) || 'null');
+    } catch {
+      g = null;
+    }
+    if (!g?.viaje) return;
+    // Lo que se estaba confirmando no sobrevive: lo resuelve la central. Se recuerda la
+    // oferta por si la central sí lo asignó (llega con la asignación o con viaje_actual).
+    if (Date.now() - (g.guardado || 0) > VIAJE_GUARDADO_MAX_MS || g.viaje.fase === 'confirmando') {
+      const v = g.viaje;
+      if (v.fase === 'confirmando' && v.id && Date.now() - (v.aceptado || 0) < ACEPTADA_VIGENTE_MS) {
+        this.aceptadaReciente = { s: { ...v, viajeId: v.id }, cuando: v.aceptado || Date.now() };
+      }
+      localStorage.removeItem(CLAVE_VIAJE_REAL);
+      return;
+    }
+    this.estado.viaje = g.viaje;
+    // Si estaba en línea, sigue en línea al terminar el servicio (se anuncia con la bienvenida).
+    if (g.conectado) this.estado.conectado = true;
+  }
+
+  #guardarReal() {
+    const v = this.estado.viaje;
+    try {
+      if (!v || v.simulado) localStorage.removeItem(CLAVE_VIAJE_REAL);
+      else localStorage.setItem(CLAVE_VIAJE_REAL, JSON.stringify({ guardado: Date.now(), conectado: this.estado.conectado, viaje: v }));
+    } catch {
+      /* almacenamiento lleno o bloqueado */
+    }
+  }
+
+  // GPS en modo real: nunca simulado. Sin GPS se ve el centro del pueblo en el mapa,
+  // pero no se puede estar en línea ni se anuncia esa posición.
+  #configurarGpsReal(pos) {
+    // Dos llamadas seguidas (por ejemplo, dos toques en la píldora mientras se espera la
+    // primera lectura) no dejan un seguimiento suelto: se detiene el anterior aquí también.
+    this.dejarDeSeguir?.();
+    this.dejarDeSeguir = null;
+    this.estado.gpsReal = Boolean(pos.real);
+    this.estado.gpsSimulado = false;
+    if (pos.real) this.estado.pos = { lat: pos.lat, lng: pos.lng, rumbo: this.estado.pos?.rumbo ?? 0 };
+    else if (!this.estado.pos) this.estado.pos = { ...CENTRO, rumbo: 0 };
+    // Se sigue la posición también si la primera lectura tardó o no había señal: cuando
+    // llegue una, el taxi vuelve a estar disponible. Con el permiso negado no hay a quién seguir.
+    if (pos.real || pos.motivo !== 'denegado') {
+      this.dejarDeSeguir = seguirPosicion(
+        (p) => {
+          const recuperado = !this.estado.gpsReal;
+          if (recuperado) this.estado.gpsReal = true;
+          this.#moverA({ lat: p.lat, lng: p.lng, rumbo: p.rumbo ?? this.estado.pos?.rumbo ?? 0 });
+          if (recuperado) {
+            // La central lo tenía como no disponible (sin GPS): se anuncia ya.
+            if (this.estado.conectado) this.#anunciar();
+            this.#cambiar({});
+          }
+        },
+        { alFallar: (e) => this.#gpsPerdido(e) },
+      );
+    }
+    if (!pos.real && this.estado.conectado && !this.estado.viaje) {
+      clearInterval(this.relojPresencia);
+      this.estado.conectado = false;
+      this.#anunciar();
+    }
+    this.#cambiar({});
+  }
+
+  #gpsPerdido(e) {
+    // Solo el permiso negado; los «sin señal» momentáneos los resuelve el mismo GPS.
+    if (e?.code !== 1) return;
+    this.dejarDeSeguir?.();
+    this.dejarDeSeguir = null;
+    if (!this.estado.gpsReal) return;
+    this.estado.gpsReal = false;
+    this.#avisar({ titulo: 'Sin permiso de ubicación', cuerpo: 'Actívalo para seguir recibiendo servicios.', tipo: 'error' });
+    if (this.estado.conectado && !this.estado.viaje) this.desconectar();
+    else this.#cambiar({});
+  }
+
+  // Vuelve a pedir el GPS si no hay seguimiento en marcha (por ejemplo, después de que la
+  // persona activó la ubicación). Una sola vez a la vez.
+  async #reintentarGps() {
+    if (!this.real || this.buscandoGps || (this.estado.gpsReal && this.dejarDeSeguir)) return;
+    this.buscandoGps = true;
+    try {
+      await this.#configurarGps();
+      if (this.estado.gpsReal && this.estado.conectado) this.#anunciar();
+    } finally {
+      this.buscandoGps = false;
+    }
+  }
+
+  async #conectarReal() {
+    // Un segundo toque mientras se espera el GPS (hasta 7 s) no abre otra conexión.
+    if (this.conectandoTurno) return false;
+    this.conectandoTurno = true;
+    try {
+      return await this.#conectarRealYa();
+    } finally {
+      this.conectandoTurno = false;
+    }
+  }
+
+  async #conectarRealYa() {
+    if (!servidor.haySesion()) {
+      this.#avisar({ titulo: 'Ingresa de nuevo', cuerpo: servidor.textoError('sin_sesion'), tipo: 'error' });
+      return false;
+    }
+    if (this.bus.estado === 'rechazado') {
+      // Se vuelve a intentar (la aprobación o la sesión pudieron cambiar); si sigue el
+      // rechazo, llega otra vez el evento 'rechazo'.
+      this.bus.conectar();
+      this.#avisar({ titulo: 'Conectando con la central…', cuerpo: servidor.textoError(this.ultimoRechazo || 'sin_sesion'), tipo: 'info' });
+      return false;
+    }
+    if (this.bus.estado === 'sin_conectar') this.bus.conectar();
+    if (!this.estado.gpsReal) {
+      this.buscandoGps = true;
+      this.#cambiar({});
+      try {
+        await this.#configurarGps();
+      } finally {
+        this.buscandoGps = false;
+      }
+    }
+    if (!this.estado.gpsReal) {
+      this.#avisar({ titulo: 'Activa la ubicación para conectarte', cuerpo: 'Con tu ubicación te llegan los servicios cercanos y el pasajero ve por dónde vas.', tipo: 'error' });
+      return false;
+    }
+    this.#cambiar({ conectado: true });
+    // Si la central aún no saluda, la presencia sale con la bienvenida.
+    this.#anunciar();
+    this.bus.publicar('consulta_solicitudes', {});
+    this.#arrancarRelojPresencia();
+    this.#avisar({ titulo: 'Estás en línea', cuerpo: 'Te llegarán las solicitudes cercanas.', tipo: 'exito' });
+    return true;
+  }
+
+  #arrancarRelojPresencia() {
+    clearInterval(this.relojPresencia);
+    this.relojPresencia = setInterval(() => this.#anunciar(), TIEMPOS.presencia);
+  }
+
+  #alBienvenida(d) {
+    // El id c_… de la bienvenida es con el que la central asigna los servicios.
+    if (d?.conductor) perfil.fijarConductorServidor(d.conductor);
+    // Un servicio de otra cuenta (entró otro conductor en este celular) no se retoma.
+    const propio = this.estado.viaje?.conductorId;
+    if (propio && d?.conductor?.id && propio !== d.conductor.id) {
+      this.aceptadaReciente = null;
+      this.#terminar();
+    }
+    // Solo se revisa el servicio que había al conectar: uno aceptado después es de esta conexión.
+    const v = this.estado.viaje;
+    this.viajeARevisar = v && !v.simulado && FASES_ACTIVAS.includes(v.fase) ? v.id : null;
+    clearTimeout(this.relojViajeActual);
+    this.relojViajeActual = setTimeout(() => this.#reconciliar(undefined), ESPERA_VIAJE_ACTUAL_MS);
+    // El servidor arranca a cada conductor como no disponible: se anuncia ya.
+    if (this.estado.conectado) {
+      this.#anunciar();
+      if (!this.estado.viaje) this.bus.publicar('consulta_solicitudes', {});
+      this.#arrancarRelojPresencia();
+    }
+    this.#cambiar({});
+    this.emit('bienvenida', d);
+  }
+
+  // d: datos de viaje_actual; null = el servidor no tiene viaje activo (0.2);
+  // undefined = no llegó nada en 2,5 s (servidor 0.1).
+  #reconciliar(d) {
+    clearTimeout(this.relojViajeActual);
+    const aRevisar = this.viajeARevisar;
+    this.viajeARevisar = null;
+    const v = this.estado.viaje;
+    const activo = Boolean(v) && !v.simulado && FASES_ACTIVAS.includes(v.fase);
+    if (d && d.viajeId) {
+      if (v && v.id === d.viajeId) return this.#seguirDelServidor(d);
+      // Un servicio que este teléfono ya cerró (terminó y cobró, o canceló): la central aún
+      // no lo sabe porque el cierre salió sin señal o este viaje_actual se armó antes de leer
+      // lo que estaba en la cola. Se repite el cierre en vez de retomarlo o cancelarlo.
+      const cerrado = perfil.viajeCerrado('conductor', d.viajeId);
+      if (cerrado) {
+        this.#repetirCierre(cerrado, d.viajeId);
+        return;
+      }
+      // La oferta que se aceptó y se soltó por tiempo (o al recargar): la central sí la
+      // asignó. Con el servidor 0.1 este viaje_actual no trae origen: se usa la oferta.
+      const aceptada = this.aceptadaReciente?.s;
+      if (!v && aceptada?.viajeId === d.viajeId && d.estado === 'asignado') {
+        return this.#retomarAsignado({ pasajero: d.pasajero, codigoHash: d.codigoHash });
+      }
+      // La central tiene otro servicio para este conductor: el del teléfono ya no vale.
+      if (v) {
+        if (activo && v.fase !== 'confirmando') this.#guardarEnHistorial('cancelado', { motivo: 'Terminó sin conexión' });
+        this.#terminar();
+      }
+      if (d.origen && FASE_DEL_SERVIDOR[d.estado]) return this.#rearmar(d);
+      // Sin datos para atenderlo (servidor 0.1): se cancela y la central busca otro taxi.
+      this.bus.publicar('cancelacion', { viajeId: d.viajeId, conductorId: this.perfil?.id, por: 'conductor', motivo: 'datos_perdidos' });
+      this.#avisar({ titulo: 'Cancelamos un servicio anterior', cuerpo: 'No pudimos recuperar sus datos; la central le busca otro taxi al pasajero.', tipo: 'info' });
+      return;
+    }
+    // 'confirmando': la aceptación pudo salir con esta conexión; la resuelve su reloj.
+    // Un servicio aceptado después de la bienvenida tampoco se revisa.
+    if (!activo || v.fase === 'confirmando' || v.id !== aRevisar) return;
+    // El servidor ya no tiene el servicio: el pasajero canceló o se cerró sin conexión.
+    this.#guardarEnHistorial('cancelado', { motivo: 'Terminó sin conexión' });
+    this.#avisar({ titulo: 'Tu servicio anterior terminó', cuerpo: 'El pasajero canceló o el servicio se cerró mientras estabas sin conexión.', tipo: 'info' });
+    this.#terminar();
+  }
+
+  // viaje_actual del mismo servicio: manda la fase más avanzada.
+  #seguirDelServidor(d) {
+    const v = this.estado.viaje;
+    const extra = {};
+    if (d.pasajero) extra.pasajero = { ...v.pasajero, ...d.pasajero, nombre: v.pasajero?.nombre || d.pasajero.nombre, celular: d.pasajero.celular || v.pasajero?.celular || '' };
+    if (!v.origen && d.origen) extra.origen = d.origen;
+    if (!v.destino && d.destino) extra.destino = d.destino;
+    if (!v.codigoHash && d.codigoHash) extra.codigoHash = d.codigoHash;
+    const faseServidor = FASE_DEL_SERVIDOR[d.estado];
+    if (!faseServidor) return this.#faseViaje(v.fase, extra);
+    if (ORDEN_FASES[v.fase] < ORDEN_FASES[faseServidor]) {
+      // La central va adelante (p. ej. confirmó mientras no había conexión).
+      if (v.fase === 'confirmando') {
+        clearTimeout(this.temporizadores.get('confirmar'));
+        Object.assign(extra, { esperaTexto: null, esperaHasta: null });
+        this.#avisar({ titulo: 'Servicio confirmado', cuerpo: `Recoge a ${v.pasajero?.nombre || 'tu pasajero'} en ${v.origen?.titulo || 'el punto marcado'}.`, tipo: 'exito' });
+      }
+      if (faseServidor === 'en_viaje' && !v.inicio) extra.inicio = Date.now();
+      this.#faseViaje(faseServidor, extra);
+      this.#rutaHaciaObjetivo();
+    } else {
+      this.#faseViaje(v.fase, extra);
+      // El teléfono va adelante: lo que no alcanzó a llegar a la central se manda otra vez.
+      if (ORDEN_FASES[v.fase] > ORDEN_FASES[faseServidor]) this.#reenviarFase(this.estado.viaje, d.estado);
+    }
+    this.#anunciar();
+  }
+
+  #reenviarFase(v, estadoServidor) {
+    const base = { viajeId: v.id, conductorId: this.perfil?.id };
+    if (v.fase === 'en_origen' && estadoServidor === 'asignado') this.bus.publicar('estado', { ...base, fase: 'llego' });
+    else if (v.fase === 'en_viaje') this.bus.publicar('estado', { ...base, fase: 'en_viaje' });
+    else if (['cobrando', 'calificar'].includes(v.fase)) {
+      this.bus.publicar('estado', { ...base, fase: 'finalizado', valor: v.valor, km: v.km });
+      // Ya confirmó el efectivo: que al pasajero también le llegue.
+      if (v.fase === 'calificar' && v.pago) this.bus.publicar('pago_confirmado', { ...base, metodo: v.pago.metodo, valor: v.pago.valor, billetera: null, ref: null });
+    }
+  }
+
+  // Repite el cierre de un servicio que este teléfono ya cerró (ver #reconciliar). La
+  // central ignora lo que ya no aplica (un fin repetido, una cancelación de algo cerrado).
+  #repetirCierre(cerrado, viajeId) {
+    const base = { viajeId, conductorId: this.perfil?.id };
+    if (cerrado.final === 'cancelado') {
+      this.bus.publicar('cancelacion', { ...base, por: 'conductor', motivo: cerrado.motivo || '' });
+    } else {
+      this.bus.publicar('estado', { ...base, fase: 'finalizado', valor: cerrado.valor, km: cerrado.km });
+      if (cerrado.pago) this.bus.publicar('pago_confirmado', { ...base, metodo: cerrado.pago.metodo, valor: cerrado.pago.valor, billetera: null, ref: null });
+      if (cerrado.estrellas) this.bus.publicar('calificacion', { viajeId, de: 'conductor', estrellas: cerrado.estrellas, etiquetas: cerrado.etiquetas || [], comentario: cerrado.comentario || '' });
+    }
+    // La central lo tenía ocupado con ese servicio: queda libre otra vez.
+    this.#anunciar();
+  }
+
+  // viaje_actual de un servicio que el teléfono no tiene (servidor 0.2: trae los datos).
+  #rearmar(d) {
+    const fase = FASE_DEL_SERVIDOR[d.estado];
+    const viaje = {
+      id: d.viajeId,
+      pasajero: { id: d.pasajero?.id || null, nombre: d.pasajero?.nombre || 'Pasajero', calificacion: d.pasajero?.calificacion ?? null, celular: d.pasajero?.celular || '' },
+      origen: d.origen,
+      destino: d.destino || null,
+      metodoPago: d.metodoPago || 'efectivo',
+      nota: d.nota || '',
+      tarifa: Number(d.tarifa) || 0,
+      km: d.km ?? null,
+      min: d.min ?? null,
+      codigoHash: d.codigoHash || null,
+      codigoSimulado: null,
+      simulado: false,
+      fase,
+      aceptado: Date.now(),
+      pago: null,
+      rearmado: true,
+      conductorId: this.perfil?.id || null,
+    };
+    if (fase === 'en_viaje') viaje.inicio = Date.now();
+    this.#cambiar({ viaje, solicitudes: [], rutaActual: null, etaMin: null, kmRestantes: null, mensajePasajero: null });
+    this.#avisar({
+      titulo: 'Retomamos tu servicio',
+      cuerpo: fase === 'en_viaje' ? `Lleva a ${viaje.pasajero.nombre} a ${viaje.destino?.titulo || 'su destino'}.` : `Recoge a ${viaje.pasajero.nombre} en ${viaje.origen?.titulo || 'el punto marcado'}.`,
+      tipo: 'info',
+    });
+    this.#rutaHaciaObjetivo();
+    this.#anunciar();
+  }
+
+  // La asignación llegó después de soltar el servicio por tiempo.
+  #retomarAsignado(d) {
+    const { s } = this.aceptadaReciente;
+    this.aceptadaReciente = null;
+    const viaje = {
+      id: s.viajeId,
+      pasajero: { ...s.pasajero, celular: d.pasajero?.celular || '' },
+      origen: s.origen,
+      destino: s.destino,
+      metodoPago: s.metodoPago,
+      nota: s.nota,
+      tarifa: s.tarifa,
+      km: s.km,
+      min: s.min,
+      codigoHash: d.codigoHash || s.codigoHash || null, // 0.2.1: llega con la asignación
+      codigoSimulado: null,
+      simulado: false,
+      fase: 'hacia_origen',
+      aceptado: Date.now(),
+      pago: null,
+      conductorId: this.perfil?.id || null,
+    };
+    this.#cambiar({ viaje, solicitudes: [], mensajePasajero: null });
+    this.#avisar({ titulo: 'Servicio confirmado', cuerpo: `Recoge a ${s.pasajero?.nombre || 'tu pasajero'} en ${s.origen?.titulo || 'el punto marcado'}.`, tipo: 'exito' });
+    this.#rutaHaciaObjetivo();
+    this.#anunciar();
+  }
+
+  // Ruta desde donde está el taxi hasta el punto de recogida o el destino.
+  #rutaHaciaObjetivo() {
+    const v = this.estado.viaje;
+    if (!v || !this.estado.pos) return;
+    const objetivo = v.fase === 'hacia_origen' ? v.origen : v.fase === 'en_viaje' ? v.destino : null;
+    if (!objetivo) return;
+    calcularRuta(this.estado.pos, objetivo)
+      .then((r) => {
+        if (!r || this.estado.viaje?.id !== v.id || this.estado.viaje.fase !== v.fase) return;
+        this.#cambiar({ rutaActual: r.coords, etaMin: r.min, kmRestantes: r.km });
+      })
+      .catch(() => {});
+  }
+
+  // Errores del servidor (sin viajeId: responden a lo último que se mandó).
+  #alErrorServidor(d) {
+    const codigo = d?.codigo || '';
+    this.emit('error_servidor', { codigo, texto: servidor.textoError(codigo) });
+    const v = this.estado.viaje;
+    if (!['servicio_no_disponible', 'ya_tienes_un_servicio'].includes(codigo) || v?.fase !== 'confirmando') return;
+    clearTimeout(this.temporizadores.get('confirmar'));
+    this.aceptadaReciente = null;
+    this.#avisar({ titulo: servidor.textoError(codigo), cuerpo: 'Sigue atento a nuevas solicitudes.', tipo: 'info' });
+    this.#terminar();
+    // La central dice que ya hay un servicio a tu nombre: al reconectar llega con viaje_actual.
+    if (codigo === 'ya_tienes_un_servicio') this.bus.reconectar();
+  }
+
   async #avisar(aviso) {
     const a = await avisar(aviso);
     this.emit('aviso', a);
@@ -472,11 +1034,13 @@ class ControladorConductor extends Emisor {
 
   #cambiar(cambios) {
     Object.assign(this.estado, cambios);
+    if (this.real && ('viaje' in cambios || 'conectado' in cambios)) this.#guardarReal();
     this.emit('cambio', this.estado);
   }
 
   // Cambia entre GPS real y simulado (true/false/null = automático).
   async usarGpsSimulado(valor) {
+    if (this.real) return; // en la app real el GPS siempre es el de verdad
     perfil.guardarAjustes({ gpsSimulado: valor });
     await this.#configurarGps();
     if (this.estado.conectado) this.#anunciar();
@@ -493,6 +1057,7 @@ class ControladorConductor extends Emisor {
 
   destruir() {
     clearInterval(this.relojPresencia);
+    clearTimeout(this.relojViajeActual);
     this.recorrido?.detener();
     this.dejarDeSeguir?.();
     this.pasajeroSim?.detener();

@@ -146,6 +146,24 @@ export function avisoDemo(clase = 'a-chip-demo') {
   return EM.ES_PROPUESTA ? `<span class="${clase}">Demostración de ${esc(EM.APP)} para ${esc(EM.NOMBRE_LARGO)}</span>` : '';
 }
 
+// Modo real: el chip de conexión dice el estado del tiempo real con el servidor
+// (bus.estado del núcleo). Sirve para el pasajero y para el conductor.
+export const TEXTO_CONEXION = {
+  sin_conectar: 'Conectando…',
+  conectando: 'Conectando…',
+  en_linea: 'En línea',
+  reconectando: 'Sin conexión, reintentando…',
+  rechazado: 'Sin conexión',
+};
+export function pintarChipConexion(chip, estado = 'sin_conectar') {
+  if (!chip) return;
+  chip.dataset.estado = estado;
+  chip.classList.toggle('a-vivo', estado === 'en_linea');
+  chip.classList.toggle('a-reconectando', estado === 'conectando' || estado === 'reconectando' || estado === 'sin_conectar');
+  chip.classList.toggle('a-desconectado', estado === 'rechazado');
+  ponerTexto(chip, '[data-conexion-txt]', TEXTO_CONEXION[estado] || TEXTO_CONEXION.sin_conectar);
+}
+
 // Cuadros de colores tipo «tablero de taxi» (detalle de marca).
 export function franjaCuadros(clase = '') {
   return `<div class="a-cuadros ${clase}" aria-hidden="true"></div>`;
@@ -566,11 +584,17 @@ export function estrellas({ valor = 0, etiqueta = 'Calificación', alCambiar = (
 }
 
 /* ------------------------------------------------------------------ */
-/* Casillas para códigos de 4 dígitos                                   */
+/* Casillas para códigos de 4 dígitos (y de 6: el código del correo)    */
 /* ------------------------------------------------------------------ */
+// Con n = 6 lleva la clase a-casillas-6 (casillas más angostas, para que quepan
+// en un celular de 360 px). Las de 4 no cambian.
+// Las de 6 (el código que llega al correo, solo en modo real) aceptan el código pegado
+// o autocompletado entero: sin maxlength (el navegador cortaría lo pegado a 1 carácter
+// antes del evento input) y con «paste» propio que reparte los dígitos.
 export function casillasCodigo({ n = 4, etiqueta = 'Código', secreto = false, alCompletar = () => {}, alCambiar = () => {} } = {}) {
-  const cont = el(`<div class="a-casillas" role="group" aria-label="${esc(etiqueta)}">
-    ${Array.from({ length: n }, (_, i) => `<input type="${secreto ? 'password' : 'text'}" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="${i === 0 ? 'one-time-code' : 'off'}" aria-label="${esc(etiqueta)}: dígito ${i + 1} de ${n}">`).join('')}
+  const pegable = n === 6;
+  const cont = el(`<div class="a-casillas${n === 6 ? ' a-casillas-6' : ''}" role="group" aria-label="${esc(etiqueta)}">
+    ${Array.from({ length: n }, (_, i) => `<input type="${secreto ? 'password' : 'text'}" inputmode="numeric" pattern="[0-9]*"${pegable ? '' : ' maxlength="1"'} autocomplete="${i === 0 ? 'one-time-code' : 'off'}" aria-label="${esc(etiqueta)}: dígito ${i + 1} de ${n}">`).join('')}
   </div>`);
   const cajas = [...cont.querySelectorAll('input')];
   const valor = () => cajas.map((c) => c.value).join('');
@@ -580,13 +604,31 @@ export function casillasCodigo({ n = 4, etiqueta = 'Código', secreto = false, a
     alCambiar(valor());
     if (valor().length === n) alCompletar(valor());
   };
+  // Reparte varios dígitos desde la casilla i. Un código completo va desde la primera.
+  const repartir = (i, digitos) => {
+    const desde = pegable && digitos.length >= n ? 0 : i;
+    digitos.split('').slice(0, n - desde).forEach((d, k) => (cajas[desde + k].value = d));
+    cajas[Math.min(n - 1, desde + digitos.length)].focus();
+  };
   cajas.forEach((caja, i) => {
+    if (pegable) {
+      caja.addEventListener('paste', (e) => {
+        const digitos = (e.clipboardData?.getData('text') || '').replace(/\D/g, '');
+        if (!digitos) return;
+        e.preventDefault();
+        if (digitos.length > 1) repartir(i, digitos);
+        else {
+          caja.value = digitos;
+          if (i < n - 1) cajas[i + 1].focus();
+        }
+        revisar();
+      });
+    }
     caja.addEventListener('input', () => {
       const digitos = caja.value.replace(/\D/g, '');
       if (digitos.length > 1) {
         // Pegó o el teclado autocompletó varios dígitos.
-        digitos.split('').slice(0, n - i).forEach((d, k) => (cajas[i + k].value = d));
-        cajas[Math.min(n - 1, i + digitos.length)].focus();
+        repartir(i, digitos);
       } else {
         caja.value = digitos;
         if (digitos && i < n - 1) cajas[i + 1].focus();
@@ -618,6 +660,11 @@ export function casillasCodigo({ n = 4, etiqueta = 'Código', secreto = false, a
       cont.classList.remove('a-error');
       void cont.offsetWidth;
       cont.classList.add('a-error');
+    },
+    // Bloquea las casillas mientras se espera la respuesta del servidor.
+    desactivar: (si = true) => {
+      cajas.forEach((c) => (c.disabled = Boolean(si)));
+      cont.setAttribute('aria-busy', String(Boolean(si)));
     },
   };
 }
@@ -745,7 +792,7 @@ export function puntoVisible(m, p, { arriba = 90, abajo = 0, lados = 30 } = {}) 
 /* ------------------------------------------------------------------ */
 export function panelEscritorio({ titulo, texto, puntos = [], url = location.href }) {
   const propuesta = EM.ES_PROPUESTA ? `<p class="a-escritorio-propuesta">${icono('info', { tam: 18 })}<span>${esc(EM.TEXTO_PROPUESTA)}</span></p>` : '';
-  return el(`<aside class="a-escritorio" aria-label="Información de la demo">
+  return el(`<aside class="a-escritorio" aria-label="${EM.MODO_REAL ? 'Información de la app' : 'Información de la demo'}">
     ${propuesta}
     <div class="a-escritorio-marca">${EM.EN_TAXICUN ? EM.marcaApp(52) : EM.marcaIcono(52)}<div><strong>${EM.EN_TAXICUN ? `${EM.palabraApp()} · ${esc(EM.NOMBRE)}` : esc(EM.NOMBRE)}</strong>${EM.LEMA ? `<span>${esc(EM.LEMA)}</span>` : ''}</div></div>
     <h1>${titulo}</h1>
@@ -755,6 +802,6 @@ export function panelEscritorio({ titulo, texto, puntos = [], url = location.hre
       <div class="a-escritorio-qr-img">${N.qrSVG(url, { redondeado: true, color: '#121212' })}</div>
       <div><strong>Ábrela en tu celular</strong><span>Escanea el código con la cámara.</span></div>
     </div>
-    <small>${esc(EM.unir(['Demo', EM.RAZON_SOCIAL, EM.TELEFONO_VISIBLE]))}<br>${esc(EM.TEXTO_DESARROLLO)}</small>
+    <small>${esc(EM.unir([EM.MODO_REAL ? '' : 'Demo', EM.RAZON_SOCIAL, EM.TELEFONO_VISIBLE]))}<br>${esc(EM.TEXTO_DESARROLLO)}</small>
   </aside>`);
 }

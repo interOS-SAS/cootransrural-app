@@ -3,6 +3,7 @@
   "carpeta": "el-rosal",
   "estado": "cliente",
   "diseno": "a",
+  "real": true,
   "EMPRESA": {
     "nombre": "Cootransrural",
     "razonSocial": "Cooperativa de Transportadores Rurales de El Rosal Ltda.",
