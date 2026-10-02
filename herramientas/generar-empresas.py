@@ -33,6 +33,7 @@ import json
 import math
 import pathlib
 import re
+import unicodedata
 from urllib.parse import urlparse
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
@@ -51,7 +52,7 @@ def carpeta(f):
 URL_PUBLICA = 'https://taxicun.com/'
 PROVEEDOR = {'nombre': 'interOS', 'web': 'https://interos.com.co',
              # Contacto comercial que firma las propuestas (plantillas/propuesta/).
-             'contacto': 'Oscar Bernal', 'correo': 'oscaradrianbernal@gmail.com'}
+             'contacto': 'Oscar Bernal', 'correo': 'info@taxicun.com'}
 # La app de todas las cooperativas se llama TaxiCun; interOS es quien la desarrolla.
 # (taxicun/ escoge la cooperativa con ?e=<id>, la elección guardada o el GPS.)
 MARCA = {'nombre': 'TaxiCun', 'desarrollador': PROVEEDOR['nombre'], 'lema': 'Tu taxi de confianza en Cundinamarca'}
@@ -545,6 +546,26 @@ def tipo_empresa(E):
     return 'empresa' if str(E.get('tipo') or '').strip().lower() == 'empresa' else 'cooperativa'
 
 
+# Región con su artículo: «la provincia del Guavio», «la Sabana Centro», «el Sumapaz»…
+# (en las fichas viene sin artículo y a veces sin «provincia»: «Guavio», «Oriente»).
+REGIONES_CON_ARTICULO = {
+    'guavio': 'la provincia del Guavio', 'oriente': 'la provincia de Oriente', 'rionegro': 'la provincia de Rionegro',
+    'sumapaz': 'la región del Sumapaz', 'gualivá': 'la provincia del Gualivá', 'tequendama': 'la provincia del Tequendama',
+    'almeidas': 'la provincia de Almeidas', 'ubaté': 'la provincia de Ubaté', 'soacha': 'la provincia de Soacha', 'medina': 'la provincia de Medina',
+}
+
+
+def region_con_articulo(region):
+    r = (region or '').strip()
+    if not r:
+        return ''
+    if r.lower().startswith(('la ', 'el ', 'los ', 'las ')):
+        return r
+    if r.lower().startswith(('provincia', 'región', 'sabana')):
+        return 'la ' + r
+    return REGIONES_CON_ARTICULO.get(r.lower(), 'la región de ' + r)
+
+
 def colores_oficiales(ficha):
     """¿Los colores de la ficha son los de la empresa? En las propuestas casi siempre los
     propone interOS: entonces los textos dicen «colores propuestos»."""
@@ -671,7 +692,8 @@ def derivados(ficha):
         'tiene_direccion': bool(E.get('direccion')),
         'tiene_contacto': bool(tel or wa or E.get('correo') or E.get('direccion') or any(pendiente.values())),
         'tiene_fuentes': bool(ficha.get('fuentes')),
-        'fuentes_lista': [{'url': u, 'dominio': dominio(u)} for u in ficha.get('fuentes') or []],
+        # Un enlace por dominio (el primero): «Fuentes» no repite el de la alcaldía tres veces.
+        'fuentes_lista': [{'url': u, 'dominio': dominio(u)} for i, u in enumerate(ficha.get('fuentes') or []) if dominio(u) not in {dominio(v) for v in (ficha.get('fuentes') or [])[:i]}],
         'calle': calle_sin_municipio(E.get('direccion'), E),
     })
     medios = ['pide por la app'] + (['llama'] if tel else []) + (['escríbenos por WhatsApp'] if wa else [])
@@ -681,6 +703,10 @@ def derivados(ficha):
     )
     if es_principal:
         p['noche_texto'] = 'La central atiende las 24 horas, todos los días del año. Pide por la app, llama o escríbenos.'
+    # Si no está confirmado que ya preste el servicio de taxi, la web no lo da por hecho.
+    p['sin_operacion_confirmada'] = any('confirmar que ya presta' in str(x).lower() for x in (E.get('datosPendientes') or []))
+    if p['sin_operacion_confirmada']:
+        p['noche_texto'] = 'Pide tu taxi desde la app.'
     contacto = ['Visítanos en la oficina'] if E.get('direccion') else []
     if tel:
         contacto.append('llámanos')
@@ -735,7 +761,8 @@ def derivados(ficha):
     p['razon_con_nombre'] = razon if E['nombre'].lower() in razon.lower() else (f"{razon} ({E['nombre']})" if razon else f"{tipo} {E['nombre']}")
     p['nombre_largo'] = len(E['nombre']) > 14
     # Nombre del pueblo sin cortes de línea («La Vega», «El Rosal») para el título.
-    p['pueblo_junto'] = pueblo.replace(' ', '\u00a0')
+    # Nombres largos («San Antonio del Tequendama») sí pueden partirse en el celular.
+    p['pueblo_junto'] = pueblo.replace(' ', '\u00a0') if len(pueblo) <= 16 else pueblo
     lema = (E.get('lema') or '').strip()
     p['titulo_nosotros'] = lema or f'Taxis de {pueblo}'
     p['lema_punto'] = (lema if lema[-1:] in '.!?' else lema + '.') if lema else ''
@@ -781,6 +808,9 @@ def derivados(ficha):
     p['muestra'] = muestra_conductor(ficha)
     taxis = (cantidad(E.get('taxis')) or (0,))[0]
     aprox = 'exacto de taxis' in ' '.join(E.get('datosPendientes') or []).lower()
+    # Contador «N libres de M en línea»: no más taxis en línea de los que tiene la flota.
+    p['en_linea'] = min(8, taxis) if taxis else 8
+    p['en_linea_libres'] = max(1, round(p['en_linea'] * 5 / 8))
     p['taxis_calc'] = taxis or 30
     p['plan_b_flota'] = pesos(p['taxis_calc'] * 27000)
     p['plan_b_ejemplo'] = f"{taxis} taxis" if taxis else 'Con 30 taxis'
@@ -796,6 +826,7 @@ def derivados(ficha):
     llenos = max(1, min(viajes - 3, viajes))
     p['oferta'] = {
         'descuento': desc, 'horas': horas, 'viajes': viajes, 'siguiente': viajes + 1, 'descuento_fidelidad': desc_fid,
+        'premio': 'gratis' if desc_fid >= 100 else ('a mitad de precio' if desc_fid == 50 else f'con el {desc_fid} % de descuento'),
         'sellos': [{'lleno': i < llenos} for i in range(viajes)],
         'intro': 'Dos beneficios que la cooperativa ya ofrece, ahora también desde la app.' if es_principal else f'Dos beneficios que la {tipo} puede ofrecer desde la app.',
     }
@@ -804,7 +835,7 @@ def derivados(ficha):
     p['tarifas_nota'] = str(T.get('nota') or '').strip() or f'Valores de ejemplo, sujetos a confirmación de la {tipo}.'
     p['tarifa_inicial'] = {
         'minima': pesos(T.get('minimaUrbana') or 0), 'banderazo': pesos(T.get('banderazo') or 0),
-        'km': pesos(T.get('porKm') or 0), 'nocturno': pesos(T.get('recargoNocturno') or 0), 'dominical': pesos(T.get('recargoDominical') or 0), 'hay_dominical': (T.get('recargoDominical') or 0) > 0,
+        'km': pesos(T.get('porKm') or 0), 'nocturno': pesos(T.get('recargoNocturno') or 0), 'hay_nocturno': (T.get('recargoNocturno') or 0) > 0, 'dominical': pesos(T.get('recargoDominical') or 0), 'hay_dominical': (T.get('recargoDominical') or 0) > 0,
         'horario_nocturno': f"De {hora12(T.get('nocheDesde', 20))} a {hora12(T.get('nocheHasta', 6))}",
     }
 
@@ -827,7 +858,8 @@ def derivados(ficha):
             nombres.append('Bogotá')
         if aeropuerto:
             nombres.append('el aeropuerto')
-        p['rutas_titulo'] = f"De {pueblo} a toda la {region}" if region else f"De {pueblo} a toda la región"
+        # Sin nombrar la provincia: la lista de destinos incluye municipios de otras.
+        p['rutas_titulo'] = f"De {pueblo} a toda la región"
         p['rutas_texto'] = (lista_natural(nombres) + '.') if nombres else 'El casco urbano, las veredas y los municipios vecinos.'
 
     # Nosotros
@@ -897,7 +929,7 @@ def derivados(ficha):
     )
     p['sede_texto'] = ('Nuestra sede: Carrera 8 No. 12-38, Barrio San Carlos' if es_principal else (f"Oficina: {p['calle']}" if p['calle'] else ''))
     p['flota_titulo'] = ((f'Unos {taxis} taxis' if aprox else f"{taxis} taxis {modelo_taxis(ficha)}".strip()) if taxis else f'Taxis de {nombre}')
-    p['flota_texto'] = f"Cada uno con su número de móvil, el mismo que verás en la app. Listos en {pueblo}{' y la ' + region if region else ''}, de día y de noche."
+    p['flota_texto'] = f"Cada uno con su número de móvil, el mismo que verás en la app. Listos en {pueblo}{' y ' + region_con_articulo(region) if region else ''}, de día y de noche."
     if es_principal:
         p['flota_texto'] = 'Cada uno con su número de móvil, el mismo que verás en la app. Listos en El Rosal y la Sabana, de día y de noche.'
 
@@ -912,8 +944,11 @@ def derivados(ficha):
     vehiculos = 'Taxis y microbuses' if E.get('microbuses') else 'Taxis'
     if es_principal:
         p['pie_texto'] = TEXTOS_PRINCIPAL['pie_texto']
+    elif E.get('pieTexto'):
+        p['pie_texto'] = E['pieTexto']
     else:
-        p['pie_texto'] = f"{vehiculos} en {pueblo}{' y la ' + region if region else ''}{' desde ' + str(E['fundada']) if E.get('fundada') else ''}."
+        desde = ' desde ' + str(E['fundada']) if E.get('fundada') and not p.get('sin_operacion_confirmada') else ''
+        p['pie_texto'] = f"{vehiculos} en {pueblo}{' y ' + region_con_articulo(region) if region else ''}{desde}."
     p['descripcion_corta'] = (
         f"{tipo.capitalize()} de {vehiculos.lower()} de {municipio}. Transporte urbano e intermunicipal"
         + (' las 24 horas.' if E.get('servicio24h') else '.')
@@ -1051,14 +1086,18 @@ def radar_svg(ficha, lugares, rutas, pal):
         ux, uy = (x2 - cx) / (R + largo), (y2 - cy) / (R + largo)
         propia = 'start' if ux > 0.3 else ('end' if ux < -0.3 else 'middle')
         colocada = None
-        for empuje in (0, 10, 20, 30, 40):
+        # Primero con margen amplio entre etiquetas; si no cabe, con uno ajustado.
+        for mx, my in ((6, 3), (2, 1)):
+          if colocada:
+            break
+          for empuje in (0, 10, 20, 30, 40):
             for ancla in [propia] + [a for a in ('middle', 'start', 'end') if a != propia]:
                 for corrimiento in (0, -0.5, 0.5, -1, 1, -1.5, 1.5):
                     lx, ly = pos(x, y, R + largo + 6 + empuje)
                     izq = lx if ancla == 'start' else (lx - ancho if ancla == 'end' else lx - ancho / 2)
                     izq = min(max(izq, 2), W - 2 - ancho) if ancla == 'middle' else izq
                     arriba = (ly if uy > 0.55 else (ly - alto if uy < -0.55 else ly - alto / 2)) + corrimiento * alto
-                    caja = (izq - 6, arriba - 3, izq + ancho + 6, arriba + alto + 3)
+                    caja = (izq - mx, arriba - my, izq + ancho + mx, arriba + alto + my)
                     dentro = caja[0] >= 1 and caja[2] <= W - 1 and caja[1] >= 1 and caja[3] <= H - 1
                     choca = any(not (caja[2] < c[0] or caja[0] > c[2] or caja[3] < c[1] or caja[1] > c[3]) for c in etiquetas)
                     # Que no se monte sobre el círculo del pueblo.
@@ -1210,10 +1249,10 @@ def datos_propuesta(ficha, p):
 
     # Datos por confirmar (redactados amables) + lo que siempre hace falta para producción.
     confirmar = [PENDIENTE_AMABLE.get(x.lower(), mayuscula(x)).replace('la cooperativa', f'la {tipo}') for x in pend_lista]
-    if T.get('ejemplo', True):
+    if T.get('ejemplo', True) and not any('tarifa' in x.lower() for x in pend_lista):
         confirmar.append('Las tarifas oficiales (las de la demo son de ejemplo)')
     confirmar.append('La lista de conductores, con sus móviles y placas')
-    if not colores_oficiales(ficha):
+    if not colores_oficiales(ficha) and not any(('color' in x.lower() or 'logo' in x.lower()) for x in pend_lista):
         confirmar.append('Sus colores y su logo (los de la demo los propone interOS)')
 
     notas = ' '.join(str(x) for x in ficha.get('notas') or []).lower()
@@ -1227,7 +1266,8 @@ def datos_propuesta(ficha, p):
         'etiqueta': 'Propuesta comercial' if p['es_cliente'] else 'Propuesta de demostración',
         'ubicacion': (E.get('municipio') or pueblo) + (f' · {mayuscula(region)}' if region else ''),
         'nombre_corto': E.get('nombreCorto') or nombre,
-        'archivo_pdf': 'Propuesta-app-taxis-' + re.sub(r'[^A-Za-z0-9]+', '-', html.unescape(E.get('nombreCorto') or nombre)).strip('-') + '.pdf',
+        # Sin tildes («Chía» → «Chia», no «Ch-a»).
+        'archivo_pdf': 'Propuesta-app-taxis-' + re.sub(r'[^A-Za-z0-9]+', '-', ''.join(c for c in unicodedata.normalize('NFD', html.unescape(E.get('nombreCorto') or nombre)) if unicodedata.category(c) != 'Mn')).strip('-') + '.pdf',
         'movil_demo': movil,
         'enlaces': enlaces,
         'lugares': lugares,

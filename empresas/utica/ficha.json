@@ -1,0 +1,433 @@
+{
+  "id": "utica",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cooptransutica",
+    "nombreCorto": "Cooptransutica",
+    "razonSocial": "Cooperativa de Transportes de Útica (Cooptransutica)",
+    "tipo": "cooperativa",
+    "lema": "Taxis de Útica, para el pueblo y sus veredas",
+    "municipio": "Útica, Cundinamarca",
+    "pueblo": "Útica",
+    "region": "provincia del Gualivá",
+    "telefono": "3202766989",
+    "telefonoVisible": "320 276 6989",
+    "whatsapp": "573202766989",
+    "correo": "",
+    "direccion": "Carrera 4 # 5-01, Centro, Útica, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2000,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "UTI",
+    "vehiculo": "Camioneta DFSK",
+    "colorTaxi": "Amarillo",
+    "oficina": {
+      "lat": 5.1885,
+      "lng": -74.480424
+    },
+    "datosPendientes": [
+      "correo",
+      "número total de taxis (al menos 7 con tarjeta vigente en 2026)",
+      "confirmar el WhatsApp de la oficina",
+      "tarifas oficiales (decreto de tarifas de taxi de Útica)",
+      "logo y colores oficiales",
+      "misión y visión oficiales",
+      "servicio 24 horas"
+    ]
+  },
+  "colores": {
+    "primario": "#0B6E62",
+    "primario2": "#12897A",
+    "oscuro": "#053630",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 5.18792,
+    "lng": -74.481477
+  },
+  "ZONA": {
+    "sur": 4.87,
+    "norte": 5.51,
+    "oeste": -74.8,
+    "este": -74.16
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "quebradanegra",
+      "destino": "Quebradanegra",
+      "valor": 24000,
+      "km": 12,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "la-pena",
+      "destino": "La Peña",
+      "valor": 32000,
+      "km": 17,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "nimaima",
+      "destino": "Nimaima",
+      "valor": 44000,
+      "km": 25,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "villeta",
+      "destino": "Villeta",
+      "valor": 50000,
+      "km": 30,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "nocaima",
+      "destino": "Nocaima",
+      "valor": 68000,
+      "km": 42,
+      "min": 65,
+      "radioKm": 4
+    },
+    {
+      "id": "guaduas",
+      "destino": "Guaduas",
+      "valor": 99000,
+      "km": 62,
+      "min": 80,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Útica",
+      "cat": "centro",
+      "lat": 5.18792,
+      "lng": -74.481477
+    },
+    {
+      "id": "hotel-abacoa",
+      "nombre": "Hotel Abacoa",
+      "detalle": "Útica",
+      "cat": "turismo",
+      "lat": 5.187157,
+      "lng": -74.480268
+    },
+    {
+      "id": "estacion-de-policia",
+      "nombre": "Estación de Policía",
+      "detalle": "Útica",
+      "cat": "centro",
+      "lat": 5.189053,
+      "lng": -74.480181
+    },
+    {
+      "id": "iglesia-nuestra-senora-del-rosario",
+      "nombre": "Iglesia Nuestra Señora del Rosario",
+      "detalle": "Útica",
+      "cat": "centro",
+      "lat": 5.189016,
+      "lng": -74.479946
+    },
+    {
+      "id": "alcaldia-municipal-de-utica",
+      "nombre": "Alcaldía Municipal de Útica",
+      "detalle": "Útica",
+      "cat": "centro",
+      "lat": 5.188957,
+      "lng": -74.479774
+    },
+    {
+      "id": "surtimax",
+      "nombre": "Surtimax",
+      "detalle": "Útica",
+      "cat": "comercio",
+      "lat": 5.18963,
+      "lng": -74.479924
+    },
+    {
+      "id": "banco-agrario",
+      "nombre": "Banco Agrario",
+      "detalle": "Útica",
+      "cat": "comercio",
+      "lat": 5.189903,
+      "lng": -74.479801
+    },
+    {
+      "id": "cementerio-de-utica",
+      "nombre": "Cementerio de Útica",
+      "detalle": "Útica",
+      "cat": "centro",
+      "lat": 5.190635,
+      "lng": -74.483165
+    },
+    {
+      "id": "centro-de-salud-utica",
+      "nombre": "Centro de Salud Útica",
+      "detalle": "Útica",
+      "cat": "salud",
+      "lat": 5.192357,
+      "lng": -74.47847
+    },
+    {
+      "id": "biomax-utica",
+      "nombre": "Biomax Útica",
+      "detalle": "Útica",
+      "cat": "comercio",
+      "lat": 5.192971,
+      "lng": -74.478505
+    },
+    {
+      "id": "pizzeria-jacamar",
+      "nombre": "Pizzería Jacamar",
+      "detalle": "Útica · a 1,3 km",
+      "cat": "comida",
+      "lat": 5.197581,
+      "lng": -74.488821
+    },
+    {
+      "id": "chivasa",
+      "nombre": "Chivasa",
+      "detalle": "Vereda de Útica",
+      "cat": "vereda",
+      "lat": 5.160343,
+      "lng": -74.453409
+    },
+    {
+      "id": "quebradanegra",
+      "nombre": "Quebradanegra",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.117231,
+      "lng": -74.479364
+    },
+    {
+      "id": "villeta",
+      "nombre": "Villeta",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.011258,
+      "lng": -74.47023
+    },
+    {
+      "id": "la-pena",
+      "nombre": "La Peña",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.197655,
+      "lng": -74.394149
+    },
+    {
+      "id": "guaduas",
+      "nombre": "Guaduas",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.067467,
+      "lng": -74.595077
+    },
+    {
+      "id": "nimaima",
+      "nombre": "Nimaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.125392,
+      "lng": -74.38535
+    },
+    {
+      "id": "nocaima",
+      "nombre": "Nocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.069767,
+      "lng": -74.377522
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Martha Garzón",
+      "placa": "UTI 601",
+      "vehiculo": "Camioneta DFSK",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 837,
+      "desde": 2011,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Héctor Bernal",
+      "placa": "UTI 604",
+      "vehiculo": "Camioneta DFSK",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1107,
+      "desde": 2006,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Carlos Rodríguez",
+      "placa": "UTI 609",
+      "vehiculo": "Camioneta DFSK",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 406,
+      "desde": 2010,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Yolanda Prieto",
+      "placa": "UTI 611",
+      "vehiculo": "Camioneta DFSK",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1153,
+      "desde": 2007,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Rubén Sarmiento",
+      "placa": "UTI 613",
+      "vehiculo": "Camioneta DFSK",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 797,
+      "desde": 2013,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-18",
+      "movil": "018",
+      "nombre": "Wilson Gómez",
+      "placa": "UTI 618",
+      "vehiculo": "Camioneta DFSK",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1604,
+      "desde": 2013,
+      "tel": "3000000018"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Jorge Castañeda",
+      "placa": "UTI 619",
+      "vehiculo": "Camioneta DFSK",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 817,
+      "desde": 2010,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-30",
+      "movil": "030",
+      "nombre": "Nelson Pinzón",
+      "placa": "UTI 630",
+      "vehiculo": "Camioneta DFSK",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 2159,
+      "desde": 2013,
+      "tel": "3000000030"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cooptransutica —la Cooperativa de Transportes de Útica— presta desde el año 2000 el transporte público de Útica, en la provincia del Gualivá, con taxis y transporte mixto. Sus taxis son camionetas amarillas con tarjeta de operación vigente, renovada por la Alcaldía en enero de 2026.\n\nCon la app, la cooperativa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay, conoces la tarifa antes de subir, sigues el móvil en el mapa y pagas con QR, ya sea para moverte en el pueblo, subir a la vereda o salir hacia Quebradanegra y Villeta.",
+    "mision": "Prestar el servicio de taxi en Útica y sus veredas con conductores asociados que conocen cada camino, con seguridad, puntualidad y buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Útica y el Gualivá: un taxi a un toque, con tarifa clara y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi en el casco urbano de Útica",
+      "Servicio a las veredas en camioneta",
+      "Viajes a Quebradanegra y Villeta",
+      "Viajes a La Peña, Guaduas y Nimaima"
+    ],
+    "frase": "Del pueblo a la vereda, tu taxi en Útica"
+  },
+  "fuentes": [
+    "https://uticacundinamarca.micolombiadigital.gov.co/sites/uticacundinamarca/content/files/000796/39785_resolucion-n-029-renovacion-de-tarjetas-de-operacion-vehicular.pdf",
+    "https://uticacundinamarca.micolombiadigital.gov.co/sites/uticacundinamarca/content/files/000796/39786_resolucion-n-028-desvinculacion-de-vehiculo.pdf",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832004561",
+    "https://www.facebook.com/people/Cootransutica/100037033426822/",
+    "https://colfirma.com/empresa/cooperativa-de-transportes-de-utica-832004561",
+    "https://edirectorio.net/empresa/cooperativa-de-transportes-de-utica",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Taxis: la Resolución 029 del 29 de enero de 2026 de la Alcaldía de Útica renueva diez tarjetas de operación de «vehículos tipo taxi (servicio individual) y mixtos» vinculados a Cooptransutica: siete son taxis (camionetas amarillas de 6 a 9 pasajeros, SAIC Wuling, BAIC y DFSK, modelos 2008 a 2018) y tres son mixtos; las tarjetas valen hasta el 31 de diciembre de 2026. La Resolución 028 de la misma fecha autoriza la desvinculación de un vehículo de Cooptransutica «en la modalidad servicio taxi». La 029 dice que la cooperativa está habilitada para el servicio público de pasajeros en la jurisdicción de Útica (URL en fuentes; PDF escaneados, leídos página por página). Las placas no se publican.",
+    "RUES abierto (datos.gov.co): Cooperativa de Transportes de Útica, sigla Cooptransutica, NIT 832.004.561-7, ACTIVA, Cámara de Comercio de Facatativá, matriculada el 19-abr-2000 y renovada el 20-mar-2026 (CIIU principal 9499). Fundada: 2000 es el año de la matrícula; en 2025 su Facebook muestra una celebración de «25 Feliz cumpleaños», que coincide con esa fecha.",
+    "Nombre: la razón social y la Alcaldía escriben «Cooptransutica»; su página de Facebook se llama «Cootransutica».",
+    "Teléfono y WhatsApp 320 276 6989: la cooperativa lo publica en Facebook (diciembre de 2025) para separar cupos, con el ícono de WhatsApp, y es el teléfono del registro mercantil (edirectorio). La misma publicación da también el 311 596 3018. Confirmar que el WhatsApp atiende pedidos de taxi.",
+    "Dirección: Carrera 4 # 5-01, Centro (registro mercantil, edirectorio). Oficina en el mapa: cruce de la Carrera 4 con la Calle 5 en OpenStreetMap.",
+    "Representante legal: José Wilson Pérez León, según el RUES abierto (marzo de 2026). Se usa solo para el saludo de la propuesta.",
+    "Correo: no se encontró.",
+    "Número de taxis: al menos 7 con tarjeta de operación vigente en 2026 (Res. 029); puede haber otros con otra fecha de renovación, por eso queda en null.",
+    "Vehículo: sus taxis son camionetas; la marca más común en la Res. 029 es DFSK (las más nuevas, de 9 pasajeros).",
+    "Colores propios de interOS (verde jade), inspirados en el verde de su sede y de sus publicaciones; no se encontró el logo. Lema y frase: propuestos por interOS.",
+    "Tarifas: no se encontró el decreto de tarifas de taxi de Útica.",
+    "Placa de la demo (UTI): inventada para la demo; no corresponde a placas reales.",
+    "Destinos: municipios vecinos del Gualivá y el Magdalena Centro (Quebradanegra, Villeta, La Peña, Guaduas, Nimaima, Nocaima). Útica queda a unos 120 km de Bogotá: no se añaden portal ni aeropuerto.",
+    "La historia solo usa hechos de las fuentes; la misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

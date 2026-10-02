@@ -1,0 +1,641 @@
+{
+  "id": "cajica-fortaleza",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Taxis Fortaleza de Piedra",
+    "nombreCorto": "Fortaleza de Piedra",
+    "razonSocial": "Cooperativa de Transportadores Fortaleza de Piedra",
+    "tipo": "cooperativa",
+    "lema": "Taxis de Cajicá, firmes como la piedra",
+    "municipio": "Cajicá, Cundinamarca",
+    "pueblo": "Cajicá",
+    "telefono": "3214192900",
+    "telefonoVisible": "321 419 2900",
+    "whatsapp": "",
+    "correo": "fortalezadepiedra@hotmail.com",
+    "direccion": "Carrera 6 # 1-36, Cajicá, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://www.taxisfortalezadepiedra.com/",
+    "fundada": 1989,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "CAJ",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana Centro",
+    "datosPendientes": [
+      "whatsapp",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.91641,
+      "lng": -74.02673
+    }
+  },
+  "colores": {
+    "primario": "#5B4E3C",
+    "primario2": "#75664F",
+    "oscuro": "#2A241B",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.91728,
+    "lng": -74.025584
+  },
+  "ZONA": {
+    "sur": 4.6,
+    "norte": 5.24,
+    "oeste": -74.35,
+    "este": -73.71
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "chia",
+      "destino": "Chía",
+      "valor": 18000,
+      "km": 8,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "tabio",
+      "destino": "Tabio",
+      "valor": 22000,
+      "km": 11,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "zipaquira",
+      "destino": "Zipaquirá",
+      "valor": 26000,
+      "km": 13,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "sopo",
+      "destino": "Sopó",
+      "valor": 27000,
+      "km": 14,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "tocancipa",
+      "destino": "Tocancipá",
+      "valor": 32000,
+      "km": 17,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "tenjo",
+      "destino": "Tenjo",
+      "valor": 33000,
+      "km": 18,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 35000,
+      "km": 19,
+      "min": 30,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 65000,
+      "km": 39,
+      "min": 60,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.917271,
+      "lng": -74.02553
+    },
+    {
+      "id": "estacion-de-policia-de-cajica",
+      "nombre": "Estación de Policía de Cajicá",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.917193,
+      "lng": -74.026129
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Cajicá",
+      "cat": "comercio",
+      "lat": 4.916851,
+      "lng": -74.026015
+    },
+    {
+      "id": "alcaldia-municipal-de-cajica",
+      "nombre": "Alcaldía Municipal de Cajicá",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.916578,
+      "lng": -74.025467
+    },
+    {
+      "id": "la-fonda-de-pipe",
+      "nombre": "La Fonda De Pipe",
+      "detalle": "Cajicá",
+      "cat": "comida",
+      "lat": 4.917908,
+      "lng": -74.026021
+    },
+    {
+      "id": "parroquia-inmaculada-concepcion",
+      "nombre": "Parroquia Inmaculada Concepción",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.916765,
+      "lng": -74.024886
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Cajicá",
+      "cat": "comercio",
+      "lat": 4.916857,
+      "lng": -74.026377
+    },
+    {
+      "id": "primax",
+      "nombre": "Primax",
+      "detalle": "Cajicá",
+      "cat": "comercio",
+      "lat": 4.91755,
+      "lng": -74.026565
+    },
+    {
+      "id": "d1-cajica-centro",
+      "nombre": "D1 Cajicá centro",
+      "detalle": "Cajicá",
+      "cat": "comercio",
+      "lat": 4.916329,
+      "lng": -74.025979
+    },
+    {
+      "id": "banco-av-villas",
+      "nombre": "Banco AV Villas",
+      "detalle": "Cajicá",
+      "cat": "comercio",
+      "lat": 4.917074,
+      "lng": -74.02682
+    },
+    {
+      "id": "hospital-jorge-cavelier",
+      "nombre": "Hospital Jorge Cavelier",
+      "detalle": "Cajicá",
+      "cat": "salud",
+      "lat": 4.915898,
+      "lng": -74.025279
+    },
+    {
+      "id": "clinica-san-luis",
+      "nombre": "Clínica San Luis",
+      "detalle": "Cajicá",
+      "cat": "salud",
+      "lat": 4.915505,
+      "lng": -74.025348
+    },
+    {
+      "id": "parque-el-rocio",
+      "nombre": "Parque El Rocío",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.915001,
+      "lng": -74.025265
+    },
+    {
+      "id": "plaza-campesina",
+      "nombre": "Plaza Campesina",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.915196,
+      "lng": -74.024225
+    },
+    {
+      "id": "parque-de-la-estacion",
+      "nombre": "Parque de la Estación",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.915363,
+      "lng": -74.023583
+    },
+    {
+      "id": "bilbioteca-publica-de-cajica",
+      "nombre": "Biblioteca Pública de Cajicá",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.916281,
+      "lng": -74.022946
+    },
+    {
+      "id": "parque-de-las-flores",
+      "nombre": "Parque de las Flores",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.91972,
+      "lng": -74.027313
+    },
+    {
+      "id": "hotel-sexta-avenida",
+      "nombre": "Hotel Sexta Avenida",
+      "detalle": "Cajicá",
+      "cat": "turismo",
+      "lat": 4.920374,
+      "lng": -74.026423
+    },
+    {
+      "id": "nacho-s-pizza",
+      "nombre": "Nacho's Pizza",
+      "detalle": "Cajicá",
+      "cat": "comida",
+      "lat": 4.914194,
+      "lng": -74.026974
+    },
+    {
+      "id": "ied-pompilio-martinez",
+      "nombre": "IED Pompilio Martinez",
+      "detalle": "Cajicá",
+      "cat": "educacion",
+      "lat": 4.91507,
+      "lng": -74.028255
+    },
+    {
+      "id": "skatepark-cajica",
+      "nombre": "Skatepark Cajicá",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.918844,
+      "lng": -74.022381
+    },
+    {
+      "id": "crafts-arepas",
+      "nombre": "Crafts Arepas",
+      "detalle": "Cajicá",
+      "cat": "comida",
+      "lat": 4.91389,
+      "lng": -74.027067
+    },
+    {
+      "id": "restaurante-la-fogata",
+      "nombre": "Restaurante La Fogata",
+      "detalle": "Cajicá",
+      "cat": "comida",
+      "lat": 4.92093,
+      "lng": -74.027373
+    },
+    {
+      "id": "restaurante-mikela-pizza-rustica",
+      "nombre": "Restaurante Mikela Pizza Rústica",
+      "detalle": "Cajicá",
+      "cat": "comida",
+      "lat": 4.913963,
+      "lng": -74.028246
+    },
+    {
+      "id": "colegio-pablo-herrera-preescolar",
+      "nombre": "Colegio Pablo Herrera Preescolar",
+      "detalle": "Cajicá",
+      "cat": "educacion",
+      "lat": 4.92322,
+      "lng": -74.032421
+    },
+    {
+      "id": "colegio-colombo-hispano",
+      "nombre": "Colegio Colombo-Hispano",
+      "detalle": "Cajicá",
+      "cat": "educacion",
+      "lat": 4.921257,
+      "lng": -74.033742
+    },
+    {
+      "id": "gimmasio-aleman-friederich-von-schiller",
+      "nombre": "Gimnasio Alemán Friedrich von Schiller",
+      "detalle": "Cajicá",
+      "cat": "educacion",
+      "lat": 4.927694,
+      "lng": -74.027223
+    },
+    {
+      "id": "colegio-emilio-sotomayor-duque",
+      "nombre": "Colegio Emilio Sotomayor Duque",
+      "detalle": "Cajicá",
+      "cat": "educacion",
+      "lat": 4.908472,
+      "lng": -74.031604
+    },
+    {
+      "id": "i-e-d-pablo-herrera",
+      "nombre": "I.E.D. Pablo Herrera",
+      "detalle": "Cajicá · a 1,4 km",
+      "cat": "educacion",
+      "lat": 4.926524,
+      "lng": -74.033766
+    },
+    {
+      "id": "canelon",
+      "nombre": "Canelon",
+      "detalle": "Cajicá · a 1,7 km",
+      "cat": "barrio",
+      "lat": 4.913417,
+      "lng": -74.040275
+    },
+    {
+      "id": "clarion-sabana-rk",
+      "nombre": "Hotel Sabana Park",
+      "detalle": "Cajicá · a 1,8 km",
+      "cat": "turismo",
+      "lat": 4.901627,
+      "lng": -74.029429
+    },
+    {
+      "id": "calahorra",
+      "nombre": "Calahorra",
+      "detalle": "Cajicá · a 2,0 km",
+      "cat": "barrio",
+      "lat": 4.900344,
+      "lng": -74.0193
+    },
+    {
+      "id": "compensar-cajica",
+      "nombre": "Compensar Cajicá",
+      "detalle": "Cajicá · a 3,0 km",
+      "cat": "salud",
+      "lat": 4.892276,
+      "lng": -74.035612
+    },
+    {
+      "id": "el-museo-de-la-computacion",
+      "nombre": "El Museo de la Computación",
+      "detalle": "Cajicá · a 3,3 km",
+      "cat": "turismo",
+      "lat": 4.942586,
+      "lng": -74.01067
+    },
+    {
+      "id": "chia",
+      "nombre": "Chía",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.861286,
+      "lng": -74.06022
+    },
+    {
+      "id": "zipaquira",
+      "nombre": "Zipaquirá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.023475,
+      "lng": -74.003982
+    },
+    {
+      "id": "tabio",
+      "nombre": "Tabio",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.916396,
+      "lng": -74.099095
+    },
+    {
+      "id": "sopo",
+      "nombre": "Sopó",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.907916,
+      "lng": -73.940233
+    },
+    {
+      "id": "tocancipa",
+      "nombre": "Tocancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.97371,
+      "lng": -73.92118
+    },
+    {
+      "id": "tenjo",
+      "nombre": "Tenjo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.871304,
+      "lng": -74.147325
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Germán Quintero",
+      "placa": "CAJ 604",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2181,
+      "desde": 2012,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Fabio Cruz",
+      "placa": "CAJ 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1084,
+      "desde": 2014,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Wilson Gómez",
+      "placa": "CAJ 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1067,
+      "desde": 2016,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Héctor Bernal",
+      "placa": "CAJ 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1290,
+      "desde": 2020,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Rubén Sarmiento",
+      "placa": "CAJ 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 776,
+      "desde": 2014,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Sandra Patiño",
+      "placa": "CAJ 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1724,
+      "desde": 2019,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Yolanda Prieto",
+      "placa": "CAJ 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1299,
+      "desde": 2009,
+      "tel": "3000000029"
+    },
+    {
+      "id": "demo-30",
+      "movil": "030",
+      "nombre": "Jorge Castañeda",
+      "placa": "CAJ 630",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 612,
+      "desde": 2019,
+      "tel": "3000000030"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "La Cooperativa de Transportadores Fortaleza de Piedra presta el servicio de taxi en Cajicá desde su sede de la Carrera 6 # 1-36. Tiene personería jurídica desde 1989 y la Alcaldía de Cajicá la habilitó para el servicio de taxi en 2002. Con más de 30 años de experiencia, su central atiende las 24 horas el casco urbano, las veredas y los viajes a los municipios vecinos.\n\nCon la app, la cooperativa lleva ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay cerca, sigues el móvil en el mapa y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Cajicá y sus veredas, de día y de noche, con conductores asociados que conocen el municipio, con seguridad, puntualidad y buen trato para cada pasajero.",
+    "vision": "Ser la forma más fácil y confiable de pedir un taxi en Cajicá: a un toque, con el móvil en el mapa y la tarifa clara antes de subir.",
+    "servicios": [
+      "Taxi las 24 horas",
+      "Servicio en el casco urbano y las veredas",
+      "Viajes a Chía, Zipaquirá, Tabio y Sopó",
+      "Servicio puerta a puerta",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Taxis de Cajicá, firmes como la piedra"
+  },
+  "fuentes": [
+    "https://www.taxisfortalezadepiedra.com/",
+    "https://www.taxisfortalezadepiedra.com/contacto",
+    "https://www.taxisfortalezadepiedra.com/nosotros",
+    "http://web.archive.org/web/20240913104408/https://www.taxisfortalezadepiedra.com/website/empresa.html",
+    "https://www.instagram.com/alcajica/reel/DXW__OKjt0i/",
+    "https://www.facebook.com/alcaldiacajica/videos/4387660881511879/",
+    "https://play.google.com/store/apps/details?id=com.taxiscajica&hl=es",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=800223963",
+    "https://extrategiamedios.com/numeros-telefonicos-para-solicitar-taxi-en-cajica/",
+    "https://es.cybo.com/CO-biz/cooperativa-de-transportadores-fortaleza",
+    "https://cajica.gov.co/docdown/archi/2025/Decreto/PROYECTO%20DECRETO%20INCREMENTO%20DE%20TARIFAS%20TTE%20INDIVIDUAL.pdf",
+    "https://web.chia-cundinamarca.gov.co/2026/09/02/300-taxistas-de-chia-y-cajica-eliminan-planilla-de-viaje-ocasional/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es taxi: la Alcaldía de Cajicá (Instagram y Facebook, 20-abr-2026) dice «En Cajicá, contamos con tres empresas de taxis»: Fortaleza de Piedra, Expreso Cajicá y Cajitaxis (https://www.instagram.com/alcajica/reel/DXW__OKjt0i/). Su web: «Somos una Cooperativa de taxis especializada en el servicio público terrestre». Habilitación de taxi por la Res. 765 del 21-dic-2002 de la Alcaldía de Cajicá (su página «Empresa», copia de archive.org del 13-sep-2024).",
+    "Razón social, NIT 800.223.963-7, representante legal Bernardo Antonio Sotelo Zabaleta y matrícula del 25-abr-1997 (renovada en 2026): RUES abierto de Confecámaras (https://www.datos.gov.co/resource/c82u-588k.json?nit=800223963). Año 1989: personería jurídica 21667 del 3-oct-1989 (página «Empresa», copia de 2024, que dice además «más de 30 años de experiencia»).",
+    "Teléfonos: línea «Pida su taxi» 321 419 2900 y fijo (601) 883 3030 (web oficial, páginas Inicio, Nosotros y Contacto; también los publica la Alcaldía de Cajicá en abril de 2026). La copia de 2024 lista además el fijo (601) 866 0950. No se sabe si el 321 419 2900 tiene WhatsApp. Servicio 24 horas: su web («Servicio 24/7 disponible» y horario «24 horas» en Contacto).",
+    "Correo fortalezadepiedra@hotmail.com y dirección Cra. 6 # 1-36: su página Contacto (verificado el 1-oct-2026). Google la escribe «Cra. 6 Este # 1-36»; la oficina se ubicó con la ficha de Google, que coincide con el cruce de la Carrera 6 y la Calle 1 en OpenStreetMap.",
+    "OJO para la venta: ya tiene app y sistema de despacho compartido, «Taxis Cajicá» (Pont Solutions LLC, Google Play com.taxiscajica, más de mil descargas, 7 reseñas, actualizada el 1-oct-2025), que despacha para Cajitaxi, Fortaleza de Piedra y Expreso Cajicá: https://play.google.com/store/apps/details?id=com.taxiscajica&hl=es . La propuesta debe diferenciarse: marca propia, pago con QR, stickers, web propia y taxis libres en el mapa.",
+    "El celular 310 852 4504 aparece en las fichas de Google de Fortaleza de Piedra y de Cajitaxi: no usarlo ni publicarlo hasta saber de quién es. La ficha de Google «Taxis Cajica S A», en la misma dirección y marcada como posiblemente inactiva, es esta misma empresa.",
+    "Tarifas: solo hay PROYECTO de decreto 2025 de la Alcaldía de Cajicá (comentarios del 16 al 20-ene-2025): carrera mínima (1 km) $7.000; recargos puerta a puerta, nocturno (20:00-05:00) y domingo/festivo de $1.000 cada uno; tabla por sectores de $7.000 a $30.000 (Calahorra iglesia $8.000, Fontanar 2.º retorno $15.000, La Cumbre al fondo $30.000): https://cajica.gov.co/docdown/archi/2025/Decreto/PROYECTO%20DECRETO%20INCREMENTO%20DE%20TARIFAS%20TTE%20INDIVIDUAL.pdf (listado en https://cajica.gov.co/proyectos-normativos/). No se localizó el decreto definitivo, por eso la ficha no trae tarifas (la demo usa las de ejemplo).",
+    "Desde el 1-sep-2026 los taxis de Chía y Cajicá no pagan planilla de viaje ocasional entre los dos municipios (Decreto 1001 del 4-ago-2026 del Ministerio de Transporte y acta de entendimiento entre las alcaldías): https://web.chia-cundinamarca.gov.co/2026/09/02/300-taxistas-de-chia-y-cajica-eliminan-planilla-de-viaje-ocasional/ . La Alcaldía de Chía habla de más de 300 taxis entre 6 empresas de Chía y Cajicá. Su web anuncia que no cobra planilla a Zipaquirá, Tabio, Chía y Sopó. No hay cifra propia de taxis de la cooperativa.",
+    "Redes (enlazadas desde su web): https://www.facebook.com/coopfortalezadepiedra.cajica , https://instagram.com/taxicajica/ y https://linktr.ee/taxis.cajica.app .",
+    "Colores propios de interOS (piedra y dorado); su web no muestra un manual de marca. El lema también es de interOS. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

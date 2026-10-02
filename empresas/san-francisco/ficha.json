@@ -1,0 +1,498 @@
+{
+  "id": "san-francisco",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootranslibertad",
+    "nombreCorto": "Cootranslibertad",
+    "razonSocial": "Cooperativa Multiactiva de Transportadores del Municipio de San Francisco (Cootranslibertad)",
+    "tipo": "cooperativa",
+    "lema": "Taxis y camperos en San Francisco de Sales",
+    "municipio": "San Francisco, Cundinamarca",
+    "pueblo": "San Francisco",
+    "region": "provincia del Gualivá",
+    "telefono": "",
+    "telefonoVisible": "",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Calle 2 N # 8-03, Centro, San Francisco, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 1999,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "SFR",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "datosPendientes": [
+      "teléfono de la central",
+      "whatsapp",
+      "correo",
+      "número de taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.974898,
+      "lng": -74.290531
+    }
+  },
+  "colores": {
+    "primario": "#3730A3",
+    "primario2": "#4F46E5",
+    "oscuro": "#1E1B4B",
+    "acento": "#FFC21A",
+    "rojo": "#DC2626"
+  },
+  "CENTRO": {
+    "lat": 4.974936,
+    "lng": -74.289568
+  },
+  "ZONA": {
+    "sur": 4.65,
+    "norte": 5.29,
+    "oeste": -74.61,
+    "este": -73.97
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "la-vega",
+      "destino": "La Vega",
+      "valor": 23000,
+      "km": 12,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "supata",
+      "destino": "Supatá",
+      "valor": 34000,
+      "km": 19,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "villeta",
+      "destino": "Villeta",
+      "valor": 61000,
+      "km": 37,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 67000,
+      "km": 41,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "subachoque",
+      "destino": "Subachoque",
+      "valor": 73000,
+      "km": 45,
+      "min": 70,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 87000,
+      "km": 54,
+      "min": 85,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 97000,
+      "km": 61,
+      "min": 95,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, San Francisco",
+      "cat": "centro",
+      "lat": 4.974887,
+      "lng": -74.28952
+    },
+    {
+      "id": "vereda-pueblo-viejo",
+      "nombre": "Vereda Pueblo Viejo",
+      "detalle": "Vereda de San Francisco",
+      "cat": "vereda",
+      "lat": 4.95831,
+      "lng": -74.261805
+    },
+    {
+      "id": "museo-de-la-llanta-y-chatarra",
+      "nombre": "Museo de la llanta y chatarra",
+      "detalle": "San Francisco · a 1,2 km",
+      "cat": "turismo",
+      "lat": 4.963959,
+      "lng": -74.287665
+    },
+    {
+      "id": "la-chancheria",
+      "nombre": "La Chanchería",
+      "detalle": "San Francisco · a 3,3 km",
+      "cat": "comida",
+      "lat": 4.945215,
+      "lng": -74.291465
+    },
+    {
+      "id": "iedp-republica-de-francia",
+      "nombre": "IEDp República de Francia",
+      "detalle": "San Francisco",
+      "cat": "educacion",
+      "lat": 4.969454,
+      "lng": -74.288152
+    },
+    {
+      "id": "toriba",
+      "nombre": "Toriba",
+      "detalle": "Vereda de San Francisco",
+      "cat": "vereda",
+      "lat": 4.982795,
+      "lng": -74.2673
+    },
+    {
+      "id": "biomax",
+      "nombre": "Biomax",
+      "detalle": "San Francisco",
+      "cat": "comercio",
+      "lat": 4.970714,
+      "lng": -74.28954
+    },
+    {
+      "id": "intimalka",
+      "nombre": "Intimalka",
+      "detalle": "San Francisco",
+      "cat": "educacion",
+      "lat": 4.972836,
+      "lng": -74.288212
+    },
+    {
+      "id": "hotel-real",
+      "nombre": "Hotel Real",
+      "detalle": "San Francisco",
+      "cat": "turismo",
+      "lat": 4.973299,
+      "lng": -74.288597
+    },
+    {
+      "id": "parroquia-de-san-francisco-de-sales",
+      "nombre": "Parroquia de San Francisco de Sales",
+      "detalle": "San Francisco",
+      "cat": "centro",
+      "lat": 4.974317,
+      "lng": -74.289279
+    },
+    {
+      "id": "banco-agrario",
+      "nombre": "Banco Agrario",
+      "detalle": "San Francisco",
+      "cat": "comercio",
+      "lat": 4.975157,
+      "lng": -74.289241
+    },
+    {
+      "id": "alcaldia-municipal-de-san-francisco-de-s",
+      "nombre": "Alcaldía Municipal de San Francisco de Sales",
+      "detalle": "San Francisco",
+      "cat": "centro",
+      "lat": 4.975259,
+      "lng": -74.289186
+    },
+    {
+      "id": "estacion-de-policia-de-san-francisco-de-",
+      "nombre": "Estación de Policía de San Francisco de Sales",
+      "detalle": "San Francisco",
+      "cat": "centro",
+      "lat": 4.975375,
+      "lng": -74.28913
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "San Francisco",
+      "cat": "comercio",
+      "lat": 4.975308,
+      "lng": -74.289315
+    },
+    {
+      "id": "mirador-santuario-de-la-virgen-milagrosa",
+      "nombre": "Mirador Santuario de la Virgen Milagrosa",
+      "detalle": "San Francisco",
+      "cat": "centro",
+      "lat": 4.980337,
+      "lng": -74.284836
+    },
+    {
+      "id": "plaza-de-mercado",
+      "nombre": "Plaza de Mercado",
+      "detalle": "San Francisco",
+      "cat": "centro",
+      "lat": 4.97527,
+      "lng": -74.290866
+    },
+    {
+      "id": "hotel-villa-paz",
+      "nombre": "Hotel Villa Paz",
+      "detalle": "San Francisco",
+      "cat": "turismo",
+      "lat": 4.977957,
+      "lng": -74.290177
+    },
+    {
+      "id": "aire-libre-cabanas",
+      "nombre": "Aire Libre Cabañas",
+      "detalle": "San Francisco",
+      "cat": "turismo",
+      "lat": 4.975382,
+      "lng": -74.295554
+    },
+    {
+      "id": "moliher",
+      "nombre": "Moliher",
+      "detalle": "San Francisco",
+      "cat": "comida",
+      "lat": 4.981857,
+      "lng": -74.295785
+    },
+    {
+      "id": "la-vega",
+      "nombre": "La Vega",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.999712,
+      "lng": -74.339522
+    },
+    {
+      "id": "supata",
+      "nombre": "Supatá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.062167,
+      "lng": -74.236402
+    },
+    {
+      "id": "subachoque",
+      "nombre": "Subachoque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.927969,
+      "lng": -74.173964
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    },
+    {
+      "id": "villeta",
+      "nombre": "Villeta",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.011258,
+      "lng": -74.47023
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Édgar Molina",
+      "placa": "SFR 604",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 957,
+      "desde": 2006,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Wilson Gómez",
+      "placa": "SFR 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1307,
+      "desde": 2017,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Yolanda Prieto",
+      "placa": "SFR 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1228,
+      "desde": 2013,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-18",
+      "movil": "018",
+      "nombre": "Germán Quintero",
+      "placa": "SFR 618",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 535,
+      "desde": 2014,
+      "tel": "3000000018"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Diana Forero",
+      "placa": "SFR 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1297,
+      "desde": 2015,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Sandra Patiño",
+      "placa": "SFR 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1115,
+      "desde": 2021,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Fabio Cruz",
+      "placa": "SFR 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1232,
+      "desde": 2006,
+      "tel": "3000000028"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Jorge Castañeda",
+      "placa": "SFR 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2286,
+      "desde": 2008,
+      "tel": "3000000029"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootranslibertad, la Cooperativa Multiactiva de Transportadores del municipio de San Francisco, está inscrita desde 1999 y reúne taxis y camperos que prestan servicio en San Francisco de Sales, en su casco urbano y en sus veredas.\n\nCon la app, la cooperativa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa, en el pueblo o camino a la finca.",
+    "mision": "Prestar el servicio de taxi y campero en San Francisco y sus veredas con asociados que conocen el municipio, con seguridad, puntualidad y buen trato.",
+    "vision": "Ser la forma más fácil y confiable de moverse en San Francisco: un taxi a un toque en el celular, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en San Francisco",
+      "Camperos a las veredas",
+      "Viajes a La Vega, Supatá y Subachoque",
+      "Viajes a Bogotá y al aeropuerto"
+    ],
+    "frase": "Su taxi en San Francisco, a un toque"
+  },
+  "fuentes": [
+    "https://www.facebook.com/groups/sanfranciscodesalescundinamarcacomunidadoficial/posts/9350980768263214/",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832009326",
+    "https://edirectorio.net/empresa/cooperativa-multiactiva-de-transportadores-del-municipio-de-san-francisco",
+    "https://empresas.tusdatos.co/informe/cooperativa-multiactiva-de-transportadores-del-municipio-de-san-francisco-nit-832009326",
+    "https://local.infobel.co/CO101311969/cootranslibertad-san_francisco.html",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Taxis y camperos: publicación del grupo de Facebook «San Francisco de Sales Cundinamarca - Comunidad Oficial» («La cooperativa de taxis y camperos «COOTRANS LIBERTAD» le informa…»; fecha sin confirmar) y un aviso de Facebook Marketplace en San Francisco que vende un taxi «afiliado a la Empresa cootranslibertad» (https://www.facebook.com/marketplace/item/706608294088581/; es de un particular, por eso no va en fuentes). La confianza es media: no hay web propia.",
+    "Razón social, NIT 832.009.326-5, matrícula del 09-jun-1999 en la Cámara de Comercio de Facatativá y CIIU 4921: RUES (renovada el 27-mar-2026). Representante legal según el RUES: Bernardo Herrera Espitia.",
+    "Dirección Calle 2 N # 8-03, Centro: registro mercantil según edirectorio.net y tusdatos. Ubicación de la oficina aproximada (Calle 2 entre las carreras 7 y 9 en OpenStreetMap; la Carrera 8 no se cruza con la Calle 2 en el mapa).",
+    "Teléfono: el registro mercantil (edirectorio.net) trae el celular 314 437 4365; puede ser personal: no publicar hasta confirmar que es de la cooperativa. Por eso el campo va vacío.",
+    "Instagram @cootranslibertad (23 seguidores, sin publicaciones): confirmar que sea de esta cooperativa.",
+    "Es distinta de Cootrasanfrancisco Ltda. (NIT 832.001.313-3, de mixto, sin taxis) y de una «Cootranslibertad» del Líbano (Tolima).",
+    "San Francisco queda a unos 54 km del Portal 80 por carretera (OSRM): por eso van Portal 80 y aeropuerto.",
+    "No se encontró decreto de tarifas de taxi de San Francisco: tarifas de ejemplo.",
+    "Colores propios de interOS (índigo y dorado).",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

@@ -1,0 +1,641 @@
+{
+  "id": "facatativa-hycata",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Transportes Hycatá",
+    "nombreCorto": "Hycatá",
+    "razonSocial": "Transportes Hycata S.A.",
+    "tipo": "empresa",
+    "lema": "Taxis de Facatativá, tierra de las Piedras del Tunjo",
+    "municipio": "Facatativá, Cundinamarca",
+    "pueblo": "Facatativá",
+    "telefono": "6018431225",
+    "telefonoVisible": "601 843 1225",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "HYC",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana de Occidente",
+    "datosPendientes": [
+      "confirmar que hoy opere taxis (antes de armar la demo)",
+      "número de taxis",
+      "dirección de la oficina",
+      "teléfono",
+      "correo",
+      "año de fundación",
+      "colores y logo",
+      "misión y visión oficiales"
+    ],
+    "oficina": null
+  },
+  "colores": {
+    "primario": "#4E342E",
+    "primario2": "#6D4C41",
+    "oscuro": "#21140F",
+    "acento": "#F4B731",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.809728,
+    "lng": -74.354184
+  },
+  "ZONA": {
+    "sur": 4.49,
+    "norte": 5.13,
+    "oeste": -74.67,
+    "este": -74.03
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 7000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 850,
+    "recargoDominical": 850,
+    "nocheDesde": 18,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "Carrera mínima del Decreto 125 del 21 de mayo de 2026 de Facatativá: $7.000 de lunes a sábado de 6:00 a. m. a 6:00 p. m. ($7.850 si se pide por llamada) y $7.850 de noche y los domingos y festivos (un solo valor, no se suman). Las veredas tienen tarifa fija (por ejemplo, La Selva $11.550). Banderazo, valor por km y rutas a otros municipios son de ejemplo, sujetos a confirmación."
+  },
+  "RUTAS": [
+    {
+      "id": "bojaca",
+      "destino": "Bojacá",
+      "valor": 23000,
+      "km": 11,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "el-rosal",
+      "destino": "El Rosal",
+      "valor": 26000,
+      "km": 14,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "madrid",
+      "destino": "Madrid",
+      "valor": 28000,
+      "km": 15,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "zipacon",
+      "destino": "Zipacón",
+      "valor": 29000,
+      "km": 15,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "alban",
+      "destino": "Albán",
+      "valor": 31000,
+      "km": 17,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "subachoque",
+      "destino": "Subachoque",
+      "valor": 47000,
+      "km": 28,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 59000,
+      "km": 35,
+      "min": 55,
+      "radioKm": 3
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 64000,
+      "km": 39,
+      "min": 60,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.809733,
+      "lng": -74.35417
+    },
+    {
+      "id": "banco-popular-parque-principal",
+      "nombre": "Banco Popular Parque Principal",
+      "detalle": "Facatativá",
+      "cat": "comercio",
+      "lat": 4.809888,
+      "lng": -74.354734
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Facatativá",
+      "cat": "comercio",
+      "lat": 4.810037,
+      "lng": -74.354636
+    },
+    {
+      "id": "casa-cural",
+      "nombre": "Casa cural",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.809193,
+      "lng": -74.353996
+    },
+    {
+      "id": "banco-agrario",
+      "nombre": "Banco Agrario",
+      "detalle": "Facatativá",
+      "cat": "comercio",
+      "lat": 4.810065,
+      "lng": -74.353624
+    },
+    {
+      "id": "catedral-de-facatativa",
+      "nombre": "Catedral de Facatativá",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.809254,
+      "lng": -74.353674
+    },
+    {
+      "id": "alcaldia-municipal-de-facatativa",
+      "nombre": "Alcaldía Municipal de Facatativá",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.810383,
+      "lng": -74.353926
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Facatativá",
+      "cat": "comercio",
+      "lat": 4.809755,
+      "lng": -74.35529
+    },
+    {
+      "id": "paradero-de-buses",
+      "nombre": "Paradero de Buses",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.808627,
+      "lng": -74.354676
+    },
+    {
+      "id": "tiendas-ara-carrera-2",
+      "nombre": "Tiendas Ara Carrera 2",
+      "detalle": "Facatativá",
+      "cat": "comercio",
+      "lat": 4.809402,
+      "lng": -74.355369
+    },
+    {
+      "id": "famisanar-cafam-facatativa",
+      "nombre": "Famisanar-Cafam Facatativá",
+      "detalle": "Facatativá",
+      "cat": "salud",
+      "lat": 4.808588,
+      "lng": -74.353251
+    },
+    {
+      "id": "salud-total-virrey-solis-facatativa",
+      "nombre": "Salud Total-Virrey Solis Facatativá",
+      "detalle": "Facatativá",
+      "cat": "salud",
+      "lat": 4.808743,
+      "lng": -74.352996
+    },
+    {
+      "id": "monumento-nacional-estacion-ferrea-de-fa",
+      "nombre": "Monumento Nacional: Estación Férrea de Facatativá",
+      "detalle": "Facatativá",
+      "cat": "turismo",
+      "lat": 4.808569,
+      "lng": -74.35526
+    },
+    {
+      "id": "hotel-el-trebol",
+      "nombre": "Hotel El Trebol",
+      "detalle": "Facatativá",
+      "cat": "turismo",
+      "lat": 4.808554,
+      "lng": -74.352427
+    },
+    {
+      "id": "clinica-santa-ana",
+      "nombre": "Clinica Santa Ana",
+      "detalle": "Facatativá",
+      "cat": "salud",
+      "lat": 4.809478,
+      "lng": -74.351353
+    },
+    {
+      "id": "davita-facatativa",
+      "nombre": "Davita Facatativá",
+      "detalle": "Facatativá",
+      "cat": "salud",
+      "lat": 4.809702,
+      "lng": -74.351211
+    },
+    {
+      "id": "el-rancho-costeno",
+      "nombre": "El rancho Costeño",
+      "detalle": "Facatativá",
+      "cat": "comida",
+      "lat": 4.807755,
+      "lng": -74.351317
+    },
+    {
+      "id": "restaurante-parrilla-bbq",
+      "nombre": "Restaurante Parrilla BBQ",
+      "detalle": "Facatativá",
+      "cat": "comida",
+      "lat": 4.806228,
+      "lng": -74.351879
+    },
+    {
+      "id": "escuela-rafael-pombo",
+      "nombre": "Escuela Rafael Pombo",
+      "detalle": "Facatativá",
+      "cat": "educacion",
+      "lat": 4.813001,
+      "lng": -74.356936
+    },
+    {
+      "id": "estacion-de-policia-de-facatativa",
+      "nombre": "Estación de Policía de Facatativá",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.809826,
+      "lng": -74.349789
+    },
+    {
+      "id": "instituto-tecnico-industrial-de-facatati",
+      "nombre": "Instituto Técnico Industrial de Facatativá - Sede Académica",
+      "detalle": "Facatativá",
+      "cat": "educacion",
+      "lat": 4.814195,
+      "lng": -74.355885
+    },
+    {
+      "id": "iem-john-f-kenedy",
+      "nombre": "IEM John F. Kennedy",
+      "detalle": "Facatativá",
+      "cat": "educacion",
+      "lat": 4.804752,
+      "lng": -74.352572
+    },
+    {
+      "id": "colegio-seminario-san-juan-apostol",
+      "nombre": "Colegio Seminario San Juan Apóstol",
+      "detalle": "Facatativá",
+      "cat": "educacion",
+      "lat": 4.812502,
+      "lng": -74.349712
+    },
+    {
+      "id": "iglesia-de-santa-rita",
+      "nombre": "Iglesia de Santa Rita",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.814758,
+      "lng": -74.356307
+    },
+    {
+      "id": "cai-santa-rita",
+      "nombre": "CAI Santa Rita",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.815221,
+      "lng": -74.354936
+    },
+    {
+      "id": "parque-santa-rita",
+      "nombre": "Parque Santa Rita",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.815307,
+      "lng": -74.355418
+    },
+    {
+      "id": "cai-san-benito",
+      "nombre": "CAI San Benito",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.803806,
+      "lng": -74.354268
+    },
+    {
+      "id": "polideportivo-la-arboleda",
+      "nombre": "Polideportivo La Arboleda",
+      "detalle": "Facatativá",
+      "cat": "centro",
+      "lat": 4.810789,
+      "lng": -74.347412
+    },
+    {
+      "id": "el-delirio-oriental",
+      "nombre": "El Delirio Oriental",
+      "detalle": "Facatativá",
+      "cat": "comida",
+      "lat": 4.816769,
+      "lng": -74.357388
+    },
+    {
+      "id": "institucion-educativa-tecnico-comercial-",
+      "nombre": "Institucion Educativa Tecnico Comercial Santa Rita",
+      "detalle": "Facatativá",
+      "cat": "educacion",
+      "lat": 4.818493,
+      "lng": -74.352878
+    },
+    {
+      "id": "colegio-nacional-emilio-cifuentes",
+      "nombre": "Colegio Nacional Emilio Cifuentes",
+      "detalle": "Facatativá",
+      "cat": "educacion",
+      "lat": 4.813038,
+      "lng": -74.34554
+    },
+    {
+      "id": "dagustos",
+      "nombre": "Dagustos",
+      "detalle": "Facatativá",
+      "cat": "comida",
+      "lat": 4.803198,
+      "lng": -74.346947
+    },
+    {
+      "id": "la-esquina",
+      "nombre": "La esquina",
+      "detalle": "Facatativá",
+      "cat": "comida",
+      "lat": 4.803311,
+      "lng": -74.346706
+    },
+    {
+      "id": "vereda-san-rafael",
+      "nombre": "Vereda San Rafael",
+      "detalle": "Vereda de Facatativá",
+      "cat": "vereda",
+      "lat": 4.827503,
+      "lng": -74.36516
+    },
+    {
+      "id": "la-torre-del-vigia-betel",
+      "nombre": "La Torre del Vigia- Betel",
+      "detalle": "Facatativá · a 2,6 km",
+      "cat": "turismo",
+      "lat": 4.832883,
+      "lng": -74.3526
+    },
+    {
+      "id": "el-rosal",
+      "nombre": "El Rosal",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.85257,
+      "lng": -74.26059
+    },
+    {
+      "id": "madrid",
+      "nombre": "Madrid",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.730613,
+      "lng": -74.264037
+    },
+    {
+      "id": "subachoque",
+      "nombre": "Subachoque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.927969,
+      "lng": -74.173964
+    },
+    {
+      "id": "zipacon",
+      "nombre": "Zipacón",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.752766,
+      "lng": -74.379569
+    },
+    {
+      "id": "bojaca",
+      "nombre": "Bojacá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.732482,
+      "lng": -74.341674
+    },
+    {
+      "id": "alban",
+      "nombre": "Albán",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.876533,
+      "lng": -74.436043
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-03",
+      "movil": "003",
+      "nombre": "Carlos Rodríguez",
+      "placa": "HYC 603",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1165,
+      "desde": 2018,
+      "tel": "3000000003"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Rubén Sarmiento",
+      "placa": "HYC 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 490,
+      "desde": 2017,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-18",
+      "movil": "018",
+      "nombre": "Jairo Moreno",
+      "placa": "HYC 618",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 808,
+      "desde": 2019,
+      "tel": "3000000018"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Jorge Castañeda",
+      "placa": "HYC 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1692,
+      "desde": 2008,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Yolanda Prieto",
+      "placa": "HYC 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 582,
+      "desde": 2017,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Luz Marina Rojas",
+      "placa": "HYC 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2265,
+      "desde": 2017,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Fabio Cruz",
+      "placa": "HYC 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2078,
+      "desde": 2016,
+      "tel": "3000000026"
+    },
+    {
+      "id": "demo-27",
+      "movil": "027",
+      "nombre": "Édgar Molina",
+      "placa": "HYC 627",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1836,
+      "desde": 2014,
+      "tel": "3000000027"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Transportes Hycatá S.A. es una empresa de transporte de Facatativá, registrada en la Cámara de Comercio desde 1992. Es conocida por el transporte urbano, las rutas a veredas como La Selva, San Rafael y El Dintel y el transporte especial escolar y empresarial, y la Alcaldía la cuenta entre las empresas habilitadas en transporte individual en taxi.\n\nCon esta app, Hycatá puede ofrecer también el taxi desde el celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Facatativá y sus veredas con conductores que conocen el municipio, con seguridad, puntualidad y tarifas claras.",
+    "vision": "Ser una forma fácil y confiable de moverse en Facatativá: un taxi a un toque en el celular, con la tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en Facatativá",
+      "Transporte urbano",
+      "Rutas a las veredas La Selva, San Rafael y El Dintel",
+      "Transporte especial escolar y empresarial"
+    ],
+    "frase": "Facatativá se mueve con Hycatá"
+  },
+  "fuentes": [
+    "https://facatativacundinamarca.micolombiadigital.gov.co/sites/facatativacundinamarca/content/files/001477/73828_resolucion-no-1267-de-20231.pdf",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=800159471",
+    "https://www.facebook.com/TransportesHycata/",
+    "https://www.aiyellow.com/transporteshycata/",
+    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/transportes-hycata-sa",
+    "https://facatativacundinamarca.micolombiadigital.gov.co/sites/facatativacundinamarca/content/files/002388/119396_decreto-125-de-2026.pdf",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza BAJA (verificado el 1-oct-2026, con reservas): confirmar por teléfono que opere taxis antes de armar o enviar la demo. Existe y está activa: razón social, NIT 800.159.471-1, matrícula del 9-abr-1992 en la Cámara de Comercio de Facatativá, actividad 4921, renovación del 24-mar-2026 y representante legal Jorge Humberto Pulido Pardo: RUES (datos.gov.co c82u-588k).",
+    "Evidencia de taxi: la Resolución 1267 del 13-dic-2023 de la Alcaldía de Facatativá la incluye (fila 115) entre las personas jurídicas HABILITADAS para el sorteo de matrículas de taxis nuevos, que exigía «el acto administrativo que le concede habilitación en el transporte individual». No se encontró ningún aviso propio de taxis ni cuántos tiene: su cara pública es el transporte urbano, las rutas a las veredas La Selva, San Rafael y El Dintel y el especial escolar y empresarial (su Facebook y directorios).",
+    "Teléfono (601) 843 1225: registro mercantil (vía informacolombia/einforma); (601) 842 8559 en directorios antiguos. Por confirmar. Sin web ni correo públicos (no figura en SECOP II): _correo_propuesta.para vacío.",
+    "Dirección por confirmar: el registro mercantil da Carrera 11 # 13A-127, barrio El Copihue (la que se usa); otros directorios dan Calle 12 # 3-07, Centro, y Calle 10 # 3A-42. Por eso oficina = null (la demo usa el centro del pueblo).",
+    "Tarifas: Decreto 125 del 21-may-2026 de Facatativá (deroga el Decreto 042 de 2025), https://facatativacundinamarca.micolombiadigital.gov.co/sites/facatativacundinamarca/content/files/002388/119396_decreto-125-de-2026.pdf . Zona urbana lunes a sábado 6:00-18:00 $7.000 ($7.850 por llamada); nocturno 18:00-6:00 y domingos y festivos 24 h $7.850; veredas con tarifa fija (Agrícola La Monja y La Selva $11.550, Cuatro Esquinas $34.550, Dintel $42.750). Por eso recargoNocturno y recargoDominical = $850; la app los suma si coinciden (domingo de noche), el decreto no. Falta decidir si el pedido por app cuenta como «por llamada» ($7.850). OJO: la ficha ya hecha de Coptaxi usa el Decreto 080 de 2024 ($6.000/$6.800); conviene actualizarla.",
+    "Colores propios de interOS (café piedra, por las Piedras del Tunjo, y dorado): no se encontró logo. El lema alude al Parque Arqueológico Piedras del Tunjo de Facatativá. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales.",
+    "Destinos: municipios vecinos de Facatativá (El Rosal, Madrid, Subachoque, Zipacón, Bojacá, Albán); a unos 40 km del Portal 80."
+  ]
+}

@@ -1,0 +1,568 @@
+{
+  "id": "simijaca",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Comultrasim",
+    "nombreCorto": "Comultrasim",
+    "razonSocial": "Cooperativa Multiactiva de Transportadores de Simijaca (Comultrasim Ltda.)",
+    "tipo": "cooperativa",
+    "lema": "Taxis de Simijaca, de día y de noche",
+    "municipio": "Simijaca, Cundinamarca",
+    "pueblo": "Simijaca",
+    "region": "provincia de Ubaté",
+    "telefono": "3204896514",
+    "telefonoVisible": "320 489 6514",
+    "whatsapp": "573204896514",
+    "correo": "gerencia.comultrasim@hotmail.com",
+    "direccion": "Calle 9 # 6-32, Simijaca, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://comultrasim.github.io/Web/",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "SIM",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "oficina": {
+      "lat": 5.504188,
+      "lng": -73.852656
+    },
+    "datosPendientes": [
+      "número de taxis",
+      "tipo de vehículo de los taxis (automóvil o camioneta)",
+      "tarifas oficiales del taxi",
+      "año de fundación",
+      "misión y visión del servicio de taxi"
+    ]
+  },
+  "colores": {
+    "primario": "#1F7A1A",
+    "primario2": "#2A8C22",
+    "oscuro": "#0D3B0A",
+    "acento": "#F56A00",
+    "rojo": "#B71C1C"
+  },
+  "CENTRO": {
+    "lat": 5.5024,
+    "lng": -73.852218
+  },
+  "ZONA": {
+    "sur": 5.18,
+    "norte": 5.82,
+    "oeste": -74.17,
+    "este": -73.53
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "susa",
+      "destino": "Susa",
+      "valor": 18000,
+      "km": 8,
+      "min": 10,
+      "radioKm": 4
+    },
+    {
+      "id": "chiquinquira",
+      "destino": "Chiquinquirá",
+      "valor": 31000,
+      "km": 16,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "fuquene",
+      "destino": "Fúquene",
+      "valor": 33000,
+      "km": 18,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "san-miguel-de-sema",
+      "destino": "San Miguel de Sema",
+      "valor": 34000,
+      "km": 19,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "carmen-de-carupa",
+      "destino": "Carmen de Carupa",
+      "valor": 46000,
+      "km": 27,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "ubate",
+      "destino": "Ubaté",
+      "valor": 64000,
+      "km": 38,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "guacheta",
+      "destino": "Guachetá",
+      "valor": 63000,
+      "km": 38,
+      "min": 55,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Simijaca",
+      "cat": "centro",
+      "lat": 5.502396,
+      "lng": -73.852249
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Simijaca",
+      "cat": "comercio",
+      "lat": 5.502642,
+      "lng": -73.851869
+    },
+    {
+      "id": "alcaldia-municipal-de-simijaca",
+      "nombre": "Alcaldía Municipal de Simijaca",
+      "detalle": "Simijaca",
+      "cat": "centro",
+      "lat": 5.502082,
+      "lng": -73.852546
+    },
+    {
+      "id": "banco-agrario",
+      "nombre": "Banco Agrario",
+      "detalle": "Simijaca",
+      "cat": "comercio",
+      "lat": 5.502928,
+      "lng": -73.852182
+    },
+    {
+      "id": "parroquia-inmaculada-concepcion",
+      "nombre": "Parroquia Inmaculada Concepción",
+      "detalle": "Simijaca",
+      "cat": "centro",
+      "lat": 5.501966,
+      "lng": -73.851719
+    },
+    {
+      "id": "coratiendas",
+      "nombre": "Coratiendas",
+      "detalle": "Simijaca",
+      "cat": "comercio",
+      "lat": 5.503481,
+      "lng": -73.851732
+    },
+    {
+      "id": "estacion-de-policia-de-simijaca",
+      "nombre": "Estación de Policía de Simijaca",
+      "detalle": "Simijaca",
+      "cat": "centro",
+      "lat": 5.501325,
+      "lng": -73.851655
+    },
+    {
+      "id": "hotel-sj",
+      "nombre": "Hotel SJ",
+      "detalle": "Simijaca",
+      "cat": "turismo",
+      "lat": 5.502905,
+      "lng": -73.850997
+    },
+    {
+      "id": "el-mono",
+      "nombre": "El Mono",
+      "detalle": "Simijaca",
+      "cat": "comercio",
+      "lat": 5.503611,
+      "lng": -73.852937
+    },
+    {
+      "id": "salon-del-reino",
+      "nombre": "Salón Del Reino",
+      "detalle": "Simijaca",
+      "cat": "centro",
+      "lat": 5.503051,
+      "lng": -73.853615
+    },
+    {
+      "id": "rubianos",
+      "nombre": "Rubianos",
+      "detalle": "Simijaca",
+      "cat": "comida",
+      "lat": 5.500827,
+      "lng": -73.853028
+    },
+    {
+      "id": "bethesda",
+      "nombre": "Bethesda",
+      "detalle": "Simijaca",
+      "cat": "centro",
+      "lat": 5.502916,
+      "lng": -73.853934
+    },
+    {
+      "id": "plaza-de-mercado",
+      "nombre": "Plaza de Mercado",
+      "detalle": "Simijaca",
+      "cat": "centro",
+      "lat": 5.500639,
+      "lng": -73.851268
+    },
+    {
+      "id": "chispita-roja",
+      "nombre": "Chispita Roja",
+      "detalle": "Simijaca",
+      "cat": "comida",
+      "lat": 5.504336,
+      "lng": -73.852955
+    },
+    {
+      "id": "tiendas-d1",
+      "nombre": "Tiendas D1",
+      "detalle": "Simijaca",
+      "cat": "comercio",
+      "lat": 5.504693,
+      "lng": -73.852073
+    },
+    {
+      "id": "colegio-agustin-parra",
+      "nombre": "Colegio Agustín Parra",
+      "detalle": "Simijaca",
+      "cat": "educacion",
+      "lat": 5.504537,
+      "lng": -73.850897
+    },
+    {
+      "id": "punto-del-sabor",
+      "nombre": "Punto del Sabor",
+      "detalle": "Simijaca",
+      "cat": "comida",
+      "lat": 5.505028,
+      "lng": -73.852366
+    },
+    {
+      "id": "centro-salud",
+      "nombre": "Centro de Salud de Simijaca",
+      "detalle": "Simijaca",
+      "cat": "salud",
+      "lat": 5.505001,
+      "lng": -73.851757
+    },
+    {
+      "id": "cementerio-simijaca",
+      "nombre": "Cementerio Simijaca",
+      "detalle": "Simijaca",
+      "cat": "centro",
+      "lat": 5.499499,
+      "lng": -73.853155
+    },
+    {
+      "id": "la-granja",
+      "nombre": "Cancha La Granja",
+      "detalle": "Simijaca",
+      "cat": "centro",
+      "lat": 5.505135,
+      "lng": -73.850416
+    },
+    {
+      "id": "c-chiquilines",
+      "nombre": "C. Chiquilines",
+      "detalle": "Simijaca",
+      "cat": "educacion",
+      "lat": 5.505764,
+      "lng": -73.849982
+    },
+    {
+      "id": "barrio-el-progreso",
+      "nombre": "Barrio El Progreso",
+      "detalle": "Simijaca",
+      "cat": "barrio",
+      "lat": 5.499593,
+      "lng": -73.855346
+    },
+    {
+      "id": "san-rafael",
+      "nombre": "San Rafael",
+      "detalle": "Vereda de Simijaca",
+      "cat": "vereda",
+      "lat": 5.525759,
+      "lng": -73.842077
+    },
+    {
+      "id": "la-glorieta",
+      "nombre": "La Glorieta",
+      "detalle": "Vereda de Simijaca",
+      "cat": "vereda",
+      "lat": 5.492391,
+      "lng": -73.827903
+    },
+    {
+      "id": "pantano",
+      "nombre": "Pantano",
+      "detalle": "Vereda de Simijaca",
+      "cat": "vereda",
+      "lat": 5.517048,
+      "lng": -73.825245
+    },
+    {
+      "id": "hato-chico",
+      "nombre": "Hato Chico",
+      "detalle": "Vereda de Simijaca",
+      "cat": "vereda",
+      "lat": 5.532845,
+      "lng": -73.846654
+    },
+    {
+      "id": "la-guaira-campestre",
+      "nombre": "La Guaira Campestre",
+      "detalle": "Simijaca · a 3,7 km",
+      "cat": "comida",
+      "lat": 5.527752,
+      "lng": -73.830269
+    },
+    {
+      "id": "susa",
+      "nombre": "Susa",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.454953,
+      "lng": -73.815382
+    },
+    {
+      "id": "fuquene",
+      "nombre": "Fúquene",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.404401,
+      "lng": -73.796117
+    },
+    {
+      "id": "ubate",
+      "nombre": "Ubaté",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.308589,
+      "lng": -73.8143
+    },
+    {
+      "id": "chiquinquira",
+      "nombre": "Chiquinquirá",
+      "detalle": "Boyacá",
+      "cat": "municipio",
+      "lat": 5.623494,
+      "lng": -73.820948
+    },
+    {
+      "id": "san-miguel-de-sema",
+      "nombre": "San Miguel de Sema",
+      "detalle": "Boyacá",
+      "cat": "municipio",
+      "lat": 5.518989,
+      "lng": -73.722997
+    },
+    {
+      "id": "carmen-de-carupa",
+      "nombre": "Carmen de Carupa",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.348461,
+      "lng": -73.901697
+    },
+    {
+      "id": "guacheta",
+      "nombre": "Guachetá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.38509,
+      "lng": -73.685904
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Yolanda Prieto",
+      "placa": "SIM 604",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1368,
+      "desde": 2014,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Wilson Gómez",
+      "placa": "SIM 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1499,
+      "desde": 2015,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Fabio Cruz",
+      "placa": "SIM 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2118,
+      "desde": 2019,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Jairo Moreno",
+      "placa": "SIM 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1269,
+      "desde": 2011,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Martha Garzón",
+      "placa": "SIM 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1642,
+      "desde": 2008,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Diana Forero",
+      "placa": "SIM 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2228,
+      "desde": 2008,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Carlos Rodríguez",
+      "placa": "SIM 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 457,
+      "desde": 2013,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Héctor Bernal",
+      "placa": "SIM 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1419,
+      "desde": 2010,
+      "tel": "3000000029"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Comultrasim, la Cooperativa Multiactiva de Transportadores de Simijaca, conecta a Simijaca con Chiquinquirá, Susa, Buenavista y San Miguel de Sema en camionetas y busetas, y presta expresos, carga y encomiendas. En el municipio ofrece además servicio de taxi urbano e interveredal, que anuncia las 24 horas, desde su oficina principal en la Calle 9 # 6-32.\n\nCon la app, Comultrasim puede llevar ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Simijaca y sus veredas con seguridad, puntualidad y buen trato, con la misma experiencia con la que la cooperativa conecta a la región entre Cundinamarca y Boyacá.",
+    "vision": "Ser la forma más fácil y confiable de pedir un taxi en Simijaca: un toque, la tarifa clara y el móvil en el mapa, a cualquier hora.",
+    "servicios": [
+      "Taxi urbano en Simijaca",
+      "Servicio interveredal",
+      "Servicio las 24 horas",
+      "Pedidos por WhatsApp",
+      "Viajes a Susa, Fúquene, Ubaté y Chiquinquirá",
+      "Expresos a todo el país"
+    ],
+    "frase": "Conectamos municipios, aseguramos tu viaje"
+  },
+  "fuentes": [
+    "https://comultrasim.github.io/Web/",
+    "https://comultrasim.github.io/Web/servicios.html",
+    "https://comultrasim.github.io/Web/contacto.html",
+    "https://github.com/Comultrasim/Web",
+    "https://github.com/Comultrasim/Web/commit/432c0c2d8086e14b41beb65d27e9561d15d18ffa",
+    "https://raw.githubusercontent.com/Comultrasim/Web/main/Politica%20de%20Tratamiento%20de%20Datos%20Personales%20Comultrasim.pdf",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=800174206",
+    "https://www.facebook.com/comultrasim/",
+    "https://www.simijaca-cundinamarca.gov.co/Transparencia/Normatividad/2023_DECRETO%2008%20-%20TARIFAS%20TRANSPORTE%20PUBLICO.pdf",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza media. El único respaldo de los taxis es su propia web: «Servicio de taxi urbano – Ofrecemos servicios de taxis en el municipio de Simijaca cubriendo rutas urbanas e interveredales. Servicio seguro y confiable las 24 horas» (según el historial de GitHub, la cooperativa cambió la tarjeta «Servicio Especial» por esta el 23-jun-2026 y la mantuvo en los ajustes del 18-sep-2026). Pero en las fotos de flota de la web solo hay camionetas doble cabina, vans y busetas, ningún automóvil taxi, y la Alcaldía no tiene tarifas de taxi publicadas: hay que confirmar si sus taxis son automóviles o camionetas veredales.",
+    "NIT 800.174.206-9, CIIU 4921 (secundario 4732), matrícula en el RUES del 26-ago-1997 (ESAL 90005725) y renovación del 31-mar-2026: RUES abierto (datos.gov.co c82u-588k). Representante legal según el RUES: Wilson Fernando Cabra Castellanos. Año de fundación sin confirmar.",
+    "Teléfono y WhatsApp 320 489 6514 («Línea Oficial WhatsApp»), correo gerencia.comultrasim@hotmail.com y dirección Calle 9 # 6-32: su web (página de contacto). Tiene además taquilla en el Terminal de Transportes de Chiquinquirá. La web dice que el chat de WhatsApp atiende de lunes a sábado. El correo de protección de datos de su política de tratamiento de datos es solo para habeas data: no va en copia. Se quitó un fijo que traía la primera búsqueda porque no tiene fuente verificable.",
+    "Es una cooperativa mixta: transporte intermunicipal en camionetas y busetas entre Chiquinquirá, Simijaca, Susa, Buenavista y San Miguel de Sema, además de expresos, carga y encomiendas. Facebook: «Comultrasim» (empresa de transporte y flete).",
+    "Colores de su marca (css/global.css de su web): verde #36A92D, naranja #F56A00 y rojo oscuro #7A0B0B. El primario es una versión más oscura de su verde, para que el texto blanco se lea, y el acento es su naranja.",
+    "Misión y visión: redacción general propuesta por interOS y centrada en el taxi (las oficiales hablan de transporte de pasajeros, servicio especial, carga y encomiendas). La frase «Conectamos municipios, aseguramos tu viaje» es de su web.",
+    "Tarifas: no se encontró decreto de tarifas de taxi; los decretos de tarifas de Simijaca de 2020 a 2025 son de transporte especial, mixto o colectivo escolar (por ejemplo, el Decreto 008 de 2023). La demo usa valores de ejemplo.",
+    "Vehículo «Kia Picanto»: valor por defecto, sin confirmar.",
+    "Oficina: ubicación aproximada sobre la Calle 9, entre las carreras 6 y 7, calculada con los cruces de calles de OpenStreetMap.",
+    "Destinos: municipios vecinos, incluidos Chiquinquirá y San Miguel de Sema (Boyacá), adonde llegan sus rutas. Simijaca queda a unos 115 km del Portal Norte por carretera (OSRM), así que solo van municipios."
+  ]
+}

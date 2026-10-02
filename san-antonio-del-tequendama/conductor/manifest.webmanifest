@@ -1,0 +1,19 @@
+{
+  "name": "TST Transportes Conductor",
+  "short_name": "Conductor",
+  "description": "App de los conductores de TST Transportes: recibe servicios, navega hasta el pasajero y cobra con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/san-antonio-del-tequendama/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/san-antonio-del-tequendama/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/san-antonio-del-tequendama/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

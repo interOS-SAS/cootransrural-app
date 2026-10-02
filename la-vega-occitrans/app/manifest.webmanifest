@@ -1,0 +1,19 @@
+{
+  "name": "Occitrans — Pide tu taxi",
+  "short_name": "Occitrans",
+  "description": "Pide tu taxi de Occitrans en La Vega con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#14720E",
+  "theme_color": "#14720E",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/la-vega-occitrans/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/la-vega-occitrans/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/la-vega-occitrans/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

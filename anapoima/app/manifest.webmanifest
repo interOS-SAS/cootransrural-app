@@ -1,0 +1,19 @@
+{
+  "name": "Expreso Santa Ana — Pide tu taxi",
+  "short_name": "Santa Ana",
+  "description": "Pide tu taxi de Expreso Santa Ana en Anapoima con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#9B1B5A",
+  "theme_color": "#9B1B5A",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/anapoima/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/anapoima/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/anapoima/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

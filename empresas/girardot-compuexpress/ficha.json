@@ -1,0 +1,616 @@
+{
+  "id": "girardot-compuexpress",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Compuexpress",
+    "nombreCorto": "Compuexpress",
+    "razonSocial": "Radio Taxi Compu-Express de Girardot S.A.S.",
+    "tipo": "empresa",
+    "lema": "Tu taxi 24/7 en Girardot, Flandes y Ricaurte",
+    "municipio": "Girardot, Cundinamarca",
+    "pueblo": "Girardot",
+    "telefono": "3228333333",
+    "telefonoVisible": "322 833 3333",
+    "whatsapp": "",
+    "correo": "taxiscompuexpressgirardot@gmail.com",
+    "direccion": "Carrera 5 # 17-81, barrio El Porvenir, Girardot, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2002,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "GRT",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Alto Magdalena",
+    "datosPendientes": [
+      "número de taxis",
+      "modelo de los taxis",
+      "WhatsApp de la central",
+      "misión y visión oficiales",
+      "colores oficiales"
+    ],
+    "oficina": {
+      "lat": 4.293478,
+      "lng": -74.802297
+    }
+  },
+  "colores": {
+    "primario": "#C80000",
+    "primario2": "#E00000",
+    "oscuro": "#4D0000",
+    "acento": "#FFD200",
+    "rojo": "#B00020"
+  },
+  "CENTRO": {
+    "lat": 4.297029,
+    "lng": -74.807125
+  },
+  "ZONA": {
+    "sur": 3.98,
+    "norte": 4.62,
+    "oeste": -75.12,
+    "este": -74.48
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 1500,
+    "recargoDominical": 0,
+    "nocheDesde": 19,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima ($8.000) y el recargo nocturno ($1.500, de 7:00 p. m. a 5:59 a. m.) son los del Decreto 0030 de 2026 de la Alcaldía de Girardot. En Girardot el taxi se cobra por zonas (zona 1 $8.000, zona 2 $8.500, zona 3 $9.000, zona 4 y veredas de $16.000 a $30.000, sitios turísticos de $8.000 a $25.000, $2.000 adicionales entre zonas y $1.000 de recargo navideño del 16 de diciembre al puente de Reyes); el cálculo por kilómetro y las rutas a otros municipios son de ejemplo, sujetos a confirmación de la empresa."
+  },
+  "RUTAS": [
+    {
+      "id": "flandes",
+      "destino": "Flandes",
+      "valor": 15000,
+      "km": 3,
+      "min": 5,
+      "radioKm": 4
+    },
+    {
+      "id": "ricaurte",
+      "destino": "Ricaurte",
+      "valor": 15000,
+      "km": 5,
+      "min": 10,
+      "radioKm": 4
+    },
+    {
+      "id": "agua-de-dios",
+      "destino": "Agua de Dios",
+      "valor": 41000,
+      "km": 23,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "narino",
+      "destino": "Nariño",
+      "valor": 45000,
+      "km": 26,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "tocaima",
+      "destino": "Tocaima",
+      "valor": 51000,
+      "km": 30,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "nilo",
+      "destino": "Nilo",
+      "valor": 51000,
+      "km": 30,
+      "min": 50,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Bolívar",
+      "detalle": "Parque principal, Girardot",
+      "cat": "centro",
+      "lat": 4.297029,
+      "lng": -74.807125
+    },
+    {
+      "id": "texaco",
+      "nombre": "Texaco",
+      "detalle": "Girardot",
+      "cat": "comercio",
+      "lat": 4.304617,
+      "lng": -74.802729
+    },
+    {
+      "id": "terpel-jumbo",
+      "nombre": "Terpel / Jumbo",
+      "detalle": "Girardot",
+      "cat": "comercio",
+      "lat": 4.305169,
+      "lng": -74.803147
+    },
+    {
+      "id": "biomax",
+      "nombre": "Biomax",
+      "detalle": "Girardot",
+      "cat": "comercio",
+      "lat": 4.3041,
+      "lng": -74.802831
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Girardot",
+      "cat": "comercio",
+      "lat": 4.304955,
+      "lng": -74.803605
+    },
+    {
+      "id": "terpel",
+      "nombre": "Terpel",
+      "detalle": "Girardot",
+      "cat": "comercio",
+      "lat": 4.303871,
+      "lng": -74.802633
+    },
+    {
+      "id": "la-prosperidad",
+      "nombre": "La Prosperidad",
+      "detalle": "Girardot",
+      "cat": "comida",
+      "lat": 4.304808,
+      "lng": -74.802006
+    },
+    {
+      "id": "pollo-de-niko",
+      "nombre": "Pollo de Niko",
+      "detalle": "Girardot",
+      "cat": "comida",
+      "lat": 4.30343,
+      "lng": -74.802605
+    },
+    {
+      "id": "ocean-ice-cream-and-coffee-shop",
+      "nombre": "Ocean Ice Cream and Coffee Shop",
+      "detalle": "Girardot",
+      "cat": "comida",
+      "lat": 4.303463,
+      "lng": -74.802423
+    },
+    {
+      "id": "frisby",
+      "nombre": "Frisby",
+      "detalle": "Girardot",
+      "cat": "comida",
+      "lat": 4.30245,
+      "lng": -74.804039
+    },
+    {
+      "id": "la-magola-pizza",
+      "nombre": "La Magola Pizza",
+      "detalle": "Girardot",
+      "cat": "comida",
+      "lat": 4.305331,
+      "lng": -74.800479
+    },
+    {
+      "id": "terminal-de-transporte",
+      "nombre": "Terminal de Transporte",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.302728,
+      "lng": -74.805284
+    },
+    {
+      "id": "cristo-resucitado",
+      "nombre": "Cristo Resucitado",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.305795,
+      "lng": -74.799692
+    },
+    {
+      "id": "colegio-liceo-moderno",
+      "nombre": "Colegio Liceo Moderno",
+      "detalle": "Girardot",
+      "cat": "educacion",
+      "lat": 4.304182,
+      "lng": -74.799247
+    },
+    {
+      "id": "hotel-galeon-inn",
+      "nombre": "Hotel Galeón Inn",
+      "detalle": "Girardot",
+      "cat": "turismo",
+      "lat": 4.30124,
+      "lng": -74.80547
+    },
+    {
+      "id": "institucion-educativa-ramon-bueno-y-jose",
+      "nombre": "Institución Educativa Ramón Bueno y José Triana",
+      "detalle": "Girardot",
+      "cat": "educacion",
+      "lat": 4.300823,
+      "lng": -74.800872
+    },
+    {
+      "id": "hotel-imaru",
+      "nombre": "Hotel Imaru",
+      "detalle": "Girardot",
+      "cat": "turismo",
+      "lat": 4.30067,
+      "lng": -74.80549
+    },
+    {
+      "id": "salon-del-reino-de-los-testigosde-jehova",
+      "nombre": "Salón del Reino de los Testigos de Jehová",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.305993,
+      "lng": -74.797799
+    },
+    {
+      "id": "colegio-cristiano-mi-primer-amor",
+      "nombre": "Colegio Cristiano Mi Primer Amor",
+      "detalle": "Girardot",
+      "cat": "educacion",
+      "lat": 4.306142,
+      "lng": -74.797468
+    },
+    {
+      "id": "colegio-americano",
+      "nombre": "Colegio Americano",
+      "detalle": "Girardot",
+      "cat": "educacion",
+      "lat": 4.298748,
+      "lng": -74.80449
+    },
+    {
+      "id": "escuela-anexa",
+      "nombre": "Escuela Anexa",
+      "detalle": "Girardot",
+      "cat": "educacion",
+      "lat": 4.298394,
+      "lng": -74.807059
+    },
+    {
+      "id": "cementerio-catolico",
+      "nombre": "Cementerio Católico",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.300043,
+      "lng": -74.797001
+    },
+    {
+      "id": "colegio-la-presentacion",
+      "nombre": "Colegio La Presentación",
+      "detalle": "Girardot",
+      "cat": "educacion",
+      "lat": 4.298299,
+      "lng": -74.807315
+    },
+    {
+      "id": "la-barra",
+      "nombre": "La Barra",
+      "detalle": "Girardot",
+      "cat": "turismo",
+      "lat": 4.300131,
+      "lng": -74.809272
+    },
+    {
+      "id": "catedral-inmaculado-corazon-de-maria",
+      "nombre": "Catedral Inmaculado Corazón de María",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.297644,
+      "lng": -74.806583
+    },
+    {
+      "id": "hotel-dubai",
+      "nombre": "Hotel Dubái",
+      "detalle": "Girardot",
+      "cat": "turismo",
+      "lat": 4.298239,
+      "lng": -74.807752
+    },
+    {
+      "id": "clinica-girardot",
+      "nombre": "Clinica Girardot",
+      "detalle": "Girardot",
+      "cat": "salud",
+      "lat": 4.296644,
+      "lng": -74.803571
+    },
+    {
+      "id": "comando-distrital-de-girardot",
+      "nombre": "Comando Distrital de Girardot",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.300538,
+      "lng": -74.796077
+    },
+    {
+      "id": "clinica-junical-san-sebastian",
+      "nombre": "Clínica Junical San Sebastián",
+      "detalle": "Girardot",
+      "cat": "salud",
+      "lat": 4.296099,
+      "lng": -74.800482
+    },
+    {
+      "id": "hotel-bachue",
+      "nombre": "Hotel Bachué",
+      "detalle": "Girardot",
+      "cat": "turismo",
+      "lat": 4.295429,
+      "lng": -74.803687
+    },
+    {
+      "id": "alcaldia-de-girardot",
+      "nombre": "Alcaldía de Girardot",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.296381,
+      "lng": -74.807289
+    },
+    {
+      "id": "hotel-tocarema",
+      "nombre": "Hotel Tocarema",
+      "detalle": "Girardot",
+      "cat": "turismo",
+      "lat": 4.295356,
+      "lng": -74.802038
+    },
+    {
+      "id": "clinica-san-rafael",
+      "nombre": "Clínica San Rafael",
+      "detalle": "Girardot",
+      "cat": "salud",
+      "lat": 4.296799,
+      "lng": -74.797131
+    },
+    {
+      "id": "san-pablo-apostol",
+      "nombre": "Iglesia San Pablo Apóstol",
+      "detalle": "Girardot · a 2,2 km",
+      "cat": "centro",
+      "lat": 4.316688,
+      "lng": -74.805172
+    },
+    {
+      "id": "clinica-de-especialistas",
+      "nombre": "Clínica de Especialistas",
+      "detalle": "Girardot",
+      "cat": "salud",
+      "lat": 4.293451,
+      "lng": -74.80832
+    },
+    {
+      "id": "ricaurte",
+      "nombre": "Ricaurte",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.277736,
+      "lng": -74.771816
+    },
+    {
+      "id": "flandes",
+      "nombre": "Flandes",
+      "detalle": "Tolima",
+      "cat": "municipio",
+      "lat": 4.2865,
+      "lng": -74.813697
+    },
+    {
+      "id": "tocaima",
+      "nombre": "Tocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.455243,
+      "lng": -74.634486
+    },
+    {
+      "id": "agua-de-dios",
+      "nombre": "Agua de Dios",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.379633,
+      "lng": -74.670259
+    },
+    {
+      "id": "nilo",
+      "nombre": "Nilo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.306591,
+      "lng": -74.619761
+    },
+    {
+      "id": "narino",
+      "nombre": "Nariño",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.398123,
+      "lng": -74.82793
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Nelson Pinzón",
+      "placa": "GRT 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 2272,
+      "desde": 2011,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Sandra Patiño",
+      "placa": "GRT 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 986,
+      "desde": 2010,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Jairo Moreno",
+      "placa": "GRT 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2204,
+      "desde": 2019,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Wilson Gómez",
+      "placa": "GRT 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 2286,
+      "desde": 2008,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Rubén Sarmiento",
+      "placa": "GRT 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1173,
+      "desde": 2007,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-17",
+      "movil": "017",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "GRT 617",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 491,
+      "desde": 2019,
+      "tel": "3000000017"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Diana Forero",
+      "placa": "GRT 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1983,
+      "desde": 2011,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Germán Quintero",
+      "placa": "GRT 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2060,
+      "desde": 2013,
+      "tel": "3000000024"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Compuexpress —Radio Taxi Compu-Express de Girardot S.A.S.— es una de las cuatro empresas habilitadas para el servicio de taxi en Girardot. Desde su sede en la Carrera 5 # 17-81, barrio El Porvenir, atiende Girardot, Flandes y Ricaurte las 24 horas por sus líneas de radio taxi y por Maxiexpress, su app para Android.\n\nCon la app, Compuexpress puede llevar su servicio también al iPhone y sumar lo que hoy le falta: ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Girardot, Flandes y Ricaurte las 24 horas, con conductores que conocen la región, con seguridad, puntualidad, tarifas claras y buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más rápida y confiable de pedir un taxi en Girardot y sus alrededores: un toque en el celular, la tarifa clara y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi las 24 horas",
+      "Servicio en Girardot, Flandes y Ricaurte",
+      "Pedidos por teléfono",
+      "Reservas y viajes programados",
+      "Seguimiento del taxi en el mapa"
+    ],
+    "frase": "Compuexpress, tu taxi a un toque en Girardot"
+  },
+  "fuentes": [
+    "https://www.girardot-cundinamarca.gov.co/Transparencia/Normatividad/CIRCULAR%20EXT%20003%20EMPRESA%20TAXI.pdf",
+    "https://www.girardot-cundinamarca.gov.co/Transparencia/Normatividad/DECRETO%20No.%200030%20DE%202026%20-%20ESTABLECE%20TARIFA%20PARA%20EL%20SERVICIO%20PUBLICO%20DE%20TAXI%20EN%20GIRARDOT.pdf",
+    "https://colfirma.com/empresa/radio-taxi-compu-express-de-girardot-s-a-s-808003004",
+    "https://play.google.com/store/apps/details?id=com.compuexpress.girardot",
+    "https://empresas.larepublica.co/colombia/cundinamarca/girardot/radio-taxi-compu-express-de-girardot-s-a-s-808003004",
+    "https://www.datos.gov.co/d/c82u-588k",
+    "https://www.facebook.com/compuexpress.girardor/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Habilitación: la Circular Externa 003 del 2-sep-2025 de la Secretaría de Tránsito y Transporte de Girardot (https://www.girardot-cundinamarca.gov.co/Transparencia/Normatividad/CIRCULAR%20EXT%20003%20EMPRESA%20TAXI.pdf) dice que solo cuatro empresas están habilitadas para taxi en Girardot: Central de Transportes S.A. (Megataxi), Central de Taxis S.A.S., Radio Taxi Compuexpress de Girardot S.A.S. y la Cooperativa de Taxistas Unidos de Girardot Ltda. Las cuatro concertaron las tarifas del Decreto 0030 de 2026. La Circular la lista como «RADIO TAXI COMPUEXPRESS DE GIRARDOT S.A.S. – 808.003.004-4 – APP MAXIEXPRESS».",
+    "Razón social, NIT 808.003.004-4, dirección Cra 5 # 17-81, El Porvenir, y correo taxiscompuexpressgirardot@gmail.com: registro mercantil (colfirma); la dirección coincide con la ficha del desarrollador en Google Play. Las direcciones antiguas de los directorios (Cr 5 # 20B-111 y Cr 1D # 20A-136) ya no valen. Matriculada en la Cámara de Comercio de Girardot el 20-ago-2002, antes como Ltda. (RUES abierto; fundada = 2002); renovó el 15-abr-2026.",
+    "Gerente: José Aniceto Hernández Hernández, representante legal según el registro mercantil (colfirma). D&B daba «José Álvaro», sin comprobar: se usa el del registro.",
+    "Teléfono 322 833 3333: Circular 003-2025 de la Alcaldía y teléfono del desarrollador en Google Play. La Circular también publica 312 822 2222 y 312 833 3333. Fijo antiguo 601 835 1515 (infotaxicolombia; sin confirmar que siga activo). No se confirmó cuál es WhatsApp (whatsapp vacío). Se quitó el 314 833 3333 de informacolombia: no se pudo comprobar.",
+    "Correos: taxiscompuexpressgirardot@gmail.com (registro mercantil) y maxiexpressgirardot@gmail.com (ficha de su app en Google Play). Se escribe a los dos.",
+    "Servicio 24 horas y cobertura: su Facebook (facebook.com/compuexpress.girardor, unos 1.790 me gusta: «Servicio 24/7 Girardot, Flandes y Ricaurte»). Lema y frase: redacción de interOS a partir de eso.",
+    "GANCHO COMERCIAL: tiene app propia, «Maxiexpress» (com.compuexpress.girardot), SOLO para Android: más de 1.000 descargas, 4,3 estrellas con 28 opiniones, actualizada el 4-jun-2026; solo permite pagar en efectivo y las opiniones se quejan de lentitud, cancelaciones y falta de disponibilidad. No hay versión para iPhone. La propuesta es migrar o sumar iPhone, pago QR, stickers QR y panel propio.",
+    "Nombre: la empresa es «Radio Taxi Compuexpress» (así la nombran la Alcaldía y su Facebook) y su app se llama «Maxiexpress». Colores tomados del ícono de Maxiexpress: rojo #C80000, amarillo #F8D000 y azul #003098 (colores oficiales por confirmar). En la propuesta no se usa su logo.",
+    "Oficina ubicada en el mapa sobre la Carrera 5 entre las calles 17 y 18 (cruces de OpenStreetMap), a unos 80 m de la Calle 17.",
+    "Tarifas: Decreto 0030 del 28-ene-2026 de la Alcaldía de Girardot (https://www.girardot-cundinamarca.gov.co/Transparencia/Normatividad/DECRETO%20No.%200030%20DE%202026%20-%20ESTABLECE%20TARIFA%20PARA%20EL%20SERVICIO%20PUBLICO%20DE%20TAXI%20EN%20GIRARDOT.pdf). Carrera mínima $8.000 (de 6:00 a. m. a 6:59 p. m.); recargo nocturno $1.500, solo de 7:00 p. m. a 5:59 a. m.; recargo navideño $1.000 (del 16-dic-2026 al puente de Reyes de 2027); $2.000 entre zonas. Zona centro: de la Carrera 7 a la Carrera 14 y de la Calle 9 (Plaza de Mercado Leopoldo Rother) a la Calle 28 (Terminal). Zona 1 $8.000, zona 2 $8.500, zona 3 $9.000, zona 4 y veredas de $16.000 a $30.000, sitios turísticos de $8.000 a $25.000. El decreto no fija recargo dominical (recargoDominical = 0). Banderazo, valor por km y rutas son de ejemplo.",
+    "Destinos: municipios vecinos a los que se viaja en taxi desde Girardot. Flandes es del Tolima (al otro lado del puente sobre el Magdalena): al crear la ficha, corregir el detalle de ese destino a «Tolima» (crear-ficha.py pone «Cundinamarca»). Girardot queda a unos 130 km de Bogotá: sin Portal ni aeropuerto en destinos.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

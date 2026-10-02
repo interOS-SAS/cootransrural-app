@@ -1,0 +1,466 @@
+{
+  "id": "caqueza",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Glahsmotor",
+    "nombreCorto": "Glahsmotor",
+    "razonSocial": "Glahsmotor Ltda.",
+    "tipo": "empresa",
+    "lema": "Taxis de Cáqueza, tierra sin igual",
+    "municipio": "Cáqueza, Cundinamarca",
+    "pueblo": "Cáqueza",
+    "region": "provincia de Oriente",
+    "telefono": "3143814943",
+    "telefonoVisible": "314 381 4943",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Km 27 + 200 m, vía Bogotá–Villavicencio, Cáqueza, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2001,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "CAQ",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "oficina": null,
+    "datosPendientes": [
+      "confirmar que sigue prestando el servicio de taxi (la prueba oficial es un decreto de 2017)",
+      "teléfono de la central y WhatsApp (el 314 381 4943 es el del registro mercantil)",
+      "correo",
+      "sede u oficina vigente (registro: Km 27 vía al Llano; Google: Carrera 5 # 2A-12)",
+      "número de taxis",
+      "tarifas oficiales (decreto de tarifas de taxi de Cáqueza)",
+      "logo y colores",
+      "misión y visión oficiales",
+      "servicio 24 horas"
+    ]
+  },
+  "colores": {
+    "primario": "#3F1C7A",
+    "primario2": "#5A2FA0",
+    "oscuro": "#1E0C3D",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.40571,
+    "lng": -73.945921
+  },
+  "ZONA": {
+    "sur": 4.09,
+    "norte": 4.73,
+    "oeste": -74.27,
+    "este": -73.63
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "une",
+      "destino": "Une",
+      "valor": 28000,
+      "km": 15,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "fosca",
+      "destino": "Fosca",
+      "valor": 30000,
+      "km": 16,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "chipaque",
+      "destino": "Chipaque",
+      "valor": 30000,
+      "km": 16,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "quetame",
+      "destino": "Quetame",
+      "valor": 33000,
+      "km": 18,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "ubaque",
+      "destino": "Ubaque",
+      "valor": 38000,
+      "km": 22,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "fomeque",
+      "destino": "Fómeque",
+      "valor": 51000,
+      "km": 30,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-usme",
+      "destino": "Portal Usme (Bogotá)",
+      "valor": 60000,
+      "km": 36,
+      "min": 35,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 100000,
+      "km": 63,
+      "min": 75,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Cáqueza",
+      "cat": "centro",
+      "lat": 4.40571,
+      "lng": -73.945921
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Cáqueza",
+      "cat": "comercio",
+      "lat": 4.406029,
+      "lng": -73.94603
+    },
+    {
+      "id": "banco-popular",
+      "nombre": "Banco Popular",
+      "detalle": "Cáqueza",
+      "cat": "comercio",
+      "lat": 4.40562,
+      "lng": -73.946341
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Cáqueza",
+      "cat": "comercio",
+      "lat": 4.405505,
+      "lng": -73.946315
+    },
+    {
+      "id": "alcaldia-de-caqueza",
+      "nombre": "Alcaldía de Cáqueza",
+      "detalle": "Cáqueza",
+      "cat": "centro",
+      "lat": 4.405746,
+      "lng": -73.945463
+    },
+    {
+      "id": "banco-agrario",
+      "nombre": "Banco Agrario",
+      "detalle": "Cáqueza",
+      "cat": "comercio",
+      "lat": 4.406162,
+      "lng": -73.945744
+    },
+    {
+      "id": "estacion-de-policia-de-caqueza",
+      "nombre": "Estación de Policía de Cáqueza",
+      "detalle": "Cáqueza",
+      "cat": "centro",
+      "lat": 4.404934,
+      "lng": -73.947291
+    },
+    {
+      "id": "esso",
+      "nombre": "Esso",
+      "detalle": "Cáqueza",
+      "cat": "comercio",
+      "lat": 4.405677,
+      "lng": -73.948075
+    },
+    {
+      "id": "hotel-el-paisa",
+      "nombre": "Hotel El Paisa",
+      "detalle": "Cáqueza",
+      "cat": "turismo",
+      "lat": 4.40522,
+      "lng": -73.948554
+    },
+    {
+      "id": "parque-de-los-colores",
+      "nombre": "Parque de los Colores",
+      "detalle": "Cáqueza",
+      "cat": "centro",
+      "lat": 4.402678,
+      "lng": -73.946608
+    },
+    {
+      "id": "el-rosario",
+      "nombre": "El Rosario",
+      "detalle": "Vereda de Cáqueza",
+      "cat": "vereda",
+      "lat": 4.430219,
+      "lng": -73.967075
+    },
+    {
+      "id": "colegio-rincon-grande",
+      "nombre": "Colegio Rincón Grande",
+      "detalle": "Cáqueza · a 4,3 km",
+      "cat": "educacion",
+      "lat": 4.43596,
+      "lng": -73.969696
+    },
+    {
+      "id": "chipaque",
+      "nombre": "Chipaque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.442358,
+      "lng": -74.044915
+    },
+    {
+      "id": "ubaque",
+      "nombre": "Ubaque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.482311,
+      "lng": -73.934893
+    },
+    {
+      "id": "fomeque",
+      "nombre": "Fómeque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.487111,
+      "lng": -73.893528
+    },
+    {
+      "id": "quetame",
+      "nombre": "Quetame",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.330703,
+      "lng": -73.862947
+    },
+    {
+      "id": "fosca",
+      "nombre": "Fosca",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.338934,
+      "lng": -73.938509
+    },
+    {
+      "id": "une",
+      "nombre": "Une",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.403355,
+      "lng": -74.024749
+    },
+    {
+      "id": "portal-usme",
+      "nombre": "Portal Usme (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.531684,
+      "lng": -74.11939
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Édgar Molina",
+      "placa": "CAQ 601",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1838,
+      "desde": 2009,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Rubén Sarmiento",
+      "placa": "CAQ 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1018,
+      "desde": 2021,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Diana Forero",
+      "placa": "CAQ 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1949,
+      "desde": 2016,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Yolanda Prieto",
+      "placa": "CAQ 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 750,
+      "desde": 2007,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Germán Quintero",
+      "placa": "CAQ 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1638,
+      "desde": 2007,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Carlos Rodríguez",
+      "placa": "CAQ 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 984,
+      "desde": 2016,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Luz Marina Rojas",
+      "placa": "CAQ 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1547,
+      "desde": 2007,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Martha Garzón",
+      "placa": "CAQ 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 2224,
+      "desde": 2014,
+      "tel": "3000000028"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Glahsmotor Ltda. es la empresa de taxis de Cáqueza, la cabecera de la provincia de Oriente, sobre la vía Bogotá–Villavicencio. Un decreto de la Alcaldía la reconoce como la empresa legalmente habilitada para el servicio municipal de taxi y le asigna los paraderos del casco urbano: a la salida hacia Bogotá y Villavicencio, en el sector La Cadena, frente a la Empresa de Servicios Públicos y frente al edificio La Triada.\n\nCon la app, la empresa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay, conoces la tarifa antes de subir, sigues el móvil en el mapa y pagas con QR, ya sea para moverte en el pueblo, ir a las veredas o salir hacia Chipaque, Bogotá o el Llano.",
+    "mision": "Prestar el servicio de taxi en Cáqueza y sus veredas con conductores que conocen el municipio y la vía al Llano, con seguridad, puntualidad y buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Cáqueza y el Oriente de Cundinamarca: un taxi a un toque, con tarifa clara y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi en el casco urbano de Cáqueza",
+      "Servicio a las veredas",
+      "Viajes a Chipaque, Ubaque, Fosca y Une",
+      "Viajes a Quetame y Fómeque",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Tu taxi en Cáqueza, tierra sin igual"
+  },
+  "fuentes": [
+    "https://caquezacundinamarca.micolombiadigital.gov.co/sites/caquezacundinamarca/content/files/000026/1259_decreto-029.PDF",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832006126",
+    "https://colfirma.com/empresa/glahsmotor-ltda-832006126",
+    "https://edirectorio.net/empresa/glahsmotor-ltda",
+    "https://directorio-empresas.einforma.co/informacion-empresa/glahsmotor-ltda",
+    "https://www.cybo.com/CO-biz/glash-motor-taxi-agencia-c%C3%A1queza_1F",
+    "https://infotaxicolombia.com.co/empresas-taxi/glash-motor-taxi-agencia-caqueza-caqueza-cundinamarca-colombia/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Taxis: el Decreto 029 del 5 de mayo de 2017 de la Alcaldía de Cáqueza (capítulo II, «Servicio municipal de taxi», artículo cuarto) dice que el servicio público municipal en la modalidad individual de taxis es de la empresa «GlahsMotor Ltda.», «esta empresa legalmente habilitada», y le asigna 9 cupos de parada: 4 a la salida Bogotá–Villavicencio (sector La Cadena), 2 frente a la Empresa de Servicios Públicos y 3 frente al edificio La Triada. Es la única empresa de taxis que nombra el decreto (URL en fuentes; PDF escaneado, leído página por página).",
+    "Sigue activa: en el RUES abierto (datos.gov.co) figura Glahsmotor Ltda., NIT 832.006.126-5, sociedad limitada, matrícula ACTIVA en la Cámara de Comercio de Bogotá, CIIU 4921 (transporte de pasajeros), constituida el 19-oct-2001 y renovada el 22-may-2026. No se encontró una prueba de 2024-2026 de que siga operando los taxis (el decreto es de 2017): hay que confirmarlo antes de enviar la propuesta.",
+    "Nombre: el registro mercantil dice GLAHSMOTOR LTDA; Google Maps, Cybo e infotaxicolombia la escriben «Glash Motor Taxi Agencia Cáqueza».",
+    "Teléfono 314 381 4943: es el teléfono comercial del registro mercantil (eInforma, edirectorio); no se sabe si es la línea de la central ni si tiene WhatsApp. Un directorio antiguo da el fijo 601 848 0777 (no se sabe si sigue en uso).",
+    "Dirección: Km 27 + 200 m de la vía Bogotá–Villavicencio es el domicilio del registro mercantil (eInforma, Empresite, edirectorio). Google Maps y Cybo tienen la ficha «Glash Motor Taxi Agencia Cáqueza» en la Carrera 5 # 2A-12 (punto 4.40605, -73.94648, a media cuadra del cruce de la Carrera 5 con la Calle 2A en OpenStreetMap), pero la única foto de esa ficha es de una tienda naturista: la agencia pudo moverse. Por eso la oficina queda sin punto en el mapa (null).",
+    "Fundada: 2001 es el año de constitución en el registro mercantil.",
+    "Representante legal: Germán Danilo Rojas Rozo, según el RUES abierto (actualizado en mayo de 2026). Se usa solo para el saludo de la propuesta.",
+    "Correo: no se encontró en directorios ni en redes.",
+    "Número de taxis: sin cifra; los 9 cupos de parada del decreto de 2017 no son el tamaño de la flota.",
+    "Tarifas: no se encontró el decreto de tarifas de taxi de Cáqueza (ni en el portal de la Alcaldía ni en buscadores).",
+    "Colores propios de interOS (morado y dorado); no se encontró logo de la empresa. Lema: usa «Tierra sin igual», el lema del municipio que aparece en los documentos de la Alcaldía.",
+    "Placa de la demo (CAQ): inventada para la demo; no corresponde a placas reales.",
+    "Destinos: municipios vecinos del Oriente (Chipaque, Ubaque, Fómeque, Quetame, Fosca, Une); Cáqueza queda a menos de 50 km de Bogotá por la vía al Llano, por eso se añaden Portal Usme y el aeropuerto, igual que en Chipaque.",
+    "La historia solo usa hechos de las fuentes; la misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

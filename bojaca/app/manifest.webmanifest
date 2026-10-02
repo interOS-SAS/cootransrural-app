@@ -1,0 +1,19 @@
+{
+  "name": "Ricotrans — Pide tu taxi",
+  "short_name": "Ricotrans",
+  "description": "Pide tu taxi de Ricotrans en Bojacá con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#A16207",
+  "theme_color": "#A16207",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/bojaca/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/bojaca/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/bojaca/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

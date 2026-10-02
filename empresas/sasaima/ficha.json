@@ -1,0 +1,442 @@
+{
+  "id": "sasaima",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Coovetrans",
+    "nombreCorto": "Coovetrans",
+    "razonSocial": "Cooperativa Vehicular de Transportes Sasaima (Coovetrans)",
+    "tipo": "cooperativa",
+    "lema": "Taxis y camperos en Sasaima y sus veredas",
+    "municipio": "Sasaima, Cundinamarca",
+    "pueblo": "Sasaima",
+    "region": "provincia del Gualivá",
+    "telefono": "3203209469",
+    "telefonoVisible": "320 320 9469",
+    "whatsapp": "573203209469",
+    "correo": "coovetransltda@hotmail.com",
+    "direccion": "Carrera 4 # 8-79, Sasaima, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://www.coovetrans.com/",
+    "fundada": 1999,
+    "taxisIniciales": null,
+    "taxis": 5,
+    "microbuses": null,
+    "asociados": 37,
+    "servicio24h": false,
+    "placaPrefijo": "SAS",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "datosPendientes": [
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.96488,
+      "lng": -74.43577
+    },
+    "pieTexto": "Transporte en Sasaima y la provincia del Gualivá desde 1999; taxis desde 2015."
+  },
+  "colores": {
+    "primario": "#530054",
+    "primario2": "#6E1A70",
+    "oscuro": "#2A002B",
+    "acento": "#FFC21A",
+    "rojo": "#C62828"
+  },
+  "CENTRO": {
+    "lat": 4.964577,
+    "lng": -74.433115
+  },
+  "ZONA": {
+    "sur": 4.64,
+    "norte": 5.28,
+    "oeste": -74.75,
+    "este": -74.11
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "villeta",
+      "destino": "Villeta",
+      "valor": 23000,
+      "km": 11,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "alban",
+      "destino": "Albán",
+      "valor": 34000,
+      "km": 18,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "guayabal-de-siquima",
+      "destino": "Guayabal de Síquima",
+      "valor": 42000,
+      "km": 24,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 59000,
+      "km": 35,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "nocaima",
+      "destino": "Nocaima",
+      "valor": 61000,
+      "km": 36,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "la-vega",
+      "destino": "La Vega",
+      "valor": 63000,
+      "km": 38,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 111000,
+      "km": 70,
+      "min": 100,
+      "radioKm": 3
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 115000,
+      "km": 73,
+      "min": 100,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Sasaima",
+      "cat": "centro",
+      "lat": 4.964577,
+      "lng": -74.433115
+    },
+    {
+      "id": "alcaldia-sasaima",
+      "nombre": "Alcaldía de Sasaima",
+      "detalle": "Sasaima",
+      "cat": "centro",
+      "lat": 4.963468,
+      "lng": -74.434349
+    },
+    {
+      "id": "mirador-del-rio",
+      "nombre": "Mirador del Rio",
+      "detalle": "Sasaima",
+      "cat": "barrio",
+      "lat": 4.96704,
+      "lng": -74.434107
+    },
+    {
+      "id": "hospital-hilario-lugo",
+      "nombre": "Hospital Hilario Lugo",
+      "detalle": "Sasaima",
+      "cat": "salud",
+      "lat": 4.964689,
+      "lng": -74.436638
+    },
+    {
+      "id": "universidad-de-la-salle",
+      "nombre": "Universidad de La Salle",
+      "detalle": "Sasaima",
+      "cat": "educacion",
+      "lat": 4.967201,
+      "lng": -74.436595
+    },
+    {
+      "id": "centro-vacacional-la-maria",
+      "nombre": "Centro Vacacional La Maria",
+      "detalle": "Sasaima",
+      "cat": "turismo",
+      "lat": 4.959063,
+      "lng": -74.43321
+    },
+    {
+      "id": "restaurant-puerto-rico",
+      "nombre": "Restaurant Puerto Rico",
+      "detalle": "Sasaima · a 1,4 km",
+      "cat": "comida",
+      "lat": 4.951744,
+      "lng": -74.434055
+    },
+    {
+      "id": "finca-el-paraiso",
+      "nombre": "Finca El Paraíso",
+      "detalle": "Sasaima · a 1,4 km",
+      "cat": "turismo",
+      "lat": 4.952623,
+      "lng": -74.428023
+    },
+    {
+      "id": "condominio-kaori",
+      "nombre": "Condominio Kaori",
+      "detalle": "Sasaima · a 3,0 km",
+      "cat": "barrio",
+      "lat": 4.97452,
+      "lng": -74.408031
+    },
+    {
+      "id": "naranjillo",
+      "nombre": "Naranjillo",
+      "detalle": "Vereda de Sasaima",
+      "cat": "vereda",
+      "lat": 4.967709,
+      "lng": -74.403353
+    },
+    {
+      "id": "villeta",
+      "nombre": "Villeta",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.011258,
+      "lng": -74.47023
+    },
+    {
+      "id": "la-vega",
+      "nombre": "La Vega",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.999712,
+      "lng": -74.339522
+    },
+    {
+      "id": "alban",
+      "nombre": "Albán",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.876533,
+      "lng": -74.436043
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    },
+    {
+      "id": "guayabal-de-siquima",
+      "nombre": "Guayabal de Síquima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.878265,
+      "lng": -74.467563
+    },
+    {
+      "id": "nocaima",
+      "nombre": "Nocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.069767,
+      "lng": -74.377522
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-02",
+      "movil": "002",
+      "nombre": "Martha Garzón",
+      "placa": "SAS 602",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1757,
+      "desde": 2006,
+      "tel": "3000000002"
+    },
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Yolanda Prieto",
+      "placa": "SAS 604",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 574,
+      "desde": 2021,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Sandra Patiño",
+      "placa": "SAS 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1700,
+      "desde": 2018,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Fabio Cruz",
+      "placa": "SAS 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2230,
+      "desde": 2020,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-08",
+      "movil": "008",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "SAS 608",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1064,
+      "desde": 2012,
+      "tel": "3000000008"
+    },
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Nelson Pinzón",
+      "placa": "SAS 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2275,
+      "desde": 2012,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Jairo Moreno",
+      "placa": "SAS 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2145,
+      "desde": 2006,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Diana Forero",
+      "placa": "SAS 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2123,
+      "desde": 2011,
+      "tel": "3000000012"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Coovetrans, la Cooperativa Vehicular de Transportes Sasaima, se constituyó en 1999 y presta servicio en taxis, camperos y camionetas. Con la Resolución 675 de 2015 de la Alcaldía de Sasaima quedó habilitada para el servicio de taxi; además cubre las veredas con sus camperos y el servicio mixto hacia Villeta y La Vega desde su sede en la Carrera 4 # 8-79.\n\nCon la app, la cooperativa puede llevar el taxi al celular: pides con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa, en el pueblo o camino a la finca.",
+    "mision": "Prestar el servicio de transporte en Sasaima y sus veredas con asociados que conocen el territorio, con seguridad, puntualidad y buen trato para la comunidad y los visitantes.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Sasaima: un taxi a un toque en el celular, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en Sasaima",
+      "Camperos a las veredas",
+      "Camionetas municipales",
+      "Servicio mixto a Villeta y La Vega",
+      "Viajes a los municipios vecinos"
+    ],
+    "frase": "Su taxi en Sasaima, a un toque"
+  },
+  "fuentes": [
+    "https://www.coovetrans.com/",
+    "https://www.coovetrans.com/contacto/",
+    "https://www.coovetrans.com/wp-content/uploads/2026/06/informe-de-gestion-2025.23032026.pdf",
+    "https://www.coovetrans.com/wp-content/uploads/2026/06/certificado-de-existencia-y-representacion-legal-coovetrans.25062026.pdf",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832003938",
+    "https://www.datos.gov.co/resource/qmzu-gj57.json?nit=832003938",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "5 taxis, 37 asociados y parque automotor (9 camionetas municipales, 14 camperos veredales y 15 camionetas intermunicipales); habilitación de taxi con la Resolución 675 de 2015 del alcalde de Sasaima; mixto a Villeta y La Vega (Res. 00484 de 2004 de MinTransporte): Informe de Gestión 2025 (23-mar-2026) publicado en su web. Tiene pocos taxis: es sobre todo de mixto y camperos.",
+    "Razón social, NIT 832.003.938-5, constitución (Acta No. 1 del 10-may-1999; inscrita el 26-ago-1999 en la Cámara de Comercio de Facatativá), dirección Carrera 4 # 8-79 y teléfonos comerciales 320 320 9469 y 320 320 9496: certificado de existencia del 25-jun-2026 publicado en su web. El 320 320 9469 es además su WhatsApp (enlace de su web para pedir taxi, campero o camioneta).",
+    "Correos de su página de contacto: gerencia.coovetrans@gmail.com (GERENCIA) y coovetransltda@hotmail.com (SERVICIOS, también de notificaciones en el certificado y en SECOP II). Hay además sgsst.coovetrans@gmail.com y operativa1.coovetrans@gmail.com (internos).",
+    "Gerente (e) y representante legal: Raúl Dueñas Carrillo (Acta No. 34 del 03-mar-2003; certificado de 2026 y RUES del 07-may-2026). La certificación de cargos trae un celular personal: no publicar.",
+    "radiotaxi.com.co le atribuye el fijo 601 846 8187, que no aparece en sus fuentes propias: no usar sin confirmar.",
+    "Ubicación de la oficina aproximada: Carrera 4 justo antes de la Calle 9 en OpenStreetMap (la Calle 8 no está en el mapa).",
+    "Sasaima queda a unos 73 km del Portal 80 por carretera (OSRM): en el límite de ~70 km, por eso se dejaron Portal 80 y aeropuerto.",
+    "No se encontró decreto de tarifas de taxi de Sasaima: las tarifas de la demo son de ejemplo.",
+    "Colores de su marca: morado #530054 de la banda de su logo y de su web; su web también usa verde (#1F8730). El acento dorado es propuesta de interOS.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

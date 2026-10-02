@@ -1,0 +1,19 @@
+{
+  "name": "Auto Servicio Chía — Pide tu taxi",
+  "short_name": "Auto Servicio Chía",
+  "description": "Pide tu taxi de Auto Servicio Chía en Chía con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#4527A0",
+  "theme_color": "#4527A0",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/chia-autoservicio/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/chia-autoservicio/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/chia-autoservicio/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

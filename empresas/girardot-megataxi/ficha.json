@@ -1,0 +1,679 @@
+{
+  "id": "girardot-megataxi",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Megataxi",
+    "nombreCorto": "Megataxi",
+    "razonSocial": "Central de Transportes S.A. (Megataxi)",
+    "tipo": "empresa",
+    "lema": "Tradición, tecnología y servicio",
+    "municipio": "Girardot, Cundinamarca",
+    "pueblo": "Girardot",
+    "telefono": "3118351111",
+    "telefonoVisible": "311 835 1111",
+    "whatsapp": "573118351111",
+    "correo": "contacto@megataxigirardot.com",
+    "direccion": "Carrera 10 # 42-369, vía a Tocaima, frente a Ciudad Montes, Girardot, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://megataxigirardot.com",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "GIR",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Alto Magdalena",
+    "datosPendientes": [
+      "número de taxis",
+      "modelo de los taxis",
+      "año de fundación de la marca Megataxi",
+      "misión y visión oficiales",
+      "la ubicación exacta de la oficina en el mapa"
+    ],
+    "oficina": {
+      "lat": 4.3276,
+      "lng": -74.8041
+    }
+  },
+  "colores": {
+    "primario": "#1A2380",
+    "primario2": "#0868B8",
+    "oscuro": "#0C1245",
+    "acento": "#FFD900",
+    "rojo": "#D80000"
+  },
+  "CENTRO": {
+    "lat": 4.297029,
+    "lng": -74.807125
+  },
+  "ZONA": {
+    "sur": 3.98,
+    "norte": 4.62,
+    "oeste": -75.12,
+    "este": -74.48
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 1500,
+    "recargoDominical": 0,
+    "nocheDesde": 19,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima ($8.000) y el recargo nocturno ($1.500, de 7:00 p. m. a 5:59 a. m.) son los del Decreto 0030 de 2026 de la Alcaldía de Girardot. En Girardot el taxi se cobra por zonas (zona 1 $8.000, zona 2 $8.500, zona 3 $9.000, zona 4 y veredas de $16.000 a $30.000, sitios turísticos de $8.000 a $25.000, $2.000 adicionales entre zonas y $1.000 de recargo navideño del 16 de diciembre al puente de Reyes); el cálculo por kilómetro y las rutas a otros municipios son de ejemplo, sujetos a confirmación de la empresa."
+  },
+  "RUTAS": [
+    {
+      "id": "flandes",
+      "destino": "Flandes",
+      "valor": 15000,
+      "km": 3,
+      "min": 5,
+      "radioKm": 4
+    },
+    {
+      "id": "ricaurte",
+      "destino": "Ricaurte",
+      "valor": 15000,
+      "km": 5,
+      "min": 10,
+      "radioKm": 4
+    },
+    {
+      "id": "agua-de-dios",
+      "destino": "Agua de Dios",
+      "valor": 41000,
+      "km": 23,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "narino",
+      "destino": "Nariño",
+      "valor": 45000,
+      "km": 26,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "tocaima",
+      "destino": "Tocaima",
+      "valor": 51000,
+      "km": 30,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "nilo",
+      "destino": "Nilo",
+      "valor": 51000,
+      "km": 30,
+      "min": 50,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Bolívar",
+      "detalle": "Parque principal, Girardot",
+      "cat": "centro",
+      "lat": 4.297029,
+      "lng": -74.807125
+    },
+    {
+      "id": "texaco",
+      "nombre": "Texaco",
+      "detalle": "Girardot",
+      "cat": "comercio",
+      "lat": 4.304614,
+      "lng": -74.802729
+    },
+    {
+      "id": "terpel-jumbo",
+      "nombre": "Terpel / Jumbo",
+      "detalle": "Girardot",
+      "cat": "comercio",
+      "lat": 4.305169,
+      "lng": -74.803147
+    },
+    {
+      "id": "biomax",
+      "nombre": "Biomax",
+      "detalle": "Girardot",
+      "cat": "comercio",
+      "lat": 4.304071,
+      "lng": -74.802954
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Girardot",
+      "cat": "comercio",
+      "lat": 4.304955,
+      "lng": -74.803605
+    },
+    {
+      "id": "el-corral",
+      "nombre": "El Corral",
+      "detalle": "Girardot",
+      "cat": "comida",
+      "lat": 4.305358,
+      "lng": -74.803421
+    },
+    {
+      "id": "terpel",
+      "nombre": "Terpel",
+      "detalle": "Girardot",
+      "cat": "comercio",
+      "lat": 4.303871,
+      "lng": -74.802633
+    },
+    {
+      "id": "la-prosperidad",
+      "nombre": "La Prosperidad",
+      "detalle": "Girardot",
+      "cat": "comida",
+      "lat": 4.304831,
+      "lng": -74.802018
+    },
+    {
+      "id": "sena-centro-de-la-tecnologia-del-diseno-",
+      "nombre": "SENA-Centro de la tecnología del diseño y de la productivida",
+      "detalle": "Girardot",
+      "cat": "educacion",
+      "lat": 4.305661,
+      "lng": -74.802508
+    },
+    {
+      "id": "pollo-de-niko",
+      "nombre": "Pollo de Niko",
+      "detalle": "Girardot",
+      "cat": "comida",
+      "lat": 4.303426,
+      "lng": -74.802607
+    },
+    {
+      "id": "ocean-ice-cream-and-coffee-shop",
+      "nombre": "Ocean Ice Cream and Coffee Shop",
+      "detalle": "Girardot",
+      "cat": "comida",
+      "lat": 4.303463,
+      "lng": -74.802423
+    },
+    {
+      "id": "conjuto-los-almendros",
+      "nombre": "Conjunto Los Almendros",
+      "detalle": "Girardot",
+      "cat": "barrio",
+      "lat": 4.306456,
+      "lng": -74.802615
+    },
+    {
+      "id": "frisby",
+      "nombre": "Frisby",
+      "detalle": "Girardot",
+      "cat": "comida",
+      "lat": 4.302449,
+      "lng": -74.804038
+    },
+    {
+      "id": "terminal-de-transporte",
+      "nombre": "Terminal de Transporte",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.302727,
+      "lng": -74.805472
+    },
+    {
+      "id": "cristo-resucitado",
+      "nombre": "Cristo Resucitado",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.305737,
+      "lng": -74.799743
+    },
+    {
+      "id": "hotel-diana-maria",
+      "nombre": "Hotel Diana María",
+      "detalle": "Girardot",
+      "cat": "turismo",
+      "lat": 4.301408,
+      "lng": -74.804771
+    },
+    {
+      "id": "colegio-liceo-moderno",
+      "nombre": "Colegio Liceo Moderno",
+      "detalle": "Girardot",
+      "cat": "educacion",
+      "lat": 4.304188,
+      "lng": -74.799247
+    },
+    {
+      "id": "hotel-galeon-inn",
+      "nombre": "Hotel Galeón Inn",
+      "detalle": "Girardot",
+      "cat": "turismo",
+      "lat": 4.30124,
+      "lng": -74.80547
+    },
+    {
+      "id": "institucion-educativa-ramon-bueno-y-jose",
+      "nombre": "Institución Educativa Ramón Bueno y José Triana",
+      "detalle": "Girardot",
+      "cat": "educacion",
+      "lat": 4.301088,
+      "lng": -74.800853
+    },
+    {
+      "id": "universidad-de-cundinamarca",
+      "nombre": "Universidad de Cundinamarca",
+      "detalle": "Girardot",
+      "cat": "educacion",
+      "lat": 4.306504,
+      "lng": -74.806972
+    },
+    {
+      "id": "hotel-imaru",
+      "nombre": "Hotel Imaru",
+      "detalle": "Girardot",
+      "cat": "turismo",
+      "lat": 4.30067,
+      "lng": -74.80549
+    },
+    {
+      "id": "unad-cead-girardot",
+      "nombre": "UNAD CEAD Girardot",
+      "detalle": "Girardot",
+      "cat": "educacion",
+      "lat": 4.309419,
+      "lng": -74.803886
+    },
+    {
+      "id": "salon-del-reino-de-los-testigosde-jehova",
+      "nombre": "Salón del Reino de los Testigos de Jehová",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.305993,
+      "lng": -74.797799
+    },
+    {
+      "id": "corporacion-universitaria-minuto-de-dios",
+      "nombre": "Corporación Universitaria Minuto de Dios - UNIMINUTO",
+      "detalle": "Girardot",
+      "cat": "educacion",
+      "lat": 4.310041,
+      "lng": -74.803933
+    },
+    {
+      "id": "coliseo-san-jorge",
+      "nombre": "Coliseo San Jorge",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.306086,
+      "lng": -74.79656
+    },
+    {
+      "id": "registraduria-nacional-del-estado-civil",
+      "nombre": "Registraduría Nacional del Estado Civil",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.298346,
+      "lng": -74.805634
+    },
+    {
+      "id": "notaria-2",
+      "nombre": "Notaria 2",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.29793,
+      "lng": -74.804725
+    },
+    {
+      "id": "secretaria-de-transito",
+      "nombre": "Secretaría de Tránsito",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.311491,
+      "lng": -74.801027
+    },
+    {
+      "id": "camara-de-comercio-de-giardot",
+      "nombre": "Cámara de Comercio de Girardot",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.297336,
+      "lng": -74.802465
+    },
+    {
+      "id": "la-barra",
+      "nombre": "La Barra",
+      "detalle": "Girardot",
+      "cat": "turismo",
+      "lat": 4.300131,
+      "lng": -74.809272
+    },
+    {
+      "id": "catedral-inmaculado-corazon-de-maria",
+      "nombre": "Catedral Inmaculado Corazón de María",
+      "detalle": "Girardot",
+      "cat": "centro",
+      "lat": 4.297644,
+      "lng": -74.806583
+    },
+    {
+      "id": "hotel-dubai",
+      "nombre": "Hotel Dubái",
+      "detalle": "Girardot",
+      "cat": "turismo",
+      "lat": 4.298302,
+      "lng": -74.807776
+    },
+    {
+      "id": "conjunto-residencial-colinas-del-viento",
+      "nombre": "Conjunto Residencial Colinas del Viento",
+      "detalle": "Girardot",
+      "cat": "barrio",
+      "lat": 4.311527,
+      "lng": -74.807169
+    },
+    {
+      "id": "clinica-girardot",
+      "nombre": "Clinica Girardot",
+      "detalle": "Girardot",
+      "cat": "salud",
+      "lat": 4.296644,
+      "lng": -74.803571
+    },
+    {
+      "id": "conjunto-barlovento",
+      "nombre": "Conjunto Barlovento",
+      "detalle": "Girardot",
+      "cat": "barrio",
+      "lat": 4.312162,
+      "lng": -74.806055
+    },
+    {
+      "id": "la-magdala",
+      "nombre": "La Magdala",
+      "detalle": "Girardot",
+      "cat": "barrio",
+      "lat": 4.30757,
+      "lng": -74.79492
+    },
+    {
+      "id": "clinica-junical-san-sebastian",
+      "nombre": "Clínica Junical San Sebastián",
+      "detalle": "Girardot",
+      "cat": "salud",
+      "lat": 4.296156,
+      "lng": -74.80048
+    },
+    {
+      "id": "hotel-bachue",
+      "nombre": "Hotel Bachué",
+      "detalle": "Girardot",
+      "cat": "turismo",
+      "lat": 4.295412,
+      "lng": -74.803646
+    },
+    {
+      "id": "el-nogal",
+      "nombre": "El Nogal",
+      "detalle": "Girardot",
+      "cat": "barrio",
+      "lat": 4.307488,
+      "lng": -74.81195
+    },
+    {
+      "id": "clinica-san-rafael",
+      "nombre": "Clínica San Rafael",
+      "detalle": "Girardot",
+      "cat": "salud",
+      "lat": 4.296714,
+      "lng": -74.797312
+    },
+    {
+      "id": "clinica-de-especialistas",
+      "nombre": "Clínica de Especialistas",
+      "detalle": "Girardot",
+      "cat": "salud",
+      "lat": 4.293451,
+      "lng": -74.80832
+    },
+    {
+      "id": "el-limpiadientes",
+      "nombre": "El Limpiadientes",
+      "detalle": "Vereda de Girardot",
+      "cat": "vereda",
+      "lat": 4.329753,
+      "lng": -74.812326
+    },
+    {
+      "id": "ricaurte",
+      "nombre": "Ricaurte",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.277736,
+      "lng": -74.771816
+    },
+    {
+      "id": "flandes",
+      "nombre": "Flandes",
+      "detalle": "Tolima",
+      "cat": "municipio",
+      "lat": 4.2865,
+      "lng": -74.813697
+    },
+    {
+      "id": "tocaima",
+      "nombre": "Tocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.455243,
+      "lng": -74.634486
+    },
+    {
+      "id": "agua-de-dios",
+      "nombre": "Agua de Dios",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.379633,
+      "lng": -74.670259
+    },
+    {
+      "id": "nilo",
+      "nombre": "Nilo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.306591,
+      "lng": -74.619761
+    },
+    {
+      "id": "narino",
+      "nombre": "Nariño",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.398123,
+      "lng": -74.82793
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Héctor Bernal",
+      "placa": "GIR 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 478,
+      "desde": 2010,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Carlos Rodríguez",
+      "placa": "GIR 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2281,
+      "desde": 2016,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Fabio Cruz",
+      "placa": "GIR 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 951,
+      "desde": 2008,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Nelson Pinzón",
+      "placa": "GIR 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1303,
+      "desde": 2006,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Martha Garzón",
+      "placa": "GIR 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 865,
+      "desde": 2012,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Sandra Patiño",
+      "placa": "GIR 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2270,
+      "desde": 2010,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Yolanda Prieto",
+      "placa": "GIR 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1270,
+      "desde": 2016,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-30",
+      "movil": "030",
+      "nombre": "Jorge Castañeda",
+      "placa": "GIR 630",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 980,
+      "desde": 2007,
+      "tel": "3000000030"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Megataxi es la marca de Central de Transportes S.A., una de las cuatro empresas habilitadas para el servicio de taxi en Girardot. Desde su sede en la Carrera 10 # 42-369, sobre la vía a Tocaima, atiende Girardot, Ricaurte y Flandes las 24 horas, con conductores locales, radioperadoras y pedidos por teléfono y WhatsApp, y ofrece traslados al aeropuerto, transporte corporativo, conductor elegido y encomiendas.\n\nCon la app, Megataxi puede volver a tener su propia aplicación, con su marca, en Android y en iPhone: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Girardot, Ricaurte y Flandes con conductores locales y verificados, con seguridad, puntualidad, tarifas claras y buen trato, de día y de noche, para quienes viven en la región y para los turistas que la visitan.",
+    "vision": "Ser la forma más fácil y confiable de pedir un taxi en Girardot y la región: un toque en el celular, la tarifa clara y el móvil en el mapa, con el respaldo de una empresa local.",
+    "servicios": [
+      "Taxi las 24 horas en Girardot, Ricaurte y Flandes",
+      "Viajes programados",
+      "Traslados al aeropuerto",
+      "Transporte corporativo",
+      "Conductor elegido",
+      "Encomiendas express"
+    ],
+    "frase": "Más de 25 años moviendo a Girardot con confianza"
+  },
+  "fuentes": [
+    "https://www.girardot-cundinamarca.gov.co/Transparencia/Normatividad/CIRCULAR%20EXT%20003%20EMPRESA%20TAXI.pdf",
+    "https://www.girardot-cundinamarca.gov.co/Transparencia/Normatividad/DECRETO%20No.%200030%20DE%202026%20-%20ESTABLECE%20TARIFA%20PARA%20EL%20SERVICIO%20PUBLICO%20DE%20TAXI%20EN%20GIRARDOT.pdf",
+    "https://megataxigirardot.com/",
+    "https://megataxigirardot.com/about/",
+    "https://megataxigirardot.com/services/",
+    "https://megataxigirardot.com/contact/",
+    "https://megataxigirardot.com/politicas-de-privacidad/",
+    "https://colfirma.com/empresa/central-de-transportes-s-a-890600041",
+    "https://colfirma.com/empresa/megataxi-ya-s-a-s-901104210",
+    "https://www.datos.gov.co/d/c82u-588k",
+    "https://www.facebook.com/megataxigirardot",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Habilitación: la Circular Externa 003 del 2-sep-2025 de la Secretaría de Tránsito y Transporte de Girardot (https://www.girardot-cundinamarca.gov.co/Transparencia/Normatividad/CIRCULAR%20EXT%20003%20EMPRESA%20TAXI.pdf) dice que solo cuatro empresas están habilitadas para taxi en Girardot: Central de Transportes S.A. (Megataxi), Central de Taxis S.A.S., Radio Taxi Compuexpress de Girardot S.A.S. y la Cooperativa de Taxistas Unidos de Girardot Ltda. Las cuatro concertaron las tarifas del Decreto 0030 de 2026. La Circular la lista como «CENTRAL DE TRANSPORTES S.A. – 890.600.041-6 – APP MEGATAXI».",
+    "Razón social: la empresa habilitada es Central de Transportes S.A. (NIT 890.600.041-6); Megataxi es su marca. La radio y la plataforma las opera Megataxi Ya S.A.S. (NIT 901.104.210-6), con el mismo representante legal y la misma dirección; por eso va UNA sola propuesta para las dos. Megataxi Girardot E.U. está en liquidación (descartada).",
+    "Gerente: José Líder Velandia Linares, representante legal de Central de Transportes S.A. y de Megataxi Ya S.A.S. (registro mercantil vía colfirma).",
+    "Teléfono y WhatsApp 311 835 1111: Circular 003-2025 de la Alcaldía y web (sus WhatsApp, con bot, son 311 835 1111 y 312 316 3675). La web también publica las líneas de pedido 301 606 8777 y 301 611 1511, los fijos 601 835 1111 y 601 835 4444 y la línea de afiliados 301 611 6622 (https://megataxigirardot.com/contact/).",
+    "Correos: contacto@megataxigirardot.com y megataxiya@gmail.com (página de contacto de la web; el dominio tiene MX de Hostinger, revisado el 1-oct-2026). megataxiya@gmail.com es también el de Megataxi Ya S.A.S. en el registro mercantil y en su política de datos. Central de Transportes S.A. tiene registrado centraldetransportes@outlook.es (colfirma). Se escribe a los tres.",
+    "Dirección: Cra 10 # 42-369, vía a Tocaima (web y registro mercantil; el de Megataxi Ya agrega «frente a Ciudad Montes»). La dirección antigua de los directorios (Cl 35 # 24-01, Vivisol) ya no vale. Oficina ubicada de forma APROXIMADA sobre la vía a Tocaima frente al barrio Ciudad Montes (el CAI Ciudad Montes de OpenStreetMap está en 4.3276, -74.8039); confirmar.",
+    "Fundación: Central de Transportes S.A. está matriculada en la Cámara de Comercio de Girardot desde 1971 (RUES abierto: 23-jun-1971; colfirma dice 13-mar-1972) y renovó el 27-mar-2026; Megataxi Ya S.A.S. se matriculó el 1-ago-2017. La web habla de «más de 25 años» (y en otra parte de «más de 15»): por eso fundada queda en null.",
+    "Servicio 24 horas, cobertura en Girardot, Ricaurte y Flandes, servicios (aeropuerto, corporativo, conductor elegido, encomiendas, mascotas), lema («tradición, tecnología y servicio») y frase («más de 25 años moviendo a Girardot con confianza»): su web. Número de taxis: la web anuncia «500+ vehículos disponibles» y «2.000+ servicios diarios», cifras publicitarias; taxis queda en null.",
+    "GANCHO COMERCIAL: la web sigue mostrando «Descargar Nueva App 5G», pero ese botón lleva a la ficha de Google Play de su app Autocab (com.autocab.taxibooker.megataxigirardot.girardot), que ya no existe (404 el 1-oct-2026), y no hay app en el App Store. Hoy reciben pedidos por bots de WhatsApp y QR (video de Facebook de abril de 2026). La propuesta es devolverles una app propia, en Android y en iPhone.",
+    "Redes: Facebook facebook.com/megataxigirardot (unos 1.700 seguidores); Instagram @mega_taxi_girardot_ (enlazado en la web) y @megataxigirardot.",
+    "Colores tomados de su logo y su web: azul marino del contorno del logo (#182078), azul #0868B8, rojo de «MEGA» (#D80000) y amarillo de la web (#FFD900). En la propuesta no se usa su logo.",
+    "Tarifas: Decreto 0030 del 28-ene-2026 de la Alcaldía de Girardot (https://www.girardot-cundinamarca.gov.co/Transparencia/Normatividad/DECRETO%20No.%200030%20DE%202026%20-%20ESTABLECE%20TARIFA%20PARA%20EL%20SERVICIO%20PUBLICO%20DE%20TAXI%20EN%20GIRARDOT.pdf). Carrera mínima $8.000 (de 6:00 a. m. a 6:59 p. m.); recargo nocturno $1.500, solo de 7:00 p. m. a 5:59 a. m.; recargo navideño $1.000 (del 16-dic-2026 al puente de Reyes de 2027); $2.000 entre zonas. Zona centro: de la Carrera 7 a la Carrera 14 y de la Calle 9 (Plaza de Mercado Leopoldo Rother) a la Calle 28 (Terminal). Zona 1 $8.000, zona 2 $8.500, zona 3 $9.000, zona 4 y veredas de $16.000 a $30.000, sitios turísticos de $8.000 a $25.000. El decreto no fija recargo dominical (recargoDominical = 0). Banderazo, valor por km y rutas son de ejemplo.",
+    "Destinos: municipios vecinos a los que se viaja en taxi desde Girardot. Flandes es del Tolima (al otro lado del puente sobre el Magdalena): al crear la ficha, corregir el detalle de ese destino a «Tolima» (crear-ficha.py pone «Cundinamarca»). Girardot queda a unos 130 km de Bogotá: sin Portal ni aeropuerto en destinos.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Transportes Rioseco — Pide tu taxi",
+  "short_name": "Transportes Rioseco",
+  "description": "Pide tu taxi de Transportes Rioseco en San Juan de Rioseco con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F766E",
+  "theme_color": "#0F766E",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/san-juan-de-rioseco/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/san-juan-de-rioseco/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/san-juan-de-rioseco/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

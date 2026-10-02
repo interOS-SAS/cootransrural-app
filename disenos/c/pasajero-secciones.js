@@ -158,7 +158,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
         <div class="c-regla"><small>Carrera mínima</small><strong>${N.pesos(T.minimaUrbana)}</strong></div>
         <div class="c-regla"><small>Banderazo</small><strong>${N.pesos(T.banderazo)}</strong></div>
         <div class="c-regla"><small>Por kilómetro</small><strong>${N.pesos(T.porKm)}</strong></div>
-        <div class="c-regla"><small>Recargo nocturno <span>(${T.nocheDesde}:00 a ${String(T.nocheHasta - 1).padStart(2, '0')}:59)</span></small><strong>+${N.pesos(T.recargoNocturno)}</strong></div>
+        ${T.recargoNocturno > 0 ? `<div class="c-regla"><small>Recargo nocturno <span>(${T.nocheDesde}:00 a ${String(T.nocheHasta - 1).padStart(2, '0')}:59)</span></small><strong>+${N.pesos(T.recargoNocturno)}</strong></div>` : ''}
         ${T.recargoDominical > 0 ? `<div class="c-regla"><small>Domingos y festivos</small><strong>+${N.pesos(T.recargoDominical)}</strong></div>` : ''}
         <div class="c-regla c-regla-promo"><small>Programando con ${T.horasAnticipacion} h</small><strong>−${Math.round(T.descuentoProgramado * 100)} %</strong></div>
         <div class="c-regla c-regla-promo"><small>Cada ${T.viajesFidelidad} viajes, el siguiente</small><strong>−${Math.round(T.descuentoFidelidad * 100)} %</strong></div>

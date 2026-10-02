@@ -1,0 +1,19 @@
+{
+  "name": "Servitacoop — Pide tu taxi",
+  "short_name": "Servitacoop",
+  "description": "Pide tu taxi de Servitacoop en Anolaima con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#5E2B83",
+  "theme_color": "#5E2B83",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/anolaima/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/anolaima/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/anolaima/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

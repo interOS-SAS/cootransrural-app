@@ -40,9 +40,18 @@ CUNDINAMARCA = (3.7, -74.9, 5.9, -73.0)  # sur, oeste, norte, este
 # Destinos que pueden aparecer en las rutas (se buscan por nombre en OSM).
 FIJOS = {
     'portal-80': {'nombre': 'Portal 80 (TransMilenio)', 'detalle': 'Bogotá', 'cat': 'bogota', 'lat': 4.7097122, 'lng': -74.1104822},
+    'portal-sur': {'nombre': 'Portal Sur (TransMilenio)', 'detalle': 'Bogotá', 'cat': 'bogota', 'lat': 4.596894, 'lng': -74.169474},
+    'portal-usme': {'nombre': 'Portal Usme (TransMilenio)', 'detalle': 'Bogotá', 'cat': 'bogota', 'lat': 4.531684, 'lng': -74.11939},
     'portal-norte': {'nombre': 'Portal Norte (TransMilenio)', 'detalle': 'Bogotá', 'cat': 'bogota', 'lat': 4.7546, 'lng': -74.0461},
     'aeropuerto': {'nombre': 'Aeropuerto El Dorado', 'detalle': 'Bogotá', 'cat': 'bogota', 'lat': 4.6992528, 'lng': -74.1417611},
     'terminal-salitre': {'nombre': 'Terminal Salitre', 'detalle': 'Bogotá', 'cat': 'bogota', 'lat': 4.6534, 'lng': -74.1163},
+}
+
+# Municipios vecinos que NO son de Cundinamarca (para el detalle del destino).
+DEPARTAMENTO_FUERA = {
+    'Flandes': 'Tolima', 'Melgar': 'Tolima', 'Honda': 'Tolima', 'Mariquita': 'Tolima', 'Carmen de Apicalá': 'Tolima',
+    'Chiquinquirá': 'Boyacá', 'San Miguel de Sema': 'Boyacá', 'Puerto Boyacá': 'Boyacá', 'Tunja': 'Boyacá',
+    'Villavicencio': 'Meta', 'Guayabetal': 'Cundinamarca',
 }
 
 # Campos que vienen de cooperativas.json y pasan tal cual a la ficha.
@@ -267,10 +276,16 @@ def lugares_del_pueblo(centro, pueblo, radio=3500):
             detalle = f'Vereda de {pueblo}' if f['d'] > 1.2 else pueblo
         salida.append({'id': slug(f['nombre']), 'nombre': f['nombre'], 'detalle': detalle, 'cat': f['cat'], 'lat': f['lat'], 'lng': f['lng']})
     # El parque principal siempre de primero (si no está en OSM, el centro del pueblo).
-    if not any('parque principal' in l['nombre'].lower() for l in salida):
+    # Solo cuenta un lugar que SE LLAME «Parque Principal…» (no «Banco Popular Parque Principal»).
+    # Ningún otro lugar puede quedar con el id «parque» (en la propuesta se numeran por id).
+    for l in salida:
+        if l['id'] == 'parque':
+            l['id'] = 'parque-' + slug(l['detalle'])[:20]
+    es_parque = lambda l: l['nombre'].lower().startswith('parque principal')
+    if not any(es_parque(l) for l in salida):
         salida.insert(0, {'id': 'parque', 'nombre': 'Parque Principal', 'detalle': f'Centro, {pueblo}', 'cat': 'centro', 'lat': round(centro['lat'], 6), 'lng': round(centro['lng'], 6)})
     else:
-        i = next(i for i, l in enumerate(salida) if 'parque principal' in l['nombre'].lower())
+        i = next(i for i, l in enumerate(salida) if es_parque(l))
         salida.insert(0, salida.pop(i))
         salida[0]['id'] = 'parque'
     return salida
@@ -348,7 +363,7 @@ def crear(id_, base, rehacer=False):
             d = dict(FIJOS[dest], id=dest)
         else:
             p = lugar_poblado(dest)
-            d = {'id': slug(dest), 'nombre': dest, 'detalle': 'Cundinamarca', 'cat': 'municipio', 'lat': round(p['lat'], 6), 'lng': round(p['lng'], 6)}
+            d = {'id': slug(dest), 'nombre': dest, 'detalle': DEPARTAMENTO_FUERA.get(dest, 'Cundinamarca'), 'cat': 'municipio', 'lat': round(p['lat'], 6), 'lng': round(p['lng'], 6)}
         km, minutos = ruta_osrm(centro, d)
         time.sleep(0.6)
         if not any(l['id'] == d['id'] for l in lugares):

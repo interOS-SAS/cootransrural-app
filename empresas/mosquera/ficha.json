@@ -1,0 +1,607 @@
+{
+  "id": "mosquera",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootransmosquera",
+    "nombreCorto": "Cootransmosquera",
+    "razonSocial": "Cooperativa Multiactiva de Transporte de Mosquera Ltda. (Cootransmosquera)",
+    "tipo": "cooperativa",
+    "lema": "Taxis de Mosquera desde 1994",
+    "municipio": "Mosquera, Cundinamarca",
+    "pueblo": "Mosquera",
+    "telefono": "3123951037",
+    "telefonoVisible": "312 395 1037",
+    "whatsapp": "573123951037",
+    "correo": "gerencia@cootransmosquera.com",
+    "direccion": "Carrera 1 # 5-13, Centro, Mosquera, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://cootransmosquera.com",
+    "fundada": 1994,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "MSQ",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana de Occidente",
+    "datosPendientes": [
+      "número de taxis",
+      "si la central atiende las 24 horas",
+      "qué tiene hoy con su app (Autocab) y hasta cuándo",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.706081,
+      "lng": -74.228067
+    }
+  },
+  "colores": {
+    "primario": "#00782E",
+    "primario2": "#009037",
+    "oscuro": "#0B1A10",
+    "acento": "#FFED00",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.705099,
+    "lng": -74.230357
+  },
+  "ZONA": {
+    "sur": 4.39,
+    "norte": 5.03,
+    "oeste": -74.55,
+    "este": -73.91
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 6300,
+    "banderazo": 4200,
+    "porKm": 1167,
+    "redondeo": 500,
+    "recargoNocturno": 1050,
+    "recargoDominical": 1050,
+    "nocheDesde": 20,
+    "nocheHasta": 5,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "Valores del tarjetón oficial de la Alcaldía de Mosquera (mayo de 2025, taxímetro según el Decreto 305 de 2023): unidad de $105 cada 90 m (unos $1.167 por km), banderazo $4.200, carrera mínima $6.300 y recargo de $1.050 de 8:00 p. m. a 5:00 a. m. y los domingos y festivos (es un solo recargo, no se suman). Puerta a puerta ($735) y zonas veredales o de difícil acceso ($10.500) van aparte. Las rutas a otros municipios son de ejemplo, sujetas a confirmación."
+  },
+  "RUTAS": [
+    {
+      "id": "funza",
+      "destino": "Funza",
+      "valor": 15000,
+      "km": 3,
+      "min": 10,
+      "radioKm": 4
+    },
+    {
+      "id": "madrid",
+      "destino": "Madrid",
+      "valor": 15000,
+      "km": 5,
+      "min": 10,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 30000,
+      "km": 16,
+      "min": 30,
+      "radioKm": 3
+    },
+    {
+      "id": "bojaca",
+      "destino": "Bojacá",
+      "valor": 31000,
+      "km": 17,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 35000,
+      "km": 19,
+      "min": 35,
+      "radioKm": 3
+    },
+    {
+      "id": "cota",
+      "destino": "Cota",
+      "valor": 35000,
+      "km": 20,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 37000,
+      "km": 21,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "soacha",
+      "destino": "Soacha",
+      "valor": 45000,
+      "km": 26,
+      "min": 35,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Mosquera",
+      "cat": "centro",
+      "lat": 4.705099,
+      "lng": -74.230357
+    },
+    {
+      "id": "colegio-policarpa-salavarrieta",
+      "nombre": "Colegio Policarpa Salavarrieta",
+      "detalle": "Mosquera",
+      "cat": "educacion",
+      "lat": 4.704311,
+      "lng": -74.232435
+    },
+    {
+      "id": "estacion-de-servicio-malta",
+      "nombre": "Estación de Servicio Malta",
+      "detalle": "Mosquera · a 1,9 km",
+      "cat": "comercio",
+      "lat": 4.695221,
+      "lng": -74.244618
+    },
+    {
+      "id": "gastrobar",
+      "nombre": "GastroBar",
+      "detalle": "Mosquera",
+      "cat": "comida",
+      "lat": 4.705313,
+      "lng": -74.232136
+    },
+    {
+      "id": "colegio-sagrados-corazones",
+      "nombre": "Colegio Sagrados Corazones",
+      "detalle": "Mosquera",
+      "cat": "educacion",
+      "lat": 4.703945,
+      "lng": -74.231029
+    },
+    {
+      "id": "restaurante-sazon",
+      "nombre": "Restaurante Sazón",
+      "detalle": "Mosquera",
+      "cat": "comida",
+      "lat": 4.705018,
+      "lng": -74.231246
+    },
+    {
+      "id": "parroquia-santa-maria-auxiliadora",
+      "nombre": "Parroquia Santa Maria Auxiliadora",
+      "detalle": "Mosquera",
+      "cat": "centro",
+      "lat": 4.704514,
+      "lng": -74.230869
+    },
+    {
+      "id": "2-caminos",
+      "nombre": "2 Caminos",
+      "detalle": "Mosquera",
+      "cat": "comida",
+      "lat": 4.705426,
+      "lng": -74.231382
+    },
+    {
+      "id": "aqui-peru",
+      "nombre": "Aquí Perú",
+      "detalle": "Mosquera",
+      "cat": "comida",
+      "lat": 4.705957,
+      "lng": -74.231582
+    },
+    {
+      "id": "vianda",
+      "nombre": "Vianda",
+      "detalle": "Mosquera",
+      "cat": "comida",
+      "lat": 4.704529,
+      "lng": -74.230558
+    },
+    {
+      "id": "oratorio-salesiano-don-bosco",
+      "nombre": "Oratorio Salesiano Don Bosco",
+      "detalle": "Mosquera",
+      "cat": "centro",
+      "lat": 4.704482,
+      "lng": -74.230502
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Mosquera",
+      "cat": "comercio",
+      "lat": 4.70449,
+      "lng": -74.230192
+    },
+    {
+      "id": "pagafacil",
+      "nombre": "PagaFácil",
+      "detalle": "Mosquera",
+      "cat": "comercio",
+      "lat": 4.70432,
+      "lng": -74.230016
+    },
+    {
+      "id": "supermercados-ara",
+      "nombre": "Supermercados Ara",
+      "detalle": "Mosquera",
+      "cat": "comercio",
+      "lat": 4.705991,
+      "lng": -74.230944
+    },
+    {
+      "id": "cementerio-de-mosquera",
+      "nombre": "Cementerio de Mosquera",
+      "detalle": "Mosquera",
+      "cat": "centro",
+      "lat": 4.709427,
+      "lng": -74.235915
+    },
+    {
+      "id": "alcaldia-de-mosquera",
+      "nombre": "Alcaldía de Mosquera",
+      "detalle": "Mosquera",
+      "cat": "centro",
+      "lat": 4.704702,
+      "lng": -74.229914
+    },
+    {
+      "id": "colegio-cooperativo-tomas-cipriano-de-mo",
+      "nombre": "Colegio Cooperativo Tomás Cipriano de Mosquera",
+      "detalle": "Mosquera",
+      "cat": "educacion",
+      "lat": 4.703932,
+      "lng": -74.229262
+    },
+    {
+      "id": "zapatoca-mosquera",
+      "nombre": "Zapatoca Mosquera",
+      "detalle": "Mosquera",
+      "cat": "comercio",
+      "lat": 4.707513,
+      "lng": -74.231599
+    },
+    {
+      "id": "instituto-diversificado-albert-einstein",
+      "nombre": "Instituto Diversificado Albert Einstein",
+      "detalle": "Mosquera",
+      "cat": "educacion",
+      "lat": 4.702676,
+      "lng": -74.228585
+    },
+    {
+      "id": "estacion-de-policia-de-mosquera",
+      "nombre": "Estación de Policía de Mosquera",
+      "detalle": "Mosquera",
+      "cat": "centro",
+      "lat": 4.704128,
+      "lng": -74.228999
+    },
+    {
+      "id": "institucion-educativa-antonio-narino",
+      "nombre": "Institución Educativa Antonio Nariño",
+      "detalle": "Mosquera",
+      "cat": "educacion",
+      "lat": 4.703693,
+      "lng": -74.228697
+    },
+    {
+      "id": "institucion-educativa-la-merced-sede-cen",
+      "nombre": "Institución Educativa La Merced Sede Central",
+      "detalle": "Mosquera",
+      "cat": "educacion",
+      "lat": 4.705832,
+      "lng": -74.229741
+    },
+    {
+      "id": "hospital-maria-auxiliadora",
+      "nombre": "Hospital Maria Auxiliadora",
+      "detalle": "Mosquera",
+      "cat": "salud",
+      "lat": 4.703279,
+      "lng": -74.228201
+    },
+    {
+      "id": "hotel-san-martin",
+      "nombre": "Hotel San Martin",
+      "detalle": "Mosquera",
+      "cat": "turismo",
+      "lat": 4.704217,
+      "lng": -74.228231
+    },
+    {
+      "id": "un-lugar-cerca-de-ti-iglesia-cristiana",
+      "nombre": "Un Lugar Cerca de Ti Iglesia Cristiana",
+      "detalle": "Mosquera",
+      "cat": "centro",
+      "lat": 4.708055,
+      "lng": -74.230645
+    },
+    {
+      "id": "ango-fisioterapia",
+      "nombre": "Ango Fisioterapia",
+      "detalle": "Mosquera",
+      "cat": "salud",
+      "lat": 4.711364,
+      "lng": -74.22943
+    },
+    {
+      "id": "biblioteca-san-juan-bosco",
+      "nombre": "Biblioteca San Juan Bosco",
+      "detalle": "Mosquera",
+      "cat": "centro",
+      "lat": 4.709924,
+      "lng": -74.22612
+    },
+    {
+      "id": "parque-mosuca",
+      "nombre": "Parque Mosuca",
+      "detalle": "Mosquera",
+      "cat": "centro",
+      "lat": 4.7132,
+      "lng": -74.228757
+    },
+    {
+      "id": "parque-biblioteca-de-mosquera",
+      "nombre": "Parque Biblioteca de Mosquera",
+      "detalle": "Mosquera",
+      "cat": "centro",
+      "lat": 4.710225,
+      "lng": -74.225616
+    },
+    {
+      "id": "gimnasio-pedagogico-san-rafael",
+      "nombre": "Gimnasio Pedagógico San Rafael",
+      "detalle": "Mosquera",
+      "cat": "educacion",
+      "lat": 4.710785,
+      "lng": -74.224938
+    },
+    {
+      "id": "funza",
+      "nombre": "Funza",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.716324,
+      "lng": -74.212216
+    },
+    {
+      "id": "madrid",
+      "nombre": "Madrid",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.730613,
+      "lng": -74.264037
+    },
+    {
+      "id": "bojaca",
+      "nombre": "Bojacá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.732482,
+      "lng": -74.341674
+    },
+    {
+      "id": "soacha",
+      "nombre": "Soacha",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.582152,
+      "lng": -74.219736
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    },
+    {
+      "id": "cota",
+      "nombre": "Cota",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.808387,
+      "lng": -74.103677
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Édgar Molina",
+      "placa": "MSQ 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1479,
+      "desde": 2010,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Héctor Bernal",
+      "placa": "MSQ 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1993,
+      "desde": 2009,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Luz Marina Rojas",
+      "placa": "MSQ 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 599,
+      "desde": 2021,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Sandra Patiño",
+      "placa": "MSQ 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1291,
+      "desde": 2017,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-17",
+      "movil": "017",
+      "nombre": "Nelson Pinzón",
+      "placa": "MSQ 617",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 580,
+      "desde": 2009,
+      "tel": "3000000017"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Wilson Gómez",
+      "placa": "MSQ 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 885,
+      "desde": 2017,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Fabio Cruz",
+      "placa": "MSQ 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1585,
+      "desde": 2015,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-27",
+      "movil": "027",
+      "nombre": "Jairo Moreno",
+      "placa": "MSQ 627",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 640,
+      "desde": 2008,
+      "tel": "3000000027"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootransmosquera, la Cooperativa Multiactiva de Transporte de Mosquera, nació el 26 de mayo de 1994 y desde entonces se dedica al transporte público de pasajeros en el municipio: taxi individual, colectivo urbano y transporte escolar. Sus taxis atienden el casco urbano de Mosquera todos los días, incluidos domingos y festivos, y viajan a los municipios vecinos con planilla de viaje ocasional, desde su sede en la Carrera 1 # 5-13, en el centro.\n\nCon esta app, Cootransmosquera puede llevar ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Mosquera con conductores que conocen el municipio, con seguridad, puntualidad, tarifas claras y buen trato para cada pasajero.",
+    "vision": "Ser la forma más fácil y confiable de moverse en taxi por Mosquera: un toque en el celular, la tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en el casco urbano de Mosquera",
+      "Viajes a municipios vecinos con planilla de viaje ocasional",
+      "Servicio todos los días, incluidos domingos y festivos",
+      "Colectivo urbano en chanas y microbuses",
+      "Transporte escolar y especial"
+    ],
+    "frase": "Moviendo a Mosquera desde 1994"
+  },
+  "fuentes": [
+    "https://cootransmosquera.com/",
+    "https://cootransmosquera.com/rutas/",
+    "https://cootransmosquera.com/nosotros/",
+    "https://play.google.com/store/apps/details?id=com.cootransmosquera.mosquera",
+    "https://www.mosquera-cundinamarca.gov.co/noticias/atencion-comunidad-usuaria-del-servicio-de-taxi",
+    "https://www.mosquera-cundinamarca.gov.co/noticias/en-mosquera-nos-transportamos-seguros-745620",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=800236577",
+    "https://mosqueracundinamarca.micolombiadigital.gov.co/sites/mosqueracundinamarca/content/files/002960/147975_3-475610_1024x600.jpg",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza alta (verificado el 1-oct-2026). Razón social, NIT 800.236.577-3, matrícula del 4-abr-1997 en la Cámara de Comercio de Facatativá, renovación del 30-mar-2026 y representante legal Sorany Andrea Roa Obando: RUES (datos.gov.co c82u-588k). Fundada el 26 de mayo de 1994: página Nosotros de su web.",
+    "Evidencia de taxi: su web («TAXI INDIVIDUAL – Capacidad 04 pasajeros – Casco urbano municipio de Mosquera – Municipios aledaños con planilla de viaje ocasional – todos los días, incluidos sábados, domingos y festivos», https://cootransmosquera.com/rutas/). La Alcaldía de Mosquera la lista como empresa de taxi legalmente autorizada (6-jul-2023 y 10-dic-2023). Es, con Coomofu, la empresa de taxi propia de Mosquera.",
+    "Teléfonos: 312 395 1037 (también WhatsApp: botón de chat de su web) y 300 215 2000 (su web y Alcaldía de Mosquera); fijos (601) 827 8188 y (601) 827 8230 (su web). Horario de oficina: lunes, miércoles y viernes de 8:00 a. m. a 5:00 p. m. (su web). No hay evidencia de central 24 horas. El celular de un asesor de la CUN que aparece en su web es personal: no publicar.",
+    "Correos: gerencia@cootransmosquera.com (encabezado y pie de su web) y appcootransmosquera@gmail.com (soporte de su app en Google Play), en copia.",
+    "Dirección: Carrera 1 # 5-13, Centro, Mosquera (su web). Oficina ubicada en el mapa por el cruce de la Carrera 1 con la Calle 5 (OpenStreetMap).",
+    "OJO para la venta: ya tiene app de pasajero «Cootransmosquera taxis» (Google Play: más de 1 mil descargas, 4,3 estrellas con 73 opiniones, actualizada el 5-ago-2026; pago en efectivo) hecha sobre Autocab (política de privacidad en autocab.net). Proponer mejora: marca propia, pago QR, stickers QR, código de abordaje, panel propio.",
+    "Además de taxi tiene colectivo urbano en Mosquera (chanas y microbuses), transporte escolar y especial. Su web muestra en 0 los contadores de flota, así que el número de taxis está por confirmar.",
+    "Tarifas: tarjetón oficial de la Alcaldía de Mosquera (30-may-2025), taxímetro según el Decreto 305 del 7-nov-2023, https://mosqueracundinamarca.micolombiadigital.gov.co/sites/mosqueracundinamarca/content/files/002960/147975_3-475610_1024x600.jpg . No se halló decreto de taxi de 2026. porKm = $105 / 90 m redondeado ($1.167). La app suma el recargo nocturno y el dominical si coinciden; en el tarjetón es un solo recargo de 10 unidades.",
+    "Colores tomados de su logo (bandera amarilla #FFED00 y verde #009037, letras negras); el primario es ese verde oscurecido para que el texto blanco se lea bien y el oscuro es casi negro, como el logo. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales.",
+    "Redes: https://www.facebook.com/cootransmosqueraltda , https://www.instagram.com/cootransmosqueraltda/ .",
+    "Destinos: municipios vecinos de Mosquera (Wikipedia: Funza al norte, Soacha al sur, Madrid y Bojacá al occidente) más Facatativá y Cota; a unos 15 km del Portal 80. Id «mosquera» porque es la única empresa de taxi con sede en Mosquera (Coomofu, que también opera allí, tiene sede en Funza)."
+  ]
+}

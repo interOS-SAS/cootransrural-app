@@ -1,0 +1,467 @@
+{
+  "id": "bojaca",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Ricotrans",
+    "nombreCorto": "Ricotrans",
+    "razonSocial": "Ricotrans S.A.S.",
+    "tipo": "empresa",
+    "lema": "Con Ricotrans, cada viaje es una experiencia agradable",
+    "municipio": "Bojacá, Cundinamarca",
+    "pueblo": "Bojacá",
+    "telefono": "3224407243",
+    "telefonoVisible": "322 440 7243",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Calle 7 # 7-77, barrio Centro (parque principal), Bojacá, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "BOJ",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana de Occidente",
+    "datosPendientes": [
+      "correo",
+      "número de taxis",
+      "año de fundación",
+      "si el 322 440 7243 atiende por WhatsApp",
+      "confirmar con la Alcaldía que es la empresa de taxi habilitada",
+      "tarifas oficiales 2026",
+      "colores y logo",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.73261,
+      "lng": -74.342836
+    }
+  },
+  "colores": {
+    "primario": "#A16207",
+    "primario2": "#B8750A",
+    "oscuro": "#3B2304",
+    "acento": "#FFE45C",
+    "rojo": "#DC2626"
+  },
+  "CENTRO": {
+    "lat": 4.732482,
+    "lng": -74.341674
+  },
+  "ZONA": {
+    "sur": 4.41,
+    "norte": 5.05,
+    "oeste": -74.66,
+    "este": -74.02
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 26000,
+      "km": 13,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "madrid",
+      "destino": "Madrid",
+      "valor": 27000,
+      "km": 14,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "mosquera",
+      "destino": "Mosquera",
+      "valor": 35000,
+      "km": 19,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "zipacon",
+      "destino": "Zipacón",
+      "valor": 35000,
+      "km": 19,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "funza",
+      "destino": "Funza",
+      "valor": 40000,
+      "km": 23,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "soacha",
+      "destino": "Soacha",
+      "valor": 51000,
+      "km": 30,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 57000,
+      "km": 34,
+      "min": 60,
+      "radioKm": 3
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 62000,
+      "km": 37,
+      "min": 60,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Bojacá",
+      "cat": "centro",
+      "lat": 4.732482,
+      "lng": -74.341674
+    },
+    {
+      "id": "san-pedro",
+      "nombre": "San Pedro",
+      "detalle": "Bojacá",
+      "cat": "comida",
+      "lat": 4.732302,
+      "lng": -74.341351
+    },
+    {
+      "id": "ara",
+      "nombre": "Ara",
+      "detalle": "Bojacá",
+      "cat": "comercio",
+      "lat": 4.732812,
+      "lng": -74.342352
+    },
+    {
+      "id": "alcaldia-municipal-de-bojaca",
+      "nombre": "Alcaldía Municipal de Bojacá",
+      "detalle": "Bojacá",
+      "cat": "centro",
+      "lat": 4.731944,
+      "lng": -74.342232
+    },
+    {
+      "id": "santuario-de-nuestra-senora-de-la-salud",
+      "nombre": "Santuario de Nuestra Señora de la Salud",
+      "detalle": "Bojacá",
+      "cat": "centro",
+      "lat": 4.731668,
+      "lng": -74.341446
+    },
+    {
+      "id": "mercado",
+      "nombre": "Mercado",
+      "detalle": "Bojacá",
+      "cat": "centro",
+      "lat": 4.731918,
+      "lng": -74.340149
+    },
+    {
+      "id": "terminal-de-bojaca",
+      "nombre": "Terminal de Bojacá",
+      "detalle": "Bojacá",
+      "cat": "centro",
+      "lat": 4.731942,
+      "lng": -74.339377
+    },
+    {
+      "id": "iedp-nuestra-senora-de-la-gracia-sede-sa",
+      "nombre": "IEDp Nuestra Señora de la Gracia sede Santa Helena",
+      "detalle": "Bojacá",
+      "cat": "educacion",
+      "lat": 4.737195,
+      "lng": -74.344699
+    },
+    {
+      "id": "estacion-de-policia-de-bojaca",
+      "nombre": "Estación de Policía de Bojacá",
+      "detalle": "Bojacá",
+      "cat": "centro",
+      "lat": 4.738338,
+      "lng": -74.343017
+    },
+    {
+      "id": "cementerio-nuestra-senora-de-la-salud",
+      "nombre": "Cementerio Nuestra Señora de La Salud",
+      "detalle": "Bojacá",
+      "cat": "centro",
+      "lat": 4.737706,
+      "lng": -74.345425
+    },
+    {
+      "id": "iglesia-tabernaculo-de-bogota",
+      "nombre": "Iglesia Tabernaculo de Bogotá",
+      "detalle": "Bojacá · a 1,3 km",
+      "cat": "centro",
+      "lat": 4.721137,
+      "lng": -74.339182
+    },
+    {
+      "id": "colegio-campestre-san-nicolas-de-tolenti",
+      "nombre": "Colegio Campestre San Nicolás de Tolentino",
+      "detalle": "Bojacá · a 1,3 km",
+      "cat": "educacion",
+      "lat": 4.722395,
+      "lng": -74.34824
+    },
+    {
+      "id": "escuela-el-chuscal",
+      "nombre": "Escuela el Chuscal",
+      "detalle": "Bojacá · a 3,9 km",
+      "cat": "educacion",
+      "lat": 4.763584,
+      "lng": -74.358876
+    },
+    {
+      "id": "madrid",
+      "nombre": "Madrid",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.730613,
+      "lng": -74.264037
+    },
+    {
+      "id": "mosquera",
+      "nombre": "Mosquera",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.7002,
+      "lng": -74.238506
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    },
+    {
+      "id": "zipacon",
+      "nombre": "Zipacón",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.752766,
+      "lng": -74.379569
+    },
+    {
+      "id": "funza",
+      "nombre": "Funza",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.717747,
+      "lng": -74.203155
+    },
+    {
+      "id": "soacha",
+      "nombre": "Soacha",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.582689,
+      "lng": -74.211778
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Sandra Patiño",
+      "placa": "BOJ 601",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1581,
+      "desde": 2011,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Rubén Sarmiento",
+      "placa": "BOJ 604",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1218,
+      "desde": 2011,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Édgar Molina",
+      "placa": "BOJ 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 2164,
+      "desde": 2016,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Wilson Gómez",
+      "placa": "BOJ 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 452,
+      "desde": 2011,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Yolanda Prieto",
+      "placa": "BOJ 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 690,
+      "desde": 2019,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Germán Quintero",
+      "placa": "BOJ 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2038,
+      "desde": 2011,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Fabio Cruz",
+      "placa": "BOJ 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 767,
+      "desde": 2013,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Jorge Castañeda",
+      "placa": "BOJ 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2194,
+      "desde": 2010,
+      "tel": "3000000024"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Ricotrans S.A.S. es la empresa de transporte público de Bojacá que presta el servicio individual en taxi y el servicio especial. Desde su oficina en la Calle 7 # 7-77, junto al parque principal, atiende a quienes viven en Bojacá y a quienes lo visitan.\n\nCon esta app, Ricotrans puede llevar ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Bojacá con conductores que conocen el municipio, con seguridad, puntualidad, tarifas claras y buen trato para cada pasajero.",
+    "vision": "Ser la forma más fácil y confiable de moverse en taxi por Bojacá: un toque en el celular, la tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en Bojacá",
+      "Servicio especial",
+      "Pedidos por teléfono",
+      "Atención en la oficina del parque principal"
+    ],
+    "frase": "¡Pide tu taxi hoy mismo!"
+  },
+  "fuentes": [
+    "https://www.facebook.com/p/Ricotrans-SAS-100068765296121/",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=900452083",
+    "https://edirectorio.net/empresa/ricotrans-s-a-s",
+    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/ricotrans-sas",
+    "https://bojacacundinamarca.micolombiadigital.gov.co/clasificados/mejorando-el-servicio-de-taxi-del-municipio-tu-opinion",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza media (verificado el 1-oct-2026). Razón social, NIT 900.452.083-5, matrícula del 21-jul-2011 en la Cámara de Comercio de Facatativá, renovación del 31-mar-2026 y representante legal Paola Katherine Vizcaíno Gutiérrez: RUES (datos.gov.co c82u-588k). Año de fundación sin confirmar (solo la matrícula).",
+    "Evidencia de taxi: su Facebook («Empresa de Transporte Público Ricotrans S.A.S – Servicio Individual – Servicio Especial», con publicaciones como «Con RICOTRANS cada viaje es una experiencia agradable. ¡Pide tu taxi hoy mismo! #serviciodetaxi #bojaca»). El lema y la frase salen de ahí. La Alcaldía de Bojacá confirma que el municipio tiene servicio de taxi (encuestas de dic-2025 y jul-2026 para ajustar la tarifa de 2026 y contrato CPS 245-2025 para actualizar las tarifas de taxi y mixto), aunque no nombra a la empresa.",
+    "Es la única empresa de taxi encontrada con sede en Bojacá (no apareció otra en RUES, directorios ni el portal de la Alcaldía); por eso el id es «bojaca». Confirmar con la Alcaldía que es la habilitada y cuántos taxis tiene.",
+    "Teléfonos: 322 440 7243 (línea de contacto que publica la empresa en su Facebook; no consta que sea WhatsApp) y fijo (601) 825 2079 (registro mercantil, vía informacolombia/einforma). Sin correo público (no figura en SECOP II): _correo_propuesta.para vacío.",
+    "Dirección: Calle 7 # 7-77, barrio Centro, en el parque principal (registro mercantil vía einforma/edirectorio). Oficina ubicada en el mapa sobre la Calle 7, entre las carreras 7 y 8 (OpenStreetMap). Horario (ficha de directorio): lunes a viernes 8:00-17:00 y sábados 8:00-12:00.",
+    "Tarifas: no se encontró decreto de tarifa de taxi de Bojacá publicado; la Alcaldía abrió encuestas (10-dic-2025 y 23-jul-2026) para ajustar las de 2026. Sin campo tarifas.",
+    "Colores propios de interOS (ocre y amarillo claro): no se encontró logo. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales.",
+    "Destinos: vecinos de Bojacá (Madrid, Mosquera, Facatativá, Zipacón y Soacha) más Funza; a unos 35 km del Portal 80."
+  ]
+}

@@ -1,0 +1,606 @@
+{
+  "id": "guasca",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Transportes Guasca",
+    "nombreCorto": "Transportes Guasca",
+    "razonSocial": "Transportes Guasca S.A.S.",
+    "tipo": "empresa",
+    "lema": "Taxis Guasca: seguridad y progreso",
+    "municipio": "Guasca, Cundinamarca",
+    "pueblo": "Guasca",
+    "telefono": "3214080350",
+    "telefonoVisible": "321 408 0350",
+    "whatsapp": "573214080350",
+    "correo": "atencionalcliente@transguasca.com",
+    "direccion": "Carrera 3 # 7-59, Guasca, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://www.transguasca.com",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "GUA",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Guavio",
+    "datosPendientes": [
+      "año de fundación",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.869095,
+      "lng": -73.874994
+    }
+  },
+  "colores": {
+    "primario": "#1F2A8C",
+    "primario2": "#2E3FB0",
+    "oscuro": "#0B1250",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.866439,
+    "lng": -73.877694
+  },
+  "ZONA": {
+    "sur": 4.55,
+    "norte": 5.19,
+    "oeste": -74.2,
+    "este": -73.56
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 7600,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 1100,
+    "recargoDominical": 1100,
+    "nocheDesde": 20,
+    "nocheHasta": 5,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima ($7.600) y los recargos nocturno (de 8:00 p. m. a 5:00 a. m.) y dominical o festivo ($1.100 cada uno; $2.200 si es dominical o festivo de noche) son los del Decreto 064 de 2026 de la Alcaldía de Guasca, que además fija una tarifa por sector para las veredas (20 sectores, de $7.600 a $70.000). El valor por km y las rutas a otros municipios son de ejemplo, sujetos a confirmación de la empresa."
+  },
+  "RUTAS": [
+    {
+      "id": "guatavita",
+      "destino": "Guatavita",
+      "valor": 27000,
+      "km": 14,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "sopo",
+      "destino": "Sopó",
+      "valor": 30000,
+      "km": 16,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "gachancipa",
+      "destino": "Gachancipá",
+      "valor": 40000,
+      "km": 23,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "tocancipa",
+      "destino": "Tocancipá",
+      "valor": 43000,
+      "km": 25,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "la-calera",
+      "destino": "La Calera",
+      "valor": 46000,
+      "km": 27,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 58000,
+      "km": 35,
+      "min": 55,
+      "radioKm": 3
+    },
+    {
+      "id": "junin",
+      "destino": "Junín",
+      "valor": 86000,
+      "km": 53,
+      "min": 80,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 88000,
+      "km": 55,
+      "min": 85,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Guasca",
+      "cat": "centro",
+      "lat": 4.866453,
+      "lng": -73.877793
+    },
+    {
+      "id": "estacion-de-policia-de-guasca",
+      "nombre": "Estación de Policía de Guasca",
+      "detalle": "Guasca",
+      "cat": "centro",
+      "lat": 4.866811,
+      "lng": -73.877507
+    },
+    {
+      "id": "banco-agrario",
+      "nombre": "Banco Agrario",
+      "detalle": "Guasca",
+      "cat": "comercio",
+      "lat": 4.866813,
+      "lng": -73.877929
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Guasca",
+      "cat": "comercio",
+      "lat": 4.86693,
+      "lng": -73.877833
+    },
+    {
+      "id": "ara",
+      "nombre": "Ara",
+      "detalle": "Guasca",
+      "cat": "comercio",
+      "lat": 4.866977,
+      "lng": -73.877776
+    },
+    {
+      "id": "basilica-menor-san-jacinto",
+      "nombre": "Basilica Menor San Jacinto",
+      "detalle": "Guasca",
+      "cat": "centro",
+      "lat": 4.86614,
+      "lng": -73.877218
+    },
+    {
+      "id": "alcaldia-municipal-de-guasca",
+      "nombre": "Alcaldía Municipal de Guasca",
+      "detalle": "Guasca",
+      "cat": "centro",
+      "lat": 4.867018,
+      "lng": -73.877535
+    },
+    {
+      "id": "chiles-e-chelas",
+      "nombre": "Chiles e Chelas",
+      "detalle": "Guasca",
+      "cat": "comida",
+      "lat": 4.866651,
+      "lng": -73.878604
+    },
+    {
+      "id": "cabana-biofilia-refugio-de-arte-y-natura",
+      "nombre": "Cabaña BioFilia, Refugio de Arte y Naturaleza",
+      "detalle": "Guasca",
+      "cat": "turismo",
+      "lat": 4.867305,
+      "lng": -73.877328
+    },
+    {
+      "id": "hostel-la-abuela",
+      "nombre": "Hostel La Abuela",
+      "detalle": "Guasca",
+      "cat": "turismo",
+      "lat": 4.865811,
+      "lng": -73.878594
+    },
+    {
+      "id": "cooratiendas",
+      "nombre": "Cooratiendas",
+      "detalle": "Guasca",
+      "cat": "comida",
+      "lat": 4.867301,
+      "lng": -73.876798
+    },
+    {
+      "id": "antara-tipi",
+      "nombre": "Antara-Tipi",
+      "detalle": "Guasca",
+      "cat": "turismo",
+      "lat": 4.865378,
+      "lng": -73.878827
+    },
+    {
+      "id": "mision-carismatica-internacional",
+      "nombre": "Misión Carismática Internacional",
+      "detalle": "Guasca",
+      "cat": "centro",
+      "lat": 4.868159,
+      "lng": -73.878177
+    },
+    {
+      "id": "ied-mariano-ospina-rodriguez",
+      "nombre": "IED Mariano Ospina Rodriguez",
+      "detalle": "Guasca",
+      "cat": "educacion",
+      "lat": 4.868027,
+      "lng": -73.878537
+    },
+    {
+      "id": "parada-gacheta",
+      "nombre": "Parada Gachetá",
+      "detalle": "Guasca",
+      "cat": "centro",
+      "lat": 4.866888,
+      "lng": -73.875296
+    },
+    {
+      "id": "centro-de-salud-de-guasca",
+      "nombre": "Centro de Salud de Guasca",
+      "detalle": "Guasca",
+      "cat": "salud",
+      "lat": 4.86711,
+      "lng": -73.880188
+    },
+    {
+      "id": "asadero",
+      "nombre": "Asadero",
+      "detalle": "Guasca",
+      "cat": "comida",
+      "lat": 4.866703,
+      "lng": -73.875027
+    },
+    {
+      "id": "hospedaje-el-terminal",
+      "nombre": "Hospedaje El Terminal",
+      "detalle": "Guasca",
+      "cat": "turismo",
+      "lat": 4.86908,
+      "lng": -73.878158
+    },
+    {
+      "id": "el-corralito-desayunos",
+      "nombre": "El corralito desayunos",
+      "detalle": "Guasca",
+      "cat": "comida",
+      "lat": 4.866558,
+      "lng": -73.874684
+    },
+    {
+      "id": "transportes-guasca",
+      "nombre": "Transportes Guasca",
+      "detalle": "Guasca",
+      "cat": "centro",
+      "lat": 4.868994,
+      "lng": -73.875193
+    },
+    {
+      "id": "cementerio-parroquial-san-jacinto",
+      "nombre": "Cementerio Parroquial San Jacinto",
+      "detalle": "Guasca",
+      "cat": "centro",
+      "lat": 4.869156,
+      "lng": -73.880363
+    },
+    {
+      "id": "mariana-ospina-rodriguez",
+      "nombre": "Mariana Ospina Rodriguez",
+      "detalle": "Guasca",
+      "cat": "educacion",
+      "lat": 4.870593,
+      "lng": -73.872385
+    },
+    {
+      "id": "texaco",
+      "nombre": "Texaco",
+      "detalle": "Guasca",
+      "cat": "comercio",
+      "lat": 4.868714,
+      "lng": -73.884714
+    },
+    {
+      "id": "terpel",
+      "nombre": "Terpel",
+      "detalle": "Guasca",
+      "cat": "comercio",
+      "lat": 4.868904,
+      "lng": -73.88508
+    },
+    {
+      "id": "entre-montanas",
+      "nombre": "Entre Montañas",
+      "detalle": "Guasca · a 2,1 km",
+      "cat": "comida",
+      "lat": 4.874491,
+      "lng": -73.894384
+    },
+    {
+      "id": "aguas-termales",
+      "nombre": "Aguas Termales",
+      "detalle": "Vereda de Guasca",
+      "cat": "vereda",
+      "lat": 4.876652,
+      "lng": -73.858659
+    },
+    {
+      "id": "san-jose",
+      "nombre": "San Jose",
+      "detalle": "Vereda de Guasca",
+      "cat": "vereda",
+      "lat": 4.852474,
+      "lng": -73.895168
+    },
+    {
+      "id": "pastor-ospina",
+      "nombre": "Pastor Ospina",
+      "detalle": "Vereda de Guasca",
+      "cat": "vereda",
+      "lat": 4.850886,
+      "lng": -73.853873
+    },
+    {
+      "id": "capilla-de-siecha",
+      "nombre": "Capilla de Siecha",
+      "detalle": "Guasca · a 3,5 km",
+      "cat": "centro",
+      "lat": 4.849585,
+      "lng": -73.903854
+    },
+    {
+      "id": "posada-cafe-la-huerta",
+      "nombre": "Posada Café la Huerta",
+      "detalle": "Guasca · a 4,1 km",
+      "cat": "turismo",
+      "lat": 4.835652,
+      "lng": -73.898598
+    },
+    {
+      "id": "sopo",
+      "nombre": "Sopó",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.907916,
+      "lng": -73.940233
+    },
+    {
+      "id": "la-calera",
+      "nombre": "La Calera",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.723608,
+      "lng": -73.968903
+    },
+    {
+      "id": "guatavita",
+      "nombre": "Guatavita",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.934395,
+      "lng": -73.835301
+    },
+    {
+      "id": "tocancipa",
+      "nombre": "Tocancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.97371,
+      "lng": -73.92118
+    },
+    {
+      "id": "gachancipa",
+      "nombre": "Gachancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.992029,
+      "lng": -73.872111
+    },
+    {
+      "id": "junin",
+      "nombre": "Junín",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.790184,
+      "lng": -73.663172
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "GUA 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 631,
+      "desde": 2012,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Héctor Bernal",
+      "placa": "GUA 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1394,
+      "desde": 2006,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Jairo Moreno",
+      "placa": "GUA 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 955,
+      "desde": 2021,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Martha Garzón",
+      "placa": "GUA 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1752,
+      "desde": 2012,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-17",
+      "movil": "017",
+      "nombre": "Nelson Pinzón",
+      "placa": "GUA 617",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 991,
+      "desde": 2021,
+      "tel": "3000000017"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Yolanda Prieto",
+      "placa": "GUA 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1778,
+      "desde": 2017,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Fabio Cruz",
+      "placa": "GUA 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2139,
+      "desde": 2014,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Germán Quintero",
+      "placa": "GUA 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1130,
+      "desde": 2012,
+      "tel": "3000000026"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Transportes Guasca nació en Guasca hace más de tres décadas, cuando su fundador empezó con dos camionetas para darle a la comunidad un transporte de fácil acceso. Hoy es una S.A.S. con más de siete rutas en el departamento, servicio veredal a Paso Hondo, Agua Caliente y Siecha, y es la empresa que presta el servicio de taxi en el municipio: Taxis Guasca.\n\nCon la app, Taxis Guasca puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves la tarifa de tu sector antes de subir, sigues el móvil en el mapa y pagas con QR o en efectivo, del centro a las veredas, los termales o las lagunas de Siecha.",
+    "mision": "Prestar el servicio de taxi en Guasca y sus veredas con seguridad y puntualidad, con conductores que conocen cada sector del municipio y un trato amable para los guasqueños y para quienes llegan a conocer sus termales, sus lagunas y su campo.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Guasca: un taxi a un toque, con la tarifa oficial de cada sector a la vista y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas por sectores",
+      "Viajes a los termales y a las lagunas de Siecha",
+      "Viajes a Sopó, La Calera y Guatavita",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Seguridad y progreso, ahora en tu celular"
+  },
+  "fuentes": [
+    "https://www.transguasca.com/servicios/",
+    "https://www.transguasca.com/nosotros/",
+    "http://guascacundinamarca.micolombiadigital.gov.co/sites/guascacundinamarca/content/files/000451/22535_resolucion-no-141-de-2021.pdf",
+    "http://guascacundinamarca.micolombiadigital.gov.co/sites/guascacundinamarca/content/files/001310/65461_decreto-no-064-de-2026.pdf",
+    "https://www.datos.gov.co/resource/qmzu-gj57.json?nit=860078427",
+    "https://www.rues.org.co/buscar/RM/860078427",
+    "https://infotaxicolombia.com.co/empresas-taxi/transportes-guasca-s-a-s-guasca-cundinamarca-colombia/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es el único operador de taxis de Guasca: la Resolución 141 de 20-ago-2021 de la Alcaldía dice que «el servicio público de taxi en el municipio de Guasca, se presta en la actualidad por la Empresa Transportes Guasca S.A.S» (habilitada por la Resolución 197 de 2014). Su web anuncia «servicio individual taxis – Taxis Guasca». También opera rutas intermunicipales (Bogotá hacia Guasca, Guatavita, Gachalá, Ubalá, Cáqueza, Une, Chipaque y Cajicá; Cota–Suba; Zipaquirá hacia Sopó y Gachancipá) y veredales (Sopó; Guasca–Paso Hondo, Agua Caliente y Siecha).",
+    "Contacto (su web, pie de página): WhatsApp 321 408 0350, fijo 601 883 5146, correo atencionalcliente@transguasca.com y dirección Carrera 3 # 7-59. El WhatsApp es además el teléfono que registró en SECOP II; se usa como línea principal porque es el contacto más reciente. En el registro de proveedores de SECOP II (oct-2024) figura también el correo tguasca@hotmail.com. Un directorio (informacolombia) da el 601 857 3960, sin confirmar.",
+    "Razón social y NIT 860.078.427-7: RUES y SECOP II. Representante legal: Luis Gustavo Vargas Hernández, según el registro de proveedores de SECOP II (29-oct-2024) y los contratos con las alcaldías de Sopó (nov-2024) y Gachetá (2020). Su web (de 2021) dice que el fundador «continúa al frente de la compañía».",
+    "Año de fundación: la web dice que la empresa nació «hace 36 años», pero el texto es de alrededor de 2021 y no da fecha; queda pendiente.",
+    "Tarifas oficiales: Decreto 064 de 10-sep-2026 de la Alcaldía de Guasca (tarifas del transporte individual en taxi), revisado en el PDF: carrera mínima y sector 1 (centro, terminal, Giralda, etc.) $7.600; sector 2 $9.400; sector 3 $10.500; sector 4 $11.600; sector 5 $12.800; sectores 6 a 11 de $15.000 a $20.900; sectores 12 a 15 de $24.200 a $31.400; sectores 16 a 20 de $36.000 a $70.000 (en algunos destinos se suma el peaje). Recargo nocturno (8:00 p. m. a 5:00 a. m.) $1.100; dominical o festivo $1.100; dominical o festivo nocturno $2.200. URL: http://guascacundinamarca.micolombiadigital.gov.co/sites/guascacundinamarca/content/files/001310/65461_decreto-no-064-de-2026.pdf. Decretos anteriores: 015 de 2025 y 045 de 2024.",
+    "Colores: el azul índigo es el de su logo (circular, «Transportes Guasca S.A.S. – Seguridad y progreso»), medido en la imagen de su web; el dorado es propuesta de interOS. El lema usa su eslogan «Seguridad y progreso».",
+    "Oficina ubicada en el mapa de forma aproximada sobre la Carrera 3, entre la Calle 6 y la Calle 8 (la Calle 7 no tiene nombre en OpenStreetMap).",
+    "Destinos: municipios vecinos y de sus rutas; Guasca queda a unos 50 km de Bogotá, por eso se añaden el Portal Norte y el aeropuerto.",
+    "En infotaxicolombia tiene 4,1 estrellas y más de 210 reseñas.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales.",
+    "Pendientes: año de fundación, número de taxis, modelo de los taxis, misión y visión oficiales."
+  ]
+}

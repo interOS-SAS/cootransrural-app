@@ -1,0 +1,19 @@
+{
+  "name": "Glahsmotor — Pide tu taxi",
+  "short_name": "Glahsmotor",
+  "description": "Pide tu taxi de Glahsmotor en Cáqueza con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#3F1C7A",
+  "theme_color": "#3F1C7A",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/caqueza/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/caqueza/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/caqueza/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

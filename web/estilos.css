@@ -973,8 +973,8 @@ html.con-franja { scroll-padding-top: calc(var(--alto-barra) + var(--alto-franja
 .aviso-publico { display: flex; gap: 12px; align-items: flex-start; margin: 26px 0 0; padding: 16px 18px; border-radius: 18px; background: var(--amarillo-tinte); border: 1px solid rgba(201, 148, 0, .35); color: #5c4400; font-size: .92rem; line-height: 1.5; }
 .aviso-publico .icono { margin-top: 2px; }
 .aviso-publico p { margin: 0; }
-.aviso-publico .fuentes { display: block; margin-top: 6px; font-size: .82rem; }
-.aviso-publico a { color: #5c4400; font-weight: 700; }
+.aviso-publico .fuentes { display: block; margin-top: 6px; font-size: .82rem; overflow-wrap: anywhere; }
+.aviso-publico a { color: #5c4400; font-weight: 700; overflow-wrap: anywhere; }
 .aviso-pendiente { display: flex; gap: 10px; align-items: flex-start; margin: 22px 0 0; padding: 14px 16px; border-radius: 16px; background: var(--verde-tinte); color: var(--verde); font-size: .92rem; font-weight: 600; line-height: 1.45; }
 .aviso-pendiente .icono { margin-top: 1px; }
 .dato.pendiente { border-style: dashed; background: #fff; }

@@ -1,0 +1,395 @@
+{
+  "id": "quebradanegra",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootransoccidente",
+    "nombreCorto": "Cootransoccidente",
+    "razonSocial": "Cooperativa de Transportes del Occidente Municipio de Quebradanegra (Cootransoccidente)",
+    "tipo": "cooperativa",
+    "lema": "Taxis de La Magdalena a todo Quebradanegra",
+    "municipio": "Quebradanegra, Cundinamarca",
+    "pueblo": "Quebradanegra",
+    "region": "provincia del Gualivá",
+    "telefono": "3123083092",
+    "telefonoVisible": "312 308 3092",
+    "whatsapp": "",
+    "correo": "gerenciacootrans@hotmail.com",
+    "direccion": "Calle 4 # 3-66, Inspección La Magdalena, Quebradanegra, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://cootransoccidente.com.co/",
+    "fundada": 1998,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "QNG",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "datosPendientes": [
+      "teléfono de la central",
+      "whatsapp",
+      "número de taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 5.08032,
+      "lng": -74.487618
+    }
+  },
+  "colores": {
+    "primario": "#1D3F94",
+    "primario2": "#2A55B8",
+    "oscuro": "#0D1F4F",
+    "acento": "#FFD21F",
+    "rojo": "#C62828"
+  },
+  "CENTRO": {
+    "lat": 5.117231,
+    "lng": -74.479364
+  },
+  "ZONA": {
+    "sur": 4.8,
+    "norte": 5.44,
+    "oeste": -74.8,
+    "este": -74.16
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "utica",
+      "destino": "Útica",
+      "valor": 24000,
+      "km": 12,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "villeta",
+      "destino": "Villeta",
+      "valor": 31000,
+      "km": 17,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "nimaima",
+      "destino": "Nimaima",
+      "valor": 34000,
+      "km": 19,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "sasaima",
+      "destino": "Sasaima",
+      "valor": 50000,
+      "km": 29,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "nocaima",
+      "destino": "Nocaima",
+      "valor": 61000,
+      "km": 37,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "la-vega",
+      "destino": "La Vega",
+      "valor": 63000,
+      "km": 38,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "guaduas",
+      "destino": "Guaduas",
+      "valor": 80000,
+      "km": 49,
+      "min": 60,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Quebradanegra",
+      "cat": "centro",
+      "lat": 5.117231,
+      "lng": -74.479364
+    },
+    {
+      "id": "estacion-de-policia",
+      "nombre": "Estación de Policía",
+      "detalle": "Quebradanegra",
+      "cat": "centro",
+      "lat": 5.117216,
+      "lng": -74.479618
+    },
+    {
+      "id": "alcaldia",
+      "nombre": "Alcaldía de Quebradanegra",
+      "detalle": "Quebradanegra",
+      "cat": "centro",
+      "lat": 5.11734,
+      "lng": -74.478801
+    },
+    {
+      "id": "colegio-alfredo-vasquez-cobo",
+      "nombre": "Colegio Alfredo Vasquez Cobo",
+      "detalle": "Quebradanegra",
+      "cat": "educacion",
+      "lat": 5.118085,
+      "lng": -74.479084
+    },
+    {
+      "id": "cementerio-de-quebradanegra",
+      "nombre": "Cementerio de Quebradanegra",
+      "detalle": "Quebradanegra",
+      "cat": "centro",
+      "lat": 5.118651,
+      "lng": -74.477979
+    },
+    {
+      "id": "la-magdalena",
+      "nombre": "La Magdalena",
+      "detalle": "Inspección de Quebradanegra",
+      "cat": "vereda",
+      "lat": 5.079944,
+      "lng": -74.487632
+    },
+    {
+      "id": "villeta",
+      "nombre": "Villeta",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.011258,
+      "lng": -74.47023
+    },
+    {
+      "id": "utica",
+      "nombre": "Útica",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.18792,
+      "lng": -74.481477
+    },
+    {
+      "id": "guaduas",
+      "nombre": "Guaduas",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.067467,
+      "lng": -74.595077
+    },
+    {
+      "id": "nimaima",
+      "nombre": "Nimaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.125392,
+      "lng": -74.38535
+    },
+    {
+      "id": "nocaima",
+      "nombre": "Nocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.069767,
+      "lng": -74.377522
+    },
+    {
+      "id": "la-vega",
+      "nombre": "La Vega",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.999712,
+      "lng": -74.339522
+    },
+    {
+      "id": "sasaima",
+      "nombre": "Sasaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.964577,
+      "lng": -74.433115
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-03",
+      "movil": "003",
+      "nombre": "Nelson Pinzón",
+      "placa": "QNG 603",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1095,
+      "desde": 2021,
+      "tel": "3000000003"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Fabio Cruz",
+      "placa": "QNG 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 776,
+      "desde": 2012,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-08",
+      "movil": "008",
+      "nombre": "Yolanda Prieto",
+      "placa": "QNG 608",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1235,
+      "desde": 2009,
+      "tel": "3000000008"
+    },
+    {
+      "id": "demo-17",
+      "movil": "017",
+      "nombre": "Diana Forero",
+      "placa": "QNG 617",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1604,
+      "desde": 2012,
+      "tel": "3000000017"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Héctor Bernal",
+      "placa": "QNG 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 605,
+      "desde": 2012,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Rubén Sarmiento",
+      "placa": "QNG 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2015,
+      "desde": 2011,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Jairo Moreno",
+      "placa": "QNG 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1188,
+      "desde": 2016,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "QNG 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 970,
+      "desde": 2011,
+      "tel": "3000000029"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootransoccidente, la Cooperativa de Transportes del Occidente del municipio de Quebradanegra, se fundó en 1998 y presta el servicio público de pasajeros en las modalidades de taxi y mixto, con radio de acción en Quebradanegra. Tiene su sede y parqueadero en la Inspección La Magdalena, en la Calle 4 # 3-66, y un paradero en Villeta; también ofrece transporte escolar, encomiendas y expresos.\n\nCon la app, la cooperativa puede llevar el taxi al celular: pides con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa, en La Magdalena, en el casco urbano o en las veredas.",
+    "mision": "Prestar el servicio de taxi y mixto en Quebradanegra, La Magdalena y sus veredas con asociados que conocen la región, con seguridad, puntualidad y buen trato.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Quebradanegra: un taxi a un toque en el celular, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en La Magdalena y Quebradanegra",
+      "Servicio mixto a las veredas",
+      "Transporte escolar",
+      "Encomiendas",
+      "Expresos"
+    ],
+    "frase": "Taxi y mixto para Quebradanegra y La Magdalena"
+  },
+  "fuentes": [
+    "https://cootransoccidente.com.co/",
+    "https://cootransoccidente.com.co/contactanos/",
+    "https://cootransoccidente.com.co/documentos/",
+    "https://cootransoccidente.com.co/wp-content/uploads/2026/07/Certificado-de-existencia-2026.pdf",
+    "https://cootransoccidente.com.co/wp-content/uploads/2023/05/1.-INFORME-DE-GESTION-GERENCIA-COOTRANSOCCIDENTE-ANO-2022.pdf",
+    "https://radiotaxi.com.co/villeta/",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832003744",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Modalidades taxi y mixto con radio de acción en Quebradanegra, transporte escolar, encomiendas, expresos y parqueadero en Villeta: su web. Su informe de gestión 2022 habla de taxi, mixto y colectivo y de planillas de viaje ocasional para mixto y taxi. Su objeto social (certificado de 2026) incluye el servicio individual de pasajeros en taxi.",
+    "Razón social, NIT 832.003.744-3, acta del 13-may-1998 e inscripción del 22-oct-1998 en la Cámara de Comercio de Facatativá: certificado de existencia de 2026 y RUES.",
+    "Dirección Calle 4 # 3-66 (parqueadero), Inspección La Magdalena: su web y certificado de 2026. La sede está en La Magdalena, no en el casco urbano de Quebradanegra; la demo se centra en Quebradanegra (municipio en OpenStreetMap). Ubicación de la oficina aproximada (Calle 4 entre las carreras 3 y 4 de La Magdalena en OpenStreetMap).",
+    "Teléfono 312 308 3092: su web. El certificado de 2026 da como teléfono comercial el 313 321 1539. La ficha de Google del paradero de Villeta (radiotaxi.com.co) da el 350 554 8108, sin confirmar en sus fuentes. No se sabe cuál es WhatsApp.",
+    "Correo gerenciacootrans@hotmail.com: su página de contacto y certificado de 2026 (comercial y de notificaciones).",
+    "Representante legal desde el Acta No. 7 del Consejo de Administración del 21-abr-2026: Jazmín Norieth García Gaitán (certificado de 2026; RUES del 28-may-2026).",
+    "No se encontró decreto de tarifas de taxi de Quebradanegra y la página «Tarifas» de su web está vacía: tarifas de ejemplo.",
+    "Colores de su logo: cinta azul (#1D3F94) con letras amarillas sobre roseta verde.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

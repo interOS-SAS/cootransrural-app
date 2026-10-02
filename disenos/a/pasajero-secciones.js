@@ -113,7 +113,7 @@ export function abrirTarifas({ N, app }) {
     hay(T.minimaUrbana) && ['Carrera mínima', N.pesos(T.minimaUrbana)],
     hay(T.banderazo) && ['Banderazo', N.pesos(T.banderazo)],
     hay(T.porKm) && ['Por kilómetro', N.pesos(T.porKm)],
-    hay(T.recargoNocturno) && [hay(T.nocheDesde) && hay(T.nocheHasta) ? `Nocturno (${T.nocheDesde}:00 a ${(Number(T.nocheHasta) + 23) % 24}:59)` : 'Nocturno', `+${N.pesos(T.recargoNocturno)}`],
+    Number(T.recargoNocturno) > 0 && [hay(T.nocheDesde) && hay(T.nocheHasta) ? `Nocturno (${T.nocheDesde}:00 a ${(Number(T.nocheHasta) + 23) % 24}:59)` : 'Nocturno', `+${N.pesos(T.recargoNocturno)}`],
     Number(T.recargoDominical) > 0 && ['Domingos y festivos', `+${N.pesos(T.recargoDominical)}`],
     hay(T.redondeo) && ['Redondeo', `a ${N.pesos(T.redondeo)}`],
   ].filter(Boolean);

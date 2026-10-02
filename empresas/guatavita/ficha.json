@@ -1,0 +1,524 @@
+{
+  "id": "guatavita",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Líneas El Dorado Guatavita",
+    "nombreCorto": "Líneas El Dorado",
+    "razonSocial": "Líneas El Dorado Guatavita Ltda.",
+    "tipo": "empresa",
+    "lema": "Taxis de Guatavita, tierra de El Dorado",
+    "municipio": "Guatavita, Cundinamarca",
+    "pueblo": "Guatavita",
+    "telefono": "",
+    "telefonoVisible": "",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Carrera 3 # 1-03, Centro, Guatavita, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2002,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "GTV",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Guavio",
+    "datosPendientes": [
+      "teléfono de la central",
+      "WhatsApp",
+      "correo",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": null
+  },
+  "colores": {
+    "primario": "#1E5A4C",
+    "primario2": "#287563",
+    "oscuro": "#0B2A23",
+    "acento": "#E0A923",
+    "rojo": "#C62828"
+  },
+  "CENTRO": {
+    "lat": 4.934395,
+    "lng": -73.835301
+  },
+  "ZONA": {
+    "sur": 4.61,
+    "norte": 5.25,
+    "oeste": -74.16,
+    "este": -73.52
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 5600,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2100,
+    "recargoDominical": 2100,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima ($5.600) y el recargo festivo o nocturno ($2.100) son los del Decreto 051 de 2026 de la Alcaldía de Guatavita, que además fija una tarifa por destino para las veredas (por ejemplo, Embalse $8.900 y Tominé de Blancos $24.700). El decreto no fija el horario nocturno; ese horario, el valor por km y las rutas a otros municipios son de ejemplo, sujetos a confirmación de la empresa."
+  },
+  "RUTAS": [
+    {
+      "id": "guasca",
+      "destino": "Guasca",
+      "valor": 26000,
+      "km": 14,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "sesquile",
+      "destino": "Sesquilé",
+      "valor": 30000,
+      "km": 16,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "gachancipa",
+      "destino": "Gachancipá",
+      "valor": 51000,
+      "km": 30,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "tocancipa",
+      "destino": "Tocancipá",
+      "valor": 60000,
+      "km": 36,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 71000,
+      "km": 43,
+      "min": 65,
+      "radioKm": 3
+    },
+    {
+      "id": "macheta",
+      "destino": "Machetá",
+      "valor": 73000,
+      "km": 45,
+      "min": 70,
+      "radioKm": 4
+    },
+    {
+      "id": "gacheta",
+      "destino": "Gachetá",
+      "valor": 99000,
+      "km": 62,
+      "min": 85,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 101000,
+      "km": 63,
+      "min": 95,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Guatavita",
+      "cat": "centro",
+      "lat": 4.934395,
+      "lng": -73.835301
+    },
+    {
+      "id": "hosteria-guatavita",
+      "nombre": "Hosteria Guatavita",
+      "detalle": "Guatavita",
+      "cat": "comida",
+      "lat": 4.934959,
+      "lng": -73.835214
+    },
+    {
+      "id": "banco-agrario-de-colombia",
+      "nombre": "Banco Agrario de Colombia",
+      "detalle": "Guatavita",
+      "cat": "comercio",
+      "lat": 4.935016,
+      "lng": -73.835091
+    },
+    {
+      "id": "los-monolitos",
+      "nombre": "Los Monolitos",
+      "detalle": "Guatavita",
+      "cat": "comida",
+      "lat": 4.933999,
+      "lng": -73.834643
+    },
+    {
+      "id": "templo-nuestra-senora-de-los-dolores",
+      "nombre": "Templo Nuestra Señora de los Dolores",
+      "detalle": "Guatavita",
+      "cat": "centro",
+      "lat": 4.935576,
+      "lng": -73.835308
+    },
+    {
+      "id": "hospedaje-calipso",
+      "nombre": "Hospedaje Calipso",
+      "detalle": "Guatavita",
+      "cat": "turismo",
+      "lat": 4.933409,
+      "lng": -73.834226
+    },
+    {
+      "id": "museo-de-guatavita",
+      "nombre": "Museo de Guatavita",
+      "detalle": "Guatavita",
+      "cat": "turismo",
+      "lat": 4.935985,
+      "lng": -73.835082
+    },
+    {
+      "id": "cementerio-de-guatavita",
+      "nombre": "Cementerio de Guatavita",
+      "detalle": "Guatavita",
+      "cat": "centro",
+      "lat": 4.933046,
+      "lng": -73.836411
+    },
+    {
+      "id": "hospital-de-guatavita",
+      "nombre": "Hospital de Guatavita",
+      "detalle": "Guatavita",
+      "cat": "salud",
+      "lat": 4.935683,
+      "lng": -73.834097
+    },
+    {
+      "id": "biblioteca",
+      "nombre": "Biblioteca",
+      "detalle": "Guatavita",
+      "cat": "centro",
+      "lat": 4.933296,
+      "lng": -73.83355
+    },
+    {
+      "id": "hospedaje-de-guatavita",
+      "nombre": "Hospedaje de Guatavita",
+      "detalle": "Guatavita",
+      "cat": "turismo",
+      "lat": 4.934694,
+      "lng": -73.833097
+    },
+    {
+      "id": "hospedaje-mirador-de-pueblo-viejo",
+      "nombre": "Hospedaje Mirador de pueblo viejo",
+      "detalle": "Guatavita",
+      "cat": "turismo",
+      "lat": 4.932431,
+      "lng": -73.836455
+    },
+    {
+      "id": "d-1",
+      "nombre": "D1",
+      "detalle": "Guatavita",
+      "cat": "comercio",
+      "lat": 4.933407,
+      "lng": -73.832791
+    },
+    {
+      "id": "restaurante-el-dorado",
+      "nombre": "Restaurante El Dorado",
+      "detalle": "Guatavita",
+      "cat": "comida",
+      "lat": 4.934484,
+      "lng": -73.831717
+    },
+    {
+      "id": "el-puerto",
+      "nombre": "El Puerto",
+      "detalle": "Guatavita",
+      "cat": "comercio",
+      "lat": 4.935232,
+      "lng": -73.830161
+    },
+    {
+      "id": "coelgio-pio-xii",
+      "nombre": "Colegio Pío XII",
+      "detalle": "Guatavita",
+      "cat": "educacion",
+      "lat": 4.937485,
+      "lng": -73.828905
+    },
+    {
+      "id": "vereda-montecillo",
+      "nombre": "Vereda Montecillo",
+      "detalle": "Guatavita",
+      "cat": "vereda",
+      "lat": 4.929406,
+      "lng": -73.827342
+    },
+    {
+      "id": "escuela-nueva",
+      "nombre": "Escuela Nueva",
+      "detalle": "Guatavita · a 3,3 km",
+      "cat": "educacion",
+      "lat": 4.960816,
+      "lng": -73.821156
+    },
+    {
+      "id": "vereda-chaleche",
+      "nombre": "Vereda Chaleche",
+      "detalle": "Vereda de Guatavita",
+      "cat": "vereda",
+      "lat": 4.959825,
+      "lng": -73.810795
+    },
+    {
+      "id": "la-compania",
+      "nombre": "La Compañía",
+      "detalle": "Vereda de Guatavita",
+      "cat": "vereda",
+      "lat": 4.965598,
+      "lng": -73.854183
+    },
+    {
+      "id": "sesquile",
+      "nombre": "Sesquilé",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.044767,
+      "lng": -73.795553
+    },
+    {
+      "id": "guasca",
+      "nombre": "Guasca",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.866439,
+      "lng": -73.877694
+    },
+    {
+      "id": "gacheta",
+      "nombre": "Gachetá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.81661,
+      "lng": -73.637627
+    },
+    {
+      "id": "tocancipa",
+      "nombre": "Tocancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.97371,
+      "lng": -73.92118
+    },
+    {
+      "id": "gachancipa",
+      "nombre": "Gachancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.992029,
+      "lng": -73.872111
+    },
+    {
+      "id": "macheta",
+      "nombre": "Machetá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.081863,
+      "lng": -73.606559
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-03",
+      "movil": "003",
+      "nombre": "Jairo Moreno",
+      "placa": "GTV 603",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1282,
+      "desde": 2017,
+      "tel": "3000000003"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Héctor Bernal",
+      "placa": "GTV 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1755,
+      "desde": 2021,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Yolanda Prieto",
+      "placa": "GTV 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1255,
+      "desde": 2013,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-18",
+      "movil": "018",
+      "nombre": "Fabio Cruz",
+      "placa": "GTV 618",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2044,
+      "desde": 2008,
+      "tel": "3000000018"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Jorge Castañeda",
+      "placa": "GTV 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1279,
+      "desde": 2006,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "GTV 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1248,
+      "desde": 2015,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Martha Garzón",
+      "placa": "GTV 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 910,
+      "desde": 2010,
+      "tel": "3000000028"
+    },
+    {
+      "id": "demo-30",
+      "movil": "030",
+      "nombre": "Rubén Sarmiento",
+      "placa": "GTV 630",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1936,
+      "desde": 2012,
+      "tel": "3000000030"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Líneas El Dorado Guatavita mueve a Guatavita en busetas por el casco urbano, la periferia y las veredas, presta el servicio de taxi y lleva a los visitantes hasta la Laguna de Guatavita, la de la leyenda de El Dorado. La Alcaldía fija las tarifas de sus busetas y de sus taxis; las más recientes, en mayo de 2026.\n\nCon la app, la empresa puede llevar el servicio de taxi al celular: pides el taxi con tu ubicación exacta, ves la tarifa oficial antes de subir y sigues el móvil en el mapa, ya sea a una vereda, al embalse de Tominé o a la laguna.",
+    "mision": "Prestar el transporte de Guatavita —taxis, busetas y viajes a la laguna— con seguridad, puntualidad y buen trato, para los guatavitenses y para los visitantes que llegan a conocer la tierra de El Dorado.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Guatavita: un taxi a un toque, con la tarifa oficial a la vista y el móvil en el mapa, del pueblo a las veredas y a la laguna.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Transporte a la Laguna de Guatavita",
+      "Viajes al embalse de Tominé",
+      "Viajes a Sesquilé, Guasca y Gachetá",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Una leyenda dorada, a un toque"
+  },
+  "fuentes": [
+    "http://guatavitacundinamarca.micolombiadigital.gov.co/sites/guatavitacundinamarca/content/files/001541/77042_decreto-n051-de-2026.pdf",
+    "http://guatavitacundinamarca.micolombiadigital.gov.co/sites/guatavitacundinamarca/content/files/001055/52711_decreto-n067-de-2024.pdf",
+    "https://www.rues.org.co/buscar/RM/832008185",
+    "https://www.datacreditoempresas.com.co/directorio/lineas-el-dorado-guatavita-ltda.html",
+    "https://www.lasempresas.com.co/bogota/lineas-el-dorado-guatavita-ltda/",
+    "https://www.facebook.com/people/Transporte-a-La-Laguna-Lineas-El-Dorado/100057446949206/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es la única empresa que nombran los decretos de tarifas de Guatavita. El Decreto 051 de 27-may-2026 de la Alcaldía dice que el Gerente de Líneas El Dorado Guatavita Ltda. pidió ajustar «las tarifas establecidas en el Decreto Municipal 021-2025, del servicio público colectivo e individual de taxis», y en su artículo segundo fija las del «servicio público de transporte terrestre automotor individual de pasajeros en vehículos taxi».",
+    "Servicios: colectivo en busetas (rural, urbano y periférico), taxis y transporte desde el parqueadero de Guatavita hasta la Laguna (página de Facebook «Transporte a La Laguna – Lineas El Dorado», última publicación de 2017).",
+    "Razón social, NIT 832.008.185-9, matrícula del 10-dic-2002 en la Cámara de Comercio de Bogotá y actividad 4921: RUES (activa), lasempresas.com.co y datacrédito. El año 2002 es el de la matrícula.",
+    "Dirección Carrera 3 # 1-03, Centro: registro mercantil según datacrédito, einforma y edirectorio. Una ficha más antigua (lasempresas.com.co) da la Calle 7 # 2A-04/06. Oficina sin ubicar en el mapa: el trazado de Guatavita en OpenStreetMap no permite situar el cruce de la Carrera 3 con la Calle 1, y la dirección tiene dos versiones.",
+    "Teléfono y correo: no se encontró una línea confirmada de la central. Los celulares que aparecen en Facebook (2017) y en directorios no se pudieron confirmar como línea de la empresa: no se incluyen.",
+    "Tarifas oficiales: Decreto 051 de 27-may-2026 (colectivo y taxi), revisado en el PDF. Taxi: tarifa mínima $5.600 y recargo festivo/nocturno $2.100; por ejemplo, Embalse $8.900, Tominé de Blancos $24.700, Tominé de Indios $36.300, Amoladero $119.000 y Monquentiva $131.000; por vereda, Santa María de $6.500 a $17.500, Carbonera Alta de $27.500 a $33.700, Potrero Largo de $19.600 a $36.800 y El Choche de $9.400 a $21.700. Colectivo en busetas: mínima $3.500. URL: http://guatavitacundinamarca.micolombiadigital.gov.co/sites/guatavitacundinamarca/content/files/001541/77042_decreto-n051-de-2026.pdf. Decretos anteriores: 067 de 2024 (taxi) y 021 de 2025.",
+    "Colores propios de interOS (verde laguna y oro, por la leyenda de El Dorado). La frase retoma el lema de la Alcaldía, «Una leyenda dorada», que aparece en el decreto.",
+    "Destinos: municipios vecinos. Guatavita queda a unos 75 km de Bogotá, en el límite de los 70 km; se añaden el Portal Norte y el aeropuerto por los viajes de los visitantes. Quitarlos si la empresa no hace esos viajes.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales. El lema también es de interOS.",
+    "Pendientes: teléfono de la central, WhatsApp, correo, gerente, número de taxis, modelo de los taxis, misión y visión oficiales."
+  ]
+}

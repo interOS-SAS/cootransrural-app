@@ -188,7 +188,7 @@ function tarifas() {
   if (completas) urbanas.innerHTML = `
     <div class="urbana"><span>Carrera mínima</span><b>${N.pesos(T.minimaUrbana)}</b><small>Dentro del casco urbano</small></div>
     <div class="urbana"><span>Por recorrido</span><b>${N.pesos(T.banderazo)}</b><small>de arranque + ${N.pesos(T.porKm)} por km</small></div>
-    <div class="urbana"><span>Recargo nocturno</span><b>+${N.pesos(T.recargoNocturno)}</b><small>De ${horasTexto(T.nocheDesde)} a ${horasTexto(T.nocheHasta)}</small></div>
+    ${T.recargoNocturno > 0 ? `<div class="urbana"><span>Recargo nocturno</span><b>+${N.pesos(T.recargoNocturno)}</b><small>De ${horasTexto(T.nocheDesde)} a ${horasTexto(T.nocheHasta)}</small></div>` : ''}
     ${T.recargoDominical > 0 ? `<div class="urbana"><span>Domingos y festivos</span><b>+${N.pesos(T.recargoDominical)}</b><small>Todo el día</small></div>` : ''}`;
 
   const rutas = [...N.RUTAS].sort((a, b) => a.valor - b.valor || a.km - b.km);

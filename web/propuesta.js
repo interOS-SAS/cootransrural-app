@@ -47,7 +47,34 @@ addEventListener('afterprint', ajustar);
 document.getElementById('imprimir')?.addEventListener('click', () => window.print());
 
 // Listo cuando cargan las fuentes y las imágenes.
+// Con nombres largos (razón social, pueblo) una hoja puede no caber: se aprieta un poco
+// (menos espacio entre bloques y luego letra algo menor), solo esa hoja.
+const NIVELES = ['apretada-1', 'apretada-2', 'apretada-3'];
+// Los bloques no se encogen (propuesta.css): si no caben, se desborda el contenido o el
+// último bloque se mete en el pie. (En la hoja 3 el último bloque llega al pie a propósito.)
+function noCabe(hoja) {
+  const c = hoja.querySelector('.contenido');
+  if (!c) return false;
+  if (c.scrollHeight > c.clientHeight + 1) return true;
+  const pie = hoja.querySelector('.pie');
+  const ultimo = c.lastElementChild;
+  return !hoja.classList.contains('hoja-demo') && Boolean(pie && ultimo && ultimo.getBoundingClientRect().bottom > pie.getBoundingClientRect().top - 1);
+}
+function apretar() {
+  const zoom = hojas.style.zoom;
+  hojas.style.zoom = '';
+  for (const hoja of document.querySelectorAll('.hoja')) {
+    hoja.classList.remove(...NIVELES);
+    for (const nivel of NIVELES) {
+      if (!noCabe(hoja)) break;
+      hoja.classList.add(nivel);
+    }
+  }
+  hojas.style.zoom = zoom;
+}
+
 const imagenes = [...document.images].map((img) => (img.complete ? null : new Promise((ok) => { img.onload = img.onerror = ok; })));
 Promise.all([document.fonts?.ready, ...imagenes]).then(() => {
+  apretar();
   document.documentElement.dataset.listo = 'si';
 });

@@ -1,0 +1,19 @@
+{
+  "name": "Transjardín — Pide tu taxi",
+  "short_name": "Transjardín",
+  "description": "Pide tu taxi de Transjardín en Fusagasugá con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#9C1C5B",
+  "theme_color": "#9C1C5B",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/fusagasuga-transjardin/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/fusagasuga-transjardin/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/fusagasuga-transjardin/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

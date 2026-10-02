@@ -1,0 +1,682 @@
+{
+  "id": "fusagasuga-fusacatan",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Expreso Fusacatán",
+    "nombreCorto": "Expreso Fusacatán",
+    "razonSocial": "Líneas Expreso Fusacatán S.A.",
+    "tipo": "empresa",
+    "lema": "Taxis de Fusa, al pie del Fusacatán",
+    "municipio": "Fusagasugá, Cundinamarca",
+    "pueblo": "Fusagasugá",
+    "telefono": "6018726098",
+    "telefonoVisible": "601 872 6098",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Carrera 7 # 5-57, piso 2, Fusagasugá, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 1996,
+    "taxisIniciales": null,
+    "taxis": 25,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "FCN",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Sumapaz",
+    "datosPendientes": [
+      "correo",
+      "número exacto de taxis",
+      "teléfono de la central",
+      "whatsapp",
+      "misión y visión oficiales",
+      "modelo de los taxis"
+    ],
+    "oficina": {
+      "lat": 4.34437,
+      "lng": -74.36233
+    }
+  },
+  "colores": {
+    "primario": "#2F4858",
+    "primario2": "#3F6276",
+    "oscuro": "#15232B",
+    "acento": "#F2B705",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.34394,
+    "lng": -74.361953
+  },
+  "ZONA": {
+    "sur": 4.02,
+    "norte": 4.66,
+    "oeste": -74.68,
+    "este": -74.04
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8450,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 0,
+    "recargoDominical": 0,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima urbana ($8.450: Terminal, Galería, Comuneros y otros sectores hasta el cruce de Arbeláez, La Shell) es la del Decreto 016 de 2026 de la Alcaldía de Fusagasugá, que fija también $9.300 del Indio a la Shell, $10.850 de la Shell hasta el basurero (Ebenezer, Llano Largo y Pampa) y una tarifa fija para cada destino de las veredas. El mismo decreto prohíbe cobrar recargos en los recorridos urbanos de taxi. El valor por kilómetro y las rutas a otros municipios son de ejemplo, sujetos a confirmación de la empresa."
+  },
+  "RUTAS": [
+    {
+      "id": "pasca",
+      "destino": "Pasca",
+      "valor": 22000,
+      "km": 11,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "silvania",
+      "destino": "Silvania",
+      "valor": 24000,
+      "km": 12,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "arbelaez",
+      "destino": "Arbeláez",
+      "valor": 31000,
+      "km": 16,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "tibacuy",
+      "destino": "Tibacuy",
+      "valor": 35000,
+      "km": 19,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "sibate",
+      "destino": "Sibaté",
+      "valor": 49000,
+      "km": 29,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "granada",
+      "destino": "Granada",
+      "valor": 51000,
+      "km": 30,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-sur",
+      "destino": "Portal Sur (Bogotá)",
+      "valor": 85000,
+      "km": 53,
+      "min": 65,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 110000,
+      "km": 69,
+      "min": 90,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Fusagasugá",
+      "cat": "centro",
+      "lat": 4.34394,
+      "lng": -74.361953
+    },
+    {
+      "id": "olaya",
+      "nombre": "Olaya",
+      "detalle": "Fusagasugá",
+      "cat": "barrio",
+      "lat": 4.344545,
+      "lng": -74.365081
+    },
+    {
+      "id": "primax",
+      "nombre": "Primax",
+      "detalle": "Fusagasugá",
+      "cat": "comercio",
+      "lat": 4.341967,
+      "lng": -74.367882
+    },
+    {
+      "id": "maximercado",
+      "nombre": "Maximercado",
+      "detalle": "Fusagasugá",
+      "cat": "comercio",
+      "lat": 4.343135,
+      "lng": -74.364982
+    },
+    {
+      "id": "tiendas-ideal",
+      "nombre": "Tiendas Ideal",
+      "detalle": "Fusagasugá",
+      "cat": "comercio",
+      "lat": 4.343045,
+      "lng": -74.364535
+    },
+    {
+      "id": "paradero-colectivo-fusagasuga-chinauta",
+      "nombre": "Paradero Colectivo Fusagasugá-Chinauta",
+      "detalle": "Fusagasugá",
+      "cat": "centro",
+      "lat": 4.343683,
+      "lng": -74.364197
+    },
+    {
+      "id": "plaza-de-mercado",
+      "nombre": "Plaza de Mercado",
+      "detalle": "Fusagasugá",
+      "cat": "centro",
+      "lat": 4.342091,
+      "lng": -74.365104
+    },
+    {
+      "id": "ara",
+      "nombre": "Ara",
+      "detalle": "Fusagasugá",
+      "cat": "comercio",
+      "lat": 4.342413,
+      "lng": -74.364331
+    },
+    {
+      "id": "estacion-de-policia-de-fusagasuga",
+      "nombre": "Estación de Policía de Fusagasugá",
+      "detalle": "Fusagasugá",
+      "cat": "centro",
+      "lat": 4.343631,
+      "lng": -74.363585
+    },
+    {
+      "id": "ue-manuel-humberto-cardenas",
+      "nombre": "UE Manuel Humberto Cárdenas",
+      "detalle": "Fusagasugá",
+      "cat": "educacion",
+      "lat": 4.346619,
+      "lng": -74.363652
+    },
+    {
+      "id": "parque-zabal",
+      "nombre": "Parque Zabal",
+      "detalle": "Fusagasugá",
+      "cat": "turismo",
+      "lat": 4.344059,
+      "lng": -74.362995
+    },
+    {
+      "id": "hotel-la-montana",
+      "nombre": "Hotel La Montaña",
+      "detalle": "Fusagasugá",
+      "cat": "turismo",
+      "lat": 4.342149,
+      "lng": -74.363825
+    },
+    {
+      "id": "cementerio-nuestra-senora-de-belen",
+      "nombre": "Cementerio Nuestra Señora de Belén",
+      "detalle": "Fusagasugá",
+      "cat": "centro",
+      "lat": 4.349272,
+      "lng": -74.365808
+    },
+    {
+      "id": "rico-mc-pollo",
+      "nombre": "Rico Mc. Pollo",
+      "detalle": "Fusagasugá",
+      "cat": "comida",
+      "lat": 4.342174,
+      "lng": -74.36373
+    },
+    {
+      "id": "el-brasero",
+      "nombre": "El Brasero",
+      "detalle": "Fusagasugá",
+      "cat": "comida",
+      "lat": 4.341448,
+      "lng": -74.364295
+    },
+    {
+      "id": "govindas",
+      "nombre": "Govindas",
+      "detalle": "Fusagasugá",
+      "cat": "comida",
+      "lat": 4.344421,
+      "lng": -74.362489
+    },
+    {
+      "id": "las-palmas",
+      "nombre": "Las Palmas",
+      "detalle": "Fusagasugá",
+      "cat": "turismo",
+      "lat": 4.342514,
+      "lng": -74.363062
+    },
+    {
+      "id": "el-garcero",
+      "nombre": "El Garcero",
+      "detalle": "Fusagasugá",
+      "cat": "comida",
+      "lat": 4.344392,
+      "lng": -74.362274
+    },
+    {
+      "id": "terra",
+      "nombre": "Terra",
+      "detalle": "Fusagasugá",
+      "cat": "comida",
+      "lat": 4.34186,
+      "lng": -74.363185
+    },
+    {
+      "id": "alcaldia-municipal-de-fusagasuga",
+      "nombre": "Alcaldía Municipal de Fusagasugá",
+      "detalle": "Fusagasugá",
+      "cat": "centro",
+      "lat": 4.344298,
+      "lng": -74.361944
+    },
+    {
+      "id": "hotel-los-sauces",
+      "nombre": "Hotel Los Sauces",
+      "detalle": "Fusagasugá",
+      "cat": "turismo",
+      "lat": 4.345419,
+      "lng": -74.36163
+    },
+    {
+      "id": "hotel-scala",
+      "nombre": "Hotel Scala",
+      "detalle": "Fusagasugá",
+      "cat": "turismo",
+      "lat": 4.340702,
+      "lng": -74.363113
+    },
+    {
+      "id": "iglesia-nuestra-senora-de-belen",
+      "nombre": "Iglesia Nuestra Señora de Belén",
+      "detalle": "Fusagasugá",
+      "cat": "centro",
+      "lat": 4.344039,
+      "lng": -74.361262
+    },
+    {
+      "id": "ied-carlos-lozano-y-lozano",
+      "nombre": "IED Carlos Lozano y Lozano",
+      "detalle": "Fusagasugá",
+      "cat": "educacion",
+      "lat": 4.33723,
+      "lng": -74.365007
+    },
+    {
+      "id": "biblioteca-manuel-maria-aya-diaz",
+      "nombre": "Biblioteca Manuel María Aya Díaz",
+      "detalle": "Fusagasugá",
+      "cat": "centro",
+      "lat": 4.337497,
+      "lng": -74.363412
+    },
+    {
+      "id": "nueva-eps-ips-bienestar",
+      "nombre": "Nueva EPS - IPS Bienestar",
+      "detalle": "Fusagasugá · a 1,6 km",
+      "cat": "salud",
+      "lat": 4.343847,
+      "lng": -74.375883
+    },
+    {
+      "id": "hotel-costa-del-sol",
+      "nombre": "Hotel Costa del Sol",
+      "detalle": "Fusagasugá",
+      "cat": "turismo",
+      "lat": 4.336358,
+      "lng": -74.366131
+    },
+    {
+      "id": "fundacion-manuel-aya",
+      "nombre": "Fundación Manuel Aya",
+      "detalle": "Fusagasugá",
+      "cat": "educacion",
+      "lat": 4.33656,
+      "lng": -74.36499
+    },
+    {
+      "id": "clinica-belen-de-fusagasuga",
+      "nombre": "Clínica Belén de Fusagasugá",
+      "detalle": "Fusagasugá",
+      "cat": "salud",
+      "lat": 4.336254,
+      "lng": -74.366368
+    },
+    {
+      "id": "instituto-tecnico-industrial-sede-franci",
+      "nombre": "Instituto Técnico Industrial sede Francisco de Paula Santand",
+      "detalle": "Fusagasugá",
+      "cat": "educacion",
+      "lat": 4.338773,
+      "lng": -74.361158
+    },
+    {
+      "id": "parroquia-san-jose-obrero",
+      "nombre": "Parroquia San Jose Obrero",
+      "detalle": "Fusagasugá",
+      "cat": "centro",
+      "lat": 4.347077,
+      "lng": -74.358594
+    },
+    {
+      "id": "parque-barrio-emilio-sierra",
+      "nombre": "Parque Barrio Emilio Sierra",
+      "detalle": "Fusagasugá",
+      "cat": "barrio",
+      "lat": 4.345858,
+      "lng": -74.358095
+    },
+    {
+      "id": "departamental-femenino",
+      "nombre": "Departamental Femenino",
+      "detalle": "Fusagasugá",
+      "cat": "educacion",
+      "lat": 4.336124,
+      "lng": -74.364241
+    },
+    {
+      "id": "parque-coburgo",
+      "nombre": "Parque Coburgo",
+      "detalle": "Fusagasugá",
+      "cat": "centro",
+      "lat": 4.338544,
+      "lng": -74.36049
+    },
+    {
+      "id": "pueblito-fusagasugeno",
+      "nombre": "Pueblito Fusagasugeño",
+      "detalle": "Fusagasugá · a 1,7 km",
+      "cat": "centro",
+      "lat": 4.345819,
+      "lng": -74.376889
+    },
+    {
+      "id": "iem-teodoro-aya-villaveces",
+      "nombre": "IEM Teodoro Aya Villaveces",
+      "detalle": "Fusagasugá",
+      "cat": "educacion",
+      "lat": 4.336302,
+      "lng": -74.363236
+    },
+    {
+      "id": "hospital-san-rafael",
+      "nombre": "Hospital San Rafael de Fusagasugá",
+      "detalle": "Fusagasugá · a 1,6 km",
+      "cat": "salud",
+      "lat": 4.333829,
+      "lng": -74.371368
+    },
+    {
+      "id": "centro-de-atencion-ambulatoria",
+      "nombre": "Centro de Atención Ambulatoria",
+      "detalle": "Fusagasugá · a 1,5 km",
+      "cat": "salud",
+      "lat": 4.333988,
+      "lng": -74.370118
+    },
+    {
+      "id": "vereda-cucharal",
+      "nombre": "Vereda Cucharal",
+      "detalle": "Vereda de Fusagasugá",
+      "cat": "vereda",
+      "lat": 4.361899,
+      "lng": -74.392793
+    },
+    {
+      "id": "silvania",
+      "nombre": "Silvania",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.404854,
+      "lng": -74.387241
+    },
+    {
+      "id": "pasca",
+      "nombre": "Pasca",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.30783,
+      "lng": -74.300179
+    },
+    {
+      "id": "arbelaez",
+      "nombre": "Arbeláez",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.27268,
+      "lng": -74.413822
+    },
+    {
+      "id": "tibacuy",
+      "nombre": "Tibacuy",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.347676,
+      "lng": -74.45273
+    },
+    {
+      "id": "sibate",
+      "nombre": "Sibaté",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.466006,
+      "lng": -74.262724
+    },
+    {
+      "id": "granada",
+      "nombre": "Granada",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.520281,
+      "lng": -74.352094
+    },
+    {
+      "id": "portal-sur",
+      "nombre": "Portal Sur (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.596894,
+      "lng": -74.169474
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-02",
+      "movil": "002",
+      "nombre": "Sandra Patiño",
+      "placa": "FCN 602",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 777,
+      "desde": 2006,
+      "tel": "3000000002"
+    },
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Héctor Bernal",
+      "placa": "FCN 604",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1919,
+      "desde": 2021,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Martha Garzón",
+      "placa": "FCN 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1256,
+      "desde": 2010,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Édgar Molina",
+      "placa": "FCN 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1173,
+      "desde": 2019,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Fabio Cruz",
+      "placa": "FCN 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2073,
+      "desde": 2008,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Carlos Rodríguez",
+      "placa": "FCN 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1614,
+      "desde": 2017,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-17",
+      "movil": "017",
+      "nombre": "Luz Marina Rojas",
+      "placa": "FCN 617",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1460,
+      "desde": 2011,
+      "tel": "3000000017"
+    },
+    {
+      "id": "demo-18",
+      "movil": "018",
+      "nombre": "Wilson Gómez",
+      "placa": "FCN 618",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1522,
+      "desde": 2011,
+      "tel": "3000000018"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Líneas Expreso Fusacatán S.A. es una empresa de transporte de Fusagasugá, registrada en 1996, que presta en la ciudad el transporte colectivo urbano y el servicio de taxi. Sus taxis atienden el casco urbano y las veredas, y en noviembre de 2023 recibió seis nuevas matrículas de taxi en el sorteo de la Secretaría de Movilidad.\n\nCon la app, la empresa puede llevar su servicio de taxi al celular: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir —en el casco urbano y en las veredas rige la que fija la Alcaldía— y sigues el taxi en el mapa hasta que llega.",
+    "mision": "Prestar el servicio de taxi en Fusagasugá y sus veredas con conductores que conocen la ciudad, con seguridad, puntualidad y el cobro justo de la tarifa oficial.",
+    "vision": "Ser la forma más sencilla de moverse en taxi por Fusagasugá: un toque en el celular, la tarifa clara y el taxi en el mapa.",
+    "servicios": [
+      "Taxi en el casco urbano de Fusagasugá",
+      "Servicio a las veredas",
+      "Traslados a la Terminal de Transportes",
+      "Viajes a Silvania, Pasca, Arbeláez y Tibacuy",
+      "Viajes especiales a Bogotá y al aeropuerto"
+    ],
+    "frase": "Tu taxi en Fusa, del centro a las veredas"
+  },
+  "fuentes": [
+    "https://alcaldia-municipal-de-fusagasuga.micolombiadigital.gov.co/sites/alcaldia-municipal-de-fusagasuga/content/files/000173/8602_acta-de-adjudicacion.pdf",
+    "https://observatorio.alcaldiafusagasuga.gov.co/servicio-colectivo/",
+    "https://public.tableau.com/views/ParqueautomotordeservicioautomotordeservicioindividualdeFusagasug_16668282107540/Dashboard1",
+    "https://edirectorio.net/empresa/lineas-expreso-fusacatan-s-a",
+    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/lineas-expreso-fusacatan-sa",
+    "https://co.todosnegocios.com/lineas-expreso-fusacatan-s-a-1-8675352",
+    "https://www.dnb.com/business-directory/company-profiles.lineas_expreso_fusacatan_s_a.2363c1f08ed54433d96572d84c88a158.html",
+    "https://es.wikipedia.org/wiki/Fusagasug%C3%A1",
+    "http://alcaldia-municipal-de-fusagasuga.micolombiadigital.gov.co/sites/alcaldia-municipal-de-fusagasuga/content/files/000534/26658_decreto-no-16-de-2026.pdf",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Taxi: en el acta 001 del 21 de noviembre de 2023 de la Secretaría de Movilidad de Fusagasugá es una de las 4 empresas admitidas al sorteo de matrículas de taxi (NIT 900.001.364-5) y recibió 6; el tablero del Observatorio de Fusagasugá (octubre de 2022) le daba 19 vehículos de servicio individual. De ahí la cifra aproximada de 25 taxis: confirmar.",
+    "También es una de las tres empresas de colectivo urbano de Fusagasugá (Wikipedia).",
+    "Representante legal: Plinio Mendoza Salamanca (acta 001 de 2023, donde fue vocero de las 4 empresas; Dun & Bradstreet también lo lista).",
+    "Teléfono 601 872 6098 y dirección Carrera 7 # 5-57, piso 2: RUES, informacolombia y edirectorio. Otra ficha (todosnegocios) trae 601 867 5352 y la Calle 9 # 7-11, piso 2. El pin es aproximado: Carrera 7 entre Calles 5 y 6 en OpenStreetMap.",
+    "Ojo: existe otra sociedad, Expreso Fusacatán Ltda. (de 1995, misma dirección), y la ficha de Google «Expreso Fusacatán Ltda.» (Cl. 9 # 7A-11) es de esa; la habilitada para taxi según el acta es Líneas Expreso Fusacatán S.A.",
+    "Matrícula mercantil del 5 de julio de 1996 (Cámara de Comercio de Bogotá): se toma como año de fundación.",
+    "PENDIENTE el correo de la empresa: el único hallado es el personal del representante legal (no se publica; solo con su autorización).",
+    "Sin web ni redes oficiales. Colores propios de interOS (gris pizarra y dorado).",
+    "Tarifas: Decreto 016 del 5 de febrero de 2026 de la Alcaldía de Fusagasugá (sube 8,33 % sobre el Decreto 014 de 2025). Taxi en el perímetro urbano $8.450; del Indio a la Shell $9.300; de la Shell al basurero $10.850; tarifas veredales por vía (Melgar, Novilleros, Aguadita, Arbeláez, Pasca y Silvania). Art. 3: sin recargos en recorridos urbanos de taxi, por eso el recargo nocturno y el dominical quedan en 0. http://alcaldia-municipal-de-fusagasuga.micolombiadigital.gov.co/sites/alcaldia-municipal-de-fusagasuga/content/files/000534/26658_decreto-no-16-de-2026.pdf",
+    "Destinos: municipios vecinos de Fusagasugá en Cundinamarca (Melgar y Boquerón, en el Tolima, quedan por fuera de la lista aunque el decreto de tarifas trae la vía a Melgar); Fusagasugá queda a unos 60 km de Bogotá, por eso van el Portal Sur y el aeropuerto.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

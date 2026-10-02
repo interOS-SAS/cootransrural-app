@@ -31,7 +31,7 @@ const SOLO = ARGUMENTOS.slice(2);
 const EXE = process.env.CHROMIUM || '/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome';
 const PRINCIPAL = 'cootransrural';
 const URL_PUBLICA = 'https://taxicun.com/';
-const CORREO = 'oscaradrianbernal@gmail.com';
+const CORREO = 'info@taxicun.com';
 const FECHA = '1 de octubre de 2026';
 
 const todas = readdirSync(join(RAIZ_REPO, 'empresas'))
@@ -300,7 +300,7 @@ for (const ficha of fichas) {
     continue;
   }
   const pdf = join(carpeta, archivo);
-  const nombreCorto = (E.nombreCorto || E.nombre).normalize('NFC').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const nombreCorto = (E.nombreCorto || E.nombre).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '');
   ok(archivo === `Propuesta-app-taxis-${nombreCorto}.pdf`, `${nombre}: nombre del PDF ${archivo}`);
   const info = execFileSync('pdfinfo', [pdf], { encoding: 'utf8' });
   const paginas = Number(/Pages:\s+(\d+)/.exec(info)?.[1]);

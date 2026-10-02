@@ -1,0 +1,19 @@
+{
+  "name": "Transportes Guasca — Pide tu taxi",
+  "short_name": "Transportes Guasca",
+  "description": "Pide tu taxi de Transportes Guasca en Guasca con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1F2A8C",
+  "theme_color": "#1F2A8C",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/guasca/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/guasca/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/guasca/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

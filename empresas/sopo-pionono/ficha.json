@@ -1,0 +1,535 @@
+{
+  "id": "sopo-pionono",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Tax Pionono",
+    "nombreCorto": "Tax Pionono",
+    "razonSocial": "Tax Pionono S.A.S.",
+    "tipo": "empresa",
+    "lema": "Desde el Pionono, tu taxi en Sopó",
+    "municipio": "Sopó, Cundinamarca",
+    "pueblo": "Sopó",
+    "telefono": "",
+    "telefonoVisible": "",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Calle 12B # 5B-23, Sopó, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2005,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "SPO",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana Centro",
+    "datosPendientes": [
+      "teléfono de la central",
+      "whatsapp",
+      "correo",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.919241,
+      "lng": -73.940194
+    }
+  },
+  "colores": {
+    "primario": "#6D4C2F",
+    "primario2": "#87603D",
+    "oscuro": "#2F2013",
+    "acento": "#F2B33D",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.907916,
+    "lng": -73.940233
+  },
+  "ZONA": {
+    "sur": 4.59,
+    "norte": 5.23,
+    "oeste": -74.26,
+    "este": -73.62
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "tocancipa",
+      "destino": "Tocancipá",
+      "valor": 18000,
+      "km": 8,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "cajica",
+      "destino": "Cajicá",
+      "valor": 29000,
+      "km": 15,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "guasca",
+      "destino": "Guasca",
+      "valor": 30000,
+      "km": 16,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "chia",
+      "destino": "Chía",
+      "valor": 33000,
+      "km": 18,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "zipaquira",
+      "destino": "Zipaquirá",
+      "valor": 33000,
+      "km": 18,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 50000,
+      "km": 30,
+      "min": 40,
+      "radioKm": 3
+    },
+    {
+      "id": "la-calera",
+      "destino": "La Calera",
+      "valor": 56000,
+      "km": 33,
+      "min": 75,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 81000,
+      "km": 50,
+      "min": 70,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Sopó",
+      "cat": "centro",
+      "lat": 4.907916,
+      "lng": -73.940233
+    },
+    {
+      "id": "parroquia-divino-salvador",
+      "nombre": "Parroquia Divino Salvador",
+      "detalle": "Sopó",
+      "cat": "centro",
+      "lat": 4.908133,
+      "lng": -73.939946
+    },
+    {
+      "id": "banco-agrario",
+      "nombre": "Banco Agrario",
+      "detalle": "Sopó",
+      "cat": "comercio",
+      "lat": 4.907428,
+      "lng": -73.940231
+    },
+    {
+      "id": "restaurante-los-geranios",
+      "nombre": "Restaurante Los Geranios",
+      "detalle": "Sopó",
+      "cat": "comida",
+      "lat": 4.907437,
+      "lng": -73.940388
+    },
+    {
+      "id": "k-lamary",
+      "nombre": "K-Lamary",
+      "detalle": "Sopó",
+      "cat": "comida",
+      "lat": 4.907446,
+      "lng": -73.940046
+    },
+    {
+      "id": "parrilla-bar-el-fondo",
+      "nombre": "Parrilla Bar El Fondo",
+      "detalle": "Sopó",
+      "cat": "comida",
+      "lat": 4.907912,
+      "lng": -73.940763
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Sopó",
+      "cat": "comercio",
+      "lat": 4.908357,
+      "lng": -73.940671
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Sopó",
+      "cat": "comercio",
+      "lat": 4.907915,
+      "lng": -73.940871
+    },
+    {
+      "id": "alcaldia-municipal-de-sopo",
+      "nombre": "Alcaldía Municipal de Sopó",
+      "detalle": "Sopó",
+      "cat": "centro",
+      "lat": 4.908099,
+      "lng": -73.940944
+    },
+    {
+      "id": "parrilla-bar-el-balcon",
+      "nombre": "Parrilla Bar El Balcon",
+      "detalle": "Sopó",
+      "cat": "comida",
+      "lat": 4.908512,
+      "lng": -73.940689
+    },
+    {
+      "id": "colegio-cooperativo",
+      "nombre": "Colegio Cooperativo",
+      "detalle": "Sopó",
+      "cat": "educacion",
+      "lat": 4.907216,
+      "lng": -73.940589
+    },
+    {
+      "id": "paprika",
+      "nombre": "Paprika",
+      "detalle": "Sopó",
+      "cat": "comida",
+      "lat": 4.90862,
+      "lng": -73.940614
+    },
+    {
+      "id": "hotel-renacer",
+      "nombre": "Hotel Renacer",
+      "detalle": "Sopó",
+      "cat": "turismo",
+      "lat": 4.91,
+      "lng": -73.941018
+    },
+    {
+      "id": "plaza-de-mercado-de-sopo",
+      "nombre": "Plaza de Mercado de Sopó",
+      "detalle": "Sopó",
+      "cat": "centro",
+      "lat": 4.905809,
+      "lng": -73.941309
+    },
+    {
+      "id": "supertiendas-premier",
+      "nombre": "Supertiendas Premier",
+      "detalle": "Sopó",
+      "cat": "comercio",
+      "lat": 4.905647,
+      "lng": -73.94106
+    },
+    {
+      "id": "estacion-de-policia-de-sopo",
+      "nombre": "Estación de Policía de Sopó",
+      "detalle": "Sopó",
+      "cat": "centro",
+      "lat": 4.905469,
+      "lng": -73.941379
+    },
+    {
+      "id": "colegio-pablo-vi",
+      "nombre": "Colegio Pablo VI",
+      "detalle": "Sopó",
+      "cat": "educacion",
+      "lat": 4.909845,
+      "lng": -73.937281
+    },
+    {
+      "id": "cementerio-parroquial-de-sopo",
+      "nombre": "Cementerio Parroquial de Sopó",
+      "detalle": "Sopó",
+      "cat": "centro",
+      "lat": 4.903766,
+      "lng": -73.940931
+    },
+    {
+      "id": "santuario-nuestro-senor-de-la-piedra",
+      "nombre": "Santuario Nuestro Señor de la Piedra",
+      "detalle": "Sopó",
+      "cat": "centro",
+      "lat": 4.908776,
+      "lng": -73.935907
+    },
+    {
+      "id": "pueblo-viejo",
+      "nombre": "Pueblo Viejo",
+      "detalle": "Vereda de Sopó",
+      "cat": "vereda",
+      "lat": 4.92473,
+      "lng": -73.945507
+    },
+    {
+      "id": "centro-alto",
+      "nombre": "Centro Alto",
+      "detalle": "Vereda de Sopó",
+      "cat": "vereda",
+      "lat": 4.926437,
+      "lng": -73.933249
+    },
+    {
+      "id": "el-chuscal",
+      "nombre": "El Chuscal",
+      "detalle": "Vereda de Sopó",
+      "cat": "vereda",
+      "lat": 4.885008,
+      "lng": -73.951869
+    },
+    {
+      "id": "tocancipa",
+      "nombre": "Tocancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.965871,
+      "lng": -73.91364
+    },
+    {
+      "id": "cajica",
+      "nombre": "Cajicá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.91728,
+      "lng": -74.025584
+    },
+    {
+      "id": "chia",
+      "nombre": "Chía",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.866033,
+      "lng": -74.030628
+    },
+    {
+      "id": "la-calera",
+      "nombre": "La Calera",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.706824,
+      "lng": -73.932085
+    },
+    {
+      "id": "guasca",
+      "nombre": "Guasca",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.866439,
+      "lng": -73.877694
+    },
+    {
+      "id": "zipaquira",
+      "nombre": "Zipaquirá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.023475,
+      "lng": -74.003982
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Jairo Moreno",
+      "placa": "SPO 601",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 2257,
+      "desde": 2012,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-08",
+      "movil": "008",
+      "nombre": "Rubén Sarmiento",
+      "placa": "SPO 608",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1958,
+      "desde": 2021,
+      "tel": "3000000008"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Fabio Cruz",
+      "placa": "SPO 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1149,
+      "desde": 2019,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Germán Quintero",
+      "placa": "SPO 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 691,
+      "desde": 2021,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Sandra Patiño",
+      "placa": "SPO 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 848,
+      "desde": 2015,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Martha Garzón",
+      "placa": "SPO 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2244,
+      "desde": 2017,
+      "tel": "3000000026"
+    },
+    {
+      "id": "demo-27",
+      "movil": "027",
+      "nombre": "Jorge Castañeda",
+      "placa": "SPO 627",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1647,
+      "desde": 2012,
+      "tel": "3000000027"
+    },
+    {
+      "id": "demo-30",
+      "movil": "030",
+      "nombre": "Héctor Bernal",
+      "placa": "SPO 630",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 876,
+      "desde": 2011,
+      "tel": "3000000030"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Tax Pionono S.A.S. presta el servicio de taxis y camionetas en Sopó; está registrada desde 2005, antes como Tax Pionono Ltda. Desde su oficina de la Calle 12B # 5B-23 atiende el casco urbano, las veredas y los viajes a los municipios vecinos.\n\nCon la app, Tax Pionono lleva ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay cerca, sigues el móvil en el mapa y pagas con QR o en efectivo.",
+    "mision": "Llevar a la gente de Sopó a donde necesite, con un servicio de taxi seguro, puntual y amable, y conductores que conocen el municipio y sus veredas.",
+    "vision": "Ser el taxi de confianza de Sopó: a un toque, con la tarifa clara y el móvil en el mapa hasta tu puerta.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Camionetas",
+      "Viajes a Tocancipá, Cajicá y Chía",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Desde el Pionono, tu taxi en Sopó"
+  },
+  "fuentes": [
+    "https://www.sopo-cundinamarca.gov.co/publicaciones/42/vias/",
+    "https://es.cybo.com/CO-biz/tax-pionono-ltda",
+    "https://www.datacreditoempresas.com.co/directorio/tax-pionono-sas.html",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=900037321",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es taxi: la página «Vías» de la Alcaldía de Sopó (modificada el 22/08/2022) dice «Servicio de Taxis y Camionetas: Transportes Sopó S.A y Tax Pionono S.A.S». Su ficha de Google («Tax Pionono Ltda», Calle 12 B # 5 B-19) está en la categoría Taxis. Confianza media: no tiene web ni redes.",
+    "Razón social, NIT 900.037.321-4, representante legal Alexandra Sánchez Ayala y matrícula del 4-ago-2005 (renovada en 2026): RUES abierto (https://www.datos.gov.co/resource/c82u-588k.json?nit=900037321).",
+    "Dirección Calle 12 B # 5 B-23 (registro mercantil: DataCrédito, eInforma). Oficina ubicada en el cruce de la Calle 12B con la Carrera 5B en OpenStreetMap (aproximada).",
+    "SIN TELÉFONO CONFIRMADO: el registro mercantil (vía eInforma) da el celular 311 570 8630 y otro directorio el 311 441 554 (incompleto); no se sabe si son de la empresa o personales: no publicarlos sin confirmar. Sin correo ni web.",
+    "Tarifas: no se encontró el decreto de tarifas de taxi de Sopó. La alcaldía sí expide tarjetas de operación para taxis ($76.000).",
+    "Colores propios de interOS (café y dorado); el lema también es de interOS. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

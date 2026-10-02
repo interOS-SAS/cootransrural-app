@@ -1,0 +1,560 @@
+{
+  "id": "tocaima-central",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Central de Transporte de Tocaima",
+    "nombreCorto": "Central Tocaima",
+    "razonSocial": "Central de Transporte de Tocaima S.A.S.",
+    "tipo": "empresa",
+    "lema": "Taxis de Tocaima, Ciudad Salud de Colombia",
+    "municipio": "Tocaima, Cundinamarca",
+    "pueblo": "Tocaima",
+    "telefono": "3123149192",
+    "telefonoVisible": "312 314 9192",
+    "whatsapp": "",
+    "correo": "centraljmmp@gmail.com",
+    "direccion": "Calle 6 # 8-04, barrio Kennedy, Tocaima, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2020,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "TCM",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Alto Magdalena",
+    "datosPendientes": [
+      "confirmar el teléfono de la central",
+      "WhatsApp de la central",
+      "número de taxis",
+      "modelo de los taxis",
+      "tarifas oficiales de taxi",
+      "colores y logo",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.456619,
+      "lng": -74.633479
+    }
+  },
+  "colores": {
+    "primario": "#01579B",
+    "primario2": "#0277BD",
+    "oscuro": "#012A4A",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.458018,
+    "lng": -74.634051
+  },
+  "ZONA": {
+    "sur": 4.14,
+    "norte": 4.78,
+    "oeste": -74.95,
+    "este": -74.31
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "agua-de-dios",
+      "destino": "Agua de Dios",
+      "valor": 25000,
+      "km": 12,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "apulo",
+      "destino": "Apulo",
+      "valor": 23000,
+      "km": 12,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "viota",
+      "destino": "Viotá",
+      "valor": 30000,
+      "km": 16,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "jerusalen",
+      "destino": "Jerusalén",
+      "valor": 34000,
+      "km": 19,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "anapoima",
+      "destino": "Anapoima",
+      "valor": 42000,
+      "km": 24,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "nilo",
+      "destino": "Nilo",
+      "valor": 45000,
+      "km": 26,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "girardot",
+      "destino": "Girardot",
+      "valor": 52000,
+      "km": 30,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "ricaurte",
+      "destino": "Ricaurte",
+      "valor": 60000,
+      "km": 36,
+      "min": 55,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Tocaima",
+      "cat": "centro",
+      "lat": 4.458018,
+      "lng": -74.634051
+    },
+    {
+      "id": "alcaldia-de-tocaima",
+      "nombre": "Alcaldía de Tocaima",
+      "detalle": "Tocaima",
+      "cat": "centro",
+      "lat": 4.457476,
+      "lng": -74.634502
+    },
+    {
+      "id": "pizza",
+      "nombre": "Pizza",
+      "detalle": "Tocaima",
+      "cat": "comida",
+      "lat": 4.457445,
+      "lng": -74.633473
+    },
+    {
+      "id": "hospital-marco-felipe-afanador",
+      "nombre": "Hospital Marco Felipe Afanador",
+      "detalle": "Tocaima",
+      "cat": "salud",
+      "lat": 4.456799,
+      "lng": -74.636386
+    },
+    {
+      "id": "iglesia-de-san-jacinto",
+      "nombre": "Iglesia de San Jacinto",
+      "detalle": "Tocaima",
+      "cat": "centro",
+      "lat": 4.457647,
+      "lng": -74.633122
+    },
+    {
+      "id": "hotel-la-mansion",
+      "nombre": "Hotel La Mansión",
+      "detalle": "Tocaima",
+      "cat": "turismo",
+      "lat": 4.457277,
+      "lng": -74.636389
+    },
+    {
+      "id": "estacion-de-policia-de-tocaima",
+      "nombre": "Estación de Policia de Tocaima",
+      "detalle": "Tocaima",
+      "cat": "centro",
+      "lat": 4.458365,
+      "lng": -74.635186
+    },
+    {
+      "id": "ara",
+      "nombre": "Ara",
+      "detalle": "Tocaima",
+      "cat": "comercio",
+      "lat": 4.458639,
+      "lng": -74.63371
+    },
+    {
+      "id": "rico-asado",
+      "nombre": "Rico Asado",
+      "detalle": "Tocaima",
+      "cat": "comida",
+      "lat": 4.458607,
+      "lng": -74.633487
+    },
+    {
+      "id": "terpel",
+      "nombre": "Terpel",
+      "detalle": "Tocaima",
+      "cat": "comercio",
+      "lat": 4.458432,
+      "lng": -74.638755
+    },
+    {
+      "id": "centro-misionero-bethesda",
+      "nombre": "Centro Misionero Bethesda",
+      "detalle": "Tocaima",
+      "cat": "centro",
+      "lat": 4.458774,
+      "lng": -74.63926
+    },
+    {
+      "id": "terminal-de-transportes-de-tocaima",
+      "nombre": "Terminal de Transportes de Tocaima",
+      "detalle": "Tocaima",
+      "cat": "centro",
+      "lat": 4.456841,
+      "lng": -74.640837
+    },
+    {
+      "id": "centro-vacacional-copen",
+      "nombre": "Centro Vacacional COPEN",
+      "detalle": "Tocaima",
+      "cat": "turismo",
+      "lat": 4.461085,
+      "lng": -74.637624
+    },
+    {
+      "id": "hotel-tocaima-plaza",
+      "nombre": "Hotel Tocaima Plaza",
+      "detalle": "Tocaima",
+      "cat": "turismo",
+      "lat": 4.457169,
+      "lng": -74.641113
+    },
+    {
+      "id": "ied-hernan-venegas-carrillo",
+      "nombre": "IED Hernan VeneGas Carrillo",
+      "detalle": "Tocaima",
+      "cat": "educacion",
+      "lat": 4.461258,
+      "lng": -74.631031
+    },
+    {
+      "id": "hotel-catarnica",
+      "nombre": "Hotel Catarnica",
+      "detalle": "Tocaima",
+      "cat": "turismo",
+      "lat": 4.459439,
+      "lng": -74.628468
+    },
+    {
+      "id": "san-jacinto-ii",
+      "nombre": "San Jacinto II",
+      "detalle": "Tocaima",
+      "cat": "barrio",
+      "lat": 4.462721,
+      "lng": -74.632045
+    },
+    {
+      "id": "los-suspiros",
+      "nombre": "Los Suspiros",
+      "detalle": "Vereda de Tocaima",
+      "cat": "vereda",
+      "lat": 4.442823,
+      "lng": -74.64
+    },
+    {
+      "id": "el-portillo",
+      "nombre": "El Portillo",
+      "detalle": "Vereda de Tocaima",
+      "cat": "vereda",
+      "lat": 4.457574,
+      "lng": -74.612899
+    },
+    {
+      "id": "la-cunchuma",
+      "nombre": "La Cunchuma",
+      "detalle": "Vereda de Tocaima",
+      "cat": "vereda",
+      "lat": 4.463101,
+      "lng": -74.613772
+    },
+    {
+      "id": "la-vina",
+      "nombre": "La Viña",
+      "detalle": "Vereda de Tocaima",
+      "cat": "vereda",
+      "lat": 4.448242,
+      "lng": -74.65754
+    },
+    {
+      "id": "el-penon",
+      "nombre": "El Peñón",
+      "detalle": "Vereda de Tocaima",
+      "cat": "vereda",
+      "lat": 4.441397,
+      "lng": -74.613762
+    },
+    {
+      "id": "los-pocitos-azufrados",
+      "nombre": "Los Pocitos Azufrados",
+      "detalle": "Tocaima · a 2,9 km",
+      "cat": "turismo",
+      "lat": 4.478589,
+      "lng": -74.646264
+    },
+    {
+      "id": "acuata",
+      "nombre": "Acuata",
+      "detalle": "Vereda de Tocaima",
+      "cat": "vereda",
+      "lat": 4.478953,
+      "lng": -74.649694
+    },
+    {
+      "id": "girardot",
+      "nombre": "Girardot",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.304638,
+      "lng": -74.803074
+    },
+    {
+      "id": "agua-de-dios",
+      "nombre": "Agua de Dios",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.379633,
+      "lng": -74.670259
+    },
+    {
+      "id": "apulo",
+      "nombre": "Apulo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.520545,
+      "lng": -74.593827
+    },
+    {
+      "id": "anapoima",
+      "nombre": "Anapoima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.549301,
+      "lng": -74.535912
+    },
+    {
+      "id": "nilo",
+      "nombre": "Nilo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.306591,
+      "lng": -74.619761
+    },
+    {
+      "id": "jerusalen",
+      "nombre": "Jerusalén",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.56239,
+      "lng": -74.694207
+    },
+    {
+      "id": "viota",
+      "nombre": "Viotá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.438888,
+      "lng": -74.523358
+    },
+    {
+      "id": "ricaurte",
+      "nombre": "Ricaurte",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.277736,
+      "lng": -74.771816
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-02",
+      "movil": "002",
+      "nombre": "Diana Forero",
+      "placa": "TCM 602",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1385,
+      "desde": 2019,
+      "tel": "3000000002"
+    },
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Martha Garzón",
+      "placa": "TCM 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 658,
+      "desde": 2009,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "TCM 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1262,
+      "desde": 2008,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Jorge Castañeda",
+      "placa": "TCM 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1874,
+      "desde": 2015,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-17",
+      "movil": "017",
+      "nombre": "Wilson Gómez",
+      "placa": "TCM 617",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 754,
+      "desde": 2019,
+      "tel": "3000000017"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Carlos Rodríguez",
+      "placa": "TCM 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1892,
+      "desde": 2018,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Héctor Bernal",
+      "placa": "TCM 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1716,
+      "desde": 2017,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-27",
+      "movil": "027",
+      "nombre": "Sandra Patiño",
+      "placa": "TCM 627",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2161,
+      "desde": 2017,
+      "tel": "3000000027"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Central de Transporte de Tocaima S.A.S. es una empresa con sede en Tocaima, la Ciudad Salud de Colombia, conocida por sus aguas y fangos azufrados. Desde 2021 tiene la habilitación de la Alcaldía para prestar el servicio de taxi en el municipio y atiende desde su oficina en la Calle 6 # 8-04, barrio Kennedy.\n\nCon la app, la empresa puede llevar su servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo, también si vienes de visita a los termales.",
+    "mision": "Prestar el servicio de taxi en Tocaima con conductores que conocen el municipio, con seguridad, puntualidad, tarifas claras y buen trato para quienes viven aquí y para quienes vienen a disfrutar de sus aguas termales.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Tocaima: un taxi a un toque, con tarifa clara y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi en el casco urbano de Tocaima",
+      "Viajes a los sitios turísticos y termales",
+      "Viajes a Girardot, Agua de Dios y Apulo",
+      "Pedidos por teléfono",
+      "Viajes programados"
+    ],
+    "frase": "Tu taxi en la Ciudad Salud"
+  },
+  "fuentes": [
+    "https://www.tocaima-cundinamarca.gov.co/sites/tocaimacundinamarca/content/files/000826/41254_resolucion-4352021.pdf",
+    "https://www.tocaima-cundinamarca.gov.co/resolucion-no-0652025",
+    "https://www.tocaima-cundinamarca.gov.co/sites/tocaimacundinamarca/content/files/001470/73468_0652025-por-medio-del-cual-e-resuelve-una-solicitud-de-desvinculacion-administrativa-de-vehiculo-taxi.pdf",
+    "https://www.tocaima-cundinamarca.gov.co/resolucion-no-229-de-2025",
+    "https://colfirma.com/empresa/central-de-transporte-de-tocaima-s-a-s-901407553",
+    "https://empresas.larepublica.co/colombia/cundinamarca/tocaima/central-de-transporte-de-tocaima-s-a-s-901407553",
+    "https://www.datos.gov.co/d/c82u-588k",
+    "https://es.wikipedia.org/wiki/Tocaima",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Habilitación: la Resolución 435 del 16-sep-2021 de la Alcaldía de Tocaima le concede habilitación y permiso de operación para el servicio público de transporte terrestre automotor individual de pasajeros tipo taxi en el municipio. La Resolución 065-2025 (24-feb-2025) desvincula de esta empresa el taxi amarillo TGN 770. En las resoluciones aparece a veces como «Central de Transportes de Tocaima S.A.S.».",
+    "Razón social, NIT 901.407.553-8, correo centraljmmp@gmail.com y dirección Calle 6 # 8-04, barrio Kennedy: registro mercantil (colfirma, La República); la dirección coincide con la ficha de mapas. En la habilitación de 2021 aparece la Calle 6 No. 7-109, barrio Kennedy. Matriculada en la Cámara de Comercio de Girardot el 31-ago-2020 (fundada = 2020) y renovada el 11-feb-2026.",
+    "Gerente: Ana Isabel Puentes Gómez, representante legal según las resoluciones 435-2021 y 065-2025 de la Alcaldía de Tocaima y el registro mercantil.",
+    "Teléfono 312 314 9192: ficha de negocio «CENTRAL DE TRANSPORTE DE TOCAIMA SAS» en mapas (vía Brave Search). Falta confirmar que sea la línea de la empresa; no se sabe si es WhatsApp ni si atienden las 24 horas (servicio24h = false).",
+    "Tamaño: según la Resolución 435-2021, la capacidad transportadora de Tocaima es de 70 taxis más 22 camperos para el servicio rural, «y esta no será ampliada». Esos 70 cupos se reparten entre esta empresa y Coomofu. No hay dato por empresa: taxis queda en null.",
+    "GANCHO COMERCIAL: la otra empresa de taxis del municipio es Coomofu (Cooperativa de Motoristas de Mosquera y Funza), que ya tiene app propia; en 2025 al menos 4 taxis pasaron de esta empresa a Coomofu (resoluciones 065-068 y 098-102 de 2025). Una app propia le daría con qué competir. Coomofu va en la propuesta de la región Sabana Occidente/Soacha (sede en Funza), no aquí.",
+    "Tarifas: no hay decreto de tarifas de taxi en la web de la Alcaldía de Tocaima (al buscar «tarifa» solo salen las de transporte escolar, Resolución 060 de 2026). Sin campo tarifas: la demo usa valores de ejemplo.",
+    "Lema y frase: Tocaima es la «Ciudad Salud de Colombia» por las propiedades terapéuticas de sus aguas y fangos azufrados (Wikipedia). Los taxis de Tocaima son amarillos (Res. 065-2025). Colores propios de interOS (azul termal y amarillo taxi): la empresa no tiene logo ni colores conocidos.",
+    "Oficina ubicada en el mapa sobre la Calle 6, junto al cruce con la Carrera 8 (OpenStreetMap). Destinos: municipios vecinos; Tocaima queda a más de 100 km de Bogotá, sin Portal ni aeropuerto.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

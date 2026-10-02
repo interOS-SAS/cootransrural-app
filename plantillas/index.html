@@ -124,7 +124,7 @@
         <div class="hero-anim">
           <span class="pildora"><span class="punto" aria-hidden="true"></span><span>{{EMPRESA.pueblo}}<span class="solo-ancho">, {{departamento}}</span>{{#si EMPRESA.servicio24h}} · Servicio 24 horas{{/si}}</span></span>
           <h1 id="titulo-hero">Pide tu taxi en {{pueblo_junto}} <span class="resaltado">desde el celular<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 80 4, 200 2, 296 10"/></svg></span></h1>
-          <p class="hero-texto">Con <b class="tc-nombre">Taxi<span>Cun</span></b> marcas tu ubicación exacta, ves la tarifa antes de pedir y sigues tu móvil en el mapa hasta la puerta de tu casa o tu negocio. Con los conductores de siempre: los de {{EMPRESA.nombre}}.</p>
+          <p class="hero-texto">Con <b class="tc-nombre">Taxi<span>Cun</span></b> marcas tu ubicación exacta, ves la tarifa antes de pedir y sigues tu móvil en el mapa hasta la puerta de tu casa o tu negocio. {{#si sin_operacion_confirmada}}Con los conductores de {{EMPRESA.nombre}}.{{/si}}{{#no sin_operacion_confirmada}}Con los conductores de siempre: los de {{EMPRESA.nombre}}.{{/no}}</p>
           <div class="botones">
             <a class="boton boton-amarillo boton-grande" id="pedir-taxi" href="{{RAIZ}}{{taxicun_ruta}}"><svg class="icono"><use href="#i-taxi"/></svg>Pedir taxi ahora</a>
             <a class="boton boton-vidrio boton-grande" id="descargar-taxicun" href="{{RAIZ}}{{taxicun_ruta}}"><svg class="icono"><use href="#i-descargar"/></svg>Descargar TaxiCun</a>
@@ -185,7 +185,7 @@
             <p class="lead">Sin llamar ni explicar dónde estás. TaxiCun usa el GPS de tu celular para que el móvil llegue justo a tu punto de recogida y te lleve a tu destino.</p>
           </div>
           <div class="en-linea revelar" id="taxis-en-linea">
-            <span class="en-linea-contador" aria-hidden="true"><span class="punto"></span><b>5</b> libres<small>de 8 en línea</small></span>
+            <span class="en-linea-contador" aria-hidden="true"><span class="punto"></span><b>{{en_linea_libres}}</b> libres<small>de {{en_linea}} en línea</small></span>
             <div>
               <h3>Ya no llamas uno por uno para saber cuál está libre</h3>
               <p>Al abrir TaxiCun ves cuántos taxis de {{EMPRESA.nombre}} están en línea cerca de ti, cuántos están libres y a cuántos minutos está el más cercano. Pides y le llega al conductor libre más cercano.</p>
@@ -364,7 +364,7 @@
           </article>
           <article class="oferta verde revelar" style="--retraso:.1s">
             <div class="grande">{{oferta.descuento_fidelidad}} %<small>en tu viaje<br>número {{oferta.siguiente}}</small></div>
-            <h3>Cada {{oferta.viajes}} viajes, el siguiente a mitad de precio</h3>
+            <h3>Cada {{oferta.viajes}} viajes, el siguiente {{oferta.premio}}</h3>
             <ol class="tarjeta-sellos" aria-label="Tarjeta de viajes: {{oferta.viajes}} sellos y el siguiente al {{oferta.descuento_fidelidad}} %">
               {{#cada oferta.sellos}}<li{{#si lleno}} class="lleno"{{/si}}>{{#si lleno}}<svg class="icono"><use href="#i-check"/></svg>{{/si}}</li>{{/cada}}<li class="premio">{{oferta.descuento_fidelidad}}&nbsp;%</li>
             </ol>
@@ -396,7 +396,8 @@
             <div class="urbanas" id="urbanas">
               <div class="urbana"><span>Carrera mínima</span><b>{{tarifa_inicial.minima}}</b><small>Dentro del casco urbano</small></div>
               <div class="urbana"><span>Por recorrido</span><b>{{tarifa_inicial.banderazo}}</b><small>de arranque + {{tarifa_inicial.km}} por km</small></div>
-              <div class="urbana"><span>Recargo nocturno</span><b>+{{tarifa_inicial.nocturno}}</b><small>{{tarifa_inicial.horario_nocturno}}</small></div>
+{{#si tarifa_inicial.hay_nocturno}}              <div class="urbana"><span>Recargo nocturno</span><b>+{{tarifa_inicial.nocturno}}</b><small>{{tarifa_inicial.horario_nocturno}}</small></div>
+{{/si}}
 {{#si tarifa_inicial.hay_dominical}}              <div class="urbana"><span>Domingos y festivos</span><b>+{{tarifa_inicial.dominical}}</b><small>Todo el día</small></div>
 {{/si}}
             </div>

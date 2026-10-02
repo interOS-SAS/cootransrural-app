@@ -1,0 +1,554 @@
+{
+  "id": "pacho",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootranspacho",
+    "nombreCorto": "Cootranspacho",
+    "razonSocial": "Cooperativa Integral de Transportadores de Pacho Ltda. (Cootranspacho)",
+    "tipo": "cooperativa",
+    "lema": "Tu taxi en Pacho, capital de Rionegro",
+    "municipio": "Pacho, Cundinamarca",
+    "pueblo": "Pacho",
+    "telefono": "3115279095",
+    "telefonoVisible": "311 527 9095",
+    "whatsapp": "573115279095",
+    "correo": "cootranspacho@hotmail.com",
+    "direccion": "Calle 8 # 13-21, Pacho, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 1981,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "PAC",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia de Rionegro",
+    "datosPendientes": [
+      "número de taxis",
+      "modelo de los taxis",
+      "color de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 5.12766,
+      "lng": -74.160028
+    }
+  },
+  "colores": {
+    "primario": "#5A2A82",
+    "primario2": "#6E3A9C",
+    "oscuro": "#2A1240",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 5.130147,
+    "lng": -74.158313
+  },
+  "ZONA": {
+    "sur": 4.81,
+    "norte": 5.45,
+    "oeste": -74.48,
+    "este": -73.84
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "supata",
+      "destino": "Supatá",
+      "valor": 38000,
+      "km": 21,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "villagomez",
+      "destino": "Villagómez",
+      "valor": 50000,
+      "km": 29,
+      "min": 80,
+      "radioKm": 4
+    },
+    {
+      "id": "el-penon",
+      "destino": "El Peñón",
+      "valor": 49000,
+      "km": 29,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "zipaquira",
+      "destino": "Zipaquirá",
+      "valor": 62000,
+      "km": 37,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "subachoque",
+      "destino": "Subachoque",
+      "valor": 71000,
+      "km": 43,
+      "min": 120,
+      "radioKm": 4
+    },
+    {
+      "id": "topaipi",
+      "destino": "Topaipí",
+      "valor": 75000,
+      "km": 46,
+      "min": 115,
+      "radioKm": 4
+    },
+    {
+      "id": "vergara",
+      "destino": "Vergara",
+      "valor": 82000,
+      "km": 50,
+      "min": 115,
+      "radioKm": 4
+    },
+    {
+      "id": "san-cayetano",
+      "destino": "San Cayetano",
+      "valor": 97000,
+      "km": 61,
+      "min": 125,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Pacho",
+      "cat": "centro",
+      "lat": 5.130147,
+      "lng": -74.158313
+    },
+    {
+      "id": "mercafacil-bolivar",
+      "nombre": "MercaFácil Bolivar",
+      "detalle": "Pacho",
+      "cat": "comercio",
+      "lat": 5.129969,
+      "lng": -74.158016
+    },
+    {
+      "id": "fuente-la-amistad",
+      "nombre": "Fuente la Amistad",
+      "detalle": "Pacho",
+      "cat": "comercio",
+      "lat": 5.130475,
+      "lng": -74.158012
+    },
+    {
+      "id": "alcaldia-municipal-de-pacho",
+      "nombre": "Alcaldía Municipal de Pacho",
+      "detalle": "Pacho",
+      "cat": "centro",
+      "lat": 5.129681,
+      "lng": -74.158544
+    },
+    {
+      "id": "hot-2-hamburger",
+      "nombre": "Hot 2 Hamburger",
+      "detalle": "Pacho",
+      "cat": "comida",
+      "lat": 5.129662,
+      "lng": -74.158062
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Pacho",
+      "cat": "comercio",
+      "lat": 5.130481,
+      "lng": -74.157794
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Pacho",
+      "cat": "comercio",
+      "lat": 5.13079,
+      "lng": -74.157986
+    },
+    {
+      "id": "flota-rionegro-gomez-villa",
+      "nombre": "Flota Rionegro & Gomez Villa",
+      "detalle": "Pacho",
+      "cat": "centro",
+      "lat": 5.129889,
+      "lng": -74.159043
+    },
+    {
+      "id": "cocina-criolla",
+      "nombre": "Cocina Criolla",
+      "detalle": "Pacho",
+      "cat": "comida",
+      "lat": 5.130337,
+      "lng": -74.157416
+    },
+    {
+      "id": "mercado-la-fortaleza",
+      "nombre": "Mercado la Fortaleza",
+      "detalle": "Pacho",
+      "cat": "comercio",
+      "lat": 5.130815,
+      "lng": -74.157611
+    },
+    {
+      "id": "iglesia",
+      "nombre": "Iglesia del parque principal",
+      "detalle": "Pacho",
+      "cat": "centro",
+      "lat": 5.12908,
+      "lng": -74.158268
+    },
+    {
+      "id": "hotel-quinta-avenida",
+      "nombre": "Hotel Quinta Avenida",
+      "detalle": "Pacho",
+      "cat": "turismo",
+      "lat": 5.130921,
+      "lng": -74.157509
+    },
+    {
+      "id": "terminal-de-transporte",
+      "nombre": "Terminal de transporte",
+      "detalle": "Pacho",
+      "cat": "centro",
+      "lat": 5.130771,
+      "lng": -74.157054
+    },
+    {
+      "id": "la-olla-de-barro",
+      "nombre": "La Olla de Barro",
+      "detalle": "Pacho",
+      "cat": "comida",
+      "lat": 5.128811,
+      "lng": -74.159221
+    },
+    {
+      "id": "hospital-san-rafael-de-pacho",
+      "nombre": "Hospital San Rafael de Pacho",
+      "detalle": "Pacho",
+      "cat": "salud",
+      "lat": 5.130173,
+      "lng": -74.160315
+    },
+    {
+      "id": "ied-ana-francisca-lara-sd-narino",
+      "nombre": "IED Ana Francisca Lara SD Nariño",
+      "detalle": "Pacho",
+      "cat": "educacion",
+      "lat": 5.132384,
+      "lng": -74.160711
+    },
+    {
+      "id": "pa-chorizos",
+      "nombre": "Pa'chorizos",
+      "detalle": "Pacho",
+      "cat": "comida",
+      "lat": 5.135885,
+      "lng": -74.158971
+    },
+    {
+      "id": "rapi-burgers",
+      "nombre": "Rapi Burgers",
+      "detalle": "Pacho",
+      "cat": "comida",
+      "lat": 5.136093,
+      "lng": -74.159119
+    },
+    {
+      "id": "estacion-pacho",
+      "nombre": "Estación Pacho",
+      "detalle": "Pacho",
+      "cat": "centro",
+      "lat": 5.136889,
+      "lng": -74.156807
+    },
+    {
+      "id": "hotel-california",
+      "nombre": "Hotel California",
+      "detalle": "Pacho · a 1,5 km",
+      "cat": "turismo",
+      "lat": 5.143467,
+      "lng": -74.156171
+    },
+    {
+      "id": "cabrera",
+      "nombre": "Cabrera",
+      "detalle": "Vereda de Pacho",
+      "cat": "vereda",
+      "lat": 5.137761,
+      "lng": -74.134493
+    },
+    {
+      "id": "guaia-terra-glamping",
+      "nombre": "Guaia Terra Glamping",
+      "detalle": "Pacho · a 2,8 km",
+      "cat": "turismo",
+      "lat": 5.144608,
+      "lng": -74.137841
+    },
+    {
+      "id": "los-pinos",
+      "nombre": "Los Pinos",
+      "detalle": "Vereda de Pacho",
+      "cat": "vereda",
+      "lat": 5.120497,
+      "lng": -74.12708
+    },
+    {
+      "id": "zipaquira",
+      "nombre": "Zipaquirá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.023475,
+      "lng": -74.003982
+    },
+    {
+      "id": "supata",
+      "nombre": "Supatá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.062167,
+      "lng": -74.236402
+    },
+    {
+      "id": "subachoque",
+      "nombre": "Subachoque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.927969,
+      "lng": -74.173964
+    },
+    {
+      "id": "san-cayetano",
+      "nombre": "San Cayetano",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.333308,
+      "lng": -74.024153
+    },
+    {
+      "id": "villagomez",
+      "nombre": "Villagómez",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.273168,
+      "lng": -74.195178
+    },
+    {
+      "id": "topaipi",
+      "nombre": "Topaipí",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.33539,
+      "lng": -74.302681
+    },
+    {
+      "id": "el-penon",
+      "nombre": "El Peñón",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.248229,
+      "lng": -74.289439
+    },
+    {
+      "id": "vergara",
+      "nombre": "Vergara",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.118376,
+      "lng": -74.345186
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Martha Garzón",
+      "placa": "PAC 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1195,
+      "desde": 2013,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Rubén Sarmiento",
+      "placa": "PAC 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1584,
+      "desde": 2012,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-17",
+      "movil": "017",
+      "nombre": "Édgar Molina",
+      "placa": "PAC 617",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 415,
+      "desde": 2009,
+      "tel": "3000000017"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Diana Forero",
+      "placa": "PAC 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2258,
+      "desde": 2009,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Wilson Gómez",
+      "placa": "PAC 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 2207,
+      "desde": 2021,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Sandra Patiño",
+      "placa": "PAC 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1813,
+      "desde": 2013,
+      "tel": "3000000026"
+    },
+    {
+      "id": "demo-27",
+      "movil": "027",
+      "nombre": "Luz Marina Rojas",
+      "placa": "PAC 627",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1012,
+      "desde": 2021,
+      "tel": "3000000027"
+    },
+    {
+      "id": "demo-30",
+      "movil": "030",
+      "nombre": "Yolanda Prieto",
+      "placa": "PAC 630",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1014,
+      "desde": 2019,
+      "tel": "3000000030"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootranspacho, la Cooperativa Integral de Transportadores de Pacho, mueve a la gente de Pacho desde 1981, según cuenta la propia cooperativa. Desde su oficina en la Calle 8 # 13-21 presta el servicio colectivo urbano y veredal, el transporte especial, las encomiendas y los taxis a convenir hacia cualquier parte del país, con rutas a las veredas, Zipaquirá, Cajicá y Bogotá.\n\nCon la app, la cooperativa puede llevar el servicio de taxi al celular: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir, sigues el móvil en el mapa y pagas con QR o en efectivo, en el casco urbano o en las veredas.",
+    "mision": "Prestar el servicio de transporte de Pacho y sus veredas con conductores asociados que conocen la provincia de Rionegro, con seguridad, puntualidad y buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Pacho y en la provincia de Rionegro: un taxi a un toque, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Taxis a convenir a cualquier parte del país",
+      "Viajes a Zipaquirá, Cajicá y Bogotá",
+      "Transporte especial",
+      "Encomiendas"
+    ],
+    "frase": "Pacho se mueve con su cooperativa"
+  },
+  "fuentes": [
+    "https://directorioturistico.pacho-cundinamarca.gov.co/lugar/51/cooperativa-integral-de-transportadores-de-pacho-ltda-cootranspacho",
+    "https://www.datos.gov.co/resource/f789-7hwg.json?numero_de_constancia=20-12-10647020",
+    "https://www.facebook.com/COOTRANSPACHO/",
+    "https://www.rues.org.co/buscar/RM/860514026",
+    "https://www.colombia.com/turismo/prestadores-de-servicios-turisticos/i31710/agencia-cootranspacho",
+    "https://infotaxicolombia.com.co/empresas-taxi/cooperativa-integral-de-transportadores-de-pacho-cootranspacho-pacho-cundinamarca-colombia/",
+    "https://pachocundinamarca.micolombiadigital.gov.co/api/v1/contents/comprometidos-con-la-seguridad-vial-de-todos",
+    "https://pachocundinamarca.micolombiadigital.gov.co/api/v1/contents/secretaria-de-transito-y-transporte-realizo-visita-de",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es la única empresa con taxis que se encontró en Pacho. Es una cooperativa mixta: colectivo municipal urbano y veredal, especial de operación nacional, encomiendas y automóviles/taxis. La otra empresa que visita la Secretaría de Tránsito, Transdipacho (Transportes Urbanos Diego Pacho Ltda.), solo muestra microbuses en sus fotos, así que no es de taxis.",
+    "Prueba del servicio de taxi: (1) el Directorio Turístico oficial de la Alcaldía de Pacho dice «taxis a convenir a cualquier parte del país»; (2) en SECOP I, la Alcaldía le adjudicó en abril de 2020 el contrato CTO U M 087-2020, «arrendamiento de vehículos de transporte público colectivo e individual»; (3) su Facebook dice que presta el servicio en «Automóviles, Busetas y Microbus»; (4) en octubre de 2025 la Secretaría de Tránsito de Pacho revisó «planillas para vehículos tipo taxi».",
+    "Teléfono y WhatsApp 311 527 9095: línea de la cooperativa, con botones Llamar y WhatsApp en el Directorio Turístico oficial de la Alcaldía de Pacho; el mismo número sale en su ficha de Google Maps y en infotaxicolombia. Según directorios empresariales (infobel), también tiene el fijo 601 854 2000.",
+    "Correo cootranspacho@hotmail.com: Directorio Turístico de la Alcaldía de Pacho y ficha RNT en colombia.com (RNT 217439). Dirección Calle 8 # 13-21: Directorio Turístico de la Alcaldía; la ficha RNT conserva una dirección antigua (Kra 9 # 7-36).",
+    "Razón social, NIT 860.514.026-8 y representante legal (Manuel Alfredo Ortiz Pulgarín): RUES, Cámara de Comercio de Facatativá, consultado el 1-oct-2026; el mismo representante firmó el contrato SECOP de 2020. Es una entidad sin ánimo de lucro activa (matrícula 9000500460), actividades 4921 y 5320.",
+    "Año 1981: lo dice su Facebook («Desde el 1981 hasta la fecha»); no se confirmó en otra fuente.",
+    "Tarifas: no se encontró decreto de tarifas de taxi en Pacho. La Alcaldía solo publica las del colectivo municipal urbano y rural (Decreto 004 de 2025 y Decreto 006 de 15-ene-2026, http://pachocundinamarca.micolombiadigital.gov.co/sites/pachocundinamarca/content/files/001239/61929_decreto-numero-006-del-15012025.pdf). Las tarifas de la demo serán de ejemplo.",
+    "Color de los taxis: en Facebook existe la página comunitaria «Taxis Rojos Pacho», sin datos de empresa; puede que los taxis de Pacho sean rojos. Se deja «Amarillo» hasta confirmarlo.",
+    "Colores propios de interOS (violeta y dorado): no se encontró logo ni colores de la cooperativa.",
+    "Oficina ubicada en el mapa por el cruce de la Avenida Calle 8 con la Carrera 13 (OpenStreetMap).",
+    "Destinos: municipios vecinos de Pacho. Queda a más de 70 km de Bogotá por carretera, así que no se añaden el portal ni el aeropuerto.",
+    "En la ficha RNT hay un celular que parece personal: no se incluye.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales. El lema también es de interOS.",
+    "Pendientes: número de taxis, color y modelo de los taxis, misión y visión oficiales."
+  ]
+}

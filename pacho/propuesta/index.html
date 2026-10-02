@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Propuesta: TaxiCun para Cooperativa Integral de Transportadores de Pacho Ltda. (Cootranspacho) · interOS</title>
+  <meta name="description" content="Propuesta de demostración de TaxiCun para Cooperativa Integral de Transportadores de Pacho Ltda. (Cootranspacho): la app de taxis de Cundinamarca, con el nombre y los colores de Cootranspacho en Pacho. Demo, planes, precios y entrega. Desarrollada por interOS.">
+  <!-- Documento comercial de interOS: no se indexa en buscadores. -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#2A1240">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../img/taxicun/favicon-32.png">
+  <link rel="preload" href="../../fuentes/sora-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../fuentes/plus-jakarta-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../fuentes/fuentes.css?v=d7cb94cf69">
+  <link rel="stylesheet" href="../../web/propuesta.css?v=3d1538ffbb">
+  <!-- Colores de Cootranspacho (de su ficha). -->
+  <style>:root{--verde:#5A2A82;--verde-2:#6E3A9C;--verde-3:#8345BA;--verde-osc:#2A1240;--verde-tinte:#EEEAF2;--verde-tinte-2:#F0ECF4;--verde-tinte-3:#EBE5F0;--verde-linea:#E1D9E8;--exito-tinte:#EEEAF2;--b-claro:#C0AED0;--fondo-oscuro:#130B1B;--noche-1:#1B1025;--noche-2:#0A0410;--fondo-vitrina:#0D0613;--amarillo:#FFC21A;--amarillo-2:#FFD45F;--amarillo-osc:#C99915;--amarillo-texto:#8F6C0F;--amarillo-vivo:#FFC21A;--rojo:#D32F2F;--velo:#1D0D2D;--velo-2:#26103A;--velo-3:#1A0B28;--noche:#0E0616;--verde-rgb:90, 42, 130;--verde-3-rgb:131, 69, 186;--verde-osc-rgb:42, 18, 64;--amarillo-rgb:255, 194, 26;--velo-rgb:29, 13, 45;--velo-2-rgb:38, 16, 58;--velo-3-rgb:26, 11, 40;--noche-rgb:14, 6, 22;--rojo-rgb:211, 47, 47}</style>
+</head>
+<body class="es-propuesta" data-empresa="pacho" data-pdf="Propuesta-app-taxis-Cootranspacho.pdf" data-color-qr="#5A2A82">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+      <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+      <symbol id="i-etiqueta" viewBox="0 0 24 24"><path d="M12.59 2.59A2 2 0 0 0 11.17 2H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.42l8.7 8.7a2.43 2.43 0 0 0 3.42 0l6.58-6.58a2.43 2.43 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.2"/></symbol>
+      <symbol id="i-qr" viewBox="0 0 24 24"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></symbol>
+      <symbol id="i-volante" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2.2"/><path d="M12 14.2V22"/><path d="M9.8 12 2.4 10.6"/><path d="m14.2 12 7.4-1.4"/></symbol>
+      <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+      <symbol id="i-cel" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2.5"/><path d="M12 18h.01"/></symbol>
+      <symbol id="i-capas" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="i-taxi" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+      <symbol id="i-casa" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .71-1.53l7-6a2 2 0 0 1 2.58 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+      <symbol id="i-navegar" viewBox="0 0 24 24"><path d="M3 11 22 2l-9 19-2-8z"/></symbol>
+      <symbol id="i-bandera" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></symbol>
+      <symbol id="i-estrella" viewBox="0 0 24 24"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></symbol>
+      <symbol id="i-reloj" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+      <symbol id="i-chat" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+      <symbol id="i-candado" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+      <symbol id="i-servidor" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01"/><path d="M6 18h.01"/></symbol>
+      <symbol id="i-usuario-ok" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></symbol>
+      <symbol id="i-documento" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></symbol>
+      <symbol id="i-correo" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+      <symbol id="i-flecha" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+      <symbol id="i-billete" viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol>
+      <symbol id="i-grafica" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+      <symbol id="i-descargar" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
+      <symbol id="i-mapa" viewBox="0 0 24 24"><path d="M14.1 5.55a2 2 0 0 0 1.79 0l3.66-1.83A1 1 0 0 1 21 4.62v12.76a1 1 0 0 1-.55.9l-4.56 2.27a2 2 0 0 1-1.79 0l-4.2-2.1a2 2 0 0 0-1.8 0l-3.65 1.83A1 1 0 0 1 3 19.38V6.62a1 1 0 0 1 .55-.9l4.56-2.27a2 2 0 0 1 1.79 0z"/><path d="M15 5.76v15"/><path d="M9 3.24v15"/></symbol>
+      <symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.22 3.48a.5.5 0 0 0 .78-.42V7.87a.5.5 0 0 0-.75-.43L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+      <symbol id="i-cohete" viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></symbol>
+      <symbol id="i-lista" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></symbol>
+      <symbol id="i-pluma" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.38 3.62a1 1 0 0 1 3 3L7.37 18.64a2 2 0 0 1-.86.5l-2.87.84a.5.5 0 0 1-.62-.62l.84-2.87a2 2 0 0 1 .5-.85z"/></symbol>
+      <symbol id="i-imprimir" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></symbol>
+      <symbol id="i-tienda" viewBox="0 0 24 24"><path d="M12 2v8"/><path d="m16 6-4 4-4-4"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 18h.01"/><path d="M10 18h.01"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="herramientas" role="toolbar" aria-label="Opciones del documento">
+    <span class="herramientas-marca"><img src="../../img/taxicun/icono.svg" alt="" width="28" height="28"><span><b>TaxiCun · Cootranspacho</b><small>Propuesta de demostración · 1 de octubre de 2026</small></span></span>
+    <span class="herramientas-botones">
+      <a class="boton boton-claro" href="../" target="_blank" rel="noopener"><svg class="ic"><use href="#i-web"/></svg>Abrir la demo</a>
+      <a class="boton boton-claro boton-pdf" href="Propuesta-app-taxis-Cootranspacho.pdf" download><svg class="ic"><use href="#i-imprimir"/></svg>Descargar PDF</a>
+      <button type="button" class="boton" id="imprimir"><svg class="ic"><use href="#i-imprimir"/></svg>Imprimir o guardar en PDF</button>
+    </span>
+  </div>
+
+  <main class="hojas" id="hojas">
+
+    <!-- ===================== 1 · PORTADA ===================== -->
+    <section class="hoja portada" aria-label="Portada">
+      <div class="portada-fondo" aria-hidden="true">
+        <img src="../../img/web/hero.jpg" alt="">
+        <span class="portada-velo"></span>
+      </div>
+      <div class="portada-arriba">
+        <span class="portada-marcas">
+          <span class="tc-logo tc-logo-portada" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="56" height="56"><b aria-hidden="true">Taxi<span>Cun</span></b></span>
+          <span class="portada-coop"><img src="../../empresas/pacho/icono-192.png" alt="Ícono de Cootranspacho" width="40" height="40"><span><b>Cootranspacho</b><small>Pacho, Cundinamarca · Provincia de Rionegro</small></span></span>
+        </span>
+        <span class="portada-desarrolla"><small>Desarrollada por</small><span class="portada-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="40" height="22"><b>inter<span>OS</span></b></span></span>
+      </div>
+      <div class="portada-texto">
+        <span class="pildora">Propuesta de demostración</span>
+        <h1><span class="h1-antes">Propuesta: TaxiCun para</span> <span class="h1-nombre">Cooperativa Integral de Transportadores de Pacho Ltda. (Cootranspacho)</span></h1>
+        <p class="portada-lead">TaxiCun, la app de taxis de Cundinamarca, con el nombre de Cootranspacho en Pacho y, al salir, sus colores y sus conductores. La demo ya está hecha: la pueden probar hoy.</p>
+      </div>
+      <div class="portada-telefonos" aria-hidden="true">
+        <span class="telefono telefono-atras"><img src="../../empresas/pacho/conductor-a.jpg" alt=""></span>
+        <span class="telefono telefono-frente"><img src="../../empresas/pacho/disenos-a.jpg" alt=""></span>
+      </div>
+      <div class="portada-abajo">
+        <div class="portada-qr">
+          <div class="qr" data-qr="https://taxicun.com/pacho/" data-nombre="portada" role="img" aria-label="Código QR de la demo de Cootranspacho"></div>
+          <p><b>Escanee y abra su demo</b><span class="url">Apunte la cámara del celular al código</span></p>
+        </div>
+        <div class="portada-datos">
+          <p class="portada-preparada">Preparada por <b>interOS</b> para <b>Cootranspacho</b></p>
+          <p class="portada-fecha">1 de octubre de 2026</p>
+          <ul class="portada-cifras">
+            <li><b>2</b><span>apps: pasajero y conductor</span></li>
+            <li><b>23</b><span>lugares de Pacho ya cargados</span></li>
+            <li><b>8</b><span>destinos con tarifa</span></li>
+            <li><b>7</b><span>días o menos para tenerla</span></li>
+          </ul>
+        </div>
+      </div>
+      <footer class="portada-pie">
+        <span><b>Oscar Bernal</b> · interOS · info@taxicun.com</span>
+        <span class="aviso-datos">Demostración preparada con datos públicos; no es una página oficial de la cooperativa.</span>
+      </footer>
+    </section>
+
+    <!-- ===================== 2 · QUÉ GANAN ===================== -->
+    <section class="hoja" aria-labelledby="t-ganan">
+      <header class="cabeza">
+        <span class="cabeza-marca"><span class="tc-logo tc-logo-cabeza" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="22" height="22"><b aria-hidden="true">Taxi<span>Cun</span></b></span><span>Propuesta para Cootranspacho</span></span>
+        <span class="cabeza-seccion"><b>02</b>Qué ganan</span>
+      </header>
+      <div class="contenido">
+        <div class="titular">
+          <span class="antetitulo">Qué ganan</span>
+          <h2 id="t-ganan">TaxiCun con la marca de Cootranspacho, para sus pasajeros y conductores</h2>
+        </div>
+
+        <div class="en-linea">
+          <span class="en-linea-contador" aria-hidden="true"><b>5</b><span><span class="punto"></span>libres</span><small>de 8 en línea</small></span>
+          <p><b>Se acabó llamar uno por uno para ver quién está libre.</b> En TaxiCun el pasajero ve cuántos taxis de Cootranspacho están en línea y libres cerca. Pide y le llega el más cercano: menos llamadas a la central y menos servicios perdidos.</p>
+        </div>
+
+        <div class="avisos" aria-label="Avisos durante el servicio">
+          <p class="avisos-titulo"><svg class="ic"><use href="#i-cel"/></svg>El pasajero recibe un aviso en cada paso del servicio</p>
+          <ol>
+            <li><span class="avisos-ic"><svg class="ic"><use href="#i-check"/></svg></span><b>Taxi asignado</b><small>Conductor, móvil y placa</small></li>
+            <li><span class="avisos-ic"><svg class="ic"><use href="#i-taxi"/></svg></span><b>En camino</b><small>Lo ve llegar en el mapa</small></li>
+            <li><span class="avisos-ic"><svg class="ic"><use href="#i-casa"/></svg></span><b>En la puerta</b><small>Aviso con sonido</small></li>
+            <li><span class="avisos-ic"><svg class="ic"><use href="#i-navegar"/></svg></span><b>Inicia el viaje</b><small>Con código de abordaje</small></li>
+            <li><span class="avisos-ic"><svg class="ic"><use href="#i-bandera"/></svg></span><b>Termina</b><small>Paga y califica</small></li>
+          </ol>
+        </div>
+
+        <div class="beneficios">
+          <article><span class="b-ic"><svg class="ic"><use href="#i-pin"/></svg></span><h3>Pedir con GPS</h3><p>Ubicación exacta por GPS o moviendo el mapa, con los taxis libres a la vista; destino por búsqueda o entre los lugares de Pacho, y viajes programados.</p></article>
+          <article><span class="b-ic"><svg class="ic"><use href="#i-escudo"/></svg></span><h3>Seguridad en cada viaje</h3><p>Registro del pasajero, código de abordaje de 4 dígitos, datos del conductor con su móvil y placa, compartir el viaje por WhatsApp, botón SOS (123) y calificación mutua.</p></article>
+          <article><span class="b-ic"><svg class="ic"><use href="#i-etiqueta"/></svg></span><h3>Tarifas claras</h3><p>El valor se ve antes de pedir, con tarifa fija a los destinos de siempre y recargos avisados. Y si la cooperativa quiere: −10&nbsp;% al programar con 24&nbsp;h y cada 10 viajes, el siguiente al 50&nbsp;%.</p></article>
+          <article><span class="b-ic"><svg class="ic"><use href="#i-qr"/></svg></span><h3>Pago con QR Bre-B</h3><p>El conductor muestra un QR al terminar y el pasajero paga desde su banco o billetera, o en efectivo. En la demo es de prueba; en producción va con un proveedor autorizado.</p></article>
+          <article><span class="b-ic"><svg class="ic"><use href="#i-volante"/></svg></span><h3>App para los conductores</h3><p>Solicitudes con cuenta regresiva, navegación con Google Maps o Waze, código del pasajero, cobro con QR o en efectivo, ganancias del día y documentos del vehículo.</p></article>
+          <article><span class="b-ic"><svg class="ic"><use href="#i-web"/></svg></span><h3>Stickers QR y web propia</h3><p>Un QR en cada taxi, neveras, restaurantes y conjuntos abre TaxiCun con la cooperativa y dice de qué móvil llegó cada usuario. Y una web propia con el botón para pedir.</p></article>
+        </div>
+
+        <div class="frente">
+          <h3>Frente a las apps grandes</h3>
+          <table>
+            <thead><tr><th scope="col"><span class="solo-lector">Tema</span></th><th scope="col">Apps grandes</th><th scope="col">TaxiCun con Cootranspacho</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">El cliente</th><td>Queda en la plataforma</td><td><svg class="ic"><use href="#i-check"/></svg>Sigue siendo de la cooperativa</td></tr>
+              <tr><th scope="row">Lo que cuesta</th><td>Del 10 al 25&nbsp;% de cada viaje</td><td><svg class="ic"><use href="#i-check"/></svg>1,9&nbsp;% o $900 al día por taxi</td></tr>
+              <tr><th scope="row">La marca</th><td>La de la plataforma</td><td><svg class="ic"><use href="#i-check"/></svg>La suya, dentro de TaxiCun</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <footer class="pie">
+        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">TaxiCun · desarrollada por <b>interOS</b></span>
+        <span class="aviso-datos">Demostración preparada con datos públicos; no es una página oficial de la cooperativa.</span>
+        <span class="pie-numero">2 / 6</span>
+      </footer>
+    </section>
+
+    <!-- ===================== 3 · SU DEMO ===================== -->
+    <section class="hoja hoja-demo" aria-labelledby="t-demo">
+      <header class="cabeza">
+        <span class="cabeza-marca"><span class="tc-logo tc-logo-cabeza" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="22" height="22"><b aria-hidden="true">Taxi<span>Cun</span></b></span><span>Propuesta para Cootranspacho</span></span>
+        <span class="cabeza-seccion"><b>03</b>Su demo</span>
+      </header>
+      <div class="contenido">
+        <div class="titular">
+          <span class="antetitulo">Su demo ya está lista</span>
+          <h2 id="t-demo">Así se vería TaxiCun para Cootranspacho (colores propuestos)</h2>
+          <p class="lead">Dos apps con la misma marca: la del pasajero, para pedir el taxi, y la del conductor, para recibir y atender los servicios. Moderna, sencilla y con botones grandes, fáciles de tocar en la calle.</p>
+        </div>
+
+        <div class="demo-fila">
+        <aside class="tc-panel" aria-labelledby="t-taxicun">
+          <span class="tc-logo" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="40" height="40"><b aria-hidden="true">Taxi<span>Cun</span></b></span>
+          <h3 id="t-taxicun">Una sola app para Cundinamarca</h3>
+          <ul>
+            <li><svg class="ic"><use href="#i-pin"/></svg><span>Al abrir TaxiCun en Pacho, el GPS muestra a Cootranspacho, con su nombre y sus colores.</span></li>
+            <li><svg class="ic"><use href="#i-mapa"/></svg><span>Si el pasajero viaja a otro municipio con TaxiCun, la misma app le sirve allá.</span></li>
+            <li><svg class="ic"><use href="#i-qr"/></svg><span>Los stickers QR abren TaxiCun directo con Cootranspacho y el móvil del taxi.</span></li>
+            <li><svg class="ic"><use href="#i-tienda"/></svg><span>TaxiCun saldrá en Google Play y App Store como una sola app: el pasajero la descarga una vez.</span></li>
+          </ul>
+          <p class="tc-panel-pie">Desarrollada por interOS</p>
+        </aside>
+        <div class="disenos disenos-dos">
+          <figure>
+            <span class="telefono"><img src="../../empresas/pacho/disenos-a.jpg" alt="TaxiCun para pasajeros con Cootranspacho"></span>
+            <figcaption><b>Para el pasajero</b><span>Pide con su ubicación, ve los taxis libres y sigue el suyo en el mapa.</span></figcaption>
+          </figure>
+          <figure>
+            <span class="telefono"><img src="../../empresas/pacho/conductor-a.jpg" alt="TaxiCun para conductores con Cootranspacho"></span>
+            <figcaption><b>Para el conductor</b><span>Recibe los servicios, llega con Waze o Google Maps y cobra con QR.</span></figcaption>
+          </figure>
+        </div>
+        </div>
+
+        <div class="enlaces">
+          <p class="enlaces-titulo"><svg class="ic"><use href="#i-cel"/></svg>Pruébenla desde el celular: apunten la cámara a cada código (TaxiCun abre con Cootranspacho)</p>
+          <ul>
+            <li class="enlace enlace-web">
+              <div class="qr" data-qr="https://taxicun.com/pacho/" data-nombre="web" role="img" aria-label="Código QR: Web de la cooperativa"></div>
+              <b><svg class="ic"><use href="#i-web"/></svg>Web de la cooperativa</b>
+              <span>Rutas, tarifas, contacto y el botón para pedir.</span>
+              <a class="url" href="https://taxicun.com/pacho/" target="_blank" rel="noopener">Abrir el enlace</a>
+            </li>
+            <li class="enlace enlace-app">
+              <div class="qr" data-qr="https://taxicun.com/taxicun/?e=pacho" data-nombre="app" role="img" aria-label="Código QR: TaxiCun · pasajero"></div>
+              <b><svg class="ic"><use href="#i-cel"/></svg>TaxiCun · pasajero</b>
+              <span>Un viaje completo con un conductor de prueba.</span>
+              <a class="url" href="https://taxicun.com/taxicun/?e=pacho" target="_blank" rel="noopener">Abrir el enlace</a>
+            </li>
+            <li class="enlace enlace-conductor">
+              <div class="qr" data-qr="https://taxicun.com/taxicun/conductor/?e=pacho" data-nombre="conductor" role="img" aria-label="Código QR: TaxiCun · conductor"></div>
+              <b><svg class="ic"><use href="#i-volante"/></svg>TaxiCun · conductor</b>
+              <span>Demo: móvil 006, PIN 1234.</span>
+              <a class="url" href="https://taxicun.com/taxicun/conductor/?e=pacho" target="_blank" rel="noopener">Abrir el enlace</a>
+            </li>
+            <li class="enlace enlace-stickers">
+              <div class="qr" data-qr="https://taxicun.com/pacho/stickers/" data-nombre="stickers" role="img" aria-label="Código QR: Stickers QR"></div>
+              <b><svg class="ic"><use href="#i-qr"/></svg>Stickers QR</b>
+              <span>Taxi, nevera, afiche y tarjeta, listos para imprimir.</span>
+              <a class="url" href="https://taxicun.com/pacho/stickers/" target="_blank" rel="noopener">Abrir el enlace</a>
+            </li>
+            <li class="enlace enlace-descargar">
+              <div class="qr" data-qr="https://taxicun.com/pacho/descargar/" data-nombre="descargar" role="img" aria-label="Código QR: Descargar TaxiCun"></div>
+              <b><svg class="ic"><use href="#i-descargar"/></svg>Descargar TaxiCun</b>
+              <span>La página que abre el QR de los stickers.</span>
+              <a class="url" href="https://taxicun.com/pacho/descargar/" target="_blank" rel="noopener">Abrir el enlace</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <footer class="pie">
+        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">TaxiCun · desarrollada por <b>interOS</b></span>
+        <span class="aviso-datos">Demostración preparada con datos públicos; no es una página oficial de la cooperativa.</span>
+        <span class="pie-numero">3 / 6</span>
+      </footer>
+    </section>
+
+    <!-- ===================== 4 · HECHA PARA EL PUEBLO ===================== -->
+    <section class="hoja hoja-pueblo" aria-labelledby="t-pueblo">
+      <header class="cabeza">
+        <span class="cabeza-marca"><span class="tc-logo tc-logo-cabeza" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="22" height="22"><b aria-hidden="true">Taxi<span>Cun</span></b></span><span>Propuesta para Cootranspacho</span></span>
+        <span class="cabeza-seccion"><b>04</b>Hecha para Pacho</span>
+      </header>
+      <div class="contenido">
+        <div class="titular">
+          <span class="antetitulo">Hecha para Pacho</span>
+          <h2 id="t-pueblo">Ya conoce Pacho: sus lugares, sus veredas y sus rutas</h2>
+          <p class="lead">La demo ya trae 23 lugares de Pacho y 8 destinos con tarifa, tomados de OpenStreetMap y con distancias medidas por carretera. Algunos ejemplos:</p>
+        </div>
+
+        <div class="pueblo">
+          <figure class="pueblo-radar">
+            <svg class="radar" viewBox="0 0 520 470" role="img" aria-label="Esquema de Pacho: sus lugares y las rutas a los municipios vecinos"><circle cx="260" cy="232" r="148" fill="#EEEAF2"/><circle cx="260" cy="232" r="98.4" fill="none" stroke="#E1D9E8" stroke-width="1.4" stroke-dasharray="4 5"/><text x="358.4" y="236.0" text-anchor="middle" class="r-anillo" fill="#6F7A74" paint-order="stroke" stroke="#EEEAF2" stroke-width="5" stroke-linejoin="round">1 km</text><circle cx="260" cy="232" r="148.0" fill="none" stroke="#E1D9E8" stroke-width="1.4"/><text x="408.0" y="236.0" text-anchor="middle" class="r-anillo" fill="#6F7A74" paint-order="stroke" stroke="#fff" stroke-width="5" stroke-linejoin="round">2 km</text><line x1="146.0" y1="331.0" x2="130.1" y2="344.8" stroke="#2A1240" stroke-width="3.2" stroke-linecap="round"/><circle cx="130.1" cy="344.8" r="4.6" fill="#2A1240"/><text text-anchor="end" class="r-ruta-d" fill="#2A1240"><tspan x="125.6" y="376.4">Supatá</tspan><tspan x="125.6" y="391.9" class="r-km">21 km</tspan></text><line x1="248.3" y1="382.5" x2="246.7" y2="403.5" stroke="#2A1240" stroke-width="3.2" stroke-linecap="round"/><circle cx="246.7" cy="403.5" r="4.6" fill="#2A1240"/><text text-anchor="middle" class="r-ruta-d" fill="#2A1240"><tspan x="246.2" y="437.1">Subachoque</tspan><tspan x="246.2" y="452.7" class="r-km">43 km</tspan></text><line x1="343.4" y1="106.1" x2="355.0" y2="88.6" stroke="#2A1240" stroke-width="3.2" stroke-linecap="round"/><circle cx="355.0" cy="88.6" r="4.6" fill="#2A1240"/><text text-anchor="start" class="r-ruta-d" fill="#2A1240"><tspan x="358.3" y="49.2">San Cayetano</tspan><tspan x="358.3" y="64.7" class="r-km">61 km</tspan></text><line x1="222.2" y1="85.8" x2="219.5" y2="75.2" stroke="#B5BFBA" stroke-width="1.8" stroke-linecap="round"/><circle cx="219.5" cy="75.2" r="3.2" fill="#B5BFBA"/><text text-anchor="middle" class="r-ruta" fill="#6F7A74"><tspan x="218.0" y="59.4">Villagómez</tspan></text><line x1="147.7" y1="131.1" x2="139.5" y2="123.8" stroke="#B5BFBA" stroke-width="1.8" stroke-linecap="round"/><circle cx="139.5" cy="123.8" r="3.2" fill="#B5BFBA"/><text text-anchor="end" class="r-ruta" fill="#6F7A74"><tspan x="135.0" y="109.8">El Peñón</tspan></text><line x1="384.3" y1="317.7" x2="393.4" y2="323.9" stroke="#B5BFBA" stroke-width="1.8" stroke-linecap="round"/><circle cx="393.4" cy="323.9" r="3.2" fill="#B5BFBA"/><text text-anchor="start" class="r-ruta" fill="#6F7A74"><tspan x="398.3" y="345.0">Zipaquirá</tspan></text><line x1="173.0" y1="108.6" x2="166.6" y2="99.6" stroke="#B5BFBA" stroke-width="1.8" stroke-linecap="round"/><circle cx="166.6" cy="99.6" r="3.2" fill="#B5BFBA"/><text text-anchor="end" class="r-ruta" fill="#6F7A74"><tspan x="163.2" y="84.8">Topaipí</tspan></text><line x1="109.3" y1="241.5" x2="98.3" y2="242.2" stroke="#B5BFBA" stroke-width="1.8" stroke-linecap="round"/><circle cx="98.3" cy="242.2" r="3.2" fill="#B5BFBA"/><text text-anchor="end" class="r-ruta" fill="#6F7A74"><tspan x="92.3" y="260.2">Vergara</tspan></text><circle cx="260.0" cy="232.0" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="276.5" cy="241.9" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="274.8" cy="215.9" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="249.5" cy="253.1" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="271.1" cy="253.5" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="281.6" cy="218.1" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="272.6" cy="207.2" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="232.8" cy="241.6" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="290.7" cy="225.5" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="283.4" cy="209.8" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="261.4" cy="265.8" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="294.8" cy="214.8" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="236.6" cy="266.4" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="216.6" cy="191.6" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="251.0" cy="153.9" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="249.2" cy="152.6" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="278.8" cy="148.1" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="279.1" cy="113.4" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="373.7" cy="151.9" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="393.0" cy="273.0" r="3.7" fill="#5A2A82" fill-opacity=".5"/><circle cx="260" cy="232" r="16" fill="#5A2A82" fill-opacity=".16"/><circle cx="260" cy="232" r="7.5" fill="#2A1240" stroke="#fff" stroke-width="2.6"/><text x="260" y="263" text-anchor="middle" class="r-pueblo" fill="#2A1240">Pacho</text><g class="r-marca"><circle cx="284.9" cy="208.1" r="12.5" fill="#FFC21A" stroke="#fff" stroke-width="3"/><text x="284.9" y="212.8" text-anchor="middle" fill="#17130A">2</text></g><g class="r-marca"><circle cx="213.7" cy="231.4" r="12.5" fill="#FFC21A" stroke="#fff" stroke-width="3"/><text x="213.7" y="236.1" text-anchor="middle" fill="#17130A">1</text></g><g class="r-marca"><circle cx="392.5" cy="189.7" r="12.5" fill="#FFC21A" stroke="#fff" stroke-width="3"/><text x="392.5" y="194.4" text-anchor="middle" fill="#17130A">3</text></g><g class="r-norte" transform="translate(22 30)"><path d="M0 -15 L7.5 6 L0 2 L-7.5 6 Z" fill="#2A1240"/><text x="0" y="22" text-anchor="middle" fill="#2A1240">N</text></g></svg>
+            <figcaption>Esquema de Pacho (no está a escala): cada punto es un lugar que ya está en la app y las líneas de afuera son las rutas a otros municipios.</figcaption>
+          </figure>
+          <div class="pueblo-datos">
+            <h3><svg class="ic"><use href="#i-pin"/></svg>Lugares de Pacho en la app</h3>
+            <ol class="lugares">
+              <li><span class="lugar-num">1</span><span><b>Hospital San Rafael de Pacho</b><small>Salud · Pacho</small></span></li>
+              <li><span class="lugar-num">2</span><span><b>Hotel Quinta Avenida</b><small>Turismo · Pacho</small></span></li>
+              <li><span class="lugar-num">3</span><span><b>Cabrera</b><small>Vereda de Pacho</small></span></li>
+            </ol>
+            <h3><svg class="ic"><use href="#i-mapa"/></svg>Rutas con distancia y tiempo</h3>
+            <ul class="rutas">
+              <li><span class="ruta-tramo"><small>Pacho</small><svg class="ic"><use href="#i-flecha"/></svg><b>Supatá</b></span><span class="ruta-datos"><span>21 km</span><span>40 min</span><b>$38.000</b></span></li>
+              <li><span class="ruta-tramo"><small>Pacho</small><svg class="ic"><use href="#i-flecha"/></svg><b>Subachoque</b></span><span class="ruta-datos"><span>43 km</span><span>2 h</span><b>$71.000</b></span></li>
+              <li><span class="ruta-tramo"><small>Pacho</small><svg class="ic"><use href="#i-flecha"/></svg><b>San Cayetano</b></span><span class="ruta-datos"><span>61 km</span><span>2 h 5 min</span><b>$97.000</b></span></li>
+            </ul>
+            <p class="nota"><svg class="ic"><use href="#i-info"/></svg>Los valores de las rutas son de ejemplo: antes de salir se cambian por las tarifas oficiales de la cooperativa.</p>
+          </div>
+        </div>
+
+        <div class="stickers">
+          <h3><svg class="ic"><use href="#i-qr"/></svg>Stickers QR: abren TaxiCun con Cootranspacho</h3>
+          <div class="stickers-fotos">
+            <figure><img src="../../empresas/pacho/sticker-taxi.jpg" alt="Sticker con código QR en el vidrio trasero de un taxi amarillo"><figcaption>En el vidrio de cada taxi: el QR lleva el número del móvil.</figcaption></figure>
+            <figure><img src="../../empresas/pacho/nevera.jpg" alt="Sticker con código QR en una nevera de tienda"><figcaption>En neveras, tiendas, restaurantes y conjuntos del municipio.</figcaption></figure>
+          </div>
+        </div>
+      </div>
+      <footer class="pie">
+        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">TaxiCun · desarrollada por <b>interOS</b></span>
+        <span class="aviso-datos">Demostración preparada con datos públicos; no es una página oficial de la cooperativa.</span>
+        <span class="pie-numero">4 / 6</span>
+      </footer>
+    </section>
+
+    <!-- ===================== 5 · PLANES Y PRECIOS ===================== -->
+    <section class="hoja hoja-planes" aria-labelledby="t-planes">
+      <header class="cabeza">
+        <span class="cabeza-marca"><span class="tc-logo tc-logo-cabeza" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="22" height="22"><b aria-hidden="true">Taxi<span>Cun</span></b></span><span>Propuesta para Cootranspacho</span></span>
+        <span class="cabeza-seccion"><b>05</b>Planes y entrega</span>
+      </header>
+      <div class="contenido">
+        <div class="titular">
+          <span class="antetitulo">Planes y precios</span>
+          <h2 id="t-planes">Dos formas de tener TaxiCun: por uso o con cuota fija</h2>
+          <p class="lead">Para los pasajeros la app es gratis: solo pagan su viaje. La cooperativa elige el plan que más le convenga.</p>
+        </div>
+
+        <div class="planes">
+          <article class="plan">
+            <span class="plan-etiqueta">Plan A · Por uso</span>
+            <p class="plan-precio" id="precio-a"><b>1,9&nbsp;%</b><span>de lo que se facture en el mes por la app</span></p>
+            <ul class="lista-check">
+              <li><svg class="ic"><use href="#i-check"/></svg>Se cobra una vez al mes, sobre los servicios hechos por la app.</li>
+              <li><svg class="ic"><use href="#i-check"/></svg>Los viajes de la calle o de la central de siempre no pagan.</li>
+              <li><svg class="ic"><use href="#i-check"/></svg>Si la app se usa poco, se paga poco.</li>
+            </ul>
+            <p class="plan-ejemplo" id="ejemplo-a"><svg class="ic"><use href="#i-billete"/></svg><span>Si en el mes se facturan <b>$10.000.000</b> por la app, son <b>$190.000</b>.</span></p>
+          </article>
+          <article class="plan plan-b">
+            <span class="plan-etiqueta">Plan B · Cuota fija por taxi</span>
+            <p class="plan-precio" id="precio-b"><small>Solo</small><b>$900</b><span>al día por taxi · $27.000 al mes</span></p>
+            <ul class="lista-check">
+              <li><svg class="ic"><use href="#i-check"/></svg>Cada taxi con TaxiCun, haga los viajes que haga.</li>
+              <li><svg class="ic"><use href="#i-check"/></svg>Actualizaciones constantes incluidas.</li>
+              <li><svg class="ic"><use href="#i-check"/></svg>Soporte 24/7 en un grupo de WhatsApp.</li>
+            </ul>
+            <div class="plan-flota" id="flota-b">
+              <span>Ejemplos según el tamaño de la flota</span>
+              <p data-taxis="20"><b>Con 20 taxis:</b> <strong>$540.000</strong> al mes <small>($18.000 al día)</small></p>
+              <p data-taxis="50"><b>Con 50 taxis:</b> <strong>$1.350.000</strong> al mes <small>($45.000 al día)</small></p>
+            </div>
+          </article>
+        </div>
+
+        <div class="incluye">
+          <h3>Los dos planes incluyen</h3>
+          <ul>
+            <li><svg class="ic"><use href="#i-cel"/></svg>TaxiCun (pasajero y conductor) con la marca Cootranspacho</li>
+            <li><svg class="ic"><use href="#i-tienda"/></svg>TaxiCun en Google Play y App Store</li>
+            <li><svg class="ic"><use href="#i-grafica"/></svg>Panel de la cooperativa: servicios, conductores y calificaciones</li>
+            <li><svg class="ic"><use href="#i-servidor"/></svg>Servidor, mapas y mensajes de verificación</li>
+            <li><svg class="ic"><use href="#i-reloj"/></svg>Actualizaciones constantes</li>
+            <li><svg class="ic"><use href="#i-chat"/></svg>Soporte 24/7 por grupo de WhatsApp</li>
+            <li><svg class="ic"><use href="#i-volante"/></svg>Capacitación a los conductores</li>
+            <li><svg class="ic"><use href="#i-qr"/></svg>Stickers QR listos para imprimir</li>
+          </ul>
+        </div>
+
+        <div class="entrega">
+          <div class="entrega-cifra"><span>Tiempo de entrega</span><b>1 semana</b><small>o menos</small></div>
+          <ol class="entrega-pasos">
+            <li><b>Días 1 y 2</b><span>Su nombre, sus tarifas y sus conductores en TaxiCun.</span></li>
+            <li><b>Días 3 y 4</b><span>Pruebas con los conductores y capacitación.</span></li>
+            <li><b>Días 5 a 7</b><span>Envío a Google Play y App Store y salida con sus pasajeros.</span></li>
+          </ol>
+          <p class="entrega-nota"><svg class="ic"><use href="#i-info"/></svg><span>La salida en Google Play y App Store depende de la revisión de las tiendas. Mientras tanto, sus pasajeros pueden usar TaxiCun desde el navegador, con el enlace y los stickers QR.</span></p>
+        </div>
+
+        <p class="nota nota-iva"><svg class="ic"><use href="#i-info"/></svg>Valores antes de IVA. El Plan A se calcula sobre el valor de los servicios pedidos y terminados en TaxiCun en el mes (en efectivo o con QR), no sobre todo lo que factura la flota. Lo paga la cooperativa en una sola cuenta mensual. La propuesta final se acuerda con la cooperativa.</p>
+      </div>
+      <footer class="pie">
+        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">TaxiCun · desarrollada por <b>interOS</b></span>
+        <span class="aviso-datos">Demostración preparada con datos públicos; no es una página oficial de la cooperativa.</span>
+        <span class="pie-numero">5 / 6</span>
+      </footer>
+    </section>
+
+    <!-- ===================== 6 · SEGURIDAD, PASOS Y CONTACTO ===================== -->
+    <section class="hoja hoja-final" aria-labelledby="t-seguridad">
+      <header class="cabeza">
+        <span class="cabeza-marca"><span class="tc-logo tc-logo-cabeza" role="img" aria-label="TaxiCun"><img src="../../img/taxicun/icono.svg" alt="" width="22" height="22"><b aria-hidden="true">Taxi<span>Cun</span></b></span><span>Propuesta para Cootranspacho</span></span>
+        <span class="cabeza-seccion"><b>06</b>Siguientes pasos</span>
+      </header>
+      <div class="contenido">
+        <div class="titular titular-corto">
+          <span class="antetitulo">Seguridad y datos</span>
+          <h2 id="t-seguridad">Datos personales cuidados, conforme a la Ley 1581 de 2012</h2>
+        </div>
+        <div class="seguridad">
+          <div class="seg-col seg-hoy">
+            <h3><svg class="ic"><use href="#i-info"/></svg>Hoy, en la demo</h3>
+            <ul>
+              <li>Funciona desde el navegador y guarda los datos en el propio celular.</li>
+              <li>Los celulares se hablan por canales públicos de prueba: no se deben usar datos reales sensibles.</li>
+              <li>El pago QR Bre-B es de prueba: no mueve dinero.</li>
+              <li>Se armó con datos públicos de la cooperativa, con un aviso de que no es una página oficial y sin aparecer en buscadores.</li>
+            </ul>
+          </div>
+          <div class="seg-col seg-produccion">
+            <h3><svg class="ic"><use href="#i-candado"/></svg>En producción</h3>
+            <ul>
+              <li><svg class="ic"><use href="#i-servidor"/></svg>Servidor propio con conexión cifrada, en lugar de los canales de prueba.</li>
+              <li><svg class="ic"><use href="#i-candado"/></svg>En TaxiCun, los datos de cada cooperativa van separados: son suyos y solo ella los ve.</li>
+              <li><svg class="ic"><use href="#i-cel"/></svg>Registro de pasajeros verificado por SMS.</li>
+              <li><svg class="ic"><use href="#i-usuario-ok"/></svg>Conductores validados por la cooperativa, con sus documentos al día.</li>
+              <li><svg class="ic"><use href="#i-documento"/></svg>Autorización de datos y política de privacidad (Ley 1581&nbsp;de&nbsp;2012).</li>
+              <li><svg class="ic"><use href="#i-qr"/></svg>Pagos reales con un proveedor autorizado de Bre-B.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="titular titular-corto">
+          <span class="antetitulo">Siguientes pasos</span>
+          <h2>De la demo a la app en las tiendas</h2>
+        </div>
+        <ol class="pasos">
+          <li><span class="paso-num">1</span><span class="paso-ic"><svg class="ic"><use href="#i-video"/></svg></span><b>Reunión de 30 minutos</b><span>La vemos funcionando en vivo, desde el celular de un pasajero y el de un conductor, y resolvemos dudas.</span></li>
+          <li><span class="paso-num">2</span><span class="paso-ic"><svg class="ic"><use href="#i-lista"/></svg></span><b>Confirmar datos</b><span>Tarifas, conductores y colores, para que TaxiCun salga con la información oficial (lista abajo).</span></li>
+          <li><span class="paso-num">3</span><span class="paso-ic"><svg class="ic"><use href="#i-pluma"/></svg></span><b>Firma</b><span>Firmamos y en una semana o menos Cootranspacho queda en TaxiCun, con su nombre y sus colores.</span></li>
+          <li><span class="paso-num">4</span><span class="paso-ic"><svg class="ic"><use href="#i-cohete"/></svg></span><b>Piloto y salida</b><span>Algunos conductores la usan primero, ya con su información, y luego se abre a toda la flota.</span></li>
+        </ol>
+        <div class="confirmar">
+          <p><b>Para confirmar con Cootranspacho:</b> nos ayudan con estos datos y TaxiCun queda con su información oficial.</p>
+          <ul>
+            <li><svg class="ic"><use href="#i-check"/></svg>El número de taxis de la flota</li>
+            <li><svg class="ic"><use href="#i-check"/></svg>El modelo de los taxis</li>
+            <li><svg class="ic"><use href="#i-check"/></svg>Color de los taxis</li>
+            <li><svg class="ic"><use href="#i-check"/></svg>La misión y la visión oficiales</li>
+            <li><svg class="ic"><use href="#i-check"/></svg>Las tarifas oficiales (las de la demo son de ejemplo)</li>
+            <li><svg class="ic"><use href="#i-check"/></svg>La lista de conductores, con sus móviles y placas</li>
+          </ul>
+        </div>
+
+        <div class="contacto">
+          <div class="contacto-texto">
+            <span class="contacto-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="46" height="25"><b>inter<span>OS</span></b></span>
+            <p class="contacto-nombre">Oscar Bernal</p>
+            <p class="contacto-cargo">Contacto comercial · interOS</p>
+            <a class="contacto-correo" href="mailto:info@taxicun.com"><svg class="ic"><use href="#i-correo"/></svg>info@taxicun.com</a>
+            <p class="contacto-llamado">Escríbanos y agendamos la reunión: en 30 minutos la ven funcionando.</p>
+          </div>
+          <div class="contacto-qr">
+            <div class="qr" data-qr="https://taxicun.com/pacho/" data-nombre="contacto" role="img" aria-label="Código QR de la demo de Cootranspacho"></div>
+            <span>Su demo</span>
+          </div>
+        </div>
+      </div>
+      <footer class="pie">
+        <span class="pie-proveedor"><img src="../../web/propuesta-interos.png" alt="" width="18" height="10">TaxiCun · desarrollada por <b>interOS</b></span>
+        <span class="aviso-datos">Demostración preparada con datos públicos; no es una página oficial de la cooperativa.</span>
+        <span class="pie-numero">6 / 6</span>
+      </footer>
+    </section>
+
+  </main>
+
+  <script type="module" src="../../web/propuesta.js?v=f7e065385d"></script>
+</body>
+</html>

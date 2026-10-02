@@ -1,0 +1,655 @@
+{
+  "id": "chia-cootrasinchia",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootrasinchia",
+    "nombreCorto": "Cootrasinchia",
+    "razonSocial": "Cooperativa de Transportadores Independientes de Chía (Cootrasinchia)",
+    "tipo": "cooperativa",
+    "lema": "Taxis independientes de Chía, a un toque",
+    "municipio": "Chía, Cundinamarca",
+    "pueblo": "Chía",
+    "telefono": "6018637000",
+    "telefonoVisible": "601 863 7000",
+    "whatsapp": "",
+    "correo": "cootrasinchia@hotmail.com",
+    "direccion": "Calle 13 # 12-61, centro, Chía, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "CHA",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana Centro",
+    "datosPendientes": [
+      "teléfono de la central",
+      "correo",
+      "whatsapp",
+      "año de fundación",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.862855,
+      "lng": -74.060795
+    }
+  },
+  "colores": {
+    "primario": "#00677F",
+    "primario2": "#00809C",
+    "oscuro": "#00303B",
+    "acento": "#FFB300",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.861286,
+    "lng": -74.06022
+  },
+  "ZONA": {
+    "sur": 4.54,
+    "norte": 5.18,
+    "oeste": -74.38,
+    "este": -73.74
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 6210,
+    "banderazo": 3450,
+    "porKm": 1725,
+    "redondeo": 500,
+    "recargoNocturno": 1932,
+    "recargoDominical": 1932,
+    "nocheDesde": 20,
+    "nocheHasta": 5,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "Carrera mínima ($6.210), banderazo ($3.450), unidad de 80 m a $138 (equivale a $1.725 por km) y recargo nocturno (20:00 a 05:00), dominical y festivo de $1.932: Decreto 364 del 24 de diciembre de 2025 de Chía. El decreto fija además el recargo puerta a puerta ($828), la espera ($138 por minuto), el servicio por hora ($31.050) y recargos por sector. El redondeo y las tarifas a otros municipios son de ejemplo, sujetos a confirmación de la empresa.",
+    "recargoUnico": true
+  },
+  "RUTAS": [
+    {
+      "id": "cajica",
+      "destino": "Cajicá",
+      "valor": 18000,
+      "km": 8,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "cota",
+      "destino": "Cota",
+      "valor": 19000,
+      "km": 8,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "tabio",
+      "destino": "Tabio",
+      "valor": 21000,
+      "km": 10,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "tenjo",
+      "destino": "Tenjo",
+      "valor": 26000,
+      "km": 13,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 29000,
+      "km": 15,
+      "min": 25,
+      "radioKm": 3
+    },
+    {
+      "id": "sopo",
+      "destino": "Sopó",
+      "valor": 39000,
+      "km": 22,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "zipaquira",
+      "destino": "Zipaquirá",
+      "valor": 40000,
+      "km": 23,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 47000,
+      "km": 27,
+      "min": 55,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Chía",
+      "cat": "centro",
+      "lat": 4.861286,
+      "lng": -74.06022
+    },
+    {
+      "id": "parque-santander",
+      "nombre": "Parque Santander",
+      "detalle": "Chía",
+      "cat": "centro",
+      "lat": 4.861286,
+      "lng": -74.06022
+    },
+    {
+      "id": "banco-av-villas",
+      "nombre": "Banco AV Villas",
+      "detalle": "Chía",
+      "cat": "comercio",
+      "lat": 4.861786,
+      "lng": -74.060198
+    },
+    {
+      "id": "clinica-ami-odontologia-estetica",
+      "nombre": "Clínica Ami odontologia estetica",
+      "detalle": "Chía",
+      "cat": "salud",
+      "lat": 4.861568,
+      "lng": -74.059793
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Chía",
+      "cat": "comercio",
+      "lat": 4.861545,
+      "lng": -74.060703
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Chía",
+      "cat": "comercio",
+      "lat": 4.86082,
+      "lng": -74.060746
+    },
+    {
+      "id": "cooptenjo",
+      "nombre": "cooptenjo",
+      "detalle": "Chía",
+      "cat": "comercio",
+      "lat": 4.861561,
+      "lng": -74.059406
+    },
+    {
+      "id": "maria-auxiliadora",
+      "nombre": "María Auxiliadora",
+      "detalle": "Chía",
+      "cat": "educacion",
+      "lat": 4.860121,
+      "lng": -74.059715
+    },
+    {
+      "id": "asadero-parilla",
+      "nombre": "Asadero & Parilla",
+      "detalle": "Chía",
+      "cat": "comida",
+      "lat": 4.861461,
+      "lng": -74.061536
+    },
+    {
+      "id": "supermercado-1ya",
+      "nombre": "Supermercado 1Ya",
+      "detalle": "Chía",
+      "cat": "comercio",
+      "lat": 4.861368,
+      "lng": -74.061608
+    },
+    {
+      "id": "hotel-noffra",
+      "nombre": "Hotel Noffra",
+      "detalle": "Chía",
+      "cat": "turismo",
+      "lat": 4.862718,
+      "lng": -74.060743
+    },
+    {
+      "id": "parque-ospina",
+      "nombre": "Parque Ospina",
+      "detalle": "Chía",
+      "cat": "centro",
+      "lat": 4.862211,
+      "lng": -74.058619
+    },
+    {
+      "id": "estacion-de-policia-el-curubito",
+      "nombre": "Estacion de Policia \"El curubito\"",
+      "detalle": "Chía",
+      "cat": "centro",
+      "lat": 4.859401,
+      "lng": -74.06031
+    },
+    {
+      "id": "pachunita",
+      "nombre": "Pachunita",
+      "detalle": "Chía",
+      "cat": "comida",
+      "lat": 4.862083,
+      "lng": -74.06268
+    },
+    {
+      "id": "restaurante-el-maria",
+      "nombre": "Restaurante El Mariá",
+      "detalle": "Chía",
+      "cat": "comida",
+      "lat": 4.86026,
+      "lng": -74.062728
+    },
+    {
+      "id": "p-s-ocupacional",
+      "nombre": "P.S. Ocupacional",
+      "detalle": "Chía",
+      "cat": "salud",
+      "lat": 4.863914,
+      "lng": -74.061255
+    },
+    {
+      "id": "hospital-san-antonio",
+      "nombre": "Hospital San Antonio",
+      "detalle": "Chía",
+      "cat": "salud",
+      "lat": 4.858221,
+      "lng": -74.060529
+    },
+    {
+      "id": "colegio-diosa-chia-primaria",
+      "nombre": "Colegio Diosa Chia Primaria",
+      "detalle": "Chía",
+      "cat": "educacion",
+      "lat": 4.859995,
+      "lng": -74.057402
+    },
+    {
+      "id": "iglesia-pentecostal-unida-de-colombia",
+      "nombre": "Iglesia Pentecostal Unida de Colombia",
+      "detalle": "Chía",
+      "cat": "centro",
+      "lat": 4.859983,
+      "lng": -74.063044
+    },
+    {
+      "id": "pollos-santa-monica",
+      "nombre": "Pollos Santa Monica",
+      "detalle": "Chía",
+      "cat": "comida",
+      "lat": 4.858424,
+      "lng": -74.062672
+    },
+    {
+      "id": "la-alacena-chia",
+      "nombre": "La Alacena Chia",
+      "detalle": "Chía",
+      "cat": "centro",
+      "lat": 4.857756,
+      "lng": -74.061621
+    },
+    {
+      "id": "salud-fisico",
+      "nombre": "Salud Fisico",
+      "detalle": "Chía",
+      "cat": "salud",
+      "lat": 4.862238,
+      "lng": -74.056172
+    },
+    {
+      "id": "paradero-de-interveredales",
+      "nombre": "Paradero de Interveredales",
+      "detalle": "Chía",
+      "cat": "centro",
+      "lat": 4.858772,
+      "lng": -74.063553
+    },
+    {
+      "id": "terminal-de-transportes-de-chia",
+      "nombre": "Terminal de Transportes de Chia",
+      "detalle": "Chía",
+      "cat": "centro",
+      "lat": 4.859928,
+      "lng": -74.064288
+    },
+    {
+      "id": "hoqabiga",
+      "nombre": "Hoqabiga",
+      "detalle": "Chía",
+      "cat": "centro",
+      "lat": 4.863108,
+      "lng": -74.055957
+    },
+    {
+      "id": "la-iglesia-de-jesucristo-de-los-santos-d",
+      "nombre": "La Iglesia de Jesucristo de los Santos de los Últimos Días",
+      "detalle": "Chía",
+      "cat": "centro",
+      "lat": 4.862375,
+      "lng": -74.055555
+    },
+    {
+      "id": "cementerio-de-chia",
+      "nombre": "Cementerio de Chía",
+      "detalle": "Chía",
+      "cat": "centro",
+      "lat": 4.865581,
+      "lng": -74.062331
+    },
+    {
+      "id": "colegio-stella-matutina",
+      "nombre": "Colegio Stella Matutina",
+      "detalle": "Chía",
+      "cat": "educacion",
+      "lat": 4.856738,
+      "lng": -74.061939
+    },
+    {
+      "id": "liceo-lunita",
+      "nombre": "Liceo Lunita",
+      "detalle": "Chía",
+      "cat": "educacion",
+      "lat": 4.858112,
+      "lng": -74.063945
+    },
+    {
+      "id": "restaurante-wan-li-china",
+      "nombre": "Restaurante Wan Li China",
+      "detalle": "Chía",
+      "cat": "comida",
+      "lat": 4.856255,
+      "lng": -74.061235
+    },
+    {
+      "id": "colegio-nacional-diversificado-conaldi",
+      "nombre": "Colegio Nacional Diversificado \"Conaldi\"",
+      "detalle": "Chía",
+      "cat": "educacion",
+      "lat": 4.856823,
+      "lng": -74.056526
+    },
+    {
+      "id": "institucion-educativa-diversificando-sed",
+      "nombre": "Institución Educativa Diversificando Sede Santa Lucía",
+      "detalle": "Chía",
+      "cat": "educacion",
+      "lat": 4.854399,
+      "lng": -74.062626
+    },
+    {
+      "id": "hotel",
+      "nombre": "Hotel",
+      "detalle": "Chía",
+      "cat": "turismo",
+      "lat": 4.853384,
+      "lng": -74.062501
+    },
+    {
+      "id": "san-pedro",
+      "nombre": "San Pedro",
+      "detalle": "Vereda de Chía",
+      "cat": "vereda",
+      "lat": 4.863805,
+      "lng": -74.048981
+    },
+    {
+      "id": "hotel-ibis-chia",
+      "nombre": "Hotel Ibis - Chía",
+      "detalle": "Chía · a 3,4 km",
+      "cat": "turismo",
+      "lat": 4.880971,
+      "lng": -74.037165
+    },
+    {
+      "id": "ibis",
+      "nombre": "Ibis",
+      "detalle": "Chía · a 3,4 km",
+      "cat": "turismo",
+      "lat": 4.881077,
+      "lng": -74.037013
+    },
+    {
+      "id": "cajica",
+      "nombre": "Cajicá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.91728,
+      "lng": -74.025584
+    },
+    {
+      "id": "cota",
+      "nombre": "Cota",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.808387,
+      "lng": -74.103677
+    },
+    {
+      "id": "sopo",
+      "nombre": "Sopó",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.907916,
+      "lng": -73.940233
+    },
+    {
+      "id": "tabio",
+      "nombre": "Tabio",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.916396,
+      "lng": -74.099095
+    },
+    {
+      "id": "tenjo",
+      "nombre": "Tenjo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.871304,
+      "lng": -74.147325
+    },
+    {
+      "id": "zipaquira",
+      "nombre": "Zipaquirá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.023475,
+      "lng": -74.003982
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Sandra Patiño",
+      "placa": "CHA 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1189,
+      "desde": 2006,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Germán Quintero",
+      "placa": "CHA 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1848,
+      "desde": 2014,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Martha Garzón",
+      "placa": "CHA 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1918,
+      "desde": 2018,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Héctor Bernal",
+      "placa": "CHA 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 467,
+      "desde": 2010,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Nelson Pinzón",
+      "placa": "CHA 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1738,
+      "desde": 2019,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Diana Forero",
+      "placa": "CHA 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1972,
+      "desde": 2016,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Luz Marina Rojas",
+      "placa": "CHA 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1542,
+      "desde": 2016,
+      "tel": "3000000026"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Rubén Sarmiento",
+      "placa": "CHA 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1909,
+      "desde": 2008,
+      "tel": "3000000028"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootrasinchia, la Cooperativa de Transportadores Independientes de Chía, presta servicio de taxis y de camionetas mixtas dentro y fuera de Chía desde su oficina de la Calle 13 # 12-61, en el centro del municipio, con transportadores asociados que conocen la ciudad y sus veredas.\n\nCon la app, la cooperativa lleva ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay cerca, sigues el móvil en el mapa y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Chía y sus veredas con transportadores asociados que conocen el municipio, con seguridad, puntualidad y buen trato para cada pasajero.",
+    "vision": "Ser la forma más fácil y confiable de pedir un taxi en Chía: a un toque, con tarifa clara y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Camionetas mixtas",
+      "Viajes a Cajicá, Cota y la Sabana",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Taxis independientes de Chía, a un toque"
+  },
+  "fuentes": [
+    "https://web.chia-cundinamarca.gov.co/2024/03/11/mesa-entre-taxistas-y-administracion/",
+    "https://www.aiyellow.com/cootrasinchia/",
+    "https://www.nexdu.com/co/chia-cun/empresa/cootrasinchia-459557",
+    "https://taximigo.com/colombia/taxis-chia/",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=800138120",
+    "https://autoserviciochia.com/wp-content/uploads/2026/04/DECRETO-364-DE-2025-individual-Taxi.pdf",
+    "https://web.chia-cundinamarca.gov.co/2026/09/02/300-taxistas-de-chia-y-cajica-eliminan-planilla-de-viaje-ocasional/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es taxi: la Alcaldía de Chía (11-mar-2024) informó de una «mesa técnica entre la Secretaría de Movilidad y la Cooperativa de Transportadores independientes, Cootrasinchia» sobre el alza de la tarifa del taxi, el transporte ilegal y las zonas amarillas. Su aviso de directorio: «Servicio de taxis y camionetas mixtas dentro y fuera de la ciudad» (AiYellow).",
+    "Taxis y camionetas mixtas: su actividad principal en el RUES es la 4922 (transporte mixto). En directorios aparece también como «Cootranschia».",
+    "Razón social, NIT 800.138.120-1, representante legal Jorge Armando Herrera Riveros y matrícula del 18-mar-1997 (renovada en 2026): RUES abierto (https://www.datos.gov.co/resource/c82u-588k.json?nit=800138120). La matrícula de 1997 no es el año de fundación (no se halló).",
+    "Contacto SOLO de directorios sin fecha (AiYellow y Nexdu): fijos (601) 863 7000, (601) 863 1333 y (601) 865 1386; correo «cootrasinchía@hotmail.com», escrito con tilde (Hotmail no la admite): se deja sin tilde. Confirmar teléfono y correo antes de enviar nada.",
+    "Dirección Calle 13 # 12-61, centro (AiYellow, Nexdu y directorios de taxis); oficina ubicada en el cruce de la Calle 13 con la Carrera 12 en OpenStreetMap (aproximada). Facebook casi sin contenido: https://www.facebook.com/cootrasinchia.cootrasinchia/ .",
+    "Tarifas oficiales: Decreto 364 del 24-dic-2025 de Chía (verificado en el PDF): unidad de 80 m $138; banderazo $3.450 (25 u.); carrera mínima $6.210 (45 u.); puerta a puerta $828; recargo nocturno (20:00-05:00), domingos y festivos $1.932 (un solo recargo); espera 60 s $138; hora $31.050; recargos de recorrido: Clínica de la Sabana $8.142, Yerbabuena-Segunda Vara al centro $19.320, Fusca-Torca-La Caro-Yerbabuena Baja-Primera Vara-Sindamanoy $8.142, Rincón de Fagua-La Valvanera-Resguardo indígena $3.312. PDF: https://autoserviciochia.com/wp-content/uploads/2026/04/DECRETO-364-DE-2025-individual-Taxi.pdf . En la ficha, porKm = 12,5 unidades × $138 = $1.725; la demo suma el recargo nocturno y el dominical por separado (el domingo de noche cobraría los dos: revisar).",
+    "Desde el 1-sep-2026 los taxis de Chía y Cajicá no pagan planilla de viaje ocasional entre los dos municipios (Decreto 1001 del 4-ago-2026 del Ministerio de Transporte y acta de entendimiento entre las alcaldías): https://web.chia-cundinamarca.gov.co/2026/09/02/300-taxistas-de-chia-y-cajica-eliminan-planilla-de-viaje-ocasional/ . La Alcaldía de Chía habla de más de 300 taxis entre 6 empresas de Chía y Cajicá. En Chía solo se identificaron esta y Auto Servicio Chía (Cajicá tiene 3).",
+    "Colores propios de interOS (azul petróleo y ámbar); el lema también es de interOS. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Cootransviota — Pide tu taxi",
+  "short_name": "Cootransviota",
+  "description": "Pide tu taxi de Cootransviota en Viotá con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#15803D",
+  "theme_color": "#15803D",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/viota/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/viota/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/viota/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

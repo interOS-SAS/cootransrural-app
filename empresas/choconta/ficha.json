@@ -1,0 +1,495 @@
+{
+  "id": "choconta",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Chocontax",
+    "nombreCorto": "Chocontax",
+    "razonSocial": "Chocontax S.A.S.",
+    "tipo": "empresa",
+    "lema": "Comodidad y servicio a su alcance",
+    "municipio": "Chocontá, Cundinamarca",
+    "pueblo": "Chocontá",
+    "region": "provincia de Almeidas",
+    "telefono": "3157389611",
+    "telefonoVisible": "315 738 9611",
+    "whatsapp": "",
+    "correo": "chocontax@outlook.com",
+    "direccion": "Calle 7 # 2-63, Chocontá, Cundinamarca",
+    "web": "",
+    "sitioOficial": "http://www.chocontax.com",
+    "fundada": 2016,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "CHO",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "oficina": {
+      "lat": 5.144188,
+      "lng": -73.683054
+    },
+    "datosPendientes": [
+      "número de taxis",
+      "tarifas vigentes (el último decreto hallado es de 2018)",
+      "si el 315 738 9611 recibe WhatsApp",
+      "horario del servicio (no hay evidencia de servicio 24 horas)",
+      "colores exactos del logo"
+    ]
+  },
+  "colores": {
+    "primario": "#005BA6",
+    "primario2": "#0079B8",
+    "oscuro": "#062A4A",
+    "acento": "#FFC21A",
+    "rojo": "#C4161C"
+  },
+  "CENTRO": {
+    "lat": 5.144931,
+    "lng": -73.685207
+  },
+  "ZONA": {
+    "sur": 4.83,
+    "norte": 5.47,
+    "oeste": -74.0,
+    "este": -73.36
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "villapinzon",
+      "destino": "Villapinzón",
+      "valor": 27000,
+      "km": 14,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "macheta",
+      "destino": "Machetá",
+      "valor": 35000,
+      "km": 20,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "sesquile",
+      "destino": "Sesquilé",
+      "valor": 37000,
+      "km": 21,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "suesca",
+      "destino": "Suesca",
+      "valor": 37000,
+      "km": 21,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "gachancipa",
+      "destino": "Gachancipá",
+      "valor": 52000,
+      "km": 31,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "tibirita",
+      "destino": "Tibirita",
+      "valor": 61000,
+      "km": 37,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "manta",
+      "destino": "Manta",
+      "valor": 67000,
+      "km": 41,
+      "min": 70,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 106000,
+      "km": 66,
+      "min": 85,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 136000,
+      "km": 87,
+      "min": 115,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Chocontá",
+      "cat": "centro",
+      "lat": 5.144931,
+      "lng": -73.685207
+    },
+    {
+      "id": "hospital-san-martin-de-porres",
+      "nombre": "Hospital San Martín de Porres",
+      "detalle": "Chocontá",
+      "cat": "salud",
+      "lat": 5.145473,
+      "lng": -73.682486
+    },
+    {
+      "id": "parroquia-nuestra-senora-de-la-salud",
+      "nombre": "Parroquia Nuestra Señora de la Salud",
+      "detalle": "Chocontá",
+      "cat": "centro",
+      "lat": 5.144336,
+      "lng": -73.684851
+    },
+    {
+      "id": "servilujos",
+      "nombre": "Servilujos",
+      "detalle": "Chocontá",
+      "cat": "turismo",
+      "lat": 5.147377,
+      "lng": -73.68559
+    },
+    {
+      "id": "arizona",
+      "nombre": "Estación de servicio Arizona",
+      "detalle": "Chocontá",
+      "cat": "comercio",
+      "lat": 5.148686,
+      "lng": -73.68378
+    },
+    {
+      "id": "ied-agroindustrial-santiago-de-choconta",
+      "nombre": "IED Agroindustrial Santiago de Chocontá",
+      "detalle": "Chocontá",
+      "cat": "educacion",
+      "lat": 5.146879,
+      "lng": -73.680639
+    },
+    {
+      "id": "iedp-rufino-jose-cuervo",
+      "nombre": "IEDp Rufino José Cuervo",
+      "detalle": "Chocontá",
+      "cat": "educacion",
+      "lat": 5.148048,
+      "lng": -73.677455
+    },
+    {
+      "id": "cementerio",
+      "nombre": "Cementerio",
+      "detalle": "Chocontá",
+      "cat": "centro",
+      "lat": 5.144338,
+      "lng": -73.69147
+    },
+    {
+      "id": "villa-cecilia",
+      "nombre": "Villa Cecilia",
+      "detalle": "Chocontá",
+      "cat": "comida",
+      "lat": 5.140342,
+      "lng": -73.690861
+    },
+    {
+      "id": "ese-el-satelite",
+      "nombre": "Estación de servicio El Satélite",
+      "detalle": "Chocontá · a 1,3 km",
+      "cat": "comercio",
+      "lat": 5.136994,
+      "lng": -73.691422
+    },
+    {
+      "id": "de-veracruz",
+      "nombre": "Veracruz",
+      "detalle": "Vereda de Chocontá",
+      "cat": "vereda",
+      "lat": 5.129266,
+      "lng": -73.684794
+    },
+    {
+      "id": "parador-de-santi",
+      "nombre": "Parador de Santi",
+      "detalle": "Chocontá · a 2,3 km",
+      "cat": "comida",
+      "lat": 5.129185,
+      "lng": -73.695473
+    },
+    {
+      "id": "las-cruces",
+      "nombre": "Las Cruces",
+      "detalle": "Vereda de Chocontá",
+      "cat": "vereda",
+      "lat": 5.12017,
+      "lng": -73.70934
+    },
+    {
+      "id": "de-el-tejar",
+      "nombre": "El Tejar",
+      "detalle": "Vereda de Chocontá",
+      "cat": "vereda",
+      "lat": 5.115549,
+      "lng": -73.659093
+    },
+    {
+      "id": "villapinzon",
+      "nombre": "Villapinzón",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.21555,
+      "lng": -73.597174
+    },
+    {
+      "id": "sesquile",
+      "nombre": "Sesquilé",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.044767,
+      "lng": -73.795553
+    },
+    {
+      "id": "suesca",
+      "nombre": "Suesca",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.103341,
+      "lng": -73.799006
+    },
+    {
+      "id": "macheta",
+      "nombre": "Machetá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.081863,
+      "lng": -73.606559
+    },
+    {
+      "id": "tibirita",
+      "nombre": "Tibirita",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.052097,
+      "lng": -73.504989
+    },
+    {
+      "id": "manta",
+      "nombre": "Manta",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.008713,
+      "lng": -73.539109
+    },
+    {
+      "id": "gachancipa",
+      "nombre": "Gachancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.992029,
+      "lng": -73.872111
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Yolanda Prieto",
+      "placa": "CHO 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 655,
+      "desde": 2014,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Diana Forero",
+      "placa": "CHO 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2218,
+      "desde": 2010,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Fabio Cruz",
+      "placa": "CHO 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 600,
+      "desde": 2013,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Carlos Rodríguez",
+      "placa": "CHO 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1437,
+      "desde": 2006,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-18",
+      "movil": "018",
+      "nombre": "Rubén Sarmiento",
+      "placa": "CHO 618",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1619,
+      "desde": 2017,
+      "tel": "3000000018"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Jorge Castañeda",
+      "placa": "CHO 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1911,
+      "desde": 2017,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Sandra Patiño",
+      "placa": "CHO 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1330,
+      "desde": 2015,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-30",
+      "movil": "030",
+      "nombre": "Wilson Gómez",
+      "placa": "CHO 630",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2226,
+      "desde": 2014,
+      "tel": "3000000030"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Chocontax S.A.S. es la empresa de taxis de Chocontá. Nació el 24 de octubre de 2016 para darle al municipio una nueva forma de moverse, en vehículos seguros, cómodos y con buena atención, y la Alcaldía la habilitó con la Resolución 770 de 2016. Desde su oficina en la Calle 7 # 2-63 atiende el casco urbano y las veredas, y con planilla de viaje ocasional lleva pasajeros a cualquier parte del país.\n\nCon la app, Chocontax puede llevar ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Chocontax S.A.S., empresa de servicio público de transporte en vehículos tipo taxi, sirve con alta calidad, competitividad y seguridad a la comunidad del municipio de Chocontá.",
+    "vision": "En 2030, Chocontax S.A.S. será la empresa líder de transporte en la región de los Almeidas, con las mejores prácticas de seguridad y eficacia en sus servicios.",
+    "servicios": [
+      "Taxi en el casco urbano de Chocontá",
+      "Servicio a las veredas",
+      "Viajes a Villapinzón, Sesquilé, Suesca y Machetá",
+      "Viajes ocasionales a cualquier parte del país",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Taxis de Chocontá: comodidad y servicio a su alcance"
+  },
+  "fuentes": [
+    "http://www.chocontax.com/",
+    "http://www.chocontax.com/contacto/",
+    "http://web.archive.org/web/20220102085339/http://www.chocontax.com/",
+    "http://web.archive.org/web/20251007220152/http://www.chocontax.com/index.html",
+    "https://www.facebook.com/TaxisChoconta/",
+    "https://www.facebook.com/chocontax.sas/",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=901020940",
+    "https://www.datacreditoempresas.com.co/directorio/chocontax-sas.html",
+    "http://www.choconta-cundinamarca.gov.co/sites/chocontacundinamarca/content/files/000064/3162_decreto-014-de-201807032018_0001.pdf",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza alta. Razón social Chocontax S.A.S., NIT 901.020.940-2, CIIU 4921, matrícula 2747570 del 24-oct-2016 y renovación del 23-feb-2026: RUES abierto (datos.gov.co c82u-588k) y datacreditoempresas. Representante legal según el RUES: Javier Alexander Fernández Mora.",
+    "Es empresa de taxis: su propia web (versiones archivadas de 2022 y de jul–oct 2025) dice «somos una empresa de transporte individual de pasajeros en vehículos tipo taxi», que nació el 24 de octubre de 2016, que la Alcaldía de Chocontá la habilitó con la Resolución 770 de 2016 y que presta servicio a cualquier parte del país con planillas de viaje ocasional. Su página de Facebook «Chocontax» (unos 1.165 seguidores) se presenta como empresa de taxis de Chocontá.",
+    "Teléfono 315 738 9611, correo chocontax@outlook.com y dirección Calle 7 # 2-63: su web actual (http://www.chocontax.com/contacto/, © 2025). El correo y la dirección ya salían en la web de 2022. No se sabe si el 315 738 9611 recibe WhatsApp, así que el campo whatsapp queda vacío.",
+    "Línea anterior: 312 571 4169, que su web publicaba como «Línea de atención al cliente» de 2022 a oct-2025; puede estar desactualizada. Hasta oct-2025 la web también enlazaba un grupo de WhatsApp para pedir servicios. No se usan otros números que circulaban: uno es de otra empresa de taxis de Tocancipá y otro no tiene fuente.",
+    "Misión, visión y lema («Comodidad y servicio a su alcance»): textos de su propia web (versión archivada), con ajustes mínimos de redacción. La historia resume lo que dice esa misma web. En nov-2025 rehicieron la web con una plantilla que solo trae el contacto.",
+    "Colores tomados del logo de 2022 (letras en azul y cian, silueta de auto en negro y acento rojo): aproximados, hay que confirmarlos con la empresa.",
+    "Tarifas: el último acto hallado es el Decreto 014 del 1-feb-2018 de Chocontá (perímetro urbano $4.000; veredas entre $8.000 y $30.000; zonas amarillas en el parque principal, en la Carrera 3 frente al hospital y en el Centro de Despacho de Transporte Público): http://www.choconta-cundinamarca.gov.co/sites/chocontacundinamarca/content/files/000064/3162_decreto-014-de-201807032018_0001.pdf. Como es de 2018, no se pone como tarifa vigente: la demo usa valores de ejemplo.",
+    "La app «Chocontax» de App Store y Google Play hoy da 404 en las dos tiendas y no tiene copia archivada: en la propuesta no hay que darla por hecha.",
+    "Oficina: ubicación aproximada sobre la Calle 7, entre las carreras 2 y 3, calculada con los cruces de calles de OpenStreetMap.",
+    "Destinos: municipios vecinos de la provincia de Almeidas y Gachancipá, por la Autopista Norte. Chocontá queda a unos 66 km del Portal Norte por carretera (OSRM); por eso se incluyen el Portal Norte y el aeropuerto."
+  ]
+}

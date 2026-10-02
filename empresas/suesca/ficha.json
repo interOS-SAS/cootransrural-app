@@ -1,0 +1,553 @@
+{
+  "id": "suesca",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootransuesca",
+    "nombreCorto": "Cootransuesca",
+    "razonSocial": "La Cooperativa Multiactiva de Transportadores de Suesca (Cootransuesca)",
+    "tipo": "cooperativa",
+    "lema": "Taxis de Suesca, tierra de rocas",
+    "municipio": "Suesca, Cundinamarca",
+    "pueblo": "Suesca",
+    "region": "provincia de Almeidas",
+    "telefono": "",
+    "telefonoVisible": "",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "SUE",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "oficina": null,
+    "datosPendientes": [
+      "teléfono o WhatsApp de la central",
+      "correo",
+      "dirección de la sede",
+      "número de taxis",
+      "año de fundación",
+      "colores de la cooperativa",
+      "misión y visión oficiales"
+    ]
+  },
+  "colores": {
+    "primario": "#87412F",
+    "primario2": "#A0523B",
+    "oscuro": "#3A1A12",
+    "acento": "#FFC21A",
+    "rojo": "#E53935"
+  },
+  "CENTRO": {
+    "lat": 5.103341,
+    "lng": -73.799006
+  },
+  "ZONA": {
+    "sur": 4.78,
+    "norte": 5.42,
+    "oeste": -74.12,
+    "este": -73.48
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 7000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 0,
+    "recargoDominical": 0,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima ($7.000) y la ruta Suesca–Sesquilé ($40.500) son las del Decreto 010 del 29 de enero de 2026 de Suesca, que no fija recargos nocturnos ni dominicales para el taxi; los demás valores son de ejemplo, sujetos a confirmación de la cooperativa."
+  },
+  "RUTAS": [
+    {
+      "id": "sesquile",
+      "destino": "Sesquilé",
+      "valor": 40500,
+      "km": 8,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "nemocon",
+      "destino": "Nemocón",
+      "valor": 27000,
+      "km": 14,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "gachancipa",
+      "destino": "Gachancipá",
+      "valor": 33000,
+      "km": 18,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "choconta",
+      "destino": "Chocontá",
+      "valor": 40000,
+      "km": 23,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "cucunuba",
+      "destino": "Cucunubá",
+      "valor": 41000,
+      "km": 23,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "tocancipa",
+      "destino": "Tocancipá",
+      "valor": 40000,
+      "km": 23,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 86000,
+      "km": 53,
+      "min": 65,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 116000,
+      "km": 73,
+      "min": 95,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Suesca",
+      "cat": "centro",
+      "lat": 5.103341,
+      "lng": -73.799006
+    },
+    {
+      "id": "banco-agrario",
+      "nombre": "Banco Agrario",
+      "detalle": "Suesca",
+      "cat": "comercio",
+      "lat": 5.103118,
+      "lng": -73.798554
+    },
+    {
+      "id": "restaurante-don-tono-ahumados-artesanale",
+      "nombre": "Restaurante Don Toño, Ahumados Artesanales",
+      "detalle": "Suesca",
+      "cat": "comida",
+      "lat": 5.103771,
+      "lng": -73.799274
+    },
+    {
+      "id": "estacion-de-policia-suesca",
+      "nombre": "Estación de Policía Suesca",
+      "detalle": "Suesca",
+      "cat": "centro",
+      "lat": 5.102767,
+      "lng": -73.798907
+    },
+    {
+      "id": "alcaldia-municipal-de-suesca",
+      "nombre": "Alcaldía Municipal de Suesca",
+      "detalle": "Suesca",
+      "cat": "centro",
+      "lat": 5.102775,
+      "lng": -73.799181
+    },
+    {
+      "id": "casona-quesada",
+      "nombre": "Casona Quesada",
+      "detalle": "Suesca",
+      "cat": "turismo",
+      "lat": 5.103945,
+      "lng": -73.799624
+    },
+    {
+      "id": "plaza-de-mercado-de-suesca",
+      "nombre": "Plaza de Mercado de Suesca",
+      "detalle": "Suesca",
+      "cat": "centro",
+      "lat": 5.101595,
+      "lng": -73.798823
+    },
+    {
+      "id": "polideportivo-villa-patricia",
+      "nombre": "Polideportivo Villa Patricia",
+      "detalle": "Suesca",
+      "cat": "centro",
+      "lat": 5.104441,
+      "lng": -73.801145
+    },
+    {
+      "id": "biomax",
+      "nombre": "Biomax",
+      "detalle": "Suesca",
+      "cat": "comercio",
+      "lat": 5.101275,
+      "lng": -73.797033
+    },
+    {
+      "id": "parque-deportivo-carrizosa",
+      "nombre": "Parque Deportivo Carrizosa",
+      "detalle": "Suesca",
+      "cat": "centro",
+      "lat": 5.100044,
+      "lng": -73.799052
+    },
+    {
+      "id": "cementerio-municipal-de-suesca",
+      "nombre": "Cementerio Municipal de Suesca",
+      "detalle": "Suesca",
+      "cat": "centro",
+      "lat": 5.106902,
+      "lng": -73.800307
+    },
+    {
+      "id": "ied-gonzalo-jimenez-de-quesada",
+      "nombre": "IED Gonzalo Jiménez de Quesada",
+      "detalle": "Suesca",
+      "cat": "educacion",
+      "lat": 5.098224,
+      "lng": -73.79868
+    },
+    {
+      "id": "vamonos-pa-l-norte",
+      "nombre": "Vamonos pa'l norte",
+      "detalle": "Suesca · a 1,3 km",
+      "cat": "comida",
+      "lat": 5.093675,
+      "lng": -73.79214
+    },
+    {
+      "id": "rica-pizza",
+      "nombre": "Rica Pizza",
+      "detalle": "Suesca · a 1,4 km",
+      "cat": "comida",
+      "lat": 5.093139,
+      "lng": -73.792274
+    },
+    {
+      "id": "dona-ma",
+      "nombre": "Dona Ma",
+      "detalle": "Suesca · a 1,4 km",
+      "cat": "comida",
+      "lat": 5.092956,
+      "lng": -73.792231
+    },
+    {
+      "id": "el-descanso",
+      "nombre": "El Descanso",
+      "detalle": "Suesca · a 1,4 km",
+      "cat": "turismo",
+      "lat": 5.092368,
+      "lng": -73.792102
+    },
+    {
+      "id": "hostal-caminos-de-suesca",
+      "nombre": "Hostal Caminos de Suesca",
+      "detalle": "Suesca · a 1,5 km",
+      "cat": "turismo",
+      "lat": 5.092257,
+      "lng": -73.792103
+    },
+    {
+      "id": "hotel-rural-la-esperanza",
+      "nombre": "Hotel Rural La esperanza",
+      "detalle": "Suesca · a 1,6 km",
+      "cat": "turismo",
+      "lat": 5.115715,
+      "lng": -73.792312
+    },
+    {
+      "id": "chitiva-alto",
+      "nombre": "Chitiva Alto",
+      "detalle": "Vereda de Suesca",
+      "cat": "vereda",
+      "lat": 5.102906,
+      "lng": -73.819192
+    },
+    {
+      "id": "guita",
+      "nombre": "Guita",
+      "detalle": "Vereda de Suesca",
+      "cat": "vereda",
+      "lat": 5.108517,
+      "lng": -73.77859
+    },
+    {
+      "id": "hostal-casa-lantana",
+      "nombre": "Hostal Casa Lantana",
+      "detalle": "Suesca · a 2,4 km",
+      "cat": "turismo",
+      "lat": 5.084503,
+      "lng": -73.788134
+    },
+    {
+      "id": "chitiva-bajo",
+      "nombre": "Chitiva Bajo",
+      "detalle": "Vereda de Suesca",
+      "cat": "vereda",
+      "lat": 5.087256,
+      "lng": -73.81993
+    },
+    {
+      "id": "cacicazgo",
+      "nombre": "Cacicazgo",
+      "detalle": "Vereda de Suesca",
+      "cat": "vereda",
+      "lat": 5.078397,
+      "lng": -73.788187
+    },
+    {
+      "id": "tausaquira",
+      "nombre": "Tausaquirá",
+      "detalle": "Vereda de Suesca",
+      "cat": "vereda",
+      "lat": 5.122395,
+      "lng": -73.775342
+    },
+    {
+      "id": "sesquile",
+      "nombre": "Sesquilé",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.044767,
+      "lng": -73.795553
+    },
+    {
+      "id": "choconta",
+      "nombre": "Chocontá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.145941,
+      "lng": -73.683951
+    },
+    {
+      "id": "nemocon",
+      "nombre": "Nemocón",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.067365,
+      "lng": -73.877019
+    },
+    {
+      "id": "cucunuba",
+      "nombre": "Cucunubá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.250279,
+      "lng": -73.766463
+    },
+    {
+      "id": "gachancipa",
+      "nombre": "Gachancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.992029,
+      "lng": -73.872111
+    },
+    {
+      "id": "tocancipa",
+      "nombre": "Tocancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.965718,
+      "lng": -73.91366
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Sandra Patiño",
+      "placa": "SUE 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1198,
+      "desde": 2016,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Wilson Gómez",
+      "placa": "SUE 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1029,
+      "desde": 2011,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-17",
+      "movil": "017",
+      "nombre": "Rubén Sarmiento",
+      "placa": "SUE 617",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1604,
+      "desde": 2006,
+      "tel": "3000000017"
+    },
+    {
+      "id": "demo-18",
+      "movil": "018",
+      "nombre": "Diana Forero",
+      "placa": "SUE 618",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 454,
+      "desde": 2011,
+      "tel": "3000000018"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Martha Garzón",
+      "placa": "SUE 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1978,
+      "desde": 2021,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Héctor Bernal",
+      "placa": "SUE 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 766,
+      "desde": 2006,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Fabio Cruz",
+      "placa": "SUE 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1424,
+      "desde": 2017,
+      "tel": "3000000028"
+    },
+    {
+      "id": "demo-30",
+      "movil": "030",
+      "nombre": "Jairo Moreno",
+      "placa": "SUE 630",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1116,
+      "desde": 2014,
+      "tel": "3000000030"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootransuesca, la Cooperativa Multiactiva de Transportadores de Suesca, mueve a la gente de Suesca en el casco urbano y por las veredas: tiene el transporte colectivo urbano y veredal y también el servicio de taxi, con las tarifas que fija la Alcaldía. Sus taxis llegan a veredas como Santa Rosa, Hato Grande, Palmira, Cacicazgo o Barrancas, y a Sesquilé y los municipios vecinos.\n\nCon la app, Cootransuesca puede llevar ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Suesca y sus veredas con conductores asociados que conocen cada camino, con seguridad, puntualidad, buen trato y las tarifas oficiales del municipio.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Suesca: un taxi a un toque, con la tarifa clara antes de subir y el móvil en el mapa, del pueblo a la vereda más lejana.",
+    "servicios": [
+      "Taxi en el casco urbano con la tarifa mínima oficial",
+      "Servicio a las veredas con tarifa fija",
+      "Viajes de ida y regreso a las veredas",
+      "Viajes a Sesquilé y a los municipios vecinos",
+      "Traslados a Bogotá y al aeropuerto bajo reserva"
+    ],
+    "frase": "Del pueblo a la vereda, tu taxi en Suesca"
+  },
+  "fuentes": [
+    "http://www.suesca-cundinamarca.gov.co/sites/suescacundinamarca/content/files/001375/68743_decreto-n-010-de-2026.pdf",
+    "https://www.suesca-cundinamarca.gov.co/api/v1/contents?keyword=taxi&pageSize=50&page=0",
+    "https://www.suesca-cundinamarca.gov.co/api/v1/contents?keyword=cootransuesca&pageSize=50&page=0",
+    "http://www.suesca-cundinamarca.gov.co/sites/suescacundinamarca/content/files/000470/23460_resolucion--n-433--de-30-de-diciembre-de-2019.pdf",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832000051",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza alta en que tiene taxis: en los considerandos del Decreto 010 del 29-ene-2026 de Suesca, la Cooperativa Multiactiva de Transportadores de Suesca, Cootransuesca, pide el incremento de las tarifas del colectivo «al igual que la fijación de las tarifas para la prestación del servicio individual de transporte modalidad taxis, tanto urbano como rural», y el artículo segundo fija las tarifas máximas del taxi. Es una cooperativa mixta: también tiene el colectivo urbano y veredal, con la ruta 7 y las rutas de influencia Suesca–Sesquilé.",
+    "NIT 832.000.051-4, CIIU 4921 (secundario 4732), matrícula en el RUES del 19-nov-1997 (ESAL 90006770) y renovación del 31-mar-2026: RUES abierto (datos.gov.co c82u-588k). Representante legal según el RUES: Juan Antonio Soche Moreno. Tiene registrado el establecimiento «Almacén de Repuestos Cootransuesca». La Alcaldía le otorgó la Resolución 076 de 2002, modificada por la Resolución 433 del 30-dic-2019 (no se pudo leer su contenido). Año de fundación sin confirmar.",
+    "No se encontró web, Facebook, correo ni teléfono, y no figura en SECOP II: teléfono, correo y dirección quedan vacíos. Un celular que radiotaxi.com.co publica como «taxi Suesca» es de una empresa de transporte especial, no de la cooperativa: no usarlo.",
+    "Tarifas: Decreto 010 del 29-ene-2026 de Suesca, http://www.suesca-cundinamarca.gov.co/sites/suescacundinamarca/content/files/001375/68743_decreto-n-010-de-2026.pdf. Tarifa mínima del taxi: $7.000. Ejemplos: La Virgen $11.600, Los Ruices $13.900, La Cruz $15.100, Suesca–La Playa $26.600, Suesca–Sesquilé $40.500 y Suesca–El Peaje $52.100. Por sectores hay tarifa de ida y de ida y regreso (Santa Rosa–La Virgen $9.500 / $19.000; Barrancas $53.700 / $107.400). El decreto no fija recargos nocturnos ni dominicales. Decretos anteriores de la misma serie: 011 de 2018, 021 de 2019, 013 de 2022 y 024 de 2025.",
+    "Colores propios de interOS (ocre de las rocas de Suesca y dorado).",
+    "Misión y visión: redacción general propuesta por interOS, no textos oficiales.",
+    "Oficina en null: no hay dirección confirmada (la demo usa el centro del pueblo).",
+    "Destinos: municipios vecinos. Suesca queda a unos 53 km del Portal Norte por carretera (OSRM); por eso se incluyen el Portal Norte y el aeropuerto."
+  ]
+}

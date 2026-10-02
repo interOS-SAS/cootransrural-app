@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Coomofu · Conductor</title>
+  <meta name="description" content="App de los conductores de Coomofu.">
+  <meta name="theme-color" content="#111111">
+  <meta name="robots" content="noindex">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Conductor Coomofu">
+  <link rel="manifest" href="manifest.webmanifest">
+  <script>window.CT_EMPRESA = 'funza-coomofu';</script>
+  <link rel="icon" type="image/png" sizes="32x32" href="../../empresas/funza-coomofu/favicon-32.png">
+  <link rel="apple-touch-icon" href="../../empresas/funza-coomofu/apple-touch-icon.png">
+  <link rel="stylesheet" href="../../fuentes/fuentes.css?v=d7cb94cf69">
+  <style>
+    html,body{margin:0;height:100%;background:#0F6935}
+    #carga{position:fixed;inset:0;display:grid;place-items:center;background:#0F6935;color:#fff;font:600 16px/1.4 system-ui,sans-serif;z-index:9999;transition:opacity .35s}
+    #carga img{width:96px;height:96px;border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:latido 1.4s ease-in-out infinite}
+    #carga p{margin:16px 0 0;text-align:center;opacity:.85}
+    @keyframes latido{50%{transform:scale(1.06)}}
+    #carga.oculta{opacity:0;pointer-events:none}
+  </style>
+</head>
+<body>
+  <div id="carga"><div style="text-align:center"><img src="../../empresas/funza-coomofu/icono-192.png" alt=""><p>Coomofu<br><small>Taxis de Funza y Mosquera desde 1979</small></p></div></div>
+  <div id="app"></div>
+  <noscript>Para usar la app de Coomofu activa JavaScript.</noscript>
+  <script>
+    // Si en 15 s la app no terminó de cargar (sin señal o sin los datos de la
+    // cooperativa), se dice en pantalla en vez de quedarse cargando.
+    setTimeout(function () {
+      var c = document.getElementById('carga');
+      if (!c || c.classList.contains('oculta')) return;
+      var p = c.querySelector('p');
+      if (p) p.innerHTML = 'No pudimos cargar la app.<br><small>Revisa tu conexión a internet e inténtalo de nuevo.</small><br><button type="button" onclick="location.reload()" style="margin-top:14px;min-height:44px;padding:0 20px;border:0;border-radius:999px;background:#fff;color:#111;font:700 15px system-ui,sans-serif;cursor:pointer">Reintentar</button>';
+      c.querySelector('img') && (c.querySelector('img').style.animation = 'none');
+    }, 15000);
+  </script>
+  <script type="module">
+    import * as N from '../../nucleo/index.js';
+    const VERSION_DISENOS = 'dcbadcdef2';
+    const raiz = document.getElementById('app');
+    const parametros = new URLSearchParams(location.search);
+    const d = N.perfil.disenoElegido();
+    document.documentElement.dataset.diseno = d;
+    if (parametros.get('movil')) N.perfil.guardarReferido(parametros.get('movil'));
+    if (parametros.get('vitrina')) document.documentElement.dataset.vitrina = '1';
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = `../../disenos/${d}/conductor.css?v=${VERSION_DISENOS}`;
+    document.head.appendChild(css);
+    try {
+      const { montar } = await import(`../../disenos/${d}/conductor.js?v=${VERSION_DISENOS}`);
+      await montar(raiz, { N, diseno: d, vitrina: Boolean(parametros.get('vitrina')) });
+    } catch (e) {
+      console.error(e);
+      raiz.innerHTML = '<p style="color:#fff;font:16px system-ui;padding:24px">No se pudo abrir el diseño «' + d + '». ' + (e.message || '') + '</p>';
+    }
+    document.getElementById('carga').classList.add('oculta');
+    setTimeout(() => document.getElementById('carga').remove(), 400);
+    if (!parametros.get('vitrina')) N.registrarServiceWorker();
+  </script>
+</body>
+</html>

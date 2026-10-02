@@ -1,0 +1,609 @@
+{
+  "id": "tocancipa-transfuturo",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Transfuturo",
+    "nombreCorto": "Transfuturo",
+    "razonSocial": "Sociedad de Transportadores Transfuturo Tcpa S.A.S.",
+    "tipo": "empresa",
+    "lema": "Taxis de Tocancipá, dentro y fuera del municipio",
+    "municipio": "Tocancipá, Cundinamarca",
+    "pueblo": "Tocancipá",
+    "telefono": "3123901557",
+    "telefonoVisible": "312 390 1557",
+    "whatsapp": "573123901557",
+    "correo": "transfuturosas@hotmail.com",
+    "direccion": "Diagonal 5 # 4-49, Tocancipá, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2010,
+    "taxisIniciales": null,
+    "taxis": 24,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "TOC",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana Centro",
+    "datosPendientes": [
+      "número exacto de taxis",
+      "correo",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.96142,
+      "lng": -73.91756
+    }
+  },
+  "colores": {
+    "primario": "#1565C0",
+    "primario2": "#1E7AD9",
+    "oscuro": "#0A2F5C",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.965871,
+    "lng": -73.91364
+  },
+  "ZONA": {
+    "sur": 4.65,
+    "norte": 5.29,
+    "oeste": -74.23,
+    "este": -73.59
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "gachancipa",
+      "destino": "Gachancipá",
+      "valor": 17000,
+      "km": 7,
+      "min": 10,
+      "radioKm": 4
+    },
+    {
+      "id": "sopo",
+      "destino": "Sopó",
+      "valor": 19000,
+      "km": 9,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "zipaquira",
+      "destino": "Zipaquirá",
+      "valor": 28000,
+      "km": 15,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "cajica",
+      "destino": "Cajicá",
+      "valor": 32000,
+      "km": 17,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "nemocon",
+      "destino": "Nemocón",
+      "valor": 37000,
+      "km": 21,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "chia",
+      "destino": "Chía",
+      "valor": 43000,
+      "km": 25,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 54000,
+      "km": 32,
+      "min": 45,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 84000,
+      "km": 52,
+      "min": 75,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Tocancipá",
+      "cat": "centro",
+      "lat": 4.965871,
+      "lng": -73.91364
+    },
+    {
+      "id": "tocanpizza",
+      "nombre": "TocanPizza",
+      "detalle": "Tocancipá",
+      "cat": "comida",
+      "lat": 4.965494,
+      "lng": -73.913948
+    },
+    {
+      "id": "capilla-del-santisimo",
+      "nombre": "Capilla del Santísimo",
+      "detalle": "Tocancipá",
+      "cat": "centro",
+      "lat": 4.965496,
+      "lng": -73.913307
+    },
+    {
+      "id": "alcaldia-municipal-de-tocancipa",
+      "nombre": "Alcaldía Municipal de Tocancipá",
+      "detalle": "Tocancipá",
+      "cat": "centro",
+      "lat": 4.966098,
+      "lng": -73.913147
+    },
+    {
+      "id": "puesto-de-salud-de-tocancipa",
+      "nombre": "Puesto de Salud de Tocancipá",
+      "detalle": "Tocancipá",
+      "cat": "salud",
+      "lat": 4.96628,
+      "lng": -73.913237
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Tocancipá",
+      "cat": "comercio",
+      "lat": 4.96642,
+      "lng": -73.913431
+    },
+    {
+      "id": "parroquia-de-nuestra-senora-del-transito",
+      "nombre": "Parroquia de Nuestra Señora del Tránsito",
+      "detalle": "Tocancipá",
+      "cat": "centro",
+      "lat": 4.965319,
+      "lng": -73.913205
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Tocancipá",
+      "cat": "comercio",
+      "lat": 4.96514,
+      "lng": -73.913576
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Tocancipá",
+      "cat": "comercio",
+      "lat": 4.965151,
+      "lng": -73.913327
+    },
+    {
+      "id": "surtimax",
+      "nombre": "SurtiMax",
+      "detalle": "Tocancipá",
+      "cat": "comercio",
+      "lat": 4.966698,
+      "lng": -73.913527
+    },
+    {
+      "id": "ara",
+      "nombre": "Ara",
+      "detalle": "Tocancipá",
+      "cat": "comercio",
+      "lat": 4.965836,
+      "lng": -73.914653
+    },
+    {
+      "id": "iedp-san-luis-gonzaga",
+      "nombre": "IEDp San Luis Gonzaga",
+      "detalle": "Tocancipá",
+      "cat": "educacion",
+      "lat": 4.966115,
+      "lng": -73.912597
+    },
+    {
+      "id": "biblioteca-municipal-roberto-gonzalez-ot",
+      "nombre": "Biblioteca Municipal Roberto González Otero sede Estación de",
+      "detalle": "Tocancipá",
+      "cat": "centro",
+      "lat": 4.966124,
+      "lng": -73.914949
+    },
+    {
+      "id": "lalox-pizza",
+      "nombre": "Lalox Pizza",
+      "detalle": "Tocancipá",
+      "cat": "comida",
+      "lat": 4.965166,
+      "lng": -73.915103
+    },
+    {
+      "id": "bambu",
+      "nombre": "Bambú",
+      "detalle": "Tocancipá",
+      "cat": "comida",
+      "lat": 4.966746,
+      "lng": -73.915052
+    },
+    {
+      "id": "iglesia-cruzada-cristiana",
+      "nombre": "Iglesia Cruzada Cristiana",
+      "detalle": "Tocancipá",
+      "cat": "centro",
+      "lat": 4.966502,
+      "lng": -73.915219
+    },
+    {
+      "id": "suizo",
+      "nombre": "Suizo",
+      "detalle": "Tocancipá",
+      "cat": "comida",
+      "lat": 4.965256,
+      "lng": -73.915249
+    },
+    {
+      "id": "la-casona",
+      "nombre": "La Casona",
+      "detalle": "Tocancipá",
+      "cat": "comida",
+      "lat": 4.964355,
+      "lng": -73.914461
+    },
+    {
+      "id": "centro-de-policia-de-tocancipa",
+      "nombre": "Centro de Policía de Tocancipá",
+      "detalle": "Tocancipá",
+      "cat": "centro",
+      "lat": 4.967352,
+      "lng": -73.912173
+    },
+    {
+      "id": "cementerio-municipal",
+      "nombre": "Cementerio Municipal",
+      "detalle": "Tocancipá",
+      "cat": "centro",
+      "lat": 4.965933,
+      "lng": -73.916113
+    },
+    {
+      "id": "escuela-sol-naciente",
+      "nombre": "Escuela Sol Naciente",
+      "detalle": "Tocancipá",
+      "cat": "educacion",
+      "lat": 4.963301,
+      "lng": -73.913611
+    },
+    {
+      "id": "salon-del-reino-de-los-testigos-de-jehov",
+      "nombre": "Salón del Reino de los Testigos de Jehová",
+      "detalle": "Tocancipá",
+      "cat": "centro",
+      "lat": 4.964647,
+      "lng": -73.915957
+    },
+    {
+      "id": "iglesia-pentecostal-unida-de-colombia",
+      "nombre": "Iglesia Pentecostal Unida de Colombia",
+      "detalle": "Tocancipá",
+      "cat": "centro",
+      "lat": 4.964456,
+      "lng": -73.916162
+    },
+    {
+      "id": "hospital-de-tocancipa-nuestra-senora-del",
+      "nombre": "Hospital de Tocancipá Nuestra Señora del Tránsito",
+      "detalle": "Tocancipá",
+      "cat": "salud",
+      "lat": 4.964589,
+      "lng": -73.910619
+    },
+    {
+      "id": "colegio-san-paulo",
+      "nombre": "Colegio San Paulo",
+      "detalle": "Tocancipá",
+      "cat": "educacion",
+      "lat": 4.963337,
+      "lng": -73.915985
+    },
+    {
+      "id": "i-e-d-tecnico-comercial-de-tocancipa",
+      "nombre": "I.E.D. Técnico Comercial de Tocancipá",
+      "detalle": "Tocancipá",
+      "cat": "educacion",
+      "lat": 4.969491,
+      "lng": -73.912974
+    },
+    {
+      "id": "parque-de-los-patos",
+      "nombre": "Parque de los Patos",
+      "detalle": "Tocancipá",
+      "cat": "centro",
+      "lat": 4.969523,
+      "lng": -73.915515
+    },
+    {
+      "id": "i-e-d-tecnico-industrial",
+      "nombre": "I.E.D Técnico Industrial",
+      "detalle": "Tocancipá · a 1,4 km",
+      "cat": "educacion",
+      "lat": 4.961467,
+      "lng": -73.925766
+    },
+    {
+      "id": "la-esmeralda",
+      "nombre": "La Esmeralda",
+      "detalle": "Vereda de Tocancipá",
+      "cat": "vereda",
+      "lat": 4.959839,
+      "lng": -73.892423
+    },
+    {
+      "id": "vereda-canavita",
+      "nombre": "Canavita",
+      "detalle": "Vereda de Tocancipá",
+      "cat": "vereda",
+      "lat": 4.943583,
+      "lng": -73.914805
+    },
+    {
+      "id": "esmeraldas",
+      "nombre": "Esmeraldas",
+      "detalle": "Vereda de Tocancipá",
+      "cat": "vereda",
+      "lat": 4.947585,
+      "lng": -73.895967
+    },
+    {
+      "id": "gachancipa",
+      "nombre": "Gachancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.992029,
+      "lng": -73.872111
+    },
+    {
+      "id": "sopo",
+      "nombre": "Sopó",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.907916,
+      "lng": -73.940233
+    },
+    {
+      "id": "zipaquira",
+      "nombre": "Zipaquirá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.023475,
+      "lng": -74.003982
+    },
+    {
+      "id": "cajica",
+      "nombre": "Cajicá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.91728,
+      "lng": -74.025584
+    },
+    {
+      "id": "nemocon",
+      "nombre": "Nemocón",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.067365,
+      "lng": -73.877019
+    },
+    {
+      "id": "chia",
+      "nombre": "Chía",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.861286,
+      "lng": -74.06022
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Yolanda Prieto",
+      "placa": "TOC 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1154,
+      "desde": 2015,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Jairo Moreno",
+      "placa": "TOC 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1059,
+      "desde": 2008,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Carlos Rodríguez",
+      "placa": "TOC 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1837,
+      "desde": 2007,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "TOC 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 480,
+      "desde": 2010,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Sandra Patiño",
+      "placa": "TOC 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1397,
+      "desde": 2020,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Germán Quintero",
+      "placa": "TOC 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1211,
+      "desde": 2012,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Martha Garzón",
+      "placa": "TOC 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 626,
+      "desde": 2011,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Rubén Sarmiento",
+      "placa": "TOC 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 784,
+      "desde": 2017,
+      "tel": "3000000020"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Transfuturo Tcpa S.A.S. es una empresa de Tocancipá dedicada al transporte de pasajeros en taxi, dentro y fuera del municipio. Registrada en 2010, hoy atiende desde la Diagonal 5 # 4-49 y, según la alcaldía, en 2024 contaba con 24 vehículos.\n\nCon la app, Transfuturo lleva ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay cerca, sigues el móvil en el mapa y pagas con QR o en efectivo.",
+    "mision": "Prestar en Tocancipá un servicio de taxi seguro, puntual y amable, dentro y fuera del municipio, con conductores que conocen la región.",
+    "vision": "Ser la forma más fácil y confiable de pedir un taxi en Tocancipá: a un toque, con la tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Viajes dentro y fuera de Tocancipá",
+      "Pedidos por WhatsApp",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Taxis de Tocancipá, dentro y fuera del municipio"
+  },
+  "fuentes": [
+    "https://www.facebook.com/transfuturotcpasaspaginaoficial/",
+    "https://www.tocancipa-cundinamarca.gov.co/nuestra-alcaldia/dependencias/secretaria-gobierno/programas-areas/movilidad/grupos-interes/empresas-servicio-transporte-publico",
+    "https://es.cybo.com/CO-biz/transfuturo-tcpa-s-a-s",
+    "https://es.cybo.com/CO-biz/bahias-de-taxi",
+    "https://extrategiamedios.com/numeros-telefonicos-para-solicitar-taxi-en-zipaquira-y-nuevas-tarifas-en-vigencia-2026/",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=900362807",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es taxi: su Facebook dice «EMPRESA DEDICADA AL TRANSPORTE DE PASAJEROS POR CARRETERA EN VEHÍCULOS TAXI, DENTRO Y FUERA DE TOCANCIPÁ». La Alcaldía de Tocancipá (22-jul-2024) la lista entre las empresas de transporte público del municipio, con 24 vehículos (de ahí taxis = 24, aproximado).",
+    "Razón social, NIT 900.362.807-4, representante legal César Wilson Alarcón Lozano y matrícula del 10-jun-2010 (renovada en 2026): RUES abierto (https://www.datos.gov.co/resource/c82u-588k.json?nit=900362807).",
+    "Teléfono 312 390 1557: fichas de Google de Transfuturo y de su parada «Bahías de Taxi»; Extrategia Medios lo da como WhatsApp para pedir taxi (por eso va en whatsapp; confirmar). Otro: 317 544 3163 (ficha de Google). El registro mercantil da el celular 311 281 6737: no publicarlo sin confirmar que sea de la empresa.",
+    "Correo transfuturosas@hotmail.com: ficha de Google del negocio, vista en Cybo; confirmar.",
+    "Dirección Diagonal 5 # 4-49 (registro mercantil y ficha de Google; otros directorios dan Cra. 4 # 13A-57). Oficina ubicada con las coordenadas de la ficha de Google.",
+    "«Bahías de Taxi» (Tocancipá) es su parada o central: mismo número. Su sitio negocio.site y transfuturosas.com.co ya no cargan. Grupo de Facebook «TAXIS TOCANCIPA»: https://www.facebook.com/groups/491786231005147/ .",
+    "Tarifas: no se encontró decreto de tarifas de taxi de Tocancipá; la alcaldía solo publica el de colectivo (Decreto 021 de 2026, $2.800).",
+    "Colores propios de interOS (azul eléctrico y dorado); el lema también es de interOS, tomado de su Facebook («dentro y fuera de Tocancipá»). La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

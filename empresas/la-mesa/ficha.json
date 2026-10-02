@@ -1,0 +1,639 @@
+{
+  "id": "la-mesa",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Asotaxis La Mesa",
+    "nombreCorto": "Asotaxis La Mesa",
+    "razonSocial": "Empresa Cooperativa de Taxistas Municipal Público Urbano de La Mesa (Asotaxis)",
+    "tipo": "cooperativa",
+    "lema": "Taxis de La Mesa, capital del Tequendama",
+    "municipio": "La Mesa, Cundinamarca",
+    "pueblo": "La Mesa",
+    "telefono": "3125923263",
+    "telefonoVisible": "312 592 3263",
+    "whatsapp": "573125923263",
+    "correo": "asotaxislamesa1@gmail.com",
+    "direccion": "Diagonal 4 # 4-56, barrio Atalaya, La Mesa, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "LMS",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Tequendama",
+    "datosPendientes": [
+      "número de taxis",
+      "año de fundación",
+      "modelo de los taxis",
+      "misión y visión oficiales",
+      "la ubicación de la oficina en el mapa"
+    ],
+    "oficina": null
+  },
+  "colores": {
+    "primario": "#00702B",
+    "primario2": "#018A35",
+    "oscuro": "#023A17",
+    "acento": "#F5C221",
+    "rojo": "#E0220C"
+  },
+  "CENTRO": {
+    "lat": 4.6323,
+    "lng": -74.463399
+  },
+  "ZONA": {
+    "sur": 4.31,
+    "norte": 4.95,
+    "oeste": -74.78,
+    "este": -74.14
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 6500,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 0,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima ($6.500, igual de día y de noche, también a Comfenalco, Naranjos, Acueducto, Pajonales, ISA, Techo Mesa y Ceibas) es la de la Resolución No. 43 de 2025 de La Mesa para Asotaxis, vigencia 2025; los demás valores son de ejemplo, sujetos a confirmación de la empresa."
+  },
+  "RUTAS": [
+    {
+      "id": "tena",
+      "destino": "Tena",
+      "valor": 22000,
+      "km": 11,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "el-colegio",
+      "destino": "El Colegio",
+      "valor": 28000,
+      "km": 14,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "anapoima",
+      "destino": "Anapoima",
+      "valor": 31000,
+      "km": 17,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "cachipay",
+      "destino": "Cachipay",
+      "valor": 40000,
+      "km": 23,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "zipacon",
+      "destino": "Zipacón",
+      "valor": 63000,
+      "km": 38,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "quipile",
+      "destino": "Quipile",
+      "valor": 74000,
+      "km": 46,
+      "min": 75,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 102000,
+      "km": 64,
+      "min": 90,
+      "radioKm": 3
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 108000,
+      "km": 68,
+      "min": 90,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal de La Mesa",
+      "detalle": "La Mesa",
+      "cat": "centro",
+      "lat": 4.63219,
+      "lng": -74.463059
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "La Mesa",
+      "cat": "comercio",
+      "lat": 4.632504,
+      "lng": -74.463556
+    },
+    {
+      "id": "alcaldia-municipal-de-la-mesa",
+      "nombre": "Alcaldia Municipal de La Mesa",
+      "detalle": "La Mesa",
+      "cat": "centro",
+      "lat": 4.632633,
+      "lng": -74.463434
+    },
+    {
+      "id": "corresponsal-bancolombia",
+      "nombre": "Corresponsal Bancolombia",
+      "detalle": "La Mesa",
+      "cat": "comercio",
+      "lat": 4.632611,
+      "lng": -74.463574
+    },
+    {
+      "id": "hotel-bogota",
+      "nombre": "Hotel Bogotá",
+      "detalle": "La Mesa",
+      "cat": "turismo",
+      "lat": 4.632197,
+      "lng": -74.463822
+    },
+    {
+      "id": "montecarlo",
+      "nombre": "Montecarlo",
+      "detalle": "La Mesa",
+      "cat": "comida",
+      "lat": 4.632563,
+      "lng": -74.462949
+    },
+    {
+      "id": "capilla-colonial",
+      "nombre": "Capilla Colonial",
+      "detalle": "La Mesa",
+      "cat": "centro",
+      "lat": 4.632455,
+      "lng": -74.462617
+    },
+    {
+      "id": "estacion-de-policia-de-la-mesa",
+      "nombre": "Estación de Policía de La Mesa",
+      "detalle": "La Mesa",
+      "cat": "centro",
+      "lat": 4.633087,
+      "lng": -74.463547
+    },
+    {
+      "id": "parroquia-santa-barbara",
+      "nombre": "Parroquia Santa Bárbara",
+      "detalle": "La Mesa",
+      "cat": "centro",
+      "lat": 4.632329,
+      "lng": -74.462472
+    },
+    {
+      "id": "hotel-el-mirador",
+      "nombre": "Hotel El Mirador",
+      "detalle": "La Mesa",
+      "cat": "turismo",
+      "lat": 4.633287,
+      "lng": -74.463824
+    },
+    {
+      "id": "buses-para-san-joaquin-san-javier",
+      "nombre": "Buses para San Joaquin - San Javier",
+      "detalle": "La Mesa",
+      "cat": "centro",
+      "lat": 4.63144,
+      "lng": -74.464419
+    },
+    {
+      "id": "hotel-la-mesa",
+      "nombre": "Hotel La Mesa",
+      "detalle": "La Mesa",
+      "cat": "turismo",
+      "lat": 4.63283,
+      "lng": -74.464782
+    },
+    {
+      "id": "ied-francisco-julian-olaya-sede-c-manuel",
+      "nombre": "IED Francisco Julian Olaya Sede C - Manuela Beltrán",
+      "detalle": "La Mesa",
+      "cat": "educacion",
+      "lat": 4.631304,
+      "lng": -74.464594
+    },
+    {
+      "id": "hotel-san-felipe",
+      "nombre": "Hotel San Felipe",
+      "detalle": "La Mesa",
+      "cat": "turismo",
+      "lat": 4.632953,
+      "lng": -74.464883
+    },
+    {
+      "id": "colegio-americano-meno",
+      "nombre": "Colegio Americano Meno",
+      "detalle": "La Mesa",
+      "cat": "educacion",
+      "lat": 4.630515,
+      "lng": -74.463346
+    },
+    {
+      "id": "banco-agrario",
+      "nombre": "Banco Agrario",
+      "detalle": "La Mesa",
+      "cat": "comercio",
+      "lat": 4.632665,
+      "lng": -74.461631
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "La Mesa",
+      "cat": "comercio",
+      "lat": 4.633012,
+      "lng": -74.461564
+    },
+    {
+      "id": "cooptenjo",
+      "nombre": "Cooptenjo",
+      "detalle": "La Mesa",
+      "cat": "comercio",
+      "lat": 4.632983,
+      "lng": -74.461255
+    },
+    {
+      "id": "hamburguesas-del-camino",
+      "nombre": "Hamburguesas del Camino",
+      "detalle": "La Mesa",
+      "cat": "comida",
+      "lat": 4.630152,
+      "lng": -74.462579
+    },
+    {
+      "id": "la-orquidea",
+      "nombre": "La Orquídea",
+      "detalle": "La Mesa",
+      "cat": "comida",
+      "lat": 4.63143,
+      "lng": -74.465676
+    },
+    {
+      "id": "biblioteca-publica-jose-celestino-mutis",
+      "nombre": "Biblioteca Pública Jose Celestino Mutis",
+      "detalle": "La Mesa",
+      "cat": "centro",
+      "lat": 4.632108,
+      "lng": -74.460735
+    },
+    {
+      "id": "hotel-el-mirador-de-los-nevados-2",
+      "nombre": "Hotel El Mirador de los Nevados 2",
+      "detalle": "La Mesa",
+      "cat": "turismo",
+      "lat": 4.630008,
+      "lng": -74.461945
+    },
+    {
+      "id": "buses-para-anapoima-apulo",
+      "nombre": "Buses para Anapoima - Apulo",
+      "detalle": "La Mesa",
+      "cat": "centro",
+      "lat": 4.629578,
+      "lng": -74.463546
+    },
+    {
+      "id": "buses-para-soacha-mesitas-rurales",
+      "nombre": "Buses para Soacha - Mesitas - Rurales",
+      "detalle": "La Mesa",
+      "cat": "centro",
+      "lat": 4.62963,
+      "lng": -74.461892
+    },
+    {
+      "id": "hamburguesas-artesanales",
+      "nombre": "Hamburguesas Artesanales",
+      "detalle": "La Mesa",
+      "cat": "comida",
+      "lat": 4.633272,
+      "lng": -74.46044
+    },
+    {
+      "id": "terminal-cootransvilla",
+      "nombre": "Terminal Cootransvilla",
+      "detalle": "La Mesa",
+      "cat": "centro",
+      "lat": 4.629484,
+      "lng": -74.46182
+    },
+    {
+      "id": "hospital-pedro-leon-alvarez-diaz",
+      "nombre": "Hospital Pedro Leon Alvarez Díaz",
+      "detalle": "La Mesa",
+      "cat": "salud",
+      "lat": 4.628225,
+      "lng": -74.467217
+    },
+    {
+      "id": "iedp-francisco-julian-olaya-sede-b",
+      "nombre": "IEDp Francisco Julian Olaya sede B",
+      "detalle": "La Mesa",
+      "cat": "educacion",
+      "lat": 4.626244,
+      "lng": -74.467416
+    },
+    {
+      "id": "juan-jose",
+      "nombre": "Juan José",
+      "detalle": "La Mesa",
+      "cat": "comida",
+      "lat": 4.631754,
+      "lng": -74.455225
+    },
+    {
+      "id": "clinica-multisentido",
+      "nombre": "Clínica Multisentido",
+      "detalle": "La Mesa",
+      "cat": "salud",
+      "lat": 4.625065,
+      "lng": -74.469193
+    },
+    {
+      "id": "mesalud",
+      "nombre": "Mesalud",
+      "detalle": "La Mesa",
+      "cat": "salud",
+      "lat": 4.624434,
+      "lng": -74.469582
+    },
+    {
+      "id": "iedp-francisco-julian-olaya",
+      "nombre": "IEDp Francisco Julián Olaya",
+      "detalle": "La Mesa",
+      "cat": "educacion",
+      "lat": 4.636065,
+      "lng": -74.453934
+    },
+    {
+      "id": "zapata",
+      "nombre": "Zapata",
+      "detalle": "Vereda de La Mesa",
+      "cat": "vereda",
+      "lat": 4.632205,
+      "lng": -74.440782
+    },
+    {
+      "id": "anapoima",
+      "nombre": "Anapoima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.549301,
+      "lng": -74.535912
+    },
+    {
+      "id": "tena",
+      "nombre": "Tena",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.655471,
+      "lng": -74.389339
+    },
+    {
+      "id": "el-colegio",
+      "nombre": "El Colegio",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.580262,
+      "lng": -74.442374
+    },
+    {
+      "id": "cachipay",
+      "nombre": "Cachipay",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.731066,
+      "lng": -74.436758
+    },
+    {
+      "id": "zipacon",
+      "nombre": "Zipacón",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.752766,
+      "lng": -74.379569
+    },
+    {
+      "id": "quipile",
+      "nombre": "Quipile",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.743911,
+      "lng": -74.533688
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "LMS 604",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1178,
+      "desde": 2017,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Jorge Castañeda",
+      "placa": "LMS 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1375,
+      "desde": 2011,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Wilson Gómez",
+      "placa": "LMS 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1791,
+      "desde": 2006,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Édgar Molina",
+      "placa": "LMS 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2075,
+      "desde": 2019,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Germán Quintero",
+      "placa": "LMS 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 975,
+      "desde": 2013,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Héctor Bernal",
+      "placa": "LMS 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2076,
+      "desde": 2008,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Jairo Moreno",
+      "placa": "LMS 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1854,
+      "desde": 2017,
+      "tel": "3000000026"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Luz Marina Rojas",
+      "placa": "LMS 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2091,
+      "desde": 2010,
+      "tel": "3000000029"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Asotaxis, la Empresa Cooperativa de Taxistas Municipal Público Urbano de La Mesa, presta el servicio de taxi en La Mesa, la capital de la provincia del Tequendama, con central y WhatsApp las 24 horas. Desde su sede en el barrio Atalaya atiende el casco urbano y sectores como Comfenalco, Naranjos, Pajonales o Ceibas, y lleva a la gente a los municipios vecinos: Tena, Anapoima, Cachipay, Quipile y Zipacón.\n\nCon la app, Asotaxis puede llevar ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en La Mesa y sus sectores con conductores asociados que conocen el municipio, con seguridad, puntualidad y buen trato, de día y de noche, para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de moverse en La Mesa y el Tequendama: un taxi a un toque, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi las 24 horas",
+      "Pedidos por llamada y WhatsApp",
+      "Carreras urbanas con la tarifa mínima oficial",
+      "Servicio a Comfenalco, Naranjos, Pajonales y Ceibas",
+      "Viajes a Tena, Anapoima, Cachipay, Quipile y Zipacón"
+    ],
+    "frase": "Taxis de La Mesa, de día y de noche"
+  },
+  "fuentes": [
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=808000394",
+    "https://www.datos.gov.co/resource/qmzu-gj57.json?nit=808000394",
+    "https://sgrl.mintrabajo.gov.co/Empresas/ConsultaEstandares/ConsultaCalificacion/768457",
+    "https://cristalinacundinamarca.com/noticia/taxis-de-la-mesa-hablan-de-servicio-transporte-informal-y-planilla/",
+    "https://www.lamesa-cundinamarca.gov.co/NuestraAlcaldia/SaladePrensa/Paginas/Tarifas-2025-.aspx",
+    "https://www.lamesa-cundinamarca.gov.co/NuestraAlcaldia/SaladePrensa/PublishingImages/tarifas.jpg",
+    "https://www.facebook.com/61564525778129/",
+    "https://www.facebook.com/asotaxislamesa/",
+    "https://play.google.com/store/apps/details?id=com.conexaasotaxis.app",
+    "https://infotaxicolombia.com.co/la-mesa/",
+    "https://radiotaxi.com.co/la-mesa/",
+    "https://taxiscolombia.com.co/taxis-en-la-mesa/",
+    "https://www.aiyellow.com/transporte-urbano/",
+    "https://www.datos.gov.co/resource/u3vn-bdcy.json",
+    "https://es.wikipedia.org/wiki/La_Mesa_(Cundinamarca)",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza alta. Razón social, NIT 808.000.394-8, CIIU 4921, matrícula del 12-jun-1996 en la Cámara de Comercio de Girardot y renovación del 31-mar-2026: RUES (datos.gov.co c82u-588k). Es la única empresa de taxis con sede en La Mesa (Unitransmesa SAS fue un proyecto de 2022 que no renovó la matrícula). Wikipedia dice que los taxis y colectivos están afiliados a Cootransvilla Ltda., pero ni la web de Cootransvilla ni las tarifas de la alcaldía le dan taxis: los taxis son de Asotaxis.",
+    "Teléfono y WhatsApp 312 592 3263 (central, 24 horas): su página de Facebook «Asotaxis la Mesa» (https://www.facebook.com/61564525778129/), infotaxicolombia y radiotaxi. Otros números de la empresa: 310 649 4019 (sección Información de esa misma página y aiyellow) y 312 664 5311 (aiyellow y taxiscolombia); fijos antiguos 897 0211 y 847 1908 (aiyellow, hoy irían con 601; no se sabe si siguen activos). El 324 479 6162, registrado en SECOP II y Mintrabajo, puede ser del representante: celular personal, no publicar.",
+    "Servicio 24 horas: su página de Facebook («Servicio de Taxi 24 horas – La Mesa») y la descripción de la página «Asotaxis Mesa» (unos 5.000 seguidores, https://www.facebook.com/asotaxislamesa/).",
+    "Correo asotaxislamesa1@gmail.com: SECOP II, proveedores registrados (19-mar-2026), y ficha SG-SST de Mintrabajo. El correo de PQR quejasyreclamosasotaxis@gmail.com sale en la sección Información de su página de Facebook (va en copia).",
+    "Dirección Diagonal 4 # 4-56, barrio Atalaya: su página de Facebook, Google Maps (vía infotaxicolombia y radiotaxi) y SECOP II 2026. Dirección anterior: Calle 4 # 18-36, El Recreo (aiyellow); einforma registra Calle 8 # 21A-15. La Diagonal 4 no aparece en OpenStreetMap y Google Maps no dio coordenadas sin navegador: oficina en null (la demo usa el centro del pueblo).",
+    "Gerente: Gerardo Cruz Torres, representante legal en el RUES (actualizado el 28-may-2026) y presentado como gerente en la nota de Cristalina Cundinamarca/INRAI del 29-sep-2026. SECOP II y Mintrabajo todavía muestran a Javier Peralta Ardila (dato viejo).",
+    "Pendientes internos: número de taxis, tarifa 2026, modelo de los taxis, colores oficiales (se tomaron del logo) y ubicación exacta de la oficina.",
+    "Año de fundación: el RUES da matrícula del 12-jun-1996 y su web antigua celebraba «ASOTAXIS 20 años 1997-2017»; como no coinciden, fundada queda en null. Su logo dice «Resolución 066 VI-23-2000» (habilitación).",
+    "Tarifas: Resolución No. 43 de 2025 de La Mesa (Asotaxis), vigente desde el 1-mar-2025: mínima general $6.500 diurna y nocturna «desde la punta de La Mesa hasta la Bomba Biomax y viceversa», y $6.500 a los otros sectores. Imagen oficial: https://www.lamesa-cundinamarca.gov.co/NuestraAlcaldia/SaladePrensa/PublishingImages/tarifas.jpg (página https://www.lamesa-cundinamarca.gov.co/NuestraAlcaldia/SaladePrensa/Paginas/Tarifas-2025-.aspx). Por eso recargoNocturno = 0. No se encontró la resolución de 2026; el resto de valores son de ejemplo.",
+    "Colores tomados de su logo (verde #019632, rojo #F3270E y laureles dorados #F5C221, medidos en el ícono de la app y en la foto de perfil de Facebook); el primario es el mismo verde oscurecido para que el texto blanco se lea bien.",
+    "GANCHO COMERCIAL: en la entrevista del 29-sep-2026 el gerente anunció que Asotaxis está desarrollando una aplicación para pedir taxi y quiere tenerla antes de fin de año. Ya tienen la app Android «TAXI LA MESA» (com.conexaasotaxis.app, de Conexa IT; más de 50 descargas, actualizada el 5-jun-2026), o sea, ya trabajan con un sistema de despacho de terceros con poco uso: hay que llegar pronto y proponer mejorar lo que tienen (marca propia, pago QR, stickers QR, panel propio). También piden ampliar la capacidad transportadora, se quejan del transporte informal y celebran que el nuevo decreto quite la planilla de viaje ocasional hacia los municipios vecinos.",
+    "Tamaño de referencia: en el RUNT (datos abiertos u3vn-bdcy, agosto 2026) el organismo de tránsito de La Mesa tenía 70 automóviles de servicio público activos; esa cifra NO es la flota de Asotaxis. Número de taxis: pendiente.",
+    "Sin web activa: asotaxis.amawebs.com solo enmarca una ficha de aiyellow y asotaxis.com (que aparece en Facebook) no resolvía el 1-oct-2026.",
+    "Lema: La Mesa es la capital de la provincia del Tequendama (Wikipedia). Destinos: los municipios vecinos que nombra el gerente más El Colegio; queda a unos 68 km por carretera del Portal 80 (OSRM), por eso lleva Portal 80 y aeropuerto. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

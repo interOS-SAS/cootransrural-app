@@ -1,0 +1,637 @@
+{
+  "id": "cajica-expreso",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Expreso Cajicá",
+    "nombreCorto": "Expreso Cajicá",
+    "razonSocial": "Expreso Cajicá S.A.",
+    "tipo": "empresa",
+    "lema": "Cajicá en movimiento, de puerta a puerta",
+    "municipio": "Cajicá, Cundinamarca",
+    "pueblo": "Cajicá",
+    "telefono": "3108980786",
+    "telefonoVisible": "310 898 0786",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Calle 2 # 5-29, Cajicá, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 1992,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "CJE",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana Centro",
+    "datosPendientes": [
+      "correo",
+      "whatsapp",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.916953,
+      "lng": -74.026032
+    }
+  },
+  "colores": {
+    "primario": "#A8401A",
+    "primario2": "#C2541F",
+    "oscuro": "#4A1A08",
+    "acento": "#FFC107",
+    "rojo": "#C62828"
+  },
+  "CENTRO": {
+    "lat": 4.91728,
+    "lng": -74.025584
+  },
+  "ZONA": {
+    "sur": 4.6,
+    "norte": 5.24,
+    "oeste": -74.35,
+    "este": -73.71
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "chia",
+      "destino": "Chía",
+      "valor": 18000,
+      "km": 8,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "tabio",
+      "destino": "Tabio",
+      "valor": 22000,
+      "km": 11,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "zipaquira",
+      "destino": "Zipaquirá",
+      "valor": 26000,
+      "km": 13,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "sopo",
+      "destino": "Sopó",
+      "valor": 27000,
+      "km": 14,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "tocancipa",
+      "destino": "Tocancipá",
+      "valor": 32000,
+      "km": 17,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "tenjo",
+      "destino": "Tenjo",
+      "valor": 33000,
+      "km": 18,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 35000,
+      "km": 19,
+      "min": 30,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 65000,
+      "km": 39,
+      "min": 60,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.917271,
+      "lng": -74.02553
+    },
+    {
+      "id": "estacion-de-policia-de-cajica",
+      "nombre": "Estación de Policía de Cajicá",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.917193,
+      "lng": -74.026129
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Cajicá",
+      "cat": "comercio",
+      "lat": 4.916851,
+      "lng": -74.026015
+    },
+    {
+      "id": "alcaldia-municipal-de-cajica",
+      "nombre": "Alcaldía Municipal de Cajicá",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.916578,
+      "lng": -74.025467
+    },
+    {
+      "id": "la-fonda-de-pipe",
+      "nombre": "La Fonda De Pipe",
+      "detalle": "Cajicá",
+      "cat": "comida",
+      "lat": 4.917908,
+      "lng": -74.026021
+    },
+    {
+      "id": "parroquia-inmaculada-concepcion",
+      "nombre": "Parroquia Inmaculada Concepción",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.916765,
+      "lng": -74.024886
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Cajicá",
+      "cat": "comercio",
+      "lat": 4.916857,
+      "lng": -74.026377
+    },
+    {
+      "id": "primax",
+      "nombre": "Primax",
+      "detalle": "Cajicá",
+      "cat": "comercio",
+      "lat": 4.91755,
+      "lng": -74.026565
+    },
+    {
+      "id": "d1-cajica-centro",
+      "nombre": "D1 Cajicá centro",
+      "detalle": "Cajicá",
+      "cat": "comercio",
+      "lat": 4.916329,
+      "lng": -74.025979
+    },
+    {
+      "id": "banco-av-villas",
+      "nombre": "Banco AV Villas",
+      "detalle": "Cajicá",
+      "cat": "comercio",
+      "lat": 4.917074,
+      "lng": -74.02682
+    },
+    {
+      "id": "hospital-jorge-cavelier",
+      "nombre": "Hospital Jorge Cavelier",
+      "detalle": "Cajicá",
+      "cat": "salud",
+      "lat": 4.915898,
+      "lng": -74.025279
+    },
+    {
+      "id": "clinica-san-luis",
+      "nombre": "Clínica San Luis",
+      "detalle": "Cajicá",
+      "cat": "salud",
+      "lat": 4.915505,
+      "lng": -74.025348
+    },
+    {
+      "id": "parque-el-rocio",
+      "nombre": "Parque El Rocío",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.915001,
+      "lng": -74.025265
+    },
+    {
+      "id": "plaza-campesina",
+      "nombre": "Plaza Campesina",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.915196,
+      "lng": -74.024225
+    },
+    {
+      "id": "parque-de-la-estacion",
+      "nombre": "Parque de la Estación",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.915363,
+      "lng": -74.023583
+    },
+    {
+      "id": "bilbioteca-publica-de-cajica",
+      "nombre": "Biblioteca Pública de Cajicá",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.916281,
+      "lng": -74.022946
+    },
+    {
+      "id": "parque-de-las-flores",
+      "nombre": "Parque de las Flores",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.91972,
+      "lng": -74.027313
+    },
+    {
+      "id": "hotel-sexta-avenida",
+      "nombre": "Hotel Sexta Avenida",
+      "detalle": "Cajicá",
+      "cat": "turismo",
+      "lat": 4.920374,
+      "lng": -74.026423
+    },
+    {
+      "id": "nacho-s-pizza",
+      "nombre": "Nacho's Pizza",
+      "detalle": "Cajicá",
+      "cat": "comida",
+      "lat": 4.914194,
+      "lng": -74.026974
+    },
+    {
+      "id": "ied-pompilio-martinez",
+      "nombre": "IED Pompilio Martinez",
+      "detalle": "Cajicá",
+      "cat": "educacion",
+      "lat": 4.91507,
+      "lng": -74.028255
+    },
+    {
+      "id": "skatepark-cajica",
+      "nombre": "Skatepark Cajicá",
+      "detalle": "Cajicá",
+      "cat": "centro",
+      "lat": 4.918844,
+      "lng": -74.022381
+    },
+    {
+      "id": "crafts-arepas",
+      "nombre": "Crafts Arepas",
+      "detalle": "Cajicá",
+      "cat": "comida",
+      "lat": 4.91389,
+      "lng": -74.027067
+    },
+    {
+      "id": "restaurante-la-fogata",
+      "nombre": "Restaurante La Fogata",
+      "detalle": "Cajicá",
+      "cat": "comida",
+      "lat": 4.92093,
+      "lng": -74.027373
+    },
+    {
+      "id": "restaurante-mikela-pizza-rustica",
+      "nombre": "Restaurante Mikela Pizza Rústica",
+      "detalle": "Cajicá",
+      "cat": "comida",
+      "lat": 4.913963,
+      "lng": -74.028246
+    },
+    {
+      "id": "colegio-pablo-herrera-preescolar",
+      "nombre": "Colegio Pablo Herrera Preescolar",
+      "detalle": "Cajicá",
+      "cat": "educacion",
+      "lat": 4.92322,
+      "lng": -74.032421
+    },
+    {
+      "id": "colegio-colombo-hispano",
+      "nombre": "Colegio Colombo-Hispano",
+      "detalle": "Cajicá",
+      "cat": "educacion",
+      "lat": 4.921257,
+      "lng": -74.033742
+    },
+    {
+      "id": "gimmasio-aleman-friederich-von-schiller",
+      "nombre": "Gimnasio Alemán Friedrich von Schiller",
+      "detalle": "Cajicá",
+      "cat": "educacion",
+      "lat": 4.927694,
+      "lng": -74.027223
+    },
+    {
+      "id": "colegio-emilio-sotomayor-duque",
+      "nombre": "Colegio Emilio Sotomayor Duque",
+      "detalle": "Cajicá",
+      "cat": "educacion",
+      "lat": 4.908472,
+      "lng": -74.031604
+    },
+    {
+      "id": "i-e-d-pablo-herrera",
+      "nombre": "I.E.D. Pablo Herrera",
+      "detalle": "Cajicá · a 1,4 km",
+      "cat": "educacion",
+      "lat": 4.926524,
+      "lng": -74.033766
+    },
+    {
+      "id": "canelon",
+      "nombre": "Canelon",
+      "detalle": "Cajicá · a 1,7 km",
+      "cat": "barrio",
+      "lat": 4.913417,
+      "lng": -74.040275
+    },
+    {
+      "id": "clarion-sabana-rk",
+      "nombre": "Hotel Sabana Park",
+      "detalle": "Cajicá · a 1,8 km",
+      "cat": "turismo",
+      "lat": 4.901627,
+      "lng": -74.029429
+    },
+    {
+      "id": "calahorra",
+      "nombre": "Calahorra",
+      "detalle": "Cajicá · a 2,0 km",
+      "cat": "barrio",
+      "lat": 4.900344,
+      "lng": -74.0193
+    },
+    {
+      "id": "compensar-cajica",
+      "nombre": "Compensar Cajicá",
+      "detalle": "Cajicá · a 3,0 km",
+      "cat": "salud",
+      "lat": 4.892276,
+      "lng": -74.035612
+    },
+    {
+      "id": "el-museo-de-la-computacion",
+      "nombre": "El Museo de la Computación",
+      "detalle": "Cajicá · a 3,3 km",
+      "cat": "turismo",
+      "lat": 4.942586,
+      "lng": -74.01067
+    },
+    {
+      "id": "chia",
+      "nombre": "Chía",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.861286,
+      "lng": -74.06022
+    },
+    {
+      "id": "zipaquira",
+      "nombre": "Zipaquirá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.023475,
+      "lng": -74.003982
+    },
+    {
+      "id": "tabio",
+      "nombre": "Tabio",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.916396,
+      "lng": -74.099095
+    },
+    {
+      "id": "sopo",
+      "nombre": "Sopó",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.907916,
+      "lng": -73.940233
+    },
+    {
+      "id": "tocancipa",
+      "nombre": "Tocancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.97371,
+      "lng": -73.92118
+    },
+    {
+      "id": "tenjo",
+      "nombre": "Tenjo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.871304,
+      "lng": -74.147325
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Rubén Sarmiento",
+      "placa": "CJE 601",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2164,
+      "desde": 2020,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Édgar Molina",
+      "placa": "CJE 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1042,
+      "desde": 2010,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Jairo Moreno",
+      "placa": "CJE 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1189,
+      "desde": 2010,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Diana Forero",
+      "placa": "CJE 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1493,
+      "desde": 2017,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-17",
+      "movil": "017",
+      "nombre": "Jorge Castañeda",
+      "placa": "CJE 617",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1344,
+      "desde": 2012,
+      "tel": "3000000017"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Germán Quintero",
+      "placa": "CJE 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2181,
+      "desde": 2020,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Nelson Pinzón",
+      "placa": "CJE 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1826,
+      "desde": 2007,
+      "tel": "3000000028"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Martha Garzón",
+      "placa": "CJE 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1829,
+      "desde": 2020,
+      "tel": "3000000029"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Expreso Cajicá S.A. presta servicio público de transporte en Cajicá desde 1992: taxis y también transporte colectivo urbano en el municipio. Desde su oficina de la Calle 2 # 5-29 atiende el casco urbano, las veredas y los viajes a los municipios vecinos.\n\nCon la app, Expreso Cajicá lleva ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay cerca, sigues el móvil en el mapa y pagas con QR o en efectivo.",
+    "mision": "Mover a la gente de Cajicá con un servicio de taxi seguro, puntual y amable, con conductores que conocen el municipio y sus veredas.",
+    "vision": "Ser la manera más sencilla de moverse en Cajicá: un taxi a un toque, con tarifa clara y el móvil en el mapa hasta tu puerta.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Viajes a Chía, Zipaquirá y la Sabana",
+      "Traslados a Bogotá y al aeropuerto",
+      "Transporte colectivo urbano en Cajicá"
+    ],
+    "frase": "Cajicá en movimiento, de puerta a puerta"
+  },
+  "fuentes": [
+    "https://www.instagram.com/alcajica/reel/DXW__OKjt0i/",
+    "https://extrategiamedios.com/numeros-telefonicos-para-solicitar-taxi-en-cajica/",
+    "https://play.google.com/store/apps/details?id=com.taxiscajica&hl=es",
+    "https://www.facebook.com/100068611261756/",
+    "https://directorio-empresas.einforma.co/informacion-empresa/expreso-cajica-sa",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=800174698",
+    "https://cajica.gov.co/docdown/archi/2026/Decreto/PROYECTO%20DECRETO%20TARIFA%20POR%20PASAJERO%20PARA%20EL%20SERVICIO%20P%C3%9ABLICO%202026.pdf",
+    "https://cajica.gov.co/docdown/archi/2025/Decreto/PROYECTO%20DECRETO%20INCREMENTO%20DE%20TARIFAS%20TTE%20INDIVIDUAL.pdf",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es taxi: la Alcaldía de Cajicá (Instagram y Facebook, 20-abr-2026) dice «En Cajicá, contamos con tres empresas de taxis»: Fortaleza de Piedra, Expreso Cajicá y Cajitaxis (https://www.instagram.com/alcajica/reel/DXW__OKjt0i/). También la nombra la app «Taxis Cajicá», y su página de Facebook publicó «Expreso Cajicá les ofrece muy buen servicio de taxi».",
+    "TAMBIÉN TIENE BUSES: opera colectivo urbano en Cajicá (Res. 532 del 18-sep-2017, citada en el proyecto de decreto de tarifas de colectivo 2026 de Cajicá).",
+    "Razón social, NIT 800.174.698-9, representante legal Primitivo Nieto Nieto, constitución del 27-sep-1992 y matrícula del 28-sep-1992 (renovada en 2026): RUES abierto (https://www.datos.gov.co/resource/c82u-588k.json?nit=800174698) y Colfirma.",
+    "Teléfono 310 898 0786: la Alcaldía de Cajicá lo publica como línea de Expreso Cajicá (abr-2026); no se sabe si tiene WhatsApp. Fijo (601) 879 6898: Extrategia Medios (jul-2025) y registro mercantil (eInforma).",
+    "Dirección Calle 2 # 5-29: registro mercantil (eInforma); directorios viejos daban Cl. 2 # 6-60. Oficina ubicada en el cruce de la Calle 2 con la Carrera 5 en OpenStreetMap (aproximada).",
+    "Web https://expresocajica.com/ en construcción («Próximo lanzamiento»); Facebook https://www.facebook.com/100068611261756/ . Sin correo: pedirlo por teléfono.",
+    "OJO para la venta: ya tiene app y sistema de despacho compartido, «Taxis Cajicá» (Pont Solutions LLC, Google Play com.taxiscajica, más de mil descargas, 7 reseñas, actualizada el 1-oct-2025), que despacha para Cajitaxi, Fortaleza de Piedra y Expreso Cajicá: https://play.google.com/store/apps/details?id=com.taxiscajica&hl=es . La propuesta debe diferenciarse: marca propia, pago con QR, stickers, web propia y taxis libres en el mapa.",
+    "Tarifas: solo hay PROYECTO de decreto 2025 de la Alcaldía de Cajicá (comentarios del 16 al 20-ene-2025): carrera mínima (1 km) $7.000; recargos puerta a puerta, nocturno (20:00-05:00) y domingo/festivo de $1.000 cada uno; tabla por sectores de $7.000 a $30.000 (Calahorra iglesia $8.000, Fontanar 2.º retorno $15.000, La Cumbre al fondo $30.000): https://cajica.gov.co/docdown/archi/2025/Decreto/PROYECTO%20DECRETO%20INCREMENTO%20DE%20TARIFAS%20TTE%20INDIVIDUAL.pdf (listado en https://cajica.gov.co/proyectos-normativos/). No se localizó el decreto definitivo, por eso la ficha no trae tarifas (la demo usa las de ejemplo).",
+    "Colores propios de interOS (terracota y dorado); el lema también es de interOS. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

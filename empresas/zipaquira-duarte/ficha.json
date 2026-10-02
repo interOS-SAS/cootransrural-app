@@ -1,0 +1,660 @@
+{
+  "id": "zipaquira-duarte",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Transportes Duarte",
+    "nombreCorto": "Transportes Duarte",
+    "razonSocial": "Transportes Duarte S.A.S.",
+    "tipo": "empresa",
+    "lema": "Desde 1964 moviendo a Zipaquirá",
+    "municipio": "Zipaquirá, Cundinamarca",
+    "pueblo": "Zipaquirá",
+    "telefono": "6018816922",
+    "telefonoVisible": "601 881 6922",
+    "whatsapp": "",
+    "correo": "asistentedegerencia@transduartesa.com",
+    "direccion": "Calle 11 # 9-58, piso 3, barrio La Esperanza, Zipaquirá, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://www.transduartesa.com/",
+    "fundada": 1964,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "ZIP",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana Centro",
+    "datosPendientes": [
+      "whatsapp",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 5.028018,
+      "lng": -74.000256
+    }
+  },
+  "colores": {
+    "primario": "#1E6B52",
+    "primario2": "#268766",
+    "oscuro": "#0C3326",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 5.023475,
+    "lng": -74.003982
+  },
+  "ZONA": {
+    "sur": 4.7,
+    "norte": 5.34,
+    "oeste": -74.32,
+    "este": -73.68
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 7600,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 400,
+    "recargoDominical": 400,
+    "nocheDesde": 19,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "Tarifa urbana diurna ($7.600) y nocturna, dominical y festiva ($8.000, de 19:01 a 05:59): Decreto 026 del 9 de febrero de 2026 de Zipaquirá, que también fija $7.800 a la Catedral de Sal y de $9.100 a $16.000 a los centros poblados. El cobro por recorrido y las tarifas a otros municipios son de ejemplo, sujetos a confirmación de la empresa.",
+    "recargoUnico": true
+  },
+  "RUTAS": [
+    {
+      "id": "argelia",
+      "destino": "Argelia",
+      "valor": 9100,
+      "km": 3,
+      "min": 5,
+      "radioKm": 0.5
+    },
+    {
+      "id": "paso-ancho",
+      "destino": "Paso Ancho",
+      "valor": 12400,
+      "km": 5,
+      "min": 10,
+      "radioKm": 1
+    },
+    {
+      "id": "cogua",
+      "destino": "Cogua",
+      "valor": 16000,
+      "km": 6,
+      "min": 15,
+      "radioKm": 1.5
+    },
+    {
+      "id": "cajica",
+      "destino": "Cajicá",
+      "valor": 25000,
+      "km": 13,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "nemocon",
+      "destino": "Nemocón",
+      "valor": 31000,
+      "km": 17,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "tocancipa",
+      "destino": "Tocancipá",
+      "valor": 33000,
+      "km": 18,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "tabio",
+      "destino": "Tabio",
+      "valor": 36000,
+      "km": 20,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "chia",
+      "destino": "Chía",
+      "valor": 45000,
+      "km": 26,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 53000,
+      "km": 31,
+      "min": 45,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 83000,
+      "km": 52,
+      "min": 75,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Zipaquirá",
+      "cat": "centro",
+      "lat": 5.023475,
+      "lng": -74.003982
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Zipaquirá",
+      "cat": "comercio",
+      "lat": 5.023185,
+      "lng": -74.00378
+    },
+    {
+      "id": "banco-w",
+      "nombre": "Banco W",
+      "detalle": "Zipaquirá",
+      "cat": "comercio",
+      "lat": 5.023063,
+      "lng": -74.00363
+    },
+    {
+      "id": "alcaldia-de-zipaquira",
+      "nombre": "Alcaldía de Zipaquirá",
+      "detalle": "Zipaquirá",
+      "cat": "centro",
+      "lat": 5.023735,
+      "lng": -74.003455
+    },
+    {
+      "id": "catedral-diocesana-de-zipaquira",
+      "nombre": "Catedral Diocesana de Zipaquirá",
+      "detalle": "Zipaquirá",
+      "cat": "centro",
+      "lat": 5.023956,
+      "lng": -74.003619
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Zipaquirá",
+      "cat": "comercio",
+      "lat": 5.023583,
+      "lng": -74.003266
+    },
+    {
+      "id": "esso",
+      "nombre": "Esso",
+      "detalle": "Zipaquirá",
+      "cat": "comercio",
+      "lat": 5.022681,
+      "lng": -74.003797
+    },
+    {
+      "id": "al-natural-cafe-bar",
+      "nombre": "Al Natural Café Bar",
+      "detalle": "Zipaquirá",
+      "cat": "comida",
+      "lat": 5.024116,
+      "lng": -74.004865
+    },
+    {
+      "id": "banco-de-occidente",
+      "nombre": "Banco de Occidente",
+      "detalle": "Zipaquirá",
+      "cat": "comercio",
+      "lat": 5.022924,
+      "lng": -74.004925
+    },
+    {
+      "id": "chica-quicha",
+      "nombre": "Chica Quicha",
+      "detalle": "Zipaquirá",
+      "cat": "comida",
+      "lat": 5.023896,
+      "lng": -74.00502
+    },
+    {
+      "id": "la-briego",
+      "nombre": "La Briego",
+      "detalle": "Zipaquirá",
+      "cat": "comida",
+      "lat": 5.023665,
+      "lng": -74.005186
+    },
+    {
+      "id": "hotel-colonial",
+      "nombre": "Hotel Colonial",
+      "detalle": "Zipaquirá",
+      "cat": "turismo",
+      "lat": 5.022784,
+      "lng": -74.005124
+    },
+    {
+      "id": "plaza-de-la-independencia",
+      "nombre": "Plaza de la Independencia",
+      "detalle": "Zipaquirá",
+      "cat": "centro",
+      "lat": 5.024281,
+      "lng": -74.005228
+    },
+    {
+      "id": "casa-del-chorro-francachela",
+      "nombre": "Casa del Chorro Francachela",
+      "detalle": "Zipaquirá",
+      "cat": "comida",
+      "lat": 5.024664,
+      "lng": -74.00505
+    },
+    {
+      "id": "hotel-nataly",
+      "nombre": "Hotel Nataly",
+      "detalle": "Zipaquirá",
+      "cat": "turismo",
+      "lat": 5.022368,
+      "lng": -74.005312
+    },
+    {
+      "id": "la-puerta-rota",
+      "nombre": "La puerta rota",
+      "detalle": "Zipaquirá",
+      "cat": "turismo",
+      "lat": 5.024186,
+      "lng": -74.002364
+    },
+    {
+      "id": "vieja-aduana-hostal",
+      "nombre": "Vieja Aduana hostal",
+      "detalle": "Zipaquirá",
+      "cat": "turismo",
+      "lat": 5.02521,
+      "lng": -74.003363
+    },
+    {
+      "id": "hotel-cacique-real",
+      "nombre": "Hotel Cacique Real",
+      "detalle": "Zipaquirá",
+      "cat": "turismo",
+      "lat": 5.022807,
+      "lng": -74.005832
+    },
+    {
+      "id": "enjoy-zipaquira-hostal",
+      "nombre": "Enjoy Zipaquirá Hostal",
+      "detalle": "Zipaquirá",
+      "cat": "turismo",
+      "lat": 5.022413,
+      "lng": -74.005753
+    },
+    {
+      "id": "la-carreta",
+      "nombre": "La Carreta",
+      "detalle": "Zipaquirá",
+      "cat": "comida",
+      "lat": 5.022875,
+      "lng": -74.00598
+    },
+    {
+      "id": "parque-villaveces",
+      "nombre": "Parque Villaveces",
+      "detalle": "Zipaquirá",
+      "cat": "centro",
+      "lat": 5.021296,
+      "lng": -74.006419
+    },
+    {
+      "id": "parque-homenaje-a-los-muiscas",
+      "nombre": "Parque Homenaje a los muiscas",
+      "detalle": "Zipaquirá",
+      "cat": "centro",
+      "lat": 5.020768,
+      "lng": -74.002074
+    },
+    {
+      "id": "parque-de-los-martires",
+      "nombre": "Parque de los Mártires",
+      "detalle": "Zipaquirá",
+      "cat": "centro",
+      "lat": 5.026736,
+      "lng": -74.002212
+    },
+    {
+      "id": "hospital-universitario-samaritano",
+      "nombre": "Hospital Universitario Samaritano",
+      "detalle": "Zipaquirá",
+      "cat": "salud",
+      "lat": 5.028232,
+      "lng": -74.003419
+    },
+    {
+      "id": "terminal-de-transportes",
+      "nombre": "Terminal de Transportes",
+      "detalle": "Zipaquirá",
+      "cat": "centro",
+      "lat": 5.028274,
+      "lng": -74.001722
+    },
+    {
+      "id": "iem-liceo-integrado",
+      "nombre": "IEM Liceo Integrado",
+      "detalle": "Zipaquirá",
+      "cat": "educacion",
+      "lat": 5.024142,
+      "lng": -73.997687
+    },
+    {
+      "id": "iem-san-juan-bautista-de-la-salle-zipaqu",
+      "nombre": "IEM San Juan Bautísta de la Salle Zipaquirá",
+      "detalle": "Zipaquirá",
+      "cat": "educacion",
+      "lat": 5.026069,
+      "lng": -73.998016
+    },
+    {
+      "id": "parque-iglesia-de-san-pablo",
+      "nombre": "Parque Iglesia de San Pablo",
+      "detalle": "Zipaquirá",
+      "cat": "centro",
+      "lat": 5.016685,
+      "lng": -74.001458
+    },
+    {
+      "id": "iglesia-nuestra-senora-de-la-asuncion",
+      "nombre": "Iglesia Nuestra Señora de la Asunción",
+      "detalle": "Zipaquirá",
+      "cat": "centro",
+      "lat": 5.016565,
+      "lng": -74.00133
+    },
+    {
+      "id": "iem-santiago-perez",
+      "nombre": "IEM Santiago Pérez",
+      "detalle": "Zipaquirá",
+      "cat": "educacion",
+      "lat": 5.014205,
+      "lng": -74.001552
+    },
+    {
+      "id": "iem-san-juan-bautista-de-la-salle-sede-p",
+      "nombre": "IEM San Juan Bautista de la Salle sede Primaria",
+      "detalle": "Zipaquirá · a 1,8 km",
+      "cat": "educacion",
+      "lat": 5.028931,
+      "lng": -73.988287
+    },
+    {
+      "id": "colegio-san-mateo",
+      "nombre": "Colegio San Mateo",
+      "detalle": "Zipaquirá · a 2,0 km",
+      "cat": "educacion",
+      "lat": 5.039379,
+      "lng": -73.994916
+    },
+    {
+      "id": "la-chapa",
+      "nombre": "La Chapa",
+      "detalle": "Vereda de Zipaquirá",
+      "cat": "vereda",
+      "lat": 5.044518,
+      "lng": -74.00897
+    },
+    {
+      "id": "paso-ancho",
+      "nombre": "Paso Ancho",
+      "detalle": "Vereda de Zipaquirá",
+      "cat": "vereda",
+      "lat": 5.010071,
+      "lng": -73.977316
+    },
+    {
+      "id": "argelia",
+      "nombre": "Argelia",
+      "detalle": "Vereda de Zipaquirá",
+      "cat": "vereda",
+      "lat": 5.042642,
+      "lng": -73.991022
+    },
+    {
+      "id": "cajica",
+      "nombre": "Cajicá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.91728,
+      "lng": -74.025584
+    },
+    {
+      "id": "cogua",
+      "nombre": "Cogua",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.060168,
+      "lng": -73.976194
+    },
+    {
+      "id": "nemocon",
+      "nombre": "Nemocón",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.067365,
+      "lng": -73.877019
+    },
+    {
+      "id": "tocancipa",
+      "nombre": "Tocancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.965871,
+      "lng": -73.91364
+    },
+    {
+      "id": "tabio",
+      "nombre": "Tabio",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.916396,
+      "lng": -74.099095
+    },
+    {
+      "id": "chia",
+      "nombre": "Chía",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.866033,
+      "lng": -74.030628
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-02",
+      "movil": "002",
+      "nombre": "Jorge Castañeda",
+      "placa": "ZIP 602",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 476,
+      "desde": 2008,
+      "tel": "3000000002"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Fabio Cruz",
+      "placa": "ZIP 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1725,
+      "desde": 2017,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "ZIP 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 844,
+      "desde": 2018,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Rubén Sarmiento",
+      "placa": "ZIP 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1657,
+      "desde": 2017,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Diana Forero",
+      "placa": "ZIP 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 907,
+      "desde": 2020,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Héctor Bernal",
+      "placa": "ZIP 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1227,
+      "desde": 2014,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Luz Marina Rojas",
+      "placa": "ZIP 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1154,
+      "desde": 2015,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-27",
+      "movil": "027",
+      "nombre": "Carlos Rodríguez",
+      "placa": "ZIP 627",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 774,
+      "desde": 2017,
+      "tel": "3000000027"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Transportes Duarte mueve a Zipaquirá desde 1964, cuando la fundó Marco Arguello Duarte Rodríguez. Desde su sede de la Calle 11 # 9-58, en el barrio La Esperanza, presta el servicio de taxi junto con transporte especial, mixto, colectivo, de carga y corporativo.\n\nCon la app, Transportes Duarte lleva ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay cerca, sigues el móvil en el mapa y pagas con QR o en efectivo.",
+    "mision": "Prestar en Zipaquirá un servicio de taxi seguro, puntual y amable, con la experiencia de una empresa que conoce la ciudad, sus centros poblados y la Sabana.",
+    "vision": "Seguir siendo una empresa de referencia del transporte en Zipaquirá, con la tecnología al servicio del pasajero: pedir, seguir y pagar el taxi desde el celular.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Viajes a la Catedral de Sal",
+      "Servicio a los centros poblados y veredas",
+      "Traslados a Bogotá y al aeropuerto",
+      "Transporte especial y corporativo"
+    ],
+    "frase": "Desde 1964 moviendo a Zipaquirá"
+  },
+  "fuentes": [
+    "https://www.transduartesa.com/portafolio-de-servicios/servicio-tipo-taxi",
+    "https://www.transduartesa.com/contacto",
+    "https://www.transduartesa.com/institucional/nosotros",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=860024745",
+    "https://www.facebook.com/transportesduartesa/",
+    "https://extrategiamedios.com/wp-content/uploads/2026/02/108394_decreto-026-de-2026-tarifas-taxi.pdf",
+    "https://extrategiamedios.com/asi-quedaron-las-nuevas-tarifas-del-taxi-en-zipaquira-en-2026/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es taxi: su web tiene la sección «Servicio tipo Taxi» («Solicita ya un Servicio») y dice: «Por decisión de la secretaria de movilidad de Zipaquirá y de Transportes Duarte s.a. se tomo la determinación de no realizar el incremento de la tarifa para el año 2020».",
+    "Empresa mixta: además de taxi tiene servicio especial, mixto, carga, colectivo y corporativo. Su web (Google Sites) no se actualiza desde 2020. Hay una empresa hermana en Ubaté (Transportes Duarte Urbano Ubaté S.A.S.).",
+    "Razón social, NIT 860.024.745-2, representante legal Sebastián Mauricio Duarte Sánchez y matrícula del 23-mar-1972 (renovada en 2026): RUES abierto (https://www.datos.gov.co/resource/c82u-588k.json?nit=860024745). En el RUES aparece además una matrícula vieja en La Dorada «en liquidación» con el mismo NIT: la vigente es la de Bogotá. Año 1964 y fundador: su web («Nosotros»).",
+    "Contacto (web oficial): contact center (601) 881 6922, línea (601) 852 1034 y asistentedegerencia@transduartesa.com (el dominio tiene correo en Zoho, MX revisado el 1-oct-2026). Su página de contacto enlaza un WhatsApp (https://wa.me/message/AA4SCDQBUVEAC1) sin mostrar el número.",
+    "Dirección: sede matriz Calle 11 # 9-58, barrio La Esperanza, piso 3; punto de atención Calle 1 # 10-10, C.C. La Casona Plaza, local sótano 1 (web). Oficina ubicada en el cruce de la Calle 11 con la Carrera 9 en OpenStreetMap; la ficha de Google la pone en «Cra. 11 # 9-58», unos 200 m al sureste: confirmar.",
+    "Redes: https://www.facebook.com/transportesduartesa/ y https://www.instagram.com/trans_duarte/ (enlazadas desde su web).",
+    "Tarifas oficiales: Decreto 026 del 9-feb-2026 de Zipaquirá (verificado en el PDF): urbano diurno ordinario (lun-sáb 06:00-19:00) $7.600; Catedral de Sal $7.800; nocturno (19:01-05:59), domingos y festivos $8.000; centros poblados: Aposentos Altos, Argelia, Bolívar 83, Bosques de Silesia, El Rudal y San Gabriel $9.100; Loteo Malangón $10.300; Barandillas, La Mariela, Santa Isabel y Ciudadela El Recreo $11.000; Pasoancho y Portachuelo $12.400; Villa Rosita $13.700; San Jorge $14.700; San Miguel $15.800; Jazmines $16.000; 40 % menos en la mínima para personas con discapacidad con carné. PDF: https://extrategiamedios.com/wp-content/uploads/2026/02/108394_decreto-026-de-2026-tarifas-taxi.pdf (nota: https://extrategiamedios.com/asi-quedaron-las-nuevas-tarifas-del-taxi-en-zipaquira-en-2026/). En la ficha el recargo es la diferencia $8.000 - $7.600 = $400; la carrera urbana es tarifa fija (no hay valor por km en el decreto) y la demo suma el nocturno y el dominical por separado: revisar. El decreto anterior era el 034 del 3-mar-2025.",
+    "Colores propios de interOS (verde jade y dorado); el lema también es de interOS. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

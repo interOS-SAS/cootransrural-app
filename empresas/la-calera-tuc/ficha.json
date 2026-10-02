@@ -1,0 +1,611 @@
+{
+  "id": "la-calera-tuc",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Transportes Unidos La Calera",
+    "nombreCorto": "TUC",
+    "razonSocial": "Transportes Unidos La Calera S.A.S. (TUC S.A.S.)",
+    "tipo": "empresa",
+    "lema": "Unidos para moverte en La Calera",
+    "municipio": "La Calera, Cundinamarca",
+    "pueblo": "La Calera",
+    "telefono": "",
+    "telefonoVisible": "",
+    "whatsapp": "",
+    "correo": "transunidoslacalera@hotmail.com",
+    "direccion": "Calle 5 # 2-64, La Calera, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2011,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "CLR",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Guavio",
+    "datosPendientes": [
+      "teléfono de la central",
+      "WhatsApp",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.7189,
+      "lng": -73.9684
+    }
+  },
+  "colores": {
+    "primario": "#4C6B12",
+    "primario2": "#5A7D16",
+    "oscuro": "#24330A",
+    "acento": "#E9A23B",
+    "rojo": "#C62828"
+  },
+  "CENTRO": {
+    "lat": 4.720135,
+    "lng": -73.968955
+  },
+  "ZONA": {
+    "sur": 4.4,
+    "norte": 5.04,
+    "oeste": -74.29,
+    "este": -73.65
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "sopo",
+      "destino": "Sopó",
+      "valor": 43000,
+      "km": 25,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 43000,
+      "km": 25,
+      "min": 40,
+      "radioKm": 3
+    },
+    {
+      "id": "guasca",
+      "destino": "Guasca",
+      "valor": 45000,
+      "km": 26,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 52000,
+      "km": 31,
+      "min": 65,
+      "radioKm": 3
+    },
+    {
+      "id": "tocancipa",
+      "destino": "Tocancipá",
+      "valor": 54000,
+      "km": 32,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "guatavita",
+      "destino": "Guatavita",
+      "valor": 59000,
+      "km": 35,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "chia",
+      "destino": "Chía",
+      "valor": 63000,
+      "km": 38,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "junin",
+      "destino": "Junín",
+      "valor": 126000,
+      "km": 80,
+      "min": 115,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, La Calera",
+      "cat": "centro",
+      "lat": 4.720135,
+      "lng": -73.968955
+    },
+    {
+      "id": "plaza-principal-de-la-calera",
+      "nombre": "Plaza Principal de La Calera",
+      "detalle": "La Calera",
+      "cat": "centro",
+      "lat": 4.720135,
+      "lng": -73.968955
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "La Calera",
+      "cat": "comercio",
+      "lat": 4.720228,
+      "lng": -73.969176
+    },
+    {
+      "id": "banagrario",
+      "nombre": "Banagrario",
+      "detalle": "La Calera",
+      "cat": "comercio",
+      "lat": 4.72044,
+      "lng": -73.969054
+    },
+    {
+      "id": "banco-agrario-de-colombia",
+      "nombre": "Banco Agrario de Colombia",
+      "detalle": "La Calera",
+      "cat": "comercio",
+      "lat": 4.720517,
+      "lng": -73.968928
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "La Calera",
+      "cat": "comercio",
+      "lat": 4.720132,
+      "lng": -73.969395
+    },
+    {
+      "id": "cabana-refugio-nativo",
+      "nombre": "Cabaña - Refugio Nativo",
+      "detalle": "La Calera",
+      "cat": "turismo",
+      "lat": 4.720422,
+      "lng": -73.96858
+    },
+    {
+      "id": "bancompartir",
+      "nombre": "BanCompartir",
+      "detalle": "La Calera",
+      "cat": "comercio",
+      "lat": 4.720608,
+      "lng": -73.969105
+    },
+    {
+      "id": "parroquia-nuestra-senora-del-rosario",
+      "nombre": "Parroquia Nuestra Señora del Rosario",
+      "detalle": "La Calera",
+      "cat": "centro",
+      "lat": 4.720595,
+      "lng": -73.968669
+    },
+    {
+      "id": "restaurante-saumy",
+      "nombre": "Restaurante Saümy",
+      "detalle": "La Calera",
+      "cat": "comida",
+      "lat": 4.720659,
+      "lng": -73.969455
+    },
+    {
+      "id": "amordiscos",
+      "nombre": "Amordiscos",
+      "detalle": "La Calera",
+      "cat": "comida",
+      "lat": 4.720553,
+      "lng": -73.968294
+    },
+    {
+      "id": "jimmo-s-p-company",
+      "nombre": "Jimmo's P. & Company",
+      "detalle": "La Calera",
+      "cat": "comida",
+      "lat": 4.720992,
+      "lng": -73.968749
+    },
+    {
+      "id": "la-calera-terminal",
+      "nombre": "La Calera Terminal",
+      "detalle": "La Calera",
+      "cat": "centro",
+      "lat": 4.720443,
+      "lng": -73.967608
+    },
+    {
+      "id": "iglesia",
+      "nombre": "Iglesia",
+      "detalle": "La Calera",
+      "cat": "turismo",
+      "lat": 4.718286,
+      "lng": -73.969167
+    },
+    {
+      "id": "colegio-cooperativo-paulo-vi",
+      "nombre": "Colegio Cooperativo Paulo VI",
+      "detalle": "La Calera",
+      "cat": "educacion",
+      "lat": 4.719684,
+      "lng": -73.966826
+    },
+    {
+      "id": "pizzandlove",
+      "nombre": "Pizzandlove",
+      "detalle": "La Calera",
+      "cat": "comida",
+      "lat": 4.717815,
+      "lng": -73.969039
+    },
+    {
+      "id": "biblioteca-publica-la-calera",
+      "nombre": "Biblioteca Pública La Calera",
+      "detalle": "La Calera",
+      "cat": "centro",
+      "lat": 4.72137,
+      "lng": -73.971474
+    },
+    {
+      "id": "el-tijuana",
+      "nombre": "El Tijuana",
+      "detalle": "La Calera",
+      "cat": "comida",
+      "lat": 4.717214,
+      "lng": -73.967933
+    },
+    {
+      "id": "liceo-campestre-san-rafael",
+      "nombre": "Liceo Campestre San Rafael",
+      "detalle": "La Calera",
+      "cat": "educacion",
+      "lat": 4.722865,
+      "lng": -73.972663
+    },
+    {
+      "id": "clinica-nuestra-senora-del-rosario",
+      "nombre": "Clínica Nuestra Señora del Rosario",
+      "detalle": "La Calera",
+      "cat": "salud",
+      "lat": 4.715414,
+      "lng": -73.968995
+    },
+    {
+      "id": "la-portada-vereda",
+      "nombre": "La Portada (vereda)",
+      "detalle": "Vereda de La Calera",
+      "cat": "vereda",
+      "lat": 4.718099,
+      "lng": -73.956424
+    },
+    {
+      "id": "la-portada",
+      "nombre": "La Portada",
+      "detalle": "Vereda de La Calera",
+      "cat": "vereda",
+      "lat": 4.718869,
+      "lng": -73.954732
+    },
+    {
+      "id": "la-toma",
+      "nombre": "La Toma",
+      "detalle": "Vereda de La Calera",
+      "cat": "vereda",
+      "lat": 4.735116,
+      "lng": -73.97913
+    },
+    {
+      "id": "el-rodeo",
+      "nombre": "El Rodeo",
+      "detalle": "Vereda de La Calera",
+      "cat": "vereda",
+      "lat": 4.702076,
+      "lng": -73.965483
+    },
+    {
+      "id": "altamar",
+      "nombre": "Altamar",
+      "detalle": "Vereda de La Calera",
+      "cat": "vereda",
+      "lat": 4.731886,
+      "lng": -73.952973
+    },
+    {
+      "id": "san-jose-de-la-concepcion",
+      "nombre": "San José de la Concepción",
+      "detalle": "Vereda de La Calera",
+      "cat": "vereda",
+      "lat": 4.744781,
+      "lng": -73.967358
+    },
+    {
+      "id": "porteria-del-embalse-san-rafael",
+      "nombre": "Portería del Embalse San Rafael",
+      "detalle": "La Calera · a 2,8 km",
+      "cat": "centro",
+      "lat": 4.699383,
+      "lng": -73.983233
+    },
+    {
+      "id": "hundewelt-verein",
+      "nombre": "Hundewelt Verein",
+      "detalle": "La Calera · a 3,2 km",
+      "cat": "centro",
+      "lat": 4.693904,
+      "lng": -73.957824
+    },
+    {
+      "id": "el-cedro",
+      "nombre": "El Cedro",
+      "detalle": "Vereda de La Calera",
+      "cat": "vereda",
+      "lat": 4.693008,
+      "lng": -73.956714
+    },
+    {
+      "id": "campanario-san-martin",
+      "nombre": "Campanario San Martin",
+      "detalle": "Vereda de La Calera",
+      "cat": "vereda",
+      "lat": 4.693325,
+      "lng": -73.986811
+    },
+    {
+      "id": "zona-4",
+      "nombre": "Zona 4",
+      "detalle": "La Calera · a 3,9 km",
+      "cat": "barrio",
+      "lat": 4.689366,
+      "lng": -73.951142
+    },
+    {
+      "id": "sopo",
+      "nombre": "Sopó",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.907916,
+      "lng": -73.940233
+    },
+    {
+      "id": "guasca",
+      "nombre": "Guasca",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.866439,
+      "lng": -73.877694
+    },
+    {
+      "id": "guatavita",
+      "nombre": "Guatavita",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.934395,
+      "lng": -73.835301
+    },
+    {
+      "id": "chia",
+      "nombre": "Chía",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.861286,
+      "lng": -74.06022
+    },
+    {
+      "id": "tocancipa",
+      "nombre": "Tocancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.965871,
+      "lng": -73.91364
+    },
+    {
+      "id": "junin",
+      "nombre": "Junín",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.790184,
+      "lng": -73.663172
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Nelson Pinzón",
+      "placa": "CLR 604",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 573,
+      "desde": 2013,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Jorge Castañeda",
+      "placa": "CLR 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 651,
+      "desde": 2011,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Diana Forero",
+      "placa": "CLR 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 438,
+      "desde": 2009,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Martha Garzón",
+      "placa": "CLR 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1704,
+      "desde": 2017,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-18",
+      "movil": "018",
+      "nombre": "Sandra Patiño",
+      "placa": "CLR 618",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 617,
+      "desde": 2016,
+      "tel": "3000000018"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "CLR 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1051,
+      "desde": 2011,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Germán Quintero",
+      "placa": "CLR 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 585,
+      "desde": 2006,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Luz Marina Rojas",
+      "placa": "CLR 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1103,
+      "desde": 2012,
+      "tel": "3000000026"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Transportes Unidos La Calera S.A.S. —TUC— presta en La Calera el servicio de transporte individual y mixto desde su oficina en la Calle 5 # 2-64. Es una de las siete empresas de transporte público que reconoce el Plan de Desarrollo de La Calera 2024-2027.\n\nCon la app, TUC puede llevar su servicio al celular: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir, sigues el móvil en el mapa y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi y de transporte mixto en La Calera y sus veredas con seguridad, puntualidad y buen trato, con conductores unidos por el mismo compromiso con el municipio.",
+    "vision": "Ser la forma más fácil y confiable de moverse en La Calera: un taxi a un toque, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Transporte mixto",
+      "Viajes a Sopó, Guasca y Guatavita",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Unidos, a un toque"
+  },
+  "fuentes": [
+    "https://www.facebook.com/61566108477887/",
+    "https://mapas.cundinamarca.gov.co/documents/48e49357d5e0484c9e5d05af36124854",
+    "https://www.rues.org.co/buscar/RM/900457326",
+    "https://edirectorio.net/empresa/transportes-unidos-la-calera-sas",
+    "https://www.lasempresas.com.co/bogota/transportes-unidos-la-calera-sas/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Prueba del servicio de taxi: su página de Facebook (2024) dice «Empresa dedicada al Servicio de transporte individual y mixto», con la dirección Calle 5 2-64, La Calera, y el correo Transunidoslacalera@hotmail.com (sección Información). El Plan de Desarrollo de La Calera 2024-2027 la incluye entre las 7 empresas de transporte público del municipio, con 11 vehículos, sin separar taxis de mixto. En el RUES tiene las actividades 4921 (pasajeros) y 4922 (mixto).",
+    "La página de Facebook es pequeña (11 seguidores; foto de perfil de sep-2024) y tiene poca actividad.",
+    "Teléfono sin confirmar: en su Facebook aparece como «+32 3 860 11 11», que parece el fijo 601 860 1111 mal escrito; ese fijo figura en infotaxicolombia y Cybo como «Taxis en la Calera» (Calle 4 # 6-24), y Cybo lo marca como cerrado. Una ficha antigua da el 601 875 1188. En directorios hay además un celular que parece personal: no se incluye.",
+    "Razón social, NIT 900.457.326-2 y matrícula del 16-ago-2011: RUES, lasempresas.com.co y datacrédito. Dirección Calle 5 # 2-64: su Facebook y edirectorio; una ficha antigua da la Calle 12 # 6-11.",
+    "Colores tomados de su logo (manos verdes que sostienen un óvalo con «TUC S.A.S.» en naranja), medido en su foto de perfil de Facebook: el verde se oscureció para que el texto blanco se lea bien y el acento es un naranja dorado. En la propuesta no se usa su logo.",
+    "Oficina ubicada en el mapa de forma aproximada sobre la Calle 5, entre la Carrera 2 y la Carrera 3 (OpenStreetMap).",
+    "Tarifas: no se encontró decreto de tarifas de carrera de taxi en La Calera; tarjeta de operación de taxi $128.000 (Decreto 013 de 28-ene-2026). Las tarifas de la demo serán de ejemplo.",
+    "Destinos: municipios vecinos; La Calera queda a unos 20 km de Bogotá, por eso se añaden el Portal Norte y el aeropuerto.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales. El lema también es de interOS.",
+    "Pendientes: teléfono de la central, WhatsApp, gerente, cuántos de los 11 vehículos son taxis, modelo de los taxis, misión y visión oficiales."
+  ]
+}

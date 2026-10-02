@@ -1,0 +1,19 @@
+{
+  "name": "Cooptranserga — Pide tu taxi",
+  "short_name": "Cooptranserga",
+  "description": "Pide tu taxi de Cooptranserga en Gachancipá con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#7B1F5E",
+  "theme_color": "#7B1F5E",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/gachancipa/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/gachancipa/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/gachancipa/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

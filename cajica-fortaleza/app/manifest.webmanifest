@@ -1,0 +1,19 @@
+{
+  "name": "Taxis Fortaleza de Piedra — Pide tu taxi",
+  "short_name": "Fortaleza de Piedra",
+  "description": "Pide tu taxi de Taxis Fortaleza de Piedra en Cajicá con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#5B4E3C",
+  "theme_color": "#5B4E3C",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/cajica-fortaleza/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/cajica-fortaleza/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/cajica-fortaleza/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

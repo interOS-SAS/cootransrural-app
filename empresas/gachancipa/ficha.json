@@ -1,0 +1,499 @@
+{
+  "id": "gachancipa",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cooptranserga",
+    "nombreCorto": "Cooptranserga",
+    "razonSocial": "Cooperativa Multiactiva de Transportes y Servicios de Gachancipá - Cooptranserga",
+    "tipo": "cooperativa",
+    "lema": "Taxis de Gachancipá, del pueblo a la vereda",
+    "municipio": "Gachancipá, Cundinamarca",
+    "pueblo": "Gachancipá",
+    "telefono": "3213060819",
+    "telefonoVisible": "321 306 0819",
+    "whatsapp": "",
+    "correo": "cooptranserga@gmail.com",
+    "direccion": "Carrera 4 # 4-82, Gachancipá, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://cooptranserga.com.co/",
+    "fundada": 2000,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "GAC",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana Centro",
+    "datosPendientes": [
+      "whatsapp",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.991653,
+      "lng": -73.873238
+    }
+  },
+  "colores": {
+    "primario": "#7B1F5E",
+    "primario2": "#962874",
+    "oscuro": "#360C29",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.992029,
+    "lng": -73.872111
+  },
+  "ZONA": {
+    "sur": 4.67,
+    "norte": 5.31,
+    "oeste": -74.19,
+    "este": -73.55
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "tocancipa",
+      "destino": "Tocancipá",
+      "valor": 16000,
+      "km": 7,
+      "min": 10,
+      "radioKm": 4
+    },
+    {
+      "id": "sesquile",
+      "destino": "Sesquilé",
+      "valor": 26000,
+      "km": 13,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "nemocon",
+      "destino": "Nemocón",
+      "valor": 25000,
+      "km": 13,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "sopo",
+      "destino": "Sopó",
+      "valor": 27000,
+      "km": 14,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "zipaquira",
+      "destino": "Zipaquirá",
+      "valor": 33000,
+      "km": 18,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "guatavita",
+      "destino": "Guatavita",
+      "valor": 40000,
+      "km": 23,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 62000,
+      "km": 37,
+      "min": 50,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 92000,
+      "km": 58,
+      "min": 80,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Gachancipá",
+      "cat": "centro",
+      "lat": 4.992029,
+      "lng": -73.872111
+    },
+    {
+      "id": "parroquia-san-bartolome-apostol",
+      "nombre": "Parroquia San Bartolomé Apóstol",
+      "detalle": "Gachancipá",
+      "cat": "centro",
+      "lat": 4.991422,
+      "lng": -73.870689
+    },
+    {
+      "id": "estacion-de-policia-de-gachancipa",
+      "nombre": "Estación de Policía de Gachancipá",
+      "detalle": "Gachancipá",
+      "cat": "centro",
+      "lat": 4.992153,
+      "lng": -73.87055
+    },
+    {
+      "id": "centro-de-salud-de-gachancipa",
+      "nombre": "Centro de Salud de Gachancipá",
+      "detalle": "Gachancipá",
+      "cat": "salud",
+      "lat": 4.992319,
+      "lng": -73.870423
+    },
+    {
+      "id": "centrobastos",
+      "nombre": "Centrobastos",
+      "detalle": "Gachancipá",
+      "cat": "comercio",
+      "lat": 4.990094,
+      "lng": -73.873263
+    },
+    {
+      "id": "cementerio-san-bartolome",
+      "nombre": "Cementerio San Bartolomé",
+      "detalle": "Gachancipá",
+      "cat": "centro",
+      "lat": 4.992619,
+      "lng": -73.87501
+    },
+    {
+      "id": "autoservicio-el-santandereana",
+      "nombre": "Autoservicio El Santandereana",
+      "detalle": "Gachancipá",
+      "cat": "comercio",
+      "lat": 4.994436,
+      "lng": -73.869873
+    },
+    {
+      "id": "ie-pb-carlos-garavito-acosta",
+      "nombre": "IE Pb. Carlos Garavito Acosta",
+      "detalle": "Gachancipá",
+      "cat": "educacion",
+      "lat": 4.990378,
+      "lng": -73.876303
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogota",
+      "detalle": "Gachancipá",
+      "cat": "comercio",
+      "lat": 4.988789,
+      "lng": -73.876108
+    },
+    {
+      "id": "nice-hotel",
+      "nombre": "Nice Hotel",
+      "detalle": "Gachancipá",
+      "cat": "turismo",
+      "lat": 4.997497,
+      "lng": -73.868395
+    },
+    {
+      "id": "terpel",
+      "nombre": "Terpel",
+      "detalle": "Gachancipá",
+      "cat": "comercio",
+      "lat": 4.987417,
+      "lng": -73.877085
+    },
+    {
+      "id": "capilla-santa-barbara",
+      "nombre": "Capilla Santa Barbara",
+      "detalle": "Gachancipá",
+      "cat": "centro",
+      "lat": 4.986205,
+      "lng": -73.875583
+    },
+    {
+      "id": "balcon-virgen-del-carmen",
+      "nombre": "Balcon Virgen del Carmen",
+      "detalle": "Gachancipá",
+      "cat": "centro",
+      "lat": 4.990281,
+      "lng": -73.865062
+    },
+    {
+      "id": "skatepark-gachancipa",
+      "nombre": "Skatepark Gachancipa",
+      "detalle": "Gachancipá",
+      "cat": "centro",
+      "lat": 4.996313,
+      "lng": -73.866062
+    },
+    {
+      "id": "parque-keranta",
+      "nombre": "Parque Keranta",
+      "detalle": "Gachancipá",
+      "cat": "centro",
+      "lat": 4.988483,
+      "lng": -73.878647
+    },
+    {
+      "id": "surtimax",
+      "nombre": "Surtimax",
+      "detalle": "Gachancipá",
+      "cat": "comercio",
+      "lat": 4.986331,
+      "lng": -73.877222
+    },
+    {
+      "id": "escuela-san-bartolome",
+      "nombre": "Escuela San Bartolome",
+      "detalle": "Gachancipá · a 1,4 km",
+      "cat": "educacion",
+      "lat": 4.987652,
+      "lng": -73.860579
+    },
+    {
+      "id": "tocancipa",
+      "nombre": "Tocancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.965871,
+      "lng": -73.91364
+    },
+    {
+      "id": "sesquile",
+      "nombre": "Sesquilé",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.044767,
+      "lng": -73.795553
+    },
+    {
+      "id": "nemocon",
+      "nombre": "Nemocón",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.067365,
+      "lng": -73.877019
+    },
+    {
+      "id": "zipaquira",
+      "nombre": "Zipaquirá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.023475,
+      "lng": -74.003982
+    },
+    {
+      "id": "sopo",
+      "nombre": "Sopó",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.907916,
+      "lng": -73.940233
+    },
+    {
+      "id": "guatavita",
+      "nombre": "Guatavita",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.934395,
+      "lng": -73.835301
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Jorge Castañeda",
+      "placa": "GAC 601",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1187,
+      "desde": 2007,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Diana Forero",
+      "placa": "GAC 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1545,
+      "desde": 2015,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Martha Garzón",
+      "placa": "GAC 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1230,
+      "desde": 2012,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Jairo Moreno",
+      "placa": "GAC 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1405,
+      "desde": 2016,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Yolanda Prieto",
+      "placa": "GAC 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 583,
+      "desde": 2021,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Rubén Sarmiento",
+      "placa": "GAC 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 418,
+      "desde": 2014,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Nelson Pinzón",
+      "placa": "GAC 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1873,
+      "desde": 2013,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Germán Quintero",
+      "placa": "GAC 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1541,
+      "desde": 2011,
+      "tel": "3000000026"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cooptranserga, la Cooperativa Multiactiva de Transportes y Servicios de Gachancipá, se inscribió en el año 2000 como Cooperativa Multiservicios La Gacha y lleva su nombre actual desde 2007. Desde su sede de la Carrera 4 # 4-82 presta a la comunidad de Gachancipá el servicio de taxi y de transporte colectivo.\n\nCon la app, la cooperativa lleva ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay cerca, sigues el móvil en el mapa y pagas con QR o en efectivo.",
+    "mision": "Prestar a la comunidad de Gachancipá un servicio de taxi seguro, puntual y amable, con conductores asociados que conocen el pueblo y sus veredas.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Gachancipá: un taxi a un toque, con la tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Transporte colectivo",
+      "Viajes a Tocancipá, Zipaquirá y la Sabana",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Taxis de Gachancipá, del pueblo a la vereda"
+  },
+  "fuentes": [
+    "https://www.facebook.com/COOPTRANSERGA-131668723527197/",
+    "https://www.contratos.gov.co/consultas/detalleProceso.do?numConstancia=15-11-3708960",
+    "https://cooptranserga.com.co/",
+    "https://cooptranserga.com.co/regimen-especial/",
+    "https://gachancipa-cundinamarca.gov.co/publicaciones/350/directorio-de-agremiaciones/",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832005501",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es taxi: su Facebook dice «10 AÑOS DE SERVICIO A LA COMUNIDAD DE GACHANCIPA EN TAXI Y SERVICIO COLECTIVO». En SECOP I la Alcaldía de Gachancipá registró en 2015, con Cooptranserga como contratista, el acto que «asignan unas matrículas en la modalidad de servicio público de transporte terrestre automotor individual de pasajeros en vehículo tipo taxi» (convocatoria o sorteo 009 de 2015).",
+    "TAMBIÉN TIENE BUSES: el Facebook habla de «taxi y servicio colectivo» y ofrece cupos «para vincular buseta de servicio colectivo».",
+    "Teléfono 321 306 0819: «Teléfono comercial 1» de su certificado de existencia y representación legal de la Cámara de Comercio de Bogotá (expedido el 16-mar-2026 y publicado en su web, sección Régimen especial). Correo cooptranserga@gmail.com: el mismo certificado, su web y el directorio de agremiaciones de la alcaldía (28-feb-2025).",
+    "Dirección Cra. 4 # 4-82 (certificado 2026 y web); oficina ubicada en el cruce de la Carrera 4 con la Calle 4 en OpenStreetMap (aproximada).",
+    "Año 2000: inscrita en la Cámara de Comercio el 14-ene-2000 como Cooperativa Multiservicios La Gacha (Coopserga); nombre actual por el Acta 55 del 5-nov-2007 (certificado de 2026).",
+    "Gerente y representante legal: José Miguel García Martínez (certificado del 16-mar-2026 y RUES: https://www.datos.gov.co/resource/c82u-588k.json?nit=832005501).",
+    "NO PUBLICAR: el 311 883 8828 que ponen la web, el Facebook y la alcaldía como contacto es el celular personal del gerente (celular personal, no publicar). La página «Móviles» de su web publica celulares personales de conductores: no usarlos.",
+    "Número de taxis: su página «Móviles» (actualizada en ago-2024) lista 16 móviles numerados del 501 al 518, sin decir si todos son taxis.",
+    "Tarifas: no se encontró el decreto de tarifas de taxi de Gachancipá.",
+    "Colores propios de interOS (ciruela y dorado); el lema también es de interOS. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

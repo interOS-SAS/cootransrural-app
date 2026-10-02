@@ -1,0 +1,643 @@
+{
+  "id": "ubate-cootransvu",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootransvu",
+    "nombreCorto": "Cootransvu",
+    "razonSocial": "Cooperativa de Transportadores del Valle de Ubaté (Cootransvu)",
+    "tipo": "cooperativa",
+    "lema": "Transportamos vidas e ilusiones",
+    "municipio": "Ubaté, Cundinamarca",
+    "pueblo": "Ubaté",
+    "region": "provincia de Ubaté",
+    "telefono": "6018891285",
+    "telefonoVisible": "601 889 1285",
+    "whatsapp": "",
+    "correo": "cootransvu@cootransvu.com",
+    "direccion": "Carrera 2 # 1F-237, local 15, Centro Portal Turístico Parques del Cerrito, Ubaté, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://www.cootransvu.com",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "UBA",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "oficina": {
+      "lat": 5.302349,
+      "lng": -73.814572
+    },
+    "datosPendientes": [
+      "número de taxis",
+      "línea o WhatsApp de la central de taxis",
+      "horario del servicio de taxi",
+      "tarifas oficiales 2026 (la Alcaldía las está elaborando)",
+      "año de fundación",
+      "confirmar que el fijo 601 889 1285 sigue activo",
+      "ubicación exacta de la oficina"
+    ]
+  },
+  "colores": {
+    "primario": "#2E7D32",
+    "primario2": "#3D8F40",
+    "oscuro": "#004010",
+    "acento": "#A8DB00",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 5.306728,
+    "lng": -73.814842
+  },
+  "ZONA": {
+    "sur": 4.99,
+    "norte": 5.63,
+    "oeste": -74.13,
+    "este": -73.49
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "sutatausa",
+      "destino": "Sutatausa",
+      "valor": 20000,
+      "km": 9,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "cucunuba",
+      "destino": "Cucunubá",
+      "valor": 21000,
+      "km": 10,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "fuquene",
+      "destino": "Fúquene",
+      "valor": 29000,
+      "km": 15,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "carmen-de-carupa",
+      "destino": "Carmen de Carupa",
+      "valor": 29000,
+      "km": 15,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "tausa",
+      "destino": "Tausa",
+      "valor": 31000,
+      "km": 16,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "lenguazaque",
+      "destino": "Lenguazaque",
+      "valor": 35000,
+      "km": 19,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "guacheta",
+      "destino": "Guachetá",
+      "valor": 37000,
+      "km": 21,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "susa",
+      "destino": "Susa",
+      "valor": 52000,
+      "km": 31,
+      "min": 30,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Ubaté",
+      "cat": "centro",
+      "lat": 5.306728,
+      "lng": -73.814842
+    },
+    {
+      "id": "parque-juan-jose-neira",
+      "nombre": "Parque Juan José Neira",
+      "detalle": "Ubaté",
+      "cat": "centro",
+      "lat": 5.308877,
+      "lng": -73.814324
+    },
+    {
+      "id": "estacion-de-policia-de-ubate",
+      "nombre": "Estación de Policía de Ubaté",
+      "detalle": "Ubaté",
+      "cat": "centro",
+      "lat": 5.308155,
+      "lng": -73.813992
+    },
+    {
+      "id": "bbva",
+      "nombre": "BBVA",
+      "detalle": "Ubaté",
+      "cat": "comercio",
+      "lat": 5.308688,
+      "lng": -73.814974
+    },
+    {
+      "id": "bancamia-s-a",
+      "nombre": "Bancamia S.A.",
+      "detalle": "Ubaté",
+      "cat": "comercio",
+      "lat": 5.308441,
+      "lng": -73.815049
+    },
+    {
+      "id": "av-villas",
+      "nombre": "Av Villas",
+      "detalle": "Ubaté",
+      "cat": "comercio",
+      "lat": 5.30859,
+      "lng": -73.81507
+    },
+    {
+      "id": "basilica-del-santo-cristo",
+      "nombre": "Basílica del Santo Cristo",
+      "detalle": "Ubaté",
+      "cat": "centro",
+      "lat": 5.307529,
+      "lng": -73.814442
+    },
+    {
+      "id": "la-cantina",
+      "nombre": "La Cantina",
+      "detalle": "Ubaté",
+      "cat": "comida",
+      "lat": 5.306983,
+      "lng": -73.814346
+    },
+    {
+      "id": "el-meson-del-indio",
+      "nombre": "El Mesón del Indio",
+      "detalle": "Ubaté",
+      "cat": "comida",
+      "lat": 5.306983,
+      "lng": -73.81385
+    },
+    {
+      "id": "alcaldia-de-ubate",
+      "nombre": "Alcaldía de Ubaté",
+      "detalle": "Ubaté",
+      "cat": "centro",
+      "lat": 5.306965,
+      "lng": -73.815282
+    },
+    {
+      "id": "la-provincia",
+      "nombre": "La Provincia",
+      "detalle": "Ubaté",
+      "cat": "turismo",
+      "lat": 5.31069,
+      "lng": -73.811888
+    },
+    {
+      "id": "centro-odontologico-medico-montanez",
+      "nombre": "Centro Odontológico Médico Montañez",
+      "detalle": "Ubaté",
+      "cat": "salud",
+      "lat": 5.310536,
+      "lng": -73.816844
+    },
+    {
+      "id": "ese-hospital-el-salvador",
+      "nombre": "ESE HOSPITAL EL SALVADOR",
+      "detalle": "Ubaté",
+      "cat": "salud",
+      "lat": 5.30488,
+      "lng": -73.813835
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Ubaté",
+      "cat": "comercio",
+      "lat": 5.311764,
+      "lng": -73.810957
+    },
+    {
+      "id": "cancha-simon-bolivar",
+      "nombre": "Cancha Simón Bolivar",
+      "detalle": "Ubaté",
+      "cat": "centro",
+      "lat": 5.314244,
+      "lng": -73.814896
+    },
+    {
+      "id": "colegio-santa-maria",
+      "nombre": "Colegio Santa María",
+      "detalle": "Ubaté",
+      "cat": "educacion",
+      "lat": 5.314544,
+      "lng": -73.815977
+    },
+    {
+      "id": "colegio-la-presentacion",
+      "nombre": "Colegio La Presentación",
+      "detalle": "Ubaté",
+      "cat": "educacion",
+      "lat": 5.309131,
+      "lng": -73.820831
+    },
+    {
+      "id": "capilla-santa-barbara",
+      "nombre": "Capilla Santa Barbara",
+      "detalle": "Ubaté",
+      "cat": "centro",
+      "lat": 5.302957,
+      "lng": -73.818206
+    },
+    {
+      "id": "morada",
+      "nombre": "Morada",
+      "detalle": "Ubaté",
+      "cat": "turismo",
+      "lat": 5.315914,
+      "lng": -73.812901
+    },
+    {
+      "id": "parroquia-jesus-eucaristia",
+      "nombre": "Parroquia Jesús Eucaristía",
+      "detalle": "Ubaté",
+      "cat": "centro",
+      "lat": 5.309266,
+      "lng": -73.806782
+    },
+    {
+      "id": "instituto-bolivar",
+      "nombre": "Instituto Bolivar",
+      "detalle": "Ubaté",
+      "cat": "educacion",
+      "lat": 5.31603,
+      "lng": -73.815585
+    },
+    {
+      "id": "parroquia-nuestra-senora-de-la-anunciaci",
+      "nombre": "Parroquia Nuestra Señora de la Anunciación",
+      "detalle": "Ubaté",
+      "cat": "centro",
+      "lat": 5.304748,
+      "lng": -73.821864
+    },
+    {
+      "id": "colegio-jairo-anibal-nino",
+      "nombre": "Colegio Jairo Anibal Niño",
+      "detalle": "Ubaté",
+      "cat": "educacion",
+      "lat": 5.306289,
+      "lng": -73.823338
+    },
+    {
+      "id": "bonsuka",
+      "nombre": "Bonsuka",
+      "detalle": "Ubaté",
+      "cat": "comida",
+      "lat": 5.309989,
+      "lng": -73.824584
+    },
+    {
+      "id": "biomax",
+      "nombre": "Biomax",
+      "detalle": "Ubaté · a 1,3 km",
+      "cat": "comercio",
+      "lat": 5.318018,
+      "lng": -73.807963
+    },
+    {
+      "id": "la-estacion-de-san-antonio",
+      "nombre": "La Estación de San Antonio",
+      "detalle": "Ubaté · a 1,4 km",
+      "cat": "comida",
+      "lat": 5.318501,
+      "lng": -73.807234
+    },
+    {
+      "id": "salon-comunal-vereda-centro-del-llano",
+      "nombre": "Salon Comunal Vereda Centro del llano",
+      "detalle": "Ubaté · a 1,5 km",
+      "cat": "centro",
+      "lat": 5.319773,
+      "lng": -73.806485
+    },
+    {
+      "id": "volcan",
+      "nombre": "Volcán",
+      "detalle": "Vereda de Ubaté",
+      "cat": "vereda",
+      "lat": 5.325553,
+      "lng": -73.822588
+    },
+    {
+      "id": "instituto-de-ciencias-agroindustriales-y",
+      "nombre": "Instituto de Ciencias Agroindustriales y del Medio Ambiente",
+      "detalle": "Ubaté · a 2,1 km",
+      "cat": "educacion",
+      "lat": 5.306255,
+      "lng": -73.833166
+    },
+    {
+      "id": "casa-yunque",
+      "nombre": "Casa Yunque",
+      "detalle": "Ubaté · a 2,3 km",
+      "cat": "turismo",
+      "lat": 5.302996,
+      "lng": -73.83404
+    },
+    {
+      "id": "chuquencia",
+      "nombre": "Chuquencia",
+      "detalle": "Vereda de Ubaté",
+      "cat": "vereda",
+      "lat": 5.294548,
+      "lng": -73.82997
+    },
+    {
+      "id": "palogordo",
+      "nombre": "PaloGordo",
+      "detalle": "Vereda de Ubaté",
+      "cat": "vereda",
+      "lat": 5.325838,
+      "lng": -73.801264
+    },
+    {
+      "id": "canta-rana",
+      "nombre": "Canta Rana",
+      "detalle": "Vereda de Ubaté",
+      "cat": "vereda",
+      "lat": 5.324077,
+      "lng": -73.79675
+    },
+    {
+      "id": "colegio-cooperativo-san-francisco-de-asi",
+      "nombre": "Colegio Cooperativo San Francisco de Asis",
+      "detalle": "Ubaté · a 2,7 km",
+      "cat": "educacion",
+      "lat": 5.303548,
+      "lng": -73.837901
+    },
+    {
+      "id": "cucunuba",
+      "nombre": "Cucunubá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.250279,
+      "lng": -73.766463
+    },
+    {
+      "id": "sutatausa",
+      "nombre": "Sutatausa",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.247343,
+      "lng": -73.853035
+    },
+    {
+      "id": "lenguazaque",
+      "nombre": "Lenguazaque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.307153,
+      "lng": -73.714081
+    },
+    {
+      "id": "fuquene",
+      "nombre": "Fúquene",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.404401,
+      "lng": -73.796117
+    },
+    {
+      "id": "tausa",
+      "nombre": "Tausa",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.197167,
+      "lng": -73.885215
+    },
+    {
+      "id": "carmen-de-carupa",
+      "nombre": "Carmen de Carupa",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.348461,
+      "lng": -73.901697
+    },
+    {
+      "id": "guacheta",
+      "nombre": "Guachetá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.38509,
+      "lng": -73.685904
+    },
+    {
+      "id": "susa",
+      "nombre": "Susa",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.454953,
+      "lng": -73.815382
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Jairo Moreno",
+      "placa": "UBA 601",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 806,
+      "desde": 2007,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-08",
+      "movil": "008",
+      "nombre": "Yolanda Prieto",
+      "placa": "UBA 608",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1359,
+      "desde": 2007,
+      "tel": "3000000008"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Luz Marina Rojas",
+      "placa": "UBA 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1780,
+      "desde": 2013,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Diana Forero",
+      "placa": "UBA 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2249,
+      "desde": 2010,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Sandra Patiño",
+      "placa": "UBA 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 719,
+      "desde": 2016,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "UBA 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1420,
+      "desde": 2017,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Nelson Pinzón",
+      "placa": "UBA 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 583,
+      "desde": 2018,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-27",
+      "movil": "027",
+      "nombre": "Martha Garzón",
+      "placa": "UBA 627",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1942,
+      "desde": 2016,
+      "tel": "3000000027"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootransvu, la Cooperativa de Transportadores del Valle de Ubaté, la fundaron 30 transportadores de la región y hoy mueve a la gente de la provincia en varias modalidades: transporte especial, mixto y urbano, servicios empresariales, escolares y de turismo, y taxis en Ubaté. Atiende desde su sede en el Centro Portal Turístico Parques del Cerrito, con un lema que lo dice todo: «Transportamos vidas e ilusiones».\n\nCon la app, Cootransvu puede llevar ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Llevar en taxi a la gente de Ubaté y del valle con seguridad, puntualidad y buen trato, con conductores que conocen la región y la solidaridad propia de una cooperativa.",
+    "vision": "Que pedir un taxi de Cootransvu en Ubaté sea tan fácil como tocar un botón: con la tarifa clara, el móvil en el mapa y la confianza de siempre.",
+    "servicios": [
+      "Taxi en el casco urbano de Ubaté",
+      "Servicio a las veredas del valle",
+      "Viajes a Cucunubá, Sutatausa, Lenguazaque y Fúquene",
+      "Transporte especial y empresarial",
+      "Transporte escolar y de turismo"
+    ],
+    "frase": "Transportamos vidas e ilusiones"
+  },
+  "fuentes": [
+    "https://www.cootransvu.com/home.html",
+    "https://www.cootransvu.com/corporativo.html",
+    "https://www.cootransvu.com/style/style.css",
+    "https://www.facebook.com/cootransvu.cooperativa",
+    "https://radiotaxi.com.co/numeros-de-taxis-en-ubate/",
+    "https://www.nexdu.com/co/ubate-cun/empresa/cooperativa-de-transportadores-del-valle-de-ubate-cootransvu-462365",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=800211666",
+    "https://www.datos.gov.co/resource/qmzu-gj57.json?nit=800211666",
+    "https://lavilla.com.co/2024/11/18/edicto-cooperativa-de-transportadores-del-valle-de-ubate-cootransvu/",
+    "https://community.secop.gov.co/Public/Tendering/OpportunityDetail/Index?noticeUID=CO1.NTC.9923887&isFromPublicArea=True&isModal=true&asPopupView=true",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza media. La cooperativa sí anuncia taxis: la descripción de su web dice «transporte especias y taxis» [sic] y el menú de la portada tiene una sección «TAXIS»; radiotaxi.com.co la lista como «Taxi en ubate – Cootransvu» y nexdu como «Servicio Taxi». Pero su misión, visión y servicios hablan de transporte especial, mixto y urbano, y todas las fotos de su web son buses y busetas. Hay que confirmar cuántos taxis tiene.",
+    "Razón social, NIT 800.211.666-2, CIIU 4921, matrícula del 16-feb-1998 y renovación del 25-mar-2026: RUES abierto (datos.gov.co c82u-588k). Representante legal según el RUES: Laura Juliana Serna Vinchira (en el registro de SECOP II de 2021 figuraba otra persona). Presidenta del consejo de administración según su web: Claudia Rocío Rincón Sánchez. Su web lista 30 fundadores; el año de fundación no se confirmó (fundada queda en null).",
+    "Correo cootransvu@cootransvu.com y dirección: su web (home.html) y SECOP II proveedores. Fijo 601 889 1285: SECOP II proveedores (registro de 2021) y nexdu.com; nexdu también da el 601 855 2545, sin confirmar. La web muestra además info@cotransvu.com, con el dominio mal escrito: no usarlo. El correo recursohumanos@cootransvu.com (edicto de nov-2024 en lavilla.com.co) no va en copia porque es de recursos humanos.",
+    "radiotaxi.com.co le publica un celular como línea de taxi, con horario de 24 horas, pero no está confirmado que sea de la cooperativa: no se publica y servicio24h queda en false.",
+    "Otra sede: Km 1 vía Ubaté–Bogotá, estación de servicio Mobil Cootransvu (nexdu; en el RUES está registrado el establecimiento «Estación de Servicio Automotriz Cootransvu»). En 2025 tuvo contratos en SECOP II con las alcaldías de Tausa y Fúquene.",
+    "Colores de su web (style.css de cootransvu.com): verde #4CA34F, verde oscuro #004010 y verde lima #A8DB00; las fotos muestran buses blancos con verde lima. El acento es el verde lima de su marca en vez del amarillo. Por confirmar con la cooperativa.",
+    "Misión y visión: redacción general propuesta por interOS y centrada en el taxi (las oficiales hablan de transporte especial, mixto y urbano). Lema «Transportamos vidas e ilusiones»: de su web.",
+    "Tarifas: no se encontró un acto con valores para el taxi en Ubaté. El 30-ene-2026 la Alcaldía firmó el contrato STT-CPS-337-2026 (SECOP II) para la asesoría en la elaboración de las tablas tarifarias del servicio de transporte individual de pasajeros: https://community.secop.gov.co/Public/Tendering/OpportunityDetail/Index?noticeUID=CO1.NTC.9923887&isFromPublicArea=True&isModal=true&asPopupView=true. En el sitio de la Alcaldía solo hay decretos de tarifas de transporte escolar. La demo usa valores de ejemplo.",
+    "Oficina: punto del barrio Parques del Cerrito en OpenStreetMap (ubicación aproximada).",
+    "En Ubaté también está Unitaxi Ubaté (otra entrada: ubate-unitaxi).",
+    "Destinos: municipios vecinos de la provincia de Ubaté. Ubaté queda a unos 76 km del Portal Norte por carretera (OSRM), así que solo van municipios."
+  ]
+}

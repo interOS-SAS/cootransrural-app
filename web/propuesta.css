@@ -490,3 +490,19 @@ a { color: inherit; }
 /* Si la hoja 3 tiene espacio de sobra (nombres cortos), se reparte entre los bloques. */
 .hoja-demo .contenido { justify-content: space-between; }
 .hoja-demo .disenos figcaption b { font-size: 9.4pt; }
+
+/* Hojas que no caben con nombres largos (las marca propuesta.js): primero menos aire,
+   luego títulos y textos un poco más chicos. */
+.apretada-1 .contenido { gap: 4.4mm; padding-top: 5.5mm; }
+.apretada-2 .contenido { gap: 3.4mm; }
+.apretada-2 .titular h2 { font-size: 17.5pt; }
+.apretada-2 .beneficios p, .apretada-2 .stickers p, .apretada-2 .lead { font-size: 7.9pt; }
+.apretada-3 .contenido { gap: 2.6mm; padding-top: 4.5mm; }
+.apretada-3 .titular h2 { font-size: 16pt; }
+.apretada-3 .frente th, .apretada-3 .frente td { padding-top: 1.2mm; padding-bottom: 1.2mm; }
+/* Los bloques no se encogen (si no caben, se nota y propuesta.js aprieta la hoja). */
+.hoja:not(.hoja-demo) .contenido > * { flex-shrink: 0; }
+.apretada-2 .confirmar ul { font-size: 7.6pt; gap: .9mm 5mm; }
+.apretada-2 .seguridad li, .apretada-2 .pasos li span:last-child { font-size: 7.6pt; }
+.apretada-3 .nota-despacho { font-size: 7.3pt; padding: 1.8mm 2.8mm; }
+.apretada-3 .contacto-llamado { display: none; }

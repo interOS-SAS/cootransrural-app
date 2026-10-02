@@ -1,0 +1,606 @@
+{
+  "id": "el-colegio",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cointranscol",
+    "nombreCorto": "Cointranscol",
+    "razonSocial": "Cooperativa Integral de Transporte de El Colegio Cundinamarca (Cointranscol)",
+    "tipo": "cooperativa",
+    "lema": "Esfuerzo y patrimonio de la región del Tequendama",
+    "municipio": "El Colegio, Cundinamarca",
+    "pueblo": "El Colegio",
+    "telefono": "3202735331",
+    "telefonoVisible": "320 273 5331",
+    "whatsapp": "",
+    "correo": "cointranscol@yahoo.com",
+    "direccion": "Calle 7 # 3-35, barrio Los Amigos, Mesitas del Colegio, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "MDC",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Tequendama",
+    "datosPendientes": [
+      "WhatsApp",
+      "año de fundación",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.582959,
+      "lng": -74.442558
+    }
+  },
+  "colores": {
+    "primario": "#092BAD",
+    "primario2": "#1F45C4",
+    "oscuro": "#061A5E",
+    "acento": "#F9D71C",
+    "rojo": "#D9141F"
+  },
+  "CENTRO": {
+    "lat": 4.58402,
+    "lng": -74.445955
+  },
+  "ZONA": {
+    "sur": 4.26,
+    "norte": 4.9,
+    "oeste": -74.76,
+    "este": -74.12
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "la-mesa",
+      "destino": "La Mesa",
+      "valor": 27000,
+      "km": 14,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "san-antonio-del-tequendama",
+      "destino": "San Antonio del Tequendama",
+      "valor": 37000,
+      "km": 21,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "anapoima",
+      "destino": "Anapoima",
+      "valor": 40000,
+      "km": 23,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "tena",
+      "destino": "Tena",
+      "valor": 44000,
+      "km": 25,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "viota",
+      "destino": "Viotá",
+      "valor": 43000,
+      "km": 25,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "soacha",
+      "destino": "Soacha",
+      "valor": 70000,
+      "km": 43,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 105000,
+      "km": 66,
+      "min": 90,
+      "radioKm": 3
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 108000,
+      "km": 68,
+      "min": 85,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "El Colegio",
+      "cat": "centro",
+      "lat": 4.58402,
+      "lng": -74.445955
+    },
+    {
+      "id": "estacion-de-policia-de-el-colegio",
+      "nombre": "Estación de Policía de El Colegio",
+      "detalle": "El Colegio",
+      "cat": "centro",
+      "lat": 4.581289,
+      "lng": -74.442105
+    },
+    {
+      "id": "biblioteca-publica-hernando-lopez-rodrig",
+      "nombre": "Biblioteca Pública Hernando López Rodríguez",
+      "detalle": "El Colegio",
+      "cat": "centro",
+      "lat": 4.581437,
+      "lng": -74.441773
+    },
+    {
+      "id": "terminal-de-transporte",
+      "nombre": "Terminal de Transporte",
+      "detalle": "El Colegio",
+      "cat": "centro",
+      "lat": 4.580216,
+      "lng": -74.443762
+    },
+    {
+      "id": "plaza-de-mercado",
+      "nombre": "Plaza de Mercado",
+      "detalle": "El Colegio",
+      "cat": "centro",
+      "lat": 4.580286,
+      "lng": -74.444267
+    },
+    {
+      "id": "el-dorado",
+      "nombre": "El Dorado",
+      "detalle": "El Colegio",
+      "cat": "turismo",
+      "lat": 4.579464,
+      "lng": -74.444565
+    },
+    {
+      "id": "hotel-el-dorado",
+      "nombre": "Hotel El Dorado",
+      "detalle": "El Colegio",
+      "cat": "turismo",
+      "lat": 4.582707,
+      "lng": -74.442309
+    },
+    {
+      "id": "rock-y-pizza",
+      "nombre": "Rock y Pizza",
+      "detalle": "El Colegio",
+      "cat": "comida",
+      "lat": 4.582769,
+      "lng": -74.442458
+    },
+    {
+      "id": "hotel-piscina-aroa",
+      "nombre": "Hotel piscina Aroa",
+      "detalle": "El Colegio",
+      "cat": "turismo",
+      "lat": 4.578552,
+      "lng": -74.444724
+    },
+    {
+      "id": "esso",
+      "nombre": "Esso",
+      "detalle": "El Colegio",
+      "cat": "comercio",
+      "lat": 4.579798,
+      "lng": -74.445258
+    },
+    {
+      "id": "casa-de-la-cultura",
+      "nombre": "Casa de la Cultura",
+      "detalle": "El Colegio",
+      "cat": "centro",
+      "lat": 4.57952,
+      "lng": -74.445211
+    },
+    {
+      "id": "hotel-genesis-22",
+      "nombre": "Hotel Génesis 22",
+      "detalle": "El Colegio",
+      "cat": "turismo",
+      "lat": 4.58323,
+      "lng": -74.441976
+    },
+    {
+      "id": "parador-turistico",
+      "nombre": "Parador Turistico",
+      "detalle": "El Colegio",
+      "cat": "centro",
+      "lat": 4.583145,
+      "lng": -74.441186
+    },
+    {
+      "id": "rancho-d-rafa",
+      "nombre": "Rancho D'Rafa",
+      "detalle": "El Colegio",
+      "cat": "comida",
+      "lat": 4.582124,
+      "lng": -74.444945
+    },
+    {
+      "id": "hospital-nuestra-senora-del-carmen",
+      "nombre": "Hospital Nuestra Señora del Carmen",
+      "detalle": "El Colegio",
+      "cat": "salud",
+      "lat": 4.581595,
+      "lng": -74.445267
+    },
+    {
+      "id": "la-terraza",
+      "nombre": "La Terraza",
+      "detalle": "El Colegio",
+      "cat": "comida",
+      "lat": 4.583397,
+      "lng": -74.441488
+    },
+    {
+      "id": "surtidores-mixta-22",
+      "nombre": "Surtidores Mixta 22",
+      "detalle": "El Colegio",
+      "cat": "comida",
+      "lat": 4.582255,
+      "lng": -74.445034
+    },
+    {
+      "id": "terpel",
+      "nombre": "Terpel",
+      "detalle": "El Colegio",
+      "cat": "comercio",
+      "lat": 4.583717,
+      "lng": -74.441671
+    },
+    {
+      "id": "ara",
+      "nombre": "Ara",
+      "detalle": "El Colegio",
+      "cat": "comercio",
+      "lat": 4.582546,
+      "lng": -74.445458
+    },
+    {
+      "id": "el-caribe",
+      "nombre": "El Caribe",
+      "detalle": "El Colegio",
+      "cat": "comida",
+      "lat": 4.582322,
+      "lng": -74.44565
+    },
+    {
+      "id": "la-calenita",
+      "nombre": "La Caleñita",
+      "detalle": "El Colegio",
+      "cat": "comercio",
+      "lat": 4.583969,
+      "lng": -74.444739
+    },
+    {
+      "id": "parroquia-nuestra-senora-del-rosario",
+      "nombre": "Parroquia Nuestra Señora del Rosario",
+      "detalle": "El Colegio",
+      "cat": "centro",
+      "lat": 4.583595,
+      "lng": -74.445759
+    },
+    {
+      "id": "colegio-departamental-el-tequendama",
+      "nombre": "Colegio Departamental El Tequendama",
+      "detalle": "El Colegio",
+      "cat": "educacion",
+      "lat": 4.575683,
+      "lng": -74.444313
+    },
+    {
+      "id": "banagrario",
+      "nombre": "BanAgrario",
+      "detalle": "El Colegio",
+      "cat": "comercio",
+      "lat": 4.584559,
+      "lng": -74.44494
+    },
+    {
+      "id": "alcaldia-municipal-de-el-colegio",
+      "nombre": "Alcaldía Municipal de El Colegio",
+      "detalle": "El Colegio",
+      "cat": "centro",
+      "lat": 4.584311,
+      "lng": -74.445636
+    },
+    {
+      "id": "escuela-francisco-julian-olaya",
+      "nombre": "Escuela Francisco Julian Olaya",
+      "detalle": "El Colegio",
+      "cat": "educacion",
+      "lat": 4.582464,
+      "lng": -74.447842
+    },
+    {
+      "id": "villa-olimpica",
+      "nombre": "Villa Olímpica",
+      "detalle": "El Colegio",
+      "cat": "centro",
+      "lat": 4.580593,
+      "lng": -74.448795
+    },
+    {
+      "id": "trujillo",
+      "nombre": "Trujillo",
+      "detalle": "Vereda de El Colegio",
+      "cat": "vereda",
+      "lat": 4.588569,
+      "lng": -74.457548
+    },
+    {
+      "id": "escuela-rural-san-jose",
+      "nombre": "Escuela Rural San José",
+      "detalle": "El Colegio · a 2,7 km",
+      "cat": "educacion",
+      "lat": 4.573843,
+      "lng": -74.418673
+    },
+    {
+      "id": "escuela-rural-lucerna",
+      "nombre": "Escuela Rural Lucerna",
+      "detalle": "El Colegio · a 3,5 km",
+      "cat": "educacion",
+      "lat": 4.586959,
+      "lng": -74.411468
+    },
+    {
+      "id": "la-mesa",
+      "nombre": "La Mesa",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.6323,
+      "lng": -74.463399
+    },
+    {
+      "id": "anapoima",
+      "nombre": "Anapoima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.549301,
+      "lng": -74.535912
+    },
+    {
+      "id": "tena",
+      "nombre": "Tena",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.655471,
+      "lng": -74.389339
+    },
+    {
+      "id": "san-antonio-del-tequendama",
+      "nombre": "San Antonio del Tequendama",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.616137,
+      "lng": -74.351691
+    },
+    {
+      "id": "viota",
+      "nombre": "Viotá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.438888,
+      "lng": -74.523358
+    },
+    {
+      "id": "soacha",
+      "nombre": "Soacha",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.582689,
+      "lng": -74.211778
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-02",
+      "movil": "002",
+      "nombre": "Jairo Moreno",
+      "placa": "MDC 602",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1137,
+      "desde": 2019,
+      "tel": "3000000002"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Diana Forero",
+      "placa": "MDC 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1244,
+      "desde": 2019,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Nelson Pinzón",
+      "placa": "MDC 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 687,
+      "desde": 2007,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Sandra Patiño",
+      "placa": "MDC 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2102,
+      "desde": 2017,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Édgar Molina",
+      "placa": "MDC 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1743,
+      "desde": 2007,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Germán Quintero",
+      "placa": "MDC 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2223,
+      "desde": 2015,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Jorge Castañeda",
+      "placa": "MDC 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 438,
+      "desde": 2008,
+      "tel": "3000000028"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Wilson Gómez",
+      "placa": "MDC 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1098,
+      "desde": 2012,
+      "tel": "3000000029"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cointranscol, la Cooperativa Integral de Transporte de El Colegio, lleva más de 30 años al servicio de los colegiunos: en 2024 la alcaldía celebró sus tres décadas. Presta el servicio urbano en Mesitas del Colegio con taxis y camionetas doble cabina, y se presenta como «esfuerzo y patrimonio de la región del Tequendama».\n\nEn 2023 la cooperativa ya probó recibir pedidos de taxi por WhatsApp con un código QR. Con la app puede dar el siguiente paso con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi y de transporte en Mesitas del Colegio y sus veredas con conductores asociados que conocen el municipio, con seguridad, puntualidad y buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Mesitas del Colegio y el Tequendama: un taxi a un toque, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en Mesitas del Colegio",
+      "Camionetas doble cabina",
+      "Servicio a las veredas",
+      "Transporte para empresas y entidades",
+      "Viajes a La Mesa, Anapoima, Tena y San Antonio del Tequendama"
+    ],
+    "frase": "Tu taxi en Mesitas, a un toque"
+  },
+  "fuentes": [
+    "https://www.facebook.com/groups/825862027440168/posts/25188294490770249/",
+    "https://www.facebook.com/groups/1428083687476376/about/",
+    "https://www.facebook.com/cointranscol/",
+    "https://sgrl.mintrabajo.gov.co/Empresas/ConsultaEstandares/ConsultaCalificacion/724064",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=800227672",
+    "https://www.facebook.com/AlcaldiadeMesitasdeElColegio/posts/779615300854383/",
+    "https://edirectorio.net/empresa/cooperativa-integral-de-transporte-del-el-colegio-cundinamarca",
+    "https://es.wikipedia.org/wiki/El_Colegio",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza media. Evidencia de taxis: el 1-dic-2023, en el grupo de Facebook «Periodismo comunitario Mesitas de El Colegio», la empresa anunció «¿NECESITAS UN SERVICIO DE TAXI O CAMIONETA DOBLE CABINA DE LA EMPRESA COINTRANSCOL?», con un periodo de prueba de 3 meses para pedir por WhatsApp escaneando un código QR. Su grupo de Facebook la describe como «empresa de servicio urbano en el municipio de Mesitas del Colegio». También hace transporte especial (contratos de transporte de funcionarios con la alcaldía). No se sabe si el servicio por WhatsApp sigue ni cuántos taxis tiene: confirmar por teléfono.",
+    "GANCHO COMERCIAL: en dic-2023 ya probó pedir taxi por WhatsApp con un código QR; es justo lo que ofrece la app, con QR y stickers.",
+    "RUES: NIT 800.227.672-7, CIIU 4921, activa y renovada el 8-abr-2026, matrícula del 5-jun-1997 en la Cámara de Comercio de Girardot. En feb-2024 la Alcaldía de El Colegio celebró sus «30 años al servicio de los colegiunos» (apunta a 1994). Como no coinciden, fundada queda en null.",
+    "Teléfono 320 273 5331: lo publica la empresa en su página de Facebook (https://www.facebook.com/cointranscol/) y lo registró en Mintrabajo; se usa como teléfono de la central, confirmar. WhatsApp 315 533 8833: el que anunció la empresa en dic-2023 para pedir taxi o camioneta; whatsapp vacío hasta confirmar que siga activo. Ojo: como el teléfono es celular, la web generada lo ofrece también como WhatsApp (generar-empresas.py lo hace solo).",
+    "Correo cointranscol@yahoo.com: su página de Facebook y la ficha SG-SST de Mintrabajo. Representante legal: Leonidas Suárez Arenas (RUES y Mintrabajo).",
+    "Dirección Calle 7 # 3-35/39, barrio Los Amigos: su página de Facebook; el RUES (vía einforma y edirectorio) registra la Calle 5 # 7-32. Oficina ubicada en el mapa sobre la Calle 7, entre las carreras 3 y 4 (cruces de OpenStreetMap).",
+    "Web antigua cointranscol.jimdo.com (no carga) y blog de 2010 en cooperativacointranscol.blogspot.com; página de Facebook con 11 seguidores y grupo privado de 54 miembros. En El Colegio no apareció otra empresa con taxis («Motos & Taxis en Mesitas» es solo una página-directorio). No se encontró resolución de tarifas: no lleva campo tarifas.",
+    "Pendientes internos: confirmar si sigue el WhatsApp de la prueba de dic-2023, año de fundación, número de taxis, modelo de los taxis, tarifas y colores oficiales.",
+    "Lema: sus propias palabras en el anuncio de dic-2023 («Somos COINTRANSCOL, esfuerzo y patrimonio de la región del Tequendama»). Colores tomados de su logo (alas amarillo #F6F15B, azul #092BAD y rojo #EC1722, con pinos verdes), medidos en la foto de perfil de Facebook; el acento es un amarillo un poco más dorado para que se lea mejor.",
+    "Municipio oficial: El Colegio, más conocido como Mesitas del Colegio (Wikipedia); en OpenStreetMap el pueblo se llama «El Colegio». Queda a unos 68 km del Portal 80 por carretera (OSRM), por eso lleva Portal 80 y aeropuerto. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

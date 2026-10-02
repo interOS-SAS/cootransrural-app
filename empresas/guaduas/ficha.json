@@ -1,0 +1,499 @@
+{
+  "id": "guaduas",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootransunidos Guaduas",
+    "nombreCorto": "Cootransunidos",
+    "razonSocial": "Cooperativa de Transportadores Unidos Guaduas (Cootransunidos Guaduas)",
+    "tipo": "cooperativa",
+    "lema": "Los taxis de la plaza de Guaduas",
+    "municipio": "Guaduas, Cundinamarca",
+    "pueblo": "Guaduas",
+    "region": "provincia del Bajo Magdalena",
+    "telefono": "6018417446",
+    "telefonoVisible": "601 841 7446",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Calle 4 # 6-56, Guaduas, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2008,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "GDS",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "datosPendientes": [
+      "teléfono de la central",
+      "whatsapp",
+      "correo",
+      "número de taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 5.068359,
+      "lng": -74.597338
+    }
+  },
+  "colores": {
+    "primario": "#9A3412",
+    "primario2": "#B5461B",
+    "oscuro": "#431407",
+    "acento": "#FFC21A",
+    "rojo": "#B91C1C"
+  },
+  "CENTRO": {
+    "lat": 5.067467,
+    "lng": -74.595077
+  },
+  "ZONA": {
+    "sur": 4.75,
+    "norte": 5.39,
+    "oeste": -74.92,
+    "este": -74.28
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "chaguani",
+      "destino": "Chaguaní",
+      "valor": 36000,
+      "km": 20,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "villeta",
+      "destino": "Villeta",
+      "valor": 51000,
+      "km": 30,
+      "min": 90,
+      "radioKm": 4
+    },
+    {
+      "id": "quebradanegra",
+      "destino": "Quebradanegra",
+      "valor": 53000,
+      "km": 31,
+      "min": 90,
+      "radioKm": 4
+    },
+    {
+      "id": "utica",
+      "destino": "Útica",
+      "valor": 59000,
+      "km": 35,
+      "min": 95,
+      "radioKm": 4
+    },
+    {
+      "id": "caparrapi",
+      "destino": "Caparrapí",
+      "valor": 78000,
+      "km": 48,
+      "min": 70,
+      "radioKm": 4
+    },
+    {
+      "id": "puerto-salgar",
+      "destino": "Puerto Salgar",
+      "valor": 107000,
+      "km": 67,
+      "min": 75,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Guaduas",
+      "cat": "centro",
+      "lat": 5.067467,
+      "lng": -74.595077
+    },
+    {
+      "id": "plaza-de-la-constitucion",
+      "nombre": "Plaza de la Constitución",
+      "detalle": "Guaduas",
+      "cat": "centro",
+      "lat": 5.067512,
+      "lng": -74.595062
+    },
+    {
+      "id": "salome",
+      "nombre": "Salomé",
+      "detalle": "Guaduas",
+      "cat": "comida",
+      "lat": 5.067586,
+      "lng": -74.595367
+    },
+    {
+      "id": "biblioteca-municipal-alberto-hincapie-es",
+      "nombre": "Biblioteca Municipal Alberto Hincapié Espinosa",
+      "detalle": "Guaduas",
+      "cat": "centro",
+      "lat": 5.067145,
+      "lng": -74.595199
+    },
+    {
+      "id": "banco-de-colombia",
+      "nombre": "Bancolombia",
+      "detalle": "Guaduas",
+      "cat": "comercio",
+      "lat": 5.06721,
+      "lng": -74.595373
+    },
+    {
+      "id": "restaurante-colonial-de-la-villa",
+      "nombre": "Restaurante colonial de la villa",
+      "detalle": "Guaduas",
+      "cat": "comida",
+      "lat": 5.067831,
+      "lng": -74.595318
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Guaduas",
+      "cat": "comercio",
+      "lat": 5.067027,
+      "lng": -74.59495
+    },
+    {
+      "id": "la-mazorcada-del-parque",
+      "nombre": "La mazorcada del parque",
+      "detalle": "Guaduas",
+      "cat": "comida",
+      "lat": 5.067256,
+      "lng": -74.595526
+    },
+    {
+      "id": "el-museo-fusion-sushi-gastrobar",
+      "nombre": "El Museo fusión sushi gastrobar",
+      "detalle": "Guaduas",
+      "cat": "comida",
+      "lat": 5.067855,
+      "lng": -74.595444
+    },
+    {
+      "id": "la-taqueria",
+      "nombre": "La Taquería",
+      "detalle": "Guaduas",
+      "cat": "comida",
+      "lat": 5.06808,
+      "lng": -74.595208
+    },
+    {
+      "id": "hostal-morgan",
+      "nombre": "Hostal Morgan",
+      "detalle": "Guaduas",
+      "cat": "turismo",
+      "lat": 5.068057,
+      "lng": -74.594417
+    },
+    {
+      "id": "matisia",
+      "nombre": "Matisia",
+      "detalle": "Guaduas",
+      "cat": "turismo",
+      "lat": 5.067872,
+      "lng": -74.594281
+    },
+    {
+      "id": "casa-de-policarpa-salavarrieta",
+      "nombre": "Casa de Policarpa Salavarrieta",
+      "detalle": "Guaduas",
+      "cat": "turismo",
+      "lat": 5.066776,
+      "lng": -74.595776
+    },
+    {
+      "id": "lombok",
+      "nombre": "Lombok",
+      "detalle": "Guaduas",
+      "cat": "turismo",
+      "lat": 5.067873,
+      "lng": -74.59412
+    },
+    {
+      "id": "supermercado-punto-y-coma",
+      "nombre": "Supermercado Punto y Coma",
+      "detalle": "Guaduas",
+      "cat": "comercio",
+      "lat": 5.067443,
+      "lng": -74.597469
+    },
+    {
+      "id": "parada-de-bus",
+      "nombre": "Parada de bus",
+      "detalle": "Guaduas",
+      "cat": "centro",
+      "lat": 5.065386,
+      "lng": -74.596745
+    },
+    {
+      "id": "quinta-baroe",
+      "nombre": "Quinta Baroe",
+      "detalle": "Guaduas",
+      "cat": "turismo",
+      "lat": 5.066166,
+      "lng": -74.59274
+    },
+    {
+      "id": "mentto-hotel",
+      "nombre": "Mentto Hotel",
+      "detalle": "Guaduas",
+      "cat": "turismo",
+      "lat": 5.068146,
+      "lng": -74.592026
+    },
+    {
+      "id": "cementerio-municipal-de-guaduas",
+      "nombre": "Cementerio Municipal de Guaduas",
+      "detalle": "Guaduas",
+      "cat": "centro",
+      "lat": 5.070198,
+      "lng": -74.596692
+    },
+    {
+      "id": "ara",
+      "nombre": "Ara",
+      "detalle": "Guaduas",
+      "cat": "comercio",
+      "lat": 5.069206,
+      "lng": -74.599409
+    },
+    {
+      "id": "esc-r-cajon",
+      "nombre": "Escuela Rural Cajón",
+      "detalle": "Guaduas · a 2,6 km",
+      "cat": "educacion",
+      "lat": 5.055027,
+      "lng": -74.575626
+    },
+    {
+      "id": "villeta",
+      "nombre": "Villeta",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.011258,
+      "lng": -74.47023
+    },
+    {
+      "id": "puerto-salgar",
+      "nombre": "Puerto Salgar",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.46369,
+      "lng": -74.650124
+    },
+    {
+      "id": "caparrapi",
+      "nombre": "Caparrapí",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.346134,
+      "lng": -74.491646
+    },
+    {
+      "id": "chaguani",
+      "nombre": "Chaguaní",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.94968,
+      "lng": -74.594798
+    },
+    {
+      "id": "utica",
+      "nombre": "Útica",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.18792,
+      "lng": -74.481477
+    },
+    {
+      "id": "quebradanegra",
+      "nombre": "Quebradanegra",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.117231,
+      "lng": -74.479364
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-03",
+      "movil": "003",
+      "nombre": "Héctor Bernal",
+      "placa": "GDS 603",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 528,
+      "desde": 2012,
+      "tel": "3000000003"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Sandra Patiño",
+      "placa": "GDS 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1469,
+      "desde": 2007,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Édgar Molina",
+      "placa": "GDS 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 463,
+      "desde": 2019,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Carlos Rodríguez",
+      "placa": "GDS 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1379,
+      "desde": 2008,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Jorge Castañeda",
+      "placa": "GDS 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 874,
+      "desde": 2020,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Diana Forero",
+      "placa": "GDS 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 502,
+      "desde": 2019,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Martha Garzón",
+      "placa": "GDS 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2112,
+      "desde": 2019,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Jairo Moreno",
+      "placa": "GDS 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 2098,
+      "desde": 2020,
+      "tel": "3000000026"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootransunidos Guaduas surgió en 2008 de la unión de los taxistas del parque principal de la Villa de Guaduas. La Alcaldía la habilitó para el servicio de taxi con la Resolución 0414 del 28 de noviembre de 2008, y en julio de 2011 sumó el servicio colectivo a La Paz y Puerto Bogotá. Sus taxis paran en la Plaza de la Constitución y en la calle Juan N. Corpas.\n\nCon la app, la cooperativa puede llevar el taxi de la plaza al celular: pides con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa por la Villa o camino a las veredas.",
+    "mision": "Prestar el servicio de taxi en la Villa de Guaduas y sus veredas con conductores asociados que conocen el municipio, con seguridad, puntualidad y buen trato para la comunidad y los visitantes.",
+    "vision": "Ser la forma más fácil y confiable de pedir un taxi en Guaduas: un toque en el celular, tarifa clara y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi en Guaduas",
+      "Paradero en la Plaza de la Constitución",
+      "Servicio colectivo a La Paz y Puerto Bogotá",
+      "Servicio a las veredas",
+      "Viajes a los municipios vecinos"
+    ],
+    "frase": "Una cooperativa del presente para el futuro"
+  },
+  "fuentes": [
+    "http://cootransunidosguaduascity.blogspot.com/",
+    "https://cootransunidosguaduas2019.blogspot.com/",
+    "http://cootransunidos.blogspot.com/",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=900234934",
+    "https://www.transitoguaduas.com/paginaweb/public/fijacion-precios",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Habilitación para taxi en Guaduas con la Resolución 0414 del 28-nov-2008 de la Alcaldía (capacidad de 21 a 25 automóviles), origen en los taxistas del parque principal, inicio el 30-nov-2008, paraderos (Plaza de la Constitución y calle Juan N. Corpas), servicio colectivo desde julio de 2011 y lema «Una cooperativa del presente para el futuro» (entrada del emblema, 2013): sus blogs. La resolución y la lista de asociados traen nombres y cédulas: no publicarlos.",
+    "Razón social, NIT 900.234.934-3 y matrícula del 31-jul-2008 en la Cámara de Comercio de Honda: RUES. Representante legal según el RUES (actualizado el 26-mar-2026): José David Medina Luna; el blog de agosto de 2023 también lo nombra gerente.",
+    "Dirección Calle 4 # 6-56 y fijo 601 841 7446: blog de 2019 (confirmar si siguen vigentes). En 2008 usaba el 601 846 6735. Sin correo conocido. Ubicación de la oficina aproximada: la Calle 4 del centro figura como «Camellón Real» en OpenStreetMap; se ubicó a mitad de cuadra entre las carreras 6 y 7.",
+    "Número de taxis: en 2008 la capacidad habilitada era de 21 a 25 taxis; en agosto de 2023 el blog listó 32 asociados con placa, sin separar taxis y colectivos. Se deja vacío.",
+    "Servicio 24 horas: el blog lo decía en 2008 («las 24 horas del día»); sin evidencia reciente, se dejó en falso.",
+    "Tarifas: la Resolución AD-01-2024 del 12-ene-2024 de la Secretaría de Tránsito y Transporte de Guaduas fijó la mínima de taxi en $5.600 de día (6:00 a 20:00) y $6.000 de noche, «para la vigencia 2024»; la página de tarifas de Tránsito Guaduas no tiene una de 2025 ni de 2026. Por ser de 2024 no se puso el campo de tarifas. URL: https://www.transitoguaduas.com/paginaweb/public/descargar/AD-01-2024%20-%20FIJACION%20TARIFAS%20TAXI%20-%20FIRMADO.pdf",
+    "Honda (Tolima) es su vecino principal pero no va en destinos porque la demo solo ubica municipios de Cundinamarca.",
+    "No confundir con Cootransunidos de Ocaña (Norte de Santander). Sin sitio web propio vigente (blogs hasta 2023).",
+    "Colores propios de interOS (teja colonial de la Villa de Guaduas y dorado). El lema es de interOS; la frase es su lema.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

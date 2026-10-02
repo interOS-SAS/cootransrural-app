@@ -1,0 +1,514 @@
+{
+  "id": "san-antonio-del-tequendama",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "TST Transportes",
+    "nombreCorto": "TST",
+    "razonSocial": "Transportes San Antonio del Tequendama S.A.S. (TST Transportes S.A.S.)",
+    "tipo": "empresa",
+    "lema": "Un transporte profesional para la región del Tequendama",
+    "municipio": "San Antonio del Tequendama, Cundinamarca",
+    "pueblo": "San Antonio del Tequendama",
+    "region": "provincia del Tequendama",
+    "telefono": "3112761760",
+    "telefonoVisible": "311 276 1760",
+    "whatsapp": "",
+    "correo": "transportetstltda@yahoo.es",
+    "direccion": "Km 19 vía Bogotá–Mesitas del Colegio (Troncal del Tequendama), San Antonio del Tequendama, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 1990,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "SAT",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "oficina": null,
+    "datosPendientes": [
+      "número de taxis",
+      "línea de la central de taxis y WhatsApp",
+      "correo vigente (el publicado es de 2011)",
+      "ubicación exacta de la sede (Km 19)",
+      "recargos nocturno y dominical (el decreto no los fija)",
+      "logo y colores oficiales",
+      "misión y visión oficiales",
+      "modelo de vehículo",
+      "servicio 24 horas"
+    ]
+  },
+  "colores": {
+    "primario": "#3B7A16",
+    "primario2": "#4E9A1E",
+    "oscuro": "#1B3A09",
+    "acento": "#FFC21A",
+    "rojo": "#C62828"
+  },
+  "CENTRO": {
+    "lat": 4.616137,
+    "lng": -74.351691
+  },
+  "ZONA": {
+    "sur": 4.3,
+    "norte": 4.94,
+    "oeste": -74.67,
+    "este": -74.03
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 7000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 0,
+    "recargoDominical": 0,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La parada mínima del servicio individual tipo taxi ($7.000) es la del Decreto 010 del 9 de febrero de 2026 de la Alcaldía de San Antonio del Tequendama, que además fija una tarifa fija por destino desde San Antonio, Bellavista, Santandercito y Pradilla (por ejemplo, de Bellavista a Santandercito $7.000, de San Antonio a Santandercito $13.000 y hasta $30.000 a las veredas más lejanas). El decreto no fija recargos nocturnos ni dominicales; los demás valores son de ejemplo, sujetos a confirmación de la empresa."
+  },
+  "RUTAS": [
+    {
+      "id": "tena",
+      "destino": "Tena",
+      "valor": 32000,
+      "km": 17,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "el-colegio",
+      "destino": "El Colegio",
+      "valor": 37000,
+      "km": 21,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "la-mesa",
+      "destino": "La Mesa",
+      "valor": 53000,
+      "km": 31,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "granada",
+      "destino": "Granada",
+      "valor": 56000,
+      "km": 34,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "sibate",
+      "destino": "Sibaté",
+      "valor": 59000,
+      "km": 35,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "soacha",
+      "destino": "Soacha",
+      "valor": 62000,
+      "km": 37,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 81000,
+      "km": 50,
+      "min": 75,
+      "radioKm": 3
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 87000,
+      "km": 54,
+      "min": 80,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "San Antonio del Tequendama",
+      "cat": "centro",
+      "lat": 4.616311,
+      "lng": -74.352021
+    },
+    {
+      "id": "biblioteca-municipal-san-antonio-del-teq",
+      "nombre": "Biblioteca Municipal San Antonio del Tequendama",
+      "detalle": "San Antonio del Tequendama",
+      "cat": "centro",
+      "lat": 4.615995,
+      "lng": -74.351866
+    },
+    {
+      "id": "hospital-san-antonio-del-tequendama-ese",
+      "nombre": "Hospital San Antonio del Tequendama ESE",
+      "detalle": "San Antonio del Tequendama",
+      "cat": "salud",
+      "lat": 4.616645,
+      "lng": -74.351852
+    },
+    {
+      "id": "parroquia-san-antonio-de-padua",
+      "nombre": "Parroquia San Antonio de Padua",
+      "detalle": "San Antonio del Tequendama",
+      "cat": "centro",
+      "lat": 4.616053,
+      "lng": -74.352358
+    },
+    {
+      "id": "alcaldia-municipal-san-antonio-del-teque",
+      "nombre": "Alcaldía Municipal San Antonio Del Tequendama",
+      "detalle": "San Antonio del Tequendama",
+      "cat": "centro",
+      "lat": 4.616868,
+      "lng": -74.35205
+    },
+    {
+      "id": "estacion-de-policia-municipal",
+      "nombre": "Estación de Policía Municipal",
+      "detalle": "San Antonio del Tequendama",
+      "cat": "centro",
+      "lat": 4.615185,
+      "lng": -74.351975
+    },
+    {
+      "id": "escuela-antonia-santos",
+      "nombre": "Escuela Antonia Santos",
+      "detalle": "San Antonio del Tequendama",
+      "cat": "educacion",
+      "lat": 4.615381,
+      "lng": -74.351037
+    },
+    {
+      "id": "cementerio-local-san-antonio-del-tequend",
+      "nombre": "Cementerio Local San Antonio del Tequendama",
+      "detalle": "San Antonio del Tequendama",
+      "cat": "centro",
+      "lat": 4.616581,
+      "lng": -74.353138
+    },
+    {
+      "id": "colegio-departamental-san-antonio-del-te",
+      "nombre": "Colegio Departamental San Antonio del Tequendama",
+      "detalle": "San Antonio del Tequendama",
+      "cat": "educacion",
+      "lat": 4.61151,
+      "lng": -74.347248
+    },
+    {
+      "id": "parque-de-la-avioneta",
+      "nombre": "Parque de La Avioneta",
+      "detalle": "San Antonio del Tequendama",
+      "cat": "centro",
+      "lat": 4.612475,
+      "lng": -74.346233
+    },
+    {
+      "id": "colegio-mariano-santamaria-educacion-bas",
+      "nombre": "Colegio Mariano Santamaría Educación Basica",
+      "detalle": "San Antonio del Tequendama · a 2,5 km",
+      "cat": "educacion",
+      "lat": 4.595017,
+      "lng": -74.34284
+    },
+    {
+      "id": "centro-de-salud-de-santandercito-ese-hos",
+      "nombre": "Centro de Salud de Santandercito- ESE Hospital SAT",
+      "detalle": "San Antonio del Tequendama · a 2,6 km",
+      "cat": "salud",
+      "lat": 4.594664,
+      "lng": -74.342955
+    },
+    {
+      "id": "parque-cristobal-colon",
+      "nombre": "Parque Cristobal Colon",
+      "detalle": "San Antonio del Tequendama · a 2,6 km",
+      "cat": "centro",
+      "lat": 4.594892,
+      "lng": -74.342212
+    },
+    {
+      "id": "iglesia-nuestra-senora-del-carmen",
+      "nombre": "Iglesia Nuestra Señora del Carmen",
+      "detalle": "San Antonio del Tequendama · a 2,6 km",
+      "cat": "centro",
+      "lat": 4.594456,
+      "lng": -74.342405
+    },
+    {
+      "id": "escuela-napoles",
+      "nombre": "Escuela Napoles",
+      "detalle": "San Antonio del Tequendama · a 2,7 km",
+      "cat": "educacion",
+      "lat": 4.640368,
+      "lng": -74.354157
+    },
+    {
+      "id": "restaurante-bellavista",
+      "nombre": "restaurante Bellavista",
+      "detalle": "San Antonio del Tequendama · a 3,1 km",
+      "cat": "comida",
+      "lat": 4.588348,
+      "lng": -74.350012
+    },
+    {
+      "id": "el-veleno",
+      "nombre": "El Veleño",
+      "detalle": "San Antonio del Tequendama · a 3,6 km",
+      "cat": "comida",
+      "lat": 4.587284,
+      "lng": -74.336135
+    },
+    {
+      "id": "tarahara",
+      "nombre": "Tarahara",
+      "detalle": "San Antonio del Tequendama · a 3,8 km",
+      "cat": "turismo",
+      "lat": 4.601463,
+      "lng": -74.320684
+    },
+    {
+      "id": "soacha",
+      "nombre": "Soacha",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.582689,
+      "lng": -74.211778
+    },
+    {
+      "id": "el-colegio",
+      "nombre": "El Colegio",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.580262,
+      "lng": -74.442374
+    },
+    {
+      "id": "tena",
+      "nombre": "Tena",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.655471,
+      "lng": -74.389339
+    },
+    {
+      "id": "la-mesa",
+      "nombre": "La Mesa",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.6323,
+      "lng": -74.463399
+    },
+    {
+      "id": "sibate",
+      "nombre": "Sibaté",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.466006,
+      "lng": -74.262724
+    },
+    {
+      "id": "granada",
+      "nombre": "Granada",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.520281,
+      "lng": -74.352094
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-02",
+      "movil": "002",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "SAT 602",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 880,
+      "desde": 2011,
+      "tel": "3000000002"
+    },
+    {
+      "id": "demo-03",
+      "movil": "003",
+      "nombre": "Rubén Sarmiento",
+      "placa": "SAT 603",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 961,
+      "desde": 2020,
+      "tel": "3000000003"
+    },
+    {
+      "id": "demo-08",
+      "movil": "008",
+      "nombre": "Sandra Patiño",
+      "placa": "SAT 608",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1228,
+      "desde": 2006,
+      "tel": "3000000008"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Luz Marina Rojas",
+      "placa": "SAT 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 956,
+      "desde": 2015,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Diana Forero",
+      "placa": "SAT 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1250,
+      "desde": 2019,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Jorge Castañeda",
+      "placa": "SAT 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 758,
+      "desde": 2021,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Germán Quintero",
+      "placa": "SAT 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1809,
+      "desde": 2006,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Jairo Moreno",
+      "placa": "SAT 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1159,
+      "desde": 2016,
+      "tel": "3000000025"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "TST Transportes —Transportes San Antonio del Tequendama S.A.S.— mueve a San Antonio del Tequendama desde 1990: rutas por las veredas, servicio especial y escolar, y taxis para carreras dentro y fuera del municipio. En 2026, después de una mesa de trabajo con la gerencia de TST y algunos de sus afiliados, la Alcaldía fijó las tarifas del servicio tipo taxi desde San Antonio, Bellavista, Santandercito y Pradilla hacia cada vereda.\n\nCon la app, la empresa puede llevar sus taxis al celular: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay, conoces la tarifa de tu vereda antes de subir, sigues el móvil en el mapa y pagas con QR, ya sea para subir a Santandercito, bajar a El Colegio o ir hacia Soacha y Bogotá.",
+    "mision": "Prestar el servicio de taxi en San Antonio del Tequendama, Santandercito, Bellavista, Pradilla y sus veredas con conductores que conocen cada camino, con seguridad, puntualidad, tarifa clara y buen trato.",
+    "vision": "Ser la forma más fácil y confiable de moverse en San Antonio del Tequendama: un taxi a un toque, con la tarifa de cada vereda a la vista y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi en San Antonio, Santandercito, Bellavista y Pradilla",
+      "Carreras a las veredas con tarifa fija",
+      "Viajes a Soacha, El Colegio y Tena",
+      "Viajes a La Mesa y el Tequendama",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Un transporte profesional para la región del Tequendama"
+  },
+  "fuentes": [
+    "https://sanantoniodeltequendamacundinamarca.micolombiadigital.gov.co/sites/sanantoniodeltequendamacundinamarca/content/files/001386/69299_decreto-no-010-2026-tarifas-servicio-publico20260212_08164902.pdf",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=800105416",
+    "https://www.facebook.com/people/TST-Transportes-San-Antonio-del-Tequendama/100057270047748/",
+    "https://www.instagram.com/tst_transportes_sas/",
+    "https://colfirma.com/empresa/transportes-san-antonio-del-tequendama-sas-800105416",
+    "https://edirectorio.net/empresa/transportes-san-antonio-del-tequendama-sas",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Taxis: el Decreto 010 del 9 de febrero de 2026 de la Alcaldía de San Antonio del Tequendama fija, además de la tarifa del servicio urbano (colectivo), una «Lista de precios servicio individual de pasajeros tipo taxi»: parada mínima $7.000 y carreras con tarifa fija desde San Antonio, Bellavista, Santandercito y Pradilla, de $7.000 a $30.000. El decreto dice que las tarifas salieron de una mesa de trabajo con «la gerencia de la empresa T.S.T y algunos de sus afiliados» (URL en fuentes; PDF escaneado, leído página por página).",
+    "El blog de la empresa en Blogger (octubre de 2011) lista entre sus servicios «Taxis: para transporte por carreras dentro y fuera del municipio», además del transporte veredal, intermunicipal a La Mesa, especial y escolar. TST también tiene buses y busetas (portada de su Facebook): la propuesta es solo para su servicio de taxi.",
+    "RUES abierto (datos.gov.co): Transportes San Antonio del Tequendama S.A.S., sigla TST Transportes S.A.S., NIT 800.105.416-4, ACTIVA, Cámara de Comercio de Girardot, CIIU 4921, matriculada el 14-ago-1990 y renovada el 19-mar-2026. Fundada: 1990 es el año de la matrícula.",
+    "Teléfono 311 276 1760: el de la página de Facebook de la empresa (también aparece en su blog de 2011). El registro mercantil da el 311 450 4912 (eInforma, edirectorio) y sus avisos de horarios en Facebook (diciembre de 2025) dan el 310 804 6702 y el 310 804 6734. No se sabe cuál es la línea de taxis ni si alguno tiene WhatsApp.",
+    "Correo transportetstltda@yahoo.es: el que publica el blog de la empresa en 2011; puede estar desactualizado.",
+    "Dirección: Km 19 de la vía Bogotá–Mesitas del Colegio (Troncal del Tequendama), según el registro mercantil (edirectorio) y su Facebook. No se pudo ubicar el kilómetro 19 con precisión en OpenStreetMap: la oficina queda sin punto en el mapa (null).",
+    "Representante legal: Blanca Nubia Aguilera Gutiérrez, según el RUES abierto (actualizado en abril de 2026); también es el contacto del blog de 2011. Se usa solo para el saludo de la propuesta.",
+    "Número de taxis: sin cifra.",
+    "Colores: tomados del verde de sus buses (franja verde limón y letras verdes de «TST Transportes» en la portada de su Facebook); el tono exacto es una aproximación de interOS. Acento amarillo de taxi.",
+    "Lema y frase: «Un transporte profesional para la región del Tequendama», el lema que publica la empresa en su blog.",
+    "Vehículo: no se sabe qué carros usa en el servicio de taxi; se deja el modelo genérico de la demo. Placa de la demo (SAT): inventada.",
+    "Tarifas: Decreto 010 del 9 de febrero de 2026 (URL en fuentes). El decreto no fija recargos nocturnos ni dominicales.",
+    "Destinos: municipios vecinos (Soacha, El Colegio, Tena, La Mesa, Sibaté, Granada); San Antonio queda a unos 40 km de Bogotá por Soacha, por eso se añaden Portal 80 y el aeropuerto, como en Tena y El Colegio.",
+    "La historia solo usa hechos de las fuentes; la misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

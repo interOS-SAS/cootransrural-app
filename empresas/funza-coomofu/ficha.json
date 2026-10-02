@@ -1,0 +1,646 @@
+{
+  "id": "funza-coomofu",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Coomofu",
+    "nombreCorto": "Coomofu",
+    "razonSocial": "Cooperativa de Motoristas de Mosquera y Funza Coomofu Ltda.",
+    "tipo": "cooperativa",
+    "lema": "Taxis de Funza y Mosquera desde 1979",
+    "municipio": "Funza, Cundinamarca",
+    "pueblo": "Funza",
+    "telefono": "3245997136",
+    "telefonoVisible": "324 599 7136",
+    "whatsapp": "",
+    "correo": "info@coomofu.com",
+    "direccion": "Carrera 14 # 14-31, Funza, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://coomofu.com",
+    "fundada": 1979,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "FNZ",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana de Occidente",
+    "datosPendientes": [
+      "número de taxis",
+      "si la línea 324 599 7136 también atiende por WhatsApp",
+      "si la central atiende las 24 horas",
+      "qué tiene hoy con su app (Autocab) y hasta cuándo",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.717031,
+      "lng": -74.211775
+    }
+  },
+  "colores": {
+    "primario": "#0F6935",
+    "primario2": "#178A47",
+    "oscuro": "#06301A",
+    "acento": "#FFF200",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.716324,
+    "lng": -74.212216
+  },
+  "ZONA": {
+    "sur": 4.4,
+    "norte": 5.04,
+    "oeste": -74.53,
+    "este": -73.89
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 6150,
+    "banderazo": 3813,
+    "porKm": 1230,
+    "redondeo": 500,
+    "recargoNocturno": 1200,
+    "recargoDominical": 1200,
+    "nocheDesde": 21,
+    "nocheHasta": 5,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "Valores del Decreto 022 del 11 de junio de 2025 de Funza (modifica el Decreto 089 de 2023): unidad de $123 cada 100 m ($1.230 por km), banderazo $3.813, carrera mínima $6.150 y recargo de $1.200 de 9:00 p. m. a 5:00 a. m. y los domingos y festivos todo el día (es un solo recargo, no se suman). Puerta a puerta ($738), espera ($123 cada 24 segundos) y recorrido fuera del perímetro urbano ($2.091) van aparte. Las rutas a otros municipios son de ejemplo, sujetas a confirmación."
+  },
+  "RUTAS": [
+    {
+      "id": "mosquera",
+      "destino": "Mosquera",
+      "valor": 15000,
+      "km": 3,
+      "min": 5,
+      "radioKm": 4
+    },
+    {
+      "id": "madrid",
+      "destino": "Madrid",
+      "valor": 17000,
+      "km": 7,
+      "min": 10,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 29000,
+      "km": 15,
+      "min": 35,
+      "radioKm": 3
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 32000,
+      "km": 17,
+      "min": 30,
+      "radioKm": 3
+    },
+    {
+      "id": "cota",
+      "destino": "Cota",
+      "valor": 32000,
+      "km": 17,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 41000,
+      "km": 23,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "tenjo",
+      "destino": "Tenjo",
+      "valor": 41000,
+      "km": 24,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "soacha",
+      "destino": "Soacha",
+      "valor": 48000,
+      "km": 28,
+      "min": 40,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Funza",
+      "cat": "centro",
+      "lat": 4.716324,
+      "lng": -74.212216
+    },
+    {
+      "id": "estacion-de-policia-de-funza",
+      "nombre": "Estación de Policía de Funza",
+      "detalle": "Funza",
+      "cat": "centro",
+      "lat": 4.716055,
+      "lng": -74.205689
+    },
+    {
+      "id": "supermercado-colsubsidio-funza",
+      "nombre": "Supermercado Colsubsidio Funza",
+      "detalle": "Funza",
+      "cat": "comercio",
+      "lat": 4.71554,
+      "lng": -74.206443
+    },
+    {
+      "id": "biblioteca-colsubsidio-funza",
+      "nombre": "Biblioteca Colsubsidio Funza",
+      "detalle": "Funza",
+      "cat": "centro",
+      "lat": 4.71535,
+      "lng": -74.206643
+    },
+    {
+      "id": "colegio-cristiano-integral",
+      "nombre": "Colegio Cristiano Integral",
+      "detalle": "Funza",
+      "cat": "educacion",
+      "lat": 4.717082,
+      "lng": -74.208424
+    },
+    {
+      "id": "parque-serenas",
+      "nombre": "Parque Serenas",
+      "detalle": "Funza",
+      "cat": "centro",
+      "lat": 4.71579,
+      "lng": -74.208457
+    },
+    {
+      "id": "terpel",
+      "nombre": "Terpel",
+      "detalle": "Funza",
+      "cat": "comercio",
+      "lat": 4.713912,
+      "lng": -74.209693
+    },
+    {
+      "id": "hotel-el-sol",
+      "nombre": "Hotel El Sol",
+      "detalle": "Funza",
+      "cat": "turismo",
+      "lat": 4.713354,
+      "lng": -74.209515
+    },
+    {
+      "id": "colegio-furatena",
+      "nombre": "Colegio Furatena",
+      "detalle": "Funza · a 1,7 km",
+      "cat": "educacion",
+      "lat": 4.712175,
+      "lng": -74.19778
+    },
+    {
+      "id": "surtimayorista",
+      "nombre": "Surtimayorista",
+      "detalle": "Funza",
+      "cat": "comercio",
+      "lat": 4.716338,
+      "lng": -74.210825
+    },
+    {
+      "id": "la-gran-cosecha-campesina",
+      "nombre": "La Gran Cosecha Campesina",
+      "detalle": "Funza",
+      "cat": "centro",
+      "lat": 4.715191,
+      "lng": -74.210874
+    },
+    {
+      "id": "hotel-san-angel",
+      "nombre": "Hotel San Angel",
+      "detalle": "Funza",
+      "cat": "turismo",
+      "lat": 4.712828,
+      "lng": -74.209762
+    },
+    {
+      "id": "colegio-miguel-antonio-caro-mac",
+      "nombre": "Colegio Miguel Antonio Caro (MAC)",
+      "detalle": "Funza",
+      "cat": "educacion",
+      "lat": 4.710268,
+      "lng": -74.206741
+    },
+    {
+      "id": "la-iglesia-de-jesucristo-de-los-santos-d",
+      "nombre": "La Iglesia de Jesucristo de los Santos de los Últimos Días",
+      "detalle": "Funza",
+      "cat": "centro",
+      "lat": 4.710675,
+      "lng": -74.208198
+    },
+    {
+      "id": "sabana-express",
+      "nombre": "Sabana Express",
+      "detalle": "Funza",
+      "cat": "comida",
+      "lat": 4.716567,
+      "lng": -74.211817
+    },
+    {
+      "id": "colegio-parroquial-santiago-apostol",
+      "nombre": "Colegio Parroquial Santiago Apóstol",
+      "detalle": "Funza",
+      "cat": "educacion",
+      "lat": 4.71538,
+      "lng": -74.211732
+    },
+    {
+      "id": "colegio-cooperativo-comunal-de-funza",
+      "nombre": "Colegio Cooperativo Comunal de Funza",
+      "detalle": "Funza",
+      "cat": "educacion",
+      "lat": 4.718465,
+      "lng": -74.212096
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Funza",
+      "cat": "comercio",
+      "lat": 4.716692,
+      "lng": -74.21235
+    },
+    {
+      "id": "subestacion-furatena",
+      "nombre": "Subestación de Policía Furatena",
+      "detalle": "Funza · a 1,8 km",
+      "cat": "centro",
+      "lat": 4.711027,
+      "lng": -74.196652
+    },
+    {
+      "id": "av-villas",
+      "nombre": "AV Villas",
+      "detalle": "Funza",
+      "cat": "comercio",
+      "lat": 4.715796,
+      "lng": -74.212328
+    },
+    {
+      "id": "colegio-mayor-creativista",
+      "nombre": "Colegio Mayor Creativista",
+      "detalle": "Funza",
+      "cat": "educacion",
+      "lat": 4.708953,
+      "lng": -74.20639
+    },
+    {
+      "id": "el-rancho",
+      "nombre": "El Rancho",
+      "detalle": "Funza",
+      "cat": "comida",
+      "lat": 4.716388,
+      "lng": -74.212727
+    },
+    {
+      "id": "biblioteca-marques-de-san-jorge",
+      "nombre": "Biblioteca Marqués de San Jorge",
+      "detalle": "Funza",
+      "cat": "centro",
+      "lat": 4.718092,
+      "lng": -74.213174
+    },
+    {
+      "id": "el-gourmet-del-pacifico",
+      "nombre": "El Gourmet del Pacífico",
+      "detalle": "Funza",
+      "cat": "comida",
+      "lat": 4.708896,
+      "lng": -74.208823
+    },
+    {
+      "id": "delicias-vallunos-el-paisa",
+      "nombre": "Delicias Vallunos El Paisa",
+      "detalle": "Funza",
+      "cat": "comida",
+      "lat": 4.70865,
+      "lng": -74.209329
+    },
+    {
+      "id": "mi-ranchito",
+      "nombre": "Mi Ranchito",
+      "detalle": "Funza · a 1,3 km",
+      "cat": "comida",
+      "lat": 4.706974,
+      "lng": -74.205499
+    },
+    {
+      "id": "puesto-medico-el-hato",
+      "nombre": "Puesto Médico \"El Hato\"",
+      "detalle": "Funza · a 1,6 km",
+      "cat": "salud",
+      "lat": 4.706975,
+      "lng": -74.200673
+    },
+    {
+      "id": "hospital-nuestra-senora-de-las-mercedes-",
+      "nombre": "Hospital Nuestra Señora De Las Mercedes Funza",
+      "detalle": "Funza",
+      "cat": "salud",
+      "lat": 4.712099,
+      "lng": -74.212861
+    },
+    {
+      "id": "c-i-s-s-alcaldia-de-funza",
+      "nombre": "C.I.S.S. Alcaldia De Funza",
+      "detalle": "Funza",
+      "cat": "centro",
+      "lat": 4.711595,
+      "lng": -74.212614
+    },
+    {
+      "id": "vivaje-hostal",
+      "nombre": "Vivaje Hostal",
+      "detalle": "Funza",
+      "cat": "turismo",
+      "lat": 4.714779,
+      "lng": -74.214301
+    },
+    {
+      "id": "swite-hotel",
+      "nombre": "Swite Hotel",
+      "detalle": "Funza",
+      "cat": "turismo",
+      "lat": 4.714673,
+      "lng": -74.215151
+    },
+    {
+      "id": "hotel-el-paraiso",
+      "nombre": "Hotel El Paraiso",
+      "detalle": "Funza",
+      "cat": "turismo",
+      "lat": 4.710211,
+      "lng": -74.213876
+    },
+    {
+      "id": "hospedaje-olimpus",
+      "nombre": "Hospedaje Olimpus",
+      "detalle": "Funza",
+      "cat": "turismo",
+      "lat": 4.709076,
+      "lng": -74.215727
+    },
+    {
+      "id": "siete-trojes",
+      "nombre": "Siete Trojes",
+      "detalle": "Vereda de Funza",
+      "cat": "vereda",
+      "lat": 4.737419,
+      "lng": -74.22721
+    },
+    {
+      "id": "mosquera",
+      "nombre": "Mosquera",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.705099,
+      "lng": -74.230357
+    },
+    {
+      "id": "madrid",
+      "nombre": "Madrid",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.730613,
+      "lng": -74.264037
+    },
+    {
+      "id": "cota",
+      "nombre": "Cota",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.808387,
+      "lng": -74.103677
+    },
+    {
+      "id": "tenjo",
+      "nombre": "Tenjo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.871304,
+      "lng": -74.147325
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    },
+    {
+      "id": "soacha",
+      "nombre": "Soacha",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.582152,
+      "lng": -74.219736
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-03",
+      "movil": "003",
+      "nombre": "Yolanda Prieto",
+      "placa": "FNZ 603",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 616,
+      "desde": 2019,
+      "tel": "3000000003"
+    },
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Édgar Molina",
+      "placa": "FNZ 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2105,
+      "desde": 2011,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Germán Quintero",
+      "placa": "FNZ 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1868,
+      "desde": 2007,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Carlos Rodríguez",
+      "placa": "FNZ 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1781,
+      "desde": 2012,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Héctor Bernal",
+      "placa": "FNZ 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2010,
+      "desde": 2019,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Fabio Cruz",
+      "placa": "FNZ 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1766,
+      "desde": 2014,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Diana Forero",
+      "placa": "FNZ 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1682,
+      "desde": 2017,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Nelson Pinzón",
+      "placa": "FNZ 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 2198,
+      "desde": 2016,
+      "tel": "3000000026"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Coomofu, la Cooperativa de Motoristas de Mosquera y Funza, nació en 1979, cuando un grupo de transportadores se organizó para ofrecer el servicio de taxi dentro de Mosquera y Funza y conectar a sus vecinos con Bogotá. Con los años sumó rutas entre municipios, transporte especial, servicio mixto y carga exprés, y hoy presta el servicio de taxi en Funza, Mosquera y Tocaima desde su sede en la Carrera 14 # 14-31 de Funza.\n\nCon esta app, Coomofu puede dar el siguiente paso en el celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Funza y Mosquera con conductores que conocen la Sabana, con seguridad, puntualidad, tarifas claras y buen trato para cada pasajero.",
+    "vision": "Ser la forma más fácil y confiable de pedir un taxi en Funza y Mosquera: un toque en el celular, la tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en Funza y Mosquera",
+      "Taxi en Tocaima",
+      "Viajes a Bogotá y a los municipios vecinos",
+      "Transporte especial con cobertura nacional",
+      "Rutas intermunicipales y servicio mixto",
+      "Carga exprés hasta 800 kg"
+    ],
+    "frase": "Tu taxi de confianza en Funza y Mosquera"
+  },
+  "fuentes": [
+    "https://coomofu.com/",
+    "https://coomofu.com/nosotros/",
+    "https://grupocoomofu.com/inicio/",
+    "https://play.google.com/store/apps/details?id=com.coomofu.funza",
+    "https://apps.apple.com/co/app/taxi-coomofu/id1604634707",
+    "https://www.facebook.com/Coomofu.oficial/",
+    "https://www.mosquera-cundinamarca.gov.co/noticias/atencion-comunidad-usuaria-del-servicio-de-taxi",
+    "https://funzacundinamarca.micolombiadigital.gov.co/noticias/seguridadvial-los-taxistas-agentes-y-policias-de-transito",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=860517391",
+    "https://www.datos.gov.co/resource/qmzu-gj57.json?$where=upper(nombre)%20like%20%27%25COOMOFU%25%27",
+    "https://funzacundinamarca.micolombiadigital.gov.co/sites/funzacundinamarca/content/files/002847/142316_22-decreto-222025.pdf",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza alta (verificado el 1-oct-2026). Razón social, NIT 860.517.391-5, matrícula del 12-mar-1997 en la Cámara de Comercio de Facatativá, renovación del 18-mar-2026 y representante legal Gabriel Enrique Roa Quiñones: RUES (datos.gov.co c82u-588k).",
+    "Fundada en 1979 e historia (taxi en Mosquera y Funza desde el comienzo, rutas en los 80, absorción de la cooperativa de Tocaima en 1999): página Nosotros de su web (https://coomofu.com/nosotros/). Servicios (taxi en Funza, Mosquera y Tocaima; especial nacional; intermunicipal; mixto; carga exprés hasta 800 kg): su web.",
+    "Evidencia de taxi: su web («Servicio de taxis en Funza, Mosquera y Tocaima»); la Alcaldía de Mosquera (10-dic-2023) la nombra con Cootransmosquera como empresa de taxi legalmente autorizada; la Alcaldía de Funza capacitó a «taxistas de la empresa Coomofu» (19-may-2023).",
+    "Teléfonos: líneas de la central 324 599 7136 y 324 599 7137 (su web y Alcaldía de Mosquera); fijo (601) 821 5870 (su web); 350 667 5945 (línea de Coomofu publicada por la Alcaldía de Mosquera, dic-2023); Tocaima (601) 836 7911. No consta que alguna sea WhatsApp: whatsapp vacío. El teléfono del desarrollador en Google Play (317…) puede ser de una persona: celular personal, no publicar.",
+    "Correos: info@coomofu.com (pie de página de su web y de grupocoomofu.com); direccion.comercial@coomofu.com (registro de proveedor en SECOP II, ene-2025) y operativo@coomofu.com (desarrollador de la app en Google Play), en copia.",
+    "Dirección: Carrera 14 # 14-31, Funza (su web); también tiene oficina en Tocaima (Diagonal 6B # 14-55). Oficina ubicada en el mapa entre los cruces de la Carrera 14 con las calles 14 y 15 (OpenStreetMap). Su sitio va en sitioOficial; web queda vacío, como en las demás fichas.",
+    "OJO para la venta: ya tiene app de pasajero «Taxi Coomofu» (Google Play: más de 10 mil descargas, 4,5 estrellas con 355 opiniones, actualizada el 4-ago-2026; pago con QR Bancolombia o Davivienda; también en App Store). Está hecha sobre Autocab (soporte y política de privacidad en autocab.net). La propuesta debe ser de mejora (marca propia, pago QR Bre-B, stickers QR, código de abordaje, panel propio), no de empezar de cero.",
+    "En sep-2026 hizo con Coopexfun la promoción «Alianza de la Sabana»: tarifa fija de $8.000 de día y $9.000 de noche y domingos en la zona urbana de Funza y Mosquera.",
+    "Tarifas: Decreto 022 del 11-jun-2025 de Funza (modifica el Decreto 089 de 2023), https://funzacundinamarca.micolombiadigital.gov.co/sites/funzacundinamarca/content/files/002847/142316_22-decreto-222025.pdf . En la lista de decretos 2026 de la Alcaldía (hasta el 57-2026) no hay uno nuevo de taxi. La app suma el recargo nocturno y el dominical si coinciden (domingo de noche); en el decreto es un solo recargo de 8 unidades: tenerlo en cuenta al configurar. Puerta a puerta, espera y fuera del perímetro no se modelan. Mosquera tiene su propia tabla (mínima $6.300, Decreto 305 de 2023).",
+    "Número de taxis por confirmar: la web habla de «más de 2000 activos y conductores» en total, sin cifra de taxis.",
+    "Colores tomados de su logo (verde #0F6935, amarillo #FFF200 y negro, medidos en coomofu.com/wp-content/uploads/2021/11/LOGO-1.png); primario2 y oscuro son el mismo verde aclarado y oscurecido. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales.",
+    "Redes: https://www.facebook.com/Coomofu.oficial/ , https://www.instagram.com/coomofu_oficial/ , https://www.tiktok.com/@coomofultda , https://x.com/CoomofuOficial .",
+    "Destinos: municipios vecinos de Funza (Wikipedia: Cota y Tenjo al norte, Mosquera al sur, Madrid al occidente) más Facatativá y Soacha (su historia menciona cobertura Funza–Soacha); está a unos 20 km del Portal 80."
+  ]
+}

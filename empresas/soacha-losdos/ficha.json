@@ -1,0 +1,676 @@
+{
+  "id": "soacha-losdos",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Taxis Los Dos",
+    "nombreCorto": "Taxis Los Dos",
+    "razonSocial": "Taxis Los Dos S.A.S.",
+    "tipo": "empresa",
+    "lema": "Tu taxi en Soacha, a un toque",
+    "municipio": "Soacha, Cundinamarca",
+    "pueblo": "Soacha",
+    "telefono": "6017222242",
+    "telefonoVisible": "601 722 2242",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Carrera 8 # 11-23, Soacha, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "SCH",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia de Soacha",
+    "datosPendientes": [
+      "correo",
+      "confirmar teléfono y dirección",
+      "número de taxis",
+      "año de fundación",
+      "si sigue recibiendo pedidos por la app de Taxis Libres",
+      "tarifas oficiales vigentes de Soacha",
+      "colores y logo",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.58225,
+      "lng": -74.22126
+    }
+  },
+  "colores": {
+    "primario": "#7E22CE",
+    "primario2": "#9333EA",
+    "oscuro": "#2E1065",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.582152,
+    "lng": -74.219736
+  },
+  "ZONA": {
+    "sur": 4.26,
+    "norte": 4.9,
+    "oeste": -74.54,
+    "este": -73.9
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "sibate",
+      "destino": "Sibaté",
+      "valor": 32000,
+      "km": 17,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "granada",
+      "destino": "Granada",
+      "valor": 41000,
+      "km": 24,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 43000,
+      "km": 25,
+      "min": 35,
+      "radioKm": 3
+    },
+    {
+      "id": "mosquera",
+      "destino": "Mosquera",
+      "valor": 44000,
+      "km": 25,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 46000,
+      "km": 27,
+      "min": 30,
+      "radioKm": 3
+    },
+    {
+      "id": "bojaca",
+      "destino": "Bojacá",
+      "valor": 49000,
+      "km": 28,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "san-antonio-del-tequendama",
+      "destino": "San Antonio del Tequendama",
+      "valor": 60000,
+      "km": 36,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "fusagasuga",
+      "destino": "Fusagasugá",
+      "valor": 75000,
+      "km": 46,
+      "min": 60,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Soacha",
+      "cat": "centro",
+      "lat": 4.582152,
+      "lng": -74.219736
+    },
+    {
+      "id": "iglesia-de-dios-ministerial-de-jesucrist",
+      "nombre": "Iglesia de Dios Ministerial de Jesucristo Internacional",
+      "detalle": "Soacha",
+      "cat": "centro",
+      "lat": 4.581717,
+      "lng": -74.212948
+    },
+    {
+      "id": "hotel-everest-r",
+      "nombre": "Hotel Everest R",
+      "detalle": "Soacha",
+      "cat": "turismo",
+      "lat": 4.583248,
+      "lng": -74.213541
+    },
+    {
+      "id": "el-porvenir-barrio-soacha",
+      "nombre": "El Porvenir",
+      "detalle": "Soacha",
+      "cat": "barrio",
+      "lat": 4.581549,
+      "lng": -74.209591
+    },
+    {
+      "id": "comando-sies-policia",
+      "nombre": "Comando SIES Policía",
+      "detalle": "Soacha",
+      "cat": "centro",
+      "lat": 4.585532,
+      "lng": -74.213302
+    },
+    {
+      "id": "primax",
+      "nombre": "Primax",
+      "detalle": "Soacha",
+      "cat": "comercio",
+      "lat": 4.580857,
+      "lng": -74.214648
+    },
+    {
+      "id": "iglesia-camino-de-vida-cruzada-cristiana",
+      "nombre": "Iglesia Camino de Vida Cruzada Cristiana",
+      "detalle": "Soacha",
+      "cat": "centro",
+      "lat": 4.582169,
+      "lng": -74.215155
+    },
+    {
+      "id": "iglesia-adventista-del-septimo-dia-galil",
+      "nombre": "Iglesia Adventista del Séptimo día Galilea",
+      "detalle": "Soacha · a 1,3 km",
+      "cat": "centro",
+      "lat": 4.585229,
+      "lng": -74.208313
+    },
+    {
+      "id": "la-riviera-pollo-asado",
+      "nombre": "La Riviera Pollo Asado",
+      "detalle": "Soacha · a 1,4 km",
+      "cat": "comida",
+      "lat": 4.584558,
+      "lng": -74.207713
+    },
+    {
+      "id": "pollomax",
+      "nombre": "Pollomax",
+      "detalle": "Soacha · a 1,4 km",
+      "cat": "comida",
+      "lat": 4.584487,
+      "lng": -74.207633
+    },
+    {
+      "id": "eds-soacha-centro-primax",
+      "nombre": "EDS Soacha Centro Primax",
+      "detalle": "Soacha",
+      "cat": "comercio",
+      "lat": 4.582193,
+      "lng": -74.216353
+    },
+    {
+      "id": "parque-mariscal-sucre",
+      "nombre": "Parque Mariscal Sucre",
+      "detalle": "Soacha · a 1,4 km",
+      "cat": "centro",
+      "lat": 4.583052,
+      "lng": -74.206824
+    },
+    {
+      "id": "iglesia-de-jesucristo-de-los-santos-de-l",
+      "nombre": "Iglesia de Jesucristo de los Santos de los Últimos Días",
+      "detalle": "Soacha",
+      "cat": "centro",
+      "lat": 4.577943,
+      "lng": -74.213842
+    },
+    {
+      "id": "iglesia-nuestra-senora-de-las-misericord",
+      "nombre": "Iglesia Nuestra Señora de las Misericordias",
+      "detalle": "Soacha",
+      "cat": "centro",
+      "lat": 4.578108,
+      "lng": -74.214229
+    },
+    {
+      "id": "banco-av-villas",
+      "nombre": "Banco AV Villas",
+      "detalle": "Soacha",
+      "cat": "comercio",
+      "lat": 4.582295,
+      "lng": -74.217032
+    },
+    {
+      "id": "banco-w",
+      "nombre": "Banco W",
+      "detalle": "Soacha",
+      "cat": "comercio",
+      "lat": 4.581475,
+      "lng": -74.217209
+    },
+    {
+      "id": "biblioteca-publica-joaquin-pineros",
+      "nombre": "Biblioteca Pública Joaquin Piñeros",
+      "detalle": "Soacha",
+      "cat": "centro",
+      "lat": 4.581993,
+      "lng": -74.217348
+    },
+    {
+      "id": "ricaurte-barrio-soacha",
+      "nombre": "Ricaurte",
+      "detalle": "Soacha · a 1,3 km",
+      "cat": "barrio",
+      "lat": 4.578043,
+      "lng": -74.208485
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Soacha · a 1,5 km",
+      "cat": "comercio",
+      "lat": 4.584552,
+      "lng": -74.206344
+    },
+    {
+      "id": "museo-arqueologico",
+      "nombre": "Museo Arqueológico",
+      "detalle": "Soacha",
+      "cat": "turismo",
+      "lat": 4.581921,
+      "lng": -74.217512
+    },
+    {
+      "id": "plaza-de-mercado-municipal",
+      "nombre": "Plaza de Mercado Municipal",
+      "detalle": "Soacha",
+      "cat": "centro",
+      "lat": 4.580408,
+      "lng": -74.217191
+    },
+    {
+      "id": "los-rosales-barrio-de-soacha",
+      "nombre": "Los Rosales",
+      "detalle": "Soacha · a 1,5 km",
+      "cat": "barrio",
+      "lat": 4.58014,
+      "lng": -74.20635
+    },
+    {
+      "id": "san-mateo-barrio-soacha",
+      "nombre": "San Mateo",
+      "detalle": "Soacha · a 1,6 km",
+      "cat": "barrio",
+      "lat": 4.580399,
+      "lng": -74.20548
+    },
+    {
+      "id": "hotel-nuevo-soacha",
+      "nombre": "Hotel Nuevo Soacha",
+      "detalle": "Soacha",
+      "cat": "turismo",
+      "lat": 4.582816,
+      "lng": -74.219554
+    },
+    {
+      "id": "palacio-chino",
+      "nombre": "Palacio Chino",
+      "detalle": "Soacha",
+      "cat": "comida",
+      "lat": 4.578347,
+      "lng": -74.21881
+    },
+    {
+      "id": "hotel-el-sol",
+      "nombre": "Hotel El Sol",
+      "detalle": "Soacha",
+      "cat": "turismo",
+      "lat": 4.580534,
+      "lng": -74.219901
+    },
+    {
+      "id": "centro-medico-cruz-blanca",
+      "nombre": "Centro Medico Cruz Blanca",
+      "detalle": "Soacha",
+      "cat": "salud",
+      "lat": 4.577991,
+      "lng": -74.220782
+    },
+    {
+      "id": "centro-de-salud-san-mateo",
+      "nombre": "Centro de Salud San Mateo",
+      "detalle": "Soacha · a 1,9 km",
+      "cat": "salud",
+      "lat": 4.577736,
+      "lng": -74.20284
+    },
+    {
+      "id": "armero-barrio-de-soacha",
+      "nombre": "Armero",
+      "detalle": "Soacha · a 2,0 km",
+      "cat": "barrio",
+      "lat": 4.578291,
+      "lng": -74.202003
+    },
+    {
+      "id": "hospital-cardiovascular-del-nino-de-cund",
+      "nombre": "Hospital Cardiovascular del Niño de Cundinamarca",
+      "detalle": "Soacha · a 2,1 km",
+      "cat": "salud",
+      "lat": 4.582448,
+      "lng": -74.20043
+    },
+    {
+      "id": "junin-barrio-de-soacha",
+      "nombre": "Junín",
+      "detalle": "Soacha · a 2,1 km",
+      "cat": "barrio",
+      "lat": 4.578905,
+      "lng": -74.200793
+    },
+    {
+      "id": "centro-medico-virrey-solis-soacha",
+      "nombre": "Centro Medico Virrey Solis Soacha",
+      "detalle": "Soacha · a 2,3 km",
+      "cat": "salud",
+      "lat": 4.588028,
+      "lng": -74.200094
+    },
+    {
+      "id": "chow-fan-valenciana",
+      "nombre": "Chow Fan Valenciana",
+      "detalle": "Soacha · a 2,4 km",
+      "cat": "comida",
+      "lat": 4.591214,
+      "lng": -74.199922
+    },
+    {
+      "id": "hotel-polaris",
+      "nombre": "Hotel Polaris",
+      "detalle": "Soacha · a 2,5 km",
+      "cat": "turismo",
+      "lat": 4.592241,
+      "lng": -74.199142
+    },
+    {
+      "id": "hotel-el-patriota",
+      "nombre": "Hotel El Patriota",
+      "detalle": "Soacha",
+      "cat": "turismo",
+      "lat": 4.572661,
+      "lng": -74.224788
+    },
+    {
+      "id": "la-maria-barrio-soacha",
+      "nombre": "La María",
+      "detalle": "Soacha · a 2,6 km",
+      "cat": "barrio",
+      "lat": 4.597873,
+      "lng": -74.201858
+    },
+    {
+      "id": "institucion-educativa-julio-cesar-turbay",
+      "nombre": "Institución Educativa Julio César Turbay",
+      "detalle": "Soacha · a 3,3 km",
+      "cat": "educacion",
+      "lat": 4.584881,
+      "lng": -74.190006
+    },
+    {
+      "id": "la-despensa-barrio",
+      "nombre": "La Despensa",
+      "detalle": "Soacha · a 3,7 km",
+      "cat": "barrio",
+      "lat": 4.596177,
+      "lng": -74.18941
+    },
+    {
+      "id": "ie-la-despensa-sede-ciudad-verde",
+      "nombre": "IE La Despensa sede Ciudad Verde",
+      "detalle": "Soacha · a 3,1 km",
+      "cat": "educacion",
+      "lat": 4.609602,
+      "lng": -74.220719
+    },
+    {
+      "id": "sibate",
+      "nombre": "Sibaté",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.466006,
+      "lng": -74.262724
+    },
+    {
+      "id": "mosquera",
+      "nombre": "Mosquera",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.705099,
+      "lng": -74.230357
+    },
+    {
+      "id": "granada",
+      "nombre": "Granada",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.520281,
+      "lng": -74.352094
+    },
+    {
+      "id": "san-antonio-del-tequendama",
+      "nombre": "San Antonio del Tequendama",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.616137,
+      "lng": -74.351691
+    },
+    {
+      "id": "fusagasuga",
+      "nombre": "Fusagasugá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.344951,
+      "lng": -74.367425
+    },
+    {
+      "id": "bojaca",
+      "nombre": "Bojacá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.732482,
+      "lng": -74.341674
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Édgar Molina",
+      "placa": "SCH 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1943,
+      "desde": 2020,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Luz Marina Rojas",
+      "placa": "SCH 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 855,
+      "desde": 2018,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Diana Forero",
+      "placa": "SCH 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 947,
+      "desde": 2013,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Carlos Rodríguez",
+      "placa": "SCH 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 717,
+      "desde": 2007,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Fabio Cruz",
+      "placa": "SCH 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1061,
+      "desde": 2012,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Nelson Pinzón",
+      "placa": "SCH 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1983,
+      "desde": 2017,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Wilson Gómez",
+      "placa": "SCH 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1310,
+      "desde": 2006,
+      "tel": "3000000029"
+    },
+    {
+      "id": "demo-30",
+      "movil": "030",
+      "nombre": "Martha Garzón",
+      "placa": "SCH 630",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 733,
+      "desde": 2006,
+      "tel": "3000000030"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Taxis Los Dos S.A.S. es una de las dos empresas de taxi de Soacha. Está registrada desde 2009 como empresa de transporte de pasajeros y presta el servicio de taxi a la comunidad del municipio, con su línea de atención para pedidos, quejas y sugerencias.\n\nCon esta app, Taxis Los Dos puede llevar su servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Soacha con conductores que conocen el municipio, con seguridad, puntualidad, tarifas claras y buen trato para cada pasajero.",
+    "vision": "Ser la forma más fácil de pedir un taxi en Soacha: un toque en el celular, la tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en Soacha",
+      "Pedidos por teléfono a la central",
+      "Carreras con la tarifa oficial",
+      "Atención de quejas y sugerencias"
+    ],
+    "frase": "Tu taxi en Soacha"
+  },
+  "fuentes": [
+    "https://periodismopublico.com/en-soacha-denuncian-abuso-de-taxistas-en-el-cobro-de-tarifas",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=900291342",
+    "https://edirectorio.net/empresa/taxis-los-dos-s-a-s",
+    "https://es.cybo.com/CO-biz/taxis-los-dos-s-a-s",
+    "https://empresas.larepublica.co/colombia/cundinamarca/soacha/taxis-los-dos-sas-900291342",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza media (verificado el 1-oct-2026). Razón social, NIT 900.291.342-6, matrícula del 29-may-2009 en la Cámara de Comercio de Bogotá, actividad 4921, renovación del 31-mar-2026 y representante legal Luis Eduardo Beltrán Sanabria: RUES (datos.gov.co c82u-588k). La fecha de matrícula se usa como «registrada desde 2009»; el año de fundación queda en null.",
+    "Evidencia de taxi: Periodismo Público (27-mar-2020), al hablar de «las dos empresas» de taxi del municipio: «Taxis Xua S.A. y Taxis Los Dos S.A.S. informan a la comunidad del Municipio de Soacha…», con la línea de quejas «en Taxis Los Dos al 7222242».",
+    "Teléfonos: (601) 722 2242 (Periodismo Público, mar-2020, y directorios); (601) 722 2222 (línea de servicio que anunciaron las dos empresas de taxi de Soacha en mar-2020; por confirmar si sigue). Confirmar por teléfono el contacto actual.",
+    "Sin web, redes activas ni correo público (no aparece en SECOP II ni en directorios con correo): _correo_propuesta.para vacío.",
+    "Dirección: Carrera 8 # 11-23, Soacha (registro mercantil, vía edirectorio/informacolombia); otros directorios dan Carrera 8 # 11-53 int. 1 (misma cuadra). Oficina ubicada en el mapa sobre la Carrera 8, entre las calles 11 y 12 (OpenStreetMap). Se descartó una dirección de Mosquera (Cra. 3 # 2-19) que daba un directorio, sin respaldo.",
+    "En 2020 las dos empresas de Soacha recibían pedidos por la app de Taxis Libres: confirmar si siguen con esa plataforma.",
+    "Tarifas: no se añade el campo. Desde el 1-may-2024 la tarifa de taxi de Soacha se unificó con la de Bogotá (anuncio de los dos alcaldes; Infobae 2-may-2024: unidad $125, banderazo $3.500, mínima $6.300, recargo aeropuerto $6.300, nocturno/dominical $3.000, https://www.infobae.com/colombia/2024/05/02/tarifas-de-taxi-unificadas-en-soacha-y-bogota-desde-mayo/), pero no se encontró acto de Soacha de 2025 ni de 2026; por confirmar si hoy rige la tabla de Bogotá (Decreto Distrital 042 de 2026).",
+    "Colores propios de interOS (violeta y dorado): no se encontró logo. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales.",
+    "Destinos: municipios vecinos de Soacha (Sibaté, Mosquera, Granada, San Antonio del Tequendama, Bojacá) más Fusagasugá; Soacha limita con Bogotá, así que lleva Portal 80 y aeropuerto. Número de taxis por confirmar."
+  ]
+}

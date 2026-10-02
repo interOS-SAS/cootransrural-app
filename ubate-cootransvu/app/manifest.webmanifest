@@ -1,0 +1,19 @@
+{
+  "name": "Cootransvu — Pide tu taxi",
+  "short_name": "Cootransvu",
+  "description": "Pide tu taxi de Cootransvu en Ubaté con tu ubicación, sigue el móvil en el mapa y paga con QR.",
+  "lang": "es-CO",
+  "id": "./",
+  "start_url": "./?o=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2E7D32",
+  "theme_color": "#2E7D32",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "../../empresas/ubate-cootransvu/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../../empresas/ubate-cootransvu/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../../empresas/ubate-cootransvu/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

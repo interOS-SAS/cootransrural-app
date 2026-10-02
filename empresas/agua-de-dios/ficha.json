@@ -1,0 +1,538 @@
+{
+  "id": "agua-de-dios",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Taxis Agua de Dios",
+    "nombreCorto": "Taxis Agua de Dios",
+    "razonSocial": "Taxis Agua de Dios S.A.S.",
+    "tipo": "empresa",
+    "lema": "Taxis de Agua de Dios, tierra de Luis Antonio Calvo",
+    "municipio": "Agua de Dios, Cundinamarca",
+    "pueblo": "Agua de Dios",
+    "telefono": "",
+    "telefonoVisible": "",
+    "whatsapp": "",
+    "correo": "empresadetaxisaguadedios@gmail.com",
+    "direccion": "Calle 14 # 11-02, barrio Sogamoso, Agua de Dios, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2025,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "AGD",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Alto Magdalena",
+    "datosPendientes": [
+      "confirmar que ya presta el servicio de taxi y su habilitación",
+      "teléfono de la central",
+      "WhatsApp de la central",
+      "número de taxis",
+      "modelo de los taxis",
+      "tarifas oficiales de taxi",
+      "colores y logo",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.37482,
+      "lng": -74.66945
+    }
+  },
+  "colores": {
+    "primario": "#33691E",
+    "primario2": "#43802A",
+    "oscuro": "#172F0D",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.377272,
+    "lng": -74.669475
+  },
+  "ZONA": {
+    "sur": 4.06,
+    "norte": 4.7,
+    "oeste": -74.99,
+    "este": -74.35
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "tocaima",
+      "destino": "Tocaima",
+      "valor": 24000,
+      "km": 12,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "nilo",
+      "destino": "Nilo",
+      "valor": 28000,
+      "km": 15,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "ricaurte",
+      "destino": "Ricaurte",
+      "valor": 36000,
+      "km": 20,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "girardot",
+      "destino": "Girardot",
+      "valor": 42000,
+      "km": 24,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "flandes",
+      "destino": "Flandes",
+      "valor": 44000,
+      "km": 25,
+      "min": 45,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Agua de Dios",
+      "cat": "centro",
+      "lat": 4.377272,
+      "lng": -74.669475
+    },
+    {
+      "id": "parroquia-nuestra-senora-del-carmen",
+      "nombre": "Parroquia Nuestra Señora del Carmen",
+      "detalle": "Agua de Dios",
+      "cat": "centro",
+      "lat": 4.377856,
+      "lng": -74.669693
+    },
+    {
+      "id": "colegio-salesiano-miguel-unia",
+      "nombre": "Colegio Salesiano Miguel Unia",
+      "detalle": "Agua de Dios",
+      "cat": "educacion",
+      "lat": 4.377613,
+      "lng": -74.670331
+    },
+    {
+      "id": "parque-munoz-jordan",
+      "nombre": "Parque Muñoz Jordan",
+      "detalle": "Agua de Dios",
+      "cat": "centro",
+      "lat": 4.382181,
+      "lng": -74.670962
+    },
+    {
+      "id": "alcaldia-municipal-de-agua-de-dios",
+      "nombre": "Alcaldía Municipal de Agua de Dios",
+      "detalle": "Agua de Dios",
+      "cat": "centro",
+      "lat": 4.376988,
+      "lng": -74.66977
+    },
+    {
+      "id": "estacion-de-policia-de-agua-de-dios",
+      "nombre": "Estación de Policía de Agua de Dios",
+      "detalle": "Agua de Dios",
+      "cat": "centro",
+      "lat": 4.376832,
+      "lng": -74.669431
+    },
+    {
+      "id": "parque-carrasquilla",
+      "nombre": "Parque Carrasquilla",
+      "detalle": "Agua de Dios",
+      "cat": "centro",
+      "lat": 4.377748,
+      "lng": -74.667994
+    },
+    {
+      "id": "hospedaje-el-nuevo-castillo",
+      "nombre": "Hospedaje El Nuevo Castillo",
+      "detalle": "Agua de Dios",
+      "cat": "turismo",
+      "lat": 4.376858,
+      "lng": -74.668816
+    },
+    {
+      "id": "centro-cultural-armando-rodriguez-jimene",
+      "nombre": "Centro Cultural Armando Rodríguez Jímenez",
+      "detalle": "Agua de Dios",
+      "cat": "centro",
+      "lat": 4.376357,
+      "lng": -74.669603
+    },
+    {
+      "id": "museo-medico-de-la-lepra",
+      "nombre": "Museo Médico de la Lepra",
+      "detalle": "Agua de Dios",
+      "cat": "turismo",
+      "lat": 4.377246,
+      "lng": -74.66778
+    },
+    {
+      "id": "colegio-la-inmaculada",
+      "nombre": "Colegio La Inmaculada",
+      "detalle": "Agua de Dios",
+      "cat": "educacion",
+      "lat": 4.378375,
+      "lng": -74.666718
+    },
+    {
+      "id": "colegio-maria-auxiliadora",
+      "nombre": "Colegio María Auxiliadora",
+      "detalle": "Agua de Dios",
+      "cat": "educacion",
+      "lat": 4.375838,
+      "lng": -74.671273
+    },
+    {
+      "id": "iglesia-pentecostal-unida-de-colombia",
+      "nombre": "Iglesia Pentecostal Unida de Colombia",
+      "detalle": "Agua de Dios",
+      "cat": "centro",
+      "lat": 4.375442,
+      "lng": -74.671554
+    },
+    {
+      "id": "parque-quince-letras",
+      "nombre": "Parque Quince Letras",
+      "detalle": "Agua de Dios",
+      "cat": "centro",
+      "lat": 4.374025,
+      "lng": -74.672444
+    },
+    {
+      "id": "los-lagos",
+      "nombre": "Los Lagos",
+      "detalle": "Agua de Dios",
+      "cat": "barrio",
+      "lat": 4.37831,
+      "lng": -74.677327
+    },
+    {
+      "id": "bonanza",
+      "nombre": "Bonanza",
+      "detalle": "Agua de Dios",
+      "cat": "turismo",
+      "lat": 4.385002,
+      "lng": -74.663552
+    },
+    {
+      "id": "terpel",
+      "nombre": "Terpel",
+      "detalle": "Agua de Dios",
+      "cat": "comercio",
+      "lat": 4.375517,
+      "lng": -74.678039
+    },
+    {
+      "id": "hospital-herrera-restrepo",
+      "nombre": "Hospital Herrera Restrepo",
+      "detalle": "Agua de Dios",
+      "cat": "salud",
+      "lat": 4.371113,
+      "lng": -74.674032
+    },
+    {
+      "id": "juan-bosco",
+      "nombre": "Juan Bosco",
+      "detalle": "Agua de Dios",
+      "cat": "vereda",
+      "lat": 4.382931,
+      "lng": -74.679643
+    },
+    {
+      "id": "nueva-colombia",
+      "nombre": "Nueva Colombia",
+      "detalle": "Agua de Dios",
+      "cat": "barrio",
+      "lat": 4.389453,
+      "lng": -74.666996
+    },
+    {
+      "id": "reten-tocaima",
+      "nombre": "Reten Tocaima",
+      "detalle": "Vereda de Agua de Dios",
+      "cat": "vereda",
+      "lat": 4.382646,
+      "lng": -74.655544
+    },
+    {
+      "id": "reten-de-caracol",
+      "nombre": "Reten De Caracol",
+      "detalle": "Vereda de Agua de Dios",
+      "cat": "vereda",
+      "lat": 4.366332,
+      "lng": -74.678835
+    },
+    {
+      "id": "reten-mendoza",
+      "nombre": "Reten Mendoza",
+      "detalle": "Vereda de Agua de Dios",
+      "cat": "vereda",
+      "lat": 4.375659,
+      "lng": -74.654118
+    },
+    {
+      "id": "palermo",
+      "nombre": "Palermo",
+      "detalle": "Vereda de Agua de Dios",
+      "cat": "vereda",
+      "lat": 4.3845,
+      "lng": -74.688484
+    },
+    {
+      "id": "el-penon",
+      "nombre": "El Peñón",
+      "detalle": "Agua de Dios · a 2,2 km",
+      "cat": "turismo",
+      "lat": 4.395613,
+      "lng": -74.657844
+    },
+    {
+      "id": "el-oval",
+      "nombre": "El Oval",
+      "detalle": "Vereda de Agua de Dios",
+      "cat": "vereda",
+      "lat": 4.366302,
+      "lng": -74.686383
+    },
+    {
+      "id": "el-litoral",
+      "nombre": "El Litoral",
+      "detalle": "Vereda de Agua de Dios",
+      "cat": "vereda",
+      "lat": 4.361457,
+      "lng": -74.68959
+    },
+    {
+      "id": "sopapo",
+      "nombre": "Sopapo",
+      "detalle": "Vereda de Agua de Dios",
+      "cat": "vereda",
+      "lat": 4.398694,
+      "lng": -74.69282
+    },
+    {
+      "id": "girardot",
+      "nombre": "Girardot",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.304638,
+      "lng": -74.803074
+    },
+    {
+      "id": "tocaima",
+      "nombre": "Tocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.455243,
+      "lng": -74.634486
+    },
+    {
+      "id": "ricaurte",
+      "nombre": "Ricaurte",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.277736,
+      "lng": -74.771816
+    },
+    {
+      "id": "nilo",
+      "nombre": "Nilo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.306591,
+      "lng": -74.619761
+    },
+    {
+      "id": "flandes",
+      "nombre": "Flandes",
+      "detalle": "Tolima",
+      "cat": "municipio",
+      "lat": 4.2865,
+      "lng": -74.813697
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Héctor Bernal",
+      "placa": "AGD 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1743,
+      "desde": 2011,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-11",
+      "movil": "011",
+      "nombre": "Martha Garzón",
+      "placa": "AGD 611",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 520,
+      "desde": 2007,
+      "tel": "3000000011"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Sandra Patiño",
+      "placa": "AGD 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 475,
+      "desde": 2018,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "AGD 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1745,
+      "desde": 2020,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Wilson Gómez",
+      "placa": "AGD 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1341,
+      "desde": 2016,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-27",
+      "movil": "027",
+      "nombre": "Nelson Pinzón",
+      "placa": "AGD 627",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1050,
+      "desde": 2013,
+      "tel": "3000000027"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Fabio Cruz",
+      "placa": "AGD 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1095,
+      "desde": 2014,
+      "tel": "3000000028"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Luz Marina Rojas",
+      "placa": "AGD 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1239,
+      "desde": 2019,
+      "tel": "3000000029"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Taxis Agua de Dios S.A.S. es una empresa de transporte de pasajeros creada en 2025 en Agua de Dios, tierra del compositor Luis Antonio Calvo. Tiene su sede en la Calle 14 # 11-02, barrio Sogamoso, y nace para mover a la gente del municipio y a quienes viajan a Girardot, Tocaima y Ricaurte.\n\nCon la app, la empresa puede arrancar con el servicio en el celular desde el primer día: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Agua de Dios con conductores que conocen el municipio, con seguridad, puntualidad, tarifas claras y buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Agua de Dios y sus alrededores: un taxi a un toque, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en el casco urbano de Agua de Dios",
+      "Viajes a Girardot, Tocaima y Ricaurte",
+      "Pedidos desde la app",
+      "Viajes programados"
+    ],
+    "frase": "Tu taxi en Agua de Dios, a un toque"
+  },
+  "fuentes": [
+    "https://colfirma.com/empresa/taxis-agua-de-dios-sas-901960309",
+    "https://empresas.larepublica.co/colombia/cundinamarca/agua-de-dios/taxis-agua-de-dios-sas-901960309",
+    "https://www.datos.gov.co/d/c82u-588k",
+    "https://es.wikipedia.org/wiki/Agua_de_Dios",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "CONFIANZA BAJA: la empresa existe y está activa, pero NO está confirmado que ya opere taxis ni que tenga habilitación de la Alcaldía. Solo está el registro mercantil: «TAXIS AGUA DE DIOS SAS», CIIU 4921 (transporte de pasajeros), constituida y matriculada el 27-jun-2025 en la Cámara de Comercio de Girardot (fundada = 2025), domicilio en Agua de Dios, renovada el 28-mar-2026 (RUES abierto y colfirma). En la web de la Alcaldía no sale nada al buscar «taxi», «transporte individual» ni el nombre de la empresa. CONFIRMAR antes de mandar la propuesta.",
+    "Correo empresadetaxisaguadedios@gmail.com, dirección Calle 14 # 11-02, barrio Sogamoso, y representante legal Ricardo Miranda Gil: registro mercantil (colfirma; la dirección también en informacolombia).",
+    "Teléfono: no hay uno de la empresa. Nota interna: informacolombia registra el 300 260 9634, un celular de la Cámara que puede ser personal (celular personal, no publicar). servicio24h = false sin evidencia.",
+    "Tarifas: no hay decreto de tarifas de taxi en la web de la Alcaldía de Agua de Dios. Sin campo tarifas: la demo usa valores de ejemplo.",
+    "GANCHO COMERCIAL: es una empresa recién creada, sin central ni app conocidas; si arranca, la app le daría todo desde el primer día.",
+    "Lema: Agua de Dios es la tierra del compositor Luis Antonio Calvo, que compuso allí buena parte de su obra (Wikipedia). Historia: redacción de interOS con lo que dice el registro (los destinos son los municipios vecinos). Colores propios de interOS (verde y amarillo taxi): la empresa no tiene logo ni colores conocidos.",
+    "Oficina ubicada en el mapa sobre la Calle 14, junto al cruce con la Carrera 11 (OpenStreetMap). Destinos: municipios vecinos; Flandes es del Tolima (corregir el detalle en la ficha). Agua de Dios queda a unos 125 km de Bogotá, sin Portal ni aeropuerto.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

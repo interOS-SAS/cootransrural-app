@@ -121,7 +121,7 @@
         </div>
 
         <div class="en-linea">
-          <span class="en-linea-contador" aria-hidden="true"><b>5</b><span><span class="punto"></span>libres</span><small>de 8 en línea</small></span>
+          <span class="en-linea-contador" aria-hidden="true"><b>{{en_linea_libres}}</b><span><span class="punto"></span>libres</span><small>de {{en_linea}} en línea</small></span>
           <p><b>Se acabó llamar uno por uno para ver quién está libre.</b> En TaxiCun el pasajero ve cuántos taxis de {{EMPRESA.nombre}} están en línea y libres cerca. Pide y le llega el más cercano: menos llamadas a la central y menos servicios perdidos.</p>
         </div>
 
@@ -255,7 +255,7 @@
           <h3><svg class="ic"><use href="#i-qr"/></svg>Stickers QR: abren TaxiCun con {{EMPRESA.nombre}}</h3>
           <div class="stickers-fotos">
 {{#si img.sticker}}            <figure><img src="{{RAIZ}}{{img.sticker}}" alt="Sticker con código QR en el vidrio trasero de un taxi amarillo"><figcaption>En el vidrio de cada taxi: el QR lleva el número del móvil.</figcaption></figure>
-{{/si}}{{#si img.nevera}}            <figure><img src="{{RAIZ}}{{img.nevera}}" alt="Sticker con código QR en una nevera de tienda"><figcaption>En neveras, tiendas, restaurantes y conjuntos de {{EMPRESA.pueblo}}.</figcaption></figure>
+{{/si}}{{#si img.nevera}}            <figure><img src="{{RAIZ}}{{img.nevera}}" alt="Sticker con código QR en una nevera de tienda"><figcaption>En neveras, tiendas, restaurantes y conjuntos del municipio.</figcaption></figure>
 {{/si}}          </div>
         </div>
 {{/si}}      </div>

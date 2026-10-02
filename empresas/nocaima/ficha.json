@@ -1,0 +1,424 @@
+{
+  "id": "nocaima",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "COATAN",
+    "nombreCorto": "COATAN",
+    "razonSocial": "Cooperativa Multiactiva de Transportes del Occidente (COATAN)",
+    "tipo": "cooperativa",
+    "lema": "Empresa solidaria con futuro",
+    "municipio": "Nocaima, Cundinamarca",
+    "pueblo": "Nocaima",
+    "region": "provincia del Gualivá",
+    "telefono": "3124311207",
+    "telefonoVisible": "312 431 1207",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Carrera 7 # 7-20/22, Barrio Centro, Nocaima, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://coatan.com.co/",
+    "fundada": 1998,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "NOC",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "oficina": {
+      "lat": 5.07056,
+      "lng": -74.37805
+    },
+    "datosPendientes": [
+      "correo",
+      "WhatsApp de la central",
+      "número de taxis",
+      "sede vigente (web: Carrera 7 # 7-20/22; registro: Carrera 6 # 6-93)",
+      "horario del servicio de taxi y servicio 24 horas",
+      "visión oficial actualizada",
+      "modelo de vehículo"
+    ]
+  },
+  "colores": {
+    "primario": "#1A5C2A",
+    "primario2": "#24773A",
+    "oscuro": "#0B2E14",
+    "acento": "#E3B23C",
+    "rojo": "#C62828"
+  },
+  "CENTRO": {
+    "lat": 5.069767,
+    "lng": -74.377522
+  },
+  "ZONA": {
+    "sur": 4.75,
+    "norte": 5.39,
+    "oeste": -74.7,
+    "este": -74.06
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 5700,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 1000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 5,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera en el casco urbano ($5.700, y $6.700 los domingos y festivos y de 8:00 p. m. a 5:00 a. m.) es la del Decreto 014 del 22 de enero de 2026 de la Alcaldía de Nocaima (vigente desde el 5 de febrero de 2026), que fija además la tarifa del taxi por ruta desde el parque principal: al Cruce $12.500, al colegio Las Mercedes $16.800, a Quebrada Honda (autopista) $17.400, a La Carrera $18.500, a Naranjal $20.800, a Tobia Chica $25.100, al Zancudo $25.200, al peaje Caiquero $27.100 y a Boquerón $31.400 (con $1.000 más de noche y en festivos). Los demás valores son de ejemplo, sujetos a confirmación de la cooperativa."
+  },
+  "RUTAS": [
+    {
+      "id": "tobia-chica",
+      "destino": "Tobia Chica",
+      "valor": 25100,
+      "km": 4,
+      "min": 10,
+      "radioKm": 2
+    },
+    {
+      "id": "nimaima",
+      "destino": "Nimaima",
+      "valor": 20000,
+      "km": 9,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "la-vega",
+      "destino": "La Vega",
+      "valor": 24000,
+      "km": 12,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "vergara",
+      "destino": "Vergara",
+      "valor": 25000,
+      "km": 13,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "villeta",
+      "destino": "Villeta",
+      "valor": 35000,
+      "km": 20,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "sasaima",
+      "destino": "Sasaima",
+      "valor": 54000,
+      "km": 32,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "quebradanegra",
+      "destino": "Quebradanegra",
+      "valor": 54000,
+      "km": 32,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 109000,
+      "km": 69,
+      "min": 110,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 119000,
+      "km": 75,
+      "min": 120,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Nocaima",
+      "cat": "centro",
+      "lat": 5.069767,
+      "lng": -74.377522
+    },
+    {
+      "id": "biomax",
+      "nombre": "Biomax",
+      "detalle": "Nocaima",
+      "cat": "comercio",
+      "lat": 5.068825,
+      "lng": -74.376492
+    },
+    {
+      "id": "el-brazuelo",
+      "nombre": "El Brazuelo",
+      "detalle": "Vereda de Nocaima",
+      "cat": "vereda",
+      "lat": 5.049745,
+      "lng": -74.378452
+    },
+    {
+      "id": "el-naranjal",
+      "nombre": "El Naranjal",
+      "detalle": "Nocaima · a 2,4 km",
+      "cat": "comercio",
+      "lat": 5.050645,
+      "lng": -74.388077
+    },
+    {
+      "id": "hotel-campestre-pavo-real",
+      "nombre": "Hotel Campestre Pavo Real",
+      "detalle": "Nocaima · a 2,8 km",
+      "cat": "turismo",
+      "lat": 5.054313,
+      "lng": -74.397969
+    },
+    {
+      "id": "tobia-chica",
+      "nombre": "Tobia Chica",
+      "detalle": "Vereda de Nocaima",
+      "cat": "vereda",
+      "lat": 5.05342,
+      "lng": -74.400501
+    },
+    {
+      "id": "la-vega",
+      "nombre": "La Vega",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.999712,
+      "lng": -74.339522
+    },
+    {
+      "id": "villeta",
+      "nombre": "Villeta",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.011258,
+      "lng": -74.47023
+    },
+    {
+      "id": "sasaima",
+      "nombre": "Sasaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.964577,
+      "lng": -74.433115
+    },
+    {
+      "id": "nimaima",
+      "nombre": "Nimaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.125392,
+      "lng": -74.38535
+    },
+    {
+      "id": "vergara",
+      "nombre": "Vergara",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.118376,
+      "lng": -74.345186
+    },
+    {
+      "id": "quebradanegra",
+      "nombre": "Quebradanegra",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.117231,
+      "lng": -74.479364
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Jairo Moreno",
+      "placa": "NOC 601",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1958,
+      "desde": 2019,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Sandra Patiño",
+      "placa": "NOC 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1333,
+      "desde": 2014,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Jorge Castañeda",
+      "placa": "NOC 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1970,
+      "desde": 2011,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-08",
+      "movil": "008",
+      "nombre": "Wilson Gómez",
+      "placa": "NOC 608",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1763,
+      "desde": 2009,
+      "tel": "3000000008"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Martha Garzón",
+      "placa": "NOC 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 2260,
+      "desde": 2007,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Diana Forero",
+      "placa": "NOC 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2183,
+      "desde": 2014,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Rubén Sarmiento",
+      "placa": "NOC 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1029,
+      "desde": 2021,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-29",
+      "movil": "029",
+      "nombre": "Germán Quintero",
+      "placa": "NOC 629",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1292,
+      "desde": 2021,
+      "tel": "3000000029"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "COATAN —la Cooperativa Multiactiva de Transportes del Occidente— presta desde 1998 el servicio de transporte a la comunidad nocaimera. Está habilitada en Nocaima en las modalidades de mixto y taxi, y desde su sede en el centro del pueblo atiende el casco urbano, las veredas y los viajes hacia la autopista Bogotá–Medellín.\n\nCon la app, la cooperativa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay, conoces la tarifa de tu ruta antes de subir, sigues el móvil en el mapa y pagas con QR, ya sea para moverte en el pueblo o bajar a Tobia Chica, Caiquero o Villeta.",
+    "mision": "Ser una organización cooperativa líder en el transporte público de pasajeros en el municipio de Nocaima, que dirige sus beneficios a los asociados, los empleados y la comunidad, genera empleo y se compromete cada día con el mejoramiento continuo para brindar un mejor servicio.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Nocaima y el Gualivá: un taxi a un toque, con la tarifa de cada ruta a la vista y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi en el casco urbano de Nocaima",
+      "Carreras a las veredas con tarifa fija",
+      "Viajes a la autopista: Tobia Chica y Caiquero",
+      "Viajes a La Vega, Villeta y Sasaima",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Empresa solidaria con futuro, a un toque"
+  },
+  "fuentes": [
+    "https://coatan.com.co/",
+    "https://web.archive.org/web/20250409153853/https://coatan.com.co/",
+    "https://nocaimacundinamarca.micolombiadigital.gov.co/sites/nocaimacundinamarca/content/files/001198/59867_decreto-0142026-tarifas-transporte-publico.pdf",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832003235",
+    "https://edirectorio.net/empresa/cooperativa-multiactiva-de-transportes-del-occidente",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Taxis: su web oficial (coatan.com.co; texto leído en la captura de abril de 2025 de archive.org porque las páginas del sitio hoy dan error 502) dice «HABILITACIÓN EMPRESA: Radio de acción Municipio de Nocaima, Modalidades Mixto y Taxi» y «Desde 1998». El Decreto 014 del 22 de enero de 2026 de la Alcaldía de Nocaima fija las tarifas de taxi y mixto de 2026 y dice que «las empresas de transporte público individual y mixto del municipio de Nocaima han solicitado la regulación de la tarifa»; el decreto no nombra empresas (URL en fuentes; PDF escaneado, leído página por página).",
+    "RUES abierto (datos.gov.co): Cooperativa Multiactiva de Transportes del Occidente, sigla COATAN, NIT 832.003.235-6, ACTIVA, Cámara de Comercio de Facatativá, CIIU 4921, matriculada el 21-sep-1998 y renovada el 24-mar-2026.",
+    "Teléfono 312 431 1207 (y 320 859 1893): los publica la cooperativa en su web como teléfonos de la oficina. El registro mercantil da el fijo 601 845 1047 (edirectorio). No se sabe si alguno tiene WhatsApp.",
+    "Dirección: Carrera 7 # 7-20/22, Barrio Centro, su «única sede» según la web; el registro mercantil da Carrera 6 # 6-93. Oficina en el mapa: punto aproximado sobre la Carrera 7 entre las Calles 7 y 8 (OpenStreetMap). Horario de oficina (web): lunes a viernes de 7:00 a. m. a 5:30 p. m.; sábados y domingos de 7:00 a. m. a 12:00 m. No hay evidencia de servicio 24 horas.",
+    "Representante legal: Marlen Patricia Cifuentes Triana, según el RUES abierto (abril de 2026). Se usa solo para el saludo de la propuesta.",
+    "Correo: no se encontró (la página de contacto de su web no carga).",
+    "Número de taxis: sin cifra.",
+    "Misión: la publicada en su web, apenas resumida. La visión es una redacción general de interOS (la oficial habla de habilitarse en el servicio especial). La historia solo usa hechos de las fuentes.",
+    "Colores: tomados de su logo (una «C» verde oscuro con aro dorado y una carretera) y de la fachada verde de su sede; el tono exacto es una aproximación de interOS. Lema: «Empresa solidaria con futuro», el de su logo.",
+    "Vehículo: no se sabe qué carros usa en el servicio de taxi; se deja el modelo genérico de la demo. Placa de la demo (NOC): inventada.",
+    "Tarifas: Decreto 014 del 22 de enero de 2026 (URL en fuentes).",
+    "Destinos: municipios vecinos del Gualivá (La Vega, Villeta, Sasaima, Nimaima, Vergara, Quebradanegra); Nocaima queda a unos 70 km de Bogotá por la autopista Medellín, por eso se añaden Portal 80 y el aeropuerto, como en Sasaima."
+  ]
+}

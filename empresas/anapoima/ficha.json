@@ -1,0 +1,580 @@
+{
+  "id": "anapoima",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Expreso Santa Ana",
+    "nombreCorto": "Santa Ana",
+    "razonSocial": "Expreso Santa Ana Ltda. (ESA Ltda.)",
+    "tipo": "empresa",
+    "lema": "Taxis y expresos en Anapoima, tierra de sol",
+    "municipio": "Anapoima, Cundinamarca",
+    "pueblo": "Anapoima",
+    "telefono": "6018999209",
+    "telefonoVisible": "601 899 9209",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Carrera 3 # 4-15, Centro, Anapoima, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2006,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "ANP",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Tequendama",
+    "datosPendientes": [
+      "WhatsApp",
+      "correo",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.550123,
+      "lng": -74.535252
+    }
+  },
+  "colores": {
+    "primario": "#9B1B5A",
+    "primario2": "#B52770",
+    "oscuro": "#45092A",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.549301,
+    "lng": -74.535912
+  },
+  "ZONA": {
+    "sur": 4.23,
+    "norte": 4.87,
+    "oeste": -74.86,
+    "este": -74.22
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "apulo",
+      "destino": "Apulo",
+      "valor": 24000,
+      "km": 12,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "la-mesa",
+      "destino": "La Mesa",
+      "valor": 31000,
+      "km": 17,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "el-colegio",
+      "destino": "El Colegio",
+      "valor": 34000,
+      "km": 19,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "tocaima",
+      "destino": "Tocaima",
+      "valor": 42000,
+      "km": 24,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "viota",
+      "destino": "Viotá",
+      "valor": 56000,
+      "km": 33,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "quipile",
+      "destino": "Quipile",
+      "valor": 58000,
+      "km": 35,
+      "min": 90,
+      "radioKm": 4
+    },
+    {
+      "id": "girardot",
+      "destino": "Girardot",
+      "valor": 86000,
+      "km": 53,
+      "min": 70,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Anapoima",
+      "cat": "centro",
+      "lat": 4.549298,
+      "lng": -74.535926
+    },
+    {
+      "id": "davivienda",
+      "nombre": "Davivienda",
+      "detalle": "Anapoima",
+      "cat": "comercio",
+      "lat": 4.54921,
+      "lng": -74.536342
+    },
+    {
+      "id": "centro-medico",
+      "nombre": "Centro Médico",
+      "detalle": "Anapoima",
+      "cat": "salud",
+      "lat": 4.54945,
+      "lng": -74.536368
+    },
+    {
+      "id": "supermercado-anapoima",
+      "nombre": "Supermercado Anapoima",
+      "detalle": "Anapoima",
+      "cat": "comercio",
+      "lat": 4.549191,
+      "lng": -74.535396
+    },
+    {
+      "id": "santa-ana-de-anapoima",
+      "nombre": "Santa Ana de Anapoima",
+      "detalle": "Anapoima",
+      "cat": "centro",
+      "lat": 4.549609,
+      "lng": -74.535484
+    },
+    {
+      "id": "alcaldia-de-anapoima",
+      "nombre": "Alcaldia de Anapoima",
+      "detalle": "Anapoima",
+      "cat": "centro",
+      "lat": 4.549826,
+      "lng": -74.535998
+    },
+    {
+      "id": "frida-kahlo",
+      "nombre": "Frida Kahlo",
+      "detalle": "Anapoima",
+      "cat": "comida",
+      "lat": 4.549255,
+      "lng": -74.536459
+    },
+    {
+      "id": "rossimar-pescaderia-cevicheria",
+      "nombre": "Rossimar pescadería-cevicheria",
+      "detalle": "Anapoima",
+      "cat": "comida",
+      "lat": 4.548667,
+      "lng": -74.535701
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Anapoima",
+      "cat": "comercio",
+      "lat": 4.550004,
+      "lng": -74.535524
+    },
+    {
+      "id": "hotel-anapoima-no-2",
+      "nombre": "Hotel Anapoima No. 2",
+      "detalle": "Anapoima",
+      "cat": "turismo",
+      "lat": 4.549234,
+      "lng": -74.536847
+    },
+    {
+      "id": "el-corralito",
+      "nombre": "El Corralito",
+      "detalle": "Anapoima",
+      "cat": "comida",
+      "lat": 4.549826,
+      "lng": -74.535135
+    },
+    {
+      "id": "mar-pacifico",
+      "nombre": "Mar Pacífico",
+      "detalle": "Anapoima",
+      "cat": "comida",
+      "lat": 4.548956,
+      "lng": -74.536862
+    },
+    {
+      "id": "cootransanapoima-buses-para-veredas",
+      "nombre": "Cootransanapoima - Buses para veredas",
+      "detalle": "Anapoima",
+      "cat": "centro",
+      "lat": 4.548939,
+      "lng": -74.534515
+    },
+    {
+      "id": "aborigen",
+      "nombre": "Aborigen",
+      "detalle": "Anapoima",
+      "cat": "comida",
+      "lat": 4.547843,
+      "lng": -74.5363
+    },
+    {
+      "id": "ara",
+      "nombre": "Ara",
+      "detalle": "Anapoima",
+      "cat": "comercio",
+      "lat": 4.550544,
+      "lng": -74.534583
+    },
+    {
+      "id": "cootransvilla-buses-para-la-mesa",
+      "nombre": "Cootransvilla - Buses para La Mesa",
+      "detalle": "Anapoima",
+      "cat": "centro",
+      "lat": 4.551218,
+      "lng": -74.536537
+    },
+    {
+      "id": "expreso-del-sol-buses-para-bogota",
+      "nombre": "Expreso del Sol - Buses para Bogotá",
+      "detalle": "Anapoima",
+      "cat": "centro",
+      "lat": 4.551334,
+      "lng": -74.536392
+    },
+    {
+      "id": "ied-julio-cesar-sanchez-sede-b",
+      "nombre": "IED Julio César Sánchez Sede B",
+      "detalle": "Anapoima",
+      "cat": "educacion",
+      "lat": 4.551929,
+      "lng": -74.536534
+    },
+    {
+      "id": "plaza-de-mercado",
+      "nombre": "Plaza de Mercado",
+      "detalle": "Anapoima",
+      "cat": "centro",
+      "lat": 4.546115,
+      "lng": -74.536945
+    },
+    {
+      "id": "ied-julio-cesar-sanchez",
+      "nombre": "IED Julio Cesar Sánchez",
+      "detalle": "Anapoima",
+      "cat": "educacion",
+      "lat": 4.55187,
+      "lng": -74.533448
+    },
+    {
+      "id": "cementerio-municipal",
+      "nombre": "Cementerio municipal",
+      "detalle": "Anapoima",
+      "cat": "centro",
+      "lat": 4.553548,
+      "lng": -74.53561
+    },
+    {
+      "id": "parque-biosaludable",
+      "nombre": "Parque Biosaludable",
+      "detalle": "Anapoima",
+      "cat": "centro",
+      "lat": 4.546546,
+      "lng": -74.539512
+    },
+    {
+      "id": "barrio-nuevo-colombia",
+      "nombre": "Barrio Nuevo Colombia",
+      "detalle": "Anapoima",
+      "cat": "barrio",
+      "lat": 4.546449,
+      "lng": -74.540371
+    },
+    {
+      "id": "hotel-villa-del-rosario",
+      "nombre": "Hotel Villa del Rosario",
+      "detalle": "Anapoima",
+      "cat": "turismo",
+      "lat": 4.553971,
+      "lng": -74.531247
+    },
+    {
+      "id": "hotel-la-valvanera",
+      "nombre": "Hotel la Valvanera",
+      "detalle": "Anapoima",
+      "cat": "turismo",
+      "lat": 4.554724,
+      "lng": -74.531193
+    },
+    {
+      "id": "parque-de-la-bienvenida",
+      "nombre": "Parque de la Bienvenida",
+      "detalle": "Anapoima",
+      "cat": "centro",
+      "lat": 4.555392,
+      "lng": -74.531116
+    },
+    {
+      "id": "primax",
+      "nombre": "Primax",
+      "detalle": "Anapoima",
+      "cat": "comercio",
+      "lat": 4.556257,
+      "lng": -74.529478
+    },
+    {
+      "id": "escuela-rural-las-mercedes",
+      "nombre": "Escuela Rural Las Mercedes",
+      "detalle": "Anapoima · a 3,7 km",
+      "cat": "educacion",
+      "lat": 4.579305,
+      "lng": -74.522015
+    },
+    {
+      "id": "escuela-san-antonio",
+      "nombre": "Escuela San Antonio",
+      "detalle": "Anapoima · a 3,8 km",
+      "cat": "educacion",
+      "lat": 4.580556,
+      "lng": -74.550451
+    },
+    {
+      "id": "la-mesa",
+      "nombre": "La Mesa",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.6323,
+      "lng": -74.463399
+    },
+    {
+      "id": "apulo",
+      "nombre": "Apulo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.520545,
+      "lng": -74.593827
+    },
+    {
+      "id": "el-colegio",
+      "nombre": "El Colegio",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.580262,
+      "lng": -74.442374
+    },
+    {
+      "id": "viota",
+      "nombre": "Viotá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.438888,
+      "lng": -74.523358
+    },
+    {
+      "id": "tocaima",
+      "nombre": "Tocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.455243,
+      "lng": -74.634486
+    },
+    {
+      "id": "girardot",
+      "nombre": "Girardot",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.304638,
+      "lng": -74.803074
+    },
+    {
+      "id": "quipile",
+      "nombre": "Quipile",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.743911,
+      "lng": -74.533688
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Édgar Molina",
+      "placa": "ANP 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1583,
+      "desde": 2019,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Jairo Moreno",
+      "placa": "ANP 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1447,
+      "desde": 2011,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Germán Quintero",
+      "placa": "ANP 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1727,
+      "desde": 2012,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Yolanda Prieto",
+      "placa": "ANP 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1384,
+      "desde": 2018,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Nelson Pinzón",
+      "placa": "ANP 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1476,
+      "desde": 2010,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Diana Forero",
+      "placa": "ANP 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 950,
+      "desde": 2012,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Carlos Rodríguez",
+      "placa": "ANP 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1205,
+      "desde": 2012,
+      "tel": "3000000026"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Luz Marina Rojas",
+      "placa": "ANP 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2218,
+      "desde": 2016,
+      "tel": "3000000028"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Expreso Santa Ana presta servicio de taxis y de expresos en taxi y en minivan en Anapoima, el municipio de clima cálido de la provincia del Tequendama. Desde su oficina en el centro, sobre la Carrera 3, atiende a quienes viven en el pueblo y a quienes llegan a descansar, en el casco urbano y hacia los municipios vecinos.\n\nCon la app, la empresa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir y sigues el móvil en el mapa hasta tu puerta, en el pueblo o camino a la finca.",
+    "mision": "Prestar el servicio de taxi y de expresos en Anapoima y la región con conductores que conocen el territorio, con seguridad, puntualidad y buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Anapoima: un taxi a un toque, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en Anapoima",
+      "Expresos en taxi",
+      "Expresos en minivan para grupos",
+      "Viajes a La Mesa, Apulo y El Colegio",
+      "Viajes a Tocaima y Girardot"
+    ],
+    "frase": "Tu taxi en Anapoima, a un toque"
+  },
+  "fuentes": [
+    "https://www.anapoima-cundinamarca.gov.co/MiMunicipio/Paginas/Vias-de-Comunicacion.aspx",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=900107444",
+    "https://www.paginasamarillas.com.co/empresas/expreso-santa-ana-limitada/anapoima-32475242",
+    "https://edirectorio.net/empresa/expreso-santa-ana-ltda",
+    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/expreso-santa-ana-ltda",
+    "https://www.einforma.co/servlet/app/portal/ENTP/prod/ETIQUETA_EMPRESA/nif/900107444",
+    "https://www.openstreetmap.org/node/8845868059",
+    "https://es.wikipedia.org/wiki/Anapoima",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza media. La página «Vías de Comunicación» de la Alcaldía de Anapoima (sin fecha, parece antigua) lista la «COOPERATIVA DE TRANSPORTADORES «SANTA ANA» – Kra 3 con calle 3 – Expresos en Taxis y Mini Vans – Servicio de Taxis». En el RUES la única empresa activa de pasajeros con ese nombre en Anapoima es Expreso Santa Ana Ltda. (NIT 900.107.444-2, CIIU 4921, microempresa, matrícula del 18-sep-2006 en la Cámara de Comercio de Girardot), en la Carrera 3 # 4-15 Centro. Que sean la misma se deduce del nombre y la dirección; ninguna fuente lo dice expresamente: CONFIRMAR POR TELÉFONO antes de hacer la demo.",
+    "La entrada «Cooperativa de Trans Anapoima» con taxis de esa misma página de la alcaldía tiene la misma dirección y descripción que Santa Ana: casi seguro es un duplicado. Cootransanapoima (camperos y camionetas, rutas veredales) quedó descartada.",
+    "Teléfono fijo (601) 899 9209 en la Calle 3 # 4-18: Páginas Amarillas, todosnegocios y laguia.online (la URL de todosnegocios lleva el número, por eso no va en fuentes). El 312 480 3439 es el celular registrado ante la Cámara (informacolombia y edirectorio): celular personal, no publicar. Einforma tiene un correo oculto que empieza por «expreso…».",
+    "Dirección: Carrera 3 # 4-15, Centro (RUES vía einforma, informacolombia y edirectorio); los directorios telefónicos dan la Calle 3 # 4-18 y la alcaldía, la Kra 3 con Calle 3. Oficina ubicada en el mapa sobre la Carrera 3, junto a la Calle 4 (cruces de OpenStreetMap); en ese centro hay un paradero de taxis en OSM (nodo 8845868059).",
+    "Representante legal: Fabio Andrés Téllez Duarte, según el RUES (actualizado el 7-jul-2026). Fundada = 2006 por la matrícula de la Ltda.",
+    "No se encontró resolución de tarifas de taxi de Anapoima: no lleva campo tarifas. Queda a unos 85 km del Portal 80 por carretera (OSRM): sin destinos en Bogotá, solo municipios.",
+    "Pendientes internos: confirmar por teléfono que presta el servicio de taxi (y que es la «Santa Ana» de la alcaldía), WhatsApp, correo, número de taxis, modelo, tarifas y colores.",
+    "Colores propios de interOS (bugambilia de tierra caliente y dorado). Lema y textos generales: Anapoima es de clima cálido y destino de descanso; no se encontraron historia, flota ni misión propias. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

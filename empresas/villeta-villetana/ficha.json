@@ -1,0 +1,714 @@
+{
+  "id": "villeta-villetana",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Villetana de Taxis",
+    "nombreCorto": "Villetana de Taxis",
+    "razonSocial": "Villetana de Taxis S.A.S.",
+    "tipo": "empresa",
+    "lema": "Taxis en la ciudad más dulce de Colombia",
+    "municipio": "Villeta, Cundinamarca",
+    "pueblo": "Villeta",
+    "region": "provincia del Gualivá",
+    "telefono": "3128444444",
+    "telefonoVisible": "312 844 4444",
+    "whatsapp": "",
+    "correo": "villetanadetaxis@gmail.com",
+    "direccion": "Carrera 10 # 3-194, barrio Bello Horizonte, Villeta, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://villetanadetaxis02.wixsite.com/villetana-de-taxis",
+    "fundada": 2016,
+    "taxisIniciales": null,
+    "taxis": 22,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "VTA",
+    "vehiculo": "Hyundai Grand i10",
+    "colorTaxi": "Amarillo",
+    "datosPendientes": [
+      "teléfono de la central",
+      "whatsapp",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 5.007442,
+      "lng": -74.473307
+    }
+  },
+  "colores": {
+    "primario": "#33343F",
+    "primario2": "#434459",
+    "oscuro": "#16161C",
+    "acento": "#F8BD26",
+    "rojo": "#D7262B"
+  },
+  "CENTRO": {
+    "lat": 5.011258,
+    "lng": -74.47023
+  },
+  "ZONA": {
+    "sur": 4.69,
+    "norte": 5.33,
+    "oeste": -74.79,
+    "este": -74.15
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 7000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 1000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 5,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima ($7.000) y el recargo de $1.000 de noche (de 8 p. m. a 5 a. m.) y en domingos y festivos son los del Decreto 006 del 24 de febrero de 2025 de la Alcaldía de Villeta, el último publicado; el decreto fija además una tarifa por sector para los barrios alejados y las veredas. El valor por km y las rutas a otros municipios son de ejemplo, sujetos a confirmación de la empresa."
+  },
+  "RUTAS": [
+    {
+      "id": "sasaima",
+      "destino": "Sasaima",
+      "valor": 23000,
+      "km": 11,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "quebradanegra",
+      "destino": "Quebradanegra",
+      "valor": 32000,
+      "km": 17,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "nocaima",
+      "destino": "Nocaima",
+      "valor": 42000,
+      "km": 24,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "la-vega",
+      "destino": "La Vega",
+      "valor": 45000,
+      "km": 26,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "utica",
+      "destino": "Útica",
+      "valor": 53000,
+      "km": 32,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "guaduas",
+      "destino": "Guaduas",
+      "valor": 57000,
+      "km": 34,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 77000,
+      "km": 47,
+      "min": 55,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Villeta",
+      "cat": "centro",
+      "lat": 5.011258,
+      "lng": -74.47023
+    },
+    {
+      "id": "casa-china",
+      "nombre": "Casa china",
+      "detalle": "Villeta",
+      "cat": "comida",
+      "lat": 5.011111,
+      "lng": -74.470529
+    },
+    {
+      "id": "miramar",
+      "nombre": "Miramar",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.01156,
+      "lng": -74.470397
+    },
+    {
+      "id": "mercahogar-surtimax",
+      "nombre": "Mercahogar SurtiMAX",
+      "detalle": "Villeta",
+      "cat": "comercio",
+      "lat": 5.011618,
+      "lng": -74.470283
+    },
+    {
+      "id": "la-terraza",
+      "nombre": "La Terraza",
+      "detalle": "Villeta",
+      "cat": "comida",
+      "lat": 5.010845,
+      "lng": -74.470416
+    },
+    {
+      "id": "hospedaje-villa-lucy",
+      "nombre": "Hospedaje Villa Lucy",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.011464,
+      "lng": -74.469781
+    },
+    {
+      "id": "alcaldia-municipal-de-villeta",
+      "nombre": "Alcaldía Municipal de Villeta",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.010765,
+      "lng": -74.47016
+    },
+    {
+      "id": "san-martin-plaza",
+      "nombre": "San Martín Plaza",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.011302,
+      "lng": -74.46972
+    },
+    {
+      "id": "de-pelicula",
+      "nombre": "De pelicula",
+      "detalle": "Villeta",
+      "cat": "comida",
+      "lat": 5.010879,
+      "lng": -74.469848
+    },
+    {
+      "id": "aimapanela",
+      "nombre": "Aimapanela",
+      "detalle": "Villeta",
+      "cat": "comida",
+      "lat": 5.011751,
+      "lng": -74.469892
+    },
+    {
+      "id": "iglesia-catolica",
+      "nombre": "Parroquia San Miguel Arcángel",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.010937,
+      "lng": -74.469701
+    },
+    {
+      "id": "kaliz-pizza",
+      "nombre": "Kaliz Pizza",
+      "detalle": "Villeta",
+      "cat": "comida",
+      "lat": 5.011815,
+      "lng": -74.469849
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Villeta",
+      "cat": "comercio",
+      "lat": 5.011147,
+      "lng": -74.470912
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Villeta",
+      "cat": "comercio",
+      "lat": 5.011811,
+      "lng": -74.470669
+    },
+    {
+      "id": "unidad-medica-sede-1",
+      "nombre": "Unidad Médica Sede 1",
+      "detalle": "Villeta",
+      "cat": "salud",
+      "lat": 5.011328,
+      "lng": -74.471052
+    },
+    {
+      "id": "unidad-medica-sede-principal",
+      "nombre": "Unidad Médica Sede Principal",
+      "detalle": "Villeta",
+      "cat": "salud",
+      "lat": 5.011093,
+      "lng": -74.47104
+    },
+    {
+      "id": "el-caribeno-in",
+      "nombre": "El caribeño in",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.011911,
+      "lng": -74.469627
+    },
+    {
+      "id": "banco-w",
+      "nombre": "Banco W",
+      "detalle": "Villeta",
+      "cat": "comercio",
+      "lat": 5.012102,
+      "lng": -74.470788
+    },
+    {
+      "id": "surtiplaza",
+      "nombre": "Surtiplaza",
+      "detalle": "Villeta",
+      "cat": "comercio",
+      "lat": 5.011264,
+      "lng": -74.47125
+    },
+    {
+      "id": "estacion-de-policia",
+      "nombre": "Estación de Policía",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.010236,
+      "lng": -74.471108
+    },
+    {
+      "id": "flota-aguila",
+      "nombre": "Flota Águila",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.013098,
+      "lng": -74.470428
+    },
+    {
+      "id": "flota-santafe",
+      "nombre": "Flota Santafé",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.012979,
+      "lng": -74.471161
+    },
+    {
+      "id": "plaza-de-mercado",
+      "nombre": "Plaza de Mercado",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.009675,
+      "lng": -74.471399
+    },
+    {
+      "id": "unidad-medica-sede-2",
+      "nombre": "Unidad Médica Sede 2",
+      "detalle": "Villeta",
+      "cat": "salud",
+      "lat": 5.010365,
+      "lng": -74.472733
+    },
+    {
+      "id": "hotel-mediterraneo",
+      "nombre": "Hotel Mediterraneo",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.010945,
+      "lng": -74.473315
+    },
+    {
+      "id": "biblioteca-arcadio-plazas",
+      "nombre": "Biblioteca Arcadio Plazas",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.011262,
+      "lng": -74.473455
+    },
+    {
+      "id": "club-de-villeta",
+      "nombre": "Club de Villeta",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.01332,
+      "lng": -74.472876
+    },
+    {
+      "id": "zafiro-ciudad-cristales",
+      "nombre": "Zafiro - Ciudad Cristales",
+      "detalle": "Villeta",
+      "cat": "barrio",
+      "lat": 5.014464,
+      "lng": -74.468707
+    },
+    {
+      "id": "ciudad-cristales",
+      "nombre": "Ciudad Cristales",
+      "detalle": "Villeta",
+      "cat": "barrio",
+      "lat": 5.014202,
+      "lng": -74.467973
+    },
+    {
+      "id": "instituto-colombiano-de-bienestar-famili",
+      "nombre": "Instituto Colombiano de Bienestar Familiar",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.011602,
+      "lng": -74.474094
+    },
+    {
+      "id": "ambar-ciudad-cristales",
+      "nombre": "Ámbar - Ciudad Cristales",
+      "detalle": "Villeta",
+      "cat": "barrio",
+      "lat": 5.014225,
+      "lng": -74.467696
+    },
+    {
+      "id": "opalo-ciudad-cristales",
+      "nombre": "Ópalo - Ciudad Cristales",
+      "detalle": "Villeta",
+      "cat": "barrio",
+      "lat": 5.014115,
+      "lng": -74.466779
+    },
+    {
+      "id": "hospital-de-villeta",
+      "nombre": "Hospital de Villeta",
+      "detalle": "Villeta",
+      "cat": "salud",
+      "lat": 5.006597,
+      "lng": -74.470116
+    },
+    {
+      "id": "expreso-bolivariano",
+      "nombre": "Expreso Bolivariano",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.007719,
+      "lng": -74.474048
+    },
+    {
+      "id": "palmanova",
+      "nombre": "Palmanova",
+      "detalle": "Villeta",
+      "cat": "barrio",
+      "lat": 5.014956,
+      "lng": -74.46513
+    },
+    {
+      "id": "colegio-divino-pastor",
+      "nombre": "Colegio Divino Pastor",
+      "detalle": "Villeta",
+      "cat": "educacion",
+      "lat": 5.00935,
+      "lng": -74.476636
+    },
+    {
+      "id": "colegio-cristiano-integral",
+      "nombre": "Colegio Cristiano Integral",
+      "detalle": "Villeta",
+      "cat": "educacion",
+      "lat": 5.009137,
+      "lng": -74.477058
+    },
+    {
+      "id": "villa-elsal",
+      "nombre": "Villa Elsal",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.023381,
+      "lng": -74.475651
+    },
+    {
+      "id": "hacienda-el-capitol",
+      "nombre": "Hacienda El Capitol",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.018376,
+      "lng": -74.455273
+    },
+    {
+      "id": "el-hoyito",
+      "nombre": "El Hoyito",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.005183,
+      "lng": -74.486248
+    },
+    {
+      "id": "hacienda-portugal",
+      "nombre": "Hacienda Portugal",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.014074,
+      "lng": -74.451688
+    },
+    {
+      "id": "hacienda-germania",
+      "nombre": "Hacienda Germania",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.015508,
+      "lng": -74.49055
+    },
+    {
+      "id": "el-diamante",
+      "nombre": "El Diamante",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.009485,
+      "lng": -74.491123
+    },
+    {
+      "id": "santa-lucia",
+      "nombre": "Santa Lucia",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.02698,
+      "lng": -74.484097
+    },
+    {
+      "id": "la-elvirita",
+      "nombre": "La Elvirita",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.006474,
+      "lng": -74.448246
+    },
+    {
+      "id": "sasaima",
+      "nombre": "Sasaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.964577,
+      "lng": -74.433115
+    },
+    {
+      "id": "la-vega",
+      "nombre": "La Vega",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.999712,
+      "lng": -74.339522
+    },
+    {
+      "id": "nocaima",
+      "nombre": "Nocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.069767,
+      "lng": -74.377522
+    },
+    {
+      "id": "utica",
+      "nombre": "Útica",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.18792,
+      "lng": -74.481477
+    },
+    {
+      "id": "quebradanegra",
+      "nombre": "Quebradanegra",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.117231,
+      "lng": -74.479364
+    },
+    {
+      "id": "guaduas",
+      "nombre": "Guaduas",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.067467,
+      "lng": -74.595077
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Jorge Castañeda",
+      "placa": "VTA 601",
+      "vehiculo": "Hyundai Grand i10",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 560,
+      "desde": 2011,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-03",
+      "movil": "003",
+      "nombre": "Diana Forero",
+      "placa": "VTA 603",
+      "vehiculo": "Hyundai Grand i10",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 689,
+      "desde": 2020,
+      "tel": "3000000003"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "VTA 607",
+      "vehiculo": "Hyundai Grand i10",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1929,
+      "desde": 2009,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Héctor Bernal",
+      "placa": "VTA 609",
+      "vehiculo": "Hyundai Grand i10",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2166,
+      "desde": 2012,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-18",
+      "movil": "018",
+      "nombre": "Édgar Molina",
+      "placa": "VTA 618",
+      "vehiculo": "Hyundai Grand i10",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1485,
+      "desde": 2011,
+      "tel": "3000000018"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Rubén Sarmiento",
+      "placa": "VTA 620",
+      "vehiculo": "Hyundai Grand i10",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1098,
+      "desde": 2012,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Fabio Cruz",
+      "placa": "VTA 621",
+      "vehiculo": "Hyundai Grand i10",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1768,
+      "desde": 2016,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Nelson Pinzón",
+      "placa": "VTA 622",
+      "vehiculo": "Hyundai Grand i10",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 2123,
+      "desde": 2018,
+      "tel": "3000000022"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Villetana de Taxis S.A.S. recoge la historia de Villetaxis, la empresa de taxis que nació en Villeta el 21 de abril de 2001. Con la Resolución 000451 del 19 de diciembre de 2018, la Alcaldía de Villeta le dio la habilitación para el servicio de taxi, y hoy cuenta con 22 vehículos que atienden el casco urbano y la zona rural desde su oficina en la Carrera 10 # 3-194, barrio Bello Horizonte. Ya recibe pagos en efectivo, Nequi y Daviplata.\n\nCon la app, la empresa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Llevar a la gente de Villeta y a sus visitantes de puerta a puerta, en el casco urbano y la zona rural, con conductores puntuales y amables y vehículos cómodos y seguros.",
+    "vision": "Ser el taxi que todos piden en Villeta y el Gualivá: a un toque en el celular, con tarifa clara, pago fácil y el móvil en el mapa.",
+    "servicios": [
+      "Taxi puerta a puerta en Villeta",
+      "Servicio a la zona rural",
+      "Reservas",
+      "Expresos a otros municipios",
+      "Pago en efectivo, Nequi o Daviplata"
+    ],
+    "frase": "¡Puntual y confiable!"
+  },
+  "fuentes": [
+    "https://villetanadetaxis02.wixsite.com/villetana-de-taxis",
+    "https://villetanadetaxis02.wixsite.com/villetana-de-taxis/blank-1",
+    "https://villetanadetaxis02.wixsite.com/villetana-de-taxis/blank-2",
+    "https://buscalocolombia.com/taxis-villeta/",
+    "https://www.laspaginasamarillasencolombia.com/villetaxis/",
+    "https://www.datacreditoempresas.com.co/directorio/villetana-de-taxis-sas.html",
+    "https://empresas.larepublica.co/colombia/cundinamarca/villeta/villetana-de-taxis-s-a-s-901129598",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=901129598",
+    "https://infotaxicolombia.com.co/empresas-taxi/villetana-de-taxis-villeta-cundinamarca-colombia/",
+    "https://radiotaxi.com.co/villeta/",
+    "https://www.facebook.com/p/Villetana-de-Taxis-SAS-61553568967335/",
+    "https://www.villeta-cundinamarca.gov.co/Transparencia/Normatividad/DECRETO%20NO.%20006%20DEL%2024%20DE%20FEBRERO%20DE%202025-%20TARIFAS%20PARA%20LA%20PRESTACI%C3%93N%20DEL%20SERVICIO%20PUBLICO%20TERRESTRE.pdf",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Historia (Villetaxis nació el 21-abr-2001 y se unificó en Villetana de Taxis; Resolución 000451 del 19-dic-2018 de la Alcaldía de Villeta; 22 vehículos; cobertura en el municipio y la zona rural; pagos en efectivo, Nequi y Daviplata), lema «la ciudad más dulce de Colombia» y frase «¡Puntual y confiable!»: su web (Wix).",
+    "Razón social, NIT 901.129.598-6 y matrícula del 08-feb-2016 en la Cámara de Comercio de Facatativá: RUES (datos.gov.co). Se puso 2016 como año de fundación (la sociedad); la marca Villetaxis viene de 2001. La sociedad Villetaxis S. en C.S. (NIT 832.006.956-1) está en liquidación; la marca sigue.",
+    "Vehículos de la flota según su web: Hyundai Grand i10, Kia Picanto y Chevrolet Spark; las fotos de su web son de Hyundai Grand i10.",
+    "Teléfonos de su web (página de contacto): fijos 601 844 4444, 601 844 7772 y 601 844 4439; celulares de la central 312 844 4444, 311 844 4444, 312 244 4444 y 310 803 5620. Búscalo Colombia repite 312 244 4444, 311 844 4444, 312 844 4444, 601 844 4444 y 601 844 7772. La ficha de Google (infotaxicolombia, radiotaxi.com.co) da el 310 810 1321. Se puso el 312 844 4444 como principal; confirmar cuál usa hoy la central.",
+    "WhatsApp: su web enlaza a https://wa.me/message/TG3INLCSFM5QL1 (enlace corto de WhatsApp Business, sin número visible); por eso el campo va vacío.",
+    "Servicio 24 horas: Búscalo Colombia, infotaxicolombia y radiotaxi.com.co la listan como taxi 24 horas; su web dice que trabajan «en el momento en que lo necesiten nuestros clientes». Confirmar.",
+    "Correo villetanadetaxis@gmail.com: pie y página de contacto de su web. Representante legal según el RUES (actualizado el 31-mar-2026): Vicky Johana Fandiño Tunjo.",
+    "Dirección Carrera 10 # 3-194, barrio Bello Horizonte: su web, Datacrédito y Búscalo Colombia. Ubicación de la oficina aproximada (Carrera 10 entre las calles 3 y 4 en OpenStreetMap; los tramos de esa carrera están partidos en el mapa): confirmar.",
+    "Colores de su marca: gris carbón #33343F y amarillo #F8BD26 del tema de su web; el logo es texto amarillo con franjas roja, amarilla y verde (el rojo #D7262B sale de ahí).",
+    "Tarifas: Decreto 006 del 24-feb-2025 de Villeta (tarifa básica $7.000; recargo de $1.000 de 8 p. m. a 5 a. m., domingos y festivos). Su web aún muestra la carrera mínima en $6.500 (tarifa de 2024). Al 1-oct-2026 no hay decreto de 2026 publicado.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

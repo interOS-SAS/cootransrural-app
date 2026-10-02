@@ -365,7 +365,9 @@ console.log('— f) Web de Madrid y g) portada de cooperativas —');
   await foto(g, 'g1-cooperativas');
   await Promise.all([g.waitForURL(/\/taxicun\/$/, { timeout: 15000 }), g.click('a.boton-amarillo[href$="taxicun/"]')]);
   const rg = await esperarTaxiCun(g);
-  ok(rg.empresa === 'facatativa' && !rg.lista, `cooperativas/ → «Abrir TaxiCun» → la del GPS (Facatativá: ${rg.empresa})`);
+  // En Facatativá hay varias empresas en TaxiCun: con el GPS allá, pregunta con cuál pedir.
+  const coopsFaca = await g.evaluate(() => [...document.querySelectorAll('#elegir [data-id]')].map((b) => b.dataset.id));
+  ok(rg.lista && coopsFaca.includes('facatativa') && coopsFaca.length > 1 && /Facatativá/.test(rg.texto), `cooperativas/ → «Abrir TaxiCun» → con el GPS en Facatativá pregunta entre sus ${coopsFaca.length} empresas`);
   await foto(g, 'g2-abrir-taxicun');
   await ctx.close();
 }

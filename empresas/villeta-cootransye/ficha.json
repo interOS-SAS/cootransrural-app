@@ -1,0 +1,710 @@
+{
+  "id": "villeta-cootransye",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootransye",
+    "nombreCorto": "Cootransye",
+    "razonSocial": "Cooperativa Multiactiva de Transportes La Ye (Cootransye)",
+    "tipo": "cooperativa",
+    "lema": "Taxis de La Ye, seguros y confiables en Villeta",
+    "municipio": "Villeta, Cundinamarca",
+    "pueblo": "Villeta",
+    "region": "provincia del Gualivá",
+    "telefono": "6018447777",
+    "telefonoVisible": "601 844 7777",
+    "whatsapp": "573132618315",
+    "correo": "cootransye_@hotmail.com",
+    "direccion": "Carrera 7 # 3-70, barrio Betania, Villeta, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://sites.google.com/cootransye.com/cootransye/",
+    "fundada": 1997,
+    "taxisIniciales": null,
+    "taxis": 27,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "VYE",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "datosPendientes": [
+      "teléfono de la central",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 5.008981,
+      "lng": -74.470739
+    }
+  },
+  "colores": {
+    "primario": "#9F1239",
+    "primario2": "#BE123C",
+    "oscuro": "#4C0519",
+    "acento": "#FDD835",
+    "rojo": "#B91C1C"
+  },
+  "CENTRO": {
+    "lat": 5.011258,
+    "lng": -74.47023
+  },
+  "ZONA": {
+    "sur": 4.69,
+    "norte": 5.33,
+    "oeste": -74.79,
+    "este": -74.15
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 7000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 1000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 5,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima ($7.000) y el recargo de $1.000 de noche (de 8 p. m. a 5 a. m.) y en domingos y festivos son los del Decreto 006 del 24 de febrero de 2025 de la Alcaldía de Villeta, el último publicado; el decreto fija además una tarifa por sector para los barrios alejados y las veredas. El valor por km y las rutas a otros municipios son de ejemplo, sujetos a confirmación de la cooperativa."
+  },
+  "RUTAS": [
+    {
+      "id": "sasaima",
+      "destino": "Sasaima",
+      "valor": 23000,
+      "km": 11,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "quebradanegra",
+      "destino": "Quebradanegra",
+      "valor": 32000,
+      "km": 17,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "nocaima",
+      "destino": "Nocaima",
+      "valor": 42000,
+      "km": 24,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "la-vega",
+      "destino": "La Vega",
+      "valor": 45000,
+      "km": 26,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "utica",
+      "destino": "Útica",
+      "valor": 53000,
+      "km": 32,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "guaduas",
+      "destino": "Guaduas",
+      "valor": 57000,
+      "km": 34,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 77000,
+      "km": 47,
+      "min": 55,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Villeta",
+      "cat": "centro",
+      "lat": 5.011258,
+      "lng": -74.47023
+    },
+    {
+      "id": "casa-china",
+      "nombre": "Casa china",
+      "detalle": "Villeta",
+      "cat": "comida",
+      "lat": 5.011111,
+      "lng": -74.470529
+    },
+    {
+      "id": "miramar",
+      "nombre": "Miramar",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.01156,
+      "lng": -74.470397
+    },
+    {
+      "id": "mercahogar-surtimax",
+      "nombre": "Mercahogar SurtiMAX",
+      "detalle": "Villeta",
+      "cat": "comercio",
+      "lat": 5.011618,
+      "lng": -74.470283
+    },
+    {
+      "id": "la-terraza",
+      "nombre": "La Terraza",
+      "detalle": "Villeta",
+      "cat": "comida",
+      "lat": 5.010845,
+      "lng": -74.470416
+    },
+    {
+      "id": "hospedaje-villa-lucy",
+      "nombre": "Hospedaje Villa Lucy",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.011464,
+      "lng": -74.469781
+    },
+    {
+      "id": "alcaldia-municipal-de-villeta",
+      "nombre": "Alcaldía Municipal de Villeta",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.010765,
+      "lng": -74.47016
+    },
+    {
+      "id": "san-martin-plaza",
+      "nombre": "San Martín Plaza",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.011302,
+      "lng": -74.46972
+    },
+    {
+      "id": "de-pelicula",
+      "nombre": "De pelicula",
+      "detalle": "Villeta",
+      "cat": "comida",
+      "lat": 5.010879,
+      "lng": -74.469848
+    },
+    {
+      "id": "aimapanela",
+      "nombre": "Aimapanela",
+      "detalle": "Villeta",
+      "cat": "comida",
+      "lat": 5.011751,
+      "lng": -74.469892
+    },
+    {
+      "id": "iglesia-catolica",
+      "nombre": "Parroquia San Miguel Arcángel",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.010937,
+      "lng": -74.469701
+    },
+    {
+      "id": "kaliz-pizza",
+      "nombre": "Kaliz Pizza",
+      "detalle": "Villeta",
+      "cat": "comida",
+      "lat": 5.011815,
+      "lng": -74.469849
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Villeta",
+      "cat": "comercio",
+      "lat": 5.011147,
+      "lng": -74.470912
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Villeta",
+      "cat": "comercio",
+      "lat": 5.011811,
+      "lng": -74.470669
+    },
+    {
+      "id": "unidad-medica-sede-1",
+      "nombre": "Unidad Médica Sede 1",
+      "detalle": "Villeta",
+      "cat": "salud",
+      "lat": 5.011328,
+      "lng": -74.471052
+    },
+    {
+      "id": "unidad-medica-sede-principal",
+      "nombre": "Unidad Médica Sede Principal",
+      "detalle": "Villeta",
+      "cat": "salud",
+      "lat": 5.011093,
+      "lng": -74.47104
+    },
+    {
+      "id": "el-caribeno-in",
+      "nombre": "El caribeño in",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.011911,
+      "lng": -74.469627
+    },
+    {
+      "id": "banco-w",
+      "nombre": "Banco W",
+      "detalle": "Villeta",
+      "cat": "comercio",
+      "lat": 5.012102,
+      "lng": -74.470788
+    },
+    {
+      "id": "surtiplaza",
+      "nombre": "Surtiplaza",
+      "detalle": "Villeta",
+      "cat": "comercio",
+      "lat": 5.011264,
+      "lng": -74.47125
+    },
+    {
+      "id": "estacion-de-policia",
+      "nombre": "Estación de Policía",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.010236,
+      "lng": -74.471108
+    },
+    {
+      "id": "flota-aguila",
+      "nombre": "Flota Águila",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.013098,
+      "lng": -74.470428
+    },
+    {
+      "id": "flota-santafe",
+      "nombre": "Flota Santafé",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.012979,
+      "lng": -74.471161
+    },
+    {
+      "id": "plaza-de-mercado",
+      "nombre": "Plaza de Mercado",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.009675,
+      "lng": -74.471399
+    },
+    {
+      "id": "unidad-medica-sede-2",
+      "nombre": "Unidad Médica Sede 2",
+      "detalle": "Villeta",
+      "cat": "salud",
+      "lat": 5.010365,
+      "lng": -74.472733
+    },
+    {
+      "id": "hotel-mediterraneo",
+      "nombre": "Hotel Mediterraneo",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.010945,
+      "lng": -74.473315
+    },
+    {
+      "id": "biblioteca-arcadio-plazas",
+      "nombre": "Biblioteca Arcadio Plazas",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.011262,
+      "lng": -74.473455
+    },
+    {
+      "id": "club-de-villeta",
+      "nombre": "Club de Villeta",
+      "detalle": "Villeta",
+      "cat": "turismo",
+      "lat": 5.01332,
+      "lng": -74.472876
+    },
+    {
+      "id": "zafiro-ciudad-cristales",
+      "nombre": "Zafiro - Ciudad Cristales",
+      "detalle": "Villeta",
+      "cat": "barrio",
+      "lat": 5.014464,
+      "lng": -74.468707
+    },
+    {
+      "id": "ciudad-cristales",
+      "nombre": "Ciudad Cristales",
+      "detalle": "Villeta",
+      "cat": "barrio",
+      "lat": 5.014202,
+      "lng": -74.467973
+    },
+    {
+      "id": "instituto-colombiano-de-bienestar-famili",
+      "nombre": "Instituto Colombiano de Bienestar Familiar",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.011602,
+      "lng": -74.474094
+    },
+    {
+      "id": "ambar-ciudad-cristales",
+      "nombre": "Ámbar - Ciudad Cristales",
+      "detalle": "Villeta",
+      "cat": "barrio",
+      "lat": 5.014225,
+      "lng": -74.467696
+    },
+    {
+      "id": "opalo-ciudad-cristales",
+      "nombre": "Ópalo - Ciudad Cristales",
+      "detalle": "Villeta",
+      "cat": "barrio",
+      "lat": 5.014115,
+      "lng": -74.466779
+    },
+    {
+      "id": "hospital-de-villeta",
+      "nombre": "Hospital de Villeta",
+      "detalle": "Villeta",
+      "cat": "salud",
+      "lat": 5.006597,
+      "lng": -74.470116
+    },
+    {
+      "id": "expreso-bolivariano",
+      "nombre": "Expreso Bolivariano",
+      "detalle": "Villeta",
+      "cat": "centro",
+      "lat": 5.007719,
+      "lng": -74.474048
+    },
+    {
+      "id": "palmanova",
+      "nombre": "Palmanova",
+      "detalle": "Villeta",
+      "cat": "barrio",
+      "lat": 5.014956,
+      "lng": -74.46513
+    },
+    {
+      "id": "colegio-divino-pastor",
+      "nombre": "Colegio Divino Pastor",
+      "detalle": "Villeta",
+      "cat": "educacion",
+      "lat": 5.00935,
+      "lng": -74.476636
+    },
+    {
+      "id": "colegio-cristiano-integral",
+      "nombre": "Colegio Cristiano Integral",
+      "detalle": "Villeta",
+      "cat": "educacion",
+      "lat": 5.009137,
+      "lng": -74.477058
+    },
+    {
+      "id": "villa-elsal",
+      "nombre": "Villa Elsal",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.023381,
+      "lng": -74.475651
+    },
+    {
+      "id": "hacienda-el-capitol",
+      "nombre": "Hacienda El Capitol",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.018376,
+      "lng": -74.455273
+    },
+    {
+      "id": "el-hoyito",
+      "nombre": "El Hoyito",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.005183,
+      "lng": -74.486248
+    },
+    {
+      "id": "hacienda-portugal",
+      "nombre": "Hacienda Portugal",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.014074,
+      "lng": -74.451688
+    },
+    {
+      "id": "hacienda-germania",
+      "nombre": "Hacienda Germania",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.015508,
+      "lng": -74.49055
+    },
+    {
+      "id": "el-diamante",
+      "nombre": "El Diamante",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.009485,
+      "lng": -74.491123
+    },
+    {
+      "id": "santa-lucia",
+      "nombre": "Santa Lucia",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.02698,
+      "lng": -74.484097
+    },
+    {
+      "id": "la-elvirita",
+      "nombre": "La Elvirita",
+      "detalle": "Vereda de Villeta",
+      "cat": "vereda",
+      "lat": 5.006474,
+      "lng": -74.448246
+    },
+    {
+      "id": "la-vega",
+      "nombre": "La Vega",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.999712,
+      "lng": -74.339522
+    },
+    {
+      "id": "sasaima",
+      "nombre": "Sasaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.964577,
+      "lng": -74.433115
+    },
+    {
+      "id": "nocaima",
+      "nombre": "Nocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.069767,
+      "lng": -74.377522
+    },
+    {
+      "id": "quebradanegra",
+      "nombre": "Quebradanegra",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.117231,
+      "lng": -74.479364
+    },
+    {
+      "id": "utica",
+      "nombre": "Útica",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.18792,
+      "lng": -74.481477
+    },
+    {
+      "id": "guaduas",
+      "nombre": "Guaduas",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.067467,
+      "lng": -74.595077
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-03",
+      "movil": "003",
+      "nombre": "Carlos Rodríguez",
+      "placa": "VYE 603",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1718,
+      "desde": 2014,
+      "tel": "3000000003"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Yolanda Prieto",
+      "placa": "VYE 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1814,
+      "desde": 2008,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Jorge Castañeda",
+      "placa": "VYE 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1628,
+      "desde": 2017,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Nelson Pinzón",
+      "placa": "VYE 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 548,
+      "desde": 2017,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Luz Marina Rojas",
+      "placa": "VYE 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1683,
+      "desde": 2016,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Héctor Bernal",
+      "placa": "VYE 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1340,
+      "desde": 2016,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Fabio Cruz",
+      "placa": "VYE 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1421,
+      "desde": 2007,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Sandra Patiño",
+      "placa": "VYE 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1681,
+      "desde": 2011,
+      "tel": "3000000024"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootransye, la Cooperativa Multiactiva de Transportes La Ye, nació en Villeta en 1997 con una flota de vehículos que prestaba servicio en el área urbana y rural. Hoy reúne 69 vehículos entre taxis, colectivos, camionetas y camperos, y sus 27 taxis atienden dentro y fuera del municipio las 24 horas desde su sede en la Carrera 7 # 3-70, en el barrio Betania.\n\nCon la app, la cooperativa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa, en el pueblo, en las veredas o camino a los municipios vecinos.",
+    "mision": "Prestar el servicio de taxi en Villeta y su zona rural con conductores asociados que conocen el municipio, de forma segura, puntual y confiable, con buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de pedir un taxi en Villeta: un toque en el celular, tarifa clara y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi las 24 horas en Villeta",
+      "Servicio a las veredas",
+      "Viajes a los municipios vecinos",
+      "Colectivos y servicio mixto",
+      "Camionetas y camperos"
+    ],
+    "frase": "¡Transporte seguro y confiable!"
+  },
+  "fuentes": [
+    "https://sites.google.com/cootransye.com/cootransye/",
+    "https://sites.google.com/cootransye.com/cootransye/servicios/taxi",
+    "https://sites.google.com/cootransye.com/cootransye/contexto-de-la-empresa",
+    "https://sites.google.com/cootransye.com/cootransye/rese%C3%B1a",
+    "https://www.laspaginasamarillasencolombia.com/cootransye/",
+    "https://buscalocolombia.com/taxis-villeta/",
+    "https://infotaxicolombia.com.co/empresas-taxi/la-ye-villeta-cundinamarca-colombia/",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832002379",
+    "https://www.datos.gov.co/resource/qmzu-gj57.json?nit=832002379",
+    "https://www.villeta-cundinamarca.gov.co/Transparencia/Normatividad/DECRETO%20NO.%20006%20DEL%2024%20DE%20FEBRERO%20DE%202025-%20TARIFAS%20PARA%20LA%20PRESTACI%C3%93N%20DEL%20SERVICIO%20PUBLICO%20TERRESTRE.pdf",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es otra cooperativa de Villeta, distinta de Cootransvi (ya hecha). Razón social, NIT 832.002.379-3 y matrícula del 25-feb-1998 en la Cámara de Comercio de Facatativá: RUES (datos.gov.co). Año 1997, personería 542-98 y resoluciones 058, 059 y 060 del 10-abr-2008 de la Alcaldía: reseña de su web.",
+    "27 taxis «dentro y fuera del municipio durante las 24 horas»: página Servicios > Taxi de su web. 69 vehículos entre taxis, colectivos, camionetas y camperos: página «Contexto de la empresa».",
+    "Dirección Carrera 7 # 3-70, barrio Betania: su web y SECOP II. Ubicación de la oficina aproximada (cruce de la Carrera 7 con la Calle 3 en OpenStreetMap, hacia la Calle 3A). El paradero de taxis está en la Calle 3A # 7-106 (infotaxicolombia).",
+    "Teléfonos de su web: fijos 601 844 7777 y 601 844 6416, sugerencias 601 844 5226, celulares 313 366 1662 y 313 261 8315 (este es el WhatsApp). Se puso el fijo 601 844 7777 como principal; confirmar cuál es la línea de la central de taxis (el 313 366 1662 también sale en SECOP II e infotaxicolombia).",
+    "Correo cootransye_@hotmail.com: su web y SECOP II (2021). Hay un correo alterno, administrativo@cootransye.com (Las Páginas Amarillas en Colombia, 2024); el dominio tiene correo de Google activo. Va en copia.",
+    "Representante legal según el RUES (actualizado el 02-jul-2026): Luisa Fernanda Parra Hernández.",
+    "Tarifas: Decreto 006 del 24-feb-2025 de Villeta (tarifa básica $7.000; recargo de $1.000 de 8 p. m. a 5 a. m., domingos y festivos; tablas por sector). Deroga el Decreto 039 de 2024. Al 1-oct-2026 no hay decreto de 2026 publicado. URL en fuentes.",
+    "Colores propios de interOS (frambuesa con el amarillo #FDD835 del tema de su web); no se encontró su logo. El lema y la frase salen del encabezado de su web («¡Transporte Seguro y Confiable!»).",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales. Su web tiene páginas de misión y visión; no se pudieron leer.",
+    "Además de taxis tiene colectivos, mixtos, camionetas y camperos."
+  ]
+}

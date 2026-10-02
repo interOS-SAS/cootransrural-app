@@ -1,0 +1,531 @@
+{
+  "id": "anolaima",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Servitacoop",
+    "nombreCorto": "Servitacoop",
+    "razonSocial": "Cooperativa Única Municipal de Transportes Multiactiva de Anolaima (Servitacoop)",
+    "tipo": "cooperativa",
+    "lema": "Taxis de Anolaima, capital frutera de Colombia",
+    "municipio": "Anolaima, Cundinamarca",
+    "pueblo": "Anolaima",
+    "telefono": "6018454500",
+    "telefonoVisible": "601 845 4500",
+    "whatsapp": "",
+    "correo": "servitacoopanolaima@gmail.com",
+    "direccion": "Calle 4 # 3-72, plaza principal, Anolaima, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 1998,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "ANL",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Tequendama",
+    "datosPendientes": [
+      "WhatsApp",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.761609,
+      "lng": -74.465502
+    }
+  },
+  "colores": {
+    "primario": "#5E2B83",
+    "primario2": "#74389E",
+    "oscuro": "#2A1140",
+    "acento": "#FFB81C",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.76161,
+    "lng": -74.464999
+  },
+  "ZONA": {
+    "sur": 4.44,
+    "norte": 5.08,
+    "oeste": -74.78,
+    "este": -74.14
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "cachipay",
+      "destino": "Cachipay",
+      "valor": 19000,
+      "km": 9,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "quipile",
+      "destino": "Quipile",
+      "valor": 28000,
+      "km": 15,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "alban",
+      "destino": "Albán",
+      "valor": 35000,
+      "km": 19,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "zipacon",
+      "destino": "Zipacón",
+      "valor": 42000,
+      "km": 24,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 51000,
+      "km": 30,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "la-mesa",
+      "destino": "La Mesa",
+      "valor": 52000,
+      "km": 31,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 104000,
+      "km": 65,
+      "min": 105,
+      "radioKm": 3
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 108000,
+      "km": 68,
+      "min": 105,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Anolaima",
+      "cat": "centro",
+      "lat": 4.76161,
+      "lng": -74.464999
+    },
+    {
+      "id": "anolaima",
+      "nombre": "Estación de Policía de Anolaima",
+      "detalle": "Anolaima",
+      "cat": "centro",
+      "lat": 4.762219,
+      "lng": -74.465221
+    },
+    {
+      "id": "nuestra-senora-del-rosario",
+      "nombre": "Nuestra Señora del Rosario",
+      "detalle": "Anolaima",
+      "cat": "centro",
+      "lat": 4.762127,
+      "lng": -74.465634
+    },
+    {
+      "id": "ara",
+      "nombre": "ARA",
+      "detalle": "Anolaima",
+      "cat": "comercio",
+      "lat": 4.761798,
+      "lng": -74.465882
+    },
+    {
+      "id": "biblioteca-publica-municipal",
+      "nombre": "Biblioteca Publica Municipal",
+      "detalle": "Anolaima",
+      "cat": "centro",
+      "lat": 4.762207,
+      "lng": -74.466041
+    },
+    {
+      "id": "antonio-ricaurte",
+      "nombre": "Antonio Ricaurte",
+      "detalle": "Anolaima",
+      "cat": "educacion",
+      "lat": 4.761787,
+      "lng": -74.463086
+    },
+    {
+      "id": "escuela-simon-bolivar",
+      "nombre": "Escuela Simón Bolívar",
+      "detalle": "Anolaima",
+      "cat": "educacion",
+      "lat": 4.760622,
+      "lng": -74.463165
+    },
+    {
+      "id": "rodriperez",
+      "nombre": "RodriPerez",
+      "detalle": "Anolaima",
+      "cat": "comercio",
+      "lat": 4.763614,
+      "lng": -74.463897
+    },
+    {
+      "id": "san-vicente-ferrer",
+      "nombre": "San Vicente Ferrer",
+      "detalle": "Anolaima",
+      "cat": "centro",
+      "lat": 4.761814,
+      "lng": -74.467536
+    },
+    {
+      "id": "hospital-san-antonio",
+      "nombre": "Hospital San Antonio",
+      "detalle": "Anolaima",
+      "cat": "salud",
+      "lat": 4.763814,
+      "lng": -74.466748
+    },
+    {
+      "id": "it-olga-santa-maria",
+      "nombre": "IT Olga Santa María",
+      "detalle": "Anolaima",
+      "cat": "educacion",
+      "lat": 4.759737,
+      "lng": -74.461916
+    },
+    {
+      "id": "playa-alta",
+      "nombre": "Playa Alta",
+      "detalle": "Anolaima",
+      "cat": "turismo",
+      "lat": 4.760054,
+      "lng": -74.469478
+    },
+    {
+      "id": "cementerio",
+      "nombre": "Cementerio",
+      "detalle": "Anolaima",
+      "cat": "centro",
+      "lat": 4.765292,
+      "lng": -74.468266
+    },
+    {
+      "id": "parque-de-la-salud-anolaima",
+      "nombre": "Parque de la Salud Anolaima",
+      "detalle": "Anolaima · a 1,8 km",
+      "cat": "salud",
+      "lat": 4.767103,
+      "lng": -74.449341
+    },
+    {
+      "id": "restaurante-providencia",
+      "nombre": "Restaurante Providencia",
+      "detalle": "Anolaima · a 2,5 km",
+      "cat": "comida",
+      "lat": 4.779273,
+      "lng": -74.478993
+    },
+    {
+      "id": "meson-bochica",
+      "nombre": "Mesón Bochica",
+      "detalle": "Vereda de Anolaima",
+      "cat": "vereda",
+      "lat": 4.78451,
+      "lng": -74.461
+    },
+    {
+      "id": "cementerio-la-florida",
+      "nombre": "Cementerio La Florida",
+      "detalle": "Anolaima · a 3,3 km",
+      "cat": "centro",
+      "lat": 4.765835,
+      "lng": -74.435725
+    },
+    {
+      "id": "escuela-el-charquito",
+      "nombre": "Escuela el Charquito",
+      "detalle": "Anolaima · a 3,3 km",
+      "cat": "educacion",
+      "lat": 4.751735,
+      "lng": -74.493479
+    },
+    {
+      "id": "la-mesita",
+      "nombre": "La Mesita",
+      "detalle": "Anolaima · a 3,4 km",
+      "cat": "comida",
+      "lat": 4.753179,
+      "lng": -74.494048
+    },
+    {
+      "id": "mesita-de-caballero",
+      "nombre": "Mesita de Caballero",
+      "detalle": "Vereda de Anolaima",
+      "cat": "vereda",
+      "lat": 4.753043,
+      "lng": -74.494096
+    },
+    {
+      "id": "iedp-la-florida-sede-principal",
+      "nombre": "IEDp La Florida sede principal",
+      "detalle": "Anolaima · a 3,5 km",
+      "cat": "educacion",
+      "lat": 4.768562,
+      "lng": -74.434624
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    },
+    {
+      "id": "cachipay",
+      "nombre": "Cachipay",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.731066,
+      "lng": -74.436758
+    },
+    {
+      "id": "zipacon",
+      "nombre": "Zipacón",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.752766,
+      "lng": -74.379569
+    },
+    {
+      "id": "quipile",
+      "nombre": "Quipile",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.743911,
+      "lng": -74.533688
+    },
+    {
+      "id": "alban",
+      "nombre": "Albán",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.876533,
+      "lng": -74.436043
+    },
+    {
+      "id": "la-mesa",
+      "nombre": "La Mesa",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.6323,
+      "lng": -74.463399
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Jorge Castañeda",
+      "placa": "ANL 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1918,
+      "desde": 2017,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Germán Quintero",
+      "placa": "ANL 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1578,
+      "desde": 2015,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-08",
+      "movil": "008",
+      "nombre": "Héctor Bernal",
+      "placa": "ANL 608",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1111,
+      "desde": 2009,
+      "tel": "3000000008"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Carlos Rodríguez",
+      "placa": "ANL 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1863,
+      "desde": 2009,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Wilson Gómez",
+      "placa": "ANL 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1155,
+      "desde": 2012,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Rubén Sarmiento",
+      "placa": "ANL 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 864,
+      "desde": 2021,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Jairo Moreno",
+      "placa": "ANL 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1496,
+      "desde": 2018,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Nelson Pinzón",
+      "placa": "ANL 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1476,
+      "desde": 2007,
+      "tel": "3000000025"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Servitacoop, la Cooperativa Única Municipal de Transportes Multiactiva de Anolaima, presta el servicio de taxi y de transporte mixto en Anolaima, la capital frutera de Colombia. Desde su sede en la plaza principal atiende el casco urbano, las veredas y los viajes a los municipios vecinos, con habilitación del Ministerio de Transporte desde el año 2000.\n\nCon la app, la cooperativa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir y sigues el móvil en el mapa, en el pueblo o camino a la vereda.",
+    "mision": "Prestar el servicio de taxi y de transporte mixto en Anolaima y sus veredas con conductores asociados que conocen el territorio, con seguridad, puntualidad y buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Anolaima: un taxi a un toque, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Transporte mixto a las veredas",
+      "Pedidos por teléfono",
+      "Viajes a Facatativá, Zipacón y Cachipay",
+      "Viajes a La Mesa, Quipile y Albán"
+    ],
+    "frase": "Taxis de Anolaima, del pueblo a la vereda"
+  },
+  "fuentes": [
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832003132",
+    "https://es.scribd.com/document/479602354/plantilla-servitacoop-protocolos",
+    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/cooperativa-unica-municipal-transporte-multiactiva-anolaima",
+    "https://www.einforma.co/servlet/app/portal/ENTP/prod/ETIQUETA_EMPRESA/nif/832003132",
+    "https://empresas.tusdatos.co/informe/cooperativa-unica-municipal-de-transportes-multiactiva-de-anolaima-nit-832003132",
+    "https://www.facebook.com/servitacoop.anolaima/",
+    "https://es.wikipedia.org/wiki/Anolaima",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza media. Cooperativa multiactiva con taxis (servicio individual) y transporte mixto. Evidencia de taxis: carta del gerente general al alcalde de Anolaima del 8-sep-2020 (Scribd, texto ofuscado y descifrado), que anexa las «Resoluciones de habilitación de la empresa y servicio individual y mixto» y el listado de vehículos; su membrete cita la habilitación «R. 001978 Dic. 22 de 2000 Mintransporte». En Google Maps existe el lugar «Taxi Servitacoop Anolaima» (ficha copiada en el directorio todosnegocios; su URL lleva un celular, por eso no va en fuentes). La evidencia es de 2020: confirmar por teléfono que sigan operando taxis antes de hacer la demo.",
+    "RUES: NIT 832.003.132-6, CIIU 4921, activa y renovada en 2026, matrícula del 27-oct-1998 en la Cámara de Comercio de Facatativá; la carta cita la Resolución No. 036 del 20-nov-1998. Fundada = 1998.",
+    "Teléfono fijo (601) 845 4500: informacolombia (einforma lo muestra oculto como «6018…»). Celulares que no se deben publicar: 311 223 4631 y 320 388 1455 (los de la carta de 2020; celular personal, no publicar) y 300 360 9656 (el de la ficha de Google Maps «Taxi Servitacoop Anolaima»; celular sin confirmar, no publicar).",
+    "Correo servitacoopanolaima@gmail.com: carta de sep-2020; coincide con el correo oculto «servita…» de einforma. Es de 2020: confirmar que siga activo.",
+    "Dirección Calle 4 # 3-72, plaza principal: RUES (vía einforma y tusdatos); la carta de 2020 la escribe «Carrera 4 No. 3-72». Oficina ubicada en el mapa sobre la Calle 4, entre las carreras 3 y 4 (cruces de OpenStreetMap), junto al centro del pueblo.",
+    "Gerente: el RUES no registra representante legal; en la carta de sep-2020 firma como gerente general William Abelardo Peña Marcelo (no se sabe si sigue), por eso el saludo va a la Gerencia.",
+    "Perfil de Facebook «Servitacoop Anolaima» casi sin contenido público. En Anolaima no apareció otra empresa con taxis (Cootrasan, Sotransanolaima y Transanolaima quedaron descartadas). No se encontró resolución de tarifas de taxi: no lleva campo tarifas.",
+    "Pendientes internos: confirmar que siguen operando taxis, que el correo de 2020 siga activo, gerente actual, WhatsApp, número de taxis, modelo, tarifas y colores.",
+    "Colores propios de interOS (mora y mango de la capital frutera). Lema: Anolaima es considerada la capital frutera de Colombia (Wikipedia y lema de la alcaldía). Queda a unos 68 km del Portal 80 por carretera (OSRM), por eso lleva Portal 80 y aeropuerto. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

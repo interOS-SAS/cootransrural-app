@@ -1,0 +1,448 @@
+{
+  "id": "san-juan-de-rioseco",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Transportes Rioseco",
+    "nombreCorto": "Transportes Rioseco",
+    "razonSocial": "Transportes Rioseco S.A.S.",
+    "tipo": "empresa",
+    "lema": "Usted elige el lugar y nosotros lo llevamos",
+    "municipio": "San Juan de Rioseco, Cundinamarca",
+    "pueblo": "San Juan de Rioseco",
+    "region": "provincia de Magdalena Centro",
+    "telefono": "",
+    "telefonoVisible": "",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Carrera 4 # 9-71, San Juan de Rioseco, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2011,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "SJR",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "datosPendientes": [
+      "teléfono de la central",
+      "whatsapp",
+      "correo",
+      "número de taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.849653,
+      "lng": -74.619903
+    }
+  },
+  "colores": {
+    "primario": "#0F766E",
+    "primario2": "#14918A",
+    "oscuro": "#06302D",
+    "acento": "#FFC21A",
+    "rojo": "#C62828"
+  },
+  "CENTRO": {
+    "lat": 4.845516,
+    "lng": -74.622537
+  },
+  "ZONA": {
+    "sur": 4.53,
+    "norte": 5.17,
+    "oeste": -74.94,
+    "este": -74.3
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "viani",
+      "destino": "Vianí",
+      "valor": 30000,
+      "km": 16,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "bituima",
+      "destino": "Bituima",
+      "valor": 37000,
+      "km": 21,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "chaguani",
+      "destino": "Chaguaní",
+      "valor": 38000,
+      "km": 22,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "puli",
+      "destino": "Pulí",
+      "valor": 45000,
+      "km": 26,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "cambao",
+      "destino": "Cambao",
+      "valor": 56000,
+      "km": 33,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "quipile",
+      "destino": "Quipile",
+      "valor": 65000,
+      "km": 39,
+      "min": 70,
+      "radioKm": 4
+    },
+    {
+      "id": "beltran",
+      "destino": "Beltrán",
+      "valor": 74000,
+      "km": 45,
+      "min": 65,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, San Juan de Rioseco",
+      "cat": "centro",
+      "lat": 4.845516,
+      "lng": -74.622537
+    },
+    {
+      "id": "alcaldia-municipal-de-san-juan-de-riosec",
+      "nombre": "Alcaldía Municipal de San Juan de Rioseco",
+      "detalle": "San Juan de Rioseco",
+      "cat": "centro",
+      "lat": 4.845906,
+      "lng": -74.622283
+    },
+    {
+      "id": "hotel-nuevo-horizonte",
+      "nombre": "Hotel Nuevo Horizonte",
+      "detalle": "San Juan de Rioseco",
+      "cat": "turismo",
+      "lat": 4.845711,
+      "lng": -74.622012
+    },
+    {
+      "id": "parroquia-san-juan-bautista",
+      "nombre": "Parroquia San Juan Bautista",
+      "detalle": "San Juan de Rioseco",
+      "cat": "centro",
+      "lat": 4.844894,
+      "lng": -74.62268
+    },
+    {
+      "id": "hotel-casa-chente",
+      "nombre": "Hotel Casa Chente",
+      "detalle": "San Juan de Rioseco",
+      "cat": "turismo",
+      "lat": 4.844887,
+      "lng": -74.622072
+    },
+    {
+      "id": "estacion-de-policia-de-san-juan-de-riose",
+      "nombre": "Estación de Policía de San Juan de Rioseco",
+      "detalle": "San Juan de Rioseco",
+      "cat": "centro",
+      "lat": 4.846403,
+      "lng": -74.622861
+    },
+    {
+      "id": "hotel-america",
+      "nombre": "Hotel América",
+      "detalle": "San Juan de Rioseco",
+      "cat": "turismo",
+      "lat": 4.8462,
+      "lng": -74.621465
+    },
+    {
+      "id": "rapimerkar",
+      "nombre": "Rapimerkar",
+      "detalle": "San Juan de Rioseco",
+      "cat": "comercio",
+      "lat": 4.846858,
+      "lng": -74.621431
+    },
+    {
+      "id": "iedp-san-juan-de-rioseco",
+      "nombre": "IEDp San Juan de Rioseco",
+      "detalle": "San Juan de Rioseco",
+      "cat": "educacion",
+      "lat": 4.844371,
+      "lng": -74.620912
+    },
+    {
+      "id": "plaza-de-mercado-municipal",
+      "nombre": "Plaza de Mercado Municipal",
+      "detalle": "San Juan de Rioseco",
+      "cat": "centro",
+      "lat": 4.847489,
+      "lng": -74.62161
+    },
+    {
+      "id": "hospital-san-vicente-de-paul",
+      "nombre": "Hospital San Vicente de Paul",
+      "detalle": "San Juan de Rioseco",
+      "cat": "salud",
+      "lat": 4.84578,
+      "lng": -74.620238
+    },
+    {
+      "id": "la-mesita",
+      "nombre": "La Mesita",
+      "detalle": "Vereda de San Juan de Rioseco",
+      "cat": "vereda",
+      "lat": 4.849809,
+      "lng": -74.600101
+    },
+    {
+      "id": "el-hato",
+      "nombre": "El Hato",
+      "detalle": "Vereda de San Juan de Rioseco",
+      "cat": "vereda",
+      "lat": 4.828045,
+      "lng": -74.601005
+    },
+    {
+      "id": "viani",
+      "nombre": "Vianí",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.87426,
+      "lng": -74.562405
+    },
+    {
+      "id": "chaguani",
+      "nombre": "Chaguaní",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.94968,
+      "lng": -74.594798
+    },
+    {
+      "id": "bituima",
+      "nombre": "Bituima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.872067,
+      "lng": -74.539212
+    },
+    {
+      "id": "puli",
+      "nombre": "Pulí",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.680925,
+      "lng": -74.713554
+    },
+    {
+      "id": "beltran",
+      "nombre": "Beltrán",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.799309,
+      "lng": -74.740806
+    },
+    {
+      "id": "quipile",
+      "nombre": "Quipile",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.743911,
+      "lng": -74.533688
+    },
+    {
+      "id": "cambao",
+      "nombre": "Cambao",
+      "detalle": "Inspección de San Juan de Rioseco, sobre el río Magdalena",
+      "cat": "municipio",
+      "lat": 4.906853,
+      "lng": -74.736179
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-03",
+      "movil": "003",
+      "nombre": "Sandra Patiño",
+      "placa": "SJR 603",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 617,
+      "desde": 2020,
+      "tel": "3000000003"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Rubén Sarmiento",
+      "placa": "SJR 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1517,
+      "desde": 2011,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Jorge Castañeda",
+      "placa": "SJR 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 802,
+      "desde": 2010,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "SJR 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1024,
+      "desde": 2007,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Héctor Bernal",
+      "placa": "SJR 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1780,
+      "desde": 2021,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Diana Forero",
+      "placa": "SJR 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1245,
+      "desde": 2020,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Jairo Moreno",
+      "placa": "SJR 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1602,
+      "desde": 2011,
+      "tel": "3000000026"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Martha Garzón",
+      "placa": "SJR 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 601,
+      "desde": 2008,
+      "tel": "3000000028"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Transportes Rioseco S.A.S. es una empresa de transporte de San Juan de Rioseco, matriculada en 2011, que presta servicio de taxi en el municipio. Su lema lo resume: usted elige el lugar y, con seguridad, ellos lo llevan.\n\nCon la app, la empresa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa, en el pueblo, en las veredas o camino a Cambao y al río Magdalena.",
+    "mision": "Llevar a la gente de San Juan de Rioseco y a sus visitantes a donde necesiten, con conductores que conocen la región, con seguridad, puntualidad y buen trato.",
+    "vision": "Ser la forma más fácil y confiable de moverse en San Juan de Rioseco: un taxi a un toque en el celular, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en San Juan de Rioseco",
+      "Servicio a las veredas",
+      "Viajes a Cambao",
+      "Viajes a Vianí, Chaguaní y Pulí"
+    ],
+    "frase": "Donde usted elige el lugar y con seguridad, nosotros lo llevamos"
+  },
+  "fuentes": [
+    "https://www.facebook.com/100076182154454/",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=900417799",
+    "https://www.datacreditoempresas.com.co/directorio/transportes-rioseco-sas.html",
+    "https://edirectorio.net/empresa/transportes-rioseco-sas",
+    "https://www.lasempresas.com.co/facatativa/transportes-rioseco-sas/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Taxi: su página de Facebook (unos 970 seguidores) presentó el 3-oct-2021 al «conductor del Taxi No. 8»; su lema «donde usted elige el lugar y con seguridad, nosotros lo llevamos» sale de esa página. La publicación nombra al conductor: no publicar su nombre. Lo de «Taxi No. 8» sugiere al menos 8 taxis en 2021, pero es una inferencia. La confianza es media: evidencia de 2021 y solo de Facebook; confirmar que sigue con taxis en 2026.",
+    "Razón social, NIT 900.417.799-1, matrícula del 26-feb-2011 en la Cámara de Comercio de Facatativá y CIIU 4921: RUES (renovada el 30-mar-2026). Representante legal según el RUES: Camilo Andrés Carrera Cardozo.",
+    "Dirección Carrera 4 # 9-71: registro mercantil según Datacrédito y edirectorio (antes Calle 5 # 4-26, lasempresas.com.co, 2021). Ubicación de la oficina aproximada (Carrera 4 pasando la Calle 9 en OpenStreetMap; la Calle 10 no está en el mapa).",
+    "Teléfono: el registro mercantil (edirectorio.net) trae el celular 310 229 6465; puede ser personal: no publicar hasta confirmar que es de la empresa. En 2021 usaba el fijo 601 808 7048 (lasempresas.com.co), sin confirmar. Por eso el campo va vacío.",
+    "San Juan de Rioseco queda a unos 101 km del Portal 80 por carretera (OSRM): solo destinos municipales. Cambao es una inspección del propio municipio, sobre el río Magdalena.",
+    "No se encontró decreto de tarifas de taxi de San Juan de Rioseco: tarifas de ejemplo.",
+    "Colores propios de interOS (verde río y dorado). El lema y la frase salen de su página de Facebook.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

@@ -1481,7 +1481,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
           <div><dt>Carrera mínima</dt><dd>${N.pesos(T.minimaUrbana)}</dd></div>
           <div><dt>Banderazo</dt><dd>${N.pesos(T.banderazo)}</dd></div>
           <div><dt>Por kilómetro</dt><dd>${N.pesos(T.porKm)}</dd></div>
-          <div><dt>Recargo nocturno <small>(${sinCorte(hora12(T.nocheDesde))} a ${sinCorte(hora12(T.nocheHasta))})</small></dt><dd>+${N.pesos(T.recargoNocturno)}</dd></div>
+          ${T.recargoNocturno > 0 ? `<div><dt>Recargo nocturno <small>(${sinCorte(hora12(T.nocheDesde))} a ${sinCorte(hora12(T.nocheHasta))})</small></dt><dd>+${N.pesos(T.recargoNocturno)}</dd></div>` : ''}
           ${T.recargoDominical > 0 ? `<div><dt>Domingos y festivos</dt><dd>+${N.pesos(T.recargoDominical)}</dd></div>` : ''}
         </dl>
       </section>

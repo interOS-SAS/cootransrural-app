@@ -79,9 +79,9 @@
     {
       "id": "san-francisco",
       "destino": "San Francisco",
-      "valor": 29000,
-      "km": 15,
-      "min": 50,
+      "valor": 23000,
+      "km": 11,
+      "min": 25,
       "radioKm": 4
     },
     {
@@ -395,8 +395,8 @@
       "nombre": "San Francisco",
       "detalle": "Cundinamarca",
       "cat": "municipio",
-      "lat": 4.953252,
-      "lng": -74.264573
+      "lat": 4.974936,
+      "lng": -74.289568
     },
     {
       "id": "villeta",

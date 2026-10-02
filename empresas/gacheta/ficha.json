@@ -1,0 +1,541 @@
+{
+  "id": "gacheta",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Tax Guavio",
+    "nombreCorto": "Tax Guavio",
+    "razonSocial": "Tax Guavio S.A.",
+    "tipo": "empresa",
+    "lema": "Taxis de Gachetá, capital del Guavio",
+    "municipio": "Gachetá, Cundinamarca",
+    "pueblo": "Gachetá",
+    "telefono": "",
+    "telefonoVisible": "",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Calle 6 # 5-09, Gachetá, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2000,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "GCH",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Guavio",
+    "datosPendientes": [
+      "teléfono de la central",
+      "WhatsApp",
+      "correo",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.817831,
+      "lng": -73.637656
+    }
+  },
+  "colores": {
+    "primario": "#9B1C1F",
+    "primario2": "#B8282B",
+    "oscuro": "#470B0D",
+    "acento": "#FFC21A",
+    "rojo": "#E53935"
+  },
+  "CENTRO": {
+    "lat": 4.81661,
+    "lng": -73.637627
+  },
+  "ZONA": {
+    "sur": 4.5,
+    "norte": 5.14,
+    "oeste": -73.96,
+    "este": -73.32
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 4000,
+    "banderazo": 3000,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima ($4.000) es la del Decreto 098 de 2024 de la Alcaldía de Gachetá, el último publicado, que además fija una tarifa por destino para las veredas; los demás valores son de ejemplo, sujetos a confirmación de la empresa."
+  },
+  "RUTAS": [
+    {
+      "id": "junin",
+      "destino": "Junín",
+      "valor": 25000,
+      "km": 13,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "gama",
+      "destino": "Gama",
+      "valor": 28000,
+      "km": 15,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "ubala",
+      "destino": "Ubalá",
+      "valor": 44000,
+      "km": 26,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "gachala",
+      "destino": "Gachalá",
+      "valor": 60000,
+      "km": 36,
+      "min": 65,
+      "radioKm": 4
+    },
+    {
+      "id": "manta",
+      "destino": "Manta",
+      "valor": 61000,
+      "km": 36,
+      "min": 110,
+      "radioKm": 4
+    },
+    {
+      "id": "guasca",
+      "destino": "Guasca",
+      "valor": 79000,
+      "km": 48,
+      "min": 65,
+      "radioKm": 4
+    },
+    {
+      "id": "macheta",
+      "destino": "Machetá",
+      "valor": 91000,
+      "km": 57,
+      "min": 140,
+      "radioKm": 4
+    },
+    {
+      "id": "guatavita",
+      "destino": "Guatavita",
+      "valor": 99000,
+      "km": 62,
+      "min": 85,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Gachetá",
+      "cat": "centro",
+      "lat": 4.81661,
+      "lng": -73.637627
+    },
+    {
+      "id": "iedp-normal-superior-de-gacheta-sede-joh",
+      "nombre": "IEDp Normal Superior de Gachetá sede John Fitzgerald Kennedy",
+      "detalle": "Gachetá",
+      "cat": "educacion",
+      "lat": 4.8162,
+      "lng": -73.636918
+    },
+    {
+      "id": "parque-tauquira",
+      "nombre": "Parque Tauquira",
+      "detalle": "Gachetá",
+      "cat": "centro",
+      "lat": 4.815721,
+      "lng": -73.636892
+    },
+    {
+      "id": "zeuss",
+      "nombre": "Zeuss",
+      "detalle": "Gachetá",
+      "cat": "comercio",
+      "lat": 4.817023,
+      "lng": -73.63874
+    },
+    {
+      "id": "banco-agrario",
+      "nombre": "Banco Agrario",
+      "detalle": "Gachetá",
+      "cat": "comercio",
+      "lat": 4.817152,
+      "lng": -73.636467
+    },
+    {
+      "id": "alcaldia-municipal-de-gacheta",
+      "nombre": "Alcaldía Municipal de Gachetá",
+      "detalle": "Gachetá",
+      "cat": "centro",
+      "lat": 4.817299,
+      "lng": -73.636506
+    },
+    {
+      "id": "el-bucanero",
+      "nombre": "El Bucanero",
+      "detalle": "Gachetá",
+      "cat": "comida",
+      "lat": 4.817986,
+      "lng": -73.636906
+    },
+    {
+      "id": "biblioteca-municipal-anita-diaz",
+      "nombre": "Biblioteca Municipal Anita Díaz",
+      "detalle": "Gachetá",
+      "cat": "centro",
+      "lat": 4.816343,
+      "lng": -73.635948
+    },
+    {
+      "id": "esd-gacheta",
+      "nombre": "ESD Gachetá",
+      "detalle": "Gachetá",
+      "cat": "comercio",
+      "lat": 4.814977,
+      "lng": -73.637021
+    },
+    {
+      "id": "estacion-de-policia-de-gacheta",
+      "nombre": "Estación de Policía de Gachetá",
+      "detalle": "Gachetá",
+      "cat": "centro",
+      "lat": 4.816938,
+      "lng": -73.635843
+    },
+    {
+      "id": "hotel-gacheta-real",
+      "nombre": "Hotel Gachetá Real",
+      "detalle": "Gachetá",
+      "cat": "turismo",
+      "lat": 4.818458,
+      "lng": -73.63784
+    },
+    {
+      "id": "templo-san-miguel-arcangel",
+      "nombre": "Templo San Miguel Arcangel",
+      "detalle": "Gachetá",
+      "cat": "centro",
+      "lat": 4.817625,
+      "lng": -73.635297
+    },
+    {
+      "id": "parque-del-agua",
+      "nombre": "Parque del Agua",
+      "detalle": "Gachetá",
+      "cat": "centro",
+      "lat": 4.819304,
+      "lng": -73.636983
+    },
+    {
+      "id": "octano",
+      "nombre": "Octano",
+      "detalle": "Gachetá",
+      "cat": "comercio",
+      "lat": 4.819585,
+      "lng": -73.636584
+    },
+    {
+      "id": "iedp-monsenor-abdon-lopez-sede-policarpa",
+      "nombre": "IEDp Monseñor Abdón López sede Policarpa Salavarrieta",
+      "detalle": "Gachetá",
+      "cat": "educacion",
+      "lat": 4.818094,
+      "lng": -73.634539
+    },
+    {
+      "id": "hospital-san-francisco",
+      "nombre": "Hospital San Francisco",
+      "detalle": "Gachetá",
+      "cat": "salud",
+      "lat": 4.817905,
+      "lng": -73.640888
+    },
+    {
+      "id": "institucion-educativa-departamental-ied-",
+      "nombre": "Institución Educativa Departamental (IED) Monseñor Abdón Lóp",
+      "detalle": "Gachetá",
+      "cat": "educacion",
+      "lat": 4.813677,
+      "lng": -73.633636
+    },
+    {
+      "id": "iedp-normal-superior-de-gacheta-sede-pri",
+      "nombre": "IEDp Normal Superior de Gachetá sede Principal",
+      "detalle": "Gachetá",
+      "cat": "educacion",
+      "lat": 4.817453,
+      "lng": -73.632706
+    },
+    {
+      "id": "cementerio-de-gacheta",
+      "nombre": "Cementerio de Gachetá",
+      "detalle": "Gachetá",
+      "cat": "centro",
+      "lat": 4.820859,
+      "lng": -73.640291
+    },
+    {
+      "id": "vereda-diamante",
+      "nombre": "Vereda Diamante",
+      "detalle": "Gachetá",
+      "cat": "vereda",
+      "lat": 4.817872,
+      "lng": -73.646518
+    },
+    {
+      "id": "campoalegre",
+      "nombre": "Campoalegre",
+      "detalle": "Vereda de Gachetá",
+      "cat": "vereda",
+      "lat": 4.830645,
+      "lng": -73.632183
+    },
+    {
+      "id": "el-tabon",
+      "nombre": "El Tabon",
+      "detalle": "Vereda de Gachetá",
+      "cat": "vereda",
+      "lat": 4.840641,
+      "lng": -73.618437
+    },
+    {
+      "id": "junin",
+      "nombre": "Junín",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.790184,
+      "lng": -73.663172
+    },
+    {
+      "id": "gama",
+      "nombre": "Gama",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.763473,
+      "lng": -73.609857
+    },
+    {
+      "id": "gachala",
+      "nombre": "Gachalá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.692356,
+      "lng": -73.521048
+    },
+    {
+      "id": "ubala",
+      "nombre": "Ubalá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.745638,
+      "lng": -73.532979
+    },
+    {
+      "id": "manta",
+      "nombre": "Manta",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.008713,
+      "lng": -73.539109
+    },
+    {
+      "id": "macheta",
+      "nombre": "Machetá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.081863,
+      "lng": -73.606559
+    },
+    {
+      "id": "guatavita",
+      "nombre": "Guatavita",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.934395,
+      "lng": -73.835301
+    },
+    {
+      "id": "guasca",
+      "nombre": "Guasca",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.866439,
+      "lng": -73.877694
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Diana Forero",
+      "placa": "GCH 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1808,
+      "desde": 2012,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-08",
+      "movil": "008",
+      "nombre": "Jairo Moreno",
+      "placa": "GCH 608",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1661,
+      "desde": 2011,
+      "tel": "3000000008"
+    },
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Luz Marina Rojas",
+      "placa": "GCH 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1568,
+      "desde": 2007,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Nelson Pinzón",
+      "placa": "GCH 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 424,
+      "desde": 2014,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Fabio Cruz",
+      "placa": "GCH 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1903,
+      "desde": 2021,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Carlos Rodríguez",
+      "placa": "GCH 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 782,
+      "desde": 2017,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-27",
+      "movil": "027",
+      "nombre": "Rubén Sarmiento",
+      "placa": "GCH 627",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1767,
+      "desde": 2015,
+      "tel": "3000000027"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Édgar Molina",
+      "placa": "GCH 628",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 427,
+      "desde": 2008,
+      "tel": "3000000028"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Tax Guavio S.A. es una empresa de transporte de pasajeros con sede en Gachetá, la capital de la provincia del Guavio, registrada en el año 2000. En Gachetá, la Alcaldía fija las tarifas del taxi para el casco urbano y para cada destino de las veredas.\n\nCon la app, la empresa puede llevar el taxi al celular: pides el taxi con tu ubicación exacta, ves la tarifa antes de subir, sigues el móvil en el mapa y pagas con QR o en efectivo, en el pueblo o camino a las veredas.",
+    "mision": "Prestar el servicio de taxi en Gachetá y sus veredas con seguridad, puntualidad y buen trato, con conductores que conocen la provincia del Guavio.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Gachetá y el Guavio: un taxi a un toque, con la tarifa oficial a la vista y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Viajes a Junín, Gama y Ubalá",
+      "Viajes a Guatavita y Guasca"
+    ],
+    "frase": "El Guavio, a un toque"
+  },
+  "fuentes": [
+    "http://gachetacundinamarca.micolombiadigital.gov.co/sites/gachetacundinamarca/content/files/000791/39515_decreto-098-de-2024.pdf",
+    "http://gachetacundinamarca.micolombiadigital.gov.co/sites/gachetacundinamarca/content/files/000599/29910_decreto-017-de-2023.pdf",
+    "https://www.rues.org.co/buscar/RM/832004952",
+    "https://www.lasempresas.com.co/bogota/tax-guavio-sa/",
+    "https://edirectorio.net/empresa/tax-guavio-sa",
+    "https://transportesgacheta.com/contactanos/",
+    "https://www.facebook.com/tax.guaviosa/",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "OJO, CONFIANZA BAJA: Gachetá sí tiene taxi regulado y esta es la candidata más probable, pero ninguna fuente dice expresamente que Tax Guavio preste el servicio. El Decreto 098 de 27-nov-2024 de la Alcaldía fija la «tarifa del servicio de transporte público individual y mixto de pasajeros en vehículos tipo Taxi y mixto» (tabla «Tarifas servicio taxi individual»), pero ni ese decreto ni el 017 de 2023 nombran a la empresa operadora. Tax Guavio S.A. es la única empresa de pasajeros domiciliada en Gachetá con «Tax» en el nombre, está activa en el RUES (actividad 4921) y lasempresas le reporta 37 empleados. Confirmar con una llamada o con la Alcaldía antes de enviar la propuesta.",
+    "La otra empresa local, Transportes Gachetá S.A.S. (NIT 800.170.234-7), solo publica servicio intermunicipal y especial. Parece del mismo grupo que Tax Guavio: comparten esquina y el 312 522 1133, que Transportes Gachetá publica como su agencia de la Terminal Salitre y que los directorios atribuyen a Tax Guavio. Por eso no se usa como teléfono de la central.",
+    "Razón social, NIT 832.004.952-3 y matrícula del 10-nov-2000 con domicilio en Gachetá: RUES y lasempresas.com.co. Dirección Calle 6 # 5-09: registro mercantil según einforma, edirectorio y empresite; otras fichas dan la Calle 5 # 5-83, la esquina de la agencia de Transportes Gachetá. Oficina ubicada en el mapa por el cruce de la Calle 6 con la Carrera 5 (OpenStreetMap).",
+    "Teléfono y correo: no hay línea confirmada. En directorios aparecen un número de Bogotá antiguo (601 653 5499) y un celular que parece personal (no se incluye).",
+    "Tarifas: Decreto 098 de 27-nov-2024 (taxi individual y mixto, vigencia 2024), revisado en el PDF: carrera mínima $4.000; Urbanización La Esperanza $5.000; Ramal de Gama $8.000; Alto de las Ventas y Playa Olguín $12.000; Piñal $15.000; Alto del Llano y Puente Hato Grande $17.000; La Laguna $20.000; Eras Divino Niño $25.000; destinos más lejanos de $25.000 a $60.000. URL: http://gachetacundinamarca.micolombiadigital.gov.co/sites/gachetacundinamarca/content/files/000791/39515_decreto-098-de-2024.pdf. No se encontró decreto de 2025 ni de 2026.",
+    "Colores inspirados en el aro rojo de su logo circular («TAX GUAVIO S.A.»), visto en Facebook detrás de una capa gris: el tono es aproximado. El dorado es propuesta de interOS. En la propuesta no se usa su logo.",
+    "Destinos: municipios vecinos del Guavio. Gachetá queda a más de 70 km de Bogotá, así que no se añaden el portal ni el aeropuerto.",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales. El lema también es de interOS.",
+    "Pendientes: confirmar la modalidad taxi, teléfono de la central, WhatsApp, correo, gerente, número de taxis, modelo de los taxis, misión y visión oficiales, tarifas vigentes."
+  ]
+}

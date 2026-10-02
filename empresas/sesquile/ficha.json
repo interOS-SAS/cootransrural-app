@@ -1,0 +1,477 @@
+{
+  "id": "sesquile",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootranscovadonga",
+    "nombreCorto": "Cootranscovadonga",
+    "razonSocial": "Cooperativa Multiactiva de Transportadores de Sesquilé (Cootranscovadonga)",
+    "tipo": "cooperativa",
+    "lema": "Taxis de Sesquilé y sus veredas",
+    "municipio": "Sesquilé, Cundinamarca",
+    "pueblo": "Sesquilé",
+    "region": "provincia de Almeidas",
+    "telefono": "",
+    "telefonoVisible": "",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Plaza Multiservicios, local 4 (centro de despacho de transporte público, entre carreras 7 y 8), Sesquilé, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "SES",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "oficina": null,
+    "datosPendientes": [
+      "teléfono o WhatsApp de la central",
+      "correo",
+      "dirección de la sede administrativa",
+      "número de taxis",
+      "gerente actual",
+      "año de fundación",
+      "colores de la cooperativa",
+      "misión y visión oficiales"
+    ]
+  },
+  "colores": {
+    "primario": "#0B4F6C",
+    "primario2": "#126A8E",
+    "oscuro": "#06293A",
+    "acento": "#F5B700",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 5.044767,
+    "lng": -73.795553
+  },
+  "ZONA": {
+    "sur": 4.72,
+    "norte": 5.36,
+    "oeste": -74.12,
+    "este": -73.48
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 7300,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2400,
+    "recargoDominical": 1200,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima ($7.300), el recargo nocturno ($2.400, de 8:00 p. m. a 6:00 a. m.) y el dominical ($1.200) son los de la Resolución 178 del 27 de marzo de 2026 de Sesquilé; los demás valores son de ejemplo, sujetos a confirmación de la cooperativa."
+  },
+  "RUTAS": [
+    {
+      "id": "suesca",
+      "destino": "Suesca",
+      "valor": 19000,
+      "km": 8,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "gachancipa",
+      "destino": "Gachancipá",
+      "valor": 28000,
+      "km": 15,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "guatavita",
+      "destino": "Guatavita",
+      "valor": 30000,
+      "km": 16,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "choconta",
+      "destino": "Chocontá",
+      "valor": 34000,
+      "km": 19,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "tocancipa",
+      "destino": "Tocancipá",
+      "valor": 37000,
+      "km": 20,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "guasca",
+      "destino": "Guasca",
+      "valor": 49000,
+      "km": 28,
+      "min": 50,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-norte",
+      "destino": "Portal Norte (Bogotá)",
+      "valor": 81000,
+      "km": 50,
+      "min": 65,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 111000,
+      "km": 70,
+      "min": 90,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Sesquilé",
+      "cat": "centro",
+      "lat": 5.04467,
+      "lng": -73.796386
+    },
+    {
+      "id": "parroquia-inmaculada-concepcion",
+      "nombre": "Parroquia Inmaculada Concepción",
+      "detalle": "Sesquilé",
+      "cat": "centro",
+      "lat": 5.044359,
+      "lng": -73.795822
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Sesquilé",
+      "cat": "comercio",
+      "lat": 5.044999,
+      "lng": -73.796302
+    },
+    {
+      "id": "hotel-santa-ana",
+      "nombre": "Hotel Santa Ana",
+      "detalle": "Sesquilé",
+      "cat": "turismo",
+      "lat": 5.046041,
+      "lng": -73.795958
+    },
+    {
+      "id": "hotel-villacentro",
+      "nombre": "Hotel Villacentro",
+      "detalle": "Sesquilé",
+      "cat": "turismo",
+      "lat": 5.046918,
+      "lng": -73.796178
+    },
+    {
+      "id": "mercado",
+      "nombre": "Plaza de Mercado de Sesquilé",
+      "detalle": "Sesquilé",
+      "cat": "centro",
+      "lat": 5.046411,
+      "lng": -73.79765
+    },
+    {
+      "id": "cementerio",
+      "nombre": "Cementerio de Sesquilé",
+      "detalle": "Sesquilé",
+      "cat": "centro",
+      "lat": 5.047067,
+      "lng": -73.800469
+    },
+    {
+      "id": "las-espigas",
+      "nombre": "Las Espigas",
+      "detalle": "Sesquilé",
+      "cat": "vereda",
+      "lat": 5.034842,
+      "lng": -73.794092
+    },
+    {
+      "id": "entrada-a-sesquile",
+      "nombre": "Entrada a Sesquilé",
+      "detalle": "Sesquilé · a 1,2 km",
+      "cat": "centro",
+      "lat": 5.055847,
+      "lng": -73.796359
+    },
+    {
+      "id": "bohorquez",
+      "nombre": "Bohórquez",
+      "detalle": "Sesquilé · a 1,3 km",
+      "cat": "comida",
+      "lat": 5.055887,
+      "lng": -73.798847
+    },
+    {
+      "id": "carajillo",
+      "nombre": "Carajillo",
+      "detalle": "Sesquilé · a 1,4 km",
+      "cat": "comida",
+      "lat": 5.055184,
+      "lng": -73.802151
+    },
+    {
+      "id": "el-palacio-del-cerdo",
+      "nombre": "El Palacio del Cerdo",
+      "detalle": "Sesquilé · a 1,6 km",
+      "cat": "comida",
+      "lat": 5.054967,
+      "lng": -73.80621
+    },
+    {
+      "id": "biomax",
+      "nombre": "Biomax",
+      "detalle": "Sesquilé · a 2,5 km",
+      "cat": "comercio",
+      "lat": 5.059794,
+      "lng": -73.779146
+    },
+    {
+      "id": "granja-cero",
+      "nombre": "Granja Cero",
+      "detalle": "Sesquilé · a 2,6 km",
+      "cat": "comercio",
+      "lat": 5.059891,
+      "lng": -73.778075
+    },
+    {
+      "id": "suesca",
+      "nombre": "Suesca",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.103341,
+      "lng": -73.799006
+    },
+    {
+      "id": "guatavita",
+      "nombre": "Guatavita",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.934395,
+      "lng": -73.835301
+    },
+    {
+      "id": "choconta",
+      "nombre": "Chocontá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.145941,
+      "lng": -73.683951
+    },
+    {
+      "id": "gachancipa",
+      "nombre": "Gachancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.992029,
+      "lng": -73.872111
+    },
+    {
+      "id": "tocancipa",
+      "nombre": "Tocancipá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.97371,
+      "lng": -73.92118
+    },
+    {
+      "id": "guasca",
+      "nombre": "Guasca",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.866439,
+      "lng": -73.877694
+    },
+    {
+      "id": "portal-norte",
+      "nombre": "Portal Norte (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7546,
+      "lng": -74.0461
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Rubén Sarmiento",
+      "placa": "SES 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 478,
+      "desde": 2015,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Édgar Molina",
+      "placa": "SES 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 928,
+      "desde": 2011,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Martha Garzón",
+      "placa": "SES 609",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1054,
+      "desde": 2021,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Luz Marina Rojas",
+      "placa": "SES 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1543,
+      "desde": 2007,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Héctor Bernal",
+      "placa": "SES 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 764,
+      "desde": 2015,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Sandra Patiño",
+      "placa": "SES 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2060,
+      "desde": 2018,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Nelson Pinzón",
+      "placa": "SES 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2297,
+      "desde": 2013,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Carlos Rodríguez",
+      "placa": "SES 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 663,
+      "desde": 2016,
+      "tel": "3000000025"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootranscovadonga, la Cooperativa Multiactiva de Transportadores de Sesquilé, presta el transporte colectivo municipal en microbús y el servicio de taxi en Sesquilé. Despacha desde el local 4 de la Plaza Multiservicios, el centro de despacho de transporte público del pueblo, y lleva a la gente a veredas como Boitivá, Boitá, Nescuata, Gobernador, Tierra Negra o Salinas, con las tarifas que fija la Alcaldía.\n\nCon la app, Cootranscovadonga puede llevar ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Sesquilé y sus veredas con conductores asociados que conocen cada sector, con seguridad, puntualidad, buen trato y las tarifas oficiales del municipio.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Sesquilé: un taxi a un toque, con la tarifa clara y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi en el casco urbano con la tarifa mínima oficial",
+      "Servicio a las veredas con tarifa fija",
+      "Viajes a la Laguna del Cacique Guatavita",
+      "Viajes a Suesca, Guatavita, Gachancipá y Tocancipá",
+      "Traslados a Bogotá y al aeropuerto bajo reserva"
+    ],
+    "frase": "De Boitivá a Tierra Negra, tu taxi en Sesquilé"
+  },
+  "fuentes": [
+    "https://www.sesquile-cundinamarca.gov.co/Transparencia/Contratacion/CONTRATO%20APROVECHAMIENTO%20COOTRANSCOVADONGA.pdf",
+    "https://www.sesquile-cundinamarca.gov.co/Transparencia/Normatividad/RESOLUCI%C3%93N%20No.%20178%20DE%202026%20-%20AUMENTO%20DE%20TARIFAS%20COVADONGA%202026.pdf",
+    "https://www.sesquile-cundinamarca.gov.co/Transparencia/Normatividad/RESOLUCI%C3%93N%20No.%20618%20DE%202025%20-%20MODIFICACI%C3%93N%20DE%20HORARIO%20TRANSPORTE.pdf",
+    "https://www.sesquile-cundinamarca.gov.co/Transparencia/Normatividad/DECRETO%20034%20DE%202020%20TARIFAS%20TAXIS.pdf",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832003699",
+    "https://www.facebook.com/cootranscovadonga.sesquile",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza alta. Contrato de aprovechamiento económico del espacio público No. 001 de 2022 entre el Municipio de Sesquilé y la cooperativa: le entrega el local 4 «destinado al despacho de los servicios de transporte público terrestre en la modalidad colectivo e individual» y el uso de la rampa del centro de despachos para tres microbuses y dos taxis, con destinación «en la modalidad de microbús y taxis». La resolución de tarifas de taxi de 2026 lleva su nombre en el archivo («AUMENTO DE TARIFAS COVADONGA 2026»). Es una cooperativa mixta: también tiene el colectivo municipal en microbús (rutas de Boíta, Nescuata, Tierra Negra y Salinas) y rutas de influencia con Suesca.",
+    "NIT 832.003.699-1, matrícula en el RUES del 12-mar-1999 (ESAL 90009944) y renovación del 31-mar-2026: RUES abierto (datos.gov.co c82u-588k). Gerente: la Resolución 618 del 30-oct-2025 de la Alcaldía nombra como gerente a Andrés Gerardo Villamil Bastidas, pero en el RUES el representante legal sigue siendo José Manuel Fonseca Uscátegui; como no coinciden, el saludo va a la Gerencia. Año de fundación sin confirmar.",
+    "Dirección: local 4 de la Plaza Multiservicios, entre carreras 7 y 8 (contrato 001 de 2022). No se confirmó la sede administrativa. Una primera búsqueda trajo otra dirección y un fijo sin fuente verificable: no se usan.",
+    "Facebook: perfil «Cootranscovadonga Sesquile». No se encontró web, correo ni teléfono, y no figura en SECOP II.",
+    "Tarifas: Resolución 178 del 27-mar-2026 de Sesquilé, https://www.sesquile-cundinamarca.gov.co/Transparencia/Normatividad/RESOLUCI%C3%93N%20No.%20178%20DE%202026%20-%20AUMENTO%20DE%20TARIFAS%20COVADONGA%202026.pdf. Taxi: mínima $7.300; recargo nocturno $2.400 (8:00 p. m. a 6:00 a. m.); dominical $1.200; parada adicional $1.200; hora de espera $18.150. Ejemplos: Las Brisas (entrando) $7.600, Sector La Playa $8.250, Boitivá–Cabildo $10.600, Peaje El Roble $17.800, Laguna del Cacique Guatavita $34.650; Ranchería, Granadillo y Transformadores $55.000. Antes regía el Decreto 034 del 20-feb-2020.",
+    "La Resolución 178 habla de «las empresas habilitadas» para colectivo e individual: conviene confirmar si Transsesquilé S.A.S. también tiene taxis.",
+    "Colores propios de interOS (azul del embalse de Tominé y dorado).",
+    "Misión y visión: redacción general propuesta por interOS, no textos oficiales.",
+    "Oficina en null: la plaza no está en OpenStreetMap (la demo usa el centro del pueblo).",
+    "Destinos: municipios vecinos. Sesquilé queda a unos 50 km del Portal Norte por carretera (OSRM); por eso se incluyen el Portal Norte y el aeropuerto."
+  ]
+}

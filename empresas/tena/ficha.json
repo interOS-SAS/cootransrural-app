@@ -1,0 +1,502 @@
+{
+  "id": "tena",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootranstena",
+    "nombreCorto": "Cootranstena",
+    "razonSocial": "Cooperativa Integral de Transportes de Tena Cundinamarca (Cootranstena)",
+    "tipo": "cooperativa",
+    "lema": "Taxis de Tena, tierra de la laguna de Pedro Palo",
+    "municipio": "Tena, Cundinamarca",
+    "pueblo": "Tena",
+    "telefono": "",
+    "telefonoVisible": "",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Calle 2 # 3-87, Tena, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2015,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "TEN",
+    "vehiculo": "Chevrolet Sail",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Tequendama",
+    "datosPendientes": [
+      "teléfono de la central",
+      "WhatsApp",
+      "correo",
+      "número de taxis",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.654481,
+      "lng": -74.389048
+    }
+  },
+  "colores": {
+    "primario": "#3A3F94",
+    "primario2": "#4B52AE",
+    "oscuro": "#1A1C4A",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.655057,
+    "lng": -74.388285
+  },
+  "ZONA": {
+    "sur": 4.34,
+    "norte": 4.98,
+    "oeste": -74.71,
+    "este": -74.07
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "la-mesa",
+      "destino": "La Mesa",
+      "valor": 22000,
+      "km": 11,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "san-antonio-del-tequendama",
+      "destino": "San Antonio del Tequendama",
+      "valor": 32000,
+      "km": 17,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "el-colegio",
+      "destino": "El Colegio",
+      "valor": 44000,
+      "km": 25,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "anapoima",
+      "destino": "Anapoima",
+      "valor": 47000,
+      "km": 27,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "bojaca",
+      "destino": "Bojacá",
+      "valor": 59000,
+      "km": 35,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "mosquera",
+      "destino": "Mosquera",
+      "valor": 58000,
+      "km": 35,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 81000,
+      "km": 50,
+      "min": 75,
+      "radioKm": 3
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 86000,
+      "km": 54,
+      "min": 75,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Tena",
+      "cat": "centro",
+      "lat": 4.655057,
+      "lng": -74.388285
+    },
+    {
+      "id": "coop-tequendama",
+      "nombre": "Coop. Tequendama",
+      "detalle": "Tena",
+      "cat": "centro",
+      "lat": 4.655725,
+      "lng": -74.389227
+    },
+    {
+      "id": "alcaldia-municipal-de-tena",
+      "nombre": "Alcaldía Municipal de Tena",
+      "detalle": "Tena",
+      "cat": "centro",
+      "lat": 4.655364,
+      "lng": -74.389
+    },
+    {
+      "id": "biblioteca-publica-municipal-la-capilla",
+      "nombre": "Biblioteca Publica Municipal La Capilla",
+      "detalle": "Tena",
+      "cat": "centro",
+      "lat": 4.655811,
+      "lng": -74.389948
+    },
+    {
+      "id": "cootransvilla",
+      "nombre": "Cootransvilla",
+      "detalle": "Tena",
+      "cat": "centro",
+      "lat": 4.655087,
+      "lng": -74.388568
+    },
+    {
+      "id": "estacion-de-policia-de-tena",
+      "nombre": "Estación de Policía de Tena",
+      "detalle": "Tena",
+      "cat": "centro",
+      "lat": 4.65461,
+      "lng": -74.388355
+    },
+    {
+      "id": "parque-de-los-novios",
+      "nombre": "Parque de los Novios",
+      "detalle": "Tena",
+      "cat": "centro",
+      "lat": 4.656853,
+      "lng": -74.389654
+    },
+    {
+      "id": "cementario-municipal",
+      "nombre": "Cementerio municipal",
+      "detalle": "Tena",
+      "cat": "centro",
+      "lat": 4.652414,
+      "lng": -74.389042
+    },
+    {
+      "id": "la-vara",
+      "nombre": "La Vara",
+      "detalle": "Tena · a 1,5 km",
+      "cat": "comida",
+      "lat": 4.668835,
+      "lng": -74.385693
+    },
+    {
+      "id": "rincon-veleno",
+      "nombre": "Rincon Veleño",
+      "detalle": "Tena · a 2,2 km",
+      "cat": "comida",
+      "lat": 4.672539,
+      "lng": -74.378783
+    },
+    {
+      "id": "salon-del-reino-de-los-testigos-de-jehov",
+      "nombre": "Salón del Reino de los Testigos de Jehová",
+      "detalle": "Tena · a 2,5 km",
+      "cat": "centro",
+      "lat": 4.649929,
+      "lng": -74.411242
+    },
+    {
+      "id": "lena-verde",
+      "nombre": "Leña verde",
+      "detalle": "Tena · a 2,5 km",
+      "cat": "comida",
+      "lat": 4.674882,
+      "lng": -74.377172
+    },
+    {
+      "id": "ipuc-la-gran-via",
+      "nombre": "IPUC La Gran Vía",
+      "detalle": "Tena · a 2,6 km",
+      "cat": "centro",
+      "lat": 4.649842,
+      "lng": -74.41253
+    },
+    {
+      "id": "el-rancho-de-jairo",
+      "nombre": "El Rancho de Jairo",
+      "detalle": "Tena · a 2,7 km",
+      "cat": "comida",
+      "lat": 4.674021,
+      "lng": -74.37362
+    },
+    {
+      "id": "patiobonito",
+      "nombre": "Patiobonito",
+      "detalle": "Vereda de Tena",
+      "cat": "vereda",
+      "lat": 4.674924,
+      "lng": -74.374621
+    },
+    {
+      "id": "vereda-santa-barbara",
+      "nombre": "Vereda Santa Bárbara",
+      "detalle": "Vereda de Tena",
+      "cat": "vereda",
+      "lat": 4.652908,
+      "lng": -74.358006
+    },
+    {
+      "id": "balcon-de-la-arepa",
+      "nombre": "Balcón de la Arepa",
+      "detalle": "Tena · a 3,8 km",
+      "cat": "comida",
+      "lat": 4.676858,
+      "lng": -74.362351
+    },
+    {
+      "id": "la-mesa",
+      "nombre": "La Mesa",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.6323,
+      "lng": -74.463399
+    },
+    {
+      "id": "bojaca",
+      "nombre": "Bojacá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.732482,
+      "lng": -74.341674
+    },
+    {
+      "id": "san-antonio-del-tequendama",
+      "nombre": "San Antonio del Tequendama",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.616137,
+      "lng": -74.351691
+    },
+    {
+      "id": "el-colegio",
+      "nombre": "El Colegio",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.580262,
+      "lng": -74.442374
+    },
+    {
+      "id": "mosquera",
+      "nombre": "Mosquera",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.7002,
+      "lng": -74.238506
+    },
+    {
+      "id": "anapoima",
+      "nombre": "Anapoima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.549301,
+      "lng": -74.535912
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Carlos Rodríguez",
+      "placa": "TEN 601",
+      "vehiculo": "Chevrolet Sail",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1299,
+      "desde": 2011,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-04",
+      "movil": "004",
+      "nombre": "Luz Marina Rojas",
+      "placa": "TEN 604",
+      "vehiculo": "Chevrolet Sail",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 843,
+      "desde": 2019,
+      "tel": "3000000004"
+    },
+    {
+      "id": "demo-09",
+      "movil": "009",
+      "nombre": "Diana Forero",
+      "placa": "TEN 609",
+      "vehiculo": "Chevrolet Sail",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1740,
+      "desde": 2019,
+      "tel": "3000000009"
+    },
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Jairo Moreno",
+      "placa": "TEN 610",
+      "vehiculo": "Chevrolet Sail",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 2032,
+      "desde": 2015,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Yolanda Prieto",
+      "placa": "TEN 613",
+      "vehiculo": "Chevrolet Sail",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1850,
+      "desde": 2018,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Édgar Molina",
+      "placa": "TEN 614",
+      "vehiculo": "Chevrolet Sail",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1021,
+      "desde": 2018,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Rubén Sarmiento",
+      "placa": "TEN 625",
+      "vehiculo": "Chevrolet Sail",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 790,
+      "desde": 2020,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-28",
+      "movil": "028",
+      "nombre": "Fabio Cruz",
+      "placa": "TEN 628",
+      "vehiculo": "Chevrolet Sail",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1381,
+      "desde": 2020,
+      "tel": "3000000028"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootranstena, la Cooperativa Integral de Transportes de Tena, presta el servicio público de taxi en Tena, el municipio de la laguna de Pedro Palo, en la provincia del Tequendama. Es una cooperativa joven, registrada en 2015, con su oficina en la Calle 2 # 3-87, y sus taxis amarillos llevan a la gente del pueblo y a quienes lo visitan por el casco urbano, las veredas y los municipios vecinos.\n\nCon la app, la cooperativa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir y sigues el móvil en el mapa, también cuando vas o vuelves de la laguna.",
+    "mision": "Prestar el servicio de taxi en Tena y sus veredas con conductores asociados que conocen el municipio, con seguridad, puntualidad y buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Tena: un taxi a un toque, con tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Viajes a la laguna de Pedro Palo",
+      "Viajes a La Mesa, Bojacá y San Antonio del Tequendama",
+      "Traslados hacia la Sabana"
+    ],
+    "frase": "Taxis de Tena, cerca de todo"
+  },
+  "fuentes": [
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=900900979",
+    "https://mintransporte.gov.co/info/mintransporte/media/anexos/nLtNzTNO.pdf",
+    "https://web.archive.org/web/20190822010231/http://www.tena-cundinamarca.gov.co/noticias/cootranstena-inicia-operaciones",
+    "https://web.archive.org/web/20220727201459/http://www.tena-cundinamarca.gov.co/sites/tenacundinamarca/content/files/000103/5107_cootranstena-inicia-operaciones_1024x600.JPG",
+    "https://edirectorio.net/empresa/cooperativa-integral-de-transportes-de-tena-cundinamarca",
+    "https://www.einforma.co/servlet/app/portal/ENTP/prod/ETIQUETA_EMPRESA/nif/900900979",
+    "https://colfirma.com/empresa/cooperativa-integral-de-transportes-de-tena-cundinamarca-900900979",
+    "https://es.wikipedia.org/wiki/Tena_(Cundinamarca)",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza alta en que tiene taxis: concepto del Ministerio de Transporte, radicado MT 20261340638121 del 7-may-2026 («TRANSPORTE – TRANSPORTE INDIVIDUAL»), que responde a la alcaldesa de Tena si puede autorizar a Cootranstena «los cuatro (4) cupos» de la capacidad transportadora; y la noticia de la alcaldía «Cootranstena inicia operaciones» (archivada en 2019) con una foto de los asociados en la plaza y al menos 6 taxis amarillos Chevrolet Sail y Spark.",
+    "Razón social, NIT 900.900.979-1, matrícula del 11-ago-2015 en la Cámara de Comercio de Girardot y dirección Calle 2 # 3-87: RUES (datos.gov.co c82u-588k, y vía einforma, informacolombia y edirectorio.net). Fundada = 2015 por esa matrícula.",
+    "Representante legal: Gilberto Espinel Herrera, según el RUES (actualizado el 17-mar-2026).",
+    "Casi no aparece en internet: no tiene web ni redes y Google Maps (vía cybo) no muestra empresas de taxis en Tena. Sin teléfono ni correo de la empresa: el 323 307 9779 es el celular registrado ante la Cámara de Comercio (edirectorio y einforma): celular personal, no publicar hasta confirmar que es de la empresa. Einforma tiene un correo oculto que empieza por «cootra…».",
+    "La página de Facebook «Servicio De Taxi Tena» es de un conductor particular (2018) y no es de la cooperativa. Para coordinar con la alcaldía: gobierno@tena-cundinamarca.gov.co (sale en el concepto de Mintransporte).",
+    "Flota pequeña: al menos 6 taxis en la foto y en 2026 la alcaldía consultó si podía darle 4 cupos más. Número exacto: pendiente. Vehículo «Chevrolet Sail» por la foto de 2019 (también se ve un Spark); el modelo queda pendiente.",
+    "Oficina ubicada en el mapa sobre la Calle 2, entre las carreras 3 y 4, por el número de la placa (cruces de OpenStreetMap). No se encontró resolución de tarifas de taxi de Tena: no lleva campo tarifas.",
+    "Pendientes internos: teléfono, WhatsApp y correo de la empresa, número de taxis, modelo de los taxis, tarifas y colores.",
+    "Colores propios de interOS (índigo de la laguna de Pedro Palo y dorado). Lema: la laguna de Pedro Palo está en Tena, a 12 km del pueblo (Wikipedia). Queda a unos 54 km del Portal 80 por carretera (OSRM), por eso lleva Portal 80 y aeropuerto. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

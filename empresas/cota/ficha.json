@@ -1,0 +1,554 @@
+{
+  "id": "cota",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cotax",
+    "nombreCorto": "Cotax",
+    "razonSocial": "Compañía de Taxis de Cota Limitada - Cotax Ltda.",
+    "tipo": "empresa",
+    "lema": "El taxi de Cota, al pie del Majuy",
+    "municipio": "Cota, Cundinamarca",
+    "pueblo": "Cota",
+    "telefono": "3186873737",
+    "telefonoVisible": "318 687 3737",
+    "whatsapp": "",
+    "correo": "cotaxltda@hotmail.com",
+    "direccion": "Carrera 5 # 9-54, Cota, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 1995,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "COT",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "Sabana Centro",
+    "datosPendientes": [
+      "correo",
+      "whatsapp",
+      "número de taxis",
+      "Horario de la central (¿24 horas?)",
+      "modelo de los taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.8082,
+      "lng": -74.10314
+    }
+  },
+  "colores": {
+    "primario": "#4F6B12",
+    "primario2": "#648A17",
+    "oscuro": "#232F08",
+    "acento": "#FFC21A",
+    "rojo": "#D32F2F"
+  },
+  "CENTRO": {
+    "lat": 4.808387,
+    "lng": -74.103677
+  },
+  "ZONA": {
+    "sur": 4.49,
+    "norte": 5.13,
+    "oeste": -74.42,
+    "este": -73.78
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "chia",
+      "destino": "Chía",
+      "valor": 18000,
+      "km": 8,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "tenjo",
+      "destino": "Tenjo",
+      "valor": 24000,
+      "km": 12,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "funza",
+      "destino": "Funza",
+      "valor": 29000,
+      "km": 15,
+      "min": 30,
+      "radioKm": 4
+    },
+    {
+      "id": "cajica",
+      "destino": "Cajicá",
+      "valor": 30000,
+      "km": 16,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "tabio",
+      "destino": "Tabio",
+      "valor": 31000,
+      "km": 17,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 31000,
+      "km": 17,
+      "min": 30,
+      "radioKm": 3
+    },
+    {
+      "id": "mosquera",
+      "destino": "Mosquera",
+      "valor": 36000,
+      "km": 20,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 41000,
+      "km": 23,
+      "min": 40,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Cota",
+      "cat": "centro",
+      "lat": 4.808387,
+      "lng": -74.103677
+    },
+    {
+      "id": "la-sazon-de-mechis",
+      "nombre": "La Sazón de Mechis",
+      "detalle": "Cota",
+      "cat": "comida",
+      "lat": 4.808803,
+      "lng": -74.103388
+    },
+    {
+      "id": "surtidora-de-pollos-express",
+      "nombre": "Surtidora de Pollos Express",
+      "detalle": "Cota",
+      "cat": "comida",
+      "lat": 4.8089,
+      "lng": -74.102425
+    },
+    {
+      "id": "cementerio-de-san-jose",
+      "nombre": "Cementerio de San José",
+      "detalle": "Cota",
+      "cat": "centro",
+      "lat": 4.808646,
+      "lng": -74.105017
+    },
+    {
+      "id": "kasero-s",
+      "nombre": "Kasero's",
+      "detalle": "Cota",
+      "cat": "comida",
+      "lat": 4.80978,
+      "lng": -74.102239
+    },
+    {
+      "id": "iglesia-nuestra-senora-del-rosario",
+      "nombre": "Iglesia Nuestra Señora del Rosario",
+      "detalle": "Cota",
+      "cat": "centro",
+      "lat": 4.810103,
+      "lng": -74.102316
+    },
+    {
+      "id": "repettit",
+      "nombre": "Repettit",
+      "detalle": "Cota",
+      "cat": "comida",
+      "lat": 4.80757,
+      "lng": -74.101305
+    },
+    {
+      "id": "bbva",
+      "nombre": "BBVA",
+      "detalle": "Cota",
+      "cat": "comercio",
+      "lat": 4.809123,
+      "lng": -74.101117
+    },
+    {
+      "id": "banco-de-bogota",
+      "nombre": "Banco de Bogotá",
+      "detalle": "Cota",
+      "cat": "comercio",
+      "lat": 4.809278,
+      "lng": -74.100942
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Cota",
+      "cat": "comercio",
+      "lat": 4.809454,
+      "lng": -74.100795
+    },
+    {
+      "id": "el-surtido-de-aves-22",
+      "nombre": "El Surtido de Aves 22",
+      "detalle": "Cota",
+      "cat": "comida",
+      "lat": 4.810325,
+      "lng": -74.101276
+    },
+    {
+      "id": "la-huerta",
+      "nombre": "La Huerta",
+      "detalle": "Cota",
+      "cat": "comercio",
+      "lat": 4.811086,
+      "lng": -74.100636
+    },
+    {
+      "id": "surtimax",
+      "nombre": "SurtiMAX",
+      "detalle": "Cota",
+      "cat": "comercio",
+      "lat": 4.81153,
+      "lng": -74.100635
+    },
+    {
+      "id": "colegio-departamental-enrique-pardo-parr",
+      "nombre": "Colegio Departamental Enrique Pardo Parra",
+      "detalle": "Cota",
+      "cat": "educacion",
+      "lat": 4.808753,
+      "lng": -74.098286
+    },
+    {
+      "id": "centro-de-salud",
+      "nombre": "Centro de Salud",
+      "detalle": "Cota",
+      "cat": "salud",
+      "lat": 4.812799,
+      "lng": -74.099745
+    },
+    {
+      "id": "vereda-el-abra",
+      "nombre": "Vereda el Abra",
+      "detalle": "Cota",
+      "cat": "vereda",
+      "lat": 4.814023,
+      "lng": -74.106317
+    },
+    {
+      "id": "terminal-urbano",
+      "nombre": "Terminal Urbano",
+      "detalle": "Cota",
+      "cat": "centro",
+      "lat": 4.812363,
+      "lng": -74.098873
+    },
+    {
+      "id": "liceo-los-andes",
+      "nombre": "Liceo Los Andes",
+      "detalle": "Cota",
+      "cat": "educacion",
+      "lat": 4.815497,
+      "lng": -74.103616
+    },
+    {
+      "id": "ied-enrique-pardo-parra",
+      "nombre": "IED Enrique Pardo Parra",
+      "detalle": "Cota",
+      "cat": "educacion",
+      "lat": 4.803121,
+      "lng": -74.098002
+    },
+    {
+      "id": "estacion-de-policia-de-cota",
+      "nombre": "Estación de Policía de Cota",
+      "detalle": "Cota",
+      "cat": "centro",
+      "lat": 4.816106,
+      "lng": -74.096281
+    },
+    {
+      "id": "colegio-campestre-san-carlos-de-cota",
+      "nombre": "Colegio Campestre San Carlos de Cota",
+      "detalle": "Cota · a 1,2 km",
+      "cat": "educacion",
+      "lat": 4.818909,
+      "lng": -74.100871
+    },
+    {
+      "id": "ied-instituto-parcelas-sede-el-abra",
+      "nombre": "IED Instituto Parcelas sede El Abra",
+      "detalle": "Cota · a 1,2 km",
+      "cat": "educacion",
+      "lat": 4.806491,
+      "lng": -74.114491
+    },
+    {
+      "id": "colegio-bilingue-campestre-principado-de",
+      "nombre": "Colegio Bilingüe Campestre Principado de Mónaco",
+      "detalle": "Cota · a 1,2 km",
+      "cat": "educacion",
+      "lat": 4.805467,
+      "lng": -74.114344
+    },
+    {
+      "id": "campo-deportivo-de-cota",
+      "nombre": "Campo Deportivo de Cota",
+      "detalle": "Cota · a 1,2 km",
+      "cat": "centro",
+      "lat": 4.81817,
+      "lng": -74.098571
+    },
+    {
+      "id": "chia",
+      "nombre": "Chía",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.861286,
+      "lng": -74.06022
+    },
+    {
+      "id": "tenjo",
+      "nombre": "Tenjo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.871304,
+      "lng": -74.147325
+    },
+    {
+      "id": "funza",
+      "nombre": "Funza",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.717747,
+      "lng": -74.203155
+    },
+    {
+      "id": "mosquera",
+      "nombre": "Mosquera",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.7002,
+      "lng": -74.238506
+    },
+    {
+      "id": "cajica",
+      "nombre": "Cajicá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.91728,
+      "lng": -74.025584
+    },
+    {
+      "id": "tabio",
+      "nombre": "Tabio",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.916396,
+      "lng": -74.099095
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "COT 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 743,
+      "desde": 2021,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-07",
+      "movil": "007",
+      "nombre": "Édgar Molina",
+      "placa": "COT 607",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2000,
+      "desde": 2007,
+      "tel": "3000000007"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Jorge Castañeda",
+      "placa": "COT 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2122,
+      "desde": 2007,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Diana Forero",
+      "placa": "COT 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 2241,
+      "desde": 2019,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-17",
+      "movil": "017",
+      "nombre": "Germán Quintero",
+      "placa": "COT 617",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1506,
+      "desde": 2019,
+      "tel": "3000000017"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Martha Garzón",
+      "placa": "COT 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 813,
+      "desde": 2006,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Héctor Bernal",
+      "placa": "COT 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 553,
+      "desde": 2017,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Carlos Rodríguez",
+      "placa": "COT 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1833,
+      "desde": 2008,
+      "tel": "3000000025"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cotax Ltda., la Compañía de Taxis de Cota, presta el servicio de taxi en el municipio desde 1995. Fundada por dos hermanos, trabaja con radio-operadores desde su oficina de la Carrera 5 # 9-54, en el centro, con taxis y camionetas que también hacen acarreos y mudanzas.\n\nCon la app, Cotax lleva ese servicio al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay cerca, sigues el móvil en el mapa y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en Cota y sus veredas con seguridad, puntualidad y buen trato, con conductores que conocen el municipio y la Sabana.",
+    "vision": "Ser la forma más fácil de moverse en Cota: un taxi a un toque, con la tarifa clara y el móvil en el mapa, sin depender de plataformas de afuera.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Camionetas para acarreos y mudanzas",
+      "Viajes a Chía, Funza y la Sabana",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "El taxi de Cota, al pie del Majuy"
+  },
+  "fuentes": [
+    "https://repositorio.uniagustiniana.edu.co/bitstreams/10356021-d830-4711-b251-ac2a829586bd/download",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832002272",
+    "https://es.cybo.com/CO-biz/cotax-ltda",
+    "https://www.facebook.com/p/Conductores-Cotax-VIP-100064812906038/",
+    "https://www.contratos.gov.co/consultas/detalleProceso.do?numConstancia=15-13-4499879",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es taxi: razón social «Compañía de Taxis de Cota» (RUES). El trabajo de grado de la Uniagustiniana (2020), hecho como pasantía en la empresa, dice que «Cotax Ltda es la única empresa de taxis en Cota» y que tiene «una flotilla de 58 vehículos entre taxis y camionetas» (por eso taxis queda en null: no se sabe cuántos son taxis).",
+    "Razón social, NIT 832.002.272-4, representante legal Pablo Virgilio González Romero y matrícula del 27-nov-1995 (renovada en 2026): RUES abierto (https://www.datos.gov.co/resource/c82u-588k.json?nit=832002272). Fundada por dos hermanos y con radio-operadores (trabajo de 2020).",
+    "Teléfono 318 687 3737: ficha de Google del negocio (vista en Cybo), que la marca abierta 24 h (no se tomó como prueba de servicio 24 horas: confirmar). Fijo de PQR (601) 864 0418 y correo cotaxltda@hotmail.com: tabla de canales de PQR del trabajo de 2020; confirmar que sigan vigentes.",
+    "Dirección Cra. 5 # 9-54 (registro mercantil y trabajo de 2020); la ficha de Google la ubica en Cra. 5 # 9-86. Oficina ubicada con las coordenadas de esa ficha.",
+    "Gancho de venta: el plan estratégico de 2020 de la propia empresa propone «Crear una aplicación para taxis que permita el incremento de pasajeros» y señala como amenaza no tener «una plataforma como Uber».",
+    "Tarifas: no se encontró el decreto vigente de taxi de Cota (en la web de la alcaldía solo aparecen decretos de colectivo). En SECOP la alcaldía contrató en 2023 con Galaxso & Cía. Ltda. los estudios de demanda y tarifas del transporte individual.",
+    "Página de conductores afiliados (no oficial): https://www.facebook.com/p/Conductores-Cotax-VIP-100064812906038/ . En Cota no se halló otra empresa de taxi: Cootranscota es de buses intermunicipales.",
+    "Colores propios de interOS (verde oliva del Majuy y dorado); el lema también es de interOS. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

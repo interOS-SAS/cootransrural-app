@@ -1,0 +1,514 @@
+{
+  "id": "chipaque",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootranschipaque",
+    "nombreCorto": "Cootranschipaque",
+    "razonSocial": "Cooperativa de Transporte Colectivo de Chipaque Ltda. (Cootranschipaque Ltda.)",
+    "tipo": "cooperativa",
+    "lema": "Un servicio para todos",
+    "municipio": "Chipaque, Cundinamarca",
+    "pueblo": "Chipaque",
+    "region": "provincia de Oriente",
+    "telefono": "3214157394",
+    "telefonoVisible": "321 415 7394",
+    "whatsapp": "",
+    "correo": "",
+    "direccion": "Calle 4 # 1-89, piso 2, Chipaque, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": true,
+    "placaPrefijo": "CHP",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "oficina": {
+      "lat": 4.44278,
+      "lng": -74.04295
+    },
+    "datosPendientes": [
+      "correo",
+      "WhatsApp de la central",
+      "número de taxis",
+      "sede vigente (Calle 4 # 1-89 piso 2, Carrera 5 # 3-61 o Carrera 5 # 3-51)",
+      "confirmar el servicio 24 horas",
+      "año de fundación (2003 es el año de la matrícula mercantil)",
+      "tarifas oficiales (decreto de tarifas de taxi de Chipaque)",
+      "colores oficiales del logo",
+      "misión y visión oficiales",
+      "modelo de vehículo (la flota es mixta)"
+    ]
+  },
+  "colores": {
+    "primario": "#2B6A14",
+    "primario2": "#3A861D",
+    "oscuro": "#13340A",
+    "acento": "#F6C21B",
+    "rojo": "#C62828"
+  },
+  "CENTRO": {
+    "lat": 4.442358,
+    "lng": -74.044915
+  },
+  "ZONA": {
+    "sur": 4.12,
+    "norte": 4.76,
+    "oeste": -74.36,
+    "este": -73.72
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "caqueza",
+      "destino": "Cáqueza",
+      "valor": 30000,
+      "km": 16,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "ubaque",
+      "destino": "Ubaque",
+      "valor": 33000,
+      "km": 18,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-usme",
+      "destino": "Portal Usme (Bogotá)",
+      "valor": 37000,
+      "km": 21,
+      "min": 20,
+      "radioKm": 3
+    },
+    {
+      "id": "une",
+      "destino": "Une",
+      "valor": 42000,
+      "km": 24,
+      "min": 65,
+      "radioKm": 4
+    },
+    {
+      "id": "fosca",
+      "destino": "Fosca",
+      "valor": 54000,
+      "km": 32,
+      "min": 45,
+      "radioKm": 4
+    },
+    {
+      "id": "fomeque",
+      "destino": "Fómeque",
+      "valor": 68000,
+      "km": 42,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 77000,
+      "km": 47,
+      "min": 60,
+      "radioKm": 3
+    },
+    {
+      "id": "choachi",
+      "destino": "Choachí",
+      "valor": 80000,
+      "km": 49,
+      "min": 95,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, Chipaque",
+      "cat": "centro",
+      "lat": 4.442358,
+      "lng": -74.044915
+    },
+    {
+      "id": "parque-chipaque",
+      "nombre": "Parque",
+      "detalle": "Chipaque",
+      "cat": "centro",
+      "lat": 4.442331,
+      "lng": -74.04492
+    },
+    {
+      "id": "banco-popular",
+      "nombre": "Banco Popular",
+      "detalle": "Chipaque",
+      "cat": "comercio",
+      "lat": 4.442713,
+      "lng": -74.045077
+    },
+    {
+      "id": "parroquia-nuestra-senora-del-rosario",
+      "nombre": "Parroquia Nuestra Señora del Rosario",
+      "detalle": "Chipaque",
+      "cat": "centro",
+      "lat": 4.442515,
+      "lng": -74.044431
+    },
+    {
+      "id": "instituto-tecnico-san-jose",
+      "nombre": "Instituto Técnico San José",
+      "detalle": "Chipaque",
+      "cat": "educacion",
+      "lat": 4.444127,
+      "lng": -74.044675
+    },
+    {
+      "id": "centro-de-salud-de-chipaque",
+      "nombre": "Centro de Salud de Chipaque",
+      "detalle": "Chipaque",
+      "cat": "salud",
+      "lat": 4.443048,
+      "lng": -74.046742
+    },
+    {
+      "id": "terpel",
+      "nombre": "Terpel",
+      "detalle": "Chipaque",
+      "cat": "comercio",
+      "lat": 4.442916,
+      "lng": -74.042975
+    },
+    {
+      "id": "estacion-de-policia-de-chipaque",
+      "nombre": "Estación de Policía de Chipaque",
+      "detalle": "Chipaque",
+      "cat": "centro",
+      "lat": 4.444004,
+      "lng": -74.043701
+    },
+    {
+      "id": "plaza-de-mercado-de-chipaque",
+      "nombre": "Plaza de Mercado de Chipaque",
+      "detalle": "Chipaque",
+      "cat": "centro",
+      "lat": 4.440373,
+      "lng": -74.04394
+    },
+    {
+      "id": "hotel-chipaque",
+      "nombre": "Hotel Chipaque",
+      "detalle": "Chipaque",
+      "cat": "turismo",
+      "lat": 4.442584,
+      "lng": -74.042679
+    },
+    {
+      "id": "hotel-victoria-real",
+      "nombre": "Hotel Victoria Real",
+      "detalle": "Chipaque",
+      "cat": "turismo",
+      "lat": 4.442618,
+      "lng": -74.042246
+    },
+    {
+      "id": "iedp-pio-x",
+      "nombre": "IEDp Pío X",
+      "detalle": "Chipaque",
+      "cat": "educacion",
+      "lat": 4.444835,
+      "lng": -74.046569
+    },
+    {
+      "id": "los-parrado",
+      "nombre": "Los Parrado",
+      "detalle": "Chipaque · a 1,6 km",
+      "cat": "comida",
+      "lat": 4.440941,
+      "lng": -74.030171
+    },
+    {
+      "id": "centro",
+      "nombre": "Centro",
+      "detalle": "Vereda de Chipaque",
+      "cat": "vereda",
+      "lat": 4.432237,
+      "lng": -74.03302
+    },
+    {
+      "id": "eds-colombia-texaco",
+      "nombre": "EDS Colombia Texaco",
+      "detalle": "Chipaque · a 1,9 km",
+      "cat": "comercio",
+      "lat": 4.44091,
+      "lng": -74.027717
+    },
+    {
+      "id": "la-caldera",
+      "nombre": "La Caldera",
+      "detalle": "Vereda de Chipaque",
+      "cat": "vereda",
+      "lat": 4.435185,
+      "lng": -74.065294
+    },
+    {
+      "id": "cerezos",
+      "nombre": "Cerezos",
+      "detalle": "Vereda de Chipaque",
+      "cat": "vereda",
+      "lat": 4.471338,
+      "lng": -74.022469
+    },
+    {
+      "id": "caqueza",
+      "nombre": "Cáqueza",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.40571,
+      "lng": -73.945921
+    },
+    {
+      "id": "ubaque",
+      "nombre": "Ubaque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.482311,
+      "lng": -73.934893
+    },
+    {
+      "id": "une",
+      "nombre": "Une",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.403355,
+      "lng": -74.024749
+    },
+    {
+      "id": "fosca",
+      "nombre": "Fosca",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.338934,
+      "lng": -73.938509
+    },
+    {
+      "id": "choachi",
+      "nombre": "Choachí",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.532683,
+      "lng": -73.923483
+    },
+    {
+      "id": "fomeque",
+      "nombre": "Fómeque",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.487111,
+      "lng": -73.893528
+    },
+    {
+      "id": "portal-usme",
+      "nombre": "Portal Usme (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.531684,
+      "lng": -74.11939
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-01",
+      "movil": "001",
+      "nombre": "Wilson Gómez",
+      "placa": "CHP 601",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 960,
+      "desde": 2020,
+      "tel": "3000000001"
+    },
+    {
+      "id": "demo-02",
+      "movil": "002",
+      "nombre": "Diana Forero",
+      "placa": "CHP 602",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 804,
+      "desde": 2017,
+      "tel": "3000000002"
+    },
+    {
+      "id": "demo-03",
+      "movil": "003",
+      "nombre": "Rubén Sarmiento",
+      "placa": "CHP 603",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 2149,
+      "desde": 2008,
+      "tel": "3000000003"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Nelson Pinzón",
+      "placa": "CHP 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 987,
+      "desde": 2020,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Jairo Moreno",
+      "placa": "CHP 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1769,
+      "desde": 2016,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Édgar Molina",
+      "placa": "CHP 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1279,
+      "desde": 2011,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-20",
+      "movil": "020",
+      "nombre": "Germán Quintero",
+      "placa": "CHP 620",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1013,
+      "desde": 2007,
+      "tel": "3000000020"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Carlos Rodríguez",
+      "placa": "CHP 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 597,
+      "desde": 2007,
+      "tel": "3000000022"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootranschipaque —la Cooperativa de Transporte Colectivo de Chipaque Ltda.— presta el servicio de taxi en Chipaque, el municipio de la provincia de Oriente que queda sobre la vía Bogotá–Villavicencio, a pocos kilómetros de la capital. Sus taxis amarillos llevan el logo de la cooperativa y su lema, «Un servicio para todos», y atienden el casco urbano, las veredas y los viajes a los municipios vecinos.\n\nCon la app, la cooperativa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay, conoces la tarifa antes de subir, sigues el móvil en el mapa y pagas con QR, ya sea para moverte en el pueblo o para bajar a Cáqueza o subir a Bogotá.",
+    "mision": "Prestar el servicio de taxi en Chipaque y sus veredas con conductores asociados que conocen el municipio y la vía al Llano, con seguridad, puntualidad y buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Chipaque y el Oriente de Cundinamarca: un taxi a un toque, con tarifa clara y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi en el casco urbano",
+      "Servicio a las veredas",
+      "Viajes a Cáqueza, Ubaque, Une y el Oriente",
+      "Viajes a Choachí, Fosca y Fómeque",
+      "Traslados a Bogotá y al aeropuerto"
+    ],
+    "frase": "Un servicio para todos, del pueblo a las veredas"
+  },
+  "fuentes": [
+    "https://www.facebook.com/100064455711664/posts/-transporte-tenga-en-cuenta-el-listado-de-veh%C3%ADculos-de-la-empresa-cootranschipaq/2652486618342177/",
+    "https://www.facebook.com/people/Cootranschipaque-Ltda/100004523478098/",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832009691",
+    "https://directorio-empresas.einforma.co/informacion-empresa/cooperativa-transporte-colectivo-chipaque-ltda",
+    "https://empresite.eleconomistaamerica.co/COOPERATIVA-TRANSPORTE-COLECTIVO-CHIPAQUE-LTDA.html",
+    "https://edirectorio.net/empresa/cooperativa-de-transporte-colectivo-de-chipaque-ltda",
+    "https://www.emis.com/php/company-profile/CO/Cootranschipaque_Ltda_es_12000592.html",
+    "https://www.google.com/maps/place/Cootranschipaque+Ltda/@4.4431532,-74.045015,17z",
+    "https://es.wikipedia.org/wiki/Chipaque",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Taxis: prueba directa. La Alcaldía de Chipaque publicó en su Facebook (19-may-2020) el comunicado de la cooperativa con su listado de móviles (02 a 13) y fotos de sus taxis amarillos rotulados con el logo; la portada del Facebook de la cooperativa muestra una fila de sus taxis amarillos. Wikipedia la describe como cooperativa de transportes urbanos y rurales. La razón social dice «transporte colectivo», pero opera los taxis del casco urbano.",
+    "Razón social, NIT 832.009.691-9 y estado ACTIVA (CIIU 4921, matrícula renovada en 2026): RUES abierto de datos.gov.co; el NIT con dígito de verificación también aparece en el comunicado de 2020.",
+    "Fundada: 2003 es el año de la matrícula en la Cámara de Comercio de Bogotá (19-sep-2003, RUES); la cooperativa podría ser más antigua: confirmar.",
+    "Teléfono 321 415 7394: lo publica la propia cooperativa como «Teléfono» en el comunicado de 2020 y aparece en la ficha de Google Maps «Cootranschipaque Ltda» y en eInforma. Es la línea de la cooperativa, no de una persona. No se sabe si tiene WhatsApp.",
+    "Servicio 24 h: la ficha de Google Maps «Cootranschipaque Ltda» figura abierta las 24 horas; confirmar con la cooperativa (en 2020, por la pandemia, el horario autorizado era de 8 a.m. a 6:30 p.m.).",
+    "Dirección: Calle 4 # 1-89, piso 2, es la «dirección actual» del registro mercantil según eInforma y Empresite. Otros directorios dan Carrera 5 # 3-61 (edirectorio y otra ficha de Google Maps) y Carrera 5 # 3-51 (EMIS). Hay además un punto «Cootranschipaque Agencia» (parada) en la Carrera 2 # 4-31 (Google Maps y Cybo). Hay que confirmar la sede vigente.",
+    "Oficina en el mapa: punto aproximado de la Calle 4 # 1-89 (Calle 4 entre Carreras 1 y 2, ubicado con las calles de OpenStreetMap). La ficha de Google Maps «Cootranschipaque Ltda» marca otro punto del casco urbano (4.44315, -74.04502, cerca de Calle 6 con Carrera 4).",
+    "Gerente y representante legal: Sandra Yannet Vásquez, según el RUES abierto (renovación de 2026); firma como gerente el comunicado de 2020 y lo dice su perfil público de LinkedIn. Se usa solo para el saludo de la propuesta.",
+    "Correo: no se encontró (ni en directorios, ni en el listado del sector solidario, ni en su Facebook). El correo enmascarado de Infobel es genérico y no sirve.",
+    "Número de taxis: sin cifra oficial; en mayo de 2020 había móviles numerados al menos hasta el 13 y la portada de Facebook muestra unos 10 taxis en fila. Las placas reales y los nombres de los conductores del comunicado son datos de uso interno y no se publican.",
+    "Colores: tomados del logo de la cooperativa (letras verdes con borde amarillo, trazos azules y el lema «Un servicio para todos»); el tono exacto es una aproximación de interOS. Lema: el de su logo.",
+    "Vehículo: las fotos muestran una flota mixta (Chevrolet Spark, Hyundai i10 y otros); se deja el modelo genérico de la demo.",
+    "Placa de la demo (CHP): inventada para la demo; no corresponde a placas reales.",
+    "Tarifas: no se encontró el decreto de tarifas de taxi de Chipaque (ni en la web de la Alcaldía ni en buscadores). Desde 2025 el municipio tiene oficina de tránsito propia; la Alcaldía podría dar el decreto.",
+    "Destinos: municipios vecinos del Oriente (Cáqueza, Ubaque, Une, Fosca, Choachí, Fómeque); Chipaque queda a unos 30 km del sur de Bogotá, por eso se añaden Portal Usme (el más cercano de los disponibles) y el aeropuerto.",
+    "La historia solo usa hechos de las fuentes; la misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}

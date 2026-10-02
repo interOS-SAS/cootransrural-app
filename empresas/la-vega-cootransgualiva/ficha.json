@@ -1,0 +1,558 @@
+{
+  "id": "la-vega-cootransgualiva",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootransgualiva",
+    "nombreCorto": "Cootransgualiva",
+    "razonSocial": "Cooperativa de Transportadores del Gualivá (Cootransgualiva)",
+    "tipo": "cooperativa",
+    "lema": "Taxis en La Vega, con el sello del Gualivá",
+    "municipio": "La Vega, Cundinamarca",
+    "pueblo": "La Vega",
+    "region": "provincia del Gualivá",
+    "telefono": "3112578028",
+    "telefonoVisible": "311 257 8028",
+    "whatsapp": "",
+    "correo": "cootransgualiva@hotmail.com",
+    "direccion": "Carrera 3A # 16-146, La Vega, Cundinamarca",
+    "web": "",
+    "sitioOficial": "https://www.cootransgualiva.com.co/",
+    "fundada": 1996,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "VEG",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "datosPendientes": [
+      "whatsapp",
+      "número de taxis",
+      "misión y visión oficiales"
+    ],
+    "oficina": {
+      "lat": 4.997241,
+      "lng": -74.339016
+    }
+  },
+  "colores": {
+    "primario": "#1E6B35",
+    "primario2": "#28874A",
+    "oscuro": "#0B3519",
+    "acento": "#FFC21A",
+    "rojo": "#C62828"
+  },
+  "CENTRO": {
+    "lat": 4.999712,
+    "lng": -74.339522
+  },
+  "ZONA": {
+    "sur": 4.68,
+    "norte": 5.32,
+    "oeste": -74.66,
+    "este": -74.02
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 7200,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 500,
+    "recargoDominical": 500,
+    "nocheDesde": 19,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5,
+    "nota": "La carrera mínima ($7.200 de día y $7.700 de noche y en festivos; la tarifa nocturna rige desde las 7 p. m.) es la del Decreto 009 del 23 de enero de 2025 de la Alcaldía de La Vega, el último publicado; el decreto fija además una tarifa por sector para las veredas. El valor por km y las rutas a otros municipios son de ejemplo, sujetos a confirmación de la cooperativa."
+  },
+  "RUTAS": [
+    {
+      "id": "nocaima",
+      "destino": "Nocaima",
+      "valor": 23000,
+      "km": 11,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "san-francisco",
+      "destino": "San Francisco",
+      "valor": 23000,
+      "km": 11,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "villeta",
+      "destino": "Villeta",
+      "valor": 45000,
+      "km": 26,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "supata",
+      "destino": "Supatá",
+      "valor": 51000,
+      "km": 30,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "sasaima",
+      "destino": "Sasaima",
+      "valor": 64000,
+      "km": 38,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 72000,
+      "km": 44,
+      "min": 70,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 92000,
+      "km": 57,
+      "min": 95,
+      "radioKm": 3
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 101000,
+      "km": 64,
+      "min": 105,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, La Vega",
+      "cat": "centro",
+      "lat": 4.999712,
+      "lng": -74.339522
+    },
+    {
+      "id": "cooptenjo",
+      "nombre": "Cooptenjo",
+      "detalle": "La Vega",
+      "cat": "comercio",
+      "lat": 4.999435,
+      "lng": -74.339744
+    },
+    {
+      "id": "el-novillo-de-daniel",
+      "nombre": "El novillo de Daniel",
+      "detalle": "La Vega",
+      "cat": "comida",
+      "lat": 4.999843,
+      "lng": -74.338925
+    },
+    {
+      "id": "ppc-la-vega",
+      "nombre": "PPC La Vega",
+      "detalle": "La Vega",
+      "cat": "comida",
+      "lat": 4.999721,
+      "lng": -74.340167
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "La Vega",
+      "cat": "comercio",
+      "lat": 5.000573,
+      "lng": -74.339755
+    },
+    {
+      "id": "colectivos-a-naguy",
+      "nombre": "Colectivos a Nagüy",
+      "detalle": "La Vega",
+      "cat": "centro",
+      "lat": 5.000756,
+      "lng": -74.339467
+    },
+    {
+      "id": "flota-aguila",
+      "nombre": "Flota Águila",
+      "detalle": "La Vega",
+      "cat": "centro",
+      "lat": 4.999168,
+      "lng": -74.340427
+    },
+    {
+      "id": "la-canasta",
+      "nombre": "La Canasta",
+      "detalle": "La Vega",
+      "cat": "comercio",
+      "lat": 5.000821,
+      "lng": -74.339509
+    },
+    {
+      "id": "fonda-veguna",
+      "nombre": "Fonda Veguna",
+      "detalle": "La Vega",
+      "cat": "comida",
+      "lat": 5.000729,
+      "lng": -74.340075
+    },
+    {
+      "id": "el-rey",
+      "nombre": "El Rey",
+      "detalle": "La Vega",
+      "cat": "comercio",
+      "lat": 5.000997,
+      "lng": -74.340176
+    },
+    {
+      "id": "supermercado-la-carolina",
+      "nombre": "Supermercado La Carolina",
+      "detalle": "La Vega",
+      "cat": "comercio",
+      "lat": 4.998296,
+      "lng": -74.340064
+    },
+    {
+      "id": "las-delicias",
+      "nombre": "Las Delicias",
+      "detalle": "La Vega",
+      "cat": "comida",
+      "lat": 5.000052,
+      "lng": -74.3411
+    },
+    {
+      "id": "broster-campeon",
+      "nombre": "Broster Campeon",
+      "detalle": "La Vega",
+      "cat": "comida",
+      "lat": 4.998017,
+      "lng": -74.339865
+    },
+    {
+      "id": "estacion-de-policia-la-vega",
+      "nombre": "Estación de Policía La Vega",
+      "detalle": "La Vega",
+      "cat": "centro",
+      "lat": 4.998325,
+      "lng": -74.340583
+    },
+    {
+      "id": "iglesia-de-dios-ministerial-de-jesucrist",
+      "nombre": "Iglesia de Dios Ministerial de Jesucristo Internacional - ID",
+      "detalle": "La Vega",
+      "cat": "centro",
+      "lat": 5.001172,
+      "lng": -74.3406
+    },
+    {
+      "id": "hotel-casa-morebo",
+      "nombre": "Hotel Casa Morebo",
+      "detalle": "La Vega",
+      "cat": "turismo",
+      "lat": 5.001457,
+      "lng": -74.341386
+    },
+    {
+      "id": "san-antonio-de-lavega",
+      "nombre": "Hospital San Antonio de La Vega",
+      "detalle": "La Vega",
+      "cat": "salud",
+      "lat": 4.997384,
+      "lng": -74.340799
+    },
+    {
+      "id": "cementerio",
+      "nombre": "Cementerio",
+      "detalle": "La Vega",
+      "cat": "centro",
+      "lat": 5.00302,
+      "lng": -74.339948
+    },
+    {
+      "id": "hotel-caribe-la-vega",
+      "nombre": "Hotel Caribe La Vega",
+      "detalle": "La Vega",
+      "cat": "turismo",
+      "lat": 4.993893,
+      "lng": -74.338431
+    },
+    {
+      "id": "institucion-educativa-departamental-rica",
+      "nombre": "Institucion Educativa Departamental Ricardo Hinestrosa Daza",
+      "detalle": "La Vega",
+      "cat": "educacion",
+      "lat": 4.992169,
+      "lng": -74.332923
+    },
+    {
+      "id": "vereda-rancho-quemado",
+      "nombre": "Vereda Rancho Quemado",
+      "detalle": "Vereda de La Vega",
+      "cat": "vereda",
+      "lat": 4.999265,
+      "lng": -74.350656
+    },
+    {
+      "id": "ecohotel-monteverde",
+      "nombre": "Ecohotel Monteverde",
+      "detalle": "La Vega · a 1,7 km",
+      "cat": "turismo",
+      "lat": 4.999968,
+      "lng": -74.355073
+    },
+    {
+      "id": "la-gregorienne",
+      "nombre": "La Gregorienne",
+      "detalle": "La Vega · a 2,1 km",
+      "cat": "turismo",
+      "lat": 5.018536,
+      "lng": -74.337873
+    },
+    {
+      "id": "escuela-vda-naguy",
+      "nombre": "Escuela vda. Naguy",
+      "detalle": "La Vega · a 3,3 km",
+      "cat": "educacion",
+      "lat": 5.017845,
+      "lng": -74.31561
+    },
+    {
+      "id": "villeta",
+      "nombre": "Villeta",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.011258,
+      "lng": -74.47023
+    },
+    {
+      "id": "san-francisco",
+      "nombre": "San Francisco",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.974936,
+      "lng": -74.289568
+    },
+    {
+      "id": "nocaima",
+      "nombre": "Nocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.069767,
+      "lng": -74.377522
+    },
+    {
+      "id": "sasaima",
+      "nombre": "Sasaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.964577,
+      "lng": -74.433115
+    },
+    {
+      "id": "supata",
+      "nombre": "Supatá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.062167,
+      "lng": -74.236402
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Álvaro Cifuentes",
+      "placa": "VEG 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1351,
+      "desde": 2017,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-12",
+      "movil": "012",
+      "nombre": "Luz Marina Rojas",
+      "placa": "VEG 612",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 809,
+      "desde": 2014,
+      "tel": "3000000012"
+    },
+    {
+      "id": "demo-15",
+      "movil": "015",
+      "nombre": "Martha Garzón",
+      "placa": "VEG 615",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1788,
+      "desde": 2010,
+      "tel": "3000000015"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Rubén Sarmiento",
+      "placa": "VEG 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 630,
+      "desde": 2010,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-18",
+      "movil": "018",
+      "nombre": "Germán Quintero",
+      "placa": "VEG 618",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 1267,
+      "desde": 2017,
+      "tel": "3000000018"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Nelson Pinzón",
+      "placa": "VEG 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 696,
+      "desde": 2008,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-23",
+      "movil": "023",
+      "nombre": "Yolanda Prieto",
+      "placa": "VEG 623",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1209,
+      "desde": 2019,
+      "tel": "3000000023"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Jorge Castañeda",
+      "placa": "VEG 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1527,
+      "desde": 2010,
+      "tel": "3000000025"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootransgualiva, la Cooperativa de Transportadores del Gualivá, está inscrita desde 1996 y presta en La Vega el servicio de transporte en vehículos taxi y mixto. Desde su sede en la Carrera 3A # 16-146 atiende el casco urbano, las veredas y los viajes por la región, y expide la planilla de viaje ocasional para los servicios que salen del municipio.\n\nCon la app, la cooperativa puede llevar el taxi al celular: pides con tu ubicación exacta, ves la tarifa antes de subir y sigues el móvil en el mapa, en el pueblo, en las veredas o camino a la laguna.",
+    "mision": "Prestar el servicio de taxi y mixto en La Vega y sus veredas con asociados que conocen el Gualivá, con seguridad, puntualidad y buen trato para quienes viven aquí y para los turistas.",
+    "vision": "Ser la forma más fácil y confiable de pedir un taxi en La Vega: un toque en el celular, tarifa clara y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi en La Vega",
+      "Servicio mixto a las veredas",
+      "Planilla de viaje ocasional",
+      "Viajes a los municipios del Gualivá",
+      "Viajes a Bogotá y al aeropuerto"
+    ],
+    "frase": "Taxis y mixtos con el sello del Gualivá"
+  },
+  "fuentes": [
+    "https://www.cootransgualiva.com.co/",
+    "https://www.cootransgualiva.com.co/nosotros",
+    "https://www.cootransgualiva.com.co/representantes",
+    "https://www.cootransgualiva.com.co/contactenos",
+    "https://www.cootransgualiva.com.co/documentacion",
+    "https://www.cootransgualiva.com.co/_files/ugd/03ef1c_72d9171737ab48d8a5345fdcf37bc441.pdf",
+    "https://www.cootransgualiva.com.co/_files/ugd/03ef1c_ca3ce01ebec24938adf8c3e688bd4fef.pdf",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=832004505",
+    "https://www.lavega-cundinamarca.gov.co/Transparencia/Normatividad/Decreto%20009.pdf",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Es una cooperativa de La Vega distinta de Cootransvillaleal (ya hecha). Taxi: la misión de su web habla del «transporte terrestre automotor en la modalidad individual en vehículos taxi y mixto»; su Informe de Gestión 2025 propone «recibir vehículos tipo taxi que vengan de otra empresa». Planilla de viaje ocasional: su web.",
+    "Razón social, NIT 832.004.505-4 e inscripción del 24-jun-1996 en la Cámara de Comercio de Facatativá: su web y el RUES.",
+    "Dirección Carrera 3A # 16-146: su web, certificado de Cámara de Comercio e informe 2025. Ubicación de la oficina aproximada (Carrera 3A entre las calles 16 y 17 en OpenStreetMap).",
+    "Celular 311 257 8028: su web y certificado de Cámara de Comercio. Fijos 601 845 7373 y 601 845 8932: teléfonos comerciales del certificado de 2023 (el 845 7373 sale como telefax en el membrete del informe 2025). No se sabe cuál es WhatsApp.",
+    "Correo cootransgualiva@hotmail.com: su web, certificado de 2023 y membrete del informe 2025.",
+    "Gerente y representante legal desde el Acta No. 34 del 16-dic-2010: Moisés Ignacio Velásquez Camacho (su web, RUES del 30-mar-2026 y firma del informe 2025).",
+    "No se sabe cuántos taxis tiene: el informe 2025 habla sobre todo de rutas, cupos y camionetas tipo van. Las actas e informes publicados traen nombres y cédulas de asociados: no publicarlos.",
+    "Tarifas: Decreto 009 del 23-ene-2025 de La Vega (taxi diurna $7.200; festivos y nocturna $7.700, recargo de $500 desde las 7 p. m.; tablas por sector, p. ej. Rancho Quema'o $8.700, Loma Verde $12.100, La Laguna $32.700). El decreto no dice hasta qué hora va la tarifa nocturna (la demo usa la de ejemplo, 6 a. m.) y habla de «festivos»: la demo aplica el recargo los domingos. Los decretos 001 a 013 de 2026 publicados no son de tarifas de taxi.",
+    "Colores de su logo: pinos verdes (#1E6B35) dentro de un anillo rojo (#C62828). Su web usa una paleta azul y turquesa casi igual a la de Cootransvillaleal, por eso no se usó. Logo con letras en cursiva «Cootransgualiva».",
+    "La misión y la visión son una redacción general propuesta por interOS, no textos oficiales. Su web tiene misión publicada (taxi y mixto)."
+  ]
+}

@@ -1,0 +1,553 @@
+{
+  "id": "la-vega-occitrans",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Occitrans",
+    "nombreCorto": "Occitrans",
+    "razonSocial": "Compañía de Transportadores y Otros Servicios de Occidente S.A.S. (Occitrans S.A.S.)",
+    "tipo": "empresa",
+    "lema": "Lo llevamos a donde usted quiera",
+    "municipio": "La Vega, Cundinamarca",
+    "pueblo": "La Vega",
+    "telefono": "3133200003",
+    "telefonoVisible": "313 320 0003",
+    "whatsapp": "",
+    "correo": "hseoccitrans@gmail.com",
+    "direccion": "",
+    "web": "",
+    "sitioOficial": "https://hseoccitrans.wixsite.com/inicio",
+    "fundada": null,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "VEG",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "region": "provincia del Gualivá",
+    "datosPendientes": [
+      "número de taxis en La Vega y en Albán",
+      "punto de atención en La Vega",
+      "año de fundación",
+      "tarifas oficiales de La Vega y Albán",
+      "si atiende por WhatsApp",
+      "misión y visión del servicio de taxi"
+    ],
+    "oficina": null
+  },
+  "colores": {
+    "primario": "#14720E",
+    "primario2": "#1C9014",
+    "oscuro": "#0A3307",
+    "acento": "#F0E808",
+    "rojo": "#E31A12"
+  },
+  "CENTRO": {
+    "lat": 4.999712,
+    "lng": -74.339522
+  },
+  "ZONA": {
+    "sur": 4.68,
+    "norte": 5.32,
+    "oeste": -74.66,
+    "este": -74.02
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "nocaima",
+      "destino": "Nocaima",
+      "valor": 23000,
+      "km": 11,
+      "min": 15,
+      "radioKm": 4
+    },
+    {
+      "id": "san-francisco",
+      "destino": "San Francisco",
+      "valor": 23000,
+      "km": 11,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "villeta",
+      "destino": "Villeta",
+      "valor": 45000,
+      "km": 26,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "sasaima",
+      "destino": "Sasaima",
+      "valor": 64000,
+      "km": 38,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "facatativa",
+      "destino": "Facatativá",
+      "valor": 72000,
+      "km": 44,
+      "min": 70,
+      "radioKm": 4
+    },
+    {
+      "id": "portal-80",
+      "destino": "Portal 80 (Bogotá)",
+      "valor": 92000,
+      "km": 57,
+      "min": 95,
+      "radioKm": 3
+    },
+    {
+      "id": "alban",
+      "destino": "Albán",
+      "valor": 92000,
+      "km": 58,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "aeropuerto",
+      "destino": "Aeropuerto El Dorado",
+      "valor": 101000,
+      "km": 64,
+      "min": 105,
+      "radioKm": 3
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Centro, La Vega",
+      "cat": "centro",
+      "lat": 4.999712,
+      "lng": -74.339522
+    },
+    {
+      "id": "cooptenjo",
+      "nombre": "Cooptenjo",
+      "detalle": "La Vega",
+      "cat": "comercio",
+      "lat": 4.999435,
+      "lng": -74.339744
+    },
+    {
+      "id": "el-novillo-de-daniel",
+      "nombre": "El novillo de Daniel",
+      "detalle": "La Vega",
+      "cat": "comida",
+      "lat": 4.999843,
+      "lng": -74.338925
+    },
+    {
+      "id": "ppc-la-vega",
+      "nombre": "PPC La Vega",
+      "detalle": "La Vega",
+      "cat": "comida",
+      "lat": 4.999721,
+      "lng": -74.340167
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "La Vega",
+      "cat": "comercio",
+      "lat": 5.000573,
+      "lng": -74.339755
+    },
+    {
+      "id": "colectivos-a-naguy",
+      "nombre": "Colectivos a Nagüy",
+      "detalle": "La Vega",
+      "cat": "centro",
+      "lat": 5.000756,
+      "lng": -74.339467
+    },
+    {
+      "id": "flota-aguila",
+      "nombre": "Flota Águila",
+      "detalle": "La Vega",
+      "cat": "centro",
+      "lat": 4.999168,
+      "lng": -74.340427
+    },
+    {
+      "id": "la-canasta",
+      "nombre": "La Canasta",
+      "detalle": "La Vega",
+      "cat": "comercio",
+      "lat": 5.000821,
+      "lng": -74.339509
+    },
+    {
+      "id": "fonda-veguna",
+      "nombre": "Fonda Veguna",
+      "detalle": "La Vega",
+      "cat": "comida",
+      "lat": 5.000729,
+      "lng": -74.340075
+    },
+    {
+      "id": "el-rey",
+      "nombre": "El Rey",
+      "detalle": "La Vega",
+      "cat": "comercio",
+      "lat": 5.000997,
+      "lng": -74.340176
+    },
+    {
+      "id": "supermercado-la-carolina",
+      "nombre": "Supermercado La Carolina",
+      "detalle": "La Vega",
+      "cat": "comercio",
+      "lat": 4.998296,
+      "lng": -74.340064
+    },
+    {
+      "id": "las-delicias",
+      "nombre": "Las Delicias",
+      "detalle": "La Vega",
+      "cat": "comida",
+      "lat": 5.000052,
+      "lng": -74.3411
+    },
+    {
+      "id": "broster-campeon",
+      "nombre": "Broster Campeon",
+      "detalle": "La Vega",
+      "cat": "comida",
+      "lat": 4.998017,
+      "lng": -74.339865
+    },
+    {
+      "id": "estacion-de-policia-la-vega",
+      "nombre": "Estación de Policía La Vega",
+      "detalle": "La Vega",
+      "cat": "centro",
+      "lat": 4.998325,
+      "lng": -74.340583
+    },
+    {
+      "id": "iglesia-de-dios-ministerial-de-jesucrist",
+      "nombre": "Iglesia de Dios Ministerial de Jesucristo Internacional - ID",
+      "detalle": "La Vega",
+      "cat": "centro",
+      "lat": 5.001172,
+      "lng": -74.3406
+    },
+    {
+      "id": "hotel-casa-morebo",
+      "nombre": "Hotel Casa Morebo",
+      "detalle": "La Vega",
+      "cat": "turismo",
+      "lat": 5.001457,
+      "lng": -74.341386
+    },
+    {
+      "id": "san-antonio-de-lavega",
+      "nombre": "Hospital San Antonio de La Vega",
+      "detalle": "La Vega",
+      "cat": "salud",
+      "lat": 4.997384,
+      "lng": -74.340799
+    },
+    {
+      "id": "cementerio",
+      "nombre": "Cementerio",
+      "detalle": "La Vega",
+      "cat": "centro",
+      "lat": 5.00302,
+      "lng": -74.339948
+    },
+    {
+      "id": "hotel-caribe-la-vega",
+      "nombre": "Hotel Caribe La Vega",
+      "detalle": "La Vega",
+      "cat": "turismo",
+      "lat": 4.993893,
+      "lng": -74.338431
+    },
+    {
+      "id": "institucion-educativa-departamental-rica",
+      "nombre": "Institucion Educativa Departamental Ricardo Hinestrosa Daza",
+      "detalle": "La Vega",
+      "cat": "educacion",
+      "lat": 4.992169,
+      "lng": -74.332923
+    },
+    {
+      "id": "vereda-rancho-quemado",
+      "nombre": "Vereda Rancho Quemado",
+      "detalle": "Vereda de La Vega",
+      "cat": "vereda",
+      "lat": 4.999265,
+      "lng": -74.350656
+    },
+    {
+      "id": "ecohotel-monteverde",
+      "nombre": "Ecohotel Monteverde",
+      "detalle": "La Vega · a 1,7 km",
+      "cat": "turismo",
+      "lat": 4.999968,
+      "lng": -74.355073
+    },
+    {
+      "id": "la-gregorienne",
+      "nombre": "La Gregorienne",
+      "detalle": "La Vega · a 2,1 km",
+      "cat": "turismo",
+      "lat": 5.018536,
+      "lng": -74.337873
+    },
+    {
+      "id": "escuela-vda-naguy",
+      "nombre": "Escuela vda. Naguy",
+      "detalle": "La Vega · a 3,3 km",
+      "cat": "educacion",
+      "lat": 5.017845,
+      "lng": -74.31561
+    },
+    {
+      "id": "alban",
+      "nombre": "Albán",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.876533,
+      "lng": -74.436043
+    },
+    {
+      "id": "sasaima",
+      "nombre": "Sasaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.964577,
+      "lng": -74.433115
+    },
+    {
+      "id": "facatativa",
+      "nombre": "Facatativá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.809728,
+      "lng": -74.354184
+    },
+    {
+      "id": "san-francisco",
+      "nombre": "San Francisco",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.974936,
+      "lng": -74.289568
+    },
+    {
+      "id": "nocaima",
+      "nombre": "Nocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.069767,
+      "lng": -74.377522
+    },
+    {
+      "id": "villeta",
+      "nombre": "Villeta",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 5.011258,
+      "lng": -74.47023
+    },
+    {
+      "id": "portal-80",
+      "nombre": "Portal 80 (TransMilenio)",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.7097122,
+      "lng": -74.1104822
+    },
+    {
+      "id": "aeropuerto",
+      "nombre": "Aeropuerto El Dorado",
+      "detalle": "Bogotá",
+      "cat": "bogota",
+      "lat": 4.6992528,
+      "lng": -74.1417611
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-02",
+      "movil": "002",
+      "nombre": "Héctor Bernal",
+      "placa": "VEG 602",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1020,
+      "desde": 2009,
+      "tel": "3000000002"
+    },
+    {
+      "id": "demo-05",
+      "movil": "005",
+      "nombre": "Sandra Patiño",
+      "placa": "VEG 605",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 557,
+      "desde": 2007,
+      "tel": "3000000005"
+    },
+    {
+      "id": "demo-13",
+      "movil": "013",
+      "nombre": "Diana Forero",
+      "placa": "VEG 613",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2200,
+      "desde": 2015,
+      "tel": "3000000013"
+    },
+    {
+      "id": "demo-16",
+      "movil": "016",
+      "nombre": "Édgar Molina",
+      "placa": "VEG 616",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 1300,
+      "desde": 2011,
+      "tel": "3000000016"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Martha Garzón",
+      "placa": "VEG 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 5.0,
+      "viajes": 887,
+      "desde": 2021,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-22",
+      "movil": "022",
+      "nombre": "Jairo Moreno",
+      "placa": "VEG 622",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 488,
+      "desde": 2006,
+      "tel": "3000000022"
+    },
+    {
+      "id": "demo-25",
+      "movil": "025",
+      "nombre": "Germán Quintero",
+      "placa": "VEG 625",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 901,
+      "desde": 2017,
+      "tel": "3000000025"
+    },
+    {
+      "id": "demo-27",
+      "movil": "027",
+      "nombre": "Rubén Sarmiento",
+      "placa": "VEG 627",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.9,
+      "viajes": 1823,
+      "desde": 2013,
+      "tel": "3000000027"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Occitrans S.A.S. —la Compañía de Transportadores y Otros Servicios de Occidente— presta el servicio de transporte individual en taxi en La Vega y en Albán, para moverse dentro y fuera del municipio, y ofrece camionetas doble cabina para expresos hacia los sitios turísticos, fincas, hoteles y hospedajes de La Vega. Tiene su sede principal en Funza, donde hace transporte mixto, y también presta transporte especial escolar, empresarial y de turismo.\n\nCon esta app, Occitrans puede llevar su servicio de taxi al celular con su propia marca: pides el taxi con tu ubicación exacta, ves cuántos taxis hay libres, conoces la tarifa antes de subir, sigues el móvil en el mapa hasta tu puerta y pagas con QR o en efectivo.",
+    "mision": "Prestar el servicio de taxi en La Vega y Albán con conductores que conocen la región, con seguridad, puntualidad y tarifas claras, para quienes viven aquí y para quienes vienen de paseo.",
+    "vision": "Ser la forma más fácil y confiable de moverse en taxi por La Vega y Albán: un toque en el celular, la tarifa clara y el móvil en el mapa.",
+    "servicios": [
+      "Taxi en La Vega y Albán",
+      "Expresos en camioneta doble cabina",
+      "Traslados a fincas, hoteles y sitios turísticos",
+      "Transporte especial escolar, empresarial y de turismo",
+      "Transporte mixto en Funza"
+    ],
+    "frase": "Lo llevamos a donde usted quiera"
+  },
+  "fuentes": [
+    "https://www.lavega-cundinamarca.gov.co/Turismo/Emprendimientos/Paginas/TRASPORTE-OCCITRANS-.aspx",
+    "https://www.facebook.com/occitrans.sas/",
+    "https://hseoccitrans.wixsite.com/inicio",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=900494325",
+    "https://www.informacolombia.com/directorio-empresas/informacion-empresa/compania-transportadores-otros-servicios-occidente-sas-o",
+    "https://funzacundinamarca.micolombiadigital.gov.co/noticias/exaltamos-el-trabajo-de-nuestros-conductores",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Confianza media (verificado el 1-oct-2026). Razón social, NIT 900.494.325-2, matrícula del 30-ene-2012 en la Cámara de Comercio de Facatativá, actividad 4921, renovación del 10-mar-2026 y representante legal Carlos Humberto Morales Albornoz: RUES (datos.gov.co c82u-588k). Su Facebook dice que fue fundada en Albán; el año queda pendiente.",
+    "Evidencia de taxi: la Alcaldía de La Vega, en su sección de emprendimientos («Cuentan con servicio de transporte individual en taxis, ideal para desplazamientos cómodos y seguros dentro y fuera del municipio», más expresos en camionetas doble cabina); su Facebook («Servicio mixto en el municipio de Funza – Servicio individual (taxi) en Albán y La Vega»); su web ofrece «Servicio de taxi». El primer barrido la había descartado como «turismo, empresarial y mixto», y no es así.",
+    "Región: la sede está en Funza (Sabana de Occidente), pero sus TAXIS operan en La Vega y Albán (Gualivá). Se armó la demo en La Vega, donde la Alcaldía la reconoce; en La Vega ya está la ficha de Cootransvillaleal (la-vega) y la lista de Gualivá trae a Cootransgualiva: cruzar para no repetir. En Albán no apareció otra empresa de taxi (RUES), así que Albán podría ser otra opción para su demo.",
+    "Teléfonos: 313 320 0003 (su web y Facebook), 312 396 3055 (su Facebook) y 312 563 2973 (teléfono de Occitrans que publica la Alcaldía de La Vega y el registro mercantil). No consta que alguno sea WhatsApp.",
+    "Correo hseoccitrans@gmail.com: encabezado y sección Contacto de su web (Wix). Dirección de la sede: Carrera 10A # 17-08, barrio Serenas, Funza (su web y registro mercantil vía informacolombia). Oficina = null porque la sede queda fuera del pueblo de la demo.",
+    "Lema y frase: el eslogan de su web («Lo llevamos a donde usted quiera»). Su web también tiene misión y visión, pero enfocadas al transporte especial (la visión es «para el 2021»); se usa una redacción general propuesta por interOS para el taxi. La misión y la visión son una redacción general propuesta por interOS, no textos oficiales.",
+    "Colores tomados de su logo (verde #189010, rojo #E81810 y amarillo #F0E808); el primario es el verde oscurecido para que el texto blanco se lea bien y el rojo del logo queda para alertas.",
+    "Tarifas de La Vega y Albán: no se buscaron; sin campo tarifas.",
+    "Destinos: Albán (donde también opera) y vecinos de La Vega (Wikipedia: Sasaima, Facatativá, San Francisco, Nocaima) más Villeta; La Vega está a 54 km de Bogotá, por eso lleva Portal 80 y aeropuerto. Número de taxis por confirmar."
+  ]
+}

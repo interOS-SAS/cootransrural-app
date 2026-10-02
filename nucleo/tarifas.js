@@ -38,7 +38,8 @@ export function calcularTarifa({ origen, destino, km, fecha = new Date(), progra
     recargos += TARIFAS.recargoNocturno;
     detalle.push({ concepto: 'Recargo nocturno', valor: TARIFAS.recargoNocturno });
   }
-  if (domingo && TARIFAS.recargoDominical > 0) {
+  // Algunos decretos (p. ej. Chía) fijan un solo recargo, no acumulable: noche o domingo.
+  if (domingo && TARIFAS.recargoDominical > 0 && !(TARIFAS.recargoUnico && recargos > 0)) {
     recargos += TARIFAS.recargoDominical;
     detalle.push({ concepto: 'Recargo dominical', valor: TARIFAS.recargoDominical });
   }

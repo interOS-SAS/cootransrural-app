@@ -1,0 +1,433 @@
+{
+  "id": "viota",
+  "estado": "propuesta",
+  "EMPRESA": {
+    "nombre": "Cootransviota",
+    "nombreCorto": "Cootransviota",
+    "razonSocial": "Cooperativa de Transportadores de Viotá Cundinamarca (Cootransviota)",
+    "tipo": "cooperativa",
+    "lema": "Taxis de Viotá, tierra de café",
+    "municipio": "Viotá, Cundinamarca",
+    "pueblo": "Viotá",
+    "region": "provincia del Tequendama",
+    "telefono": "6018349076",
+    "telefonoVisible": "601 834 9076",
+    "whatsapp": "",
+    "correo": "cootransviota@hotmail.com",
+    "direccion": "Calle 17A # 9A-15/19, Centro, Viotá, Cundinamarca",
+    "web": "",
+    "sitioOficial": "",
+    "fundada": 2000,
+    "taxisIniciales": null,
+    "taxis": null,
+    "microbuses": null,
+    "asociados": null,
+    "servicio24h": false,
+    "placaPrefijo": "VIO",
+    "vehiculo": "Kia Picanto",
+    "colorTaxi": "Amarillo",
+    "oficina": {
+      "lat": 4.43772,
+      "lng": -74.5214
+    },
+    "datosPendientes": [
+      "número de taxis",
+      "WhatsApp de la central",
+      "confirmar si el fijo 601 834 9076 sigue en uso (el registro da 324 255 2247)",
+      "tarifas oficiales (decreto de tarifas de taxi de Viotá)",
+      "colores exactos del logo",
+      "misión y visión oficiales",
+      "modelo de vehículo",
+      "horario nocturno (hoy hasta las 10:30 p. m.)"
+    ]
+  },
+  "colores": {
+    "primario": "#15803D",
+    "primario2": "#1E9A4B",
+    "oscuro": "#0A3D1D",
+    "acento": "#FFC21A",
+    "rojo": "#D0202E"
+  },
+  "CENTRO": {
+    "lat": 4.438888,
+    "lng": -74.523358
+  },
+  "ZONA": {
+    "sur": 4.12,
+    "norte": 4.76,
+    "oeste": -74.84,
+    "este": -74.2
+  },
+  "TARIFAS": {
+    "ejemplo": true,
+    "minimaUrbana": 8000,
+    "banderazo": 5500,
+    "porKm": 1300,
+    "redondeo": 500,
+    "recargoNocturno": 2000,
+    "recargoDominical": 1000,
+    "nocheDesde": 20,
+    "nocheHasta": 6,
+    "descuentoProgramado": 0.1,
+    "horasAnticipacion": 24,
+    "viajesFidelidad": 10,
+    "descuentoFidelidad": 0.5
+  },
+  "RUTAS": [
+    {
+      "id": "tocaima",
+      "destino": "Tocaima",
+      "valor": 30000,
+      "km": 16,
+      "min": 20,
+      "radioKm": 4
+    },
+    {
+      "id": "apulo",
+      "destino": "Apulo",
+      "valor": 38000,
+      "km": 21,
+      "min": 25,
+      "radioKm": 4
+    },
+    {
+      "id": "el-colegio",
+      "destino": "El Colegio",
+      "valor": 43000,
+      "km": 25,
+      "min": 35,
+      "radioKm": 4
+    },
+    {
+      "id": "tibacuy",
+      "destino": "Tibacuy",
+      "valor": 54000,
+      "km": 32,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "anapoima",
+      "destino": "Anapoima",
+      "valor": 56000,
+      "km": 33,
+      "min": 40,
+      "radioKm": 4
+    },
+    {
+      "id": "girardot",
+      "destino": "Girardot",
+      "valor": 74000,
+      "km": 45,
+      "min": 60,
+      "radioKm": 4
+    },
+    {
+      "id": "silvania",
+      "destino": "Silvania",
+      "valor": 75000,
+      "km": 46,
+      "min": 55,
+      "radioKm": 4
+    },
+    {
+      "id": "fusagasuga",
+      "destino": "Fusagasugá",
+      "valor": 84000,
+      "km": 52,
+      "min": 65,
+      "radioKm": 4
+    }
+  ],
+  "LUGARES": [
+    {
+      "id": "parque",
+      "nombre": "Parque Principal",
+      "detalle": "Viotá",
+      "cat": "centro",
+      "lat": 4.439118,
+      "lng": -74.522221
+    },
+    {
+      "id": "parroquia-inmaculada-concepcion",
+      "nombre": "Parroquia Inmaculada Concepción",
+      "detalle": "Viotá",
+      "cat": "centro",
+      "lat": 4.439348,
+      "lng": -74.522755
+    },
+    {
+      "id": "alcaldia",
+      "nombre": "Alcaldía",
+      "detalle": "Viotá",
+      "cat": "centro",
+      "lat": 4.439534,
+      "lng": -74.522122
+    },
+    {
+      "id": "hotel-viota-plaza",
+      "nombre": "Hotel Viotá Plaza",
+      "detalle": "Viotá",
+      "cat": "turismo",
+      "lat": 4.43876,
+      "lng": -74.521826
+    },
+    {
+      "id": "estacion-de-policia-de-viota",
+      "nombre": "Estación de Policía de Viota",
+      "detalle": "Viotá",
+      "cat": "centro",
+      "lat": 4.439162,
+      "lng": -74.521767
+    },
+    {
+      "id": "estacion-de-servicio-de-viota",
+      "nombre": "Estación de Servicio de Viotá",
+      "detalle": "Viotá",
+      "cat": "comercio",
+      "lat": 4.442632,
+      "lng": -74.52243
+    },
+    {
+      "id": "cementerio-municipal",
+      "nombre": "Cementerio municipal",
+      "detalle": "Viotá",
+      "cat": "centro",
+      "lat": 4.442994,
+      "lng": -74.530111
+    },
+    {
+      "id": "el-pinal",
+      "nombre": "El Piñal",
+      "detalle": "Centro poblado de Viotá",
+      "cat": "vereda",
+      "lat": 4.447502,
+      "lng": -74.560486
+    },
+    {
+      "id": "el-colegio",
+      "nombre": "El Colegio",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.580262,
+      "lng": -74.442374
+    },
+    {
+      "id": "tocaima",
+      "nombre": "Tocaima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.455243,
+      "lng": -74.634486
+    },
+    {
+      "id": "apulo",
+      "nombre": "Apulo",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.520545,
+      "lng": -74.593827
+    },
+    {
+      "id": "anapoima",
+      "nombre": "Anapoima",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.549301,
+      "lng": -74.535912
+    },
+    {
+      "id": "tibacuy",
+      "nombre": "Tibacuy",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.347676,
+      "lng": -74.45273
+    },
+    {
+      "id": "silvania",
+      "nombre": "Silvania",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.404854,
+      "lng": -74.387241
+    },
+    {
+      "id": "girardot",
+      "nombre": "Girardot",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.304638,
+      "lng": -74.803074
+    },
+    {
+      "id": "fusagasuga",
+      "nombre": "Fusagasugá",
+      "detalle": "Cundinamarca",
+      "cat": "municipio",
+      "lat": 4.344951,
+      "lng": -74.367425
+    }
+  ],
+  "CONDUCTORES_DEMO": [
+    {
+      "id": "demo-02",
+      "movil": "002",
+      "nombre": "Luz Marina Rojas",
+      "placa": "VIO 602",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1956,
+      "desde": 2016,
+      "tel": "3000000002"
+    },
+    {
+      "id": "demo-06",
+      "movil": "006",
+      "nombre": "Jairo Moreno",
+      "placa": "VIO 606",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 1753,
+      "desde": 2009,
+      "tel": "3000000006"
+    },
+    {
+      "id": "demo-10",
+      "movil": "010",
+      "nombre": "Wilson Gómez",
+      "placa": "VIO 610",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2073,
+      "desde": 2009,
+      "tel": "3000000010"
+    },
+    {
+      "id": "demo-14",
+      "movil": "014",
+      "nombre": "Jorge Castañeda",
+      "placa": "VIO 614",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1265,
+      "desde": 2016,
+      "tel": "3000000014"
+    },
+    {
+      "id": "demo-19",
+      "movil": "019",
+      "nombre": "Nelson Pinzón",
+      "placa": "VIO 619",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 1214,
+      "desde": 2018,
+      "tel": "3000000019"
+    },
+    {
+      "id": "demo-21",
+      "movil": "021",
+      "nombre": "Rubén Sarmiento",
+      "placa": "VIO 621",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.6,
+      "viajes": 597,
+      "desde": 2019,
+      "tel": "3000000021"
+    },
+    {
+      "id": "demo-24",
+      "movil": "024",
+      "nombre": "Héctor Bernal",
+      "placa": "VIO 624",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.8,
+      "viajes": 2197,
+      "desde": 2019,
+      "tel": "3000000024"
+    },
+    {
+      "id": "demo-26",
+      "movil": "026",
+      "nombre": "Fabio Cruz",
+      "placa": "VIO 626",
+      "vehiculo": "Kia Picanto",
+      "color": "Amarillo",
+      "calificacion": 4.7,
+      "viajes": 2046,
+      "desde": 2018,
+      "tel": "3000000026"
+    }
+  ],
+  "PASAJEROS_DEMO": [
+    {
+      "nombre": "María Fernanda",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Andrés",
+      "calificacion": 4.8
+    },
+    {
+      "nombre": "Doña Rosa",
+      "calificacion": 5
+    },
+    {
+      "nombre": "Julián",
+      "calificacion": 4.7
+    },
+    {
+      "nombre": "Camila",
+      "calificacion": 4.9
+    },
+    {
+      "nombre": "Don Álvaro",
+      "calificacion": 4.6
+    }
+  ],
+  "textos": {
+    "historia": "Cootransviota —la Cooperativa de Transportadores de Viotá— mueve a Viotá desde el año 2000: rutas a las veredas y, desde 2006, el servicio de taxi dentro del municipio. Sus taxis atienden el casco urbano y centros poblados como El Piñal, todos los días hasta las 10:30 p. m., desde el paradero habitual, y la cooperativa organiza horarios especiales en las fiestas, como el Festival de la Piña.\n\nCon la app, la cooperativa puede llevar ese servicio al celular: pides el taxi con tu ubicación exacta, ves cuántos taxis libres hay, conoces la tarifa antes de subir, sigues el móvil en el mapa y pagas con QR, ya sea para moverte en el pueblo, ir a El Piñal o bajar a Tocaima y El Colegio.",
+    "mision": "Prestar el servicio de taxi en Viotá, El Piñal y sus veredas con conductores asociados que conocen cada camino, con seguridad, puntualidad y buen trato para quienes viven aquí y para quienes nos visitan.",
+    "vision": "Ser la forma más fácil y confiable de moverse en Viotá y el Tequendama: un taxi a un toque, con tarifa clara y el móvil en el mapa, de día y de noche.",
+    "servicios": [
+      "Taxi en el casco urbano de Viotá",
+      "Servicio a El Piñal y las veredas",
+      "Viajes a El Colegio, Tocaima y Apulo",
+      "Viajes a Anapoima, Tibacuy y Silvania",
+      "Viajes a Girardot y Fusagasugá"
+    ],
+    "frase": "Tu taxi en Viotá, tierra de café"
+  },
+  "fuentes": [
+    "https://viotacundinamarca.micolombiadigital.gov.co/sites/viotacundinamarca/content/files/000622/31086_resolucion--038.pdf",
+    "https://www.facebook.com/people/Cooperativa-de-Transportadores-de-Viota-Cootransviota/100064633705408/",
+    "https://www.datos.gov.co/resource/c82u-588k.json?nit=808001860",
+    "https://edirectorio.net/empresa/cooperativa-de-transportadores-de-viota-cundinamarca-cootransviota",
+    "https://empresas.tusdatos.co/informe/cooperativa-de-transportadores-de-viota-cundinamarca-cootransviota-nit-808001860",
+    "https://www.openstreetmap.org/"
+  ],
+  "notas": [
+    "Propuesta: no es cliente ni ha autorizado nada.",
+    "Taxis: la Resolución 38 del 2 de febrero de 2022 de la Alcaldía de Viotá cuenta que la Resolución 165 de 2006 (modificada por la 175 de 2011) le otorgó a Cootransviota capacidad transportadora para el servicio «en vehículos tipo taxi dentro de la jurisdicción del Municipio de Viotá», y expide la tarjeta de operación de un taxi afiliado (una camioneta). La prueba más reciente es de 2026: en un comunicado del 16 de mayo de 2026 en su Facebook, por el VIII Festival de la Piña en El Piñal, la cooperativa anuncia horarios especiales del «servicio de transporte individual tipo taxi» (rutas Viotá–El Piñal) y dice que después retoma sus horarios habituales de taxi, todos los días hasta las 10:30 p. m., desde el paradero habitual. La cooperativa también presta rutas a las veredas: la propuesta es para los taxis.",
+    "RUES abierto (datos.gov.co): Cooperativa de Transportadores de Viotá Cundinamarca, sigla Cootransviota, NIT 808.001.860-3, ACTIVA, Cámara de Comercio de Girardot, matriculada el 28-jun-2000 y renovada el 12-may-2026 (CIIU principal 9499 y secundario 4921). La Resolución 09 del 4 de agosto de 2001 la habilitó para el transporte urbano e interveredal (Res. 38/2022). Fundada: 2000, año de la matrícula; su logo de 2026 dice «26 años».",
+    "Teléfono 601 834 9076 y correo cootransviota@hotmail.com: los de su página de Facebook. El registro mercantil da el 324 255 2247 (edirectorio). No se sabe si tiene WhatsApp.",
+    "Dirección: Calle 17A # 9A-15/19, Centro (su Facebook y el registro mercantil). Oficina en el mapa: punto aproximado sobre la Calle 17A entre las Carreras 9 y 10 (la Carrera 9A no aparece en OpenStreetMap en ese sector).",
+    "Representante legal: Jairo Martínez Guzmán, según el RUES abierto (actualizado en julio de 2026). Se usa solo para el saludo de la propuesta.",
+    "Número de taxis: sin cifra.",
+    "Colores: tomados de su logo y del aviso de su sede (verde con rojo y blanco); el tono exacto es una aproximación de interOS.",
+    "Lema y frase: propuestos por interOS; Viotá es un municipio cafetero y el aviso de la sede de la cooperativa tiene granos de café.",
+    "Vehículo: el taxi de la Res. 38/2022 es una camioneta SAIC Wuling y el logo muestra un taxi pequeño amarillo; no se sabe el modelo de la flota, se deja el genérico de la demo.",
+    "Tarifas: no se encontró el decreto de tarifas de taxi de Viotá.",
+    "Placa de la demo (VIO): inventada para la demo; no corresponde a placas reales.",
+    "Destinos: municipios vecinos (El Colegio, Tocaima, Apulo, Anapoima, Tibacuy, Silvania) y las ciudades cercanas de Girardot y Fusagasugá. Viotá queda a unos 85 km de Bogotá: no se añaden portal ni aeropuerto.",
+    "La historia solo usa hechos de las fuentes; la misión y la visión son una redacción general propuesta por interOS, no textos oficiales."
+  ]
+}
