@@ -628,6 +628,21 @@ html[data-vitrina="1"] .a-escritorio { display: none !important; }
   }
 }
 
+/* ---------------- Batería ----------------
+ * App en segundo plano o pestaña oculta (nucleo/plataforma.js pone html.app-oculta): nada que animar. */
+html.app-oculta *, html.app-oculta *::before, html.app-oculta *::after { animation-play-state: paused !important; }
+/* Modo real (la app de verdad, que puede quedar horas abierta en el carro): los latidos que
+ * animan box-shadow obligan a repintar la pantalla en cada cuadro (60 por segundo) todo el rato
+ * que se ven. Laten unas veces al aparecer o al cambiar de estado y después se quedan quietos
+ * (con su color y su aro). La barra de «buscando» se mueve con transform: sin recalcular el
+ * diseño en cada cuadro. Las demás animaciones de este tipo están en pasajero.css y conductor.css. */
+html[data-modo="real"] .a-led-vivo,
+html[data-modo="real"] .a-vivo .a-led,
+html[data-modo="real"] .a-chip-red.a-reconectando .a-led,
+html[data-modo="real"] .a-eta-llego svg { animation-iteration-count: 3; }
+html[data-modo="real"] .a-barra-progreso span { left: 0; animation-name: a-indeterminada-t; }
+@keyframes a-indeterminada-t { 0% { transform: translateX(-100%); } 100% { transform: translateX(285.72%); } }
+
 /* Mapa: Mapbox «streets» (núcleo). Si cae a OpenStreetMap, se suaviza un poco. */
 .a-app .ct-mapa-respaldo .leaflet-tile-pane, .a-app [data-capa='osm'] .leaflet-tile-pane { filter: saturate(.62) contrast(.94) brightness(1.05); }
 

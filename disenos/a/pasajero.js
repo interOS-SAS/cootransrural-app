@@ -1123,7 +1123,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       montar(c, pie) {
         $(pie, '[data-cancelar]').addEventListener('click', cancelarViaje);
         let i = 0;
-        const t = setInterval(() => {
+        // Con la app oculta no rota (al volver sigue donde iba).
+        const parar = N.relojVisible(() => {
           const nodo = $(c, '[data-mensaje]');
           if (!nodo) return;
           // Modo real: sin conexión no se rota (la solicitud espera en la cola).
@@ -1133,8 +1134,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           void nodo.offsetWidth;
           nodo.textContent = siguiente;
           nodo.classList.add('a-entra-txt');
-        }, 2600);
-        ui.limpiezas.push(() => clearInterval(t));
+        }, 2600, { alVolver: false });
+        ui.limpiezas.push(parar);
       },
       entrar(e) {
         const v = e.viaje;
@@ -1224,8 +1225,13 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           const f = limitar(1 - eta / total, 0, 1);
           const r = $(c, '[data-progreso]');
           const t = $(c, '[data-progreso-taxi]');
+          // Modo real: el taxi se desliza con transform (sin recalcular el diseño en cada cuadro);
+          // el relleno salta sin transición, tapado por el taxi (pasajero.css). El ancho se lee
+          // antes de escribir nada (sin forzar otro cálculo del diseño).
+          const ancho = t && REAL ? t.parentElement?.clientWidth || 0 : 0;
           if (r) r.style.width = `${f * 100}%`;
-          if (t) t.style.left = `${f * 100}%`;
+          if (t && REAL) t.style.transform = `translateX(${Math.round(f * ancho * 10) / 10}px)`;
+          else if (t) t.style.left = `${f * 100}%`;
         }
       },
     },
@@ -1693,6 +1699,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     m.refrescar();
     hoja.fijar(hoja.estado, false);
     if (app.dataset.pin) ubicarPin();
+    // Modo real: el taxi de la barra de avance se mueve en píxeles (ver VISTAS.en_viaje): con
+    // otro ancho (girar el teléfono, otra ventana) se vuelve a ubicar.
+    if (REAL && ui.vista === 'en_viaje') pintar();
   });
 
   // El primer toque desbloquea el sonido de los avisos.
@@ -1852,8 +1861,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       if (codigo === 'sin_sesion') return sesionCerrada();
       if (conSesion) avisos.mostrar({ titulo: 'No pudimos conectarte', cuerpo: EM.textoError(codigo), tipo: 'error' });
     });
-    // Respaldo por si algún cambio de estado no llega como evento.
-    setInterval(pintarConexion, 3000);
+    // Respaldo por si algún cambio de estado no llega como evento (solo con la app a la vista).
+    N.relojVisible(pintarConexion, 3000);
   }
 
   /* ---------------- arranque ---------------- */

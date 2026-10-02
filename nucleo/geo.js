@@ -41,9 +41,11 @@ export async function obtenerPosicion({ espera = 8000, precisa = true } = {}) {
 }
 
 // Sigue la posición en tiempo real. Devuelve la función para detenerse.
-// alFallar({ code }) avisa si se pierde el GPS (1 permiso negado, 2 no disponible, 3 tiempo).
-export function seguirPosicion(fn, { precisa = true, alFallar = () => {} } = {}) {
-  return seguir((p) => fn({ ...p, real: true }), { precisa, alFallar });
+// alFallar({ code, muerto }) avisa si se pierde el GPS (1 permiso negado, 2 no disponible, 3 tiempo);
+// muerto: el seguimiento ya no existe y hay que pedir otro (ver plataforma.seguir).
+// intervalo (ms): cada cuánto se quiere una lectura; solo lo respeta el plugin en Android.
+export function seguirPosicion(fn, { precisa = true, alFallar = () => {}, intervalo } = {}) {
+  return seguir((p) => fn({ ...p, real: true }), { precisa, alFallar, ...(intervalo ? { intervalo } : {}) });
 }
 
 // ¿La posición está lejos de la zona de servicio? (por ejemplo, alguien que

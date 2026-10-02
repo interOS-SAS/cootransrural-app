@@ -28,6 +28,7 @@ import { leerCobro, urlPago } from './qr.js';
 import * as perfil from './perfil.js';
 import * as servidor from './servidor.js';
 import { Emisor, uid, codigoNumerico, hashCorto, distanciaKm, pesos, minutosTexto, primerNombre, enlaceMapa, fechaTexto, horaTexto } from './util.js';
+import { relojVisible, appOculta, alCambiarVisibilidad } from './plataforma.js';
 
 export const FASES = ['inicio', 'buscando', 'asignado', 'llego', 'en_viaje', 'pagar', 'calificar'];
 
@@ -38,6 +39,16 @@ const ESPERA_VIAJE_ACTUAL_MS = 2500; // el servidor 0.1 solo manda viaje_actual 
 const BUSQUEDA_MAX_MS = 10 * 60 * 1000; // el servidor suelta la búsqueda a los 10 min
 const VIDA_COLA_MS = 60000; // lo que el bus guarda sin conexión (ver BusServidor)
 const VIAJE_GUARDADO_MAX_MS = 12 * 3600 * 1000;
+// Batería (modo real). Los taxis cercanos se recalculan cuando llega una presencia (en las fases
+// que los muestran) y, para quitar los que dejaron de anunciarse, con este reloj (solo con la app
+// a la vista). Antes era cada segundo aunque no hubiera llegado nada.
+const RELOJ_TAXIS_REAL_MS = 5000;
+const FASES_CON_TAXIS = ['inicio', 'buscando'];
+// La ubicación del taxi llega cada 2 s: el viaje se guarda en el celular (para retomarlo al
+// recargar) con ella a lo sumo cada tanto, y siempre al ocultarse la app o cerrarse la página
+// (así al volver no retroceden la barra ni la hora de llegada); al reconectar, la central manda
+// el viaje de nuevo.
+const GUARDAR_UBICACION_MS = 30000;
 
 // El código de abordaje solo vive en este teléfono; el servidor guarda su huella
 // (hashCorto(viajeId + código)). Si se perdió lo guardado, se recupera de la huella.
@@ -109,6 +120,11 @@ class ControladorPasajero extends Emisor {
     if (this.real) {
       this.#escucharServidor();
       this.#retomarReal();
+      // Lo que quedó sin guardar por la espera de GUARDAR_UBICACION_MS (matar la app pasa antes
+      // por segundo plano; recargar o cerrar la pestaña, por pagehide).
+      this.alSalir = () => this.#guardarUbicacionPendiente();
+      this.dejarVisibilidad = alCambiarVisibilidad((oculta) => oculta && this.alSalir());
+      globalThis.addEventListener?.('pagehide', this.alSalir);
     } else {
       // Un conductor que se conecta tarde pide las solicitudes que siguen buscando.
       this.bus.on('consulta_solicitudes', () => {
@@ -134,10 +150,12 @@ class ControladorPasajero extends Emisor {
     if (this.usarAmbiente) {
       const centroSim = pos.real && !fueraDeZona(pos) ? pos : pos.real ? pos : CENTRO;
       this.ambiente = new TaxisAmbiente(centroSim, { cantidad: 5 });
-      this.relojTaxis = setInterval(() => this.#actualizarTaxis(), 1000);
+      // Con la app oculta no hace falta recalcularlos (al volver se recalculan de una vez).
+      this.pararRelojTaxis = relojVisible(() => this.#actualizarTaxis(), 1000);
     } else if (this.real) {
-      // Solo los taxis de verdad (presencias del servidor).
-      this.relojTaxis = setInterval(() => this.#actualizarTaxis(), 1000);
+      // Solo los taxis de verdad (presencias del servidor): al llegar cada presencia
+      // (#programarTaxis) y, para quitar los vencidos, cada RELOJ_TAXIS_REAL_MS.
+      this.pararRelojTaxis = relojVisible(() => this.#actualizarTaxis(), RELOJ_TAXIS_REAL_MS);
     }
     this.#cambiar({});
   }
@@ -445,6 +463,7 @@ class ControladorPasajero extends Emisor {
     if (tipo === 'presencia') {
       if (d.disponible) this.reales.set(d.conductorId, { ...d, visto: Date.now() });
       else this.reales.delete(d.conductorId);
+      if (this.real) this.#programarTaxis();
       return;
     }
     // Modo real: la aceptación de una búsqueda anterior de este mismo viaje (cambió de id
@@ -488,7 +507,11 @@ class ControladorPasajero extends Emisor {
         } else if (fase === 'en_viaje') {
           cambios.etaMin = d.etaMin ?? (viaje.destino ? (distanciaKm(d.pos, viaje.destino) * 1.3 / 30) * 60 : null);
         }
-        this.#cambiar(cambios);
+        // Modo real: no se reescribe todo el viaje en el celular cada 2 s (ver GUARDAR_UBICACION_MS).
+        const guardar = !this.real || Date.now() - (this.ubicacionGuardada || 0) >= GUARDAR_UBICACION_MS;
+        if (guardar) this.ubicacionGuardada = Date.now();
+        this.#cambiar(cambios, { silencioso: !guardar });
+        if (!guardar) this.ubicacionSinGuardar = true;
         break;
       }
       case 'estado': {
@@ -882,6 +905,16 @@ class ControladorPasajero extends Emisor {
     return [...this.reales.values()];
   }
 
+  // Una presencia nueva: los taxis se recalculan en un momento (varias juntas, una sola vez) si
+  // la pantalla los muestra; si no, los pone al día el reloj.
+  #programarTaxis() {
+    if (this.taxisPendientes || appOculta() || !FASES_CON_TAXIS.includes(this.estado.fase)) return;
+    this.taxisPendientes = setTimeout(() => {
+      this.taxisPendientes = null;
+      this.#actualizarTaxis();
+    }, 300);
+  }
+
   #actualizarTaxis() {
     const reales = this.#conductoresRealesDisponibles().filter((p) => p.pos).map((p) => ({ id: p.conductorId, lat: p.pos.lat, lng: p.pos.lng, rumbo: p.pos.rumbo || 0, movil: p.movil, simulado: false }));
     const amb = this.ambiente ? this.ambiente.lista() : [];
@@ -921,10 +954,20 @@ class ControladorPasajero extends Emisor {
     this.emit('aviso', a);
   }
 
+  // Modo real: guarda el viaje si quedó una ubicación del taxi sin guardar (ver GUARDAR_UBICACION_MS).
+  #guardarUbicacionPendiente() {
+    if (!this.ubicacionSinGuardar) return;
+    const { taxisCercanos, ...persistible } = this.estado;
+    this.#guardarReal(persistible);
+    this.ubicacionSinGuardar = false;
+    this.ubicacionGuardada = Date.now();
+  }
+
   #cambiar(cambios, { silencioso = false } = {}) {
     Object.assign(this.estado, cambios);
     if (!silencioso) {
       const { taxisCercanos, ...persistible } = this.estado;
+      this.ubicacionSinGuardar = false;
       if (this.real) this.#guardarReal(persistible);
       else sessionStorage.setItem('ct.viaje.pasajero', JSON.stringify({ guardado: Date.now(), fase: this.estado.fase, estado: persistible }));
     }
@@ -932,7 +975,10 @@ class ControladorPasajero extends Emisor {
   }
 
   destruir() {
-    clearInterval(this.relojTaxis);
+    this.dejarVisibilidad?.();
+    if (this.alSalir) globalThis.removeEventListener?.('pagehide', this.alSalir);
+    this.pararRelojTaxis?.();
+    clearTimeout(this.taxisPendientes);
     clearTimeout(this.temporizadorBusqueda);
     clearTimeout(this.relojViajeActual);
     this.ambiente?.detener();

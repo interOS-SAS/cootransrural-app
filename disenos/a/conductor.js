@@ -1899,7 +1899,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       if (document.visibilityState === 'visible' && ui.pantalla === 'revision') revisarCuenta({ silencioso: true });
     });
     // El estado del bus (conectando, en línea, reintentando) cambia sin aviso del controlador.
-    setInterval(() => {
+    // Solo con la app a la vista (al volver se pinta de una vez).
+    N.relojVisible(() => {
       if (c) pintarConexionReal();
     }, 1000);
     arrancarReal();

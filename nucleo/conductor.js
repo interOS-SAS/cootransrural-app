@@ -31,11 +31,30 @@ import { urlPago } from './qr.js';
 import * as perfil from './perfil.js';
 import * as servidor from './servidor.js';
 import { Emisor, hashCorto, distanciaKm, pesos, kmTexto, minutosTexto } from './util.js';
+import { GPS_CON_INTERVALO, alCambiarVisibilidad, appOculta } from './plataforma.js';
 
 // Distancia máxima (km) al pasajero para poder marcar «Llegué» con GPS real.
 const DISTANCIA_LLEGADA_KM = 0.15;
 // Con el pasajero automático del modo revisor (el GPS bajo techo se mueve decenas de metros).
 const DISTANCIA_LLEGADA_REVISION_KM = 0.4;
+
+// Modo real, batería. El GPS se sigue solo en turno o con un servicio; fuera de turno basta la
+// lectura al abrir la app, la de «Conectarme» y una al volver a la app (y, sin ninguna lectura
+// buena todavía, se sigue hasta que llegue una para salir de «Sin GPS»). En turno y sin
+// servicio, en Android las lecturas se espacian (la presencia sale cada 8 s); con un servicio,
+// cada 2 s como siempre (el pasajero ve el taxi y «Llegué» se mide a 150 m), siempre con alta
+// precisión. En iPhone el plugin no deja espaciarlas: allí se ahorra no repintando el panel
+// con cada lectura (REPINTAR_GPS).
+const INTERVALO_GPS_MS = { espera: 5000, libre: 5000, viaje: 2000 };
+// Con una lectura nueva el panel y el mapa se repintan solo si el taxi se movió (m) o pasó un
+// rato (ms). La posición, la ubicación que ve el pasajero y la llegada al punto no esperan.
+const REPINTAR_GPS = { viaje: { m: 5, ms: 3000 }, libre: { m: 15, ms: 10000 } };
+// Fuera de turno, al volver a la app después de este tiempo se lee el GPS una vez (el mapa).
+const RELEER_AL_VOLVER_MS = 20000;
+// Un seguimiento que murió (no pudo arrancar, por ejemplo con la ubicación del sistema apagada,
+// o el plugin lo borró) se vuelve a pedir a los 5 s, luego a los 10, 20… hasta cada minuto
+// (con la app a la vista; con la app oculta, al volver).
+const REINTENTO_GPS_MS = { primero: 5000, maximo: 60000 };
 
 // Modo real.
 const CLAVE_VIAJE_REAL = 'tc.real.viaje.conductor'; // localStorage: en la app nativa sessionStorage se pierde
@@ -114,6 +133,14 @@ class ControladorConductor extends Emisor {
       this.cierreRepetido = null; // el último fin que se repitió al reconectar (ver #valorRechazado)
       this.reconexionPorValor = 0; // cuándo se reconectó por un valor_invalido que llegó tarde
       this.revision = false; // modo revisor (bienvenida.revision)
+      this.gpsNegado = false; // la última lectura dijo «permiso negado»: no hay a quién seguir
+      this.claveSeguimiento = null; // con qué opciones va el seguimiento del GPS
+      this.leyendoGps = false;
+      this.primeraLectura = false;
+      this.ultimoPintadoGps = null;
+      this.ocultaDesde = 0;
+      this.relojReintentoGps = null;
+      this.esperaReintentoGps = 0;
     }
   }
 
@@ -128,6 +155,7 @@ class ControladorConductor extends Emisor {
     if (this.real) {
       this.#escucharServidor();
       this.#retomarReal();
+      this.dejarVisibilidad = alCambiarVisibilidad((oculta) => this.#alCambiarVisibilidad(oculta));
     }
     await this.#configurarGps();
     if (this.real && this.estado.viaje) this.#rutaHaciaObjetivo();
@@ -136,8 +164,19 @@ class ControladorConductor extends Emisor {
   async #configurarGps() {
     this.dejarDeSeguir?.();
     this.dejarDeSeguir = null;
+    if (this.real) {
+      // Mientras se lee, #ajustarSeguimiento no arranca otro seguimiento (lo hace al final).
+      this.claveSeguimiento = null;
+      this.leyendoGps = true;
+      let pos;
+      try {
+        pos = await obtenerPosicion({ espera: 7000 });
+      } finally {
+        this.leyendoGps = false;
+      }
+      return this.#configurarGpsReal(pos);
+    }
     const pos = await obtenerPosicion({ espera: 7000 });
-    if (this.real) return this.#configurarGpsReal(pos);
     const usarSimulado = this.#gpsDebeSimularse(pos);
     this.estado.gpsReal = pos.real && !usarSimulado;
     this.estado.gpsSimulado = !this.estado.gpsReal;
@@ -409,7 +448,19 @@ class ControladorConductor extends Emisor {
       }
     }
     this.emit('posicion', p);
+    // Modo real: el GPS da ~1 lectura por segundo (iPhone) y cada 'cambio' repinta el panel,
+    // el taxi y la ruta: solo si se movió o pasó un rato.
+    if (this.real && !this.#repintarPorGps(p)) return;
     this.emit('cambio', this.estado);
+  }
+
+  #repintarPorGps(p) {
+    const r = REPINTAR_GPS[this.estado.viaje ? 'viaje' : 'libre'];
+    const u = this.ultimoPintadoGps;
+    const ahora = Date.now();
+    if (u && ahora - u.t < r.ms && distanciaKm(u.p, p) * 1000 < r.m) return false;
+    this.ultimoPintadoGps = { p, t: ahora };
+    return true;
   }
 
   /* ---------------- viaje ---------------- */
@@ -752,42 +803,128 @@ class ControladorConductor extends Emisor {
   #configurarGpsReal(pos) {
     // Dos llamadas seguidas (por ejemplo, dos toques en la píldora mientras se espera la
     // primera lectura) no dejan un seguimiento suelto: se detiene el anterior aquí también.
-    this.dejarDeSeguir?.();
-    this.dejarDeSeguir = null;
+    this.#pararSeguimiento();
     this.estado.gpsReal = Boolean(pos.real);
     this.estado.gpsSimulado = false;
+    // Con el permiso negado no hay a quién seguir (hasta otra lectura: «Conectarme», «Llegué»).
+    this.gpsNegado = !pos.real && pos.motivo === 'denegado';
     if (pos.real) this.estado.pos = { lat: pos.lat, lng: pos.lng, rumbo: this.estado.pos?.rumbo ?? 0 };
     else if (!this.estado.pos) this.estado.pos = { ...CENTRO, rumbo: 0 };
-    // Se sigue la posición también si la primera lectura tardó o no había señal: cuando
-    // llegue una, el taxi vuelve a estar disponible. Con el permiso negado no hay a quién seguir.
-    if (pos.real || pos.motivo !== 'denegado') {
-      this.dejarDeSeguir = seguirPosicion(
-        (p) => {
-          const recuperado = !this.estado.gpsReal;
-          if (recuperado) this.estado.gpsReal = true;
-          this.#moverA({ lat: p.lat, lng: p.lng, rumbo: p.rumbo ?? this.estado.pos?.rumbo ?? 0 });
-          if (recuperado) {
-            // La central lo tenía como no disponible (sin GPS): se anuncia ya.
-            if (this.estado.conectado) this.#anunciar();
-            this.#cambiar({});
-          }
-        },
-        { alFallar: (e) => this.#gpsPerdido(e) },
-      );
-    }
     if (!pos.real && this.estado.conectado && !this.estado.viaje) {
       clearInterval(this.relojPresencia);
       this.estado.conectado = false;
       this.#anunciar();
     }
+    // #cambiar arranca el seguimiento que haga falta (#ajustarSeguimiento).
+    this.#cambiar({});
+  }
+
+  // Qué seguimiento del GPS hace falta ahora (modo real): 'viaje' con un servicio, 'libre' en
+  // turno, 'espera' fuera de turno mientras no haya llegado ninguna lectura buena (también si
+  // la primera tardó o no había señal: cuando llegue una, el taxi vuelve a estar disponible), o
+  // ninguno.
+  #modoGps() {
+    if (this.gpsNegado) return null;
+    if (this.estado.viaje) return 'viaje';
+    if (this.estado.conectado) return 'libre';
+    return this.estado.gpsReal ? null : 'espera';
+  }
+
+  // Arranca, cambia o detiene el seguimiento según #modoGps(). Se llama con cada #cambiar.
+  #ajustarSeguimiento() {
+    if (!this.real || this.leyendoGps || this.destruido) return;
+    const modo = this.#modoGps();
+    // Las opciones solo cambian algo en Android (el intervalo); en lo demás no se reinicia.
+    const clave = modo && (GPS_CON_INTERVALO ? `cada ${INTERVALO_GPS_MS[modo]}` : 'siempre');
+    if (modo ? this.dejarDeSeguir && clave === this.claveSeguimiento : !this.dejarDeSeguir) return;
+    this.#pararSeguimiento();
+    if (!modo) return;
+    this.claveSeguimiento = clave;
+    this.primeraLectura = true;
+    // Lo que avise un seguimiento ya reemplazado no cuenta (solo el vigente).
+    let dejar = null;
+    dejar = seguirPosicion((p) => this.dejarDeSeguir === dejar && this.#alLeerGps(p), {
+      intervalo: INTERVALO_GPS_MS[modo],
+      alFallar: (e) => this.#alFallarSeguimiento(e, dejar),
+    });
+    this.dejarDeSeguir = dejar;
+  }
+
+  #pararSeguimiento() {
+    clearTimeout(this.relojReintentoGps);
+    this.relojReintentoGps = null;
+    this.dejarDeSeguir?.();
+    this.dejarDeSeguir = null;
+    this.claveSeguimiento = null;
+  }
+
+  // Permiso negado: #gpsPerdido. Si el seguimiento vigente murió (código 3: el plugin lo borró;
+  // o no pudo arrancar), se suelta y se vuelve a pedir en un rato: sin esto la posición quedaría
+  // congelada (presencia vieja, «Llegué» bloqueado). Los «sin señal» de un seguimiento vivo los
+  // resuelve el mismo GPS.
+  #alFallarSeguimiento(e, dejar) {
+    if (e?.code === 1) return this.#gpsPerdido(e);
+    if (!(e?.muerto || e?.code === 3) || this.destruido || this.dejarDeSeguir !== dejar) return;
+    this.#pararSeguimiento();
+    const espera = this.esperaReintentoGps || REINTENTO_GPS_MS.primero;
+    this.esperaReintentoGps = Math.min(espera * 2, REINTENTO_GPS_MS.maximo);
+    this.relojReintentoGps = setTimeout(() => {
+      this.relojReintentoGps = null;
+      // Con la app oculta se pide al volver (#alCambiarVisibilidad).
+      if (!appOculta()) this.#ajustarSeguimiento();
+    }, espera);
+  }
+
+  #alLeerGps(p) {
+    this.esperaReintentoGps = 0;
+    const recuperado = !this.estado.gpsReal;
+    if (recuperado) this.estado.gpsReal = true;
+    const primera = this.primeraLectura;
+    this.primeraLectura = false;
+    this.#moverA({ lat: p.lat, lng: p.lng, rumbo: p.rumbo ?? this.estado.pos?.rumbo ?? 0 });
+    // La central lo tenía como no disponible (sin GPS) o, al empezar el turno, con la posición
+    // de la última lectura (fuera de turno no se sigue el GPS): se anuncia ya.
+    if (this.estado.conectado && (recuperado || (primera && !this.estado.viaje))) this.#anunciar();
+    if (recuperado) this.#cambiar({});
+  }
+
+  // Al volver a la app: en turno o con servicio, que el seguimiento esté vivo; fuera de turno (no
+  // se sigue el GPS), después de un rato, una lectura suelta para que el mapa muestre dónde está.
+  #alCambiarVisibilidad(oculta) {
+    if (oculta) {
+      if (!this.ocultaDesde) this.ocultaDesde = Date.now();
+      return;
+    }
+    const fuera = this.ocultaDesde ? Date.now() - this.ocultaDesde : 0;
+    this.ocultaDesde = 0;
+    if (this.leyendoGps) return;
+    // En turno, con un servicio o esperando la primera lectura: si el seguimiento murió o no ha
+    // dado ninguna lectura (arrancó con la app oculta, donde Android no da la ubicación), se pide
+    // uno nuevo (el anterior se suelta: nunca quedan dos).
+    if (this.#modoGps()) {
+      if (!this.dejarDeSeguir || this.primeraLectura) {
+        this.esperaReintentoGps = 0;
+        this.#pararSeguimiento();
+        this.#ajustarSeguimiento();
+      }
+      return;
+    }
+    if (fuera >= RELEER_AL_VOLVER_MS && !this.dejarDeSeguir && !this.gpsNegado) this.#releerFueraDeTurno();
+  }
+
+  async #releerFueraDeTurno() {
+    const pos = await obtenerPosicion({ espera: 8000 });
+    // Mientras tanto pudo empezar el turno o un servicio (con su propio seguimiento).
+    if (this.destruido || this.dejarDeSeguir || this.leyendoGps || !pos.real) return;
+    this.estado.pos = { lat: pos.lat, lng: pos.lng, rumbo: this.estado.pos?.rumbo ?? 0 };
     this.#cambiar({});
   }
 
   #gpsPerdido(e) {
     // Solo el permiso negado; los «sin señal» momentáneos los resuelve el mismo GPS.
     if (e?.code !== 1) return;
-    this.dejarDeSeguir?.();
-    this.dejarDeSeguir = null;
+    this.gpsNegado = true;
+    this.#pararSeguimiento();
     if (!this.estado.gpsReal) return;
     this.estado.gpsReal = false;
     this.#avisar({ titulo: 'Sin permiso de ubicación', cuerpo: 'Actívalo para seguir recibiendo servicios.', tipo: 'error' });
@@ -832,7 +969,10 @@ class ControladorConductor extends Emisor {
       return false;
     }
     if (this.bus.estado === 'sin_conectar') this.bus.conectar();
-    if (!this.estado.gpsReal) {
+    // Fuera de turno no se sigue el GPS: la última lectura puede ser vieja (o la ubicación del
+    // sistema estar apagada desde entonces). Se lee ahora: así no se conecta sin GPS, y la primera
+    // presencia y la consulta de solicitudes salen con la posición actual.
+    if (!this.estado.gpsReal || !this.dejarDeSeguir) {
       this.buscandoGps = true;
       this.#cambiar({});
       try {
@@ -1121,6 +1261,8 @@ class ControladorConductor extends Emisor {
   #cambiar(cambios) {
     Object.assign(this.estado, cambios);
     if (this.real && ('viaje' in cambios || 'conectado' in cambios)) this.#guardarReal();
+    // Modo real: el GPS se sigue o se suelta según el turno y el servicio.
+    if (this.real) this.#ajustarSeguimiento();
     this.emit('cambio', this.estado);
   }
 
@@ -1142,10 +1284,14 @@ class ControladorConductor extends Emisor {
   }
 
   destruir() {
+    this.destruido = true;
     clearInterval(this.relojPresencia);
     clearTimeout(this.relojViajeActual);
+    clearTimeout(this.relojReintentoGps);
     this.recorrido?.detener();
+    this.dejarVisibilidad?.();
     this.dejarDeSeguir?.();
+    this.dejarDeSeguir = null;
     this.pasajeroSim?.detener();
     this.bus.cerrar();
   }
