@@ -585,7 +585,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
 
   function notaSinGps() {
     return p.estado.miPosicion?.real === false
-      ? `<p class="vb-nota-gps" role="note">${ic('info', 20)}<span>${N.PARADERO?.nombre ? `Usamos el ${esc(N.PARADERO.nombre.charAt(0).toLowerCase() + N.PARADERO.nombre.slice(1))}` : `Usamos el centro de ${esc(MARCA.pueblo || 'el municipio')}`}; mueve el mapa para ubicar tu punto.</span></p>`
+      ? `<p class="vb-nota-gps" role="note">${ic('info', 20)}<span>${N.PARADERO?.nombre ? `Usamos el ${esc(N.PARADERO.nombre.charAt(0).toLowerCase() + N.PARADERO.nombre.slice(1))}` : `Usamos el centro de ${esc(MARCA.pueblo || 'el municipio')}`}. Mueve el mapa para ubicar tu punto.</span></p>`
       : '';
   }
 

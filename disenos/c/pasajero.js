@@ -440,7 +440,7 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
                 <div class="c-recogida-texto"><small>Te recogemos en</small><strong data-dir-titulo>${esc(ui.origen.titulo)}</strong><span data-dir-detalle>${esc(ui.origen.detalle || '')}</span></div>
                 <button type="button" class="c-boton-icono c-boton-icono-chico" data-accion="mi-ubicacion" aria-label="Volver a mi ubicación">${icono('mira')}</button>
               </div>
-              <p class="c-nota-gps" data-sin-gps hidden>${icono('alerta')}<span>${N.PARADERO?.nombre ? `Usamos el ${esc(N.PARADERO.nombre.charAt(0).toLowerCase() + N.PARADERO.nombre.slice(1))}` : `Usamos el centro ${esc(dePueblo)}`}; mueve el mapa para ubicar tu punto.</span></p>
+              <p class="c-nota-gps" data-sin-gps hidden>${icono('alerta')}<span>${N.PARADERO?.nombre ? `Usamos el ${esc(N.PARADERO.nombre.charAt(0).toLowerCase() + N.PARADERO.nombre.slice(1))}` : `Usamos el centro ${esc(dePueblo)}`}. Mueve el mapa para ubicar tu punto.</span></p>
               <div class="c-atajos" role="list" aria-label="Destinos rápidos">
                 ${atajosLista.map((a, i) => `<button type="button" role="listitem" class="c-chip c-atajo" data-accion="atajo" data-i="${i}">${icono(a.icono)}<span>${esc(a.texto)}</span></button>`).join('')}
               </div>
@@ -1319,7 +1319,7 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
       b.classList.add('c-girando-boton');
       const pos = await p.actualizarMiPosicion();
       b.classList.remove('c-girando-boton');
-      if (!pos.real) avisar({ titulo: 'No pudimos leer tu GPS', cuerpo: `${N.PARADERO?.nombre ? `Usamos el ${N.PARADERO.nombre.charAt(0).toLowerCase() + N.PARADERO.nombre.slice(1)}` : `Usamos el centro ${dePueblo}`}; mueve el mapa para ubicar tu punto.`, tipo: 'alerta' });
+      if (!pos.real) avisar({ titulo: 'No pudimos leer tu GPS', cuerpo: `${N.PARADERO?.nombre ? `Usamos el ${N.PARADERO.nombre.charAt(0).toLowerCase() + N.PARADERO.nombre.slice(1)}` : `Usamos el centro ${dePueblo}`}. Mueve el mapa para ubicar tu punto.`, tipo: 'alerta' });
       else m.ponerYo(pos);
       ui.origen = { lat: pos.lat, lng: pos.lng, titulo: 'Ubicando…', detalle: '' };
       pintarDireccionOrigen();

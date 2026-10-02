@@ -116,8 +116,8 @@ export const TARIFAS_OFICIALES = Boolean(N.TARIFAS_OFICIALES);
 // prohíbe recoger en el parque principal) o, si no hay, el centro del pueblo.
 const minuscula = (t) => (t ? t.charAt(0).toLowerCase() + t.slice(1) : t);
 export const TEXTO_SIN_GPS = N.PARADERO?.nombre
-  ? `Usamos el ${minuscula(limpio(N.PARADERO.nombre))}; mueve el mapa para ubicar tu punto.`
-  : `Usamos el centro de ${PUEBLO}; mueve el mapa para ubicar tu punto.`;
+  ? `Usamos el ${minuscula(limpio(N.PARADERO.nombre))}. Mueve el mapa para ubicar tu punto.`
+  : `Usamos el centro de ${PUEBLO}. Mueve el mapa para ubicar tu punto.`;
 // Lugares de la ficha donde no se puede recoger (noRecoger: el parque principal de El Rosal).
 export const LUGARES_SIN_RECOGIDA = (N.LUGARES || []).filter((l) => l && l.noRecoger && Number.isFinite(l.lat) && Number.isFinite(l.lng));
 
