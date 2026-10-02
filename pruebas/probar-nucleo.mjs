@@ -18,6 +18,46 @@ async function pagina() {
 }
 const ok = (c, m) => { console.log((c ? '✔' : '✘') + ' ' + m); if (!c) process.exitCode = 1; };
 
+// 0) Tarifas oficiales de El Rosal (Decreto 05 de 2026) en la ficha de Cootransrural:
+//    urbano $6.100, un destino de la zona 5, uno sin ubicar, de vereda a vereda (estimada),
+//    otro municipio (referencia) y el paradero como recogida por defecto (Decreto 89 de 2026).
+const t = await pagina();
+const rt = await t.evaluate(() => {
+  const { N } = window;
+  const par = N.PUNTO_RECOGIDA;
+  const liceo = N.LUGARES.find((l) => l.id === 'liceo');
+  const z5 = N.DESTINOS_TARIFA.find((d) => d.destino === 'Escuela Buenavista');
+  const balcones = N.DESTINOS_TARIFA.find((d) => d.destino === 'Casa Balcones');
+  const resumen = (x) => ({ total: x.total, tipo: x.tipo, etiqueta: x.etiqueta, concepto: x.detalle[0]?.concepto, nota: x.nota, url: x.fuente?.url || '' });
+  return {
+    paradero: { par, parque: N.LUGARES.find((l) => l.id === 'parque'), lugar: N.LUGARES.find((l) => l.id === 'paradero')?.nombre },
+    total: N.DESTINOS_TARIFA.length,
+    zonas: N.zonasTarifa().length,
+    urbano: resumen(N.calcularTarifa({ origen: par, destino: { ...liceo, titulo: liceo.nombre }, km: 0.6 })),
+    zona5: resumen(N.calcularTarifa({ origen: par, destino: N.lugarDeTarifa(z5), km: 5 })),
+    cerca5: resumen(N.calcularTarifa({ origen: par, destino: { lat: z5.lat + 0.0008, lng: z5.lng, titulo: 'Punto en el mapa' }, km: 5 })),
+    balcones: { ...resumen(N.calcularTarifa({ origen: par, destino: { titulo: balcones.destino, idTarifa: balcones.id } })), precision: N.textoPrecision(balcones), buscado: N.buscarTarifas('casa balcones').map((d) => d.destino) },
+    vereda: resumen(N.calcularTarifa({ origen: { lat: 4.8755, lng: -74.272 }, destino: N.lugarDeTarifa(z5), km: 3 })),
+    lejos: resumen(N.calcularTarifa({ origen: par, destino: { lat: 4.86, lng: -74.29, titulo: 'Punto en el mapa' }, km: 4 })),
+    madrid: resumen(N.calcularTarifa({ origen: par, destino: { ...N.LUGARES.find((l) => l.id === 'madrid'), titulo: 'Madrid' } })),
+    sinDestino: resumen(N.calcularTarifa({ origen: par, destino: null })),
+    busqueda: N.buscarLocal('escuela buenavista').map((x) => ({ titulo: x.titulo, idTarifa: x.idTarifa || '' })),
+  };
+});
+console.log(JSON.stringify(rt, null, 1));
+ok(rt.total === 191 && rt.zonas === 10, `tabla oficial: ${rt.total} destinos en ${rt.zonas} zonas`);
+ok(rt.urbano.total === 6100 && rt.urbano.tipo === 'oficial' && rt.urbano.etiqueta === 'Tarifa oficial · Decreto 05 de 2026', `urbano: $6.100 oficial («${rt.urbano.concepto}»)`);
+ok(rt.zona5.total === 15600 && rt.zona5.tipo === 'oficial' && /decreto-no052026/.test(rt.zona5.url), `zona 5: Escuela Buenavista $15.600 oficial con la fuente («${rt.zona5.concepto}»)`);
+ok(rt.cerca5.total === 15600 && rt.cerca5.tipo === 'oficial', 'zona 5: un punto a 90 m de la escuela también cobra el precio oficial');
+ok(rt.balcones.total === 17900 && rt.balcones.tipo === 'oficial' && rt.balcones.precision === 'Sin ubicar en el mapa' && rt.balcones.buscado.includes('Casa Balcones'), 'sin ubicar: Casa Balcones $17.900 oficial, se encuentra en la tabla aunque no esté en el mapa');
+ok(rt.vereda.tipo === 'estimada' && /fuera del casco urbano/.test(rt.vereda.nota), `de una vereda a otra: estimada y lo dice (${rt.vereda.total})`);
+ok(rt.lejos.tipo === 'estimada' && rt.lejos.total === 4200 + 4 * 1900, `destino fuera de la tabla: estimada con banderazo y km estimados (${rt.lejos.total})`);
+ok(rt.madrid.tipo === 'referencia' && rt.madrid.total === 30000 && rt.madrid.etiqueta === 'Precio de referencia', 'otro municipio: precio de referencia (Madrid $30.000, sin cifras nuevas)');
+ok(rt.sinDestino.total === 6100, 'sin destino: desde la mínima oficial ($6.100)');
+ok(rt.busqueda.some((x) => x.titulo === 'Escuela Buenavista' && x.idTarifa), 'la búsqueda de lugares trae los destinos de la tabla oficial');
+ok(rt.paradero.lugar === 'Paradero de taxis (Cra. 9, salón cultural)' && rt.paradero.par.lat === 4.85272 && rt.paradero.par.lng === -74.26284 && Boolean(rt.paradero.parque?.noRecoger), 'recogida por defecto: el paradero de la Cra. 9 (no el parque)');
+await t.close();
+
 // 1) Pasajero con conductor simulado
 const a = await pagina();
 const r1 = await a.evaluate(async () => {

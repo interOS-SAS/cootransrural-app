@@ -2856,3 +2856,13 @@
 /* QR Bre-B de prueba para «¿Probar con otro celular?» */
 .vb-qr-breb { padding: 8px; border-width: 3px; }
 .vb-qr-breb .ct-breb { box-shadow: none; }
+
+/* Tabla oficial de tarifas por zonas (Cootransrural: Decreto 05 de 2026) */
+.vb-aviso-oficial a { color: inherit; font-weight: 700; text-decoration: underline; }
+.vb-zonas-tarifa details { border-top: 1px solid rgba(0, 0, 0, .1); }
+.vb-zonas-tarifa summary { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; min-height: 52px; padding: 12px 2px; cursor: pointer; font-size: 18px; }
+.vb-zonas-tarifa summary span { color: var(--vb-texto-2, #4A5A50); font-size: 16px; }
+.vb-zonas-tarifa ul { list-style: none; margin: 0 0 12px; padding: 0; }
+.vb-zonas-tarifa li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 2px; border-top: 1px dashed rgba(0, 0, 0, .12); font-size: 17px; }
+.vb-zonas-tarifa li small { display: block; font-size: 14px; color: var(--vb-texto-2, #4A5A50); }
+.vb-zonas-tarifa li b { white-space: nowrap; font-variant-numeric: tabular-nums; }

@@ -41,9 +41,11 @@ export function recorrer(coords, ms, alAvanzar, paso = 500) {
   };
 }
 
-// Puntos cercanos a un centro, preferiblemente lugares reales de la lista.
-function puntosCerca(centro, n, radioKm = 1.6) {
-  const cercanos = LUGARES.filter((l) => distanciaKm(l, centro) < radioKm && distanciaKm(l, centro) > 0.15);
+// Puntos cercanos a un centro, preferiblemente lugares reales de la lista. Para recoger
+// (recoger: true) no se usan los lugares donde está prohibido (noRecoger: el parque principal
+// de El Rosal, por el Decreto 89 de 2026).
+function puntosCerca(centro, n, radioKm = 1.6, { recoger = false } = {}) {
+  const cercanos = LUGARES.filter((l) => distanciaKm(l, centro) < radioKm && distanciaKm(l, centro) > 0.15 && !(recoger && l.noRecoger));
   const puntos = [];
   for (let i = 0; i < n; i++) {
     if (cercanos.length > 2 && Math.random() < 0.7) {
@@ -235,7 +237,7 @@ export class ConductorSimulado {
 /* Pasajero simulado (para la app del conductor)                      */
 /* ------------------------------------------------------------------ */
 export async function crearSolicitudSimulada(posConductor) {
-  const [origen] = puntosCerca(posConductor, 1, 1.3);
+  const [origen] = puntosCerca(posConductor, 1, 1.3, { recoger: true });
   let destino;
   if (Math.random() < 0.25) {
     // A veces un viaje intermunicipal.

@@ -71,7 +71,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
   const $$ = (s) => [...vista.querySelectorAll(s)];
 
   /* ---------------- estado de la interfaz ---------------- */
-  const posInicial = p.estado.miPosicion || N.CENTRO;
+  const posInicial = p.estado.miPosicion || N.PUNTO_RECOGIDA || N.CENTRO;
   const ui = {
     pantalla: 'inicio',
     clave: '',
@@ -159,7 +159,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     m.quitarDestino();
     m.quitarRuta();
     const e = p.estado;
-    // Sin GPS la posición es el centro del pueblo: no se marca como «aquí estás».
+    // Sin GPS la posición es el paradero de taxis de la ficha o el centro del pueblo: no se marca como «aquí estás».
     if (e.miPosicion && e.miPosicion.real !== false) m.ponerYo(e.miPosicion);
     interactivo(modo !== 'vista');
     // La vista previa del inicio es solo para mirar: fuera del orden del teclado
@@ -585,7 +585,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
 
   function notaSinGps() {
     return p.estado.miPosicion?.real === false
-      ? `<p class="vb-nota-gps" role="note">${ic('info', 20)}<span>Usamos el centro de ${esc(MARCA.pueblo || 'el municipio')}; mueve el mapa para ubicar tu punto.</span></p>`
+      ? `<p class="vb-nota-gps" role="note">${ic('info', 20)}<span>${N.PARADERO?.nombre ? `Usamos el ${esc(N.PARADERO.nombre.charAt(0).toLowerCase() + N.PARADERO.nombre.slice(1))}` : `Usamos el centro de ${esc(MARCA.pueblo || 'el municipio')}`}; mueve el mapa para ubicar tu punto.</span></p>`
       : '';
   }
 
@@ -906,10 +906,10 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
         </section>
 
         <section class="vb-tarjeta vb-tarifa" aria-labelledby="vb-tarifa-t">
-          <div class="vb-tarifa-cab"><h2 id="vb-tarifa-t">Tarifa estimada</h2><span class="vb-chip-ejemplo">Tarifa de ejemplo</span></div>
+          <div class="vb-tarifa-cab"><h2 id="vb-tarifa-t">${N.TARIFAS.ejemplo ? 'Tarifa estimada' : 'Valor del viaje'}</h2><span class="vb-chip-ejemplo" data-chip-tarifa ${N.TARIFAS.ejemplo ? '' : 'hidden'}>${N.TARIFAS.ejemplo ? 'Tarifa de ejemplo' : ''}</span></div>
           <div class="vb-tarifa-total" data-tarifa-total><span class="vb-esqueleto"></span></div>
           <details class="vb-detalle"><summary>Ver cómo se calcula</summary><ul data-tarifa-detalle></ul></details>
-          <p class="vb-letra-chica">Valores de ejemplo mientras la ${MARCA.tipo} publica sus tarifas oficiales.</p>
+          <p class="vb-letra-chica" data-tarifa-nota>${N.TARIFAS.ejemplo ? `Valores de ejemplo mientras la ${MARCA.tipo} publica sus tarifas oficiales.` : ''}</p>
         </section>
 
         <section class="vb-bloque" aria-labelledby="vb-pago-t">
@@ -979,6 +979,17 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       return;
     }
     const t = c.tarifa;
+    // Con tarifas oficiales (Cootransrural): el chip dice si es oficial, estimada o de referencia.
+    if (!N.TARIFAS.ejemplo) {
+      const chip = $('[data-chip-tarifa]');
+      if (chip) {
+        chip.textContent = t.etiqueta || N.etiquetaTarifa(t);
+        chip.dataset.tipo = t.tipo || '';
+        chip.hidden = false;
+      }
+      const nota = $('[data-tarifa-nota]');
+      if (nota) nota.textContent = (t.notas || []).join(' ');
+    }
     total.innerHTML = `${ui.destino ? '' : '<small>Desde</small> '}${N.pesos(t.total)}${t.descuento ? ` <s>${N.pesos(t.total + t.descuento)}</s>` : ''}`;
     $('[data-tarifa-detalle]').innerHTML = t.detalle.map((x) => `<li><span>${esc(x.concepto)}</span><b class="${x.valor < 0 ? 'menos' : ''}">${x.valor < 0 ? '−' : ''}${N.pesos(Math.abs(x.valor))}</b></li>`).join('')
       + `<li class="total"><span>Total estimado</span><b>${N.pesos(t.total)}</b></li>`;
@@ -1468,9 +1479,24 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
 
   function htmlTarifas() {
     const T = N.TARIFAS;
+    // Tabla oficial (Cootransrural: Decreto 05 de 2026). Banderazo y valor por km, estimados.
+    const oficiales = Boolean(N.TARIFAS_OFICIALES);
+    const fuente = N.FUENTE_TARIFAS;
+    const estimados = new Set(Array.isArray(T.estimados) ? T.estimados : []);
+    const zonas = oficiales ? N.zonasTarifa() : [];
+    const totalDestinos = zonas.reduce((n, z) => n + z.destinos.length, 0);
+    const aviso = T.ejemplo
+      ? `<p class="vb-aviso-ejemplo">${ic('info', 22)}<span><b>Tarifas de ejemplo.</b> Son valores de prueba para esta demostración; los oficiales los define la ${MARCA.tipo}.</span></p>`
+      : fuente ? `<p class="vb-aviso-ejemplo vb-aviso-oficial" data-aviso-oficial>${ic('check', 22)}<span><b>Tarifas oficiales · ${esc(fuente.acto)}.</b> ${esc([fuente.entidad, fuente.fecha].filter(Boolean).join(', '))}${oficiales ? `: precio cerrado desde ${esc(N.ORIGEN_OFICIAL)} a ${totalDestinos} destinos.` : '.'}${fuente.url ? ` <a href="${esc(fuente.url)}" target="_blank" rel="noopener" data-enlace-decreto>Ver el decreto</a>` : ''}</span></p>` : '';
+    const zonasHTML = !oficiales ? '' : `<section class="vb-tarjeta vb-zonas-tarifa" data-tabla-oficial>
+        <h2>${ic('ruta', 24)} ${esc(`Precios desde ${N.ORIGEN_OFICIAL}`)}</h2>
+        <p class="vb-sub">${esc(`${fuente?.acto || 'Tabla oficial'}: ${totalDestinos} destinos en ${zonas.length} zonas. Toca una zona.`)}</p>
+        ${zonas.map((z) => `<details class="vb-zona" data-zona="${z.zona}"><summary><b>Zona ${z.zona}</b> <span>${esc(z.sector)} · ${z.destinos.length}</span></summary>
+          <ul>${z.destinos.map((d) => { const nota = N.textoPrecision(d); return `<li data-id="${esc(d.id)}"><span>${esc(d.destino)}${nota ? `<small>${esc(nota)}</small>` : ''}</span><b>${N.pesos(d.valor)}</b></li>`; }).join('')}</ul></details>`).join('')}
+      </section>`;
     return `<div class="vb-desliza vb-tarifas">
       ${cabSeccion('Tarifas y rutas', 'Para que sepas cuánto vale antes de subir')}
-      <p class="vb-aviso-ejemplo">${ic('info', 22)}<span><b>Tarifas de ejemplo.</b> Son valores de prueba para esta demostración; los oficiales los define la ${MARCA.tipo}.</span></p>
+      ${aviso}
       <section class="vb-ofertas">
         <button type="button" class="vb-oferta oro" data-accion="programar"><span class="vb-oferta-num">−10 %</span><span><b>Programa con 24 h</b><small>Pide con un día de anticipación y paga menos.</small></span>${ic('flecha')}</button>
         <button type="button" class="vb-oferta verde" data-accion="ir" data-pantalla="fidelidad"><span class="vb-oferta-num">50 %</span><span><b>Cada 10 viajes</b><small>El siguiente viaje va a mitad de precio.</small></span>${ic('flecha')}</button>
@@ -1478,16 +1504,18 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       <section class="vb-tarjeta vb-reglas">
         <h2>${ic('taxi', 24)} ${esc(MARCA.pueblo ? `Dentro de ${MARCA.pueblo}` : 'Dentro del municipio')}</h2>
         <dl>
-          <div><dt>Carrera mínima</dt><dd>${N.pesos(T.minimaUrbana)}</dd></div>
-          <div><dt>Banderazo</dt><dd>${N.pesos(T.banderazo)}</dd></div>
-          <div><dt>Por kilómetro</dt><dd>${N.pesos(T.porKm)}</dd></div>
+          <div><dt>Carrera mínima${oficiales ? ' <small>(oficial)</small>' : ''}</dt><dd>${N.pesos(T.minimaUrbana)}</dd></div>
+          <div><dt>Banderazo${estimados.has('banderazo') ? ' <small>(estimado)</small>' : ''}</dt><dd>${N.pesos(T.banderazo)}</dd></div>
+          <div><dt>Por kilómetro${estimados.has('porKm') ? ' <small>(estimado)</small>' : ''}</dt><dd>${N.pesos(T.porKm)}</dd></div>
           ${T.recargoNocturno > 0 ? `<div><dt>Recargo nocturno <small>(${sinCorte(hora12(T.nocheDesde))} a ${sinCorte(hora12(T.nocheHasta))})</small></dt><dd>+${N.pesos(T.recargoNocturno)}</dd></div>` : ''}
           ${T.recargoDominical > 0 ? `<div><dt>Domingos y festivos</dt><dd>+${N.pesos(T.recargoDominical)}</dd></div>` : ''}
         </dl>
+        ${oficiales ? [T.notaRecargos, T.notaEstimacion].filter(Boolean).map((x) => `<p class="vb-letra-chica">${esc(x)}</p>`).join('') : ''}
       </section>
+      ${zonasHTML}
       <section class="vb-tarjeta vb-rutas">
         <h2>${ic('ruta', 24)} ${esc(MARCA.pueblo ? `Rutas desde ${MARCA.pueblo}` : 'Rutas a otros municipios')}</h2>
-        <p class="vb-sub">Tarifa fija por trayecto. Toca una ruta para pedirla.</p>
+        <p class="vb-sub">${oficiales && T.rutasReferencia ? 'Precio de referencia por trayecto, por confirmar con la cooperativa (el decreto no fija viajes a otros municipios). Toca una ruta para pedirla.' : 'Tarifa fija por trayecto. Toca una ruta para pedirla.'}</p>
         <ul>${N.RUTAS.map((r) => `<li><button type="button" data-accion="ruta-pedir" data-id="${esc(r.id)}">
             <span class="vb-ruta-nombre"><b>${esc(r.destino)}</b><small>${r.km} km · ${N.minutosTexto(r.min)}</small></span>
             <span class="vb-ruta-valor">${N.pesos(r.valor)}</span>${ic('flecha', 20)}</button></li>`).join('')}</ul>

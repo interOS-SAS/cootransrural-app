@@ -98,6 +98,14 @@ m.ajustar([p1, p2], { margenAbajo }); m.centrar(p, zoom); m.centro(); m.alMovers
 
 - `N.buscarDirecciones(texto)`, `N.buscarLocal(texto)`, `N.direccionDe(p)`, `N.obtenerPosicion()`
 - `N.LUGARES`, `N.CATEGORIAS`, `N.RUTAS`, `N.TARIFAS`, `N.EMPRESA`, `N.calcularTarifa(...)`, `N.progresoFidelidad(n)`
+- `N.calcularTarifa(...)` devuelve además `tipo` (`'oficial'` | `'estimada'` | `'referencia'`),
+  `etiqueta` (el texto del chip: «Tarifa oficial · Decreto 05 de 2026», «Tarifa estimada»,
+  «Precio de referencia» o, en las fichas de ejemplo, «Tarifa de ejemplo»), `fuente`,
+  `destinoOficial` y `notas`. Tabla oficial: `N.TARIFAS_OFICIALES`, `N.FUENTE_TARIFAS`,
+  `N.ORIGEN_OFICIAL`, `N.DESTINOS_TARIFA`, `N.zonasTarifa()`, `N.buscarTarifas(texto)`,
+  `N.destinoOficial(punto)`, `N.lugarDeTarifa(d)`, `N.textoPrecision(d)`, `N.enCascoUrbano(p)`.
+- `N.PARADERO` y `N.PUNTO_RECOGIDA`: sin GPS, `N.obtenerPosicion()` devuelve el paradero de
+  la ficha (si lo hay) en vez del centro del pueblo.
 - `N.qrSVG(texto, { redondeado, color, fondo })`, `N.escanearQR(video, alLeer)`, `N.urlDescarga({ movil })`
 - `N.pedirPermisoNotificaciones()`, `N.prepararSonido()`, `N.sonar(tipo)`
 - `N.instalar()`, `N.puedeInstalar()`, `N.instruccionesInstalacion()`, `N.yaInstalada()`

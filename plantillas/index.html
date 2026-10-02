@@ -382,8 +382,9 @@
         <div class="encabezado revelar">
           <span class="antetitulo">Tarifas y rutas</span>
           <h2 id="titulo-tarifas">Sabes cuánto pagas antes de subirte</h2>
-          <p class="lead">TaxiCun calcula la tarifa con la ruta real. Para los viajes más comunes desde {{EMPRESA.pueblo}} hay tarifa fija.</p>
+          <p class="lead">{{tarifas_lead}}</p>
 {{#si tarifas_ejemplo}}          <p class="aviso-ejemplo"><svg class="icono"><use href="#i-info"/></svg>{{tarifas_nota}}</p>
+{{/si}}{{#si tarifas_oficial}}          <p class="aviso-ejemplo aviso-oficial" id="aviso-oficial"><svg class="icono"><use href="#i-check"/></svg><span>{{tarifas_nota}}{{#si tarifas_fuente.url}} <a href="{{tarifas_fuente.url}}" target="_blank" rel="noopener">Ver el {{tarifas_fuente.acto}}</a>{{/si}}</span></p>
 {{/si}}
         </div>
         <figure class="foto-marco banda-sabana revelar">
@@ -394,8 +395,8 @@
         <div class="tarifas-rejilla">
           <div class="revelar desde-izq">
             <div class="urbanas" id="urbanas">
-              <div class="urbana"><span>Carrera mínima</span><b>{{tarifa_inicial.minima}}</b><small>Dentro del casco urbano</small></div>
-              <div class="urbana"><span>Por recorrido</span><b>{{tarifa_inicial.banderazo}}</b><small>de arranque + {{tarifa_inicial.km}} por km</small></div>
+              <div class="urbana"><span>Carrera mínima</span><b>{{tarifa_inicial.minima}}</b><small>{{tarifa_inicial.minima_texto}}</small></div>
+              <div class="urbana"><span>{{tarifa_inicial.recorrido_titulo}}</span><b>{{tarifa_inicial.banderazo}}</b><small>{{tarifa_inicial.recorrido_texto}}</small></div>
 {{#si tarifa_inicial.hay_nocturno}}              <div class="urbana"><span>Recargo nocturno</span><b>+{{tarifa_inicial.nocturno}}</b><small>{{tarifa_inicial.horario_nocturno}}</small></div>
 {{/si}}
 {{#si tarifa_inicial.hay_dominical}}              <div class="urbana"><span>Domingos y festivos</span><b>+{{tarifa_inicial.dominical}}</b><small>Todo el día</small></div>
@@ -407,12 +408,12 @@
               <select id="cotizar-destino" name="destino"><option>Cargando destinos…</option></select>
               <label class="casilla"><input type="checkbox" id="cotizar-programado"> Lo programo con 24 horas de anticipación</label>
               <div class="cotizacion" id="cotizacion" aria-live="polite"></div>
-              <p class="cotizador-nota">Calculado con la hora actual (incluye recargos si aplican).</p>
+              <p class="cotizador-nota">{{cotizador_nota}}</p>
             </form>
           </div>
           <div class="tabla-caja revelar desde-der">
-            <h3>Rutas con tarifa fija desde {{EMPRESA.pueblo}}</h3>
-            <p>Tiempos aproximados con tráfico normal.</p>
+            <h3>{{tabla_rutas_titulo}}</h3>
+            <p>{{tabla_rutas_texto}}</p>
             <table>
               <thead><tr><th scope="col">Destino</th><th scope="col" class="col-km">Distancia</th><th scope="col">Tiempo</th><th scope="col">Tarifa</th></tr></thead>
               <tbody id="tabla-rutas">
@@ -421,7 +422,20 @@
             </table>
           </div>
         </div>
-      </div>
+{{#si tarifas_oficial}}        <div class="tabla-caja tabla-oficial revelar" id="tabla-oficial">
+          <h3>Precios desde {{tarifas_origen}} · {{tarifas_fuente.acto}}</h3>
+          <p>{{tarifas_total}} destinos del municipio en zonas, con precio cerrado. Toca una zona para ver sus destinos.</p>
+{{#cada tarifas_zonas}}          <details class="zona-tarifa">
+            <summary><span><b>Zona {{zona}}</b> · {{sector}}</span><small>{{cuantos}} · {{rango}}</small></summary>
+            <table>
+              <thead><tr><th scope="col">Destino</th><th scope="col">Tarifa</th></tr></thead>
+              <tbody>
+{{#cada destinos}}                <tr><td><span class="destino">{{destino}}</span>{{#si nota}}<small class="nota-destino">{{nota}}</small>{{/si}}</td><td><b>{{valor}}</b></td></tr>
+{{/cada}}              </tbody>
+            </table>
+          </details>
+{{/cada}}        </div>
+{{/si}}      </div>
     </section>
 
     <!-- ============ NOSOTROS ============ -->
@@ -759,7 +773,7 @@
       <div class="pie-base">
 {{#si es_propuesta}}        <span>© <span id="anio">2026</span> {{proveedor.nombre}} · Propuesta de TaxiCun para {{EMPRESA.nombre}}.</span>
 {{/si}}{{#no es_propuesta}}        <span>© <span id="anio">2026</span> {{EMPRESA.nombre}}. Todos los derechos reservados.</span>
-{{/no}}        <span>App en demostración: tarifas de ejemplo y pagos de prueba. <a href="privacidad/">Privacidad</a></span>
+{{/no}}        <span>{{pie_demo}} <a href="privacidad/">Privacidad</a></span>
         <span class="pie-interos">App TaxiCun · desarrollada por <a href="{{proveedor.web}}" target="_blank" rel="noopener">{{proveedor.nombre}}</a>{{#si es_principal}} · <a class="discreto" href="{{RAIZ}}cooperativas/">Cooperativas</a>{{/si}}</span>
       </div>
     </div>

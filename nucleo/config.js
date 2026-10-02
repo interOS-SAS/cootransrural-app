@@ -46,6 +46,11 @@ export const TIPO_EMPRESA = ficha.EMPRESA?.tipo === 'empresa' ? 'empresa' : 'coo
 export const COLORES = ficha.colores || {};
 export const CENTRO = ficha.CENTRO;
 export const ZONA = ficha.ZONA;
+// Paradero oficial de taxis, si la ficha lo trae (El Rosal: Decreto 89 de 2026, Cra. 9 junto
+// al salón cultural; prohíbe recoger en el parque principal). Es el punto de recogida que la
+// app propone cuando no hay GPS; sin paradero, el centro del pueblo.
+export const PARADERO = ficha.PARADERO && Number.isFinite(ficha.PARADERO.lat) && Number.isFinite(ficha.PARADERO.lng) ? ficha.PARADERO : null;
+export const PUNTO_RECOGIDA = PARADERO ? { lat: PARADERO.lat, lng: PARADERO.lng } : CENTRO;
 
 // Quién desarrolla la app (pie de página y franja de propuesta).
 export const PROVEEDOR = { nombre: 'interOS', web: 'https://interos.com.co' };

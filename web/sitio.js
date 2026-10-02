@@ -183,9 +183,11 @@ function tarifas() {
   const T = N.TARIFAS || {};
   const urbanas = $('#urbanas');
   // Si la ficha no trae todas las tarifas, se deja lo que puso la plantilla (sin «NaN»).
+  // Con tarifas oficiales (Cootransrural) se deja lo que puso la plantilla: dice qué es oficial
+  // (la mínima del decreto) y qué es estimado (el recorrido).
   const completas = ['minimaUrbana', 'banderazo', 'porKm', 'recargoNocturno', 'recargoDominical', 'nocheDesde', 'nocheHasta']
     .every((k) => Number.isFinite(T[k]));
-  if (completas) urbanas.innerHTML = `
+  if (completas && !N.TARIFAS_OFICIALES) urbanas.innerHTML = `
     <div class="urbana"><span>Carrera mínima</span><b>${N.pesos(T.minimaUrbana)}</b><small>Dentro del casco urbano</small></div>
     <div class="urbana"><span>Por recorrido</span><b>${N.pesos(T.banderazo)}</b><small>de arranque + ${N.pesos(T.porKm)} por km</small></div>
     ${T.recargoNocturno > 0 ? `<div class="urbana"><span>Recargo nocturno</span><b>+${N.pesos(T.recargoNocturno)}</b><small>De ${horasTexto(T.nocheDesde)} a ${horasTexto(T.nocheHasta)}</small></div>` : ''}
@@ -202,33 +204,48 @@ function tarifas() {
       <td><b>${N.pesos(r.valor)}</b></td>
     </tr>`).join('');
 
-  // Cotizador: usa el mismo cálculo de la app (núcleo).
+  // Cotizador: usa el mismo cálculo de la app (núcleo). Sale del paradero de taxis si la ficha
+  // lo trae (El Rosal: Decreto 89 de 2026, no se recoge en el parque) o, si no, del parque.
   const select = $('#cotizar-destino');
   const programado = $('#cotizar-programado');
   const salida = $('#cotizacion');
   const lugares = new Map(N.LUGARES.map((l) => [l.id, l]));
-  select.innerHTML = `<option value="urbano">Dentro de ${N.escaparHTML(E.pueblo)} (carrera mínima)</option>` +
-    rutas.map((r) => `<option value="${r.id}">${N.escaparHTML(r.destino)}</option>`).join('');
+  const origenCotizador = N.PARADERO || N.LUGARES.find((l) => l.id === 'parque') || N.CENTRO;
+  const esc = N.escaparHTML;
+  // Con tabla oficial: un grupo por zona con sus destinos (precio del decreto) y, aparte, los
+  // otros municipios (precio de referencia).
+  const oficiales = Boolean(N.TARIFAS_OFICIALES);
+  const destinosTarifa = new Map((N.DESTINOS_TARIFA || []).map((d) => [`t:${d.id}`, d]));
+  select.innerHTML = `<option value="urbano">Dentro de ${esc(E.pueblo)} (${oficiales ? 'tarifa única' : 'carrera mínima'})</option>` +
+    (oficiales
+      ? N.zonasTarifa().map((z) => `<optgroup label="${esc(`Zona ${z.zona} · ${z.sector}`)}">${z.destinos.map((d) => `<option value="t:${esc(d.id)}">${esc(d.destino)}</option>`).join('')}</optgroup>`).join('')
+        + (rutas.length ? `<optgroup label="Otros municipios (precio de referencia)">${rutas.map((r) => `<option value="${r.id}">${esc(r.destino)}</option>`).join('')}</optgroup>` : '')
+      : rutas.map((r) => `<option value="${r.id}">${esc(r.destino)}</option>`).join(''));
   select.value = rutas.find((r) => r.id === 'aeropuerto') ? 'aeropuerto' : rutas[0]?.id || 'urbano';
 
   const calcular = () => {
-    const origen = N.LUGARES.find((l) => l.id === 'parque') || N.CENTRO;
-    const destino = select.value === 'urbano' ? (lugares.get('alcaldia') || origen) : lugares.get(select.value);
+    const origen = origenCotizador;
+    const tarifa = destinosTarifa.get(select.value);
+    // Un destino de la tabla puede no estar en el mapa: el precio sale por su id.
+    const destino = tarifa ? { titulo: tarifa.destino, idTarifa: tarifa.id, lat: tarifa.lat, lng: tarifa.lng }
+      : select.value === 'urbano' ? (lugares.get('alcaldia') || origen) : lugares.get(select.value);
     if (!destino) return;
     const t = N.calcularTarifa({ origen, destino, programado: programado.checked, km: select.value === 'urbano' ? 0.5 : undefined });
     if (!Number.isFinite(t.total)) {
       salida.textContent = `La ${N.TIPO_EMPRESA || 'cooperativa'} está confirmando sus tarifas. Muy pronto podrás calcular tu viaje aquí.`;
       return;
     }
+    const oficial = !t.ejemplo && t.tipo === 'oficial';
     salida.innerHTML = `
-      <div class="cotizacion-total"><span>Total estimado</span><b>${N.pesos(t.total)}</b></div>
-      <ul>${t.detalle.map((d) => `<li class="${d.valor < 0 ? 'menos' : ''}"><span>${N.escaparHTML(d.concepto)}</span><span>${d.valor < 0 ? '−' + N.pesos(-d.valor) : N.pesos(d.valor)}</span></li>`).join('')}</ul>`;
+      <div class="cotizacion-total"><span>${oficial && !t.descuento ? 'Total' : 'Total estimado'}</span><b>${N.pesos(t.total)}</b></div>
+      ${t.ejemplo ? '' : `<p class="cotizacion-tipo" data-tipo="${esc(t.tipo || '')}">${esc(t.etiqueta || N.etiquetaTarifa(t))}</p>`}
+      <ul>${t.detalle.map((d) => `<li class="${d.valor < 0 ? 'menos' : ''}"><span>${esc(d.concepto)}</span><span>${d.valor < 0 ? '−' + N.pesos(-d.valor) : N.pesos(d.valor)}</span></li>`).join('')}</ul>`;
   };
   // Ejemplo de la oferta del 10 %: viaje al aeropuerto un lunes a las 10:00 a. m.
   const aeropuerto = lugares.get('aeropuerto');
   const ejemplo = $('#ejemplo-programado');
   if (aeropuerto && ejemplo) {
-    const origen = N.LUGARES.find((l) => l.id === 'parque') || N.CENTRO;
+    const origen = origenCotizador;
     const fecha = new Date('2026-10-05T10:00:00-05:00');
     const normal = N.calcularTarifa({ origen, destino: aeropuerto, fecha });
     const con = N.calcularTarifa({ origen, destino: aeropuerto, fecha, programado: true });

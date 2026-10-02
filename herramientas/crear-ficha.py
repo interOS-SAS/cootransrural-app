@@ -61,6 +61,15 @@ NOMBRES = ['Jorge Castañeda', 'Luz Marina Rojas', 'Édgar Molina', 'Carlos Rodr
            'Fabio Cruz', 'Héctor Bernal', 'Nelson Pinzón', 'Martha Garzón', 'Álvaro Cifuentes', 'Yolanda Prieto',
            'Germán Quintero', 'Rubén Sarmiento', 'Diana Forero', 'Jairo Moreno']
 
+# Tarifas de EJEMPLO para las fichas nuevas (las que tenía Cootransrural antes de sus tarifas
+# oficiales; las mismas de nucleo/datos.js). No se copian de Cootransrural: ahora trae las del
+# Decreto 05 de 2026 de El Rosal, con su fuente y su tabla.
+TARIFAS_EJEMPLO = {
+    'ejemplo': True, 'minimaUrbana': 8000, 'banderazo': 5500, 'porKm': 1300, 'redondeo': 500,
+    'recargoNocturno': 2000, 'recargoDominical': 1000, 'nocheDesde': 20, 'nocheHasta': 6,
+    'descuentoProgramado': 0.1, 'horasAnticipacion': 24, 'viajesFidelidad': 10, 'descuentoFidelidad': 0.5,
+}
+
 
 def slug(texto):
     t = unicodedata.normalize('NFD', texto.lower())
@@ -379,7 +388,7 @@ def crear(id_, base, rehacer=False):
         'id': id_,
         'CENTRO': {'lat': round(centro['lat'], 6), 'lng': round(centro['lng'], 6)},
         'ZONA': {'sur': round(centro['lat'] - 0.32, 2), 'norte': round(centro['lat'] + 0.32, 2), 'oeste': round(centro['lng'] - 0.32, 2), 'este': round(centro['lng'] + 0.32, 2)},
-        'TARIFAS': dict(cootrans['TARIFAS'], **base.get('tarifas', {})),
+        'TARIFAS': dict(TARIFAS_EJEMPLO, **base.get('tarifas', {})),
         'RUTAS': rutas,
         'LUGARES': lugares,
         'CONDUCTORES_DEMO': conductores_demo(id_, base['EMPRESA']),

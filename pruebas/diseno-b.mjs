@@ -31,6 +31,9 @@ const ID = (process.argv.find((a) => a.startsWith('--empresa='))?.slice(10) || '
 const PRINCIPAL = ID === 'cootransrural';
 const FICHA = JSON.parse(readFileSync(new URL(`../empresas/${ID}/ficha.json`, import.meta.url), 'utf8'));
 const E = FICHA.EMPRESA || {};
+// Tarifas oficiales (Cootransrural: Decreto 05 de 2026): chip «Tarifa oficial · …», «Tarifa
+// estimada» o «Precio de referencia»; las rutas a otros municipios son precio de referencia.
+const OFICIALES = FICHA.TARIFAS?.ejemplo === false && (FICHA.DESTINOS_TARIFA || []).length > 0;
 const NOMBRE = E.nombreCorto || E.nombre;
 // «cooperativa» o «empresa» (EMPRESA.tipo; las S.A.S. dicen «la empresa»).
 const TIPO = E.tipo === 'empresa' ? 'empresa' : 'cooperativa';
@@ -555,7 +558,10 @@ async function probarPasajero(navegador) {
   await pg.waitForFunction(() => !document.querySelector('[data-tarifa-total] .vb-esqueleto'), null, { timeout: 15000 });
   const tarifa = (await pg.textContent('[data-tarifa-total]')).trim();
   ok(/\$\s?\d/.test(tarifa), `tarifa estimada visible (${tarifa})`);
-  ok(await pg.isVisible('.vb-chip-ejemplo'), 'aviso de tarifa de ejemplo');
+  {
+    const chip = (await pg.textContent('[data-chip-tarifa]')).trim();
+    ok(await pg.isVisible('[data-chip-tarifa]') && (OFICIALES ? /^(Tarifa oficial · .+|Tarifa estimada|Precio de referencia)$/.test(chip) : chip === 'Tarifa de ejemplo'), `el chip de la tarifa dice «${chip}»`);
+  }
   await esperarMapa(pg, '.vb-mapa-medio', 1800);
   await foto(pg, 'p09-paso3-confirmar');
   await pg.click('[data-accion="cuando"][data-v="programar"]');
@@ -687,6 +693,11 @@ async function probarPasajero(navegador) {
     ok(JSON.stringify(filas) === JSON.stringify(esperadas), `tarifas: las rutas y valores son los de la ficha (${filas.length})`);
     const titulos = await pg.$$eval('.vb-tarifas h2', (hs) => hs.map((h) => h.textContent.trim()));
     ok(titulos.includes(`Dentro de ${E.pueblo}`) && titulos.includes(`Rutas desde ${E.pueblo}`), `tarifas: «Dentro de ${E.pueblo}» y «Rutas desde ${E.pueblo}»`);
+    if (OFICIALES) {
+      const texto = await pg.textContent('.vb-tarifas');
+      ok(!/de ejemplo/i.test(texto) && (await pg.getAttribute('.vb-tarifas [data-enlace-decreto]', 'href')) === FICHA.TARIFAS.fuente.url && (await pg.locator('.vb-zona').count()) === 10,
+        'tarifas oficiales: enlace al decreto, 10 zonas y nada de «ejemplo»');
+    }
   }
   await cerrarAvisos(pg);
   await foto(pg, 'p21-tarifas');
@@ -764,7 +775,7 @@ async function probarPasajero(navegador) {
     await pg.waitForFunction(() => !document.querySelector('[data-tarifa-total] .vb-esqueleto'), null, { timeout: 15000 });
     await pg.click('.vb-paso3 .vb-detalle summary');
     const detalle = await pg.textContent('[data-tarifa-detalle]');
-    const concepto = `Tarifa fija ${E.pueblo} → ${ruta.destino}`;
+    const concepto = `${OFICIALES ? 'Precio de referencia' : 'Tarifa fija'} ${E.pueblo} → ${ruta.destino}`;
     const valorTexto = `$${Number(ruta.valor).toLocaleString('es-CO')}`;
     ok(detalle.includes(concepto) && detalle.replace(/\s/g, '').includes(valorTexto.replace(/\s/g, '')), `confirmar: «${concepto}» por ${valorTexto}`);
     await pg.evaluate(() => document.querySelector('.vb-detalle')?.scrollIntoView({ block: 'center' }));
@@ -784,7 +795,8 @@ async function probarPasajero(navegador) {
   vigilar(sinGps, 'pasajero-sin-gps');
   await sinGps.goto(URL_APP);
   await sinGps.waitForSelector('.vb-inicio', { timeout: 25000 });
-  ok((await sinGps.textContent('.vb-nota-gps')).includes(`Usamos el centro de ${E.pueblo}`), 'aviso cuando no hay GPS');
+  // Con paradero en la ficha (El Rosal: Decreto 89 de 2026), sin GPS se propone el paradero, no el parque.
+  ok((await sinGps.textContent('.vb-nota-gps')).includes(FICHA.PARADERO ? 'Usamos el paradero de taxis' : `Usamos el centro de ${E.pueblo}`), `aviso cuando no hay GPS (${FICHA.PARADERO ? 'el paradero de taxis' : `el centro de ${E.pueblo}`})`);
   await esperarMapa(sinGps, '.vb-pedir-mapa', 1500);
   await foto(sinGps, 'p27-inicio-sin-gps');
   await ctxSinGps.close();

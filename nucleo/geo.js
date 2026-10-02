@@ -1,8 +1,8 @@
 // Ubicación, direcciones y rutas. Usa servicios gratuitos (Nominatim y OSRM) y,
 // si fallan o no hay internet, responde con aproximaciones locales.
-import { CENTRO, ZONA, SERVICIOS } from './config.js';
-import { LUGARES, CATEGORIAS } from './datos.js';
-import { distanciaKm } from './util.js';
+import { CENTRO, ZONA, SERVICIOS, PUNTO_RECOGIDA } from './config.js';
+import { LUGARES, CATEGORIAS, DESTINOS_TARIFA, TARIFAS } from './datos.js';
+import { distanciaKm, pesos } from './util.js';
 import { posicion, seguir, MODO_REAL } from './plataforma.js';
 
 const cacheDirecciones = new Map();
@@ -27,15 +27,16 @@ async function pedirJSON(url, ms = 6000) {
   }
 }
 
-// Posición actual. Si el GPS falla o se niega, devuelve el centro del pueblo
-// con real: false para que la interfaz lo diga. El GPS lo da plataforma.js: en la web,
+// Posición actual. Si el GPS falla o se niega, devuelve el paradero de taxis de la ficha
+// (El Rosal: el Decreto 89 de 2026 prohíbe recoger en el parque principal) o, si no hay,
+// el centro del pueblo, con real: false para que la interfaz lo diga. El GPS lo da plataforma.js: en la web,
 // el del navegador con las opciones de siempre; en la app nativa, el del plugin.
 export async function obtenerPosicion({ espera = 8000, precisa = true } = {}) {
   try {
     const p = await posicion({ precisa, espera, edad: 15000 });
     return { lat: p.lat, lng: p.lng, precision: p.precision, real: true };
   } catch (e) {
-    return { ...CENTRO, precision: null, real: false, motivo: e?.sinGps ? 'sin-gps' : e?.code === 1 ? 'denegado' : 'no-disponible' };
+    return { ...PUNTO_RECOGIDA, precision: null, real: false, motivo: e?.sinGps ? 'sin-gps' : e?.code === 1 ? 'denegado' : 'no-disponible' };
   }
 }
 
@@ -91,7 +92,26 @@ function normalizar(t) {
   return t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 }
 
-// Lugares frecuentes que coinciden con el texto (sin internet).
+// Destinos de la tabla oficial de tarifas (los que están en el mapa) que coinciden con el
+// texto, como lugares para pedir el taxi: llevan idTarifa y su precio en el detalle.
+function buscarEnTarifas(q, palabras, yaEstan) {
+  if (TARIFAS.ejemplo || !DESTINOS_TARIFA.length) return [];
+  return DESTINOS_TARIFA.map((d, i) => ({ d, i }))
+    .filter(({ d }) => Number.isFinite(d.lat) && Number.isFinite(d.lng) && !yaEstan.has(normalizar(d.destino)))
+    .filter(({ d }) => {
+      const t = normalizar(`${d.destino} ${d.sector || ''}`);
+      return palabras.every((w) => t.includes(w));
+    })
+    .map(({ d, i }) => {
+      const nombre = normalizar(d.destino);
+      const rango = nombre.startsWith(q) ? 0 : palabras.every((w) => nombre.includes(w)) ? 1 : 2;
+      const aprox = d.precision === 'vereda' ? ' · punto aproximado' : '';
+      return { l: d, i, r: rango, lugar: { titulo: d.destino, detalle: `Zona ${d.zona} · ${d.sector} · ${pesos(d.valor)} oficial${aprox}`, lat: d.lat, lng: d.lng, idTarifa: d.id, icono: '🏷️', fuente: 'frecuente', rango } };
+    });
+}
+
+// Lugares frecuentes que coinciden con el texto (sin internet). Si la cooperativa tiene tabla
+// oficial de tarifas, también sus destinos (después de los lugares, sin repetir nombres).
 export function buscarLocal(texto, limite = 8) {
   const q = normalizar(texto.trim());
   if (!q) return [];
@@ -104,15 +124,19 @@ export function buscarLocal(texto, limite = 8) {
     if (nombre.startsWith(q)) return 0;
     return palabras.every((w) => nombre.includes(w)) ? 1 : 2;
   };
-  return LUGARES.map((l, i) => ({ l, i }))
+  const lugares = LUGARES.map((l, i) => ({ l, i }))
     .filter(({ l }) => {
       const t = normalizar(`${l.nombre} ${l.detalle} ${CATEGORIAS[l.cat]?.nombre || ''}`);
       return palabras.every((w) => t.includes(w));
     })
     .map((x) => ({ ...x, r: rango(x.l) }))
     .sort((a, b) => a.r - b.r || a.i - b.i)
-    .slice(0, limite)
     .map(({ l, r }) => ({ titulo: l.nombre, detalle: l.detalle, lat: l.lat, lng: l.lng, icono: CATEGORIAS[l.cat]?.icono, fuente: 'frecuente', rango: r }));
+  const tarifas = buscarEnTarifas(q, palabras, new Set(LUGARES.map((l) => normalizar(l.nombre || ''))))
+    .sort((a, b) => a.r - b.r || a.i - b.i)
+    .map((x) => x.lugar);
+  // Los lugares de la ficha primero; los destinos de la tabla, después (mismo rango, antes los lugares).
+  return [...lugares, ...tarifas].sort((a, b) => a.rango - b.rango).slice(0, limite);
 }
 
 // Búsqueda de direcciones: primero lugares frecuentes, luego Nominatim.

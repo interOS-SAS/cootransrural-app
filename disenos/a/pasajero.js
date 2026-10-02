@@ -30,8 +30,9 @@ const MENSAJES_BUSQUEDA_REAL = [
   `Esperamos a que un conductor de ${EM.NOMBRE} acepte`,
 ];
 const SIN_RED_BUSCANDO = 'Sin conexión: enviaremos tu solicitud al reconectar';
-// Modo real: la tarifa se marca «de ejemplo» solo mientras la ficha lo diga.
-const TARIFA_EJEMPLO = !REAL || Boolean(EM.TARIFAS_EJEMPLO);
+// La tarifa se marca «de ejemplo» solo mientras la ficha lo diga (las 76 cooperativas de la
+// demo). Con tarifas oficiales (Cootransrural) el chip dice si es oficial, estimada o de referencia.
+const TARIFA_EJEMPLO = Boolean(EM.TARIFAS_EJEMPLO);
 
 export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun = null }) {
   // Modo real con una sola cooperativa en servicio: «Cambiar de municipio» la volvería a abrir.
@@ -224,11 +225,23 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     }, 450);
   });
 
+  // Aviso si el punto de recogida cae donde la ficha prohíbe recoger (noRecoger: el parque
+  // principal de El Rosal, Decreto 89 de 2026), con un botón para ir al paradero de taxis.
+  function revisarRecogida() {
+    const aviso = $(hoja.contenido, '[data-aviso-recogida]');
+    if (!aviso) return;
+    const o = ui.origen;
+    const lugar = o && EM.LUGARES_SIN_RECOGIDA.find((l) => N.distanciaKm(o, l) <= 0.06);
+    aviso.hidden = !lugar;
+    if (lugar) ponerTexto(aviso, '[data-aviso-recogida-txt]', typeof lugar.noRecoger === 'string' ? lugar.noRecoger : `En ${lugar.nombre} no se recogen pasajeros.`);
+  }
+
   function pintarPunto(tipo, cargando) {
     const c = hoja.contenido;
     if (tipo === 'origen') {
       ponerTexto(c, '[data-origen-titulo]', cargando && ui.origen?.provisional ? 'Buscando dirección…' : ui.origen?.titulo || 'Punto en el mapa');
       ponerTexto(c, '[data-origen-detalle]', cargando ? '' : ui.origen?.detalle || '');
+      revisarRecogida();
     } else {
       ponerTexto(c, '[data-destino-titulo]', ui.destinoProvisional?.titulo || 'Mueve el mapa');
       ponerTexto(c, '[data-destino-detalle]', cargando ? '' : ui.destinoProvisional?.detalle || '');
@@ -270,7 +283,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const pos = p ? await p.actualizarMiPosicion() : await N.obtenerPosicion();
     b.classList.remove('a-girando');
     m.ponerYo(pos);
-    if (pos.real === false) avisos.mostrar({ titulo: 'No tenemos tu GPS', cuerpo: `Usamos el centro de ${EM.PUEBLO}; mueve el mapa para ubicar tu punto.`, tipo: 'info' });
+    if (pos.real === false) avisos.mostrar({ titulo: 'No tenemos tu GPS', cuerpo: EM.TEXTO_SIN_GPS, tipo: 'info' });
     if (app.dataset.pin) centrarVisible(pos, 17, ui.pinY);
     else centrarVisible(pos, 17);
   });
@@ -307,7 +320,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         { icono: 'reloj', texto: 'Mis viajes', detalle: completados ? `${completados} ${completados === 1 ? 'viaje completado' : 'viajes completados'}` : 'Tu historial', accion: () => abrirMisViajes(ctx()) },
         // El servidor no tiene viajes programados: en modo real no se ofrecen.
         !REAL && { icono: 'calendario', texto: 'Programados', detalle: 'Con 24 h: 10 % menos', insignia: programados ? String(programados) : '', accion: () => abrirProgramados(ctx()) },
-        { icono: 'ruta', texto: 'Tarifas y rutas', detalle: TARIFA_EJEMPLO ? 'Valores de ejemplo' : `Tarifas de ${EM.NOMBRE}`, accion: () => abrirTarifas(ctx()) },
+        { icono: 'ruta', texto: 'Tarifas y rutas', detalle: TARIFA_EJEMPLO ? 'Valores de ejemplo' : N.FUENTE_TARIFAS ? `Tarifas oficiales · ${N.FUENTE_TARIFAS.acto}` : `Tarifas de ${EM.NOMBRE}`, accion: () => abrirTarifas(ctx()) },
         // Modo real: sin tarjeta de viajes ni programados, Promociones quedaría vacío.
         !REAL && { icono: 'regalo', texto: 'Promociones', detalle: !fid ? `Ofertas de la ${EM.TIPO}` : fid.siguienteConDescuento ? '¡Tu próximo viaje va al 50 %!' : `Tarjeta de viajes: ${fid.completados}/${fid.meta}`, accion: () => abrirPromociones(ctx()) },
         { icono: 'ajustes', texto: 'Ajustes', detalle: !REAL ? 'Diseño, sala, sonido, instalar' : EM.ES_NATIVA ? 'Sonido y tu cuenta' : 'Sonido, avisos y tu cuenta', accion: () => abrirAjustes(ctx()) },
@@ -423,6 +436,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         ui.programar = true;
         ui.fecha = fechaPorDefecto();
         abrirBuscador();
+      },
+      // Pedir a un destino de la tabla oficial de tarifas (desde «Tarifas y rutas»).
+      puedePedir: ui.modo === 'inicio' && Boolean(ui.origen) && (!p || p.estado.fase === 'inicio'),
+      pedirA: (destino) => {
+        if (ui.modo !== 'inicio' || !ui.origen || (p && p.estado.fase !== 'inicio')) return;
+        irAConfirmar(destino);
       },
     };
   }
@@ -825,7 +844,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             <span class="a-recoger-txt"><small>Te recogemos en</small><strong data-origen-titulo>${esc(ui.origen?.titulo || 'Buscando dirección…')}</strong></span>
             <span class="a-recoger-ayuda">${icono('mapa', { tam: 14 })} Mueve el mapa</span>
           </div>
-          <div class="a-aviso-gps" data-aviso-gps hidden>${icono('info', { tam: 18 })}<span>${esc(`Usamos el centro de ${EM.PUEBLO}; mueve el mapa para ubicar tu punto.`)}</span></div>
+          <div class="a-aviso-gps" data-aviso-gps hidden>${icono('info', { tam: 18 })}<span>${esc(EM.TEXTO_SIN_GPS)}</span></div>
+          ${EM.LUGARES_SIN_RECOGIDA.length ? `<div class="a-aviso-gps a-aviso-recogida" data-aviso-recogida hidden role="status">${icono('alerta', { tam: 18 })}<span><span data-aviso-recogida-txt></span>${N.PARADERO ? ` <button type="button" class="a-btn-texto a-ir-paradero" data-ir-paradero>Ir al paradero</button>` : ''}</span></div>` : ''}
           <div class="a-campo-destino">
             <button type="button" class="a-campo-destino-btn" data-buscar>${icono('buscar', { tam: 22, grosor: 2.4 })}<span>¿A dónde vas?</span></button>
             ${REAL ? '' : `<button type="button" class="a-campo-prog" data-programar aria-label="Programar un viaje">${icono('calendario', { tam: 18 })}<span>Programar</span></button>`}
@@ -859,6 +879,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           const t = e.target;
           if (t.closest('[data-buscar]')) return abrirBuscador();
           if (t.closest('[data-programar]')) return ctx().programarViaje();
+          if (t.closest('[data-ir-paradero]') && N.PARADERO) return centrarVisible(N.PARADERO, 17, ui.pinY);
           if (t.closest('[data-promos]')) return abrirPromociones(ctx());
           if (t.closest('[data-ver-programados]')) return abrirProgramados(ctx());
           const g = t.closest('[data-guardar]');
@@ -942,7 +963,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <span><h2>Confirma tu viaje</h2><small data-ruta-sub>Calculando la ruta…</small></span>
         </div>
         <div class="a-tarifa" data-arrastre>
-          <span class="a-tarifa-txt"><small>Tarifa estimada</small><strong data-total class="a-esqueleto-txt">$——</strong>${TARIFA_EJEMPLO ? `<span class="a-chip-ejemplo">${icono('info', { tam: 13 })} Tarifa de ejemplo</span>` : ''}</span>
+          <span class="a-tarifa-txt"><small data-tarifa-titulo>${TARIFA_EJEMPLO ? 'Tarifa estimada' : 'Valor del viaje'}</small><strong data-total class="a-esqueleto-txt">$——</strong>${TARIFA_EJEMPLO ? `<span class="a-chip-ejemplo">${icono('info', { tam: 13 })} Tarifa de ejemplo</span>` : '<span class="a-chip-ejemplo a-chip-tarifa" data-chip-tarifa hidden></span>'}</span>
           <span class="a-tarifa-taxi" aria-hidden="true"><svg viewBox="0 0 40 64" width="30" height="48">${N.svgTaxi ? N.svgTaxi({ tamano: 48 }).replace(/<svg[^>]*>|<\/svg>/g, '') : ''}</svg><small>${esc(EM.VEHICULO)}<br>4 puestos</small></span>
         </div>
         <button type="button" class="a-ver-detalle" data-detalle aria-expanded="false">${icono('lista', { tam: 16 })} Ver detalle de la tarifa ${icono('abajo', { tam: 16 })}</button>
@@ -1418,11 +1439,26 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     total.classList.remove('a-cambia');
     void total.offsetWidth;
     total.classList.add('a-cambia');
-    ponerTexto(c, '[data-ruta-sub]', rt ? `${N.kmTexto(rt.km)} · ${N.minutosTexto(rt.min)}${rt.aproximada ? ' (aprox.)' : ''}${tarifa.rutaFija ? ' · ruta con tarifa fija' : ''}` : 'Destino a convenir con el conductor');
-    ponerTexto(c, '[data-ruta-datos]', rt ? `${N.kmTexto(rt.km)} · ${N.minutosTexto(rt.min)} de viaje · llegas a las ${N.horaTexto((ui.programar && ui.fecha ? ui.fecha.getTime() : Date.now()) + rt.min * 60000 + 5 * 60000)}` : `El conductor te cobra según el recorrido${TARIFA_EJEMPLO ? ' (mínima de ejemplo)' : ''}.`);
+    // Con tarifas oficiales: oficial (precio cerrado del decreto), estimada o de referencia.
+    const oficial = !TARIFA_EJEMPLO && tarifa.tipo === 'oficial';
+    const chip = $(c, '[data-chip-tarifa]');
+    if (chip) {
+      chip.innerHTML = `${icono(oficial ? 'check' : 'info', { tam: 13, grosor: oficial ? 3 : 2 })} ${esc(tarifa.etiqueta || N.etiquetaTarifa(tarifa))}`;
+      chip.dataset.tipo = tarifa.tipo || '';
+      chip.hidden = false;
+    }
+    const tipoRuta = !tarifa.rutaFija ? '' : TARIFA_EJEMPLO || tarifa.tipo !== 'referencia' ? ' · ruta con tarifa fija' : ' · precio de referencia';
+    ponerTexto(c, '[data-ruta-sub]', rt ? `${N.kmTexto(rt.km)} · ${N.minutosTexto(rt.min)}${rt.aproximada ? ' (aprox.)' : ''}${tipoRuta}` : 'Destino a convenir con el conductor');
+    const minimaTexto = TARIFA_EJEMPLO ? ' (mínima de ejemplo)' : EM.TARIFAS_OFICIALES ? ` (mínima oficial ${N.pesos(N.TARIFAS.minimaUrbana)})` : '';
+    ponerTexto(c, '[data-ruta-datos]', rt ? `${N.kmTexto(rt.km)} · ${N.minutosTexto(rt.min)} de viaje · llegas a las ${N.horaTexto((ui.programar && ui.fecha ? ui.fecha.getTime() : Date.now()) + rt.min * 60000 + 5 * 60000)}` : `El conductor te cobra según el recorrido${minimaTexto}.`);
+    const fuente = tarifa.fuente || N.FUENTE_TARIFAS;
+    const pieDetalle = TARIFA_EJEMPLO
+      ? `Tarifas de ejemplo: la ${EM.TIPO} confirmará las oficiales. Con taxímetro o ruta fija, el valor final puede variar.`
+      : [...(tarifa.notas || []), oficial ? '' : 'El valor final lo confirma el conductor.'].filter(Boolean).map(esc).join(' ')
+        + (fuente?.url ? ` <a href="${esc(fuente.url)}" target="_blank" rel="noopener" data-enlace-decreto>Ver el ${esc(fuente.acto)}</a>` : '');
     $(c, '[data-detalle-lista]').innerHTML = `<ul>${tarifa.detalle.map((d) => `<li class="${d.valor < 0 ? 'a-descuento' : ''}"><span>${esc(d.concepto)}</span><b>${d.valor < 0 ? '−' : ''}${N.pesos(Math.abs(d.valor))}</b></li>`).join('')}
-      <li class="a-detalle-total"><span>Total estimado</span><b>${N.pesos(tarifa.total)}</b></li></ul>
-      <p>${icono('info', { tam: 14 })} ${TARIFA_EJEMPLO ? `Tarifas de ejemplo: la ${EM.TIPO} confirmará las oficiales. ` : ''}Con taxímetro o ruta fija, el valor final puede variar.</p>`;
+      <li class="a-detalle-total"><span>${oficial && !tarifa.descuento ? 'Total' : 'Total estimado'}</span><b>${N.pesos(tarifa.total)}</b></li></ul>
+      <p>${icono('info', { tam: 14 })} <span>${TARIFA_EJEMPLO ? esc(pieDetalle) : pieDetalle}</span></p>`;
     const info = $(c, '[data-programar-info]');
     if (info) {
       if (ui.programar && ui.fecha) {

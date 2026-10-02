@@ -562,6 +562,8 @@ p { margin: 0 0 1em; }
 .cotizacion li { display: flex; justify-content: space-between; gap: 12px; padding: 3px 0; color: rgba(255, 255, 255, .92); }
 .cotizacion li.menos { color: var(--amarillo-2); font-weight: 700; }
 .cotizador-nota { margin: 10px 0 0; font-size: .8rem; color: rgba(255, 255, 255, .8); }
+.cotizacion-tipo { display: inline-block; margin: 8px 0 0; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, .14); font-size: .8rem; font-weight: 800; color: #fff; }
+.cotizacion-tipo[data-tipo="oficial"] { background: var(--amarillo-vivo); color: #1a1a1a; }
 .tabla-caja { overflow: hidden; border-radius: 26px; background: #fff; border: 1px solid var(--borde); box-shadow: var(--sombra); }
 .tabla-caja h3 { padding: 22px 24px 6px; font-size: 1.2rem; }
 .tabla-caja > p { padding: 0 24px; margin: 0 0 10px; color: var(--suave); font-size: .92rem; }
@@ -577,6 +579,16 @@ td .destino { display: flex; align-items: center; gap: 10px; font-weight: 700; c
 td .destino .icono { color: var(--verde-3); width: 1.05em; height: 1.05em; }
 .col-km { color: var(--suave); white-space: nowrap; }
 .tabla-vacia td { text-align: center !important; color: var(--suave); padding: 28px; }
+/* Tabla oficial de tarifas por zonas (Cootransrural: Decreto 05 de 2026) */
+.aviso-oficial { background: #E8F5EC; border-color: rgba(10, 92, 51, .3); color: #0A3D22; font-weight: 600; }
+.aviso-oficial a { color: inherit; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+.tabla-oficial { margin-top: 28px; }
+.zona-tarifa { border-top: 1px solid var(--borde); }
+.zona-tarifa summary { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; padding: 16px 24px; cursor: pointer; font-weight: 700; color: var(--tinta); }
+.zona-tarifa summary small { color: var(--suave); font-weight: 600; }
+.zona-tarifa[open] summary { background: var(--crema); }
+.nota-destino { display: block; margin-top: 2px; font-size: .8rem; color: var(--suave); }
+@media (max-width: 520px) { .zona-tarifa summary { padding: 14px 16px; } }
 @media (min-width: 961px) { .tarifas-rejilla > :first-child { position: sticky; top: calc(var(--alto-barra) + 20px); } }
 @media (max-width: 960px) { .tarifas-rejilla { grid-template-columns: 1fr; } }
 @media (max-width: 520px) {

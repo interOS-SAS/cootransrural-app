@@ -435,6 +435,35 @@
 .a-tabla tbody th { font-weight: 700; }
 .a-tabla td { color: var(--a-texto-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .a-tabla td b { color: var(--a-tinta); }
+/* Tabla oficial de tarifas por zonas (Cootransrural: Decreto 05 de 2026) */
+.a-aviso-oficial > svg { color: #7EE2A8; }
+.a-aviso-oficial strong { color: #fff; }
+.a-enlace-decreto { display: inline-flex; gap: 6px; align-items: center; margin-top: 8px; min-height: 36px; color: var(--a-ambar); font: 700 13.5px var(--a-fb); text-decoration: underline; text-underline-offset: 3px; }
+.a-nota-rutas { margin-top: 0; margin-bottom: 8px; }
+.a-buscar-tarifa { display: flex; align-items: center; gap: 10px; padding: 0 14px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--a-gris-2); }
+.a-buscar-tarifa:focus-within { box-shadow: inset 0 0 0 2px var(--a-tinta), 0 0 0 4px rgba(255, 193, 7, .55); }
+.a-buscar-tarifa input { flex: 1; min-width: 0; height: 50px; border: 0; background: none; font: 600 16px var(--a-fb); color: var(--a-tinta); outline: none; }
+.a-zonas { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.a-zona { background: #fff; border-radius: 18px; overflow: hidden; }
+.a-zona summary { display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 10px 14px; cursor: pointer; list-style: none; }
+.a-zona summary::-webkit-details-marker { display: none; }
+.a-zona summary > span { flex: 1; min-width: 0; }
+.a-zona summary strong { display: block; font: 700 14.5px/1.25 var(--a-ft); }
+.a-zona summary small { display: block; font-size: 12.5px; color: var(--a-texto-2); }
+.a-zona summary b { font: 800 13px var(--a-fb); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.a-zona summary > svg { transition: transform .2s; flex: none; }
+.a-zona[open] summary > svg { transform: rotate(180deg); }
+.a-zona[open] summary { border-bottom: 1px solid var(--a-gris-2); }
+.a-tabla-oficial { border-radius: 0; }
+.a-tabla-oficial tbody th { white-space: normal; }
+.a-tabla-oficial tbody th small { display: block; font: 600 11.5px/1.3 var(--a-fb); color: var(--a-texto-2); margin-top: 2px; }
+.a-tabla-oficial td { vertical-align: middle; }
+.a-pedir-a { display: block; margin: 4px 0 0 auto; min-height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--a-tinta); color: #fff; font: 700 12px var(--a-fb); cursor: pointer; }
+.a-pedir-a:hover { background: #000; }
+.a-chip-tarifa[data-tipo="oficial"] { background: var(--a-tinta); color: #fff; }
+.a-aviso-recogida { background: #FFE4E1; }
+.a-aviso-recogida > svg { color: #B42318; flex: none; }
+.a-ir-paradero { display: inline; margin: 0; padding: 0; min-height: 0; font-size: 13px; color: var(--a-tinta); }
 .a-oferta { display: flex; gap: 12px; align-items: center; padding: 14px; border-radius: 20px; background: #fff; margin-bottom: 8px; }
 .a-oferta > svg { width: 44px; height: 44px; padding: 10px; border-radius: 14px; background: var(--a-ambar-claro); }
 .a-oferta strong { display: block; font: 700 14.5px/1.3 var(--a-ft); }

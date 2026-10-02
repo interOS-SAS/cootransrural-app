@@ -491,3 +491,11 @@ button.c-billetera:active { transform: scale(.97); }
   .c-ilus-trazo { stroke-dashoffset: 0; }
   .c-fidelidad::after { display: none; }
 }
+/* Tabla oficial de tarifas por zonas (Cootransrural: Decreto 05 de 2026) */
+.c-aviso-oficial a { color: var(--c-amarillo); font-weight: 700; }
+.c-zonas-tarifa { display: flex; flex-direction: column; gap: 6px; }
+.c-zona summary { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; min-height: 48px; padding: 12px 4px; cursor: pointer; }
+.c-zona summary small { opacity: .75; }
+.c-zona + .c-zona { border-top: 1px solid rgba(255, 255, 255, .12); }
+.c-pantalla-tarifas .c-nota-prueba + .c-nota-prueba { margin-top: 12px; }
+.c-pantalla-tarifas .c-nota-prueba { align-items: flex-start; }

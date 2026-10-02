@@ -137,7 +137,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
         <div><strong>${(g.casa ? 1 : 0) + (g.trabajo ? 1 : 0)}</strong><small>lugares</small></div>
       </div>
       <div class="c-lista">
-        ${fila('sub', 'tarifa', 'Tarifas y rutas', 'Valores de ejemplo y rutas fijas', 'data-sub="tarifas"')}
+        ${fila('sub', 'tarifa', 'Tarifas y rutas', N.TARIFAS.ejemplo ? 'Valores de ejemplo y rutas fijas' : N.FUENTE_TARIFAS ? `Tarifas oficiales · ${esc(N.FUENTE_TARIFAS.acto)}` : 'Tarifas y rutas', 'data-sub="tarifas"')}
         ${fila('tab', 'regalo', 'Promociones y fidelidad', '10 % programando · cada 10 viajes, uno al 50 %', 'data-tab="billetera"')}
         ${fila('sub', 'ajustes', 'Ajustes', C.enTaxiCun() ? 'Municipio, diseño, sala, simulación, sonido' : 'Diseño, sala, simulación, sonido, instalar', 'data-sub="ajustes"')}
         ${fila('sub', 'ayuda', 'Ayuda y central', E.telefono ? `Llama o escribe al ${esc(E.telefonoVisible)}` : E.whatsapp ? 'Escríbenos por WhatsApp' : `Preguntas frecuentes y datos de la ${E.tipo}`, 'data-sub="ayuda"')}
@@ -150,22 +150,40 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
 
   function htmlTarifas() {
     const T = N.TARIFAS;
+    // Tabla oficial (Cootransrural: Decreto 05 de 2026). Banderazo y valor por km, estimados.
+    const oficiales = Boolean(N.TARIFAS_OFICIALES);
+    const fuente = N.FUENTE_TARIFAS;
+    const estimados = new Set(Array.isArray(T.estimados) ? T.estimados : []);
+    const zonas = oficiales ? N.zonasTarifa() : [];
+    const totalDestinos = zonas.reduce((n, z) => n + z.destinos.length, 0);
+    const aviso = T.ejemplo
+      ? `<div class="c-aviso-ejemplo">${icono('info')}<span><strong>Valores de ejemplo.</strong> La ${E.tipo} publicará las tarifas oficiales.</span></div>`
+      : fuente ? `<div class="c-aviso-ejemplo c-aviso-oficial" data-aviso-oficial>${icono('check')}<span><strong>Tarifas oficiales · ${esc(fuente.acto)}.</strong> ${esc([fuente.entidad, fuente.fecha].filter(Boolean).join(', '))}${oficiales ? `: precio cerrado desde ${esc(N.ORIGEN_OFICIAL)} a ${totalDestinos} destinos.` : '.'}${fuente.url ? ` <a href="${esc(fuente.url)}" target="_blank" rel="noopener" data-enlace-decreto>Ver el decreto</a>` : ''}</span></div>` : '';
+    const zonasHTML = !oficiales ? '' : `<h2 class="c-seccion-titulo">${esc(`Precios desde ${N.ORIGEN_OFICIAL}`)}</h2>
+      <div class="c-bloque c-zonas-tarifa" data-tabla-oficial>
+        ${zonas.map((z) => `<details class="c-zona" data-zona="${z.zona}"><summary><strong>Zona ${z.zona}</strong> <small>${esc(z.sector)} · ${z.destinos.length}</small></summary>
+          <table class="c-tabla"><thead><tr><th scope="col">Destino</th><th scope="col">Valor</th></tr></thead>
+          <tbody>${z.destinos.map((d) => { const nota = N.textoPrecision(d); return `<tr data-id="${esc(d.id)}"><td>${esc(d.destino)}${nota ? `<small class="c-tabla-sub">${esc(nota)}</small>` : ''}</td><td><strong>${N.pesos(d.valor)}</strong></td></tr>`; }).join('')}</tbody></table></details>`).join('')}
+      </div>`;
     return `<section class="c-pantalla c-pantalla-tarifas" aria-label="Tarifas y rutas">
       ${cabeza('Tarifas y rutas', 'Para que sepas cuánto pagas antes de subir', 'volver-perfil')}
-      <div class="c-aviso-ejemplo">${icono('info')}<span><strong>Valores de ejemplo.</strong> La ${E.tipo} publicará las tarifas oficiales.</span></div>
+      ${aviso}
       <h2 class="c-seccion-titulo">${E.pueblo ? `Dentro de ${esc(E.pueblo)}` : 'Dentro del municipio'}</h2>
       <div class="c-reglas">
-        <div class="c-regla"><small>Carrera mínima</small><strong>${N.pesos(T.minimaUrbana)}</strong></div>
-        <div class="c-regla"><small>Banderazo</small><strong>${N.pesos(T.banderazo)}</strong></div>
-        <div class="c-regla"><small>Por kilómetro</small><strong>${N.pesos(T.porKm)}</strong></div>
+        <div class="c-regla"><small>Carrera mínima${oficiales ? ' (oficial)' : ''}</small><strong>${N.pesos(T.minimaUrbana)}</strong></div>
+        <div class="c-regla"><small>Banderazo${estimados.has('banderazo') ? ' (estimado)' : ''}</small><strong>${N.pesos(T.banderazo)}</strong></div>
+        <div class="c-regla"><small>Por kilómetro${estimados.has('porKm') ? ' (estimado)' : ''}</small><strong>${N.pesos(T.porKm)}</strong></div>
         ${T.recargoNocturno > 0 ? `<div class="c-regla"><small>Recargo nocturno <span>(${T.nocheDesde}:00 a ${String(T.nocheHasta - 1).padStart(2, '0')}:59)</span></small><strong>+${N.pesos(T.recargoNocturno)}</strong></div>` : ''}
         ${T.recargoDominical > 0 ? `<div class="c-regla"><small>Domingos y festivos</small><strong>+${N.pesos(T.recargoDominical)}</strong></div>` : ''}
         <div class="c-regla c-regla-promo"><small>Programando con ${T.horasAnticipacion} h</small><strong>−${Math.round(T.descuentoProgramado * 100)} %</strong></div>
         <div class="c-regla c-regla-promo"><small>Cada ${T.viajesFidelidad} viajes, el siguiente</small><strong>−${Math.round(T.descuentoFidelidad * 100)} %</strong></div>
       </div>
-      <h2 class="c-seccion-titulo">Rutas con tarifa fija${E.pueblo ? ` desde ${esc(E.pueblo)}` : ''}</h2>
+      ${oficiales ? [T.notaRecargos, T.notaEstimacion].filter(Boolean).map((x) => `<p class="c-nota-prueba">${icono('info')} ${esc(x)}</p>`).join('') : ''}
+      ${zonasHTML}
+      <h2 class="c-seccion-titulo">${oficiales && T.rutasReferencia ? 'Otros municipios: precio de referencia' : `Rutas con tarifa fija${E.pueblo ? ` desde ${esc(E.pueblo)}` : ''}`}</h2>
+      ${oficiales && T.rutasReferencia && T.notaRutas ? `<p class="c-nota-prueba">${icono('info')} ${esc(T.notaRutas)}</p>` : ''}
       <div class="c-bloque">
-        <table class="c-tabla">
+        <table class="c-tabla" data-tabla-rutas>
           <thead><tr><th scope="col">Destino</th><th scope="col">Distancia</th><th scope="col">Valor</th></tr></thead>
           <tbody>${N.RUTAS.map((r) => `<tr><td>${esc(r.destino)}<small class="c-tabla-sub">${N.minutosTexto(r.min)} aprox.</small></td><td>${r.km} km</td><td><strong>${N.pesos(r.valor)}</strong></td></tr>`).join('')}</tbody>
         </table>

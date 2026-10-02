@@ -52,6 +52,9 @@ const TAXICUN = ARGS.includes('--taxicun');
 const PRINCIPAL = ID === 'cootransrural';
 const FICHA = JSON.parse(readFileSync(new URL(`../empresas/${ID}/ficha.json`, import.meta.url), 'utf8'));
 const EMPRESA = FICHA.EMPRESA;
+// Tarifas oficiales (Cootransrural: Decreto 05 de 2026): chip «Tarifa oficial · …», «Tarifa
+// estimada» o «Precio de referencia»; las rutas a otros municipios son precio de referencia.
+const OFICIALES = FICHA.TARIFAS?.ejemplo === false && (FICHA.DESTINOS_TARIFA || []).length > 0;
 const RAIZ_EMPRESA = PRINCIPAL ? 'el-rosal/' : `${ID}/`; // Cootransrural vive en el-rosal/
 const raizDe = (id) => (id === 'cootransrural' ? 'el-rosal/' : `${id}/`);
 // Dirección de la app del pasajero o del conductor de una cooperativa (con el diseño C).
@@ -328,6 +331,10 @@ async function probarPasajero() {
   await p.waitForFunction(() => /\$/.test(document.querySelector('[data-total]')?.textContent || ''), null, { timeout: 15000 });
   const tarifa = (await p.textContent('[data-total]')).trim();
   ok(true, `P4 tarifa estimada ${tarifa}, ${(await p.textContent('[data-km]')).trim()} y ${(await p.textContent('[data-min]')).trim()}`);
+  {
+    const chip = (await p.textContent('[data-chip-tarifa]')).trim();
+    ok(OFICIALES ? /^(Tarifa oficial · .+|Tarifa estimada|Precio de referencia)$/.test(chip) : chip === 'Tarifa de ejemplo', `P4 el chip de la tarifa dice «${chip}»`);
+  }
   await p.waitForFunction(() => document.querySelectorAll('.leaflet-overlay-pane path').length >= 2, null, { timeout: 10000 });
   ok(true, 'P4 ruta dibujada en el mapa');
   await captura(p, 'p08-confirmar', 1200);
@@ -429,8 +436,13 @@ async function probarPasajero() {
   ok((await p.textContent('.c-pantalla-perfil .c-pie-marca')).includes('TaxiCun · desarrollada por interOS'), 'P12 pie del perfil: «TaxiCun · desarrollada por interOS»');
   await captura(p, 'p24-perfil');
   await p.click('[data-sub="tarifas"]');
-  await p.waitForSelector('.c-tabla tbody tr');
-  ok((await p.locator('.c-tabla tbody tr').count()) >= Math.min(10, FICHA.RUTAS.length), `P12 tabla de rutas (${FICHA.RUTAS.length}) y reglas de tarifas (ejemplo)`);
+  await p.waitForSelector('[data-tabla-rutas] tbody tr');
+  ok((await p.locator('[data-tabla-rutas] tbody tr').count()) >= Math.min(10, FICHA.RUTAS.length), `P12 tabla de rutas (${FICHA.RUTAS.length}) y reglas de tarifas (${OFICIALES ? 'oficiales' : 'ejemplo'})`);
+  if (OFICIALES) {
+    const texto = await p.textContent('.c-pantalla-tarifas');
+    ok(!/de ejemplo/i.test(texto) && (await p.getAttribute('.c-pantalla-tarifas [data-enlace-decreto]', 'href')) === FICHA.TARIFAS.fuente.url && (await p.locator('.c-zona').count()) === 10,
+      'P12 tarifas oficiales: enlace al decreto, 10 zonas y nada de «ejemplo»');
+  }
   await captura(p, 'p25-tarifas');
   await p.click('[data-accion="volver-perfil"]');
   await p.click('[data-sub="ajustes"]');
@@ -696,7 +708,9 @@ async function probarGpsNegado() {
   await p.goto(URL_APP);
   await p.waitForSelector('[data-vista="inicio-recogida"] .c-tarjeta-inicio', { timeout: 20000 });
   await p.waitForSelector('[data-sin-gps]:not([hidden])', { timeout: 10000 });
-  ok((await p.textContent('[data-sin-gps]')).includes(`Usamos el centro de ${EMPRESA.pueblo}`), `P2 sin GPS: «Usamos el centro de ${EMPRESA.pueblo}; mueve el mapa…»`);
+  // Con paradero en la ficha (El Rosal: Decreto 89 de 2026), sin GPS se propone el paradero, no el parque.
+  const sinGpsEsperado = FICHA.PARADERO ? 'Usamos el paradero de taxis' : `Usamos el centro de ${EMPRESA.pueblo}`;
+  ok((await p.textContent('[data-sin-gps]')).includes(sinGpsEsperado), `P2 sin GPS: «${sinGpsEsperado}; mueve el mapa…»`);
   await captura(p, 'e01-sin-gps', 1500);
   await ctx.close();
 }
@@ -793,7 +807,7 @@ async function probarRutaFija() {
   await p.waitForFunction(() => /\$/.test(document.querySelector('[data-total]')?.textContent || ''), null, { timeout: 15000 });
   await p.click('.c-detalle-tarifa summary');
   const detalle = (await p.textContent('[data-detalle]')).replace(/\s+/g, ' ');
-  const concepto = `Tarifa fija ${EMPRESA.pueblo} → ${RUTA_FIJA.destino}`;
+  const concepto = `${OFICIALES ? 'Precio de referencia' : 'Tarifa fija'} ${EMPRESA.pueblo} → ${RUTA_FIJA.destino}`;
   const valor = RUTA_FIJA.valor.toLocaleString('es-CO');
   ok(detalle.includes(concepto) && detalle.includes(valor), `P4 ruta fija: «${concepto}» por $${valor}`);
   await p.evaluate(() => document.querySelector('.c-tarjeta-confirmar').scrollTo(0, 260));

@@ -47,6 +47,19 @@ buscadores y no usan logos de la cooperativa: aún no son clientes.
   empresa» y «afiliados» en vez de «la cooperativa» y «asociados». Las tarifas
   que sean oficiales se explican en `TARIFAS.nota` (sale en la web en vez de
   «Valores de ejemplo…»), y el horario nocturno sale de `nocheDesde`/`nocheHasta`.
+- **Tarifas oficiales (Cootransrural):** `TARIFAS.ejemplo: false` con `TARIFAS.fuente`
+  (Decreto 05 de 2026 de la Alcaldía de El Rosal, con enlace) y la tabla
+  `DESTINOS_TARIFA`: los 191 destinos «De El Rosal Centro a…» en 10 zonas, con
+  `lat`/`lng` y `precision` (exacta, aproximada, vereda o sin_ubicar; los sin ubicar
+  quedan en la tabla aunque no estén en el mapa). El núcleo cobra el precio oficial si
+  el destino es de la tabla (elegido de la lista, mismo nombre o a pocos metros), la
+  mínima de $6.100 dentro del casco urbano (`CASCO_URBANO`, límite de OSM) y, si no,
+  una estimación (`banderazo` y `porKm` estimados, en `TARIFAS.estimados`); si la
+  recogida no está en el casco urbano, también estima y lo dice. Las `RUTAS` a otros
+  municipios son precio de referencia (`TARIFAS.rutasReferencia`). El decreto no fija
+  recargos: van en 0 con `TARIFAS.notaRecargos`. `PARADERO` (Decreto 89 de 2026, Cra. 9
+  junto al salón cultural) es la recogida que se propone sin GPS; el parque principal
+  lleva `noRecoger` (sigue como destino). Las demás cooperativas no cambian.
 - **Nueva cooperativa:** agregarla a `herramientas/cooperativas.json` y correr
   `python3 herramientas/crear-ficha.py <id>`. El script saca de OpenStreetMap el
   centro del pueblo y sus lugares, y de OSRM la distancia por carretera a los

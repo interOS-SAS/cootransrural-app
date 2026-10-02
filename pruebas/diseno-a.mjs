@@ -43,6 +43,14 @@ const LLAVE = `@${String(E.nombreCorto || E.nombre).toLowerCase().normalize('NFD
 const RAIZ_COOP = PRINCIPAL ? `${BASE}el-rosal/` : `${BASE}${EMPRESA}/`; // Cootransrural vive en el-rosal/
 const PREFIJO = PRINCIPAL ? 'ct.' : `ct.${EMPRESA}.`;
 const CENTRO = { latitude: FICHA.CENTRO.lat, longitude: FICHA.CENTRO.lng };
+// Tarifas: de ejemplo (casi todas) u oficiales (Cootransrural: Decreto 05 de 2026, con la tabla
+// DESTINOS_TARIFA); con oficiales el chip dice «Tarifa oficial · …», «Tarifa estimada» o
+// «Precio de referencia», y nada de «Valores de ejemplo».
+const TARIFAS_EJEMPLO = FICHA.TARIFAS?.ejemplo !== false;
+const OFICIALES = !TARIFAS_EJEMPLO && (FICHA.DESTINOS_TARIFA || []).length > 0;
+const FUENTE = FICHA.TARIFAS?.fuente || {};
+const ETIQUETA_OFICIAL = `Tarifa oficial · ${FUENTE.acto}`;
+const pesosTexto = (v) => `$${Number(v).toLocaleString('es-CO')}`;
 const fichaDe = (id) => JSON.parse(readFileSync(new URL(`../empresas/${id}/ficha.json`, import.meta.url), 'utf8'));
 const existeFicha = (id) => existsSync(new URL(`../empresas/${id}/ficha.json`, import.meta.url));
 // Separación: el pasajero registrado aquí no debe aparecer en otras dos cooperativas.
@@ -307,7 +315,11 @@ async function probarPasajero() {
   await p.waitForTimeout(1500);
   await foto(p, 'p11-confirmar');
   ok(/\$\s?\d/.test(await p.textContent('[data-total]')), 'se ve la tarifa estimada');
-  ok(await p.isVisible('.a-chip-ejemplo'), 'la tarifa dice que es de ejemplo');
+  if (TARIFAS_EJEMPLO) ok(await p.isVisible('.a-chip-ejemplo'), 'la tarifa dice que es de ejemplo');
+  else {
+    const chip = (await p.textContent('[data-chip-tarifa]')).trim();
+    ok([ETIQUETA_OFICIAL, 'Tarifa estimada', 'Precio de referencia'].includes(chip) && !(await p.textContent('.a-hoja')).includes('de ejemplo'), `la tarifa dice de dónde sale («${chip}»), sin «de ejemplo»`);
+  }
   await foto360(p, 'p11b-confirmar-360');
   await p.click('[data-detalle]');
   await p.waitForTimeout(600);
@@ -462,9 +474,10 @@ async function probarPasajero() {
     await foto(p, nombre);
     if (item === 'Tarifas y rutas') {
       ok((await p.textContent('.a-panel.a-abierto')).includes(`Dentro de ${PUEBLO}`), `las tarifas hablan de ${PUEBLO}`);
-      const filas = await p.$$eval('.a-panel.a-abierto .a-tabla tbody th', (ns) => ns.map((n) => n.textContent.trim()));
+      const filas = await p.$$eval('.a-panel.a-abierto [data-tabla-rutas] tbody th', (ns) => ns.map((n) => n.textContent.trim()));
       const esperadas = (FICHA.RUTAS || []).filter((r) => r.destino && Number.isFinite(Number(r.valor))).map((r) => r.destino);
       ok(JSON.stringify(filas) === JSON.stringify(esperadas), `Tarifas y rutas: las ${esperadas.length} rutas de la ficha (${filas.slice(0, 3).join(', ')}…)`);
+      if (OFICIALES) await revisarPanelTarifasOficiales(p);
     }
     if (item === 'Ajustes') {
       await p.$eval('.a-panel.a-abierto [data-acerca]', (n) => n.scrollIntoView({ block: 'end' }));
@@ -699,7 +712,13 @@ async function probarBordes() {
   await p.goto(urlPasajero());
   await vista(p, 'inicio', 30000);
   await p.waitForSelector('[data-aviso-gps]:not([hidden])', { timeout: 15000 });
-  ok((await p.textContent('[data-aviso-gps]')).includes(`centro de ${PUEBLO}`), `sin GPS avisa que usa el centro de ${PUEBLO}`);
+  if (FICHA.PARADERO) {
+    // Sin GPS se propone el paradero de taxis, no el parque (El Rosal: Decreto 89 de 2026).
+    ok((await p.textContent('[data-aviso-gps]')).includes('paradero de taxis'), 'sin GPS avisa que usa el paradero de taxis');
+    await p.waitForFunction((n) => document.querySelector('[data-origen-titulo]')?.textContent.trim() === n, FICHA.PARADERO.nombre, { timeout: 15000 }).catch(() => {});
+    const titulo = (await p.textContent('[data-origen-titulo]')).trim();
+    ok(titulo === FICHA.PARADERO.nombre, `sin GPS, la recogida propuesta es «${FICHA.PARADERO.nombre}» («${titulo}»)`);
+  } else ok((await p.textContent('[data-aviso-gps]')).includes(`centro de ${PUEBLO}`), `sin GPS avisa que usa el centro de ${PUEBLO}`);
   ok((await p.textContent('[data-nombre]')).trim() === 'Doña Rosa', 'el saludo conserva el «Doña»');
   await p.waitForTimeout(1500);
   await foto(p, 'b01-sin-gps');
@@ -804,6 +823,103 @@ async function probarCambiarMunicipio(p, rol) {
   await p.screenshot({ path: `${CAPTURAS}${rol === 'conductor' ? 'c21' : 'p35'}-elegir-municipio.png` });
 }
 
+// Panel «Tarifas y rutas» con la tabla oficial: aviso con el enlace al decreto, 10 zonas con
+// los 191 destinos, buscador (un destino de la zona 5 y uno sin ubicar) y nada de «ejemplo».
+async function revisarPanelTarifasOficiales(p) {
+  const panel = '.a-panel.a-abierto';
+  const texto = await p.textContent(panel);
+  ok(!/Valores de ejemplo|de ejemplo/i.test(texto), 'Tarifas y rutas: nada de «Valores de ejemplo»');
+  const enlace = await p.getAttribute(`${panel} [data-enlace-decreto]`, 'href');
+  ok(texto.includes(ETIQUETA_OFICIAL.replace('Tarifa oficial', 'Tarifas oficiales')) && enlace === FUENTE.url, `Tarifas y rutas: «Tarifas oficiales · ${FUENTE.acto}» con enlace al decreto`);
+  const zonas = await p.locator(`${panel} .a-zona`).count();
+  const filas = await p.locator(`${panel} .a-tabla-oficial tbody tr`).count();
+  ok(zonas === 10 && filas === FICHA.DESTINOS_TARIFA.length, `Tarifas y rutas: tabla oficial por zonas (${zonas} zonas, ${filas} destinos)`);
+  ok(texto.includes(FICHA.TARIFAS.notaRecargos) && /precio de referencia/i.test(texto), 'Tarifas y rutas: nota de recargos y de viajes fuera del municipio');
+  const z5 = FICHA.DESTINOS_TARIFA.find((d) => d.zona === 5 && d.precision === 'exacta');
+  await p.fill(`${panel} [data-buscar-tarifa]`, z5.destino);
+  await p.waitForTimeout(300);
+  const visibles = await p.$$eval(`${panel} .a-tabla-oficial tbody tr:not([hidden])`, (trs) => trs.map((tr) => tr.textContent.replace(/\s+/g, ' ').trim()));
+  ok(visibles.length >= 1 && visibles.some((t) => t.includes(z5.destino) && t.includes(pesosTexto(z5.valor))), `buscador: «${z5.destino}» (zona 5) a ${pesosTexto(z5.valor)}`);
+  await foto(p, 'p29b-tarifas-zona5');
+  const sinUbicar = FICHA.DESTINOS_TARIFA.find((d) => d.precision === 'sin_ubicar');
+  await p.fill(`${panel} [data-buscar-tarifa]`, sinUbicar.destino);
+  await p.waitForTimeout(300);
+  const fila = await p.$$eval(`${panel} .a-tabla-oficial tbody tr:not([hidden])`, (trs) => trs.map((tr) => tr.textContent.replace(/\s+/g, ' ').trim()));
+  ok(fila.some((t) => t.includes(sinUbicar.destino) && t.includes(pesosTexto(sinUbicar.valor)) && t.includes('Sin ubicar en el mapa')), `buscador: «${sinUbicar.destino}» (sin ubicar) a ${pesosTexto(sinUbicar.valor)}, aunque no esté en el mapa`);
+  await foto(p, 'p29c-tarifas-sin-ubicar');
+  await p.fill(`${panel} [data-buscar-tarifa]`, '');
+}
+
+/* ------------------------------------------------------------------ */
+/* 5b) Tarifa oficial (solo fichas con tabla oficial: Cootransrural)    */
+/* ------------------------------------------------------------------ */
+// Urbano: un lugar del casco urbano cobra la mínima oficial. Zona 5: «Pedir» desde la tabla
+// oficial cobra el precio del decreto, con el chip «Tarifa oficial · Decreto 05 de 2026».
+async function probarTarifaOficial() {
+  if (!OFICIALES) return;
+  const ctx = await navegador.newContext(movil);
+  await ctx.addInitScript((k) => {
+    localStorage.setItem('ct.envivo', 'no');
+    localStorage.setItem(k, JSON.stringify({ id: 'p-oficial', nombre: 'Rosa Oficial', celular: '3115550002', calificacion: 5, verificado: true }));
+  }, `${PREFIJO}pasajero`);
+  const p = await ctx.newPage();
+  vigilar(p, 'tarifa-oficial');
+  await p.goto(urlPasajero());
+  await vista(p, 'inicio', 30000);
+  await p.waitForTimeout(1500);
+  // Con el GPS en el parque principal: aviso del Decreto 89 de 2026 y «Ir al paradero».
+  const parque = LUGARES.find((l) => l.id === 'parque');
+  if (parque?.noRecoger && FICHA.PARADERO) {
+    await p.waitForSelector('[data-aviso-recogida]:not([hidden])', { timeout: 15000 });
+    ok((await p.textContent('[data-aviso-recogida]')).includes(parque.noRecoger), 'recogida en el parque: avisa que el Decreto 89 de 2026 lo prohíbe');
+    await foto(p, 'o00-parque-no-recoger');
+    await p.click('[data-ir-paradero]');
+    await p.waitForFunction((n) => document.querySelector('[data-origen-titulo]')?.textContent.trim() === n, FICHA.PARADERO.nombre, { timeout: 15000 }).catch(() => {});
+    ok((await p.textContent('[data-origen-titulo]')).trim() === FICHA.PARADERO.nombre && await p.isHidden('[data-aviso-recogida]'), `«Ir al paradero» pone la recogida en «${FICHA.PARADERO.nombre}»`);
+  }
+  // Urbano: un lugar del casco urbano (el Liceo) → $6.100 oficial.
+  const urbano = LUGARES.find((l) => l.id === 'liceo') || LUGARES.find((l) => l.cat === 'educacion');
+  await p.click('[data-buscar]');
+  await p.waitForSelector('.a-buscador.a-abierto');
+  await p.fill('[data-q]', urbano.nombre);
+  await p.waitForSelector(`.a-buscador .a-fila:has-text("${urbano.nombre}")`);
+  await p.click(`.a-buscador .a-fila:has-text("${urbano.nombre}")`);
+  await vista(p, 'confirmar', 10000);
+  await p.waitForSelector('[data-pedir]:not([disabled])', { timeout: 30000 });
+  await p.waitForTimeout(600);
+  const total = (await p.textContent('[data-total]')).trim();
+  const chip = (await p.textContent('[data-chip-tarifa]')).trim();
+  ok(total === pesosTexto(FICHA.TARIFAS.minimaUrbana) && chip === ETIQUETA_OFICIAL, `urbano: ${urbano.nombre} cobra ${total} con «${chip}»`);
+  await foto(p, 'o01-urbano-oficial');
+  // Zona 5 desde la tabla oficial: «Pedir».
+  const z5 = FICHA.DESTINOS_TARIFA.find((d) => d.destino === 'Escuela Buenavista') || FICHA.DESTINOS_TARIFA.find((d) => d.zona === 5 && d.precision === 'exacta');
+  await p.click('[data-volver]');
+  await p.waitForTimeout(500);
+  await p.click('.a-buscador.a-abierto [data-cerrar]').catch(() => {});
+  await vista(p, 'inicio', 10000);
+  await p.waitForTimeout(600);
+  await p.click('[data-menu]');
+  await p.waitForTimeout(500);
+  await p.click('.a-menu-item:has-text("Tarifas y rutas")');
+  await p.waitForSelector('.a-panel.a-abierto [data-buscar-tarifa]');
+  await p.fill('.a-panel.a-abierto [data-buscar-tarifa]', z5.destino);
+  await p.waitForTimeout(300);
+  await p.click(`.a-panel.a-abierto [data-pedir-a="${z5.id}"]`);
+  await vista(p, 'confirmar', 10000);
+  await p.waitForSelector('[data-pedir]:not([disabled])', { timeout: 30000 });
+  await p.waitForTimeout(600);
+  const total5 = (await p.textContent('[data-total]')).trim();
+  const chip5 = (await p.textContent('[data-chip-tarifa]')).trim();
+  await p.click('[data-detalle]');
+  await p.waitForTimeout(500);
+  const detalle = await p.textContent('[data-detalle-lista]');
+  const enlace = await p.getAttribute('[data-detalle-lista] [data-enlace-decreto]', 'href');
+  ok(total5 === pesosTexto(z5.valor) && chip5 === ETIQUETA_OFICIAL && detalle.includes(`a ${z5.destino} (zona 5)`) && enlace === FUENTE.url,
+    `zona 5: «${z5.destino}» desde la tabla cobra ${total5} con «${chip5}» y enlace al decreto`);
+  await foto(p, 'o02-zona5-oficial');
+  await ctx.close();
+}
+
 /* ------------------------------------------------------------------ */
 /* 6) Ruta con tarifa fija                                              */
 /* ------------------------------------------------------------------ */
@@ -831,9 +947,12 @@ async function probarRutaFija() {
   await p.click('[data-detalle]');
   await p.waitForTimeout(800);
   const detalle = await p.textContent('[data-detalle-lista]');
-  const concepto = `Tarifa fija ${PUEBLO} → ${RUTA_FIJA.destino}`;
+  // Con tarifas oficiales, las rutas a otros municipios son precio de referencia (por confirmar).
+  const concepto = OFICIALES ? `Precio de referencia ${PUEBLO} → ${RUTA_FIJA.destino}` : `Tarifa fija ${PUEBLO} → ${RUTA_FIJA.destino}`;
   ok(detalle.includes(concepto) && detalle.replace(/\D/g, '').includes(String(RUTA_FIJA.valor)), `ruta fija: «${concepto}» por $${RUTA_FIJA.valor.toLocaleString('es-CO')}`);
-  ok((await p.textContent('[data-ruta-sub]')).includes('tarifa fija'), 'ruta fija: el resumen dice «ruta con tarifa fija»');
+  const resumenRuta = OFICIALES ? 'precio de referencia' : 'tarifa fija';
+  ok((await p.textContent('[data-ruta-sub]')).includes(resumenRuta), `ruta fija: el resumen dice «${resumenRuta}»`);
+  if (OFICIALES) ok((await p.textContent('[data-chip-tarifa]')).trim() === 'Precio de referencia', 'ruta fija: el chip dice «Precio de referencia»');
   await foto(p, 'f01-ruta-fija');
   await ctx.close();
 }
@@ -844,6 +963,7 @@ await Promise.all([
   probarEscritorio().catch((e) => { fallas++; console.log(`✘ escritorio: ${e.message}`); }),
   probarBordes().catch((e) => { fallas++; console.log(`✘ bordes: ${e.message}`); }),
   probarRutaFija().catch((e) => { fallas++; console.log(`✘ ruta fija: ${e.message}`); }),
+  probarTarifaOficial().catch((e) => { fallas++; console.log(`✘ tarifa oficial: ${e.message}`); }),
 ]);
 
 ok(errores.length === 0, `sin errores de JavaScript${errores.length ? `:\n   ${errores.slice(0, 8).join('\n   ')}` : ''}`);

@@ -9,11 +9,12 @@ import { crearSeccionesConductor } from './conductor-secciones.js';
 const { icono, esc } = C;
 const AMARILLO = '#FFE14D';
 
-// Zonas de demanda decorativas: el parque principal del municipio y otro punto
-// concurrido cercano (en El Rosal, la rotonda), tomados de la ficha.
+// Zonas de demanda decorativas: el paradero de taxis (si la ficha lo trae; en El Rosal el
+// Decreto 89 de 2026 prohíbe recoger en el parque) o el parque principal del municipio, y
+// otro punto concurrido cercano (en El Rosal, la rotonda), tomados de la ficha.
 function zonasDemanda(N) {
   const L = N.LUGARES || [];
-  const parque = L.find((l) => l.id === 'parque') || { nombre: 'Centro', ...N.CENTRO };
+  const parque = L.find((l) => l.id === 'paradero') || L.find((l) => l.id === 'parque' && !l.noRecoger) || L.find((l) => l.id === 'parque') || { nombre: 'Centro', ...N.CENTRO };
   const cerca = (l) => {
     const km = N.distanciaKm(parque, l);
     return km >= 0.45 && km <= 1.6;
@@ -21,7 +22,7 @@ function zonasDemanda(N) {
   const otra = L.find((l) => l.id === 'rotonda') || L.find((l) => ['comercio', 'salud', 'centro', 'educacion', 'barrio', 'comida'].includes(l.cat) && String(l.nombre).length <= 18 && cerca(l));
   // Nombres cortos para las etiquetas del mapa (p. ej. «Parque Principal Pedro
   // Fernández Madrid» ocuparía media pantalla).
-  const corto = (l) => (l.id === 'rotonda' ? 'Rotonda' : l.id === 'parque' && String(l.nombre).length > 20 ? 'Parque Principal' : l.nombre);
+  const corto = (l) => (l.id === 'rotonda' ? 'Rotonda' : l.id === 'paradero' ? 'Paradero' : l.id === 'parque' && String(l.nombre).length > 20 ? 'Parque Principal' : l.nombre);
   const zonas = [
     { nombre: corto(parque), nivel: 'alta', lat: parque.lat, lng: parque.lng, radio: 280, color: '#FF4D9D' },
     otra ? { nombre: corto(otra), nivel: 'media', lat: otra.lat, lng: otra.lng, radio: 300, color: '#FFE14D' } : null,

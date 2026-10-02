@@ -124,7 +124,7 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
     etaViajeInicial: null,
     calif: { estrellas: 0, etiquetas: new Set() },
   };
-  const pos0 = p.estado.miPosicion || N.CENTRO;
+  const pos0 = p.estado.miPosicion || N.PUNTO_RECOGIDA || N.CENTRO;
   ui.origen = { lat: pos0.lat, lng: pos0.lng, titulo: 'Tu ubicación', detalle: '' };
   if (p.estado.miPosicion?.real) m.ponerYo(p.estado.miPosicion);
 
@@ -440,7 +440,7 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
                 <div class="c-recogida-texto"><small>Te recogemos en</small><strong data-dir-titulo>${esc(ui.origen.titulo)}</strong><span data-dir-detalle>${esc(ui.origen.detalle || '')}</span></div>
                 <button type="button" class="c-boton-icono c-boton-icono-chico" data-accion="mi-ubicacion" aria-label="Volver a mi ubicación">${icono('mira')}</button>
               </div>
-              <p class="c-nota-gps" data-sin-gps hidden>${icono('alerta')}<span>Usamos el centro ${esc(dePueblo)}; mueve el mapa para ubicar tu punto.</span></p>
+              <p class="c-nota-gps" data-sin-gps hidden>${icono('alerta')}<span>${N.PARADERO?.nombre ? `Usamos el ${esc(N.PARADERO.nombre.charAt(0).toLowerCase() + N.PARADERO.nombre.slice(1))}` : `Usamos el centro ${esc(dePueblo)}`}; mueve el mapa para ubicar tu punto.</span></p>
               <div class="c-atajos" role="list" aria-label="Destinos rápidos">
                 ${atajosLista.map((a, i) => `<button type="button" role="listitem" class="c-chip c-atajo" data-accion="atajo" data-i="${i}">${icono(a.icono)}<span>${esc(a.texto)}</span></button>`).join('')}
               </div>
@@ -571,10 +571,10 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
               <div class="c-trayecto-punto"><span class="c-punto c-punto-magenta"></span><div><small>Destino</small><strong>${esc(destinoTitulo)}</strong></div><button type="button" class="c-boton-texto" data-accion="cambiar-destino">Cambiar</button></div>
             </div>
             <div class="c-cotizacion" data-cotizacion aria-live="polite">
-              <div class="c-precio"><small>Tarifa estimada</small><strong data-total><span class="c-esqueleto"></span></strong><span class="c-etiqueta c-etiqueta-amarilla">Tarifa de ejemplo</span></div>
+              <div class="c-precio"><small>${N.TARIFAS.ejemplo ? 'Tarifa estimada' : 'Valor del viaje'}</small><strong data-total><span class="c-esqueleto"></span></strong><span class="c-etiqueta c-etiqueta-amarilla" data-chip-tarifa ${N.TARIFAS.ejemplo ? '' : 'hidden'}>${N.TARIFAS.ejemplo ? 'Tarifa de ejemplo' : ''}</span></div>
               <div class="c-metricas"><div><strong data-km>–</strong><small>distancia</small></div><div><strong data-min>–</strong><small>tiempo</small></div></div>
             </div>
-            <details class="c-detalle-tarifa"><summary>Ver detalle de la tarifa ${icono('abajo')}</summary><ul data-detalle></ul><p>Valores de ejemplo: la ${E.tipo} confirmará las tarifas oficiales.</p></details>
+            <details class="c-detalle-tarifa"><summary>Ver detalle de la tarifa ${icono('abajo')}</summary><ul data-detalle></ul><p data-tarifa-nota>${N.TARIFAS.ejemplo ? `Valores de ejemplo: la ${E.tipo} confirmará las tarifas oficiales.` : ''}</p></details>
             <div class="c-segmentado" role="radiogroup" aria-label="Método de pago">
               <button type="button" role="radio" aria-checked="${ui.metodoPago === 'qr'}" data-accion="pago" data-pago="qr">${icono('qr')} QR <small>(prueba)</small></button>
               <button type="button" role="radio" aria-checked="${ui.metodoPago === 'efectivo'}" data-accion="pago" data-pago="efectivo">${icono('efectivo')} Efectivo</button>
@@ -1076,13 +1076,24 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
     ui.cot = r;
     caja?.classList.remove('c-cargando');
     const { ruta, tarifa } = r;
+    // Con tarifas oficiales (Cootransrural): el chip dice si es oficial, estimada o de referencia.
+    if (!N.TARIFAS.ejemplo) {
+      const chip = contenido.querySelector('[data-chip-tarifa]');
+      if (chip) {
+        chip.textContent = tarifa.etiqueta || N.etiquetaTarifa(tarifa);
+        chip.dataset.tipo = tarifa.tipo || '';
+        chip.hidden = false;
+      }
+      const nota = contenido.querySelector('[data-tarifa-nota]');
+      if (nota) nota.textContent = (tarifa.notas || []).join(' ');
+    }
     contenido.querySelector('[data-total]').innerHTML = `${ui.sinDestino ? '<small>desde</small> ' : ''}${N.pesos(tarifa.total)}${tarifa.descuento ? `<s>${N.pesos(tarifa.total + tarifa.descuento)}</s>` : ''}`;
     contenido.querySelector('[data-km]').textContent = ruta ? N.kmTexto(ruta.km) : '—';
     contenido.querySelector('[data-min]').textContent = ruta ? N.minutosTexto(ruta.min) : '—';
     contenido.querySelector('[data-detalle]').innerHTML =
       tarifa.detalle.map((d) => `<li><span>${esc(d.concepto)}</span><strong class="${d.valor < 0 ? 'c-descuento' : ''}">${d.valor < 0 ? '−' + N.pesos(-d.valor) : N.pesos(d.valor)}</strong></li>`).join('') +
       `<li class="c-total-detalle"><span>Total estimado</span><strong>${N.pesos(tarifa.total)}</strong></li>` +
-      (tarifa.rutaFija ? `<li class="c-nota-detalle"><span>${icono('ruta')} Ruta con tarifa fija hacia ${esc(tarifa.rutaFija.destino)}</span></li>` : '') +
+      (tarifa.rutaFija ? `<li class="c-nota-detalle"><span>${icono('ruta')} ${!N.TARIFAS.ejemplo && tarifa.tipo === 'referencia' ? 'Precio de referencia' : 'Ruta con tarifa fija'} hacia ${esc(tarifa.rutaFija.destino)}</span></li>` : '') +
       (ui.sinDestino ? `<li class="c-nota-detalle"><span>${icono('info')} El valor final depende del destino que le digas al conductor.</span></li>` : '') +
       (ruta?.aproximada ? `<li class="c-nota-detalle"><span>${icono('info')} Distancia aproximada (sin conexión al servicio de rutas).</span></li>` : '');
     if (ruta && ui.destino && !ui.sinDestino) {
@@ -1306,7 +1317,7 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
       b.classList.add('c-girando-boton');
       const pos = await p.actualizarMiPosicion();
       b.classList.remove('c-girando-boton');
-      if (!pos.real) avisar({ titulo: 'No pudimos leer tu GPS', cuerpo: `Usamos el centro ${dePueblo}; mueve el mapa para ubicar tu punto.`, tipo: 'alerta' });
+      if (!pos.real) avisar({ titulo: 'No pudimos leer tu GPS', cuerpo: `${N.PARADERO?.nombre ? `Usamos el ${N.PARADERO.nombre.charAt(0).toLowerCase() + N.PARADERO.nombre.slice(1)}` : `Usamos el centro ${dePueblo}`}; mueve el mapa para ubicar tu punto.`, tipo: 'alerta' });
       else m.ponerYo(pos);
       ui.origen = { lat: pos.lat, lng: pos.lng, titulo: 'Ubicando…', detalle: '' };
       pintarDireccionOrigen();

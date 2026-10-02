@@ -109,6 +109,17 @@ export function fidelidad(completados) {
 
 // ¿Las tarifas de la ficha son de ejemplo (la cooperativa aún no confirma las oficiales)?
 export const TARIFAS_EJEMPLO = Boolean(N.TARIFAS?.ejemplo);
+// ¿Tiene tabla oficial de precios (Cootransrural: Decreto 05 de 2026 de El Rosal)?
+export const TARIFAS_OFICIALES = Boolean(N.TARIFAS_OFICIALES);
+
+// Sin GPS se propone el paradero de taxis de la ficha (El Rosal: Decreto 89 de 2026, que
+// prohíbe recoger en el parque principal) o, si no hay, el centro del pueblo.
+const minuscula = (t) => (t ? t.charAt(0).toLowerCase() + t.slice(1) : t);
+export const TEXTO_SIN_GPS = N.PARADERO?.nombre
+  ? `Usamos el ${minuscula(limpio(N.PARADERO.nombre))}; mueve el mapa para ubicar tu punto.`
+  : `Usamos el centro de ${PUEBLO}; mueve el mapa para ubicar tu punto.`;
+// Lugares de la ficha donde no se puede recoger (noRecoger: el parque principal de El Rosal).
+export const LUGARES_SIN_RECOGIDA = (N.LUGARES || []).filter((l) => l && l.noRecoger && Number.isFinite(l.lat) && Number.isFinite(l.lng));
 
 // Une piezas de texto omitiendo las vacías.
 export const unir = (piezas, sep = ' · ') => piezas.filter((x) => x != null && String(x).trim() !== '').join(sep);

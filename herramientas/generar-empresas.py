@@ -631,21 +631,25 @@ def municipios_taxicun(ficha, maximo=2):
     return elegidos
 
 
+# Tarifas de EJEMPLO para completar lo que falte en una ficha (las mismas de nucleo/datos.js y
+# de crear-ficha.py). Antes salían de la ficha de Cootransrural, pero ahora esa trae las tarifas
+# oficiales del Decreto 05 de 2026 de El Rosal (con su fuente y su nota), que no deben pasar a otras.
+TARIFAS_EJEMPLO = {
+    'ejemplo': True, 'minimaUrbana': 8000, 'banderazo': 5500, 'porKm': 1300, 'redondeo': 500,
+    'recargoNocturno': 2000, 'recargoDominical': 1000, 'nocheDesde': 20, 'nocheHasta': 6,
+    'descuentoProgramado': 0.1, 'horasAnticipacion': 24, 'viajesFidelidad': 10, 'descuentoFidelidad': 0.5,
+}
+
+
 def tarifas_base():
-    if 'tarifas_base' not in _CACHE:
-        try:
-            principal = json.loads((RAIZ / 'empresas' / PRINCIPAL / 'ficha.json').read_text(encoding='utf-8'))
-            _CACHE['tarifas_base'] = dict(principal.get('TARIFAS') or {})
-        except (OSError, ValueError):
-            _CACHE['tarifas_base'] = {}
-    return _CACHE['tarifas_base']
+    return dict(TARIFAS_EJEMPLO)
 
 
 def derivados(ficha):
     fid = ficha['id']
     E = ficha['EMPRESA']
-    # Tarifas: las de la ficha; lo que falte, con las de ejemplo de la principal
-    # (las mismas que pone crear-ficha.py), para no mostrar nunca «$0».
+    # Tarifas: las de la ficha; lo que falte, con las de ejemplo (TARIFAS_EJEMPLO, las mismas
+    # que pone crear-ficha.py), para no mostrar nunca «$0».
     T = dict(tarifas_base(), **{k: v for k, v in (ficha.get('TARIFAS') or {}).items() if v is not None})
     es_principal = fid == PRINCIPAL
     es_propuesta = ficha.get('estado') == 'propuesta'
@@ -837,7 +841,50 @@ def derivados(ficha):
         'minima': pesos(T.get('minimaUrbana') or 0), 'banderazo': pesos(T.get('banderazo') or 0),
         'km': pesos(T.get('porKm') or 0), 'nocturno': pesos(T.get('recargoNocturno') or 0), 'hay_nocturno': (T.get('recargoNocturno') or 0) > 0, 'dominical': pesos(T.get('recargoDominical') or 0), 'hay_dominical': (T.get('recargoDominical') or 0) > 0,
         'horario_nocturno': f"De {hora12(T.get('nocheDesde', 20))} a {hora12(T.get('nocheHasta', 6))}",
+        'minima_texto': 'Dentro del casco urbano',
+        'recorrido_titulo': 'Por recorrido',
+        'recorrido_texto': f"de arranque + {pesos(T.get('porKm') or 0)} por km",
     }
+    # Tarifas oficiales (ejemplo: false, fuente y tabla DESTINOS_TARIFA; Cootransrural: Decreto 05
+    # de 2026 de El Rosal): mínima oficial, tabla por zonas, recorrido estimado y rutas de referencia.
+    destinos_tarifa = [d for d in ficha.get('DESTINOS_TARIFA') or [] if d.get('destino') and isinstance(d.get('valor'), (int, float))]
+    fuente = T.get('fuente') if isinstance(T.get('fuente'), dict) else {}
+    oficial = not T.get('ejemplo', True) and bool(destinos_tarifa) and bool(fuente.get('acto'))
+    p['tarifas_oficial'] = oficial
+    p['tarifas_fuente'] = {k: str(fuente.get(k) or '') for k in ('acto', 'entidad', 'fecha', 'url', 'pdf')}
+    p['tarifas_lead'] = 'TaxiCun calcula la tarifa con la ruta real. Para los viajes más comunes desde ' + pueblo + ' hay tarifa fija.'
+    p['tabla_rutas_titulo'] = f'Rutas con tarifa fija desde {pueblo}'
+    p['tabla_rutas_texto'] = 'Tiempos aproximados con tráfico normal.'
+    p['cotizador_nota'] = 'Calculado con la hora actual (incluye recargos si aplican).'
+    p['pie_demo'] = 'App en demostración: tarifas de ejemplo y pagos de prueba.'
+    p['tarifas_zonas'] = []
+    if oficial:
+        estimados = set(T.get('estimados') or [])
+        origen = T.get('origenOficial') or f'{pueblo} Centro'
+        zonas = {}
+        for d in destinos_tarifa:
+            z = zonas.setdefault(d['zona'], {'zona': d['zona'], 'sector': d.get('sector') or f"Zona {d['zona']}", 'destinos': []})
+            nota = '' if d.get('precision') in ('exacta', 'aproximada') else ('Sin ubicar en el mapa' if d.get('precision') == 'sin_ubicar' or 'lat' not in d else 'Punto aproximado (centro de la vereda)')
+            z['destinos'].append({'destino': d['destino'], 'valor': pesos(d['valor']), 'nota': nota})
+        for z in zonas.values():
+            valores = [d['valor'] for d in destinos_tarifa if d['zona'] == z['zona']]
+            z['rango'] = pesos(min(valores)) if min(valores) == max(valores) else f'{pesos(min(valores))} a {pesos(max(valores))}'
+            z['cuantos'] = f"{len(valores)} {'destino' if len(valores) == 1 else 'destinos'}"
+        p['tarifas_zonas'] = [zonas[k] for k in sorted(zonas)]
+        p['tarifas_origen'] = origen
+        p['tarifas_total'] = len(destinos_tarifa)
+        p['tarifas_lead'] = (f"Desde {origen}, TaxiCun cobra el precio oficial del {fuente['acto']} a {len(destinos_tarifa)} destinos del municipio; "
+                             f"dentro del casco urbano rige la tarifa única de {pesos(T.get('minimaUrbana') or 0)}.")
+        p['tarifa_inicial']['minima_texto'] = f"Tarifa única urbana · {fuente['acto']}"
+        if 'banderazo' in estimados or 'porKm' in estimados:
+            p['tarifa_inicial']['recorrido_titulo'] = 'Por recorrido (estimado)'
+            p['tarifa_inicial']['recorrido_texto'] = f"de arranque + {pesos(T.get('porKm') or 0)} por km, solo para destinos fuera de la tabla (el decreto no lo fija)"
+        if T.get('rutasReferencia'):
+            p['tabla_rutas_titulo'] = 'Otros municipios: precio de referencia'
+            p['tabla_rutas_texto'] = str(T.get('notaRutas') or 'Precios de referencia, por confirmar con la cooperativa.')
+        p['cotizador_nota'] = (f"Precio oficial desde {origen} ({fuente['acto']}); para otros destinos, estimado. "
+                               + ('Sin recargos: el decreto no los fija.' if not (T.get('recargoNocturno') or T.get('recargoDominical')) else 'Incluye recargos si aplican.'))
+        p['pie_demo'] = f"App en demostración: pagos de prueba. Tarifas del {fuente['acto']}."
 
     # Rutas para el pie de la foto de la Sabana
     if es_principal:
@@ -1251,6 +1298,9 @@ def datos_propuesta(ficha, p):
     confirmar = [PENDIENTE_AMABLE.get(x.lower(), mayuscula(x)).replace('la cooperativa', f'la {tipo}') for x in pend_lista]
     if T.get('ejemplo', True) and not any('tarifa' in x.lower() for x in pend_lista):
         confirmar.append('Las tarifas oficiales (las de la demo son de ejemplo)')
+    elif not T.get('ejemplo', True) and T.get('rutasReferencia'):
+        # Tarifas oficiales (p. ej. el Decreto 05 de 2026 de El Rosal): falta lo que el decreto no fija.
+        confirmar.append('Los recargos nocturno y dominical y los precios a otros municipios (el decreto no los fija)')
     confirmar.append('La lista de conductores, con sus móviles y placas')
     if not colores_oficiales(ficha) and not any(('color' in x.lower() or 'logo' in x.lower()) for x in pend_lista):
         confirmar.append('Sus colores y su logo (los de la demo los propone interOS)')

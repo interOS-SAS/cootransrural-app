@@ -114,8 +114,9 @@
       <h2>9. Términos de uso de la demostración</h2>
       <ul>
         <li>Esta versión es una <b>demostración</b> para enseñar TaxiCun a la {{tipo}} y a los usuarios.</li>
-        <li>Las <b>tarifas y rutas son valores de ejemplo</b>, sujetos a confirmación de la {{tipo}}.</li>
-        <li>Si ningún conductor real acepta el servicio, la app muestra un <b>conductor simulado</b> con datos inventados, para que se vea el recorrido completo.</li>
+{{#si tarifas_oficial}}        <li>Las tarifas dentro del municipio son las del <b>{{tarifas_fuente.acto}}</b> ({{tarifas_fuente.entidad}}); los viajes que no están en esa tabla se estiman, y las rutas a otros municipios son <b>precios de referencia</b>, sujetos a confirmación de la {{tipo}}.</li>
+{{/si}}{{#no tarifas_oficial}}        <li>Las <b>tarifas y rutas son valores de ejemplo</b>, sujetos a confirmación de la {{tipo}}.</li>
+{{/no}}        <li>Si ningún conductor real acepta el servicio, la app muestra un <b>conductor simulado</b> con datos inventados, para que se vea el recorrido completo.</li>
 {{#si tiene_telefono}}        <li>Para pedir un taxi real en este momento, {{#si wa_igual_tel}}llama o escribe a la central: <a href="tel:{{tel}}">{{tel_visible}}</a>{{/si}}{{#no wa_igual_tel}}llama a la central: <a href="tel:{{tel}}">{{tel_visible}}</a>{{#si tiene_whatsapp}}, o escríbele por <a href="https://wa.me/{{wa}}" target="_blank" rel="noopener">WhatsApp</a>{{/si}}{{/no}}.</li>
 {{/si}}{{#no tiene_telefono}}        <li>Para pedir un taxi real en este momento, {{#si tiene_whatsapp}}escríbele a la central por <a href="https://wa.me/{{wa}}" target="_blank" rel="noopener">WhatsApp</a>{{/si}}{{#no tiene_whatsapp}}acércate a la oficina de la {{tipo}}{{#si tiene_direccion}} ({{direccion_corta}}){{/si}}{{/no}}.</li>
 {{/no}}

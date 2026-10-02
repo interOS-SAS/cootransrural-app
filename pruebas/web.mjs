@@ -189,6 +189,34 @@ for (const ancho of [360, 390, 768, 1024, 1440]) {
     ok(/Pide tu taxi con TaxiCun/.test(tc.franjaTexto) && /La app TaxiCun de Cootransrural/i.test(tc.franjaTexto) && /varios municipios de Cundinamarca/.test(tc.franjaTexto) && tc.logo, `inicio ${ancho}: franja de TaxiCun con su logo («${tc.franjaTexto.slice(0, 90)}…»)`);
     ok(/^App TaxiCun · desarrollada por interOS/.test(tc.pie), `inicio ${ancho}: pie «${tc.pie}»`);
   }
+  if (ancho === 1440 || ancho === 390) {
+    // Tarifas oficiales de El Rosal (Decreto 05 de 2026): la mínima oficial, la tabla por zonas
+    // con los 191 destinos, el enlace al decreto y el cotizador con el precio del decreto.
+    const ficha = JSON.parse(readFileSync(join(RAIZ_REPO, 'empresas/cootransrural/ficha.json'), 'utf8'));
+    const T = ficha.TARIFAS;
+    const pesosTxt = (v) => `$${Number(v).toLocaleString('es-CO')}`;
+    const t = await p.evaluate(() => ({
+      urbanas: document.querySelector('#urbanas')?.innerText.replace(/\s+/g, ' ') || '',
+      zonas: document.querySelectorAll('#tabla-oficial .zona-tarifa').length,
+      filas: document.querySelectorAll('#tabla-oficial tbody tr').length,
+      enlace: document.querySelector('#aviso-oficial a')?.href || '',
+      seccion: document.querySelector('#tarifas')?.innerText || '',
+    }));
+    ok(T.ejemplo === false && t.urbanas.includes(pesosTxt(T.minimaUrbana)) && t.urbanas.includes(T.fuente.acto), `inicio ${ancho}: carrera mínima oficial ${pesosTxt(T.minimaUrbana)} (${T.fuente.acto})`);
+    ok(t.zonas === 10 && t.filas === ficha.DESTINOS_TARIFA.length && t.enlace === T.fuente.url, `inicio ${ancho}: tabla oficial por zonas (${t.zonas} zonas, ${t.filas} destinos) y enlace al decreto`);
+    ok(!/de ejemplo/i.test(t.seccion) && /precio de referencia/i.test(t.seccion), `inicio ${ancho}: tarifas sin «de ejemplo»; otros municipios como precio de referencia`);
+    const z5 = ficha.DESTINOS_TARIFA.find((d) => d.zona === 5 && d.precision === 'exacta');
+    const sinUbicar = ficha.DESTINOS_TARIFA.find((d) => d.precision === 'sin_ubicar');
+    for (const d of [z5, sinUbicar]) {
+      await p.selectOption('#cotizar-destino', `t:${d.id}`);
+      await p.waitForTimeout(200);
+      const c = await p.evaluate(() => ({ total: document.querySelector('#cotizacion b')?.textContent || '', tipo: document.querySelector('#cotizacion .cotizacion-tipo')?.textContent || '' }));
+      ok(c.total === pesosTxt(d.valor) && c.tipo === `Tarifa oficial · ${T.fuente.acto}`, `inicio ${ancho}: el cotizador cobra ${c.total} a «${d.destino}» (${c.tipo})`);
+    }
+    await p.selectOption('#cotizar-destino', 'urbano');
+    await p.waitForTimeout(200);
+    ok((await p.textContent('#cotizacion b')) === pesosTxt(T.minimaUrbana), `inicio ${ancho}: dentro de El Rosal, la tarifa única de ${pesosTxt(T.minimaUrbana)}`);
+  }
   if (ancho === 1440) {
     // Los tres QR de la página se leen con jsQR y llevan a donde dicen.
     const [descarga, cobro, sticker] = await leerQRs(p, '#qr-descarga svg, #qr-cobro svg, #qr-sticker svg');

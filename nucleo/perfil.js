@@ -98,7 +98,8 @@ export function recientes() {
 
 export function agregarReciente(lugar) {
   const r = recientes().filter((x) => !(Math.abs(x.lat - lugar.lat) < 1e-4 && Math.abs(x.lng - lugar.lng) < 1e-4));
-  return guardar(k('recientes'), [{ titulo: lugar.titulo, detalle: lugar.detalle || '', lat: lugar.lat, lng: lugar.lng }, ...r].slice(0, 8));
+  // idTarifa: destino de la tabla oficial de tarifas (así conserva su precio oficial).
+  return guardar(k('recientes'), [{ titulo: lugar.titulo, detalle: lugar.detalle || '', lat: lugar.lat, lng: lugar.lng, ...(lugar.idTarifa ? { idTarifa: lugar.idTarifa } : {}) }, ...r].slice(0, 8));
 }
 
 export function historialPasajero() {
