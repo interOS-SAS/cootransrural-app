@@ -2,7 +2,7 @@
 // Apple o Google con UN solo teléfono y desde otro país. GPS en Cupertino (37.33, -122.03), cuenta
 // revisora (REVISORES + CUENTAS_PRUEBA en el servidor) y la app TaxiCun en modo real (?real=1):
 //  a) pasajero: correo + código → datos → la central dice revision: true → con el GPS lejos de El
-//     Rosal, el aviso «Estás lejos de El Rosal… parque principal» y la recogida en el Parque
+//     Rosal, el aviso «Estás lejos de El Rosal… paradero de taxis» y la recogida en el paradero
 //     Principal → destino Tierra Grata con tarifa → pide → ningún conductor de prueba en línea: a
 //     los ~8 s acepta el «Conductor de prueba» (móvil 000, placa ABC123) → se acerca → «en la
 //     puerta» → en viaje → llega → paga en efectivo → califica. En la base: prueba, finalizado.
@@ -36,7 +36,8 @@ const CUPERTINO = { latitude: 37.33, longitude: -122.03, accuracy: 15 };
 mkdirSync(DIR, { recursive: true });
 
 const FICHA = JSON.parse(readFileSync(new URL(`../empresas/${EMPRESA}/ficha.json`, import.meta.url), 'utf8'));
-const PARQUE = FICHA.LUGARES.find((l) => l.id === 'parque');
+// Recogida de la prueba: el paradero de taxis (el Decreto 89 de 2026 prohíbe recoger en el parque principal).
+const PARQUE = FICHA.LUGARES.find((l) => l.id === 'paradero');
 const DESTINO = FICHA.LUGARES.find((l) => l.nombre === 'Tierra Grata');
 
 const resultados = [];
@@ -186,7 +187,7 @@ async function pasajero() {
 
   await debe(conAviso(pp, 'Estás lejos de El Rosal', 15000), 'pasajero: con el GPS en Cupertino, aviso «Estás lejos de El Rosal»');
   const aviso = (await avisosVistos(pp)).find((a) => a.includes('Estás lejos de El Rosal')) || '';
-  ok(/parque principal/i.test(aviso), `pasajero: el aviso dice que la prueba usa el parque principal («${aviso}»)`);
+  ok(/paradero de taxis/i.test(aviso), `pasajero: el aviso dice que la prueba usa el paradero de taxis («${aviso}»)`);
   await debe(pp.waitForFunction((t) => (document.querySelector('[data-origen-titulo]')?.textContent || '').includes(t), PARQUE.nombre, { timeout: 15000 }), `pasajero: la recogida queda en «${PARQUE.nombre}» (El Rosal)`);
   ok(!(await pp.isVisible('[data-aviso-gps]')), 'pasajero: sin «No tenemos tu GPS»');
   await foto(pp, 'p01-lejos-parque');
@@ -202,8 +203,8 @@ async function pasajero() {
   await vista(pp, 'confirmar', 10000);
   await debe(pp.waitForSelector('[data-pedir]:not([disabled])', { timeout: 25000 }), 'pasajero: confirma el viaje con la tarifa calculada');
   tarifaPasajero = Number((await texto(pp, '[data-total]')).replace(/\D/g, ''));
-  ok(tarifaPasajero >= 8000, `pasajero: tarifa de la cooperativa (${tarifaPasajero})`);
-  ok((await texto(pp, '.a-hoja')).includes(PARQUE.nombre), 'pasajero: el resumen dice que lo recogen en el Parque Principal');
+  ok(tarifaPasajero >= 6100, `pasajero: tarifa de la cooperativa, mínimo la oficial de $6.100 (${tarifaPasajero})`);
+  ok((await texto(pp, '.a-hoja')).includes(PARQUE.nombre), 'pasajero: el resumen dice que lo recogen en el paradero de taxis');
   await foto(pp, 'p02-confirmar');
   await pp.click('[data-pedir]');
   await debe(vista(pp, 'buscando', 15000), 'pasajero: «Buscando tu taxi»');
@@ -218,9 +219,10 @@ async function pasajero() {
   ok(tarjeta.includes('Conductor de prueba'), 'pasajero: «Conductor de prueba»');
   ok((await texto(pp, '.a-tarjeta-conductor .a-movil')).includes('000'), 'pasajero: móvil 000');
   ok(soloLetras(tarjeta).includes('ABC123'), 'pasajero: placa ABC123');
-  // El conductor automático no tiene celular: «Llamar» marca a la central de la cooperativa.
-  const tel = await pp.getAttribute('.a-acciones a[href^="tel:"]', 'href').catch(() => null);
-  ok(!tel || tel === `tel:${FICHA.EMPRESA.telefono}`, `pasajero: «Llamar» no marca a un teléfono inventado (${tel || 'sin botón'})`);
+  // El conductor automático no tiene celular, y con la cuenta revisora no se ofrece la central real
+  // de la cooperativa: no hay botón «Llamar». (Sin esperar: el selector no debe existir.)
+  const tel = await pp.evaluate(() => document.querySelector('.a-acciones a[href^="tel:"]')?.getAttribute('href') || null);
+  ok(!tel, `pasajero: «Llamar» no marca a nadie con el conductor automático (${tel || 'sin botón'})`);
   const codigo = await pp.getAttribute('[data-codigo]', 'data-codigo').catch(() => null);
   ok(/^\d{4}$/.test(codigo || ''), `pasajero: ve su código de abordaje (${codigo})`);
   await foto(pp, 'p03-asignado');
@@ -253,7 +255,7 @@ async function pasajero() {
     order by v.creado desc limit 1`).split('|');
   ok(fila2[0] === 'finalizado' && fila2[1] === 't', `base: el viaje queda finalizado y marcado de prueba (${fila2.slice(0, 2).join(', ')})`);
   ok(Number(fila2[2]) === tarifaPasajero, `base: valor final = tarifa (${fila2[2]})`);
-  ok(Math.abs(Number(fila2[3]) - PARQUE.lat) < 1e-4 && Math.abs(Number(fila2[4]) - PARQUE.lng) < 1e-4, `base: la recogida es el Parque Principal (${fila2[3]}, ${fila2[4]})`);
+  ok(Math.abs(Number(fila2[3]) - PARQUE.lat) < 1e-4 && Math.abs(Number(fila2[4]) - PARQUE.lng) < 1e-4, `base: la recogida es el paradero de taxis (${fila2[3]}, ${fila2[4]})`);
   ok(fila2[5] === '2', `base: las dos calificaciones (${fila2[5]})`);
 }
 

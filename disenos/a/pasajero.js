@@ -1892,7 +1892,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       // «¡Tu taxi está en la puerta!» ya se ve en el banner grande: solo va al historial.
       p.on('aviso', (a) => avisos.mostrar(a, { silencioso: p.estado.fase === 'llego' && /puerta/i.test(a.titulo) }));
       // Modo revisor (revisores de las tiendas, desde otro país): el núcleo cambió la posición al
-      // parque principal; si aún no hay un punto de recogida en la zona, el mapa y el pin van allá.
+      // paradero de taxis; si aún no hay un punto de recogida en la zona, el mapa y el pin van allá.
       p.on('revision_lejos', () => {
         if (p.estado.fase !== 'inicio' || (ui.origen && !N.fueraDeZona(ui.origen))) return;
         Object.assign(ui, { origen: null, destino: undefined, destinoProvisional: null, cotizacion: null, centrado: false, modo: 'inicio' });

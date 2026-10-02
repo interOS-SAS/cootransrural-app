@@ -113,7 +113,12 @@ export const SERVICIOS = {
 // 'oscuro' (navegación nocturna), 'navegacion' (navegación de día).
 // Si Mapbox falla, el mapa pasa solo a OpenStreetMap.
 export const MAPBOX = {
-  token: 'pk.eyJ1Ijoib3NjYXJhYmMiLCJhIjoiY211cDA5Y244MDRpYjJ3b2x2ODJoNmc1dCJ9.AHvSP--OXLIcCxBUT7ZnAQ', // público (pk.); restringido por URL en mapbox.com
+  // Solo se usa en taxicun.com (el token está restringido a ese dominio; en otro lado daría 403):
+  // en local, en la copia de GitHub Pages y en las pruebas el mapa sale de OpenStreetMap.
+  // Para forzarlo (p. ej. capturas de tienda con Referer de taxicun.com): localStorage 'taxicun.mapbox' = '1'.
+  token: /(^|\.)taxicun\.com$/.test(globalThis.location?.hostname || '') || globalThis.localStorage?.getItem('taxicun.mapbox') === '1'
+    ? 'pk.eyJ1Ijoib3NjYXJhYmMiLCJhIjoiY211cDA5Y244MDRpYjJ3b2x2ODJoNmc1dCJ9.AHvSP--OXLIcCxBUT7ZnAQ'
+    : '',
   estilos: {
     claro: 'mapbox/streets-v12',
     suave: 'mapbox/light-v11',
