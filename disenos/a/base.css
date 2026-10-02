@@ -697,3 +697,9 @@ html[data-vitrina="1"] .a-escritorio { display: none !important; }
 
 /* Modo real: «Política de privacidad» en Ajustes y en Ayuda. */
 .a-btn-privacidad { width: 100%; margin-top: 10px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--a-borde); }
+
+/* App nativa con el teclado abierto (nucleo/plataforma.js pone html.con-teclado y --a-teclado):
+   espacio abajo para que el campo enfocado pueda quedar a la vista, y los diálogos de abajo
+   suben por encima del teclado. */
+html.con-teclado :is(.a-ingreso, .a-registro, .a-hoja-contenido, .a-panel-cuerpo, .a-buscador-cuerpo, .a-sol-cuerpo, .a-menu) { padding-bottom: calc(24px + var(--a-teclado, 0px)); }
+html.con-teclado .a-modal-capa { padding-bottom: var(--a-teclado, 0px); }

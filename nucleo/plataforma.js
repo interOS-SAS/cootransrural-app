@@ -41,6 +41,31 @@ if (raiz) {
   if (ES_NATIVA) raiz.dataset.nativa = '1';
 }
 
+/* ---------------- Teclado en la app nativa ----------------
+ * En iOS el teclado tapa la parte de abajo del WebView y la página (de alto fijo) no se mueve,
+ * así que el campo que se está llenando puede quedar debajo del teclado. Se publica la altura
+ * del teclado en --a-teclado (con html.con-teclado) para que los diseños dejen espacio abajo,
+ * y se lleva el campo enfocado al centro de lo visible. */
+const vv = globalThis.visualViewport;
+if (ES_NATIVA && raiz && vv) {
+  const medirTeclado = () => {
+    const tapa = Math.max(0, Math.round(globalThis.innerHeight - vv.height - vv.offsetTop));
+    raiz.style.setProperty('--a-teclado', `${tapa}px`);
+    raiz.classList.toggle('con-teclado', tapa > 80);
+  };
+  vv.addEventListener('resize', medirTeclado);
+  vv.addEventListener('scroll', medirTeclado);
+  globalThis.document.addEventListener('focusin', (e) => {
+    const campo = e.target;
+    if (!campo?.matches?.('input:not([type=checkbox]):not([type=radio]), textarea, select, [contenteditable]')) return;
+    // Después de que el teclado termina de subir.
+    setTimeout(() => {
+      medirTeclado();
+      if (globalThis.document.activeElement === campo) campo.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+    }, 350);
+  });
+}
+
 /* ---------------- Enlaces en la app nativa ----------------
  * La app carga taxicun.com dentro del WebView: un enlace del mismo dominio (la política
  * de privacidad, que se abre «en otra pestaña») reemplazaría la app y en Android no hay
