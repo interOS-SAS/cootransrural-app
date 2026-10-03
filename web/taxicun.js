@@ -7,6 +7,8 @@
 // trabajan con el servidor («real»: true en el índice); si es una sola, se abre directo,
 // sin pedir el GPS en la carga (el permiso se pide después, en el mapa).
 import { MODO_REAL, posicion } from '../nucleo/plataforma.js';
+// Enlaces seguros (S30): no depende de la ficha, se puede cargar antes de escoger.
+import { urlInterna } from '../nucleo/enlaces.js';
 
 const RAIZ = new URL('../', import.meta.url);
 // El modo real guarda su elección aparte: no cambia lo que abre la demo en este navegador.
@@ -14,6 +16,8 @@ const CLAVE = MODO_REAL ? 'taxicun.real.empresa' : 'taxicun.empresa';
 
 const $ = (id) => document.getElementById(id);
 const escapar = (t = '') => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// Color de la cooperativa (va en CSS): solo #rgb o #rrggbb; si no, el verde de siempre.
+const colorSeguro = (c) => (/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(c ?? '')) ? c : '#0A5C33');
 
 function distanciaKm(a, b) {
   const r = Math.PI / 180;
@@ -114,7 +118,7 @@ async function abrir(coop, { rol, version, porGps = false, unica = false }) {
   $('elegir').hidden = true;
   $('carga').classList.remove('oculta');
   texto(`${coop.pueblo} · ${coop.nombre}`);
-  document.documentElement.style.setProperty('--tc-cooperativa', coop.color || '#0A5C33');
+  document.documentElement.style.setProperty('--tc-cooperativa', colorSeguro(coop.color));
   // La URL guarda la cooperativa: al recargar o compartir abre la misma.
   const u = new URL(location.href);
   u.searchParams.set('e', coop.id);
@@ -170,8 +174,8 @@ function mostrarLista(lista, { rol, version, motivo, pos = null, pueblo = '', to
     </button>
     <ul class="tc-lista">
       ${ordenadas.map((c) => `
-        <li><button type="button" data-id="${escapar(c.id)}" style="--c:${escapar(c.color)}">
-          <img src="${new URL(c.icono, RAIZ).href}" alt="" width="48" height="48">
+        <li><button type="button" data-id="${escapar(c.id)}" style="--c:${escapar(colorSeguro(c.color))}">
+          <img src="${escapar(urlInterna(c.icono, RAIZ))}" alt="" width="48" height="48">
           <span class="tc-lista-texto">${varias
             ? `<b>${escapar(c.nombre)}</b><small>${escapar(c.razonSocial || c.pueblo)}</small>`
             : `<b>${escapar(c.pueblo)}</b><small>${escapar(c.nombre)}${pos && c.centro ? ` · a ${Math.round(distanciaKm(pos, c.centro))} km` : ''}</small>`}</span>

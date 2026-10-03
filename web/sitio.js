@@ -149,7 +149,7 @@ function codigosQR() {
   // Módulos cuadrados: el estilo redondeado no siempre lo lee jsQR (el lector de la app en iPhone).
   caja.innerHTML = N.qrSVG(urlDescarga, { nivel: 'H', color: colorQR(), margen: 1 }) + `<img class="qr-logo" src="${ICONO_TAXICUN}" alt="" width="48" height="48">`;
   const enlace = $('#qr-descarga-url');
-  enlace.href = urlDescarga;
+  enlace.href = N.urlInterna(urlDescarga);
   // La dirección completa solo en la cooperativa principal: en las demás, la del
   // sitio de pruebas lleva el nombre del repositorio y confunde; queda el texto del enlace.
   if (N.ID_EMPRESA === 'cootransrural') enlace.textContent = urlDescarga.replace(/^https?:\/\//, '').replace(/\?.*$/, '');
@@ -199,7 +199,7 @@ function tarifas() {
   $('#tabla-rutas').innerHTML = rutas.map((r) => `
     <tr>
       <td><span class="destino"><svg class="icono"><use href="#i-pin"/></svg>${N.escaparHTML(r.destino)}</span></td>
-      <td class="col-km">${r.km} km</td>
+      <td class="col-km">${N.escaparHTML(String(r.km))} km</td>
       <td>${N.minutosTexto(r.min)}</td>
       <td><b>${N.pesos(r.valor)}</b></td>
     </tr>`).join('');
@@ -219,8 +219,8 @@ function tarifas() {
   select.innerHTML = `<option value="urbano">Dentro de ${esc(E.pueblo)} (${oficiales ? 'tarifa única' : 'carrera mínima'})</option>` +
     (oficiales
       ? N.zonasTarifa().map((z) => `<optgroup label="${esc(`Zona ${z.zona} · ${z.sector}`)}">${z.destinos.map((d) => `<option value="t:${esc(d.id)}">${esc(d.destino)}</option>`).join('')}</optgroup>`).join('')
-        + (rutas.length ? `<optgroup label="Otros municipios (precio de referencia)">${rutas.map((r) => `<option value="${r.id}">${esc(r.destino)}</option>`).join('')}</optgroup>` : '')
-      : rutas.map((r) => `<option value="${r.id}">${esc(r.destino)}</option>`).join(''));
+        + (rutas.length ? `<optgroup label="Otros municipios (precio de referencia)">${rutas.map((r) => `<option value="${esc(r.id)}">${esc(r.destino)}</option>`).join('')}</optgroup>` : '')
+      : rutas.map((r) => `<option value="${esc(r.id)}">${esc(r.destino)}</option>`).join(''));
   select.value = rutas.find((r) => r.id === 'aeropuerto') ? 'aeropuerto' : rutas[0]?.id || 'urbano';
 
   const calcular = () => {
@@ -392,13 +392,15 @@ function formulario() {
       `• Fecha y hora: ${N.fechaTexto(cuando)}, ${N.horaTexto(cuando)}`,
     ];
     if (descuento) lineas.push('', `Lo estoy programando con ${HORAS} horas de anticipación (${DESCUENTO} % de descuento).`);
-    const url = N.enlaceWhatsApp(whatsapp, lineas.join('\n'));
+    // Enlace armado con el WhatsApp de la ficha: solo https://wa.me (S30).
+    const url = N.urlSegura(N.enlaceWhatsApp(whatsapp, lineas.join('\n')));
+    if (!url) return;
     const ventana = window.open(url, '_blank');
     if (ventana) ventana.opener = null;
     enviado.hidden = false;
     enviado.innerHTML = ventana
       ? '¡Listo! Te abrimos WhatsApp con tu mensaje. Solo falta tocar «Enviar».'
-      : `Toca aquí para abrir WhatsApp con tu mensaje: <a href="${url}" target="_blank" rel="noopener">enviar a la central</a>.`;
+      : `Toca aquí para abrir WhatsApp con tu mensaje: <a href="${N.escaparHTML(url)}" target="_blank" rel="noopener">enviar a la central</a>.`;
   });
 }
 

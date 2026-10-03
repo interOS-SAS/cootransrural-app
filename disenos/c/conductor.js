@@ -397,12 +397,13 @@ export async function montar(raiz, { N, vitrina = false } = {}) {
   function botonesNavegacion(p, { contacto = null } = {}) {
     if (!p) return '';
     const items = [
-      `<a class="c-accion" href="${esc(N.enlaceNavegacion(p, 'google'))}" target="_blank" rel="noopener">${icono('navegar')}<span>Google Maps</span></a>`,
-      `<a class="c-accion" href="${esc(N.enlaceNavegacion(p, 'waze'))}" target="_blank" rel="noopener">${icono('mapa')}<span>Waze</span></a>`,
+      `<a class="c-accion" href="${esc(N.urlSegura(N.enlaceNavegacion(p, 'google')))}" target="_blank" rel="noopener">${icono('navegar')}<span>Google Maps</span></a>`,
+      `<a class="c-accion" href="${esc(N.urlSegura(N.enlaceNavegacion(p, 'waze')))}" target="_blank" rel="noopener">${icono('mapa')}<span>Waze</span></a>`,
     ];
-    if (contacto) {
-      items.push(`<a class="c-accion" href="tel:${esc(contacto)}">${icono('telefono')}<span>Llamar</span></a>`);
-      items.push(`<a class="c-accion" href="${esc(N.enlaceWhatsApp(contacto, `Hola, soy ${N.primerNombre(yo().nombre || '')}, tu conductor de ${E.nombre} (móvil ${yo().movil}).`))}" target="_blank" rel="noopener">${icono('chat')}<span>WhatsApp</span></a>`);
+    // El celular del pasajero llega del servidor: el enlace solo con dígitos (S30).
+    if (contacto && N.enlaceTel(contacto)) {
+      items.push(`<a class="c-accion" href="${esc(N.enlaceTel(contacto))}">${icono('telefono')}<span>Llamar</span></a>`);
+      items.push(`<a class="c-accion" href="${esc(N.urlSegura(N.enlaceWhatsApp(contacto, `Hola, soy ${N.primerNombre(yo().nombre || '')}, tu conductor de ${E.nombre} (móvil ${yo().movil}).`)))}" target="_blank" rel="noopener">${icono('chat')}<span>WhatsApp</span></a>`);
     }
     return `<div class="c-acciones-viaje${items.length === 2 ? ' c-acciones-dos' : ''}">${items.join('')}</div>`;
   }

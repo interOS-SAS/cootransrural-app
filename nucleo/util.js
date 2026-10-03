@@ -190,11 +190,14 @@ export function enlaceWhatsApp(numero, texto) {
   return texto ? `${base}?text=${encodeURIComponent(texto)}` : base;
 }
 
+// Las coordenadas pueden llegar del servidor: en el enlace solo van como números.
+const coordenadas = (p) => `${Number(p?.lat)},${Number(p?.lng)}`;
+
 export function enlaceMapa(p) {
-  return `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}`;
+  return `https://www.google.com/maps/search/?api=1&query=${coordenadas(p)}`;
 }
 
 export function enlaceNavegacion(p, app = 'google') {
-  if (app === 'waze') return `https://waze.com/ul?ll=${p.lat},${p.lng}&navigate=yes`;
-  return `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=driving`;
+  if (app === 'waze') return `https://waze.com/ul?ll=${coordenadas(p)}&navigate=yes`;
+  return `https://www.google.com/maps/dir/?api=1&destination=${coordenadas(p)}&travelmode=driving`;
 }

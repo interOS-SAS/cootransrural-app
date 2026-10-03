@@ -1,5 +1,6 @@
 // Configuración general de la app de taxis (sirve para varias cooperativas).
 // Todo lo que cambie de un despliegue a otro (relés, sala, tiempos) vive aquí.
+import { urlInterna } from './enlaces.js';
 
 // Cooperativa activa. Cada página la fija con window.CT_EMPRESA antes de cargar
 // los módulos (o con ?e=id en la URL); sin nada, es Cootransrural. Sus datos
@@ -36,7 +37,9 @@ async function cargarFicha(id) {
 const ficha = await cargarFicha(idPedido());
 
 export const FICHA = ficha;
-export const ID_EMPRESA = ficha.id;
+// El id va en rutas y enlaces (empresas/<id>/, ?e=<id>): solo a-z, 0-9 y guiones. Si la
+// ficha trajera otra cosa, se usa el id que pidió la página (ya validado).
+export const ID_EMPRESA = /^[a-z0-9-]{1,40}$/.test(String(ficha.id ?? '')) ? ficha.id : idPedido();
 // Sin «estado» explícito se trata como propuesta (franja y sin indexar): más seguro.
 export const ES_PROPUESTA = ficha.estado !== 'cliente';
 export const EMPRESA = ficha.EMPRESA;
@@ -137,16 +140,19 @@ export const CAPAS_MAPA = {
 };
 
 // Raíz del sitio (sirve igual en GitHub Pages, en un subdirectorio o en localhost).
+// Solo rutas del mismo sitio (S30): cualquier otra cosa da ''.
 export function urlDelSitio(ruta = '') {
-  return new URL(ruta, RAIZ).href;
+  return urlInterna(ruta, RAIZ);
 }
 
 // Carpeta de la cooperativa: /<id>/ o la que diga la ficha (Cootransrural → /el-rosal/).
-// En la raíz del sitio está la página de TaxiCun.
-export const RAIZ_EMPRESA = new URL(`${FICHA.carpeta || ID_EMPRESA}/`, RAIZ);
+// En la raíz del sitio está la página de TaxiCun. La carpeta es un nombre simple
+// (a-z, 0-9 y guiones): con «javascript:…» o «//otro.sitio» se usa el id.
+const CARPETA = /^[a-z0-9][a-z0-9-]{0,59}$/.test(String(FICHA.carpeta ?? '')) ? FICHA.carpeta : ID_EMPRESA;
+export const RAIZ_EMPRESA = new URL(`${CARPETA}/`, RAIZ);
 
 export function urlEmpresa(ruta = '') {
-  return new URL(ruta, RAIZ_EMPRESA).href;
+  return urlInterna(ruta, RAIZ_EMPRESA);
 }
 
 // Enlace a la app del pasajero ('pasajero') o del conductor ('conductor').

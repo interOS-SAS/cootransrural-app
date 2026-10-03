@@ -76,15 +76,18 @@ export const empresa = {
   get whatsapp() {
     return digitos(EMP().whatsapp);
   },
+  // Solo un correo sencillo: va en un enlace mailto: (S30).
   get correo() {
-    return /@/.test(dato(EMP().correo)) ? dato(EMP().correo) : '';
+    const c = dato(EMP().correo);
+    return NUC?.enlaceCorreo ? (NUC.enlaceCorreo(c) ? c : '') : /@/.test(c) ? c : '';
   },
   get direccion() {
     return dato(EMP().direccion);
   },
+  // Página oficial: solo https: de un dominio de la lista revisada en git (S30).
   get sitioOficial() {
     const s = dato(EMP().sitioOficial) || dato(EMP().web);
-    return /^https?:\/\//.test(s) ? s : '';
+    return NUC?.urlSegura ? NUC.urlSegura(s) : '';
   },
   get fundada() {
     return numero(EMP().fundada);
@@ -117,7 +120,7 @@ export const empresa = {
   },
   get proveedorWeb() {
     const w = dato(NUC?.PROVEEDOR?.web);
-    return /^https?:\/\//.test(w) ? w : '';
+    return NUC?.urlSegura ? NUC.urlSegura(w) : '';
   },
 };
 
@@ -135,7 +138,7 @@ export function urlApp(rol = 'pasajero') {
   const actual = new URLSearchParams(location.search);
   const extra = {};
   for (const k of ['d', 'sala']) if (actual.get(k)) extra[k] = actual.get(k);
-  if (NUC?.urlApp) return NUC.urlApp(rol, extra);
+  if (NUC?.urlApp) return NUC.urlInterna(NUC.urlApp(rol, extra));
   const u = new URL(`../${rol === 'conductor' ? 'conductor/' : 'app/'}`, location.href);
   for (const [k, v] of Object.entries(extra)) u.searchParams.set(k, v);
   return u.href;
@@ -146,7 +149,7 @@ export function urlApp(rol = 'pasajero') {
 // Nunca se enlaza la de otra cooperativa. Con urlEmpresa sirve igual desde
 // <id>/app/ que desde taxicun/ o taxicun/conductor/.
 export function urlPrivacidad() {
-  return NUC ? NUC.urlEmpresa('privacidad/') : '../privacidad/';
+  return NUC ? NUC.urlInterna(NUC.urlEmpresa('privacidad/')) : '../privacidad/';
 }
 
 /* ------------------------------------------------------------------ */
@@ -194,7 +197,7 @@ export function urlCambiarMunicipio(rol = 'pasajero') {
   const u = new URL(NUC.urlElegirMunicipio(rol), location.href);
   const actual = new URLSearchParams(location.search);
   for (const k of ['d', 'sala']) if (actual.get(k)) u.searchParams.set(k, actual.get(k));
-  return u.href;
+  return NUC.urlInterna(u.href);
 }
 export function municipioHTML(rol = 'pasajero') {
   const url = enTaxiCun() ? urlCambiarMunicipio(rol) : '';
@@ -285,7 +288,21 @@ export function iconoAppHTML(tam = 34, id = 'ic') {
   }
   const src = NUC.urlDelSitio(`empresas/${empresa.id}/icono-192.png`);
   const respaldo = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(iconoSVG(tam, id))}`;
-  return `<img class="c-icono-app" src="${esc(src)}" alt="" width="${tam}" height="${tam}" onerror="${esc(`this.onerror=null;this.src='${respaldo}'`)}">`;
+  // Sin manejador onerror en línea (la CSP de taxicun.com no lo deja): lo cambia el oyente de abajo.
+  return `<img class="c-icono-app" src="${esc(src)}" alt="" width="${tam}" height="${tam}" data-c-respaldo="${esc(respaldo)}">`;
+}
+
+// Si el ícono de la cooperativa no carga, se pinta el dibujo de respaldo (una sola vez y
+// solo si es un SVG armado aquí). Los errores de <img> no burbujean: se oyen en captura.
+if (globalThis.document && !globalThis.__cRespaldoIconos) {
+  globalThis.__cRespaldoIconos = true;
+  document.addEventListener('error', (ev) => {
+    const img = ev.target;
+    if (!(img instanceof HTMLImageElement) || !img.dataset.cRespaldo) return;
+    const respaldo = img.dataset.cRespaldo;
+    delete img.dataset.cRespaldo;
+    if (respaldo.startsWith('data:image/svg+xml;')) img.src = respaldo;
+  }, true);
 }
 
 // Dibujo del ícono (pin y taxi) con los colores de la cooperativa activa.
@@ -936,7 +953,7 @@ export function urlParaCelular(rol = 'pasajero') {
   const extra = { d: 'c' };
   const sala = NUC?.salaActual?.();
   if (sala && sala !== (NUC.SALA_POR_DEFECTO || 'demo')) extra.sala = sala;
-  if (NUC?.urlApp) return NUC.urlApp(rol, extra);
+  if (NUC?.urlApp) return NUC.urlInterna(NUC.urlApp(rol, extra));
   const u = new URL(`../${rol === 'conductor' ? 'conductor/' : 'app/'}`, location.href);
   for (const [k, v] of Object.entries(extra)) u.searchParams.set(k, v);
   return u.href;

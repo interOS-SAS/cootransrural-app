@@ -754,7 +754,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const titulo = EM.SERVICIO_24H ? 'Central 24 horas' : `Central de ${EM.NOMBRE}`;
     const taxis = EM.textoTaxis(` en ${EM.PUEBLO}`);
     if (EM.TELEFONO) {
-      return `<a class="a-central" href="tel:${esc(EM.TELEFONO)}">${icono('telefono', { tam: 20 })}<span><strong>${esc(titulo)}</strong><small>${esc(EM.unir([EM.TELEFONO_VISIBLE, taxis]))}</small></span>${icono('adelante', { tam: 18 })}</a>`;
+      return `<a class="a-central" href="${esc(N.enlaceTel(EM.TELEFONO))}">${icono('telefono', { tam: 20 })}<span><strong>${esc(titulo)}</strong><small>${esc(EM.unir([EM.TELEFONO_VISIBLE, taxis]))}</small></span>${icono('adelante', { tam: 18 })}</a>`;
     }
     return `<div class="a-central a-central-sin">${icono('telefono', { tam: 20 })}<span><strong>${esc(titulo)}</strong><small>${esc(EM.unir(['Teléfono de la central: pronto', taxis]))}</small><small>Mientras tanto, pide tu taxi desde la app.</small></span></div>`;
   }
@@ -804,8 +804,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const yo = N.perfil.pasajero();
     // Con la cuenta de los revisores de las tiendas el conductor es automático: sin su celular no se
     // ofrece la central real de la cooperativa.
-    const tel = String(c.tel || (p?.revision ? '' : EM.TELEFONO) || '').replace(/\D/g, '');
-    const wa = c.tel ? N.enlaceWhatsApp(c.tel, `Hola ${nombreCorto(c.nombre)}, soy ${nombreCorto(yo?.nombre || '')}, el pasajero de ${EM.NOMBRE}.`) : '';
+    const tel = N.enlaceTel(String(c.tel || (p?.revision ? '' : EM.TELEFONO) || '').replace(/\D/g, ''));
+    const wa = c.tel ? N.urlSegura(N.enlaceWhatsApp(c.tel, `Hola ${nombreCorto(c.nombre)}, soy ${nombreCorto(yo?.nombre || '')}, el pasajero de ${EM.NOMBRE}.`)) : '';
     // En modo real el celular es el que manda la central, aunque caiga en el rango de la demo.
     if (!REAL && N.esTelDemo(c.tel)) {
       return `<div class="a-acciones">
@@ -816,7 +816,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     </div>`;
     }
     return `<div class="a-acciones">
-      ${tel ? `<a class="a-accion" href="tel:${esc(tel)}">${icono('telefono')}<span>Llamar</span></a>` : ''}
+      ${tel ? `<a class="a-accion" href="${esc(tel)}">${icono('telefono')}<span>Llamar</span></a>` : ''}
       ${wa ? `<a class="a-accion" href="${esc(wa)}" target="_blank" rel="noopener">${icono('chat')}<span>WhatsApp</span></a>` : ''}
       <button type="button" class="a-accion" data-compartir>${icono('compartir')}<span>Compartir</span></button>
       <button type="button" class="a-accion a-accion-sos" data-sos>${icono('sos')}<span>SOS</span></button>
@@ -843,7 +843,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const acc = [
       { texto: 'Llamar a la Línea 123', href: 'tel:123', clase: 'a-btn-peligro', icono: 'telefono' },
       contacto?.celular ? { texto: `Avisar a ${contacto.nombre || 'mi contacto'}`, href: N.enlaceWhatsApp(contacto.celular, `🆘 Necesito ayuda.\n${p.textoCompartir()}`), externo: true, clase: 'a-btn-tinta', icono: 'chat' } : null,
-      EM.TELEFONO ? { texto: `Llamar a la central ${EM.NOMBRE}`, href: `tel:${EM.TELEFONO}`, clase: 'a-btn-suave', icono: 'telefono' } : null,
+      EM.TELEFONO ? { texto: `Llamar a la central ${EM.NOMBRE}`, href: N.enlaceTel(EM.TELEFONO), clase: 'a-btn-suave', icono: 'telefono' } : null,
       { texto: 'Cancelar', valor: null, clase: 'a-btn-texto' },
     ].filter(Boolean);
     await modal(app, {
@@ -1505,10 +1505,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const minimaTexto = TARIFA_EJEMPLO ? ' (mínima de ejemplo)' : EM.TARIFAS_OFICIALES ? ` (mínima oficial ${N.pesos(N.TARIFAS.minimaUrbana)})` : '';
     ponerTexto(c, '[data-ruta-datos]', rt ? `${N.kmTexto(rt.km)} · ${N.minutosTexto(rt.min)} de viaje · llegas a las ${N.horaTexto((ui.programar && ui.fecha ? ui.fecha.getTime() : Date.now()) + rt.min * 60000 + 5 * 60000)}` : `El conductor te cobra según el recorrido${minimaTexto}.`);
     const fuente = tarifa.fuente || N.FUENTE_TARIFAS;
+    // Enlace al decreto: solo https: de un dominio *.gov.co (S30).
+    const urlFuente = N.urlDecreto(fuente?.url);
     const pieDetalle = TARIFA_EJEMPLO
       ? `Tarifas de ejemplo: la ${EM.TIPO} confirmará las oficiales. Con taxímetro o ruta fija, el valor final puede variar.`
       : [...(tarifa.notas || []), oficial ? '' : 'El valor final lo confirma el conductor.'].filter(Boolean).map(esc).join(' ')
-        + (fuente?.url ? ` <a href="${esc(fuente.url)}" target="_blank" rel="noopener" data-enlace-decreto>Ver el ${esc(fuente.acto)}</a>` : '');
+        + (urlFuente ? ` <a href="${esc(urlFuente)}" target="_blank" rel="noopener" data-enlace-decreto>Ver el ${esc(fuente.acto)}</a>` : '');
     $(c, '[data-detalle-lista]').innerHTML = `<ul>${tarifa.detalle.map((d) => `<li class="${d.valor < 0 ? 'a-descuento' : ''}"><span>${esc(d.concepto)}</span><b>${d.valor < 0 ? '−' : ''}${N.pesos(Math.abs(d.valor))}</b></li>`).join('')}
       <li class="a-detalle-total"><span>${oficial && !tarifa.descuento ? 'Total' : 'Total estimado'}</span><b>${N.pesos(tarifa.total)}</b></li></ul>
       <p>${icono('info', { tam: 14 })} <span>${TARIFA_EJEMPLO ? esc(pieDetalle) : pieDetalle}</span></p>`;

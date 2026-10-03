@@ -16,11 +16,17 @@
 import { TARIFAS, RUTAS, LUGARES, DESTINOS_TARIFA, CASCO_URBANO } from './datos.js';
 import { distanciaKm, redondear, horaBogota, pesos } from './util.js';
 import { CENTRO, EMPRESA } from './config.js';
+import { urlDecreto } from './enlaces.js';
 
 // ¿Esta cooperativa tiene tabla oficial de precios?
 export const TARIFAS_OFICIALES = !TARIFAS.ejemplo && DESTINOS_TARIFA.length > 0;
-// De dónde salen las tarifas oficiales: { acto, entidad, fecha, url, pdf }.
-export const FUENTE_TARIFAS = TARIFAS.fuente && TARIFAS.fuente.acto ? TARIFAS.fuente : null;
+// De dónde salen las tarifas oficiales: { acto, entidad, fecha, url, pdf }. Los enlaces
+// solo quedan si son https: de un dominio *.gov.co (S30); si no, quedan vacíos y las
+// pantallas no pintan «Ver el decreto».
+const FUENTE_FICHA = TARIFAS.fuente && TARIFAS.fuente.acto ? TARIFAS.fuente : null;
+export const FUENTE_TARIFAS = FUENTE_FICHA
+  ? { ...FUENTE_FICHA, url: urlDecreto(FUENTE_FICHA.url), ...(FUENTE_FICHA.pdf ? { pdf: urlDecreto(FUENTE_FICHA.pdf) } : {}) }
+  : null;
 // «El Rosal Centro»: el origen de los precios de la tabla.
 export const ORIGEN_OFICIAL = TARIFAS.origenOficial || `${EMPRESA?.pueblo || 'el pueblo'} Centro`;
 

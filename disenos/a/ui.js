@@ -412,9 +412,11 @@ export function modal(app, { titulo, texto = '', cuerpo = '', acciones = [{ text
       resolver(valor);
     };
     for (const a of acciones) {
+      // Enlaces de las acciones: solo los permitidos (S30); si no, queda el botón.
+      const href = a.href ? N.hrefSeguro(a.href) : '';
       const b = el(`<button type="button" class="a-btn ${a.clase || 'a-btn-suave'}">${a.icono ? icono(a.icono, { tam: 20 }) : ''}<span>${esc(a.texto)}</span></button>`);
-      if (a.href) {
-        const enlace = el(`<a class="a-btn ${a.clase || 'a-btn-suave'}" href="${esc(a.href)}" ${a.externo ? 'target="_blank" rel="noopener"' : ''}>${a.icono ? icono(a.icono, { tam: 20 }) : ''}<span>${esc(a.texto)}</span></a>`);
+      if (href) {
+        const enlace = el(`<a class="a-btn ${a.clase || 'a-btn-suave'}" href="${esc(href)}" ${a.externo ? 'target="_blank" rel="noopener"' : ''}>${a.icono ? icono(a.icono, { tam: 20 }) : ''}<span>${esc(a.texto)}</span></a>`);
         enlace.addEventListener('click', () => setTimeout(() => cerrar(a.valor ?? null), 50));
         zonaAcc.append(enlace);
         continue;
@@ -522,8 +524,10 @@ export function abrirMenu(app, { cabeza = '', items = [], pie = '', clase = '' }
       continue;
     }
     const contenido = `<span class="a-menu-ico">${icono(it.icono, { tam: 22 })}</span><span class="a-menu-txt"><strong>${esc(it.texto)}</strong>${it.detalle ? `<small>${esc(it.detalle)}</small>` : ''}</span>${it.insignia ? `<span class="a-menu-insignia">${esc(it.insignia)}</span>` : ''}`;
-    const li = el(`<li>${it.href ? `<a class="a-menu-item ${it.clase || ''}" href="${esc(it.href)}">${contenido}</a>` : `<button type="button" class="a-menu-item ${it.clase || ''}">${contenido}</button>`}</li>`);
-    if (!it.href) {
+    // Enlaces del menú: solo los permitidos (S30); si no, queda el botón.
+    const href = it.href ? N.hrefSeguro(it.href) : '';
+    const li = el(`<li>${href ? `<a class="a-menu-item ${it.clase || ''}" href="${esc(href)}">${contenido}</a>` : `<button type="button" class="a-menu-item ${it.clase || ''}">${contenido}</button>`}</li>`);
+    if (!href) {
       li.firstElementChild.addEventListener('click', () => {
         cerrar();
         setTimeout(() => it.accion?.(), 120);

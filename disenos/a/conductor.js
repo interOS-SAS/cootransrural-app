@@ -846,7 +846,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         <p class="a-error" data-error role="alert"></p>
         <button type="button" class="a-btn a-btn-primario a-btn-grande" data-revisar>${icono('reloj', { tam: 20 })}<span>${estado === 'error' ? 'Reintentar' : 'Revisar de nuevo'}</span></button>
         ${dc ? `<button type="button" class="a-btn a-btn-suave a-btn-grande" data-corregir>${icono('documento', { tam: 20 })}<span>Corregir mis datos</span></button>` : ''}
-        ${EM.TELEFONO && estado !== 'error' ? `<a class="a-btn a-btn-suave a-btn-grande" href="tel:${esc(EM.TELEFONO)}">${icono('telefono', { tam: 20 })}<span>${esc(`Llamar a ${EM.NOMBRE}`)}</span></a>` : ''}
+        ${EM.TELEFONO && estado !== 'error' ? `<a class="a-btn a-btn-suave a-btn-grande" href="${esc(N.enlaceTel(EM.TELEFONO))}">${icono('telefono', { tam: 20 })}<span>${esc(`Llamar a ${EM.NOMBRE}`)}</span></a>` : ''}
         <div class="a-ingreso-acciones">
           <button type="button" class="a-btn-texto" data-salir>Cerrar sesión</button>
           <button type="button" class="a-btn-texto a-texto-peligro" data-eliminar>Eliminar mi cuenta</button>
@@ -1097,18 +1097,20 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   function navegar(p) {
     if (!p) return '';
     return `<div class="a-nav">
-      <a class="a-nav-btn" href="${esc(N.enlaceNavegacion(p, 'google'))}" target="_blank" rel="noopener">${icono('navegar', { tam: 18 })}<span>Google Maps</span></a>
-      <a class="a-nav-btn" href="${esc(N.enlaceNavegacion(p, 'waze'))}" target="_blank" rel="noopener">${icono('navegar', { tam: 18 })}<span>Waze</span></a>
+      <a class="a-nav-btn" href="${esc(N.urlSegura(N.enlaceNavegacion(p, 'google')))}" target="_blank" rel="noopener">${icono('navegar', { tam: 18 })}<span>Google Maps</span></a>
+      <a class="a-nav-btn" href="${esc(N.urlSegura(N.enlaceNavegacion(p, 'waze')))}" target="_blank" rel="noopener">${icono('navegar', { tam: 18 })}<span>Waze</span></a>
     </div>`;
   }
   // Llamar o escribir al pasajero. En modo real el celular llega con la asignación
   // (viaje.pasajero.celular); si no lo registró, se dice.
   function contacto(v) {
     const cel = v.pasajero?.celular;
-    if (!cel) return REAL ? `<p class="a-sin-celular">${icono('telefono', { tam: 16 })}<span>El pasajero no tiene celular registrado</span></p>` : '';
+    // El celular llega del servidor: el enlace solo con dígitos (S30).
+    const tel = N.enlaceTel(cel);
+    if (!cel || !tel) return REAL ? `<p class="a-sin-celular">${icono('telefono', { tam: 16 })}<span>El pasajero no tiene celular registrado</span></p>` : '';
     return `<div class="a-nav a-nav-contacto">
-      <a class="a-nav-btn" href="tel:${esc(cel)}">${icono('telefono', { tam: 18 })}<span>Llamar</span></a>
-      <a class="a-nav-btn" href="${esc(N.enlaceWhatsApp(cel, `Hola ${nombreCorto(v.pasajero.nombre)}, soy el conductor del móvil ${yoConductor()?.movil || ''} de ${EM.NOMBRE}.`))}" target="_blank" rel="noopener">${icono('chat', { tam: 18 })}<span>WhatsApp</span></a>
+      <a class="a-nav-btn" href="${esc(tel)}">${icono('telefono', { tam: 18 })}<span>Llamar</span></a>
+      <a class="a-nav-btn" href="${esc(N.urlSegura(N.enlaceWhatsApp(cel, `Hola ${nombreCorto(v.pasajero.nombre)}, soy el conductor del móvil ${yoConductor()?.movil || ''} de ${EM.NOMBRE}.`)))}" target="_blank" rel="noopener">${icono('chat', { tam: 18 })}<span>WhatsApp</span></a>
     </div>`;
   }
   function tarjetaPasajero(v) {

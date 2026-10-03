@@ -19,12 +19,38 @@ textos dicen «la ${TIPO_EMPRESA}»), `COLORES`, `CENTRO`, `ZONA`, `ES_PROPUESTA
 Si la ficha no carga, el módulo falla (nunca muestra otra cooperativa) y la
 pantalla de carga avisa a los 15 s.
 
-- `urlDelSitio(ruta)`: raíz del sitio (librerías, `pagar/`).
-- `urlEmpresa(ruta)`: raíz de la cooperativa (`<id>/descargar/`…).
+- `urlDelSitio(ruta)`: raíz del sitio (librerías, `pagar/`). Solo rutas del mismo sitio:
+  cualquier otra cosa da `''`.
+- `urlEmpresa(ruta)`: raíz de la cooperativa (`<id>/descargar/`…), con la misma regla. La
+  carpeta (`FICHA.carpeta`) y el id solo pueden ser nombres simples (a-z, 0-9 y guiones).
 - `perfil.*` guarda con prefijo `ct.<id>.` (Cootransrural: `ct.`).
 - Bus: `BroadcastChannel apptaxi-<id>-<sala>` y temas `apptaxi-demo/v2/<id>/<sala>`.
 - Pendiente conocido: el viaje en curso va en `sessionStorage['ct.viaje.pasajero']`
   (común a todas). Cada diseño lo aparta por cooperativa al abrir.
+
+## Enlaces seguros (`enlaces.js`)
+
+Con el panel, la ficha la escriben los gerentes: **todo `href` o `src` armado con datos
+de la ficha o del servidor pasa por estos ayudantes** (requisito S30 del diseño del
+panel). Si el dato no cumple, devuelven `''` y la pantalla no pinta el enlace.
+
+- `urlSegura(u)`: solo `https:`, sin usuario, clave ni puerto, y de un dominio de
+  `DOMINIOS_PERMITIDOS` (WhatsApp, Google Maps, Waze, interOS, TaxiCun, *.gov.co y
+  `SITIOS_COOPERATIVAS`, la lista revisada de páginas oficiales de las cooperativas).
+  Una cooperativa nueva con página propia se agrega a esa lista: `pruebas/enlaces-seguros.mjs`
+  falla si alguna ficha no pasa.
+- `urlDecreto(u)`: la fuente oficial de las tarifas, solo `*.gov.co`. `FUENTE_TARIFAS.url`
+  ya sale filtrada por aquí.
+- `urlInterna(u)`: rutas del mismo sitio (privacidad, la otra app, íconos).
+- `enlaceTel(n)` y `enlaceCorreo(c)`: `tel:` solo con dígitos (y `+`) y `mailto:` con un
+  correo sencillo.
+- `hrefSeguro(u)`: cualquiera de los anteriores (acciones de un diálogo, ítems de un menú).
+- Al cargarse pone una barrera de clics: un enlace `javascript:`, `data:` u otro esquema
+  que ejecute código no navega (los `blob:`, solo si son de este mismo sitio).
+
+`enlaces.js` no depende de la ficha: `web/taxicun.js` lo usa antes de escoger la cooperativa.
+Las páginas no llevan manejadores en línea (`onclick`, `onerror`, `onsubmit`): la CSP de
+taxicun.com no los deja.
 
 ## Pasajero
 

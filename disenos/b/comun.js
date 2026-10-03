@@ -6,6 +6,7 @@
 import {
   escaparHTML, iniciales, qrSVG, EMPRESA, TIPO_EMPRESA, COLORES, ID_EMPRESA, ES_PROPUESTA, PROVEEDOR, CONDUCTORES_DEMO, urlEmpresa,
   MARCA as MARCA_APP, EN_TAXICUN, urlApp, urlElegirMunicipio, urlDelSitio,
+  enlaceTel, enlaceCorreo, urlInterna,
 } from '../../nucleo/index.js';
 
 /* ------------------------------------------------------------------ */
@@ -41,7 +42,8 @@ export const MARCA = Object.freeze({
   pueblo: dato(FE.pueblo),
   municipio: dato(FE.municipio) || dato(FE.pueblo),
   direccion: dato(FE.direccion),
-  correo: dato(FE.correo),
+  // Solo un correo sencillo: va en un enlace mailto: (S30).
+  correo: enlaceCorreo(dato(FE.correo)) ? dato(FE.correo) : '',
   telefono: TEL_CENTRAL,
   telefonoVisible: dato(FE.telefonoVisible) || celularTexto(TEL_CENTRAL),
   whatsapp: dato(FE.whatsapp).replace(/\D/g, ''),
@@ -103,7 +105,7 @@ export function cifrasMarca() {
 export function telCentral() {
   const d = MARCA.telefono;
   if (!d) return '';
-  return d.length === 12 && d.startsWith('57') ? `tel:+${d}` : `tel:+57${d}`;
+  return enlaceTel(d.length === 12 && d.startsWith('57') ? `+${d}` : `+57${d}`);
 }
 
 // Móvil para las ilustraciones (el último de la flota si se sabe cuántos taxis hay).
@@ -114,7 +116,7 @@ export function movilEjemplo() {
 // Política de privacidad de la cooperativa (<id>/privacidad/; en Cootransrural, la
 // de la raíz). Con urlEmpresa sirve igual desde app/, conductor/ y taxicun/.
 export function urlPrivacidad() {
-  return urlEmpresa('privacidad/');
+  return urlInterna(urlEmpresa('privacidad/'));
 }
 
 // Enlace a la otra app de la MISMA cooperativa (rol: 'pasajero' o 'conductor').
@@ -125,12 +127,12 @@ export function urlPrivacidad() {
 // diseño que eligió la cooperativa (o el que la persona escogió en Ajustes).
 export function enlaceApp(rol = 'pasajero', diseno = 'b') {
   const d = TAXICUN.activo ? new URLSearchParams(location.search).get('d') : diseno;
-  return urlApp(rol, d ? { d } : {});
+  return urlInterna(urlApp(rol, d ? { d } : {}));
 }
 
 // Lista de municipios de TaxiCun (solo tiene sentido dentro de TaxiCun).
 export function enlaceMunicipio(rol = 'pasajero') {
-  return urlElegirMunicipio(rol);
+  return urlInterna(urlElegirMunicipio(rol));
 }
 
 // El núcleo guarda el viaje en curso del pasajero en sessionStorage con la misma

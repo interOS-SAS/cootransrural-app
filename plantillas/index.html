@@ -40,6 +40,14 @@
     setTimeout(function () { if (!window.ctSitioListo) document.documentElement.classList.remove('js'); }, 4000);
     // Cooperativa de esta página: el núcleo carga su ficha (empresas/{{id}}/ficha.json).
     window.CT_EMPRESA = '{{id}}';
+    // Sin manejadores onerror ni onsubmit en el HTML (la CSP de taxicun.com no los deja):
+    // una foto que no carga se oculta y las calculadoras no envían nada.
+    document.addEventListener('error', function (e) {
+      if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ocultar-si-falla')) e.target.hidden = true;
+    }, true);
+    document.addEventListener('submit', function (e) {
+      if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-sin-envio')) e.preventDefault();
+    }, true);
   </script>
 
   <script type="application/ld+json">
@@ -119,7 +127,7 @@
   <main id="contenido">
     <!-- ============ HERO ============ -->
     <section class="hero" id="inicio" aria-labelledby="titulo-hero">
-      <img class="hero-foto" src="{{RAIZ}}{{img.hero}}" alt="" width="1600" height="900" fetchpriority="high" decoding="async" onerror="this.hidden=true">
+      <img class="hero-foto" src="{{RAIZ}}{{img.hero}}" alt="" width="1600" height="900" fetchpriority="high" decoding="async" data-ocultar-si-falla>
       <div class="contenedor hero-rejilla">
         <div class="hero-anim">
           <span class="pildora"><span class="punto" aria-hidden="true"></span><span>{{EMPRESA.pueblo}}<span class="solo-ancho">, {{departamento}}</span>{{#si EMPRESA.servicio24h}} · Servicio 24 horas{{/si}}</span></span>
@@ -262,7 +270,7 @@
       <div class="contenedor avisos-rejilla">
         <figure class="foto-marco retrato revelar desde-izq">
           <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-campana"/></svg></span>
-          <img src="{{RAIZ}}{{img.pasajera}}" alt="Pasajera revisando en el celular la llegada de su taxi" width="800" height="1000" loading="lazy" decoding="async" onerror="this.hidden=true">
+          <img src="{{RAIZ}}{{img.pasajera}}" alt="Pasajera revisando en el celular la llegada de su taxi" width="800" height="1000" loading="lazy" decoding="async" data-ocultar-si-falla>
           <figcaption class="foto-nota"><span class="circulo"><svg class="icono"><use href="#i-campana"/></svg></span><span><b>Avisos con sonido y vibración</b><small>No tienes que estar pendiente de la pantalla.</small></span></figcaption>
         </figure>
         <div>
@@ -389,7 +397,7 @@
         </div>
         <figure class="foto-marco banda-sabana revelar">
           <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-ruta"/></svg></span>
-          <img src="{{RAIZ}}{{img.sabana}}" alt="{{#si es_principal}}Paisaje de la Sabana de Occidente cerca de El Rosal{{/si}}{{#no es_principal}}Paisaje de campos verdes y montañas{{/no}}" width="1600" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
+          <img src="{{RAIZ}}{{img.sabana}}" alt="{{#si es_principal}}Paisaje de la Sabana de Occidente cerca de El Rosal{{/si}}{{#no es_principal}}Paisaje de campos verdes y montañas{{/no}}" width="1600" height="900" loading="lazy" decoding="async" data-ocultar-si-falla>
           <figcaption><b>{{rutas_titulo}}</b><span>{{rutas_texto}}</span></figcaption>
         </figure>
         <div class="tarifas-rejilla">
@@ -402,7 +410,7 @@
 {{#si tarifa_inicial.hay_dominical}}              <div class="urbana"><span>Domingos y festivos</span><b>+{{tarifa_inicial.dominical}}</b><small>Todo el día</small></div>
 {{/si}}
             </div>
-            <form class="cotizador" id="cotizador" onsubmit="return false">
+            <form class="cotizador" id="cotizador" data-sin-envio>
               <h3><svg class="icono"><use href="#i-ruta"/></svg>Calcula tu viaje</h3>
               <label for="cotizar-destino">¿A dónde vas desde {{EMPRESA.pueblo}}?</label>
               <select id="cotizar-destino" name="destino"><option>Cargando destinos…</option></select>
@@ -462,7 +470,7 @@
 {{/si}}{{/si}}          </div>
           <figure class="foto-marco foto-real revelar desde-der">
             <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-taxi"/></svg></span>
-            <img src="{{RAIZ}}{{img.nosotros}}" alt="{{alt_nosotros}}" width="1600" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
+            <img src="{{RAIZ}}{{img.nosotros}}" alt="{{alt_nosotros}}" width="1600" height="900" loading="lazy" decoding="async" data-ocultar-si-falla>
             <span class="insignia-foto"><svg class="icono" aria-hidden="true"><use href="#i-taxi"/></svg>{{insignia_nosotros}}</span>
 {{#si frase}}            <figcaption class="lema-flotante">«{{frase}}»{{#si sede_texto}}<small>{{sede_texto}}</small>{{/si}}</figcaption>
 {{/si}}          </figure>
@@ -479,7 +487,7 @@
 {{/cada}}        </ul>
 {{/si}}{{#si img.flota}}        <figure class="foto-marco flota revelar">
           <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-taxi"/></svg></span>
-          <img src="{{RAIZ}}{{img.flota}}" alt="Taxis amarillos en fila frente a la iglesia y el parque principal de un pueblo{{#si es_principal}} de la Sabana{{/si}}, con las montañas al fondo" width="1600" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
+          <img src="{{RAIZ}}{{img.flota}}" alt="Taxis amarillos en fila frente a la iglesia y el parque principal de un pueblo{{#si es_principal}} de la Sabana{{/si}}, con las montañas al fondo" width="1600" height="900" loading="lazy" decoding="async" data-ocultar-si-falla>
           <figcaption class="flota-nota"><b>{{flota_titulo}}</b><span>{{flota_texto}}</span></figcaption>
         </figure>
 {{/si}}      </div>
@@ -490,7 +498,7 @@
       <div class="contenedor conductores-rejilla">
         <figure class="foto-marco retrato revelar desde-izq">
           <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-volante"/></svg></span>
-          <img src="{{RAIZ}}{{img.conductor}}" alt="{{#si es_principal}}Conductor de {{EMPRESA.nombre}} en su taxi{{/si}}{{#no es_principal}}Conductor de taxi sonriente junto a su carro{{/no}}" width="800" height="1000" loading="lazy" decoding="async" onerror="this.hidden=true">
+          <img src="{{RAIZ}}{{img.conductor}}" alt="{{#si es_principal}}Conductor de {{EMPRESA.nombre}} en su taxi{{/si}}{{#no es_principal}}Conductor de taxi sonriente junto a su carro{{/no}}" width="800" height="1000" loading="lazy" decoding="async" data-ocultar-si-falla>
           <span class="insignia-app"><svg class="icono"><use href="#i-volante"/></svg>TaxiCun para conductores</span>
         </figure>
         <div>
@@ -521,11 +529,11 @@
         <div class="collage revelar zoom{{#no hay_fotos_stickers}} sin-fotos{{/no}}">
 {{#si img.sticker}}          <figure class="foto-marco apaisado">
             <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-taxi"/></svg></span>
-            <img src="{{RAIZ}}{{img.sticker}}" alt="Sticker con código QR pegado en el vidrio trasero de un taxi amarillo" width="1200" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
+            <img src="{{RAIZ}}{{img.sticker}}" alt="Sticker con código QR pegado en el vidrio trasero de un taxi amarillo" width="1200" height="900" loading="lazy" decoding="async" data-ocultar-si-falla>
           </figure>
 {{/si}}{{#si img.nevera}}          <figure class="foto-marco apaisado">
             <span class="respaldo" aria-hidden="true"><svg class="icono"><use href="#i-nevera"/></svg></span>
-            <img src="{{RAIZ}}{{img.nevera}}" alt="Imán amarillo y verde con código QR en la puerta de una nevera" width="1200" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
+            <img src="{{RAIZ}}{{img.nevera}}" alt="Imán amarillo y verde con código QR en la puerta de una nevera" width="1200" height="900" loading="lazy" decoding="async" data-ocultar-si-falla>
           </figure>
 {{/si}}          <div class="sticker" aria-hidden="true">
             <b>Pide tu taxi con TaxiCun<br>Escanéame</b>
@@ -553,7 +561,7 @@
 
     <!-- ============ 24 HORAS ============ -->
     <section class="banda-noche" aria-labelledby="titulo-noche">
-      <img src="{{RAIZ}}{{img.noche}}" alt="" width="1600" height="900" loading="lazy" decoding="async" onerror="this.hidden=true">
+      <img src="{{RAIZ}}{{img.noche}}" alt="" width="1600" height="900" loading="lazy" decoding="async" data-ocultar-si-falla>
       <div class="contenedor revelar">
         <span class="pildora"><svg class="icono"><use href="#i-luna"/></svg>{{#si EMPRESA.servicio24h}}Servicio 24 horas{{/si}}{{#no EMPRESA.servicio24h}}Todos los días{{/no}}</span>
         <h2 id="titulo-noche">{{#si EMPRESA.servicio24h}}De día y de noche, siempre hay un taxi para ti{{/si}}{{#no EMPRESA.servicio24h}}Siempre hay un taxi cerca de ti{{/no}}</h2>
@@ -636,7 +644,7 @@
           </ul>
         </div>
 
-        <form class="calculadora revelar" id="calculadora" onsubmit="return false" aria-labelledby="calc-titulo">
+        <form class="calculadora revelar" id="calculadora" data-sin-envio aria-labelledby="calc-titulo">
           <div class="calc-datos">
             <h3 id="calc-titulo"><svg class="icono"><use href="#i-grafica"/></svg>Calcula cuánto pagaría la {{tipo}}</h3>
             <div class="calc-campos">

@@ -3,6 +3,8 @@
 export * from './config.js';
 export * from './datos.js';
 export * from './util.js';
+// Enlaces seguros (S30): urlSegura, urlDecreto, urlInterna, enlaceTel, enlaceCorreo y hrefSeguro.
+export * from './enlaces.js';
 export * from './tarifas.js';
 export * from './geo.js';
 export * from './qr.js';

@@ -158,7 +158,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
     const totalDestinos = zonas.reduce((n, z) => n + z.destinos.length, 0);
     const aviso = T.ejemplo
       ? `<div class="c-aviso-ejemplo">${icono('info')}<span><strong>Valores de ejemplo.</strong> La ${E.tipo} publicará las tarifas oficiales.</span></div>`
-      : fuente ? `<div class="c-aviso-ejemplo c-aviso-oficial" data-aviso-oficial>${icono('check')}<span><strong>Tarifas oficiales · ${esc(fuente.acto)}.</strong> ${esc([fuente.entidad, fuente.fecha].filter(Boolean).join(', '))}${oficiales ? `: precio cerrado desde ${esc(N.ORIGEN_OFICIAL)} a ${totalDestinos} destinos.` : '.'}${fuente.url ? ` <a href="${esc(fuente.url)}" target="_blank" rel="noopener" data-enlace-decreto>Ver el decreto</a>` : ''}</span></div>` : '';
+      : fuente ? `<div class="c-aviso-ejemplo c-aviso-oficial" data-aviso-oficial>${icono('check')}<span><strong>Tarifas oficiales · ${esc(fuente.acto)}.</strong> ${esc([fuente.entidad, fuente.fecha].filter(Boolean).join(', '))}${oficiales ? `: precio cerrado desde ${esc(N.ORIGEN_OFICIAL)} a ${totalDestinos} destinos.` : '.'}${N.urlDecreto(fuente.url) ? ` <a href="${esc(N.urlDecreto(fuente.url))}" target="_blank" rel="noopener" data-enlace-decreto>Ver el decreto</a>` : ''}</span></div>` : '';
     const zonasHTML = !oficiales ? '' : `<h2 class="c-seccion-titulo">${esc(`Precios desde ${N.ORIGEN_OFICIAL}`)}</h2>
       <div class="c-bloque c-zonas-tarifa" data-tabla-oficial>
         ${zonas.map((z) => `<details class="c-zona" data-zona="${z.zona}"><summary><strong>Zona ${z.zona}</strong> <small>${esc(z.sector)} · ${z.destinos.length}</small></summary>
@@ -243,7 +243,7 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
   function htmlAyuda() {
     // Oficina: el lugar de la ficha, sus coordenadas o, si no hay, la dirección escrita.
     const oficina = N.LUGARES.find((l) => l.id === 'oficina') || (N.EMPRESA?.oficina?.lat ? N.EMPRESA.oficina : null);
-    const enlaceOficina = oficina ? N.enlaceNavegacion(oficina) : E.direccion ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(E.direccion)}` : '';
+    const enlaceOficina = N.urlSegura(oficina ? N.enlaceNavegacion(oficina) : E.direccion ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(E.direccion)}` : '');
     const privacidad = C.urlPrivacidad();
     const preguntas = [
       ['¿Cómo sé que es mi taxi?', 'En la app ves el número de móvil, la placa, el nombre y la calificación del conductor. Antes de subir dile tu código de abordaje de 4 dígitos: si el conductor lo confirma, es tu taxi.'],
@@ -254,13 +254,13 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
     const central = E.telefono
       ? `<div><small>Central ${esc(E.nombre)}</small><strong>${esc(E.telefonoVisible)}</strong>${E.servicio24h ? '<span>Servicio 24 horas</span>' : ''}</div>
         <div class="c-central-botones${E.whatsapp ? '' : ' c-central-uno'}">
-          <a class="c-boton" href="tel:${esc(E.telefono)}">${icono('telefono')} Llamar</a>
-          ${E.whatsapp ? `<a class="c-boton c-boton-cian" href="${esc(N.enlaceWhatsApp(E.whatsapp, `Hola, ${E.nombre}. Necesito ayuda con la app.`))}" target="_blank" rel="noopener">${icono('chat')} WhatsApp</a>` : ''}
+          <a class="c-boton" href="${esc(N.enlaceTel(E.telefono))}">${icono('telefono')} Llamar</a>
+          ${E.whatsapp ? `<a class="c-boton c-boton-cian" href="${esc(N.urlSegura(N.enlaceWhatsApp(E.whatsapp, `Hola, ${E.nombre}. Necesito ayuda con la app.`)))}" target="_blank" rel="noopener">${icono('chat')} WhatsApp</a>` : ''}
         </div>`
       : `<div><small>Central ${esc(E.nombre)}</small><strong class="c-central-pronto">Teléfono de la central: pronto</strong><span>Mientras tanto, pide tu taxi desde la app${E.servicio24h ? ', las 24 horas' : ''}.</span></div>
-        ${E.whatsapp ? `<div class="c-central-botones c-central-uno"><a class="c-boton c-boton-cian" href="${esc(N.enlaceWhatsApp(E.whatsapp, `Hola, ${E.nombre}. Necesito ayuda con la app.`))}" target="_blank" rel="noopener">${icono('chat')} WhatsApp</a></div>` : ''}`;
+        ${E.whatsapp ? `<div class="c-central-botones c-central-uno"><a class="c-boton c-boton-cian" href="${esc(N.urlSegura(N.enlaceWhatsApp(E.whatsapp, `Hola, ${E.nombre}. Necesito ayuda con la app.`)))}" target="_blank" rel="noopener">${icono('chat')} WhatsApp</a></div>` : ''}`;
     const filas = [
-      E.correo ? `<a class="c-fila-menu" href="mailto:${esc(E.correo)}">${icono('nota')}<span><strong>Correo</strong><small>${esc(E.correo)}</small></span>${icono('chevron')}</a>` : '',
+      E.correo ? `<a class="c-fila-menu" href="${esc(N.enlaceCorreo(E.correo))}">${icono('nota')}<span><strong>Correo</strong><small>${esc(E.correo)}</small></span>${icono('chevron')}</a>` : '',
       E.direccion && enlaceOficina ? `<a class="c-fila-menu" href="${esc(enlaceOficina)}" target="_blank" rel="noopener">${icono('pin')}<span><strong>Oficina</strong><small>${esc(E.direccion)}</small></span>${icono('chevron')}</a>` : '',
       E.sitioOficial ? `<a class="c-fila-menu" href="${esc(E.sitioOficial)}" target="_blank" rel="noopener">${icono('info')}<span><strong>Página oficial de la ${E.tipo}</strong><small>${esc(E.sitioOficial.replace(/^https?:\/\//, '').replace(/\/$/, ''))}</small></span>${icono('chevron')}</a>` : '',
     ].filter(Boolean);

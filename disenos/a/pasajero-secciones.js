@@ -143,7 +143,7 @@ export function abrirTarifas({ N, app, pedirA = null, puedePedir = false }) {
   const avisoOficial = !oficiales ? '' : `<div class="a-aviso-ejemplo a-aviso-oficial" data-aviso-oficial>${icono('check', { tam: 20, grosor: 3 })}<span>
       <strong>${esc(fuente ? `Tarifas oficiales · ${fuente.acto}` : 'Tarifas oficiales')}</strong>
       <small>${esc(EM.unir([fuente?.entidad, fuente?.fecha], ', '))}${fuente ? '. ' : ''}${esc(`Precio cerrado desde ${N.ORIGEN_OFICIAL} a ${total} destinos en ${zonas.length} zonas.`)}</small>
-      ${fuente?.url ? `<a class="a-enlace-decreto" href="${esc(fuente.url)}" target="_blank" rel="noopener" data-enlace-decreto>${icono('externo', { tam: 15 })} Ver el ${esc(fuente.acto)}</a>` : ''}
+      ${N.urlDecreto(fuente?.url) ? `<a class="a-enlace-decreto" href="${esc(N.urlDecreto(fuente.url))}" target="_blank" rel="noopener" data-enlace-decreto>${icono('externo', { tam: 15 })} Ver el ${esc(fuente.acto)}</a>` : ''}
     </span></div>`;
   const fila = (d) => {
     const nota = N.textoPrecision(d);
@@ -394,10 +394,10 @@ export function abrirAyuda({ N, app }) {
   ]);
   // Solo se ofrecen los canales que existen; si falta el teléfono, se dice con honestidad.
   const contacto = [
-    EM.TELEFONO && `<a class="a-btn a-btn-primario a-btn-grande" href="tel:${esc(EM.TELEFONO)}">${icono('telefono', { tam: 20 })} Llamar a la central · ${esc(EM.TELEFONO_VISIBLE)}</a>`,
-    EM.WHATSAPP && `<a class="a-btn a-btn-tinta a-btn-grande" href="${esc(N.enlaceWhatsApp(EM.WHATSAPP, EM.EN_TAXICUN ? `Hola, necesito ayuda con ${EM.APP} (taxis de ${EM.NOMBRE}).` : `Hola, necesito ayuda con la app de ${EM.NOMBRE}.`))}" target="_blank" rel="noopener">${icono('chat', { tam: 20 })} Escribir por WhatsApp</a>`,
+    EM.TELEFONO && `<a class="a-btn a-btn-primario a-btn-grande" href="${esc(N.enlaceTel(EM.TELEFONO))}">${icono('telefono', { tam: 20 })} Llamar a la central · ${esc(EM.TELEFONO_VISIBLE)}</a>`,
+    EM.WHATSAPP && `<a class="a-btn a-btn-tinta a-btn-grande" href="${esc(N.urlSegura(N.enlaceWhatsApp(EM.WHATSAPP, EM.EN_TAXICUN ? `Hola, necesito ayuda con ${EM.APP} (taxis de ${EM.NOMBRE}).` : `Hola, necesito ayuda con la app de ${EM.NOMBRE}.`)))}" target="_blank" rel="noopener">${icono('chat', { tam: 20 })} Escribir por WhatsApp</a>`,
     !EM.TELEFONO && `<div class="a-sin-telefono" data-sin-telefono>${icono('telefono', { tam: 20 })}<span><strong>Teléfono de la central: pronto</strong><small>Mientras tanto, pide tu taxi desde la app: el móvil más cercano te recoge.</small></span></div>`,
-    EM.CORREO && `<a class="a-btn a-btn-suave" href="mailto:${esc(EM.CORREO)}">${icono('mensaje', { tam: 18 })} ${esc(EM.CORREO)}</a>`,
+    EM.CORREO && `<a class="a-btn a-btn-suave" href="${esc(N.enlaceCorreo(EM.CORREO))}">${icono('mensaje', { tam: 18 })} ${esc(EM.CORREO)}</a>`,
   ].filter(Boolean);
   abrirPanel(app, {
     titulo: 'Ayuda',
