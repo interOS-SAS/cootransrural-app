@@ -28,6 +28,7 @@ Después de generar, correr herramientas/versionar.py.
 Uso:  python3 herramientas/generar-empresas.py
 """
 import colorsys
+import hashlib
 import html
 import json
 import math
@@ -1350,6 +1351,91 @@ def datos_propuesta(ficha, p):
 
 _CACHE = {}
 
+# ---------------------------------------------------------------------------
+# Tienda TaxiCun GPS (plantillas/_raiz/gps/ → gps/)
+# ---------------------------------------------------------------------------
+# Los precios y el estado de la tienda viven SOLO en herramientas/gps-planes.json: aquí se calculan
+# el primer año, el ahorro de los combos (contra la licencia del Plan B, CUOTA_MES) y los textos.
+GPS_PLANES = RAIZ / 'herramientas' / 'gps-planes.json'
+
+
+def rango_pesos(minimo, maximo):
+    return pesos(minimo) if minimo == maximo else f'{pesos(minimo)} a {pesos(maximo)}'
+
+
+def sin_tildes(t):
+    return ''.join(c for c in unicodedata.normalize('NFD', str(t)) if unicodedata.category(c) != 'Mn').lower()
+
+
+def pesos_gps(valor, que):
+    if not isinstance(valor, int) or isinstance(valor, bool) or valor < 0:
+        raise ValueError(f'gps-planes.json: {que} debe ser un número entero de pesos, no {valor!r}')
+    return valor
+
+
+def gps_tienda():
+    if 'gps' in _CACHE:
+        return _CACHE['gps']
+    d = json.loads(GPS_PLANES.read_text(encoding='utf-8'))
+    planes = []
+    for p in d['planes']:
+        al, mes = pesos_gps(p['al_instalar'], f"{p['id']}.al_instalar"), pesos_gps(p['mes'], f"{p['id']}.mes")
+        planes.append({'id': p['id'], 'nombre': p['nombre'], 'lema': p.get('lema') or '', 'destacado': bool(p.get('destacado')),
+                       'al_instalar': al, 'mes': mes, 'al_instalar_texto': pesos(al), 'mes_texto': pesos(mes),
+                       'primer_anio_texto': pesos(al + 12 * mes), 'condiciones': list(p.get('condiciones') or [])})
+    por_id = {p['id']: p for p in planes}
+    variantes = []
+    for v in d['combo']['variantes']:
+        base = por_id[v['base']]
+        mes = pesos_gps(v['mes'], f"combo.{v['base']}.mes")
+        ahorro = base['mes'] + CUOTA_MES - mes
+        if ahorro <= 0:
+            raise ValueError(f"gps-planes.json: el combo «{v['nombre']}» ({pesos(mes)}) no sale más barato que {base['nombre']} más la licencia")
+        variantes.append({'nombre': v['nombre'], 'al_instalar_texto': base['al_instalar_texto'], 'mes_texto': pesos(mes),
+                          'primer_anio_texto': pesos(base['al_instalar'] + 12 * mes), 'ahorro_texto': pesos(ahorro)})
+    otros = []
+    for o in d['competencia']['otros']:
+        al = o.get('al_instalar')
+        mes = o.get('mes')
+        otros.append({
+            'etiqueta': o['etiqueta'], 'es_taxicun': False,
+            'al_instalar_texto': pesos(al) if al is not None else 'Por confirmar', 'al_instalar_nota': o.get('al_instalar_nota') or '',
+            'mes_texto': rango_pesos(*mes) if mes else 'Por confirmar', 'mes_nota': o.get('mes_nota') or '',
+            'primer_anio_texto': rango_pesos(al + 12 * mes[0], al + 12 * mes[1]) if mes and al is not None else '—',
+        })
+    comparacion = [{'etiqueta': f"TaxiCun GPS · {p['nombre']}", 'es_taxicun': True, 'al_instalar_texto': p['al_instalar_texto'],
+                    'al_instalar_nota': 'equipo e instalación' if p['al_instalar'] else 'instalación incluida',
+                    'mes_texto': p['mes_texto'], 'mes_nota': '', 'primer_anio_texto': p['primer_anio_texto']} for p in planes] + otros
+    # Municipios y cooperativas para el formulario (todas, por municipio; «Otra» va en la plantilla).
+    grupos = {}
+    for f in fichas():
+        E = f['EMPRESA']
+        grupos.setdefault(E.get('pueblo') or E.get('municipio') or 'Otro', []).append({'id': f['id'], 'nombre': E.get('nombre') or f['id']})
+    cooperativas = [{'pueblo': pueblo, 'opciones': sorted(ops, key=lambda o: sin_tildes(o['nombre']))}
+                    for pueblo, ops in sorted(grupos.items(), key=lambda g: sin_tildes(g[0]))]
+    aut = d['autorizacion']
+    borrador = not d.get('precios_aprobados')
+    publica = bool(d.get('pagina_publica'))
+    _CACHE['gps'] = {
+        # Mientras los precios no estén aprobados o la página no sea pública: franja «BORRADOR», noindex
+        # y el título con «(borrador)». Los precios llevan la etiqueta «borrador» hasta que se aprueben.
+        'borrador': borrador, 'publica': publica, 'aviso_borrador': borrador or not publica,
+        'legal_borrador': not d.get('textos_legales_aprobados'),
+        'ocho': list(range(8)),  # gps/aviso/: 8 adhesivos de 10 × 6 cm por hoja carta
+        'robots': 'index, follow' if publica else 'noindex, nofollow',
+        'planes': planes, 'compra': por_id['compra'], 'sin_cuota': por_id['sin_cuota'],
+        'combo': {'nombre': d['combo']['nombre'], 'lema': d['combo'].get('lema') or '', 'variantes': variantes,
+                  'licencia_texto': pesos(CUOTA_MES)},
+        'extras': [{'texto': e['texto'], 'valor_texto': pesos(pesos_gps(e['valor'], e['texto']))} for e in d.get('extras') or []],
+        'flotas_desde': d.get('flotas_desde') or 10,
+        'comparacion': comparacion, 'consultado': d['competencia']['consultado'],
+        'cooperativas': cooperativas, 'n_cooperativas': sum(len(g['opciones']) for g in cooperativas),
+        # El texto exacto de la casilla y su huella: el formulario manda la versión y la huella.
+        'autorizacion': {'version': aut['version'], 'texto': aut['texto'],
+                         'sha': hashlib.sha256(aut['texto'].encode('utf-8')).hexdigest()},
+    }
+    return _CACHE['gps']
+
 
 def contexto(ficha, destino_rel):
     """Datos disponibles en las plantillas para un archivo generado."""
@@ -1368,6 +1454,8 @@ def contexto(ficha, destino_rel):
         'RAIZ': raiz,
         'RAIZ_EMPRESA': raiz_empresa,
         'cooperativas': lista_cooperativas(),
+        # La tienda TaxiCun GPS (gps/ y sus páginas para imprimir).
+        'gps': gps_tienda() if destino_rel.startswith('gps/') else None,
         # Para scripts (p. ej. la página 404, que adapta colores y enlaces según la carpeta).
         'cooperativas_json': json.dumps([{k: c[k] for k in ('id', 'ruta', 'nombre', 'razonSocial', 'es_propuesta', 'servicio24h', 'tel', 'tel_visible', 'primario', 'primario2', 'claro', 'oscuro', 'acento', 'icono')}
                                          for c in lista_cooperativas()], ensure_ascii=False).replace('</', '<\\/'),

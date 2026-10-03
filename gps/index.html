@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>TaxiCun GPS (borrador) · GPS para tu taxi, instalado en tu municipio</title>
+  <!-- Tienda de TaxiCun GPS. Mientras sea borrador (herramientas/gps-planes.json): fuera de Google (noindex), sin
+       enlaces desde el resto del sitio, fuera del precacheo del service worker y con la franja «BORRADOR».
+       Los precios salen SOLO de herramientas/gps-planes.json. Sin nada de terceros: ni analítica, ni fuentes
+       de afuera, ni captcha; sin scripts en línea ni manejadores (CSP: script-src 'self'). -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="TaxiCun GPS: equipo 4G escondido y cableado en tu taxi, instalado en tu municipio. Mira dónde está en vivo, sus recorridos, kilómetros y horas de motor; botón de pánico a la central de tu cooperativa y bloqueo de encendido.">
+  <meta name="theme-color" content="#0A2552">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="TaxiCun">
+  <meta property="og:title" content="TaxiCun GPS (borrador) · GPS para tu taxi">
+  <meta property="og:description" content="Mira dónde está tu taxi en vivo, cuántos kilómetros anduvo y cuántas horas estuvo prendido. Lo instalamos nosotros, escondido, en tu municipio.">
+  <meta property="og:image" content="https://taxicun.com/img/taxicun/icono-512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../img/taxicun/favicon-32.png">
+  <link rel="apple-touch-icon" href="../img/taxicun/apple-touch-icon.png">
+  <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
+  <link rel="stylesheet" href="../web/inicio.css?v=22423e9e39">
+  <link rel="stylesheet" href="tienda.css?v=0297ab6da8">
+  <script src="tienda.js?v=fd9b383019" defer></script>
+</head>
+<body class="gps gps-con-franja">
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+    <symbol id="i-taxi" viewBox="0 0 24 24"><path d="M10 2h4"/><path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.65 5H8.4a2 2 0 0 0-1.9 1.26L5 10 3 8"/><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M7 14h.01M17 14h.01M5 18v2M19 18v2"/></symbol>
+    <symbol id="i-reloj" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-mapa" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></symbol>
+    <symbol id="i-ruta" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H17a3.5 3.5 0 0 0 0-7H7a3.5 3.5 0 0 1 0-7h8.5"/></symbol>
+    <symbol id="i-grafica" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-6"/></symbol>
+    <symbol id="i-campana" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-celular" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-flecha" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-alerta" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-telefono" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></symbol>
+    <symbol id="i-correo" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+    <symbol id="i-personas" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></symbol>
+    <symbol id="i-candado" viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="11" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5M12 15v2.5"/></symbol>
+    <symbol id="i-bateria" viewBox="0 0 24 24"><rect x="2.5" y="7" width="17" height="10" rx="2"/><path d="M22 10.5v3M6 10v4M9.5 10v4"/></symbol>
+    <symbol id="i-senal" viewBox="0 0 24 24"><path d="M4 20v-3M9 20v-6M14 20V10M19 20V5"/></symbol>
+    <symbol id="i-cable" viewBox="0 0 24 24"><path d="M7 3v5M11 3v5M5 8h8v3a4 4 0 0 1-8 0zM9 15v2a4 4 0 0 0 4 4h2a4 4 0 0 0 4-4V9"/></symbol>
+    <symbol id="i-boton" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/></symbol>
+    <symbol id="i-herramienta" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></symbol>
+    <symbol id="i-documento" viewBox="0 0 24 24"><path d="M14 2.5H6.5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V8z"/><path d="M14 2.5V8h5.5M8.5 13h7M8.5 17h5"/></symbol>
+    <symbol id="i-velocidad" viewBox="0 0 24 24"><path d="M4.5 17a8.5 8.5 0 1 1 15 0"/><path d="m12 14 4-5"/><circle cx="12" cy="14" r="1.2"/></symbol>
+    <symbol id="i-grua" viewBox="0 0 24 24"><path d="M2.5 17h13v-5h-4l-2-4H2.5zM15.5 12h3l3 3v2h-6"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="m21.5 4-6 8"/></symbol>
+    <symbol id="i-enchufe" viewBox="0 0 24 24"><path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/></symbol>
+    <symbol id="i-sirena" viewBox="0 0 24 24"><path d="M7 17v-5a5 5 0 0 1 10 0v5M5 21h14v-4H5zM12 3V2M4.2 6.2l-.7-.7M19.8 6.2l.7-.7M2 12H1M23 12h-1"/></symbol>
+    <symbol id="i-billete" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20.5l1.6-5.2A8.5 8.5 0 1 1 21 11.5z"/><path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01"/></symbol>
+    <symbol id="i-mas" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  </svg>
+
+  <header class="barra">
+    <p class="franja-borrador" role="note"><b>BORRADOR</b><span aria-hidden="true">·</span>Precios por aprobar<span aria-hidden="true">·</span>Esta página aún no es una oferta</p>
+    <div class="contenedor barra-caja">
+      <a class="marca" href="../" aria-label="TaxiCun, inicio"><img src="../img/taxicun/logo-blanco.svg" alt="TaxiCun" width="168" height="42"></a>
+      <nav class="menu" aria-label="Secciones">
+        <a href="#como">Cómo funciona</a>
+        <a href="#equipo">El equipo</a>
+        <a href="#planes">Planes</a>
+        <a href="#preguntas">Preguntas</a>
+      </nav>
+      <a class="boton boton-amarillo boton-barra" href="#quiero"><svg class="icono" aria-hidden="true"><use href="#i-pin"/></svg>Quiero GPS</a>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <!-- ============ PORTADA ============ -->
+    <section class="portada gps-portada" aria-labelledby="titulo-portada">
+      <div class="contenedor portada-rejilla">
+        <div class="portada-texto">
+          <span class="pildora"><span class="punto" aria-hidden="true"></span>Nuevo · TaxiCun GPS</span>
+          <h1 id="titulo-portada">GPS para tu taxi, <span class="resaltado">con TaxiCun</span></h1>
+          <p class="portada-lead">Mira dónde está tu taxi en vivo, cuántos kilómetros anduvo y cuántas horas estuvo prendido. Botón de pánico conectado a la central de tu cooperativa y bloqueo de encendido si te lo roban. Lo instalamos nosotros, escondido, en tu municipio.</p>
+          <div class="botones">
+            <a class="boton boton-amarillo boton-grande" href="#quiero"><svg class="icono" aria-hidden="true"><use href="#i-pin"/></svg>Quiero GPS</a>
+            <a class="boton boton-vidrio boton-grande" href="#planes">Ver planes<svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>
+          </div>
+          <ul class="garantias">
+            <li><svg class="icono" aria-hidden="true"><use href="#i-senal"/></svg>Equipo 4G escondido</li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-sirena"/></svg>Botón de pánico</li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-celular"/></svg>Lo ves en tu celular</li>
+          </ul>
+          <p class="nota">$29.900 al mes con el equipo comprado, o $49.900 al mes sin cuota inicial (precios en borrador). Con IVA y sin pagos en línea: te llamamos y te enviamos la factura electrónica.</p>
+        </div>
+        <div class="gps-arte gps-arte-portada">
+          <img src="../img/gps/portada.svg" alt="Un taxi amarillo con su GPS y, en el celular, el mapa con el recorrido del taxi" width="620" height="640">
+          <span class="gps-chip gps-chip-vivo" aria-hidden="true"><span class="punto"></span><b>En vivo</b> · TAX123 · 32 km/h</span>
+          <span class="gps-chip gps-chip-hoy" aria-hidden="true"><svg class="icono"><use href="#i-grafica"/></svg>Hoy: <b>148 km</b> · 9 h 20 min de motor</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SIN PREGUNTARLE A NADIE ============ -->
+    <section class="seccion seccion-amarilla" aria-labelledby="titulo-dias">
+      <div class="contenedor libres">
+        <div class="libres-contador" aria-hidden="true"><b>90</b><span>días</span><small>de recorridos</small></div>
+        <div>
+          <h2 id="titulo-dias">Sabes por dónde anduvo tu taxi, sin preguntarle a nadie</h2>
+          <p>Los kilómetros y las horas de motor de cada día, para comparar con lo que te reporta el conductor. Y si algo pasa, la central de tu cooperativa recibe el botón de pánico.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CÓMO FUNCIONA ============ -->
+    <section class="seccion" id="como" aria-labelledby="titulo-como">
+      <div class="contenedor">
+        <div class="encabezado">
+          <span class="antetitulo">Cómo funciona</span>
+          <h2 id="titulo-como">Tu taxi con GPS en tres pasos</h2>
+        </div>
+        <ol class="pasos">
+          <li class="paso"><span class="paso-ic"><svg class="icono" aria-hidden="true"><use href="#i-telefono"/></svg></span><h3>Nos dejas tus datos</h3><p>Llenas el formulario y te llamamos el siguiente día hábil para explicarte los planes y agendar la instalación.</p></li>
+          <li class="paso"><span class="paso-ic"><svg class="icono" aria-hidden="true"><use href="#i-herramienta"/></svg></span><h3>Lo instalamos en una hora</h3><p>Un técnico de interOS lo deja escondido y cableado, con el botón de pánico y el relé de bloqueo de encendido.</p></li>
+          <li class="paso"><span class="paso-ic"><svg class="icono" aria-hidden="true"><use href="#i-celular"/></svg></span><h3>Lo ves en tu celular</h3><p>Entras a panel.taxicun.com con tu correo, desde el celular o el computador. Te llega un código para entrar.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ LO QUE VES TÚ ============ -->
+    <section class="seccion seccion-crema" id="ves" aria-labelledby="titulo-ves">
+      <div class="contenedor dos-columnas gps-dos">
+        <figure class="gps-arte gps-arte-mitaxi">
+          <img src="../img/gps/mi-taxi.svg" alt="«Mi taxi» en el celular: el recorrido del día en el mapa, los kilómetros de cada día y las alertas" width="560" height="640" loading="lazy">
+        </figure>
+        <div>
+          <div class="encabezado">
+            <span class="antetitulo">Para el propietario</span>
+            <h2 id="titulo-ves">Todo lo de tu taxi, en «Mi taxi»</h2>
+            <p class="lead">En panel.taxicun.com, desde el celular o el computador, sin instalar nada.</p>
+          </div>
+          <ul class="lista gps-lista">
+            <li><svg class="icono" aria-hidden="true"><use href="#i-mapa"/></svg><span><b>Mapa en vivo:</b> dónde está y si va andando o está quieto.</span></li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-ruta"/></svg><span><b>Recorridos</b> de los últimos 90 días.</span></li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-grafica"/></svg><span><b>Kilómetros y horas de motor</b> por día: compáralos con lo que te reporta el conductor.</span></li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-campana"/></svg><span><b>Alertas:</b> exceso de velocidad, equipo desconectado y si se lo llevan con grúa.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PARA LA CENTRAL ============ -->
+    <section class="seccion seccion-azul" id="central" aria-labelledby="titulo-central">
+      <div class="contenedor">
+        <div class="encabezado">
+          <span class="antetitulo">Para tu cooperativa</span>
+          <h2 id="titulo-central">La central también lo cuida, si tú lo autorizas</h2>
+          <p class="lead">La central de tu cooperativa ve el taxi en el mismo panel de TaxiCun donde despacha los servicios.</p>
+        </div>
+        <div class="gps-central">
+          <figure class="gps-arte gps-arte-central">
+            <img src="../img/gps/central.svg" alt="El panel de la central en un computador: los taxis de la cooperativa en el mapa y uno en rojo, con el botón de pánico" width="760" height="500" loading="lazy">
+            <span class="gps-chip gps-chip-panico" aria-hidden="true"><svg class="icono"><use href="#i-alerta"/></svg><b>Pánico</b> · Móvil 023</span>
+          </figure>
+          <ul class="tarjetas gps-tarjetas">
+            <li><svg class="icono" aria-hidden="true"><use href="#i-mapa"/></svg><h3>La flota en el mapa</h3><p>Los taxis con GPS de la cooperativa, en el mismo panel de TaxiCun.</p></li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-sirena"/></svg><h3>Botón de pánico con sonido</h3><p>Si el conductor lo oprime, la central lo ve al instante, con la placa y la ubicación.</p></li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-telefono"/></svg><h3>Ayuda para llamar al 123</h3><p>La central tiene a mano la placa y la ubicación para avisarle a la Policía.</p></li>
+          </ul>
+        </div>
+        <p class="gps-nota-clara"><svg class="icono" aria-hidden="true"><use href="#i-escudo"/></svg>Tú decides: le das o le quitas el permiso a la central cuando quieras, desde «Mi taxi».</p>
+      </div>
+    </section>
+
+    <!-- ============ EL EQUIPO ============ -->
+    <section class="seccion" id="equipo" aria-labelledby="titulo-equipo">
+      <div class="contenedor dos-columnas gps-dos gps-dos-invertida">
+        <div>
+          <div class="encabezado">
+            <span class="antetitulo">El equipo</span>
+            <h2 id="titulo-equipo">Un GPS 4G de verdad, escondido y cableado</h2>
+            <p class="lead">Teltonika FMC920, de una marca de Lituania que se usa en todo el mundo para controlar flotas.</p>
+          </div>
+          <ul class="lista gps-lista">
+            <li><svg class="icono" aria-hidden="true"><use href="#i-senal"/></svg><span><b>Funciona en 4G:</b> en Colombia los operadores ya apagaron el 2G.</span></li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-bateria"/></svg><span><b>Batería interna:</b> si lo desconectan, alcanza a avisar.</span></li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-cable"/></svg><span><b>No va en el puerto OBD:</b> va cableado y escondido, donde no se ve.</span></li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-chat"/></svg><span><b>Con SIM de datos</b>, incluida en la mensualidad.</span></li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-boton"/></svg><span><b>Con botón de pánico</b> al alcance del conductor y el <b>relé de bloqueo</b> de encendido.</span></li>
+          </ul>
+        </div>
+        <figure class="gps-arte gps-arte-equipo">
+          <img src="../img/gps/equipo.svg" alt="El equipo GPS con su SIM de datos, el relé del arranque y el botón de pánico" width="680" height="470" loading="lazy">
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============ BLOQUEAR ENCENDIDO ============ -->
+    <section class="seccion seccion-crema" id="bloqueo" aria-labelledby="titulo-bloqueo">
+      <div class="contenedor">
+        <div class="gps-bloqueo">
+          <div class="gps-bloqueo-cabeza">
+            <span class="gps-bloqueo-ic" aria-hidden="true"><svg class="icono"><use href="#i-candado"/></svg></span>
+            <div>
+              <span class="antetitulo">Si te roban el taxi</span>
+              <h2 id="titulo-bloqueo">Bloquear encendido</h2>
+              <p class="lead">Pides el bloqueo desde tu celular. Con el carro quieto, no vuelve a prender. <b>Nunca apagamos un carro en marcha.</b></p>
+            </div>
+          </div>
+          <ol class="gps-bloqueo-pasos">
+            <li><b>Llama primero al 123.</b> El bloqueo no reemplaza la denuncia.</li>
+            <li>Pide el bloqueo en «Mi taxi».</li>
+            <li>Tú y la central ven dónde está, para decírselo a la Policía.</li>
+            <li>Cuando el carro esté quieto, se bloquea el encendido.</li>
+          </ol>
+          <p class="gps-bloqueo-nota">Lo hacen solo el gerente de tu cooperativa, si tú lo autorizas, o interOS: con doble confirmación, y queda registrado quién lo hizo y por qué. El relé se instala desde el primer día; el bloqueo se activa cuando firmas la autorización.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ INSTALACIÓN ============ -->
+    <section class="seccion" id="instalacion" aria-labelledby="titulo-instalacion">
+      <div class="contenedor">
+        <div class="encabezado">
+          <span class="antetitulo">Instalación</span>
+          <h2 id="titulo-instalacion">Lo instalamos en tu municipio</h2>
+        </div>
+        <ul class="gps-instalacion">
+          <li><svg class="icono" aria-hidden="true"><use href="#i-reloj"/></svg><h3>45 a 60 minutos</h3><p>Y el taxi vuelve a trabajar.</p></li>
+          <li><svg class="icono" aria-hidden="true"><use href="#i-pin"/></svg><h3>En tu cooperativa o en el paradero</h3><p>En jornadas por municipio, para que no tengas que ir lejos.</p></li>
+          <li><svg class="icono" aria-hidden="true"><use href="#i-herramienta"/></svg><h3>Técnicos de interOS</h3><p>Instalación oculta y cableada, con el botón de pánico y el relé.</p></li>
+          <li><svg class="icono" aria-hidden="true"><use href="#i-documento"/></svg><h3>El aviso y el formato</h3><p>Te dejamos el aviso para el taxi y el formato para que tus conductores lo firmen.</p></li>
+        </ul>
+        <p class="gps-flotas"><svg class="icono" aria-hidden="true"><use href="#i-personas"/></svg><span><b>¿Tienes 10 taxis o más, o eres la cooperativa?</b> Hacemos una jornada de instalación en la sede, con precio especial.</span></p>
+      </div>
+    </section>
+
+    <!-- ============ PLANES ============ -->
+    <section class="seccion seccion-azul gps-seccion-planes" id="planes" aria-labelledby="titulo-planes">
+      <div class="contenedor">
+        <div class="encabezado">
+          <span class="antetitulo">Planes <span class="etiqueta-borrador">borrador</span></span>
+          <h2 id="titulo-planes">Elige cómo pagarlo</h2>
+          <p class="lead">Todos traen el equipo, la instalación, la SIM con datos, el botón de pánico, el relé de bloqueo, «Mi taxi» y soporte por WhatsApp y correo. Precios con IVA incluido.</p>
+        </div>
+        <div class="gps-planes">
+          
+          <article class="gps-plan" aria-labelledby="plan-compra">
+            <h3 id="plan-compra">Compra</h3>
+            <p class="gps-plan-lema">El equipo queda tuyo</p>
+            <dl class="gps-precios">
+              <div><dt>Al instalar</dt><dd>$339.000 <span class="etiqueta-borrador">borrador</span></dd></div>
+              <div class="gps-precio-mes"><dt>Cada mes</dt><dd>$29.900 <span class="etiqueta-borrador">borrador</span></dd></div>
+              <div><dt>Primer año</dt><dd>$697.800</dd></div>
+            </dl>
+            <ul class="gps-condiciones">
+              <li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>Sin permanencia.</li><li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>Si dejas de pagar, el equipo se queda sin servicio; reactivarlo no tiene costo.</li><li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>Garantía del equipo: 12 meses.</li>
+            </ul>
+          </article>
+          
+          <article class="gps-plan gps-plan-destacado" aria-labelledby="plan-sin_cuota">
+            <h3 id="plan-sin_cuota">Sin cuota inicial</h3>
+            <p class="gps-plan-lema">Empiezas sin pagar el equipo</p>
+            <dl class="gps-precios">
+              <div><dt>Al instalar</dt><dd>$0 <span class="etiqueta-borrador">borrador</span></dd></div>
+              <div class="gps-precio-mes"><dt>Cada mes</dt><dd>$49.900 <span class="etiqueta-borrador">borrador</span></dd></div>
+              <div><dt>Primer año</dt><dd>$598.800</dd></div>
+            </dl>
+            <ul class="gps-condiciones">
+              <li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>Permanencia de 12 meses.</li><li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>El equipo es de interOS (en comodato): lo cuidas mientras lo tengas.</li><li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>Garantía del equipo mientras dure el contrato.</li>
+            </ul>
+          </article>
+          
+          <article class="gps-plan gps-plan-combo" aria-labelledby="plan-combo">
+            <h3 id="plan-combo">Combo TaxiCun + GPS</h3>
+            <p class="gps-plan-lema">El GPS y la app de pedidos, para ese taxi</p>
+            
+            <div class="gps-variante">
+              <h4>Con compra del equipo</h4>
+              <dl class="gps-precios">
+                <div><dt>Al instalar</dt><dd>$339.000 <span class="etiqueta-borrador">borrador</span></dd></div>
+                <div class="gps-precio-mes"><dt>Cada mes</dt><dd>$49.900 <span class="etiqueta-borrador">borrador</span></dd></div>
+              </dl>
+              <p class="gps-ahorro">Te ahorras $7.000 al mes frente a pagarlos por separado.</p>
+            </div>
+            
+            <div class="gps-variante">
+              <h4>Sin cuota inicial</h4>
+              <dl class="gps-precios">
+                <div><dt>Al instalar</dt><dd>$0 <span class="etiqueta-borrador">borrador</span></dd></div>
+                <div class="gps-precio-mes"><dt>Cada mes</dt><dd>$69.900 <span class="etiqueta-borrador">borrador</span></dd></div>
+              </dl>
+              <p class="gps-ahorro">Te ahorras $7.000 al mes frente a pagarlos por separado.</p>
+            </div>
+            
+            <p class="gps-plan-pie">Incluye la licencia de TaxiCun para ese taxi (Plan B, $27.000 al mes) y las mismas condiciones del plan del equipo. Si tu cooperativa usa TaxiCun, te sale más barato.</p>
+          </article>
+        </div>
+        <div class="gps-planes-pie">
+          <div>
+            <h3>Otros valores <span class="etiqueta-borrador">borrador</span></h3>
+            <ul class="gps-extras">
+              <li><span>Pasar el equipo a otro taxi</span><b>$80.000</b></li><li><span>Visita fallida por causa del cliente</span><b>$30.000</b></li><li><span>Botón de pánico adicional</span><b>$25.000</b></li>
+            </ul>
+          </div>
+          <div>
+            <h3>Cómo pagas</h3>
+            <p>Por transferencia o Bre-B, cada mes, con factura electrónica de interOS. Por ahora no hay pagos en línea.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ COMPARA ============ -->
+    <section class="seccion" id="compara" aria-labelledby="titulo-compara">
+      <div class="contenedor">
+        <div class="encabezado">
+          <span class="antetitulo">Compara</span>
+          <h2 id="titulo-compara">Compara antes de decidir</h2>
+          <p class="lead">Lo que cuesta el primer año, con IVA, frente a otros GPS para taxi que se venden en Colombia. No todos incluyen lo mismo: pregunta qué trae cada uno.</p>
+        </div>
+        <div class="gps-tabla-caja" role="region" aria-labelledby="titulo-compara" tabindex="0">
+          <table class="gps-tabla">
+            <caption class="visualmente-oculto">Precios del primer año de TaxiCun GPS y de otros GPS para taxi</caption>
+            <thead><tr><th scope="col">Opción</th><th scope="col">Al instalar</th><th scope="col">Cada mes</th><th scope="col">Primer año</th></tr></thead>
+            <tbody>
+              
+              <tr class="gps-fila-taxicun">
+                <th scope="row">TaxiCun GPS · Compra</th>
+                <td data-titulo="Al instalar">$339.000<small>equipo e instalación</small></td>
+                <td data-titulo="Cada mes">$29.900</td>
+                <td data-titulo="Primer año"><b>$697.800</b></td>
+              </tr>
+              
+              <tr class="gps-fila-taxicun">
+                <th scope="row">TaxiCun GPS · Sin cuota inicial</th>
+                <td data-titulo="Al instalar">$0<small>instalación incluida</small></td>
+                <td data-titulo="Cada mes">$49.900</td>
+                <td data-titulo="Primer año"><b>$598.800</b></td>
+              </tr>
+              
+              <tr>
+                <th scope="row">Otro GPS para taxi (A)</th>
+                <td data-titulo="Al instalar">$350.000<small>kit instalado</small></td>
+                <td data-titulo="Cada mes">$46.000</td>
+                <td data-titulo="Primer año"><b>$902.000</b></td>
+              </tr>
+              
+              <tr>
+                <th scope="row">Otro GPS para taxi (B), equipo comprado</th>
+                <td data-titulo="Al instalar">$416.500</td>
+                <td data-titulo="Cada mes">$27.380 a $42.760</td>
+                <td data-titulo="Primer año"><b>$745.060 a $929.620</b></td>
+              </tr>
+              
+              <tr>
+                <th scope="row">Otro GPS para taxi (B), equipo a cuotas</th>
+                <td data-titulo="Al instalar">$0</td>
+                <td data-titulo="Cada mes">$44.040 a $59.420<small>incluye $16.660 de la cuota del equipo</small></td>
+                <td data-titulo="Primer año"><b>$528.480 a $713.040</b></td>
+              </tr>
+              
+              <tr>
+                <th scope="row">Otro GPS para taxi (C)</th>
+                <td data-titulo="Al instalar">$357.000<small>instalación gratis</small></td>
+                <td data-titulo="Cada mes">Por confirmar<small>los 2 primeros meses gratis</small></td>
+                <td data-titulo="Primer año"><b>—</b></td>
+              </tr>
+              
+            </tbody>
+          </table>
+        </div>
+        <p class="gps-fuente">Precios publicados por otros proveedores de GPS para taxi, con IVA, consultados el 3 de octubre de 2026. Pueden haber cambiado. Los de TaxiCun GPS están en borrador.</p>
+        <div class="gps-honesto">
+          <div>
+            <h3><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>Lo que solo tiene TaxiCun GPS</h3>
+            <ul>
+              <li>La central de tu cooperativa lo ve en el mismo panel donde aprueba conductores y despacha.</li>
+              <li>Combo con la app de pedidos TaxiCun.</li>
+              <li>Bloqueo de encendido solo con el carro quieto, con doble confirmación y registro.</li>
+              <li>Técnicos de interOS que instalan en tu municipio.</li>
+            </ul>
+          </div>
+          <div>
+            <h3><svg class="icono" aria-hidden="true"><use href="#i-alerta"/></svg>Para que compares bien</h3>
+            <ul>
+              <li>Hay planes de otros con una mensualidad más baja que la nuestra si compras el equipo.</li>
+              <li>Hay opciones con el equipo a cuotas que el primer año pueden salir más baratas que nuestro plan sin cuota inicial.</li>
+              <li>Pregunta siempre si el precio incluye la instalación, la SIM, la plataforma y el botón de pánico.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PREGUNTAS ============ -->
+    <section class="seccion seccion-crema" id="preguntas" aria-labelledby="titulo-preguntas">
+      <div class="contenedor gps-preguntas-caja">
+        <div class="encabezado">
+          <span class="antetitulo">Preguntas frecuentes</span>
+          <h2 id="titulo-preguntas">Lo que nos preguntan</h2>
+        </div>
+        <div class="gps-preguntas">
+          <details><summary>¿Necesito la app de TaxiCun?</summary><p>No. El GPS funciona solo. Si tu cooperativa usa TaxiCun, el combo te sale más barato.</p></details>
+          <details><summary>¿Dónde lo veo?</summary><p>En panel.taxicun.com, desde el celular o el computador, con tu correo. Te llega un código para entrar.</p></details>
+          <details><summary>¿Quién más ve mi taxi?</summary><p>Tú. La central de tu cooperativa, solo si lo autorizas. Y el equipo de interOS, para el soporte y las emergencias. Nadie más.</p></details>
+          <details><summary>¿Se descarga la batería del carro?</summary><p>No. Gasta muy poco y, con el carro apagado, entra en reposo. Si la batería del carro baja, te avisamos.</p></details>
+          <details><summary>¿Qué pasa si me roban el taxi?</summary><p>Llama primero al 123. Luego pide el bloqueo en «Mi taxi». Tú y la central ven dónde está, para decírselo a la Policía. Cuando el carro esté quieto, se bloquea el encendido.</p></details>
+          <details><summary>¿Puede apagar el motor andando?</summary><p>No, a propósito. Solo impide volver a encenderlo.</p></details>
+          <details><summary>¿El conductor tiene que saberlo?</summary><p>Sí, la ley lo exige: la ubicación del taxi es un dato personal de quien lo maneja. Te damos el aviso para el taxi y un formato para que tus conductores lo firmen.</p></details>
+          <details><summary>¿Cuánto tiempo se guarda el recorrido?</summary><p>90 días. El resumen de cada día (kilómetros y horas de motor), 13 meses.</p></details>
+          <details><summary>¿Hay permanencia?</summary><p>En el plan Compra, no. En los planes sin cuota inicial, 12 meses, porque el equipo es nuestro.</p></details>
+          <details><summary>¿Qué pasa si vendo el taxi?</summary><p>Pasamos el equipo a tu otro taxi ($80.000) o se lo traspasas al nuevo dueño.</p></details>
+          <details><summary>¿Cómo pago?</summary><p>Por transferencia o Bre-B, cada mes, con factura electrónica de interOS. Por ahora no hay pagos en línea.</p></details>
+          <details><summary>¿Funciona fuera de Cundinamarca?</summary><p>Sí, en cualquier parte con señal 4G. Pero la instalación la hacemos en los municipios donde está TaxiCun.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ QUIERO GPS ============ -->
+    <section class="seccion seccion-azul" id="quiero" aria-labelledby="titulo-quiero">
+      <div class="contenedor gps-quiero">
+        <div class="gps-quiero-texto">
+          <span class="antetitulo">Quiero GPS</span>
+          <h2 id="titulo-quiero">Quiero GPS para mi taxi</h2>
+          <p class="lead">Déjanos tus datos y te llamamos el siguiente día hábil, sin compromiso, para explicarte los planes y agendar la instalación.</p>
+          <ul class="lista gps-lista">
+            <li><svg class="icono" aria-hidden="true"><use href="#i-telefono"/></svg><span>Te llamamos nosotros.</span></li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-billete"/></svg><span>No pagas nada por pedir información.</span></li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-correo"/></svg><span>¿Prefieres escribir? <a href="mailto:info@taxicun.com?subject=Quiero%20GPS%20para%20mi%20taxi">info@taxicun.com</a></span></li>
+          </ul>
+        </div>
+
+        <div class="gps-formulario-caja">
+          <noscript>
+            <p class="gps-aviso gps-aviso-info">Para enviar el formulario, activa JavaScript. También puedes escribirnos a <a href="mailto:info@taxicun.com?subject=Quiero%20GPS%20para%20mi%20taxi">info@taxicun.com</a> con tu nombre, tu celular, tu municipio y cuántos taxis tienes.</p>
+          </noscript>
+          <form class="gps-formulario" id="formulario-gps" method="post" action="/api/gps/interes" novalidate hidden
+                data-endpoint="/api/gps/interes" data-correo="info@taxicun.com"
+                data-autorizacion-version="1.0" data-autorizacion-sha="47b4d66fd351d7ba545fe3bd0ad0926ced7647a6cf9281d41d06d599630582aa">
+            <h3 class="gps-formulario-titulo">Tus datos</h3>
+            <p class="gps-obligatorio">Los campos con <span aria-hidden="true">*</span><span class="visualmente-oculto">asterisco</span> son obligatorios.</p>
+
+            <div class="campo">
+              <label for="g-nombre">Nombre <span aria-hidden="true">*</span></label>
+              <input id="g-nombre" name="nombre" type="text" autocomplete="name" required minlength="2" maxlength="80" aria-describedby="g-nombre-error">
+              <p class="campo-error" id="g-nombre-error" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label for="g-celular">Celular <span aria-hidden="true">*</span></label>
+              <input id="g-celular" name="celular" type="tel" inputmode="tel" autocomplete="tel-national" required maxlength="20" aria-describedby="g-celular-ayuda g-celular-error">
+              <p class="campo-ayuda" id="g-celular-ayuda">10 dígitos, sin el +57.</p>
+              <p class="campo-error" id="g-celular-error" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label for="g-correo">Correo <span class="opcional">(opcional)</span></label>
+              <input id="g-correo" name="correo" type="email" inputmode="email" autocomplete="email" maxlength="120" aria-describedby="g-correo-error">
+              <p class="campo-error" id="g-correo-error" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label for="g-cooperativa">Municipio y cooperativa <span aria-hidden="true">*</span></label>
+              <select id="g-cooperativa" name="cooperativa" required aria-describedby="g-cooperativa-error">
+                <option value="" selected disabled>Elige tu municipio</option>
+                <optgroup label="Agua de Dios"><option value="agua-de-dios">Agua de Dios · Taxis Agua de Dios</option></optgroup>
+                <optgroup label="Anapoima"><option value="anapoima">Anapoima · Expreso Santa Ana</option></optgroup>
+                <optgroup label="Anolaima"><option value="anolaima">Anolaima · Servitacoop</option></optgroup>
+                <optgroup label="Bojacá"><option value="bojaca">Bojacá · Ricotrans</option></optgroup>
+                <optgroup label="Cajicá"><option value="cajica-cajitaxi">Cajicá · Cajitaxi</option><option value="cajica-expreso">Cajicá · Expreso Cajicá</option><option value="cajica-fortaleza">Cajicá · Taxis Fortaleza de Piedra</option></optgroup>
+                <optgroup label="Cáqueza"><option value="caqueza">Cáqueza · Glahsmotor</option></optgroup>
+                <optgroup label="Chía"><option value="chia-autoservicio">Chía · Auto Servicio Chía</option><option value="chia-cootrasinchia">Chía · Cootrasinchia</option></optgroup>
+                <optgroup label="Chipaque"><option value="chipaque">Chipaque · Cootranschipaque</option></optgroup>
+                <optgroup label="Chocontá"><option value="choconta">Chocontá · Chocontax</option></optgroup>
+                <optgroup label="Cota"><option value="cota">Cota · Cotax</option></optgroup>
+                <optgroup label="El Colegio"><option value="el-colegio">El Colegio · Cointranscol</option></optgroup>
+                <optgroup label="El Rosal"><option value="cootransrural">El Rosal · Cootransrural</option></optgroup>
+                <optgroup label="Facatativá"><option value="facatativa-autofaca">Facatativá · Auto Faca</option><option value="facatativa">Facatativá · Coptaxi</option><option value="facatativa-hycata">Facatativá · Transportes Hycatá</option><option value="facatativa-villetax">Facatativá · Transportes Villetax</option></optgroup>
+                <optgroup label="Funza"><option value="funza-coomofu">Funza · Coomofu</option><option value="funza-coopexfun">Funza · Coopexfun</option></optgroup>
+                <optgroup label="Fusagasugá"><option value="fusagasuga-asoind">Fusagasugá · Asoind</option><option value="fusagasuga-asotaxis">Fusagasugá · Asotaxis Fusa</option><option value="fusagasuga-cootransfusa">Fusagasugá · Cootransfusa</option><option value="fusagasuga-fusacatan">Fusagasugá · Expreso Fusacatán</option><option value="fusagasuga-transjardin">Fusagasugá · Transjardín</option></optgroup>
+                <optgroup label="Gachancipá"><option value="gachancipa">Gachancipá · Cooptranserga</option></optgroup>
+                <optgroup label="Gachetá"><option value="gacheta">Gachetá · Tax Guavio</option></optgroup>
+                <optgroup label="Girardot"><option value="girardot-central-taxis">Girardot · Central de Taxis Girardot</option><option value="girardot-compuexpress">Girardot · Compuexpress</option><option value="girardot-megataxi">Girardot · Megataxi</option><option value="girardot-taxistas-unidos">Girardot · Taxistas Unidos de Girardot</option></optgroup>
+                <optgroup label="Guaduas"><option value="guaduas">Guaduas · Cootransunidos Guaduas</option></optgroup>
+                <optgroup label="Guasca"><option value="guasca">Guasca · Transportes Guasca</option></optgroup>
+                <optgroup label="Guatavita"><option value="guatavita">Guatavita · Líneas El Dorado Guatavita</option></optgroup>
+                <optgroup label="La Calera"><option value="la-calera-milenio">La Calera · Milenio de Taxis</option><option value="la-calera">La Calera · Tax Calera</option><option value="la-calera-taxglobal">La Calera · Tax Global</option><option value="la-calera-transcalera">La Calera · Transcalera</option><option value="la-calera-tuc">La Calera · Transportes Unidos La Calera</option></optgroup>
+                <optgroup label="La Mesa"><option value="la-mesa">La Mesa · Asotaxis La Mesa</option></optgroup>
+                <optgroup label="La Vega"><option value="la-vega-cootransgualiva">La Vega · Cootransgualiva</option><option value="la-vega">La Vega · Cootransvillaleal</option><option value="la-vega-occitrans">La Vega · Occitrans</option></optgroup>
+                <optgroup label="Madrid"><option value="madrid">Madrid · Cootransmadrid</option></optgroup>
+                <optgroup label="Mosquera"><option value="mosquera">Mosquera · Cootransmosquera</option></optgroup>
+                <optgroup label="Nocaima"><option value="nocaima">Nocaima · COATAN</option></optgroup>
+                <optgroup label="Pacho"><option value="pacho">Pacho · Cootranspacho</option></optgroup>
+                <optgroup label="Quebradanegra"><option value="quebradanegra">Quebradanegra · Cootransoccidente</option></optgroup>
+                <optgroup label="San Antonio del Tequendama"><option value="san-antonio-del-tequendama">San Antonio del Tequendama · TST Transportes</option></optgroup>
+                <optgroup label="San Francisco"><option value="san-francisco">San Francisco · Cootranslibertad</option></optgroup>
+                <optgroup label="San Juan de Rioseco"><option value="san-juan-de-rioseco">San Juan de Rioseco · Transportes Rioseco</option></optgroup>
+                <optgroup label="Sasaima"><option value="sasaima">Sasaima · Coovetrans</option></optgroup>
+                <optgroup label="Sesquilé"><option value="sesquile">Sesquilé · Cootranscovadonga</option></optgroup>
+                <optgroup label="Simijaca"><option value="simijaca">Simijaca · Comultrasim</option></optgroup>
+                <optgroup label="Soacha"><option value="soacha-losdos">Soacha · Taxis Los Dos</option><option value="soacha-taxisxua">Soacha · Taxis Xua</option></optgroup>
+                <optgroup label="Sopó"><option value="sopo-pionono">Sopó · Tax Pionono</option><option value="sopo-transportes">Sopó · Transportes Sopó</option></optgroup>
+                <optgroup label="Subachoque"><option value="subachoque">Subachoque · Coopmultrasub</option></optgroup>
+                <optgroup label="Suesca"><option value="suesca">Suesca · Cootransuesca</option></optgroup>
+                <optgroup label="Tabio"><option value="tabio">Tabio · Cooptranstermales</option></optgroup>
+                <optgroup label="Tena"><option value="tena">Tena · Cootranstena</option></optgroup>
+                <optgroup label="Tenjo"><option value="tenjo">Tenjo · Cootranstenjo</option><option value="tenjotax">Tenjo · Tenjo Tax</option></optgroup>
+                <optgroup label="Tocaima"><option value="tocaima-central">Tocaima · Central de Transporte de Tocaima</option></optgroup>
+                <optgroup label="Tocancipá"><option value="tocancipa-expreso">Tocancipá · Expreso Tocancipá</option><option value="tocancipa-transfuturo">Tocancipá · Transfuturo</option></optgroup>
+                <optgroup label="Ubaté"><option value="ubate-cootransvu">Ubaté · Cootransvu</option><option value="ubate-unitaxi">Ubaté · Unitaxi Ubaté</option></optgroup>
+                <optgroup label="Útica"><option value="utica">Útica · Cooptransutica</option></optgroup>
+                <optgroup label="Villeta"><option value="villeta">Villeta · Cootransvi</option><option value="villeta-cootransye">Villeta · Cootransye</option><option value="villeta-villetana">Villeta · Villetana de Taxis</option></optgroup>
+                <optgroup label="Viotá"><option value="viota">Viotá · Cootransviota</option></optgroup>
+                <optgroup label="Zipaquirá"><option value="zipaquira-cootranszipa">Zipaquirá · Cootranszipa</option><option value="zipaquira-duarte">Zipaquirá · Transportes Duarte</option></optgroup>
+                <optgroup label="Otra"><option value="otra">Otra / no estoy en una</option></optgroup>
+              </select>
+              <p class="campo-error" id="g-cooperativa-error" hidden></p>
+            </div>
+
+            <div class="campo-fila">
+              <div class="campo">
+                <label for="g-placa">Placa <span class="opcional">(opcional)</span></label>
+                <input id="g-placa" name="placa" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="8" aria-describedby="g-placa-ayuda g-placa-error">
+                <p class="campo-ayuda" id="g-placa-ayuda">Por ejemplo, TAX123.</p>
+                <p class="campo-error" id="g-placa-error" hidden></p>
+              </div>
+              <div class="campo">
+                <label for="g-taxis">¿Cuántos taxis? <span aria-hidden="true">*</span></label>
+                <input id="g-taxis" name="taxis" type="number" inputmode="numeric" min="1" max="500" step="1" value="1" required aria-describedby="g-taxis-error">
+                <p class="campo-error" id="g-taxis-error" hidden></p>
+              </div>
+            </div>
+
+            <fieldset class="campo campo-opciones">
+              <legend>Plan que te interesa</legend>
+              <div class="opciones">
+                <label><input type="radio" name="plan" value="compra"><span>Compra</span></label>
+                <label><input type="radio" name="plan" value="sin_cuota"><span>Sin cuota inicial</span></label>
+                <label><input type="radio" name="plan" value="combo"><span>Combo con TaxiCun</span></label>
+                <label><input type="radio" name="plan" value="no_se" checked><span>No sé todavía</span></label>
+              </div>
+            </fieldset>
+
+            <div class="campo">
+              <label for="g-mensaje">Mensaje <span class="opcional">(opcional)</span></label>
+              <textarea id="g-mensaje" name="mensaje" rows="3" maxlength="500" aria-describedby="g-mensaje-ayuda g-mensaje-error"></textarea>
+              <p class="campo-ayuda" id="g-mensaje-ayuda">Hasta 500 caracteres, sin enlaces.</p>
+              <p class="campo-error" id="g-mensaje-error" hidden></p>
+            </div>
+
+            <div class="trampa" aria-hidden="true">
+              <label for="g-sitio">Sitio web (no llenes este campo)</label>
+              <input id="g-sitio" name="sitio_web" type="text" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="campo campo-casilla">
+              <input id="g-autorizo" name="autorizacion" type="checkbox" required aria-describedby="g-autorizo-error">
+              <label for="g-autorizo">Autorizo a interOS S.A.S. (NIT 901.213.197-5) a usar estos datos para contactarme sobre TaxiCun GPS y agendar la instalación. Los guardan hasta 12 meses si no contrato. Puedo pedir que los borren en info@taxicun.com. <a href="../privacidad/">Política de privacidad</a>.</label>
+              <p class="campo-error" id="g-autorizo-error" hidden></p>
+            </div>
+
+            <button class="boton boton-amarillo boton-grande gps-enviar" type="submit"><svg class="icono" aria-hidden="true"><use href="#i-telefono"/></svg><span>Quiero que me llamen</span></button>
+            <p class="gps-estado" role="status" aria-live="polite"></p>
+          </form>
+
+          <div class="gps-resultado" id="gps-listo" tabindex="-1" hidden>
+            <span class="gps-resultado-ic gps-resultado-bien" aria-hidden="true"><svg class="icono"><use href="#i-check"/></svg></span>
+            <h3>¡Listo!</h3>
+            <p>Te llamamos en el próximo día hábil. Si es urgente, escríbenos a <a href="mailto:info@taxicun.com?subject=Quiero%20GPS%20para%20mi%20taxi">info@taxicun.com</a>.</p>
+          </div>
+
+          <div class="gps-resultado" id="gps-respaldo" tabindex="-1" hidden>
+            <span class="gps-resultado-ic gps-resultado-mal" aria-hidden="true"><svg class="icono"><use href="#i-correo"/></svg></span>
+            <h3>No pudimos enviar tus datos</h3>
+            <p>Escríbenos a <b>info@taxicun.com</b> y te llamamos. Ya te dejamos el correo listo con lo que llenaste: solo dale enviar.</p>
+            <div class="botones">
+              <a class="boton boton-amarillo gps-respaldo-correo" href="mailto:info@taxicun.com?subject=Quiero%20GPS%20para%20mi%20taxi"><svg class="icono" aria-hidden="true"><use href="#i-correo"/></svg>Escribir a info@taxicun.com</a>
+              <button class="boton boton-vidrio gps-reintentar" type="button">Intentar de nuevo</button>
+            </div>
+          </div>
+
+          <p class="gps-aviso-privacidad"><b>Aviso de privacidad.</b> interOS S.A.S. (NIT 901.213.197-5), responsable del tratamiento, usa los datos de este formulario solo para contactarte sobre TaxiCun GPS y agendar la instalación. Los guarda hasta 12 meses si no contratas. Puedes conocerlos, actualizarlos, rectificarlos o pedir que los borren escribiendo a <a href="mailto:info@taxicun.com">info@taxicun.com</a>. Esta página no guarda nada en tu navegador.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie-caja">
+      <img src="../img/taxicun/logo-blanco.svg" alt="TaxiCun" width="140" height="35" loading="lazy">
+      <p>TaxiCun es de interOS S.A.S., NIT 901.213.197-5. Precios con IVA, en borrador. Sin pagos en línea: te enviamos la factura electrónica. Tratamos tus datos según la <a href="../privacidad/">política de privacidad</a>.</p>
+      <p class="pie-enlaces"><a href="../">Inicio</a><a href="../taxicun/">Pedir taxi</a><a href="../privacidad/">Privacidad</a><a href="mailto:info@taxicun.com">info@taxicun.com</a></p>
+    </div>
+  </footer>
+</body>
+</html>

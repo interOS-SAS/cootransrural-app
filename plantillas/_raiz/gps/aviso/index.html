@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aviso para el taxi · TaxiCun GPS{{#si gps.legal_borrador}} (borrador){{/si}}</title>
+  <!-- Aviso de GPS para pegar dentro del taxi (adhesivo de 10 × 6 cm). Lo deja el técnico al instalar. Dos
+       versiones: con la central (si el propietario autorizó que la central vea el taxi) y sin ella. Se imprime en
+       carta: 8 por hoja. Oculta: noindex y sin enlaces. Texto por revisar con el abogado (D-G12). -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{RAIZ}}img/taxicun/favicon-32.png">
+  <link rel="stylesheet" href="{{RAIZ}}fuentes/fuentes.css">
+  <link rel="stylesheet" href="../imprimibles.css">
+</head>
+<body>
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+  </svg>
+  {{#si gps.legal_borrador}}<p class="marca-borrador">BORRADOR · Por revisar con el abogado · No pegar todavía</p>{{/si}}
+  <header class="pantalla">
+    <h1>Aviso de GPS para el taxi</h1>
+    <p>Adhesivo de 10 × 6 cm para pegar dentro del taxi, donde lo vea quien maneja. Imprime en hoja carta, al 100 % (sin «ajustar a la página»): salen 8 por hoja. Usa la versión que corresponda a lo que autorizó el propietario.</p>
+  </header>
+
+  <section class="hoja" aria-labelledby="t-con">
+    <h2 class="pantalla" id="t-con">Si el propietario autorizó a la central de la cooperativa</h2>
+    <div class="avisos">
+      {{#cada gps.ocho}}
+      <div class="aviso">
+        <span class="aviso-ic" aria-hidden="true"><svg><use href="#i-pin"/></svg></span>
+        <div>
+          <p class="aviso-titulo">Este vehículo tiene GPS</p>
+          <p>Su ubicación la ven el propietario y la central de la cooperativa.</p>
+          <p class="aviso-pie">Responsable: interOS S.A.S. · taxicun.com/privacidad · info@taxicun.com</p>
+        </div>
+      </div>
+      {{/cada}}
+    </div>
+  </section>
+
+  <section class="hoja" aria-labelledby="t-sin">
+    <h2 class="pantalla" id="t-sin">Si el propietario NO autorizó a la central</h2>
+    <div class="avisos">
+      {{#cada gps.ocho}}
+      <div class="aviso">
+        <span class="aviso-ic" aria-hidden="true"><svg><use href="#i-pin"/></svg></span>
+        <div>
+          <p class="aviso-titulo">Este vehículo tiene GPS</p>
+          <p>Su ubicación la ve el propietario.</p>
+          <p class="aviso-pie">Responsable: interOS S.A.S. · taxicun.com/privacidad · info@taxicun.com</p>
+        </div>
+      </div>
+      {{/cada}}
+    </div>
+  </section>
+</body>
+</html>
