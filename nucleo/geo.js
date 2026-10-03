@@ -36,14 +36,20 @@ export async function obtenerPosicion({ espera = 8000, precisa = true } = {}) {
     const p = await posicion({ precisa, espera, edad: 15000 });
     return { lat: p.lat, lng: p.lng, precision: p.precision, real: true };
   } catch (e) {
-    return { ...PUNTO_RECOGIDA, precision: null, real: false, motivo: e?.sinGps ? 'sin-gps' : e?.code === 1 ? 'denegado' : 'no-disponible' };
+    // motivo: 'sin-gps' (el aparato no tiene), 'denegado' (permiso), 'tiempo' (la lectura tardó),
+    // 'sin-senal' (el GPS respondió sin posición) o 'no-disponible' (ubicación apagada u otro error).
+    // 'tiempo' y 'sin-senal' son falta de señal: en la app, la ubicación apagada da 'no-disponible'.
+    const motivo = e?.sinGps ? 'sin-gps' : e?.code === 1 ? 'denegado' : e?.code === 3 ? 'tiempo' : e?.sinSenal ? 'sin-senal' : 'no-disponible';
+    return { ...PUNTO_RECOGIDA, precision: null, real: false, motivo };
   }
 }
 
 // Sigue la posición en tiempo real. Devuelve la función para detenerse.
-// alFallar({ code }) avisa si se pierde el GPS (1 permiso negado, 2 no disponible, 3 tiempo).
-export function seguirPosicion(fn, { precisa = true, alFallar = () => {} } = {}) {
-  return seguir((p) => fn({ ...p, real: true }), { precisa, alFallar });
+// alFallar({ code, muerto }) avisa si se pierde el GPS (1 permiso negado, 2 no disponible, 3 tiempo);
+// muerto: el seguimiento ya no existe y hay que pedir otro (ver plataforma.seguir).
+// intervalo (ms): cada cuánto se quiere una lectura; solo lo respeta el plugin en Android.
+export function seguirPosicion(fn, { precisa = true, alFallar = () => {}, intervalo } = {}) {
+  return seguir((p) => fn({ ...p, real: true }), { precisa, alFallar, ...(intervalo ? { intervalo } : {}) });
 }
 
 // ¿La posición está lejos de la zona de servicio? (por ejemplo, alguien que

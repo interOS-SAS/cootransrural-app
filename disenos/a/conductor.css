@@ -367,6 +367,14 @@
 .a-cuenta-acciones .a-btn { min-height: 52px; background: #fff; }
 .a-cuenta-acciones .a-btn:hover { background: var(--a-gris-2); }
 
+/* Modo real (batería): los latidos de box-shadow y el radar del taxi en línea, unas veces al
+ * aparecer y quietos (ver base.css). La píldora sigue verde. «Llegué», «Recibí efectivo» y
+ * «Terminar» laten 4 veces y después quedan con un aro ámbar fijo (una sombra quieta no obliga a
+ * repintar en cada cuadro): siguen viéndose resaltados. */
+html[data-modo="real"] .a-pildora[aria-checked="true"] .a-pildora-perilla,
+html[data-modo="real"] .a-radar-conductor span { animation-iteration-count: 3; }
+html[data-modo="real"] .a-resaltar { animation-iteration-count: 4; box-shadow: 0 8px 18px rgba(255, 179, 0, .35), 0 0 0 4px rgba(255, 193, 7, .75); }
+
 /* Modo real: en turno pero sin GPS (la central no le manda servicios) */
 .a-pildora.a-pildora-alerta[aria-checked="true"] { background: var(--a-rojo-txt); }
 .a-pildora.a-pildora-alerta[aria-checked="true"] .a-pildora-perilla { color: var(--a-rojo-txt); animation: none; }

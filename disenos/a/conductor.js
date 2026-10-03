@@ -1851,13 +1851,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       });
       return;
     }
-    esperarOferta(ctl, a.viajeId);
     if (!ctl.estado.conectado) {
       // Con la central aún saludando, la presencia y la consulta salen con la bienvenida.
-      await ctl.conectar();
+      // Fuera de turno «Conectarme» lee antes el GPS (batería: no se sigue fuera de turno), así
+      // que los 10 s de la oferta cuentan desde que queda en turno. Si no quedó (sin GPS, otro
+      // «Conectarme» en curso…), el núcleo ya dijo por qué: no se dice que el servicio no está.
+      const enTurno = await ctl.conectar();
       if (ctl === c && ui.vista === 'libre') pintarPildoraReal(ctl.estado);
+      if (enTurno && ctl === c) esperarOferta(ctl, a.viajeId);
       return;
     }
+    esperarOferta(ctl, a.viajeId);
     // En turno: con la bienvenida salen otra vez la presencia y consulta_solicitudes.
     reconectarCentral(ctl);
   }
@@ -2067,7 +2071,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       if (document.visibilityState === 'visible' && ui.pantalla === 'revision') revisarCuenta({ silencioso: true });
     });
     // El estado del bus (conectando, en línea, reintentando) cambia sin aviso del controlador.
-    setInterval(() => {
+    // Solo con la app a la vista (al volver se pinta de una vez).
+    N.relojVisible(() => {
       if (c) pintarConexionReal();
     }, 1000);
     // App nativa 1.2 (sin los plugins no hace nada): bloqueo con Face ID y avisos tocados.

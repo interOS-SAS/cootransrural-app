@@ -2,8 +2,35 @@
 // sonido. La interfaz de cada diseño muestra además su propio aviso en pantalla
 // escuchando el evento 'aviso' de los controladores.
 import { urlDelSitio, ID_EMPRESA } from './config.js';
+import { MODO_REAL } from './plataforma.js';
 
 let contextoAudio = null;
+
+// Batería (modo real): un AudioContext «running» mantiene despierto el audio del teléfono
+// aunque no suene nada. Se suspende al terminar cada melodía y sonar() lo reanuda (la app
+// nativa no pide un toque para sonar; en el navegador ya hubo el primer toque).
+const SUSPENDER_AUDIO = MODO_REAL;
+const MARGEN_SUSPENDER_MS = 1500;
+let relojSuspender = null;
+let suspendiendo = null; // la promesa de suspend() mientras no termina
+let finSonido = 0; // en el reloj del audio (currentTime): cuándo termina lo último programado
+function suspenderLuego(segundos = 0) {
+  if (!SUSPENDER_AUDIO || !contextoAudio) return;
+  clearTimeout(relojSuspender);
+  relojSuspender = setTimeout(() => {
+    relojSuspender = null;
+    // Aún sin arrancar (resume() lento o una interrupción): lo vuelve a programar el 'statechange'.
+    if (contextoAudio?.state !== 'running') return;
+    // El audio arrancó tarde (o un aviso corto cambió el plazo) y la melodía aún suena: se espera.
+    const falta = finSonido - contextoAudio.currentTime;
+    if (falta > 0.05) return suspenderLuego(falta);
+    const p = contextoAudio.suspend().catch(() => {});
+    suspendiendo = p;
+    p.then(() => {
+      if (suspendiendo === p) suspendiendo = null;
+    });
+  }, segundos * 1000 + MARGEN_SUSPENDER_MS);
+}
 
 export function permisoNotificaciones() {
   if (!('Notification' in window)) return 'no-soportado';
@@ -23,8 +50,24 @@ export async function pedirPermisoNotificaciones() {
 // Desbloquea el audio (los navegadores exigen un toque del usuario antes).
 export function prepararSonido() {
   try {
-    contextoAudio ??= new (window.AudioContext || window.webkitAudioContext)();
-    if (contextoAudio.state === 'suspended') contextoAudio.resume();
+    if (!contextoAudio) {
+      contextoAudio = new (window.AudioContext || window.webkitAudioContext)();
+      finSonido = 0;
+      // Arrancó tarde o volvió solo (fin de una interrupción en el iPhone) sin reloj pendiente:
+      // se programa la suspensión (si no, quedaría andando y gastando).
+      if (SUSPENDER_AUDIO) {
+        contextoAudio.addEventListener?.('statechange', () => {
+          if (contextoAudio?.state === 'running' && !relojSuspender) suspenderLuego(Math.max(0, finSonido - contextoAudio.currentTime));
+        });
+      }
+    }
+    // En iPhone queda «interrupted» después de una llamada o de pasar a segundo plano.
+    const parado = SUSPENDER_AUDIO ? contextoAudio.state !== 'running' && contextoAudio.state !== 'closed' : contextoAudio.state === 'suspended';
+    // Un sonido justo cuando se estaba suspendiendo: se reanuda apenas termine la suspensión.
+    if (SUSPENDER_AUDIO && suspendiendo) suspendiendo.then(() => contextoAudio?.resume()?.catch?.(() => {}));
+    else if (parado) contextoAudio.resume()?.catch?.(() => {});
+    // Desbloqueado con el toque: no hace falta dejarlo andando hasta que suene algo.
+    if (!relojSuspender) suspenderLuego();
   } catch {
     contextoAudio = null;
   }
@@ -44,7 +87,22 @@ export function sonar(tipo = 'info') {
   try {
     prepararSonido();
     if (!contextoAudio) return;
+    // Con un suspend() en curso (el contexto aún «running»), las notas se programan cuando
+    // termina, con el reloj del audio ya quieto: suenan enteras al reanudarse (prepararSonido
+    // pidió el resume() antes), sin un silencio en medio.
+    if (SUSPENDER_AUDIO && suspendiendo) suspendiendo.then(() => programarMelodia(tipo));
+    else programarMelodia(tipo);
+  } catch {
+    /* sin audio */
+  }
+}
+
+function programarMelodia(tipo) {
+  if (!contextoAudio) return;
+  try {
+    // Si estaba suspendido, las notas quedan programadas y suenan apenas se reanuda.
     let t = contextoAudio.currentTime + 0.02;
+    const inicio = t;
     for (const [frecuencia, duracion] of MELODIAS[tipo] || MELODIAS.info) {
       if (frecuencia > 0) {
         const osc = contextoAudio.createOscillator();
@@ -60,6 +118,8 @@ export function sonar(tipo = 'info') {
       }
       t += duracion;
     }
+    finSonido = Math.max(finSonido, t);
+    suspenderLuego(t - inicio);
   } catch {
     /* sin audio */
   }
