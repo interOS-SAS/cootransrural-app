@@ -283,10 +283,13 @@ function capacitorFalso(cfg) {
     const ut = () => ({ ...vacio, ...(L('__ut') || {}) });
     const publico = (e) => ({ activo: e.activo, modo: e.modo, motivo: e.motivo, precisa: e.precisa, desde: e.desde });
     const oyentesUt = [];
-    // Como el nativo: notifyListeners('detenido', …, retainUntilConsumed: true).
+    // Como el nativo (taxicun-app, herramientas/nativo): notifyListeners('detenido', { motivo,
+    // origen }, retainUntilConsumed: true), solo cuando el plugin se detiene solo.
+    const origenDe = (m) => (m === 'turno_apagado' ? 'notificacion' : ['sin_sesion', 'conductor_no_aprobado', 'empresa_no_disponible', 'servidor'].includes(m) ? 'servidor' : 'sistema');
     const avisar = (motivo) => {
-      if (oyentesUt.length) oyentesUt.forEach((f) => f({ motivo }));
-      else L('__utRetenido', { motivo });
+      const d = { motivo, origen: origenDe(motivo) };
+      if (oyentesUt.length) oyentesUt.forEach((f) => f(d));
+      else L('__utRetenido', d);
     };
     const error = (code, msj) => Object.assign(new Error(msj), { code });
     plugins.UbicacionTurno = {
@@ -314,7 +317,7 @@ function capacitorFalso(cfg) {
         if (e.activo) {
           Object.assign(e, { activo: false, modo: null, desde: null, motivo: op?.motivo || 'turno_apagado' });
           L('__ut', e);
-          avisar(e.motivo); // iOS: parar() avisa también cuando lo pide la web
+          // Como el nativo: detener() pedido por la web NO dispara «detenido».
         }
         return publico(e);
       },

@@ -160,6 +160,16 @@ El diseño A: `ofrecerSegundoPlano()` (aviso «Tu ubicación mientras estás con
 iniciar), «Con la app minimizada» en Ajustes y los avisos cuando el plugin se detiene. Prueba:
 `node pruebas/segundo-plano.mjs http://localhost:8961/`.
 
+Contrato con el plugin nativo (taxicun-app, `herramientas/nativo/`, igual en iOS y Android):
+`iniciar({ url, token, modo, libre })` (errores `DATOS`, `SIN_PERMISO`, `SEGUNDO_PLANO` y, solo en
+iOS, `SIN_MODO`), `cambiarModo({ modo?, libre? })`, `detener({ motivo, avisar })` (con `avisar` manda
+el último POST con `fin`; **no** dispara «detenido»), `estado()` (`{ activo, modo, libre, motivo,
+origen, precisa, desde?, ultimoEnvio?, plataforma }`) y el evento «detenido» `{ motivo, origen }`
+(solo cuando se detiene solo; `origen`: `notificacion`, `servidor` o `sistema`; retenido hasta que
+la web lo escuche). De punta a punta, con el plugin simulado en Node (mismas reglas que el nativo,
+POST reales) y el servidor 0.4.0 con tiempos cortos: `node pruebas/segundo-plano-e2e.mjs
+http://localhost:8971/` (ver su cabecera).
+
 ## Red
 
 Sin servidor propio. Las pestañas del mismo navegador se hablan por
