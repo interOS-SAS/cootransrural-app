@@ -25,6 +25,11 @@
 //     («Volviste a estar en turno.»); tocar uno vencido no («Ponte en turno para recibir servicios.»);
 //     volver antes del plazo y terminar el turno a propósito no mandan el aviso. El recorrido normal
 //     necesita el plazo normal (con 6 s el turno vencería antes de que el pasajero pida).
+//  6) A3, solo con la central de «Reglas del despacho» (bienvenida con reglas; con las anteriores se omite): el
+//     conductor 1.2 ve la oferta (oferta_vista), la rechaza (rechazo) y minimiza enseguida (antes de 2 s, cuando la
+//     central de oferta-fix sí se la repetía) → no le llega por push y el pasajero ve «Ningún taxi tomó tu solicitud»
+//     con «Llamar a la central»; vuelve, ve otra y minimiza sin responder → tampoco, y al vencerse en su pantalla el
+//     pasajero queda «sin conductores»; la que llega con la app ya minimizada sí le llega por push (control).
 //
 // Servidor (árbol de la rama v1.2), base taxicun_e2e:
 //   PUSH_SIMULADO=/tmp/cootrans/v12/integracion/avisos.jsonl \
@@ -676,6 +681,127 @@ async function faceId() {
 }
 
 /* ------------------------------------------------------------------ */
+/* 6) A3 · Reglas del despacho: lo visto o rechazado no se repite por push */
+/* ------------------------------------------------------------------ */
+// Con la central de «Reglas del despacho» (la bienvenida trae reglas), la app 1.2 manda oferta_vista al mostrar la
+// oferta y rechazo al rechazarla. Al minimizar después, la central no le repite por push lo que ya vio en pantalla
+// (antes lo adivinaba con la siguiente presencia: si minimizaba enseguida, le llegaba un «Nuevo servicio» de lo que
+// acababa de ver). Lo que le llega con la app ya minimizada, sí, por push. Con centrales anteriores se omite.
+const solicitudesPush = (viajeId) => nuevos().filter((l) => l.app === 'conductor' && l.datos?.tipo === 'solicitud' && l.datos?.viajeId === viajeId);
+const buscandoDe = (correo) => sql(`select id from viajes where pasajero_id = ${cita(idDe(correo))} and estado = 'buscando'`);
+async function cancelarBusqueda(p) {
+  await p.click('[data-cancelar]');
+  await p.waitForSelector('.a-opciones', { timeout: 5000 });
+  await p.click('.a-opcion >> nth=0');
+  await p.waitForTimeout(300);
+  await p.click('.a-modal .a-btn-peligro');
+  return vista(p, 'inicio', 10000);
+}
+async function vistaNoSeRepite() {
+  const enviados = []; // oferta_vista y rechazo que manda la app del conductor
+  const llego = new Map(); // viajeId → cuándo le llegó la solicitud por el bus
+  let conReglas = false;
+  pa = await A.newPage();
+  vigilar(pa, 'conductor 1.2');
+  pa.on('websocket', (ws) => {
+    ws.on('framesent', (f) => {
+      try {
+        const m = JSON.parse(typeof f.payload === 'string' ? f.payload : '');
+        if (m.tipo === 'oferta_vista' || m.tipo === 'rechazo') enviados.push(m);
+      } catch {
+        /* no es JSON */
+      }
+    });
+    ws.on('framereceived', (f) => {
+      const s = typeof f.payload === 'string' ? f.payload : '';
+      if (s.includes('"tipo":"bienvenida"') && s.includes('"reglas"')) conReglas = true;
+      if (s.includes('"tipo":"solicitud"')) {
+        try {
+          const m = JSON.parse(s);
+          if (!llego.has(m.datos?.viajeId)) llego.set(m.datos?.viajeId, Date.now());
+        } catch {
+          /* no es JSON */
+        }
+      }
+    });
+  });
+  const mando = (tipo, viajeId) => enviados.filter((m) => m.tipo === tipo && m.datos?.viajeId === viajeId).length;
+  // Segundos desde que le llegó la solicitud por el bus. La central de antes la daba por vista solo si el conductor
+  // hablaba 2 s o más después: minimizar antes es justo el caso A3.
+  const desdeQueLlego = (viajeId) => ((Date.now() - (llego.get(viajeId) ?? Date.now())) / 1000).toFixed(1);
+  await pa.goto(`${BASE}taxicun/conductor/`);
+  await debe(pa.waitForSelector('[data-conectar]:not([disabled])', { timeout: 30000 }), 'A3 · conductor 1.2: abre la app con su sesión');
+  if ((await pa.getAttribute('[data-conectar]', 'aria-checked')) !== 'true') {
+    await pa.click('[data-conectar]');
+    if (await intento(pa.waitForSelector('.a-modal-nativa .a-modal', { timeout: 2000 }))) await tocarModal(pa, 'Activar avisos');
+  }
+  await debe(pa.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 15000 }), 'A3 · conductor 1.2: en turno con la app a la vista');
+  await hasta(() => conReglas, 8000);
+  if (!conReglas) {
+    console.log('· A3: la central no trae «Reglas del despacho» (bienvenida sin reglas): se omite');
+    await pa.close();
+    return;
+  }
+  ok(dispositivosDe(CA.correo) === `conductor|ios|production|${tA}`, 'A3 · conductor 1.2: con su teléfono registrado (le pueden llegar push)');
+
+  // a) La ve en pantalla, la rechaza y minimiza enseguida: no le llega por push.
+  marca = leerAvisos().length;
+  await debe(pedirTaxi(pp, DESTINO), `A3 · pasajero: pide un taxi a ${DESTINO.nombre}`);
+  const v1 = await hasta(() => buscandoDe(PAS.correo), 8000);
+  await debe(v1, `A3 · pasajero: viaje buscando (${v1})`);
+  await debe(pa.waitForSelector('.a-solicitud.a-abierta', { timeout: 20000 }), 'A3 · conductor: con la app a la vista le llega la oferta por el tiempo real');
+  await pa.click('.a-solicitud [data-rechazar]');
+  await visibilidad(pa, true);
+  const dtA = desdeQueLlego(v1);
+  await debe(hasta(() => dormido(CA.correo), 6000, 100), `A3 · conductor: la rechaza y minimiza enseguida (${dtA} s después de que le llegó) → en turno en segundo plano`);
+  ok(Number(dtA) < 2, `A3 · (minimizó antes de 2 s: con la central de antes le llegaba por push) (${dtA} s)`);
+  ok(mando('oferta_vista', v1) === 1, 'A3 · conductor: la app mandó oferta_vista { viajeId } al mostrarla (una vez)');
+  ok(mando('rechazo', v1) === 1, 'A3 · conductor: «Rechazar» mandó rechazo { viajeId }');
+  await espera(4000);
+  ok(solicitudesPush(v1).length === 0, `A3 · lo que rechazó en pantalla no le llega por push al minimizar (${nuevos().map(resumen).join(' | ') || 'ningún aviso'})`);
+  ok(await intento(pp.waitForSelector('[data-sin-taxis]:not([hidden])', { timeout: 15000 })) && /Ningún taxi tomó tu solicitud/.test(await texto(pp, '[data-sin-taxis]')),
+    'A3 · pasajero: era el único → «Ningún taxi tomó tu solicitud» (sigue buscando)');
+  ok(/Llamar a la central/.test(await texto(pp, '[data-sin-taxis]')), 'A3 · pasajero: con «Llamar a la central»');
+  await foto(pp, 'a3-01-pasajero-sin-conductores');
+  await debe(cancelarBusqueda(pp), 'A3 · pasajero: cancela');
+
+  // b) Vuelve, la ve en pantalla y minimiza sin responder (antes de hablar otra vez): tampoco le llega por push.
+  //    Al vencerse en su pantalla (segundosOferta + 5 s) ya no cuenta como alguien que la puede tomar.
+  await visibilidad(pa, false);
+  await debe(hasta(() => !dormido(CA.correo), 10000, 150), 'A3 · conductor: vuelve a la app (sale de en turno en segundo plano)');
+  await debe(pa.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 15000 }), 'A3 · conductor: sigue en turno');
+  await pa.waitForTimeout(1200);
+  marca = leerAvisos().length;
+  await debe(pedirTaxi(pp, SEGUNDO), `A3 · pasajero: pide otra vez (${SEGUNDO.nombre})`);
+  const v2 = await hasta(() => buscandoDe(PAS.correo), 8000);
+  await debe(v2 && v2 !== v1, `A3 · pasajero: otro viaje buscando (${v2})`);
+  await debe(pa.waitForSelector('.a-solicitud.a-abierta', { timeout: 20000 }), 'A3 · conductor: le llega la nueva oferta por el tiempo real');
+  await visibilidad(pa, true);
+  const dtB = desdeQueLlego(v2);
+  await debe(hasta(() => dormido(CA.correo), 6000, 100), `A3 · conductor: minimiza con la oferta en pantalla y sin responder (${dtB} s después de que le llegó)`);
+  ok(Number(dtB) < 2, `A3 · (minimizó antes de 2 s) (${dtB} s)`);
+  ok(mando('oferta_vista', v2) === 1, 'A3 · conductor: la app mandó oferta_vista de la nueva antes de minimizar');
+  ok(mando('rechazo', v2) === 0, 'A3 · conductor: sin responder no manda rechazo');
+  await espera(4000);
+  ok(solicitudesPush(v2).length === 0, `A3 · lo que vio en pantalla no le llega por push al minimizar (${nuevos().map(resumen).join(' | ') || 'ningún aviso'})`);
+  const vencida = await intento(pp.waitForSelector('[data-sin-taxis]:not([hidden])', { timeout: 45000 }));
+  ok(vencida && /Ningún taxi tomó tu solicitud/.test(await texto(pp, '[data-sin-taxis]')), 'A3 · pasajero: se le venció en la pantalla (25 s + 5) → «Ningún taxi tomó tu solicitud»');
+  ok(solicitudesPush(v2).length === 0, 'A3 · (y tampoco le llegó por push después)');
+  await debe(cancelarBusqueda(pp), 'A3 · pasajero: cancela');
+
+  // c) Control: lo que llega con la app ya minimizada sí le llega por push (una vez).
+  await espera(1000);
+  marca = leerAvisos().length;
+  await debe(pedirTaxi(pp, DESTINO), 'A3 · pasajero: pide con el conductor minimizado');
+  const v3 = await hasta(() => buscandoDe(PAS.correo), 8000);
+  await debe(v3 && v3 !== v2, `A3 · pasajero: viaje buscando (${v3})`);
+  ok(await hasta(() => solicitudesPush(v3).length === 1, 10000), `A3 · control: con la app minimizada, «Nuevo servicio» por push (${nuevos().map(resumen).join(' | ') || 'ningún aviso'})`);
+  ok(!(await pp.$('[data-sin-taxis]:not([hidden])')), 'A3 · pasajero: le llegó a alguien (sin el aviso)');
+  await debe(cancelarBusqueda(pp), 'A3 · pasajero: cancela');
+  await pa.close();
+}
+
+/* ------------------------------------------------------------------ */
 /* 5) --pausa: «Tu turno quedó en pausa» (TURNO_DORMIDO_MIN corto)       */
 /* ------------------------------------------------------------------ */
 const pausasNuevas = () => nuevos().filter((l) => l.app === 'conductor' && l.datos?.tipo === 'turno_pausa');
@@ -774,6 +900,7 @@ try {
     viajeId = await viaje();
     await comoHoy();
     await faceId();
+    await vistaNoSeRepite();
   }
 } catch (e) {
   if (!(e instanceof Detener)) {
