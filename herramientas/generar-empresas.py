@@ -1437,6 +1437,29 @@ def gps_tienda():
     return _CACHE['gps']
 
 
+# Secciones de la política de privacidad de TaxiCun (plantillas/_raiz/privacidad/), en orden. El capítulo
+# «GPS para taxis» entra después de «Tu ubicación» solo cuando se publica (gps-planes.json); los números
+# de las demás se corren solos. Con el capítulo apagado, la política sale igual que antes.
+SECCIONES_POLITICA = ('responsable', 'datos', 'ubicacion', 'gps', 'finalidades', 'compartir', 'proveedores', 'no-hacemos',
+                      'conservacion', 'seguridad', 'derechos', 'eliminar-cuenta', 'menores', 'uso', 'cambios', 'contacto')
+VIGENCIA_POLITICA = '3 de octubre de 2026'  # la de la versión publicada (1.2)
+
+
+def politica_privacidad():
+    if 'politica' in _CACHE:
+        return _CACHE['politica']
+    p = json.loads(GPS_PLANES.read_text(encoding='utf-8')).get('politica_privacidad') or {}
+    con_gps = bool(p.get('publicar_capitulo_gps'))
+    vigencia = VIGENCIA_POLITICA
+    if con_gps:
+        vigencia = str(p.get('vigente_desde') or '').strip()
+        if not re.fullmatch(r'\d{1,2} de [a-z]+ de 20\d\d', vigencia):
+            raise ValueError('gps-planes.json: para publicar el capítulo GPS de la política, pon «vigente_desde» (p. ej. «5 de noviembre de 2026»)')
+    ids = [i for i in SECCIONES_POLITICA if con_gps or i != 'gps']
+    _CACHE['politica'] = {'gps': con_gps, 'vigencia': vigencia, 'n': {i.replace('-', '_'): n for n, i in enumerate(ids, 1)}}
+    return _CACHE['politica']
+
+
 def contexto(ficha, destino_rel):
     """Datos disponibles en las plantillas para un archivo generado."""
     profundidad = len(pathlib.PurePosixPath(destino_rel).parts) - 1
@@ -1456,6 +1479,8 @@ def contexto(ficha, destino_rel):
         'cooperativas': lista_cooperativas(),
         # La tienda TaxiCun GPS (gps/ y sus páginas para imprimir).
         'gps': gps_tienda() if destino_rel.startswith('gps/') else None,
+        # La política de privacidad de TaxiCun (raíz): números de sección, vigencia y el capítulo GPS.
+        'politica': politica_privacidad() if destino_rel.startswith(('privacidad/', 'gps/')) else None,
         # Para scripts (p. ej. la página 404, que adapta colores y enlaces según la carpeta).
         'cooperativas_json': json.dumps([{k: c[k] for k in ('id', 'ruta', 'nombre', 'razonSocial', 'es_propuesta', 'servicio24h', 'tel', 'tel_visible', 'primario', 'primario2', 'claro', 'oscuro', 'acento', 'icono')}
                                          for c in lista_cooperativas()], ensure_ascii=False).replace('</', '<\\/'),

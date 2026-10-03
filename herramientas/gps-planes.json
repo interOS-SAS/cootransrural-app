@@ -4,12 +4,18 @@
     "Valores en pesos colombianos, con IVA incluido. El primer año y el ahorro de los combos se calculan solos.",
     "precios_aprobados: false muestra la etiqueta «borrador» junto a cada precio. Ponlo en true cuando Oscar los apruebe.",
     "pagina_publica: false deja la página fuera de Google (noindex), con la franja «BORRADOR» y el título «(borrador)».",
+    "politica_privacidad.publicar_capitulo_gps: false deja la política de privacidad publicada como está (el capítulo GPS queda escrito en la plantilla, sin salir).",
     "textos_legales_aprobados: false marca «BORRADOR · por revisar con el abogado» el aviso para el taxi y el formato del conductor (gps/aviso/ y gps/formato-conductor/), también al imprimir.",
     "Después de cambiar algo: python3 herramientas/generar-empresas.py && python3 herramientas/versionar.py"
   ],
   "precios_aprobados": false,
   "pagina_publica": false,
   "textos_legales_aprobados": false,
+  "politica_privacidad": {
+    "publicar_capitulo_gps": false,
+    "vigente_desde": "",
+    "_nota": "El capítulo «GPS para taxis» de taxicun.com/privacidad/ (plantillas/_raiz/privacidad/) está escrito pero APAGADO: con false la política publicada no cambia. Para publicarlo, cuando el abogado lo apruebe: true, la fecha («5 de noviembre de 2026») y avisar en las apps antes (versión 1.3 o 1.4 de la política)."
+  },
   "planes": [
     {
       "id": "compra",

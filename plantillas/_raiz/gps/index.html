@@ -449,7 +449,7 @@
 
             <div class="campo campo-casilla">
               <input id="g-autorizo" name="autorizacion" type="checkbox" required aria-describedby="g-autorizo-error">
-              <label for="g-autorizo">{{gps.autorizacion.texto}} <a href="{{RAIZ}}privacidad/">Política de privacidad</a>.</label>
+              <label for="g-autorizo">{{gps.autorizacion.texto}} <a href="{{RAIZ}}privacidad/{{#si politica.gps}}#gps{{/si}}">Política de privacidad</a>.</label>
               <p class="campo-error" id="g-autorizo-error" hidden></p>
             </div>
 
@@ -482,7 +482,7 @@
   <footer class="pie">
     <div class="contenedor pie-caja">
       <img src="{{RAIZ}}img/taxicun/logo-blanco.svg" alt="TaxiCun" width="140" height="35" loading="lazy">
-      <p>TaxiCun es de interOS S.A.S., NIT 901.213.197-5. Precios con IVA{{#si gps.borrador}}, en borrador{{/si}}. Sin pagos en línea: te enviamos la factura electrónica. Tratamos tus datos según la <a href="{{RAIZ}}privacidad/">política de privacidad</a>.</p>
+      <p>TaxiCun es de interOS S.A.S., NIT 901.213.197-5. Precios con IVA{{#si gps.borrador}}, en borrador{{/si}}. Sin pagos en línea: te enviamos la factura electrónica. Tratamos tus datos según la <a href="{{RAIZ}}privacidad/{{#si politica.gps}}#gps{{/si}}">política de privacidad</a>.</p>
       <p class="pie-enlaces"><a href="{{RAIZ}}">Inicio</a><a href="{{RAIZ}}taxicun/">Pedir taxi</a><a href="{{RAIZ}}privacidad/">Privacidad</a><a href="mailto:{{proveedor.correo}}">{{proveedor.correo}}</a></p>
     </div>
   </footer>

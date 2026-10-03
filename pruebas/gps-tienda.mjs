@@ -51,7 +51,8 @@ const N_COOPS = JSON.parse(readFileSync(join(RAIZ, 'empresas/indice.json'), 'utf
       if (st.isDirectory()) { recorrer(ruta); continue; }
       if (!/\.(html|js|mjs|json|webmanifest|xml|txt|css)$/.test(nombre)) continue;
       const texto = readFileSync(ruta, 'utf8');
-      if (/(href|src|action)\s*=\s*["'][^"']*\bgps\/|taxicun\.com\/gps\b|['"`]\.?\/?gps\/['"`]/i.test(texto)) enlaces.push(rel);
+      // Enlaces de verdad (href, src, action o una ruta en un script); nombrar «taxicun.com/gps» en un texto no cuenta.
+      if (/(href|src|action)\s*=\s*["'][^"']*\bgps\/|['"`](https?:\/\/taxicun\.com)?(\.{1,2})?\/gps\/?['"`]|['"`]gps\/['"`]/i.test(texto)) enlaces.push(rel);
     }
   };
   recorrer(RAIZ.replace(/\/$/, ''));
