@@ -9,7 +9,6 @@
 // Uso: node pruebas/gps-servidor-falso.mjs [--puerto=4641] [--modo=ok|404|500|html|mudo]
 //      y abrir http://127.0.0.1:4641/gps/   (también se importa: crearServidor({ puerto, modo }))
 import http from 'node:http';
-import { createHash } from 'node:crypto';
 import { createReadStream, readFileSync } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
@@ -24,31 +23,33 @@ const TIPOS = {
   '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json',
 };
 const PLANES = JSON.parse(readFileSync(join(RAIZ, 'herramientas/gps-planes.json'), 'utf8'));
-const SHA = createHash('sha256').update(PLANES.autorizacion.texto, 'utf8').digest('hex');
 const COOPERATIVAS = new Set(JSON.parse(readFileSync(join(RAIZ, 'empresas/indice.json'), 'utf8')).cooperativas.map((c) => c.id));
-const CLAVES = ['v', 'nombre', 'celular', 'correo', 'cooperativa', 'placa', 'taxis', 'plan', 'mensaje', 'autorizacion', 'sitio_web', 'ms_en_pagina'];
+// El esquema del servidor (ESQUEMA_INTERES de src/gps/interes.js en la rama gps del servidor), cerrado, más «placa»
+// (opcional), que la tienda manda cuando la escriben y que el servidor tiene que aceptar.
+const OBLIGATORIAS = ['nombre', 'celular', 'municipio', 'taxis', 'plan', 'autorizo', 'version'];
+const OPCIONALES = ['correo', 'cooperativa', 'placa', 'mensaje', 'tiempoMs', 'sitioWeb'];
 const ENLACE = /:\/\/|www\./i;
 
-// El esquema cerrado de POST /api/gps/interes: devuelve la lista de problemas (vacía si cumple).
+// Devuelve la lista de problemas del cuerpo (vacía si cumple).
 export function revisarCuerpo(d) {
   const mal = [];
   if (!d || typeof d !== 'object' || Array.isArray(d)) return ['no es un objeto'];
-  const claves = Object.keys(d).sort();
-  if (claves.join() !== [...CLAVES].sort().join()) mal.push(`claves: ${claves.join(',')}`);
+  const sobran = Object.keys(d).filter((k) => !OBLIGATORIAS.includes(k) && !OPCIONALES.includes(k));
+  const faltan = OBLIGATORIAS.filter((k) => !(k in d));
+  if (sobran.length || faltan.length) mal.push(`claves: sobran ${sobran} · faltan ${faltan}`);
   const texto = (v, min, max) => typeof v === 'string' && v.length >= min && v.length <= max;
-  if (d.v !== 1) mal.push('v');
   if (!texto(d.nombre, 2, 80) || ENLACE.test(d.nombre) || d.nombre !== d.nombre.trim()) mal.push('nombre');
   if (typeof d.celular !== 'string' || !/^(3\d{9}|60[1-8]\d{7})$/.test(d.celular)) mal.push('celular');
-  if (!texto(d.correo, 0, 120) || (d.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.correo))) mal.push('correo');
-  if (typeof d.cooperativa !== 'string' || !(d.cooperativa === 'otra' || COOPERATIVAS.has(d.cooperativa))) mal.push('cooperativa');
-  if (typeof d.placa !== 'string' || !(d.placa === '' || /^[A-Z]{3}\d{3}$/.test(d.placa))) mal.push('placa');
+  if ('correo' in d && (!texto(d.correo, 0, 120) || (d.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.correo)))) mal.push('correo');
+  if (!texto(d.municipio, 2, 60) || ENLACE.test(d.municipio)) mal.push('municipio');
+  if ('cooperativa' in d && (typeof d.cooperativa !== 'string' || !(d.cooperativa === 'otra' || COOPERATIVAS.has(d.cooperativa)))) mal.push('cooperativa');
+  if ('placa' in d && (typeof d.placa !== 'string' || !/^[A-Z]{3}\d{3}$/.test(d.placa))) mal.push('placa');
   if (!Number.isInteger(d.taxis) || d.taxis < 1 || d.taxis > 500) mal.push('taxis');
   if (!['compra', 'sin_cuota', 'combo', 'no_se'].includes(d.plan)) mal.push('plan');
-  if (!texto(d.mensaje, 0, 500) || ENLACE.test(d.mensaje)) mal.push('mensaje');
-  const a = d.autorizacion;
-  if (!a || typeof a !== 'object' || Object.keys(a).sort().join() !== 'texto_sha,version' || a.version !== PLANES.autorizacion.version || a.texto_sha !== SHA) mal.push('autorizacion');
-  if (typeof d.sitio_web !== 'string' || d.sitio_web.length > 200) mal.push('sitio_web');
-  if (!Number.isInteger(d.ms_en_pagina) || d.ms_en_pagina < 0) mal.push('ms_en_pagina');
+  if ('mensaje' in d && (!texto(d.mensaje, 0, 500) || ENLACE.test(d.mensaje))) mal.push('mensaje');
+  if (d.autorizo !== true || d.version !== PLANES.autorizacion.version) mal.push('autorizo/version');
+  if ('sitioWeb' in d && (typeof d.sitioWeb !== 'string' || d.sitioWeb.length > 200)) mal.push('sitioWeb');
+  if ('tiempoMs' in d && (!Number.isInteger(d.tiempoMs) || d.tiempoMs < 0)) mal.push('tiempoMs');
   return mal;
 }
 

@@ -14,7 +14,7 @@
 // Uso: node pruebas/gps-tienda.mjs [carpeta_capturas]   (levanta el receptor falso en 127.0.0.1:4641)
 import { chromium } from '/tmp/cootrans/npm/node_modules/playwright-core/index.mjs';
 import { createHash } from 'node:crypto';
-import { mkdirSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { crearServidor } from './gps-servidor-falso.mjs';
@@ -32,10 +32,21 @@ const ok = (c, m) => { console.log(`${c ? '✔' : '✘'} ${m}`); if (!c) fallas+
 const PLANES = JSON.parse(readFileSync(join(RAIZ, 'herramientas/gps-planes.json'), 'utf8'));
 const pesos = (n) => '$' + Math.round(n).toLocaleString('es-CO').replace(/,/g, '.');
 const SHA = createHash('sha256').update(PLANES.autorizacion.texto, 'utf8').digest('hex');
+// La copia del texto de la autorización en el servidor (rama gps del repo del servidor), si está a mano: tienen que ser
+// idénticos, porque el servidor guarda la huella de SU copia con la versión que manda la página.
+const INTERES_SERVIDOR = process.env.INTERES_SERVIDOR || '/tmp/cootrans/gps/servidor/src/gps/interes.js';
 const esperados = [];
 for (const p of PLANES.planes) esperados.push(pesos(p.al_instalar), pesos(p.mes), pesos(p.al_instalar + 12 * p.mes));
 for (const v of PLANES.combo.variantes) esperados.push(pesos(v.mes));
 const N_COOPS = JSON.parse(readFileSync(join(RAIZ, 'empresas/indice.json'), 'utf8')).cooperativas.length;
+
+// ---------------------------------------------------------------- 0) el texto de la autorización es el del servidor
+if (existsSync(INTERES_SERVIDOR)) {
+  const fuente = readFileSync(INTERES_SERVIDOR, 'utf8');
+  const m = /'1\.0':\s*((?:'[^']*'\s*\+?\s*)+)/.exec(fuente);
+  const texto = m ? [...m[1].matchAll(/'([^']*)'/g)].map((x) => x[1]).join('') : '';
+  ok(texto === PLANES.autorizacion.texto, `el texto de la casilla (versión ${PLANES.autorizacion.version}) es igual al del servidor (sha256 ${SHA.slice(0, 12)}…)`);
+} else console.log(`(sin ${INTERES_SERVIDOR}: no se compara el texto de la autorización con el del servidor)`);
 
 // ---------------------------------------------------------------- 1) nadie enlaza la tienda
 {
@@ -94,6 +105,7 @@ async function llenar(p, d) {
   await p.fill('#g-celular', d.celular ?? '');
   await p.fill('#g-correo', d.correo ?? '');
   if (d.cooperativa) await p.selectOption('#g-cooperativa', d.cooperativa);
+  if (d.municipio !== undefined) await p.fill('#g-municipio', d.municipio);
   await p.fill('#g-placa', d.placa ?? '');
   await p.fill('#g-taxis', String(d.taxis ?? 1));
   if (d.plan) await p.check(`input[name="plan"][value="${d.plan}"]`);
@@ -159,7 +171,7 @@ for (const [nombre, vista] of [
   ok(await p.isVisible('#formulario-gps'), 'el formulario se ve (el script le quita «hidden»)');
   ok(await p.evaluate(() => document.querySelectorAll('#g-cooperativa option[value]:not([value=""])').length) === N_COOPS + 1, `municipio y cooperativa: las ${N_COOPS} más «Otra»`);
   const sinEtiqueta = await p.evaluate(() => [...document.querySelectorAll('#formulario-gps input, #formulario-gps select, #formulario-gps textarea')]
-    .filter((e) => e.name !== 'sitio_web' && e.type !== 'radio' && !document.querySelector(`label[for="${e.id}"]`)).map((e) => e.name));
+    .filter((e) => e.name !== 'sitioWeb' && e.type !== 'radio' && !document.querySelector(`label[for="${e.id}"]`)).map((e) => e.name));
   ok(sinEtiqueta.length === 0, `cada campo tiene su etiqueta${sinEtiqueta.length ? ': faltan ' + sinEtiqueta : ''}`);
 
   // ---- enlaces internos y anclas
@@ -195,12 +207,12 @@ for (const [nombre, vista] of [
   ok(await p.evaluate(() => document.querySelector('#g-celular').getAttribute('aria-invalid')) === 'true', 'vacío: aria-invalid en los campos con error');
   await capturar(p, '.gps-formulario-caja', `${nombre}-12-formulario-errores.png`);
   // Datos malos: cada regla con su mensaje.
-  await llenar(p, { nombre: 'www.spam.com', celular: '12345', correo: 'x@', cooperativa: 'otra', placa: 'AB12', taxis: 0, mensaje: 'mira https://x.co', autorizo: false });
+  await llenar(p, { nombre: 'www.spam.com', celular: '12345', correo: 'x@', cooperativa: 'otra', municipio: '', placa: 'AB12', taxis: 0, mensaje: 'mira https://x.co', autorizo: false });
   await p.click('.gps-enviar');
   const mensajes = await p.evaluate(() => Object.fromEntries([...document.querySelectorAll('.campo-error:not([hidden])')].map((e) => [e.id.replace('-error', ''), e.textContent])));
   ok(/sin enlaces/.test(mensajes['g-nombre'] || '') && /10 dígitos/.test(mensajes['g-celular'] || '') && /correo/.test(mensajes['g-correo'] || '')
     && /3 letras y 3 números/.test(mensajes['g-placa'] || '') && /de 1 a 500/.test(mensajes['g-taxis'] || '') && /enlaces/.test(mensajes['g-mensaje'] || '')
-    && /autorización/.test(mensajes['g-autorizo'] || ''), `datos malos: un mensaje claro por campo (${Object.keys(mensajes).length})`);
+    && /autorización/.test(mensajes['g-autorizo'] || '') && /municipio/.test(mensajes['g-municipio'] || ''), `datos malos: un mensaje claro por campo, también «Tu municipio» con «Otra» (${Object.keys(mensajes).length}: ${JSON.stringify(mensajes)})`);
   ok(estado.recibidos.length === 0, 'con errores no se envía nada');
 
   // ---- envío correcto (después de 3 s en la página, como una persona)
@@ -213,13 +225,25 @@ for (const [nombre, vista] of [
   const rec = estado.recibidos[0] || {};
   const c = rec.cuerpo || {};
   ok(rec.problemas?.length === 0, `contrato cumplido (esquema cerrado, origen, JSON, < 4 KB)${rec.problemas?.length ? ': ' + rec.problemas : ''}`);
-  ok(c.nombre === 'María Gómez' && c.celular === '3001234567' && c.placa === 'TAX123' && c.taxis === 2 && c.plan === 'sin_cuota' && c.cooperativa === 'cootransrural' && c.correo === 'maria@ejemplo.co',
+  ok(c.nombre === 'María Gómez' && c.celular === '3001234567' && c.placa === 'TAX123' && c.taxis === 2 && c.plan === 'sin_cuota' && c.cooperativa === 'cootransrural' && c.municipio === 'El Rosal' && c.correo === 'maria@ejemplo.co',
     `normalizado: «${c.nombre}», ${c.celular}, ${c.placa}, ${c.taxis} taxis, ${c.plan}`);
-  ok(c.autorizacion?.version === PLANES.autorizacion.version && c.autorizacion?.texto_sha === SHA, 'autorización: versión y huella del texto de la casilla');
-  ok(c.sitio_web === '' && c.ms_en_pagina >= 3000, `trampa vacía y tiempo en la página (${c.ms_en_pagina} ms)`);
+  ok(c.autorizo === true && c.version === PLANES.autorizacion.version, `autorización: autorizo y la versión ${c.version} del texto de la casilla`);
+  ok(c.sitioWeb === '' && c.tiempoMs >= 3000, `trampa vacía y tiempo en la página (${c.tiempoMs} ms)`);
   ok(rec.origen === origen && /^application\/json/.test(rec.tipo) && rec.cookie === '' && rec.consulta === '' && rec.tam < 4096, `mismo origen, JSON, sin cookies, nada en la dirección, ${rec.tam} bytes`);
   ok(await p.evaluate(() => location.search === '' && !/maria|3001234567/i.test(location.href)), 'la dirección de la página no lleva datos');
   await capturar(p, '.gps-formulario-caja', `${nombre}-13-formulario-listo.png`);
+
+  // ---- «Otra / no estoy en una»: escribe el municipio; sin placa, la placa no va en el cuerpo
+  await p.reload({ waitUntil: 'networkidle' });
+  estado.recibidos = [];
+  ok(!(await p.isVisible('#g-municipio')), '«Tu municipio» solo aparece con «Otra»');
+  await p.waitForFunction(() => performance.now() > 3100);
+  await llenar(p, { ...BUENOS, cooperativa: 'otra', municipio: ' Villapinzón ', placa: '' });
+  ok(await p.isVisible('#g-municipio'), 'con «Otra» aparece «Tu municipio»');
+  await enviarYEsperar(p, '#gps-listo');
+  const otra = estado.recibidos[0] || {};
+  ok(otra.problemas?.length === 0 && otra.cuerpo?.cooperativa === 'otra' && otra.cuerpo?.municipio === 'Villapinzón' && !('placa' in (otra.cuerpo || {})),
+    `«Otra»: municipio escrito y sin placa en el cuerpo${otra.problemas?.length ? ': ' + otra.problemas : ''}`);
 
   // ---- respaldo cuando el servidor no tiene GPS (404), falla (500), responde HTML, no responde o no hay red
   for (const modo of ['404', '500', 'html', 'mudo', 'sin red']) {

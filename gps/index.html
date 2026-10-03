@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
   <link rel="stylesheet" href="../web/inicio.css?v=22423e9e39">
   <link rel="stylesheet" href="tienda.css?v=0297ab6da8">
-  <script src="tienda.js?v=fd9b383019" defer></script>
+  <script src="tienda.js?v=94418e317d" defer></script>
 </head>
 <body class="gps gps-con-franja">
   <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -435,7 +435,7 @@
           </noscript>
           <form class="gps-formulario" id="formulario-gps" method="post" action="/api/gps/interes" novalidate hidden
                 data-endpoint="/api/gps/interes" data-correo="info@taxicun.com"
-                data-autorizacion-version="1.0" data-autorizacion-sha="47b4d66fd351d7ba545fe3bd0ad0926ced7647a6cf9281d41d06d599630582aa">
+                data-autorizacion-version="1.0">
             <h3 class="gps-formulario-titulo">Tus datos</h3>
             <p class="gps-obligatorio">Los campos con <span aria-hidden="true">*</span><span class="visualmente-oculto">asterisco</span> son obligatorios.</p>
 
@@ -462,58 +462,64 @@
               <label for="g-cooperativa">Municipio y cooperativa <span aria-hidden="true">*</span></label>
               <select id="g-cooperativa" name="cooperativa" required aria-describedby="g-cooperativa-error">
                 <option value="" selected disabled>Elige tu municipio</option>
-                <optgroup label="Agua de Dios"><option value="agua-de-dios">Agua de Dios · Taxis Agua de Dios</option></optgroup>
-                <optgroup label="Anapoima"><option value="anapoima">Anapoima · Expreso Santa Ana</option></optgroup>
-                <optgroup label="Anolaima"><option value="anolaima">Anolaima · Servitacoop</option></optgroup>
-                <optgroup label="Bojacá"><option value="bojaca">Bojacá · Ricotrans</option></optgroup>
-                <optgroup label="Cajicá"><option value="cajica-cajitaxi">Cajicá · Cajitaxi</option><option value="cajica-expreso">Cajicá · Expreso Cajicá</option><option value="cajica-fortaleza">Cajicá · Taxis Fortaleza de Piedra</option></optgroup>
-                <optgroup label="Cáqueza"><option value="caqueza">Cáqueza · Glahsmotor</option></optgroup>
-                <optgroup label="Chía"><option value="chia-autoservicio">Chía · Auto Servicio Chía</option><option value="chia-cootrasinchia">Chía · Cootrasinchia</option></optgroup>
-                <optgroup label="Chipaque"><option value="chipaque">Chipaque · Cootranschipaque</option></optgroup>
-                <optgroup label="Chocontá"><option value="choconta">Chocontá · Chocontax</option></optgroup>
-                <optgroup label="Cota"><option value="cota">Cota · Cotax</option></optgroup>
-                <optgroup label="El Colegio"><option value="el-colegio">El Colegio · Cointranscol</option></optgroup>
-                <optgroup label="El Rosal"><option value="cootransrural">El Rosal · Cootransrural</option></optgroup>
-                <optgroup label="Facatativá"><option value="facatativa-autofaca">Facatativá · Auto Faca</option><option value="facatativa">Facatativá · Coptaxi</option><option value="facatativa-hycata">Facatativá · Transportes Hycatá</option><option value="facatativa-villetax">Facatativá · Transportes Villetax</option></optgroup>
-                <optgroup label="Funza"><option value="funza-coomofu">Funza · Coomofu</option><option value="funza-coopexfun">Funza · Coopexfun</option></optgroup>
-                <optgroup label="Fusagasugá"><option value="fusagasuga-asoind">Fusagasugá · Asoind</option><option value="fusagasuga-asotaxis">Fusagasugá · Asotaxis Fusa</option><option value="fusagasuga-cootransfusa">Fusagasugá · Cootransfusa</option><option value="fusagasuga-fusacatan">Fusagasugá · Expreso Fusacatán</option><option value="fusagasuga-transjardin">Fusagasugá · Transjardín</option></optgroup>
-                <optgroup label="Gachancipá"><option value="gachancipa">Gachancipá · Cooptranserga</option></optgroup>
-                <optgroup label="Gachetá"><option value="gacheta">Gachetá · Tax Guavio</option></optgroup>
-                <optgroup label="Girardot"><option value="girardot-central-taxis">Girardot · Central de Taxis Girardot</option><option value="girardot-compuexpress">Girardot · Compuexpress</option><option value="girardot-megataxi">Girardot · Megataxi</option><option value="girardot-taxistas-unidos">Girardot · Taxistas Unidos de Girardot</option></optgroup>
-                <optgroup label="Guaduas"><option value="guaduas">Guaduas · Cootransunidos Guaduas</option></optgroup>
-                <optgroup label="Guasca"><option value="guasca">Guasca · Transportes Guasca</option></optgroup>
-                <optgroup label="Guatavita"><option value="guatavita">Guatavita · Líneas El Dorado Guatavita</option></optgroup>
-                <optgroup label="La Calera"><option value="la-calera-milenio">La Calera · Milenio de Taxis</option><option value="la-calera">La Calera · Tax Calera</option><option value="la-calera-taxglobal">La Calera · Tax Global</option><option value="la-calera-transcalera">La Calera · Transcalera</option><option value="la-calera-tuc">La Calera · Transportes Unidos La Calera</option></optgroup>
-                <optgroup label="La Mesa"><option value="la-mesa">La Mesa · Asotaxis La Mesa</option></optgroup>
-                <optgroup label="La Vega"><option value="la-vega-cootransgualiva">La Vega · Cootransgualiva</option><option value="la-vega">La Vega · Cootransvillaleal</option><option value="la-vega-occitrans">La Vega · Occitrans</option></optgroup>
-                <optgroup label="Madrid"><option value="madrid">Madrid · Cootransmadrid</option></optgroup>
-                <optgroup label="Mosquera"><option value="mosquera">Mosquera · Cootransmosquera</option></optgroup>
-                <optgroup label="Nocaima"><option value="nocaima">Nocaima · COATAN</option></optgroup>
-                <optgroup label="Pacho"><option value="pacho">Pacho · Cootranspacho</option></optgroup>
-                <optgroup label="Quebradanegra"><option value="quebradanegra">Quebradanegra · Cootransoccidente</option></optgroup>
-                <optgroup label="San Antonio del Tequendama"><option value="san-antonio-del-tequendama">San Antonio del Tequendama · TST Transportes</option></optgroup>
-                <optgroup label="San Francisco"><option value="san-francisco">San Francisco · Cootranslibertad</option></optgroup>
-                <optgroup label="San Juan de Rioseco"><option value="san-juan-de-rioseco">San Juan de Rioseco · Transportes Rioseco</option></optgroup>
-                <optgroup label="Sasaima"><option value="sasaima">Sasaima · Coovetrans</option></optgroup>
-                <optgroup label="Sesquilé"><option value="sesquile">Sesquilé · Cootranscovadonga</option></optgroup>
-                <optgroup label="Simijaca"><option value="simijaca">Simijaca · Comultrasim</option></optgroup>
-                <optgroup label="Soacha"><option value="soacha-losdos">Soacha · Taxis Los Dos</option><option value="soacha-taxisxua">Soacha · Taxis Xua</option></optgroup>
-                <optgroup label="Sopó"><option value="sopo-pionono">Sopó · Tax Pionono</option><option value="sopo-transportes">Sopó · Transportes Sopó</option></optgroup>
-                <optgroup label="Subachoque"><option value="subachoque">Subachoque · Coopmultrasub</option></optgroup>
-                <optgroup label="Suesca"><option value="suesca">Suesca · Cootransuesca</option></optgroup>
-                <optgroup label="Tabio"><option value="tabio">Tabio · Cooptranstermales</option></optgroup>
-                <optgroup label="Tena"><option value="tena">Tena · Cootranstena</option></optgroup>
-                <optgroup label="Tenjo"><option value="tenjo">Tenjo · Cootranstenjo</option><option value="tenjotax">Tenjo · Tenjo Tax</option></optgroup>
-                <optgroup label="Tocaima"><option value="tocaima-central">Tocaima · Central de Transporte de Tocaima</option></optgroup>
-                <optgroup label="Tocancipá"><option value="tocancipa-expreso">Tocancipá · Expreso Tocancipá</option><option value="tocancipa-transfuturo">Tocancipá · Transfuturo</option></optgroup>
-                <optgroup label="Ubaté"><option value="ubate-cootransvu">Ubaté · Cootransvu</option><option value="ubate-unitaxi">Ubaté · Unitaxi Ubaté</option></optgroup>
-                <optgroup label="Útica"><option value="utica">Útica · Cooptransutica</option></optgroup>
-                <optgroup label="Villeta"><option value="villeta">Villeta · Cootransvi</option><option value="villeta-cootransye">Villeta · Cootransye</option><option value="villeta-villetana">Villeta · Villetana de Taxis</option></optgroup>
-                <optgroup label="Viotá"><option value="viota">Viotá · Cootransviota</option></optgroup>
-                <optgroup label="Zipaquirá"><option value="zipaquira-cootranszipa">Zipaquirá · Cootranszipa</option><option value="zipaquira-duarte">Zipaquirá · Transportes Duarte</option></optgroup>
+                <optgroup label="Agua de Dios"><option value="agua-de-dios" data-municipio="Agua de Dios">Agua de Dios · Taxis Agua de Dios</option></optgroup>
+                <optgroup label="Anapoima"><option value="anapoima" data-municipio="Anapoima">Anapoima · Expreso Santa Ana</option></optgroup>
+                <optgroup label="Anolaima"><option value="anolaima" data-municipio="Anolaima">Anolaima · Servitacoop</option></optgroup>
+                <optgroup label="Bojacá"><option value="bojaca" data-municipio="Bojacá">Bojacá · Ricotrans</option></optgroup>
+                <optgroup label="Cajicá"><option value="cajica-cajitaxi" data-municipio="Cajicá">Cajicá · Cajitaxi</option><option value="cajica-expreso" data-municipio="Cajicá">Cajicá · Expreso Cajicá</option><option value="cajica-fortaleza" data-municipio="Cajicá">Cajicá · Taxis Fortaleza de Piedra</option></optgroup>
+                <optgroup label="Cáqueza"><option value="caqueza" data-municipio="Cáqueza">Cáqueza · Glahsmotor</option></optgroup>
+                <optgroup label="Chía"><option value="chia-autoservicio" data-municipio="Chía">Chía · Auto Servicio Chía</option><option value="chia-cootrasinchia" data-municipio="Chía">Chía · Cootrasinchia</option></optgroup>
+                <optgroup label="Chipaque"><option value="chipaque" data-municipio="Chipaque">Chipaque · Cootranschipaque</option></optgroup>
+                <optgroup label="Chocontá"><option value="choconta" data-municipio="Chocontá">Chocontá · Chocontax</option></optgroup>
+                <optgroup label="Cota"><option value="cota" data-municipio="Cota">Cota · Cotax</option></optgroup>
+                <optgroup label="El Colegio"><option value="el-colegio" data-municipio="El Colegio">El Colegio · Cointranscol</option></optgroup>
+                <optgroup label="El Rosal"><option value="cootransrural" data-municipio="El Rosal">El Rosal · Cootransrural</option></optgroup>
+                <optgroup label="Facatativá"><option value="facatativa-autofaca" data-municipio="Facatativá">Facatativá · Auto Faca</option><option value="facatativa" data-municipio="Facatativá">Facatativá · Coptaxi</option><option value="facatativa-hycata" data-municipio="Facatativá">Facatativá · Transportes Hycatá</option><option value="facatativa-villetax" data-municipio="Facatativá">Facatativá · Transportes Villetax</option></optgroup>
+                <optgroup label="Funza"><option value="funza-coomofu" data-municipio="Funza">Funza · Coomofu</option><option value="funza-coopexfun" data-municipio="Funza">Funza · Coopexfun</option></optgroup>
+                <optgroup label="Fusagasugá"><option value="fusagasuga-asoind" data-municipio="Fusagasugá">Fusagasugá · Asoind</option><option value="fusagasuga-asotaxis" data-municipio="Fusagasugá">Fusagasugá · Asotaxis Fusa</option><option value="fusagasuga-cootransfusa" data-municipio="Fusagasugá">Fusagasugá · Cootransfusa</option><option value="fusagasuga-fusacatan" data-municipio="Fusagasugá">Fusagasugá · Expreso Fusacatán</option><option value="fusagasuga-transjardin" data-municipio="Fusagasugá">Fusagasugá · Transjardín</option></optgroup>
+                <optgroup label="Gachancipá"><option value="gachancipa" data-municipio="Gachancipá">Gachancipá · Cooptranserga</option></optgroup>
+                <optgroup label="Gachetá"><option value="gacheta" data-municipio="Gachetá">Gachetá · Tax Guavio</option></optgroup>
+                <optgroup label="Girardot"><option value="girardot-central-taxis" data-municipio="Girardot">Girardot · Central de Taxis Girardot</option><option value="girardot-compuexpress" data-municipio="Girardot">Girardot · Compuexpress</option><option value="girardot-megataxi" data-municipio="Girardot">Girardot · Megataxi</option><option value="girardot-taxistas-unidos" data-municipio="Girardot">Girardot · Taxistas Unidos de Girardot</option></optgroup>
+                <optgroup label="Guaduas"><option value="guaduas" data-municipio="Guaduas">Guaduas · Cootransunidos Guaduas</option></optgroup>
+                <optgroup label="Guasca"><option value="guasca" data-municipio="Guasca">Guasca · Transportes Guasca</option></optgroup>
+                <optgroup label="Guatavita"><option value="guatavita" data-municipio="Guatavita">Guatavita · Líneas El Dorado Guatavita</option></optgroup>
+                <optgroup label="La Calera"><option value="la-calera-milenio" data-municipio="La Calera">La Calera · Milenio de Taxis</option><option value="la-calera" data-municipio="La Calera">La Calera · Tax Calera</option><option value="la-calera-taxglobal" data-municipio="La Calera">La Calera · Tax Global</option><option value="la-calera-transcalera" data-municipio="La Calera">La Calera · Transcalera</option><option value="la-calera-tuc" data-municipio="La Calera">La Calera · Transportes Unidos La Calera</option></optgroup>
+                <optgroup label="La Mesa"><option value="la-mesa" data-municipio="La Mesa">La Mesa · Asotaxis La Mesa</option></optgroup>
+                <optgroup label="La Vega"><option value="la-vega-cootransgualiva" data-municipio="La Vega">La Vega · Cootransgualiva</option><option value="la-vega" data-municipio="La Vega">La Vega · Cootransvillaleal</option><option value="la-vega-occitrans" data-municipio="La Vega">La Vega · Occitrans</option></optgroup>
+                <optgroup label="Madrid"><option value="madrid" data-municipio="Madrid">Madrid · Cootransmadrid</option></optgroup>
+                <optgroup label="Mosquera"><option value="mosquera" data-municipio="Mosquera">Mosquera · Cootransmosquera</option></optgroup>
+                <optgroup label="Nocaima"><option value="nocaima" data-municipio="Nocaima">Nocaima · COATAN</option></optgroup>
+                <optgroup label="Pacho"><option value="pacho" data-municipio="Pacho">Pacho · Cootranspacho</option></optgroup>
+                <optgroup label="Quebradanegra"><option value="quebradanegra" data-municipio="Quebradanegra">Quebradanegra · Cootransoccidente</option></optgroup>
+                <optgroup label="San Antonio del Tequendama"><option value="san-antonio-del-tequendama" data-municipio="San Antonio del Tequendama">San Antonio del Tequendama · TST Transportes</option></optgroup>
+                <optgroup label="San Francisco"><option value="san-francisco" data-municipio="San Francisco">San Francisco · Cootranslibertad</option></optgroup>
+                <optgroup label="San Juan de Rioseco"><option value="san-juan-de-rioseco" data-municipio="San Juan de Rioseco">San Juan de Rioseco · Transportes Rioseco</option></optgroup>
+                <optgroup label="Sasaima"><option value="sasaima" data-municipio="Sasaima">Sasaima · Coovetrans</option></optgroup>
+                <optgroup label="Sesquilé"><option value="sesquile" data-municipio="Sesquilé">Sesquilé · Cootranscovadonga</option></optgroup>
+                <optgroup label="Simijaca"><option value="simijaca" data-municipio="Simijaca">Simijaca · Comultrasim</option></optgroup>
+                <optgroup label="Soacha"><option value="soacha-losdos" data-municipio="Soacha">Soacha · Taxis Los Dos</option><option value="soacha-taxisxua" data-municipio="Soacha">Soacha · Taxis Xua</option></optgroup>
+                <optgroup label="Sopó"><option value="sopo-pionono" data-municipio="Sopó">Sopó · Tax Pionono</option><option value="sopo-transportes" data-municipio="Sopó">Sopó · Transportes Sopó</option></optgroup>
+                <optgroup label="Subachoque"><option value="subachoque" data-municipio="Subachoque">Subachoque · Coopmultrasub</option></optgroup>
+                <optgroup label="Suesca"><option value="suesca" data-municipio="Suesca">Suesca · Cootransuesca</option></optgroup>
+                <optgroup label="Tabio"><option value="tabio" data-municipio="Tabio">Tabio · Cooptranstermales</option></optgroup>
+                <optgroup label="Tena"><option value="tena" data-municipio="Tena">Tena · Cootranstena</option></optgroup>
+                <optgroup label="Tenjo"><option value="tenjo" data-municipio="Tenjo">Tenjo · Cootranstenjo</option><option value="tenjotax" data-municipio="Tenjo">Tenjo · Tenjo Tax</option></optgroup>
+                <optgroup label="Tocaima"><option value="tocaima-central" data-municipio="Tocaima">Tocaima · Central de Transporte de Tocaima</option></optgroup>
+                <optgroup label="Tocancipá"><option value="tocancipa-expreso" data-municipio="Tocancipá">Tocancipá · Expreso Tocancipá</option><option value="tocancipa-transfuturo" data-municipio="Tocancipá">Tocancipá · Transfuturo</option></optgroup>
+                <optgroup label="Ubaté"><option value="ubate-cootransvu" data-municipio="Ubaté">Ubaté · Cootransvu</option><option value="ubate-unitaxi" data-municipio="Ubaté">Ubaté · Unitaxi Ubaté</option></optgroup>
+                <optgroup label="Útica"><option value="utica" data-municipio="Útica">Útica · Cooptransutica</option></optgroup>
+                <optgroup label="Villeta"><option value="villeta" data-municipio="Villeta">Villeta · Cootransvi</option><option value="villeta-cootransye" data-municipio="Villeta">Villeta · Cootransye</option><option value="villeta-villetana" data-municipio="Villeta">Villeta · Villetana de Taxis</option></optgroup>
+                <optgroup label="Viotá"><option value="viota" data-municipio="Viotá">Viotá · Cootransviota</option></optgroup>
+                <optgroup label="Zipaquirá"><option value="zipaquira-cootranszipa" data-municipio="Zipaquirá">Zipaquirá · Cootranszipa</option><option value="zipaquira-duarte" data-municipio="Zipaquirá">Zipaquirá · Transportes Duarte</option></optgroup>
                 <optgroup label="Otra"><option value="otra">Otra / no estoy en una</option></optgroup>
               </select>
               <p class="campo-error" id="g-cooperativa-error" hidden></p>
+            </div>
+
+            <div class="campo" id="g-municipio-caja" hidden>
+              <label for="g-municipio">Tu municipio <span aria-hidden="true">*</span></label>
+              <input id="g-municipio" name="municipio" type="text" autocomplete="address-level2" maxlength="60" aria-describedby="g-municipio-error">
+              <p class="campo-error" id="g-municipio-error" hidden></p>
             </div>
 
             <div class="campo-fila">
@@ -549,7 +555,7 @@
 
             <div class="trampa" aria-hidden="true">
               <label for="g-sitio">Sitio web (no llenes este campo)</label>
-              <input id="g-sitio" name="sitio_web" type="text" tabindex="-1" autocomplete="off">
+              <input id="g-sitio" name="sitioWeb" type="text" tabindex="-1" autocomplete="off">
             </div>
 
             <div class="campo campo-casilla">

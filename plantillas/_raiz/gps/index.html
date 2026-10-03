@@ -378,7 +378,7 @@
           </noscript>
           <form class="gps-formulario" id="formulario-gps" method="post" action="/api/gps/interes" novalidate hidden
                 data-endpoint="/api/gps/interes" data-correo="{{proveedor.correo}}"
-                data-autorizacion-version="{{gps.autorizacion.version}}" data-autorizacion-sha="{{gps.autorizacion.sha}}">
+                data-autorizacion-version="{{gps.autorizacion.version}}">
             <h3 class="gps-formulario-titulo">Tus datos</h3>
             <p class="gps-obligatorio">Los campos con <span aria-hidden="true">*</span><span class="visualmente-oculto">asterisco</span> son obligatorios.</p>
 
@@ -405,10 +405,16 @@
               <label for="g-cooperativa">Municipio y cooperativa <span aria-hidden="true">*</span></label>
               <select id="g-cooperativa" name="cooperativa" required aria-describedby="g-cooperativa-error">
                 <option value="" selected disabled>Elige tu municipio</option>
-                {{#cada gps.cooperativas}}<optgroup label="{{pueblo}}">{{#cada opciones}}<option value="{{id}}">{{pueblo}} · {{nombre}}</option>{{/cada}}</optgroup>
+                {{#cada gps.cooperativas}}<optgroup label="{{pueblo}}">{{#cada opciones}}<option value="{{id}}" data-municipio="{{pueblo}}">{{pueblo}} · {{nombre}}</option>{{/cada}}</optgroup>
                 {{/cada}}<optgroup label="Otra"><option value="otra">Otra / no estoy en una</option></optgroup>
               </select>
               <p class="campo-error" id="g-cooperativa-error" hidden></p>
+            </div>
+
+            <div class="campo" id="g-municipio-caja" hidden>
+              <label for="g-municipio">Tu municipio <span aria-hidden="true">*</span></label>
+              <input id="g-municipio" name="municipio" type="text" autocomplete="address-level2" maxlength="60" aria-describedby="g-municipio-error">
+              <p class="campo-error" id="g-municipio-error" hidden></p>
             </div>
 
             <div class="campo-fila">
@@ -444,7 +450,7 @@
 
             <div class="trampa" aria-hidden="true">
               <label for="g-sitio">Sitio web (no llenes este campo)</label>
-              <input id="g-sitio" name="sitio_web" type="text" tabindex="-1" autocomplete="off">
+              <input id="g-sitio" name="sitioWeb" type="text" tabindex="-1" autocomplete="off">
             </div>
 
             <div class="campo campo-casilla">

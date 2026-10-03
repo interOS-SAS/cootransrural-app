@@ -1,21 +1,22 @@
 // Tienda TaxiCun GPS (gps/index.html; va en gps/ y no en web/ para no entrar en el mapa de importaciones de las
 // páginas con módulos): el formulario «Quiero GPS para mi taxi».
 //
-// Contrato con el servidor (POST /api/gps/interes, mismo origen, sin cookies):
-//   Cabeceras: Content-Type: application/json (el navegador pone Origin: https://taxicun.com).
-//   Cuerpo (JSON, menos de 4 KB, esquema cerrado; todos los campos van siempre):
-//     { "v": 1,
-//       "nombre": "2 a 80 caracteres, sin :// ni www.",
+// Contrato con el servidor (POST /api/gps/interes, mismo origen, sin cookies; el esquema es ESQUEMA_INTERES de
+// src/gps/interes.js en la rama gps del servidor, cerrado: additionalProperties false):
+//   Cabeceras: Content-Type: application/json (el navegador pone Origin: https://taxicun.com y Sec-Fetch-Site).
+//   Cuerpo (JSON, menos de 4 KB):
+//     { "nombre": "2 a 80 caracteres, sin :// ni www.",
 //       "celular": "10 dígitos: 3XXXXXXXXX o fijo 60XXXXXXXX, sin +57",
 //       "correo": "" | "correo válido, hasta 120",
+//       "municipio": "2 a 60 caracteres: el de la cooperativa elegida, o el que escribe si elige «Otra»",
 //       "cooperativa": "<id de empresas/indice.json>" | "otra",
-//       "placa": "" | "ABC123 (3 letras y 3 números, en mayúsculas)",
+//       "placa": "ABC123" (3 letras y 3 números; SOLO si la escribe, si no, no va),
 //       "taxis": 1 a 500 (entero),
 //       "plan": "compra" | "sin_cuota" | "combo" | "no_se",
 //       "mensaje": "" | "hasta 500 caracteres, sin :// ni www.",
-//       "autorizacion": { "version": "1.0", "texto_sha": "<sha256 en hex del texto de la casilla>" },
-//       "sitio_web": "" (trampa: si llega lleno, el servidor lo descarta en silencio),
-//       "ms_en_pagina": milisegundos desde que se abrió la página (menos de 3000: se descarta en silencio) }
+//       "autorizo": true, "version": "1.0" (versión del texto de la casilla; el servidor guarda la huella de su copia),
+//       "sitioWeb": "" (trampa: si llega lleno, el servidor lo descarta en silencio),
+//       "tiempoMs": milisegundos desde que se abrió la página (menos de 3000: se descarta en silencio) }
 //   Respuesta esperada: 200 {"ok": true} siempre (se guarde o no). Cualquier otra cosa (404 porque el servidor
 //   todavía no tiene GPS, 4xx, 5xx, sin respuesta en 12 s o sin red) muestra el respaldo: escribir a
 //   info@taxicun.com con el asunto «Quiero GPS para mi taxi» y lo llenado en el cuerpo del correo.
@@ -46,6 +47,7 @@
     celular: form.elements.celular,
     correo: form.elements.correo,
     cooperativa: form.elements.cooperativa,
+    municipio: form.elements.municipio,
     placa: form.elements.placa,
     taxis: form.elements.taxis,
     mensaje: form.elements.mensaje,
@@ -82,6 +84,13 @@
       return v.length <= 120 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? '' : 'Revisa el correo: parece incompleto.';
     },
     cooperativa: function (v) { return v ? '' : 'Elige tu municipio y tu cooperativa, o «Otra».'; },
+    municipio: function (v) {
+      if (campos.cooperativa.value !== 'otra') return '';
+      v = limpio(v);
+      if (!v) return 'Escribe tu municipio.';
+      if (ENLACE.test(v)) return 'Escribe solo el nombre del municipio.';
+      return v.length >= 2 && v.length <= 60 ? '' : 'Escribe el nombre del municipio.';
+    },
     placa: function (v) {
       v = placaNormal(v);
       if (!v) return '';
@@ -113,6 +122,16 @@
     return mensaje;
   }
 
+  // Al tocar «Quiero que me llamen» no se revisa el campo que se deja: el mensaje de error correría el botón hacia
+  // abajo entre el toque y el clic, y el clic se perdería (el envío revisa todo de todas formas).
+  var tocandoEnviar = false;
+  if (boton) {
+    boton.addEventListener('pointerdown', function () {
+      tocandoEnviar = true;
+      setTimeout(function () { tocandoEnviar = false; }, 1500);
+    });
+  }
+
   Object.keys(campos).forEach(function (nombre) {
     var el = campos[nombre];
     if (!el) return;
@@ -120,10 +139,28 @@
     el.addEventListener(el.type === 'checkbox' || el.tagName === 'SELECT' ? 'change' : 'input', function () {
       if (el.getAttribute('aria-invalid') === 'true') revisar(nombre);
     });
-    el.addEventListener('blur', function () {
+    el.addEventListener('blur', function (evento) {
+      if (tocandoEnviar || evento.relatedTarget === boton) return;
       if (el.type !== 'checkbox' && (el.value || el.getAttribute('aria-invalid') === 'true')) revisar(nombre);
     });
   });
+
+  // «Otra / no estoy en una»: se pide el municipio (con una cooperativa de la lista, sale de ella).
+  var cajaMunicipio = document.getElementById('g-municipio-caja');
+  function verMunicipio() {
+    var otra = campos.cooperativa.value === 'otra';
+    if (cajaMunicipio) cajaMunicipio.hidden = !otra;
+    campos.municipio.required = otra;
+    if (!otra) mostrarError('municipio', '');
+  }
+  campos.cooperativa.addEventListener('change', verMunicipio);
+  verMunicipio();
+
+  function municipioElegido() {
+    if (campos.cooperativa.value === 'otra') return limpio(campos.municipio.value);
+    var opcion = campos.cooperativa.selectedOptions && campos.cooperativa.selectedOptions[0];
+    return opcion ? opcion.getAttribute('data-municipio') || '' : '';
+  }
 
   function planElegido() {
     var p = form.querySelector('input[name="plan"]:checked');
@@ -131,23 +168,23 @@
   }
 
   function datos() {
-    return {
-      v: 1,
+    var d = {
       nombre: limpio(campos.nombre.value),
       celular: celularNormal(campos.celular.value),
       correo: limpio(campos.correo.value),
+      municipio: municipioElegido(),
       cooperativa: campos.cooperativa.value,
-      placa: placaNormal(campos.placa.value),
       taxis: parseInt(String(campos.taxis.value).trim(), 10),
       plan: planElegido(),
       mensaje: String(campos.mensaje.value || '').replace(/\r\n?/g, '\n').trim(),
-      autorizacion: {
-        version: form.getAttribute('data-autorizacion-version') || '',
-        texto_sha: form.getAttribute('data-autorizacion-sha') || '',
-      },
-      sitio_web: form.elements.sitio_web ? form.elements.sitio_web.value : '',
-      ms_en_pagina: Math.round(window.performance && performance.now ? performance.now() : 0),
+      autorizo: true,
+      version: form.getAttribute('data-autorizacion-version') || '',
+      sitioWeb: form.elements.sitioWeb ? form.elements.sitioWeb.value : '',
+      tiempoMs: Math.round(window.performance && performance.now ? performance.now() : 0),
     };
+    var placa = placaNormal(campos.placa.value);
+    if (placa) d.placa = placa;
+    return d;
   }
 
   // El respaldo: el correo a info@ con el asunto puesto y lo que llenó la persona (no pasa por ningún servidor).
@@ -160,7 +197,7 @@
       'Nombre: ' + d.nombre,
       'Celular: ' + d.celular,
       d.correo ? 'Correo: ' + d.correo : null,
-      'Municipio y cooperativa: ' + (opcion ? limpio(opcion.textContent) : ''),
+      'Municipio y cooperativa: ' + (d.cooperativa === 'otra' ? d.municipio + ' (otra cooperativa o ninguna)' : (opcion ? limpio(opcion.textContent) : '')),
       d.placa ? 'Placa: ' + d.placa : null,
       '¿Cuántos taxis?: ' + d.taxis,
       'Plan que me interesa: ' + (plan ? limpio(plan.parentNode.textContent) : 'No sé todavía'),
@@ -202,6 +239,7 @@
 
   form.addEventListener('submit', function (evento) {
     evento.preventDefault();
+    tocandoEnviar = false;
     if (enviando) return;
     var primero = null;
     Object.keys(reglas).forEach(function (nombre) {

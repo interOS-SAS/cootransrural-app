@@ -28,7 +28,6 @@ Después de generar, correr herramientas/versionar.py.
 Uso:  python3 herramientas/generar-empresas.py
 """
 import colorsys
-import hashlib
 import html
 import json
 import math
@@ -1430,9 +1429,9 @@ def gps_tienda():
         'flotas_desde': d.get('flotas_desde') or 10,
         'comparacion': comparacion, 'consultado': d['competencia']['consultado'],
         'cooperativas': cooperativas, 'n_cooperativas': sum(len(g['opciones']) for g in cooperativas),
-        # El texto exacto de la casilla y su huella: el formulario manda la versión y la huella.
-        'autorizacion': {'version': aut['version'], 'texto': aut['texto'],
-                         'sha': hashlib.sha256(aut['texto'].encode('utf-8')).hexdigest()},
+        # El texto exacto de la casilla: el formulario manda su versión y el servidor guarda la huella de SU copia
+        # del texto (src/gps/interes.js, AUTORIZACIONES): los dos textos tienen que ser idénticos.
+        'autorizacion': {'version': aut['version'], 'texto': aut['texto']},
     }
     return _CACHE['gps']
 
