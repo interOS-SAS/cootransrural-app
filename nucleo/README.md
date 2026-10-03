@@ -138,6 +138,40 @@ m.ajustar([p1, p2], { margenAbajo }); m.centrar(p, zoom); m.centro(); m.alMovers
 - `N.pesos(v)`, `N.minutosTexto(m)`, `N.kmTexto(km)`, `N.horaTexto(t)`, `N.saludo()`, `N.enlaceWhatsApp(n, texto)`, `N.enlaceNavegacion(p, 'waze')`
 - `N.perfil.*`: historial, lugares guardados, recientes, programados, ajustes (`simulacion: 'auto'|'real'`), diseño elegido.
 
+## Tarifas: un solo cálculo (`tarifador.js`)
+
+El cálculo de la tarifa vive **solo** en `tarifador.js` (§5.5 del diseño del panel). Es puro: sin
+DOM, sin red y sin `config.js` ni `datos.js`; todo sale de la ficha que se le pasa, y solo importa
+`util.js` y `enlaces.js`.
+
+```js
+import { crearTarifador, tablasTarifa, TARIFAS_BASE } from './tarifador.js';
+const T = crearTarifador(ficha);   // ficha = empresas/<id>/ficha.json, o la que arma la API (archivo + capa)
+T.calcularTarifa({ origen, destino, km, fecha, programado, viajesPrevios });
+// y T.TARIFAS, T.RUTAS, T.LUGARES, T.DESTINOS_TARIFA, T.CASCO_URBANO, T.TARIFAS_OFICIALES,
+// T.FUENTE_TARIFAS, T.ORIGEN_OFICIAL, T.enCascoUrbano, T.destinoOficial, T.rutaFija, …
+```
+
+- `tarifas.js` es el envoltorio: `crearTarifador(FICHA)` con la ficha de la página. Las apps y la
+  web siguen importando `N.calcularTarifa`, `N.TARIFAS_OFICIALES`… como antes.
+- `datos.js` toma `TARIFAS`, `RUTAS`, `LUGARES`, `DESTINOS_TARIFA` y `CASCO_URBANO` de
+  `tablasTarifa(FICHA)`: son los mismos objetos que usa el tarifador de la página.
+- **Prueba dorada:** `node pruebas/tarifas-doradas.mjs` (sin navegador, unos 8 s). Compara
+  los 3.425 casos de Cootransrural (los 191 destinos del Decreto 05 por lista, por nombre y por
+  cercanía, sin destino, las 14 rutas, los lugares, los bordes de cada radio y los recargos a varias
+  horas en día normal, domingo y festivo) y de 21 demos con `pruebas/tarifas-doradas.json`, que se
+  generó con el `tarifas.js` de antes del refactor. Si una ficha de la muestra cambia, también falla.
+  Un cambio de precios **a propósito**: `node pruebas/tarifas-doradas.mjs --regenerar` y revisar el
+  diff de la dorada en el PR. Los casos están en `pruebas/tarifas-casos.mjs` (sin importaciones: el
+  servidor los lee del commit fijado).
+- **Copia fijada en el panel y el servidor:** `taxicun-servidor` lleva `tarifador.js`, `util.js` y
+  `enlaces.js` en `panel/vendor/nucleo/`, copiados de un commit concreto de este repo con su SHA-256
+  (`panel/vendor/FUENTES.json` y `SHA256SUMS`; `node bin/panel-vendor.mjs copiar --web=<este repo>`).
+  El panel la usa para la vista previa de «Precios» y el servidor para la prueba dorada con la ficha
+  armada (S33) y, más adelante, para los topes por destino (S31). **Cambiar `tarifador.js` aquí no
+  cambia nada allá** hasta que se vuelva a fijar el commit; no le agregues importaciones (la copia
+  lleva solo esos tres archivos).
+
 ## App nativa 1.2 (`N.nativo`)
 
 Notificaciones push y Face ID / huella de la app de las tiendas (`nucleo/nativo.js`). Todo va
