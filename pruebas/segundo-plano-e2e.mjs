@@ -400,9 +400,12 @@ class UbicacionTurnoNativo {
     if (origen !== 'app') this.tel.emitir('detenido', { motivo: m, origen });
   }
 
-  // Android: botón «Salir de turno» de la notificación fija.
+  // Android: botón «Salir de turno» de la notificación fija. Durante un servicio (modo viaje) la
+  // notificación no lo trae (ServicioTurno.aviso): devuelve false y no pasa nada.
   salirDesdeNotificacion() {
+    if (this.ios || !this.activo || this.modo === 'viaje') return false;
     this.parar('turno_apagado', true, 'notificacion');
+    return true;
   }
 
   // La persona desliza la app: iOS willTerminate / Android onTaskRemoved mandan el fin esperando

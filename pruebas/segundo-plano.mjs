@@ -471,7 +471,7 @@ async function iphone() {
   ok(Boolean(await intento(p.waitForSelector('.a-modal-segundo-plano .a-modal h2:has-text("Tu ubicación mientras estás conectado")', { timeout: 8000 }))), 'iphone: después de los avisos, «Tu ubicación mientras estás conectado»');
   const textoModal = await texto(p, '.a-modal-segundo-plano .a-modal');
   ok(/sigue enviando tu ubicación aunque uses WhatsApp, Waze u otra app, o bloquees el teléfono/.test(textoModal), 'iphone: el aviso dice que sigue enviando la ubicación aunque use WhatsApp o Waze o bloquee el teléfono');
-  ok(/solo tú, la central y el pasajero de tu servicio; no guardamos tu recorrido/.test(textoModal) && /indicador azul/.test(textoModal) && !/notificación fija/.test(textoModal) && /desconéctate o cierra la app/.test(textoModal), 'iphone: quién la ve, el indicador azul (sin la notificación de Android) y cómo se detiene');
+  ok(/La ven la central y el pasajero de tu servicio; los demás pasajeros de tu cooperativa solo ven una posición aproximada de tu taxi\. No guardamos tu recorrido/.test(textoModal) && /indicador azul/.test(textoModal) && !/notificación fija/.test(textoModal) && /desconéctate o cierra la app/.test(textoModal), 'iphone: quién la ve, el indicador azul (sin la notificación de Android) y cómo se detiene');
   ok((await cuantas(p, 'ut.iniciar')) === 0 && !(await enTurno(p)), 'iphone: con el aviso en pantalla el seguimiento aún no arranca ni queda en turno');
   await p.waitForTimeout(300);
   await foto(p, 'a01-aviso-segundo-plano');
@@ -717,7 +717,7 @@ async function androidSinAvisos() {
   await p.click('[data-conectar]');
   ok(Boolean(await intento(p.waitForSelector('.a-modal-segundo-plano .a-modal h2:has-text("Tu ubicación mientras estás conectado")', { timeout: 8000 }))), 'android: sin avisos, sale directo el aviso de la ubicación');
   const t = await texto(p, '.a-modal-segundo-plano .a-modal');
-  ok(/notificación fija «Estás en turno»/.test(t) && /salir de turno/.test(t) && !/indicador azul/.test(t), 'android: menciona la notificación fija «Estás en turno» (y salir desde ahí), no el indicador azul');
+  ok(/notificación fija «Estás en turno»/.test(t) && /salir de turno cuando no tengas un servicio en curso/.test(t) && !/indicador azul/.test(t), 'android: menciona la notificación fija «Estás en turno» (y salir desde ahí sin un servicio en curso), no el indicador azul');
   await foto(p, 'b01-aviso-android');
   await tocarModal(p, 'Entendido');
   await p.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 15000 });

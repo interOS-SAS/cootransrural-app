@@ -155,6 +155,14 @@ turno que minimiza la app o usa otra sigue enviando su ubicación por HTTP nativ
   `tc.turno.conductor`; si no, arranca fuera de turno). Le da al controlador `ctl.nativo`
   (`activo()`, `enviando()`): presencia con `segundoPlano: true`, y con la app oculta el JS suelta
   su GPS y no manda presencia ni ubicación.
+- Al volver, hasta la primera lectura del GPS del JS (`posVieja` en el controlador), la presencia sale
+  **sin `pos`** y la aceptación sin `pos`, `etaMin` ni `ruta`: la central (0.4.0) usa la última posición
+  del plugin. Si no, el taxi saltaría a donde se minimizó y el radio de las ofertas se mediría desde ahí.
+- `turnoNativoEnCurso()`: el plugin lleva el turno o, recién cargada la página, su marca dice que lo
+  llevaba. El diseño A lo usa en `bus.cerrarAlOcultar`: con la app oculta el bus no se abre (ni al
+  volver la red, ni con un reintento, ni al recargarse la página) y el que se abría se suelta; se abre
+  al volver (ver `nucleo/bus.js`). La central (0.4.0) además no despierta a un dormido con GPS hasta el
+  primer mensaje de esa conexión.
 
 El diseño A: `ofrecerSegundoPlano()` (aviso «Tu ubicación mientras estás conectado», antes de
 iniciar), «Con la app minimizada» en Ajustes y los avisos cuando el plugin se detiene. Prueba:
@@ -168,7 +176,10 @@ origen, precisa, desde?, ultimoEnvio?, plataforma }`) y el evento «detenido» `
 (solo cuando se detiene solo; `origen`: `notificacion`, `servidor` o `sistema`; retenido hasta que
 la web lo escuche). De punta a punta, con el plugin simulado en Node (mismas reglas que el nativo,
 POST reales) y el servidor 0.4.0 con tiempos cortos: `node pruebas/segundo-plano-e2e.mjs
-http://localhost:8971/` (ver su cabecera).
+http://localhost:8971/` (ver su cabecera). Los casos límite de la revisión (recarga con la app oculta,
+la red que vuelve o un vistazo con la app oculta, la vuelta con el GPS del JS lento, sin ningún POST,
+Android en un servicio sin «Salir de turno»): `node pruebas/segundo-plano-casos-e2e.mjs
+http://localhost:8971/`, con el mismo montaje.
 
 ## Red
 

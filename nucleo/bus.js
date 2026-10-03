@@ -6,7 +6,7 @@
 // BusServidor, al final de este archivo. crearBus() escoge uno u otro.
 import { RELES_MQTT, PREFIJO_TEMAS, SALA_POR_DEFECTO, ID_EMPRESA, urlDelSitio } from './config.js';
 import { Emisor, uid } from './util.js';
-import { MODO_REAL, URL_BUS } from './plataforma.js';
+import { MODO_REAL, URL_BUS, appOculta } from './plataforma.js';
 import * as servidor from './servidor.js';
 
 let cargaMqtt = null;
@@ -180,6 +180,11 @@ export class Bus extends Emisor {
  * a segundo plano devuelve true, el WebSocket se cierra ya (sin «disponible: false») y se abre
  * otra vez al volver: la central sabe de una vez que no hay conexión y avisa por push (si no,
  * tarda hasta ~50 s en notarlo y lo que mande en ese rato se pierde en el socket viejo).
+ * Mientras la app siga oculta y devuelva true, tampoco se abre (ni al volver la red, ni con un
+ * reintento, conectar() o reconectar(), ni recién cargada la página): se abre al volver. El que
+ * se estaba abriendo al ocultarse se suelta, y si la bienvenida llega con la app oculta, también
+ * (sin mandar nada: la central deja al conductor dormido con GPS como estaba). Con el plugin de
+ * ubicación la app oculta no manda presencia: un WebSocket abierto lo dejaría fuera del mapa.
  * Sin esa función (la web, la app 1.0) nada cambia.
  */
 const ESPERAS_MS = [1000, 2000, 5000, 10000];
@@ -226,7 +231,8 @@ export class BusServidor extends Emisor {
       if (!this.#ocultaDesde) this.#ocultaDesde = Date.now();
       let cerrar = false;
       try {
-        cerrar = this.#estado === 'en_linea' && Boolean(this.cerrarAlOcultar?.());
+        // En línea, abriéndose o esperando el reintento (p. ej. la app se vio solo un instante).
+        cerrar = !this.#cerrado && ['en_linea', 'conectando', 'reconectando'].includes(this.#estado) && Boolean(this.cerrarAlOcultar?.());
       } catch {
         cerrar = false;
       }
@@ -304,6 +310,16 @@ export class BusServidor extends Emisor {
     return msj;
   }
 
+  // App nativa 1.2: con la app oculta y cerrarAlOcultar() en true no se abre ni se deja abierto un WebSocket.
+  #sinSocketOculta() {
+    if (!appOculta()) return false;
+    try {
+      return Boolean(this.cerrarAlOcultar?.());
+    } catch {
+      return false;
+    }
+  }
+
   #fijarEstado(estado) {
     if (estado === this.#estado) return;
     this.#estado = estado;
@@ -316,6 +332,12 @@ export class BusServidor extends Emisor {
     if (!token) {
       this.#fijarEstado('rechazado');
       this.emit('rechazo', { codigo: 'sin_sesion', motivo: 'sin_token' });
+      return;
+    }
+    if (this.#sinSocketOculta()) {
+      // Queda «reconectando» sin reloj: al volver, #reintentarYa() lo abre de una vez.
+      clearTimeout(this.#reintento);
+      this.#fijarEstado('reconectando');
       return;
     }
     this.#fijarEstado(estado);
@@ -413,6 +435,13 @@ export class BusServidor extends Emisor {
 
   #recibir(m) {
     if (!m || typeof m !== 'object' || typeof m.tipo !== 'string') return;
+    if (m.tipo === 'bienvenida' && this.#sinSocketOculta()) {
+      // Se ocultó mientras se abría: se suelta sin mandar nada (ni lo que estaba en cola) y se abre al volver.
+      clearTimeout(this.#reintento);
+      this.#soltar(4000, 'segundo_plano');
+      this.#fijarEstado('reconectando');
+      return;
+    }
     if (m.tipo === 'bienvenida') {
       clearTimeout(this.#vigia);
       this.#listo = true;

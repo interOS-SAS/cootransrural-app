@@ -929,6 +929,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const viejo = c;
     c = null;
     ui.avisoTocado = null;
+    ui.salirPendiente = false;
     clearInterval(ui.relojOferta);
     if (viejo) {
       try { viejo.desconectar(); } catch { /* ya estaba desconectado */ }
@@ -1338,6 +1339,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           const t = ev.target;
           if (t.closest('[data-conectar]')) {
             N.prepararSonido();
+            ui.salirPendiente = false; // lo decide ahora con el interruptor
             if (c.estado.conectado) c.desconectar();
             else if (REAL) conectarTurnoReal();
             else c.conectar();
@@ -1959,9 +1961,13 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const enTurnoLibre = Boolean(ctl?.estado.conectado && !ctl.estado.viaje);
     switch (motivo) {
       case 'turno_apagado':
-        // «Salir de turno» en la notificación fija de Android.
-        if (ctl?.estado.viaje && !alCargar) {
-          avisos.mostrar({ titulo: 'Sigues con un servicio en curso', cuerpo: 'Termínalo para salir de turno; mientras tanto tu pasajero sigue viendo por dónde vas.', tipo: 'alerta' });
+        // «Salir de turno» en la notificación fija de Android. La notificación no lo trae durante un
+        // servicio (taxicun-app, entrega 2): si la app aún tiene uno (se canceló o terminó con la app
+        // minimizada y todavía no lo sabe, o está cobrando o calificando), sale de turno en cuanto la
+        // app quede sin servicio (salirSiQuedoPendiente).
+        if (ctl?.estado.viaje) {
+          ui.salirPendiente = true;
+          avisos.mostrar({ titulo: 'Saldrás de turno al terminar el servicio.', cuerpo: 'Tocaste «Salir de turno» en la notificación.', tipo: 'info' });
           break;
         }
         if (enTurnoLibre) ctl.desconectar();
@@ -1990,6 +1996,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       default:
         break;
     }
+  }
+
+  function salirSiQuedoPendiente() {
+    if (!ui.salirPendiente || !c || c.estado.viaje) return;
+    ui.salirPendiente = false;
+    if (!c.estado.conectado) return;
+    c.desconectar();
+    avisos.mostrar({ titulo: 'Te desconectaste desde la notificación.', cuerpo: 'Ya no te llegan servicios. Conéctate cuando quieras seguir.', tipo: 'info' });
   }
 
   // Chip de conexión con la central y píldora (el estado del bus cambia sin «cambio»).
@@ -2107,16 +2121,22 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           // por el plugin UbicacionTurno: entonces todo va por HTTP nativo + push y no queda un
           // WebSocket «medio vivo» que muere con el ping. Sin avisos no se cierra nunca (sería el
           // único camino para enterarse, por ejemplo, de una cancelación).
+          // Con el plugin llevando el turno libre (o recién recargada la página con su marca: el
+          // turno se retoma al volver) tampoco se abre con la app oculta (ver nucleo/bus.js): oculta
+          // no manda presencia y la central lo despertaría sin ella, fuera del mapa y sin servicios.
           c.bus.cerrarAlOcultar = () => {
             const e = nuevo.estado;
-            if (!e.conectado || !N.nativo?.pushListo?.()) return false;
-            return !e.viaje || Boolean(N.nativo?.turnoNativoActivo?.());
+            const nativo = Boolean(N.nativo?.turnoNativoEnCurso?.());
+            if (!e.conectado) return nativo;
+            const avisosListos = Boolean(N.nativo?.pushListo?.());
+            return e.viaje ? nativo && avisosListos : nativo || avisosListos;
           };
           // Con el plugin: lo arranca, le cambia el modo o lo detiene según el turno, el viaje y los
           // avisos, y retoma el turno si la página se recargó con el seguimiento vivo (sin el
           // plugin no hace nada).
           ui.dejarTurno = NATIVA ? N.nativo?.vigilarTurno?.(nuevo, { libre: () => Boolean(N.nativo?.pushListo?.()) }) || null : null;
           c.on('bienvenida', () => vigente() && alBienvenida());
+          c.on('cambio', () => vigente() && salirSiQuedoPendiente());
           c.bus.on('rechazo', (d) => vigente() && alRechazo(d || {}));
           c.bus.on('conexion', () => vigente() && pintarConexionReal());
           // El núcleo reemite el estado del bus (conectando, en_linea, reconectando…).
