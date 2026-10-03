@@ -50,7 +50,9 @@ if (hijo) {
   const T = await import(pathToFileURL(join(RAIZ, 'nucleo', 'tarifas.js')).href);
   const salida = {};
   for (const caso of casosDe(ficha)) salida[caso.clave] = valorDe(T.calcularTarifa(entradaDe(caso)));
-  process.stdout.write(JSON.stringify(salida));
+  // Con stdout a una tubería, write puede quedar en cola (la tubería llena si el padre lee despacio, p. ej. con la
+  // máquina cargada): salir antes de vaciarla cortaba el JSON. Se sale cuando terminó de escribirse.
+  await new Promise((listo) => process.stdout.write(JSON.stringify(salida), listo));
   process.exit(0);
 }
 
