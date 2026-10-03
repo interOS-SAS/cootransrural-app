@@ -211,9 +211,11 @@ if (ES_NATIVA && globalThis.document && !globalThis[MARCA_ENLACES]) {
 
 const GEO = NATIVA_DE_VERDAD ? cap?.Plugins?.Geolocation || null : null;
 
-// Solo el plugin en Android respeta el intervalo del seguimiento (interval y
-// minimumUpdateInterval); en iPhone y en el navegador las lecturas llegan cuando el sistema quiere.
-export const GPS_CON_INTERVALO = Boolean(GEO) && cap?.getPlatform?.() === 'android';
+// El plugin en Android: el único que respeta el intervalo del seguimiento (interval y
+// minimumUpdateInterval; en iPhone y en el navegador las lecturas llegan cuando el sistema quiere)
+// y en el que un error antes de la primera lectura deja el seguimiento sin arrancar.
+const GPS_ANDROID = Boolean(GEO) && cap?.getPlatform?.() === 'android';
+export const GPS_CON_INTERVALO = GPS_ANDROID;
 
 // Rumbo de la marcha: «course» (solo llega siguiendo la posición) y, si no hay, «heading».
 // El plugin 8.x prioriza la brújula en heading: el taxi giraría con el teléfono.
@@ -265,20 +267,25 @@ export async function posicion({ precisa = true, espera = 8000, edad = 15000 } =
     ]);
     return aPunto(lectura);
   } catch (e) {
-    throw { code: codigoPlugin(e) };
+    // sinSenal: el GPS respondió que no tiene posición (OS-PLUG-GLOC-0002; en iPhone, sin señal
+    // bajo techo). La ubicación apagada ya la detectó permisoNativo.
+    throw { code: codigoPlugin(e), sinSenal: /GLOC-0002/.test(e?.code || '') };
   } finally {
     clearTimeout(reloj);
   }
 }
 
 // El plugin (Android e iOS) borra el seguimiento si la primera lectura no llega dentro de su
-// «timeout» y no lo vuelve a arrancar: arrancado con la app en segundo plano o bajo techo, el GPS
-// quedaría muerto. Se le da un plazo que no se cumple (un día), como el navegador, que sigue.
-const PLAZO_SEGUIMIENTO_MS = 24 * 3600 * 1000;
+// «timeout» (avisa con el código 3) y no lo vuelve a arrancar: quien sigue lo pide de nuevo
+// (conductor.js). El plazo tiene que ser corto: en Android, hasta la primera lectura la librería
+// revisa cada 10 ms en el hilo principal durante todo el plazo, y clearWatch no detiene esa
+// revisión (un seguimiento soltado sin lecturas la sigue pagando hasta cumplir el plazo).
+const PLAZO_SEGUIMIENTO_MS = 30000;
 
 // intervalo: cada cuánto se quiere una lectura (ms). Solo lo respeta Android (GPS_CON_INTERVALO).
 // alFallar({ code, muerto }): muerto = el seguimiento ya no existe (no pudo arrancar, por ejemplo
-// con la ubicación del sistema apagada, o el plugin lo borró): hay que pedir otro.
+// con la ubicación del sistema apagada, o el plugin lo borró): hay que pedir otro. En el navegador
+// nunca: su seguimiento sigue después de un error (también del tiempo agotado).
 export function seguir(fn, { precisa = true, alFallar = () => {}, intervalo = 2000 } = {}) {
   if (!GEO) {
     if (!('geolocation' in (globalThis.navigator || {}))) return () => {};
@@ -305,9 +312,10 @@ export function seguir(fn, { precisa = true, alFallar = () => {}, intervalo = 20
             huboLectura = true;
             fn(aPunto(p));
           } else if (err) {
-            // 3: el plugin ya lo borró. Un error antes de la primera lectura: no llegó a arrancar.
+            // 3: el plugin ya lo borró. En Android, un error antes de la primera lectura: no llegó
+            // a arrancar. En iPhone no: «sin señal» llega a un seguimiento vivo que sigue buscando.
             const code = codigoPlugin(err);
-            alFallar({ code, muerto: code === 3 || !huboLectura });
+            alFallar({ code, muerto: code === 3 || (GPS_ANDROID && !huboLectura) });
           }
         },
       );

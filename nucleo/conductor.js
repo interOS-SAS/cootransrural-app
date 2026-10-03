@@ -55,6 +55,10 @@ const RELEER_AL_VOLVER_MS = 20000;
 // o el plugin lo borró) se vuelve a pedir a los 5 s, luego a los 10, 20… hasta cada minuto
 // (con la app a la vista; con la app oculta, al volver).
 const REINTENTO_GPS_MS = { primero: 5000, maximo: 60000 };
+// «Conectarme» lee el GPS; si esa lectura solo tardó o no tuvo señal (la ubicación está encendida),
+// se conecta con la última lectura buena si es de hace menos de esto: la primera lectura del
+// seguimiento del turno anuncia enseguida la posición actual.
+const LECTURA_PARA_CONECTAR_MS = 10 * 60 * 1000;
 
 // Modo real.
 const CLAVE_VIAJE_REAL = 'tc.real.viaje.conductor'; // localStorage: en la app nativa sessionStorage se pierde
@@ -141,6 +145,7 @@ class ControladorConductor extends Emisor {
       this.ocultaDesde = 0;
       this.relojReintentoGps = null;
       this.esperaReintentoGps = 0;
+      this.gpsLeidoEn = 0; // cuándo llegó la última lectura buena del GPS
     }
   }
 
@@ -161,7 +166,8 @@ class ControladorConductor extends Emisor {
     if (this.real && this.estado.viaje) this.#rutaHaciaObjetivo();
   }
 
-  async #configurarGps() {
+  // En modo real devuelve la lectura (con su motivo si falló). paraConectar: ver #configurarGpsReal.
+  async #configurarGps({ paraConectar = false } = {}) {
     this.dejarDeSeguir?.();
     this.dejarDeSeguir = null;
     if (this.real) {
@@ -174,7 +180,8 @@ class ControladorConductor extends Emisor {
       } finally {
         this.leyendoGps = false;
       }
-      return this.#configurarGpsReal(pos);
+      this.#configurarGpsReal(pos, { paraConectar });
+      return pos;
     }
     const pos = await obtenerPosicion({ espera: 7000 });
     const usarSimulado = this.#gpsDebeSimularse(pos);
@@ -800,17 +807,23 @@ class ControladorConductor extends Emisor {
 
   // GPS en modo real: nunca simulado. Sin GPS se ve el centro del pueblo en el mapa,
   // pero no se puede estar en línea ni se anuncia esa posición.
-  #configurarGpsReal(pos) {
+  // paraConectar («Conectarme»): una lectura que solo tardó o no tuvo señal no borra la última
+  // buena si es reciente (LECTURA_PARA_CONECTAR_MS): con ella se conecta.
+  #configurarGpsReal(pos, { paraConectar = false } = {}) {
     // Dos llamadas seguidas (por ejemplo, dos toques en la píldora mientras se espera la
     // primera lectura) no dejan un seguimiento suelto: se detiene el anterior aquí también.
     this.#pararSeguimiento();
-    this.estado.gpsReal = Boolean(pos.real);
+    const faltoSenal = !pos.real && (pos.motivo === 'tiempo' || pos.motivo === 'sin-senal');
+    const valeLaAnterior = paraConectar && faltoSenal && this.estado.gpsReal && Boolean(this.estado.pos) && Date.now() - this.gpsLeidoEn < LECTURA_PARA_CONECTAR_MS;
+    this.estado.gpsReal = Boolean(pos.real) || valeLaAnterior;
     this.estado.gpsSimulado = false;
     // Con el permiso negado no hay a quién seguir (hasta otra lectura: «Conectarme», «Llegué»).
     this.gpsNegado = !pos.real && pos.motivo === 'denegado';
-    if (pos.real) this.estado.pos = { lat: pos.lat, lng: pos.lng, rumbo: this.estado.pos?.rumbo ?? 0 };
-    else if (!this.estado.pos) this.estado.pos = { ...CENTRO, rumbo: 0 };
-    if (!pos.real && this.estado.conectado && !this.estado.viaje) {
+    if (pos.real) {
+      this.estado.pos = { lat: pos.lat, lng: pos.lng, rumbo: this.estado.pos?.rumbo ?? 0 };
+      this.gpsLeidoEn = Date.now();
+    } else if (!this.estado.pos) this.estado.pos = { ...CENTRO, rumbo: 0 };
+    if (!this.estado.gpsReal && this.estado.conectado && !this.estado.viaje) {
       clearInterval(this.relojPresencia);
       this.estado.conectado = false;
       this.#anunciar();
@@ -837,6 +850,10 @@ class ControladorConductor extends Emisor {
     // Las opciones solo cambian algo en Android (el intervalo); en lo demás no se reinicia.
     const clave = modo && (GPS_CON_INTERVALO ? `cada ${INTERVALO_GPS_MS[modo]}` : 'siempre');
     if (modo ? this.dejarDeSeguir && clave === this.claveSeguimiento : !this.dejarDeSeguir) return;
+    // Con la app oculta, un seguimiento vivo no se reinicia solo para cambiar el intervalo: en
+    // Android no hay lecturas en segundo plano y el nuevo solo gastaría esperando la primera (ver
+    // plataforma.seguir). Se cambia al volver (#alCambiarVisibilidad).
+    if (modo && this.dejarDeSeguir && appOculta()) return;
     this.#pararSeguimiento();
     if (!modo) return;
     this.claveSeguimiento = clave;
@@ -858,13 +875,13 @@ class ControladorConductor extends Emisor {
     this.claveSeguimiento = null;
   }
 
-  // Permiso negado: #gpsPerdido. Si el seguimiento vigente murió (código 3: el plugin lo borró;
-  // o no pudo arrancar), se suelta y se vuelve a pedir en un rato: sin esto la posición quedaría
-  // congelada (presencia vieja, «Llegué» bloqueado). Los «sin señal» de un seguimiento vivo los
-  // resuelve el mismo GPS.
+  // Permiso negado: #gpsPerdido. Si el seguimiento vigente murió (muerto: el plugin lo borró, o
+  // no pudo arrancar), se suelta y se vuelve a pedir en un rato: sin esto la posición quedaría
+  // congelada (presencia vieja, «Llegué» bloqueado). Los «sin señal» de un seguimiento vivo (en
+  // iPhone y en el navegador, también antes de la primera lectura) los resuelve el mismo GPS.
   #alFallarSeguimiento(e, dejar) {
     if (e?.code === 1) return this.#gpsPerdido(e);
-    if (!(e?.muerto || e?.code === 3) || this.destruido || this.dejarDeSeguir !== dejar) return;
+    if (!e?.muerto || this.destruido || this.dejarDeSeguir !== dejar) return;
     this.#pararSeguimiento();
     const espera = this.esperaReintentoGps || REINTENTO_GPS_MS.primero;
     this.esperaReintentoGps = Math.min(espera * 2, REINTENTO_GPS_MS.maximo);
@@ -877,6 +894,7 @@ class ControladorConductor extends Emisor {
 
   #alLeerGps(p) {
     this.esperaReintentoGps = 0;
+    this.gpsLeidoEn = Date.now();
     const recuperado = !this.estado.gpsReal;
     if (recuperado) this.estado.gpsReal = true;
     const primera = this.primeraLectura;
@@ -900,13 +918,14 @@ class ControladorConductor extends Emisor {
     if (this.leyendoGps) return;
     // En turno, con un servicio o esperando la primera lectura: si el seguimiento murió o no ha
     // dado ninguna lectura (arrancó con la app oculta, donde Android no da la ubicación), se pide
-    // uno nuevo (el anterior se suelta: nunca quedan dos).
+    // uno nuevo (el anterior se suelta: nunca quedan dos). Si sigue vivo, se le aplica el
+    // intervalo que quedó pendiente mientras estaba oculta (#ajustarSeguimiento).
     if (this.#modoGps()) {
       if (!this.dejarDeSeguir || this.primeraLectura) {
         this.esperaReintentoGps = 0;
         this.#pararSeguimiento();
-        this.#ajustarSeguimiento();
       }
+      this.#ajustarSeguimiento();
       return;
     }
     if (fuera >= RELEER_AL_VOLVER_MS && !this.dejarDeSeguir && !this.gpsNegado) this.#releerFueraDeTurno();
@@ -917,6 +936,7 @@ class ControladorConductor extends Emisor {
     // Mientras tanto pudo empezar el turno o un servicio (con su propio seguimiento).
     if (this.destruido || this.dejarDeSeguir || this.leyendoGps || !pos.real) return;
     this.estado.pos = { lat: pos.lat, lng: pos.lng, rumbo: this.estado.pos?.rumbo ?? 0 };
+    this.gpsLeidoEn = Date.now();
     this.#cambiar({});
   }
 
@@ -971,18 +991,25 @@ class ControladorConductor extends Emisor {
     if (this.bus.estado === 'sin_conectar') this.bus.conectar();
     // Fuera de turno no se sigue el GPS: la última lectura puede ser vieja (o la ubicación del
     // sistema estar apagada desde entonces). Se lee ahora: así no se conecta sin GPS, y la primera
-    // presencia y la consulta de solicitudes salen con la posición actual.
+    // presencia y la consulta de solicitudes salen con la posición actual. Si la lectura solo
+    // tardó o no tuvo señal, vale la última buena si es reciente (#configurarGpsReal).
+    let lectura = null;
     if (!this.estado.gpsReal || !this.dejarDeSeguir) {
       this.buscandoGps = true;
       this.#cambiar({});
       try {
-        await this.#configurarGps();
+        lectura = await this.#configurarGps({ paraConectar: true });
       } finally {
         this.buscandoGps = false;
       }
     }
     if (!this.estado.gpsReal) {
-      this.#avisar({ titulo: 'Activa la ubicación para conectarte', cuerpo: 'Con tu ubicación te llegan los servicios cercanos y el pasajero ve por dónde vas.', tipo: 'error' });
+      // Ubicación encendida pero sin señal: el seguimiento «espera» ya la está buscando.
+      if (lectura?.motivo === 'tiempo' || lectura?.motivo === 'sin-senal') {
+        this.#avisar({ titulo: 'Buscando señal del GPS…', cuerpo: 'Tu ubicación está encendida, pero el GPS aún no responde. Toca «Conectarme» otra vez en unos segundos; a cielo abierto es más rápido.', tipo: 'alerta' });
+      } else {
+        this.#avisar({ titulo: 'Activa la ubicación para conectarte', cuerpo: 'Con tu ubicación te llegan los servicios cercanos y el pasajero ve por dónde vas.', tipo: 'error' });
+      }
       return false;
     }
     this.#cambiar({ conectado: true });

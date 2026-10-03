@@ -36,7 +36,11 @@ export async function obtenerPosicion({ espera = 8000, precisa = true } = {}) {
     const p = await posicion({ precisa, espera, edad: 15000 });
     return { lat: p.lat, lng: p.lng, precision: p.precision, real: true };
   } catch (e) {
-    return { ...PUNTO_RECOGIDA, precision: null, real: false, motivo: e?.sinGps ? 'sin-gps' : e?.code === 1 ? 'denegado' : 'no-disponible' };
+    // motivo: 'sin-gps' (el aparato no tiene), 'denegado' (permiso), 'tiempo' (la lectura tardó),
+    // 'sin-senal' (el GPS respondió sin posición) o 'no-disponible' (ubicación apagada u otro error).
+    // 'tiempo' y 'sin-senal' son falta de señal: en la app, la ubicación apagada da 'no-disponible'.
+    const motivo = e?.sinGps ? 'sin-gps' : e?.code === 1 ? 'denegado' : e?.code === 3 ? 'tiempo' : e?.sinSenal ? 'sin-senal' : 'no-disponible';
+    return { ...PUNTO_RECOGIDA, precision: null, real: false, motivo };
   }
 }
 
