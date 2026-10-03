@@ -130,6 +130,9 @@ if (existsSync(CSP_CONF)) {
   POLITICA = POLITICA.replace(/;\s*report-uri [^;]+/, '').replace(/;\s*report-to [^;]+/, '');
 }
 const CON_CSP = Boolean(POLITICA);
+// Páginas que ya trajo el servidor con la CSP (nginx con el snippet): true si es la del archivo y cada <script lleva
+// el nonce de esa respuesta, una sola vez.
+const cspDelServidor = [];
 if (!CON_CSP) console.log(`⚠ No se encontró la política en ${CSP_CONF}: se salta la parte de la CSP.`);
 else console.log(`CSP (modo informe) de ${CSP_CONF}`);
 
@@ -170,6 +173,18 @@ async function nuevoContexto({ ficha = null, indice = null, mapbox = false } = {
       if (route.request().resourceType() !== 'document') return route.fallback();
       const resp = await route.fetch();
       if (!(resp.headers()['content-type'] || '').includes('text/html')) return route.fulfill({ response: resp });
+      // Si quien sirve ya es el nginx con el snippet (la instalación local del panel), la página va TAL CUAL: su
+      // política y su nonce. Volver a ponerle otro nonce dejaría el atributo repetido, y Chromium (CSP3, «is element
+      // nonceable») ignora el nonce de un elemento con atributos repetidos. Se anota si es la política del archivo.
+      const delServidor = resp.headers()['content-security-policy-report-only'];
+      if (delServidor) {
+        const nonce = /'nonce-([0-9a-f]{32})'/.exec(delServidor)?.[1];
+        const igual = Boolean(nonce) && delServidor.replace(/;\s*report-uri [^;]+/, '').replace(/;\s*report-to [^;]+/, '') === POLITICA.replaceAll('$request_id', nonce);
+        const html = await resp.text();
+        const scripts = html.match(/<script\b[^>]*>/g) || [];
+        cspDelServidor.push(igual && scripts.every((t) => t.startsWith(`<script nonce="${nonce}"`) && t.split('nonce=').length === 2));
+        return route.fulfill({ response: resp, body: html });
+      }
       const nonce = randomBytes(16).toString('hex');
       const cuerpo = (await resp.text()).replaceAll('<script', `<script nonce="${nonce}"`);
       return route.fulfill({ response: resp, body: cuerpo, headers: { ...resp.headers(), 'content-security-policy-report-only': POLITICA.replaceAll('$request_id', nonce) } });
@@ -486,6 +501,9 @@ for (const d of ['a', 'b', 'c']) {
     return { tras, permitidas, bloqueadas: window.__csp.map((v) => `${v.directiva} ${v.bloqueado}`) };
   });
   ok(r.tras === null, 'barrera de clics: un enlace javascript: no corre al tocarlo');
+  if (CON_CSP && cspDelServidor.length) {
+    ok(cspDelServidor.every(Boolean), `CSP del servidor (nginx con el snippet): en las ${cspDelServidor.length} páginas es la del archivo, con un nonce por respuesta en cada <script`);
+  }
   if (CON_CSP) {
     ok(!r.permitidas.length, `CSP: Nominatim, OSRM, teselas de OSM/HOT/Mapbox y los 3 relés MQTT no producen violaciones${r.permitidas.length ? ': ' + JSON.stringify(r.permitidas) : ''}`);
     const hay = (re) => r.bloqueadas.some((v) => re.test(v));

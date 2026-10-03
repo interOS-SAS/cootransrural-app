@@ -891,7 +891,7 @@ async function entrarNode(c) {
 // Cuentas de prueba limpias: el pasajero con su perfil y el conductor registrado y aprobado.
 async function prepararReal() {
   const salud = await apiNode('GET', 'salud');
-  ok(salud.estado === 200 && /^0\.[34]\./.test(salud.datos?.version || ''), `real: servidor ${salud.datos?.version || '?'} (1.2: 0.3 o 0.4)`);
+  ok(salud.estado === 200 && /^0\.[345]\./.test(salud.datos?.version || ''), `real: servidor ${salud.datos?.version || '?'} (1.2: 0.3, 0.4 o 0.5)`);
   for (const c of [PRUEBA_P, PRUEBA_C]) {
     const r = await entrarNode(c);
     if (r.datos?.token) await apiNode('DELETE', 'yo', undefined, r.datos.token);
@@ -902,7 +902,7 @@ async function prepararReal() {
   const c = await entrarNode(PRUEBA_C);
   await apiNode('PATCH', 'yo', { nombre: PRUEBA_C.nombre, celular: PRUEBA_C.celular }, c.datos?.token);
   const reg = await apiNode('PUT', 'conductor', { empresa: 'cootransrural', movil: PRUEBA_C.movil, placa: PRUEBA_C.placa }, c.datos?.token);
-  const aprobado = execFileSync('node', ['bin/admin.js', 'aprobar', PRUEBA_C.correo], { cwd: SERVIDOR, env: { ...process.env, DATABASE_URL: BASE_DATOS }, encoding: 'utf8', timeout: 20000 }).trim();
+  const aprobado = execFileSync('node', ['bin/admin.js', 'aprobar', PRUEBA_C.correo, '--motivo', 'Documentos revisados (prueba de punta a punta)'], { cwd: SERVIDOR, env: { ...process.env, DATABASE_URL: BASE_DATOS }, encoding: 'utf8', timeout: 20000 }).trim();
   await apiNode('POST', 'auth/salir', undefined, c.datos?.token);
   ok(p.estado === 200 && reg.estado === 200 && /aprobado/.test(aprobado), 'real: cuentas de prueba listas (pasajero con perfil, conductor aprobado)');
 }

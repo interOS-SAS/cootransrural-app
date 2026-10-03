@@ -699,7 +699,7 @@ const idPorMovil = (movil) => recibidosP.find((m) => m.tipo === 'presencia' && N
 /* ------------------------------------------------------------------ */
 async function preparar() {
   const salud = await api('GET', 'salud');
-  await debe(salud.estado === 200 && /^0\.4\./.test(salud.datos?.version || ''), `servidor 0.4 (rama segundo-plano) por el proxy (${salud.datos?.version || salud.estado})`);
+  await debe(salud.estado === 200 && /^0\.[45]\./.test(salud.datos?.version || ''), `servidor 0.4 o 0.5 (segundo plano) por el proxy (${salud.datos?.version || salud.estado})`);
   await debe(existsSync(AVISOS), `el servidor escribe los avisos simulados en ${AVISOS} (PUSH_SIMULADO)`);
   marcaInicio = leerAvisos().length;
   for (const c of [PAS, CA, CB]) {
@@ -714,7 +714,7 @@ async function preparar() {
     const r = await entrarApi(c);
     await api('PATCH', 'yo', { nombre: c.nombre, celular: c.celular }, r.datos?.token);
     const reg = await api('PUT', 'conductor', { empresa: 'cootransrural', movil: c.movil, placa: c.placa }, r.datos?.token);
-    const apr = execFileSync('node', ['bin/admin.js', 'aprobar', c.correo], { cwd: SERVIDOR, env: { ...process.env, DATABASE_URL: BASE_DATOS }, encoding: 'utf8', timeout: 20000 }).trim();
+    const apr = execFileSync('node', ['bin/admin.js', 'aprobar', c.correo, '--motivo', 'Documentos revisados (prueba de punta a punta)'], { cwd: SERVIDOR, env: { ...process.env, DATABASE_URL: BASE_DATOS }, encoding: 'utf8', timeout: 20000 }).trim();
     await api('POST', 'auth/salir', undefined, r.datos?.token);
     await debe(reg.estado === 200 && /aprobado/.test(apr), `conductor ${c.nombre} registrado y aprobado (móvil ${c.movil})`);
   }
