@@ -666,6 +666,10 @@ export function fijarAceptoSegundoPlano(si) {
 }
 
 export const turnoNativoActivo = () => turnoNativoDisponible() && turno.activo;
+// El plugin lleva el turno o, recién cargada la página (antes de preguntarle con estado()), su marca dice que lo
+// llevaba. Mientras tanto, con la app oculta, la web no debe abrir el WebSocket con la central (ver
+// bus.cerrarAlOcultar en disenos/a/conductor.js): oculta no manda presencia y la central lo despertaría sin ella.
+export const turnoNativoEnCurso = () => turnoNativoDisponible() && (turno.activo || Boolean(leerJson(CLAVE_MARCA_TURNO)));
 
 const marcaTurno = (desde = Date.now()) => guardarJson(CLAVE_MARCA_TURNO, { desde });
 

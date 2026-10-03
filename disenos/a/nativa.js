@@ -31,9 +31,9 @@ export async function ofrecerSegundoPlano(app, { N, forzar = false }) {
   if (dicho === 'no' && !forzar) return false;
   const android = N.nativo.plataforma?.() === 'android';
   const lista = [
-    ['candado', 'La ves solo tú, la central y el pasajero de tu servicio; no guardamos tu recorrido.'],
+    ['candado', 'La ven la central y el pasajero de tu servicio; los demás pasajeros de tu cooperativa solo ven una posición aproximada de tu taxi. No guardamos tu recorrido.'],
     android
-      ? ['campana', 'En Android verás una notificación fija «Estás en turno»; desde ahí también puedes salir de turno.']
+      ? ['campana', 'En Android verás una notificación fija «Estás en turno»; desde ahí también puedes salir de turno cuando no tengas un servicio en curso.']
       : ['gps', 'En iPhone verás el indicador azul de ubicación arriba en la pantalla.'],
     ['potencia', 'Para que se detenga, desconéctate o cierra la app.'],
   ];

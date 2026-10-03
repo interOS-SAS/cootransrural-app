@@ -146,6 +146,11 @@ class ControladorConductor extends Emisor {
       this.relojReintentoGps = null;
       this.esperaReintentoGps = 0;
       this.gpsLeidoEn = 0; // cuándo llegó la última lectura buena del GPS
+      // La app estuvo oculta con el plugin enviando (el GPS del JS se soltó): estado.pos es de antes de minimizar.
+      // Hasta la próxima lectura, la presencia sale sin pos (la central usa la última del plugin) y la aceptación,
+      // sin pos ni ruta (la central los pone con la del plugin): si no, el taxi saltaría hacia atrás y el radio de
+      // las ofertas se mediría desde donde se minimizó.
+      this.posVieja = false;
       // App nativa con el plugin UbicacionTurno: lo pone nativo.vigilarTurno() ({ activo(),
       // enviando() }). Con el plugin activo la presencia lleva segundoPlano: true; mientras él
       // envía (app oculta), el JS no manda presencia ni ubicación por el bus. Sin él, nada cambia.
@@ -269,7 +274,7 @@ class ControladorConductor extends Emisor {
         conductorId: c.id,
         movil: c.movil,
         disponible: conGps && this.estado.conectado && !this.estado.viaje,
-        ...(conGps ? { pos: this.estado.pos } : {}),
+        ...(conGps && !this.posVieja ? { pos: this.estado.pos } : {}),
         // Servidor 0.4.0: al minimizar no lo saca del mapa (el plugin sigue enviando). Los
         // servidores anteriores ignoran el campo.
         ...(this.nativo?.activo?.() ? { segundoPlano: true } : {}),
@@ -320,7 +325,7 @@ class ControladorConductor extends Emisor {
   // no llegan lecturas nuevas del GPS), «Llegué» se resalta sin esperar a que el taxi se mueva.
   #llegadaSinMoverse() {
     const v = this.estado.viaje;
-    if (this.real && v?.codigoRevision && this.estado.gpsReal && this.estado.pos) this.#moverA(this.estado.pos);
+    if (this.real && v?.codigoRevision && this.estado.gpsReal && this.estado.pos && !this.posVieja) this.#moverA(this.estado.pos);
   }
 
   async #recibirSolicitud(s) {
@@ -398,7 +403,11 @@ class ControladorConductor extends Emisor {
     if (this.real) {
       // El servidor toma los datos del conductor de la base: aquí solo el viaje y la ruta
       // (la aproximada en línea recta no se manda: el pasajero vería una ruta que no existe).
-      this.bus.publicar('aceptacion', { viajeId, pos, etaMin: hacia.min, ruta: hacia.aproximada ? null : recortarRuta(hacia.coords) });
+      // Recién vuelta la app con el plugin (posVieja): sin pos, etaMin ni ruta; la central los pone con la última
+      // posición del plugin (servidor 0.4.0) y la primera lectura del GPS corrige el resto.
+      this.bus.publicar('aceptacion', this.posVieja
+        ? { viajeId }
+        : { viajeId, pos, etaMin: hacia.min, ruta: hacia.aproximada ? null : recortarRuta(hacia.coords) });
       // Quien decide es la central: si no confirma en 15 s, se suelta.
       this.temporizadores.set('confirmar', setTimeout(() => {
         if (this.estado.viaje?.fase === 'confirmando' && this.estado.viaje.id === viajeId) {
@@ -843,6 +852,7 @@ class ControladorConductor extends Emisor {
     if (pos.real) {
       this.estado.pos = { lat: pos.lat, lng: pos.lng, rumbo: this.estado.pos?.rumbo ?? 0 };
       this.gpsLeidoEn = Date.now();
+      this.posVieja = false;
     } else if (!this.estado.pos) this.estado.pos = { ...CENTRO, rumbo: 0 };
     if (!this.estado.gpsReal && this.estado.conectado && !this.estado.viaje) {
       clearInterval(this.relojPresencia);
@@ -920,6 +930,7 @@ class ControladorConductor extends Emisor {
   #alLeerGps(p) {
     this.esperaReintentoGps = 0;
     this.gpsLeidoEn = Date.now();
+    this.posVieja = false;
     const recuperado = !this.estado.gpsReal;
     if (recuperado) this.estado.gpsReal = true;
     const primera = this.primeraLectura;
@@ -936,8 +947,11 @@ class ControladorConductor extends Emisor {
   #alCambiarVisibilidad(oculta) {
     if (oculta) {
       if (!this.ocultaDesde) this.ocultaDesde = Date.now();
-      // Con el seguimiento nativo enviando, el del JS se suelta ya (ver #modoGps).
-      if (this.nativo?.enviando?.()) this.#ajustarSeguimiento();
+      // Con el seguimiento nativo enviando, el del JS se suelta ya (ver #modoGps) y la posición queda vieja.
+      if (this.nativo?.enviando?.()) {
+        this.posVieja = true;
+        this.#ajustarSeguimiento();
+      }
       return;
     }
     const fuera = this.ocultaDesde ? Date.now() - this.ocultaDesde : 0;
@@ -964,6 +978,7 @@ class ControladorConductor extends Emisor {
     if (this.destruido || this.dejarDeSeguir || this.leyendoGps || !pos.real) return;
     this.estado.pos = { lat: pos.lat, lng: pos.lng, rumbo: this.estado.pos?.rumbo ?? 0 };
     this.gpsLeidoEn = Date.now();
+    this.posVieja = false;
     this.#cambiar({});
   }
 
@@ -1285,7 +1300,7 @@ class ControladorConductor extends Emisor {
       this.#avisar(aviso);
       // Si sigue en el destino, «Terminar viaje» vuelve a resaltarse.
       this.llegadaAvisada = null;
-      if (this.estado.gpsReal && this.estado.pos) this.#moverA(this.estado.pos);
+      if (this.estado.gpsReal && this.estado.pos && !this.posVieja) this.#moverA(this.estado.pos);
       this.#rutaHaciaObjetivo();
       return;
     }
