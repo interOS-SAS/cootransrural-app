@@ -4,9 +4,19 @@
 // lee window.CT_EMPRESA al cargar. plataforma.js sí se puede (no depende de la ficha).
 //
 // En MODO_REAL (app de las tiendas, o ?real=1) solo cuentan las cooperativas que ya
-// trabajan con el servidor («real»: true en el índice); si es una sola, se abre directo,
-// sin pedir el GPS en la carga (el permiso se pide después, en el mapa).
-import { MODO_REAL, posicion } from '../nucleo/plataforma.js';
+// trabajan con el servidor («real»: true); si es una sola, se abre directo, sin pedir el
+// GPS en la carga (el permiso se pide después, en el mapa).
+//
+// Fase 2 del panel (pedido de Oscar, 3-oct): en modo real, cuáles atienden de verdad lo dice el
+// SERVIDOR (GET /api/empresas/indice: el mismo índice, armado con la base), no el archivo estático. El servidor pone
+// «real» solo si la cooperativa pasa las compuertas: activa en el panel, con zona y tarifas
+// publicadas y al menos un conductor aprobado. Una activa a la que le falta algo viene con
+// «pronto»: sigue siendo demo para la app (no se abre ni cuenta para el GPS) y en la lista sale
+// como «Pronto». De la respuesta solo se toman «real» y «pronto» de los ids que ya están en el
+// índice de la web (nombres, íconos y centros siguen saliendo del archivo, S30). Si el servidor
+// no responde bien (0.5.0 no tiene la ruta, sin red), queda el «real» del archivo, como hoy.
+// Las demos (sin ?real=1) no preguntan nada al servidor.
+import { MODO_REAL, URL_API, posicion } from '../nucleo/plataforma.js';
 // Enlaces seguros (S30): no depende de la ficha, se puede cargar antes de escoger.
 import { urlInterna } from '../nucleo/enlaces.js';
 
@@ -51,6 +61,47 @@ async function leerIndice() {
   return (await r.json()).cooperativas || [];
 }
 
+// Modo real: { id → { real, pronto } } de GET /api/empresas/indice, o null si no se pudo (se usa el archivo).
+// Sin sesión ni cookies: es pública y no dice nada de la persona.
+const ESPERA_INDICE_MS = 6000;
+async function enServicioSegunServidor() {
+  const control = new AbortController();
+  const reloj = setTimeout(() => control.abort(), ESPERA_INDICE_MS);
+  try {
+    const r = await fetch(new URL('empresas/indice', URL_API), {
+      cache: 'no-store', credentials: 'omit', headers: { Accept: 'application/json' }, signal: control.signal,
+    });
+    if (!r.ok) return null;
+    const d = await r.json();
+    const lista = Array.isArray(d?.cooperativas) ? d.cooperativas : null;
+    if (!lista?.length) return null;
+    const mapa = new Map();
+    for (const c of lista) {
+      if (!c || typeof c.id !== 'string' || !/^[a-z0-9-]{1,40}$/.test(c.id)) continue;
+      const real = c.real === true;
+      mapa.set(c.id, { real, pronto: !real && (c.pronto === true || c.estado === 'pronto') });
+    }
+    return mapa.size ? mapa : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(reloj);
+  }
+}
+
+// Modo real: la lista del archivo con «real» y «pronto» del servidor (si respondió).
+function conEstadoDelServidor(lista, servidor) {
+  if (!servidor) return lista.map((c) => ({ ...c, real: c.real === true, pronto: false }));
+  return lista.map((c) => {
+    const s = servidor.get(c.id);
+    return { ...c, real: Boolean(s?.real), pronto: Boolean(s?.pronto) };
+  });
+}
+
+// Modo real: las que atienden de verdad y las que aparecen en la lista como «Pronto» (no se abren).
+let REALES = [];
+let PRONTO = [];
+
 // Por GPS: la empresa del municipio más cercano. Si en ese municipio hay más de
 // una empresa en TaxiCun, devuelve todas para que la persona escoja.
 function porUbicacion(lista, pos) {
@@ -71,6 +122,8 @@ function masCercana(lista, pos) {
 }
 
 export async function iniciarTaxiCun({ rol = 'pasajero', version = '' } = {}) {
+  // Modo real: el índice del servidor se pide a la vez que el archivo (no demora la carga).
+  const delServidor = MODO_REAL ? enServicioSegunServidor() : null;
   let lista;
   try {
     lista = await leerIndice();
@@ -79,7 +132,10 @@ export async function iniciarTaxiCun({ rol = 'pasajero', version = '' } = {}) {
     return;
   }
   if (MODO_REAL) {
-    lista = lista.filter((c) => c.real);
+    const todas = conEstadoDelServidor(lista, await delServidor);
+    PRONTO = todas.filter((c) => !c.real && c.pronto);
+    lista = todas.filter((c) => c.real);
+    REALES = lista;
     if (!lista.length) {
       // El índice todavía no marca ninguna cooperativa real.
       texto('TaxiCun aún no está disponible. Inténtalo más tarde.');
@@ -139,8 +195,12 @@ async function abrir(coop, { rol, version, porGps = false, unica = false }) {
   document.head.appendChild(css);
   try {
     const { montar } = await import(new URL(`disenos/${d}/${archivo}.js?v=${version}`, RAIZ).href);
-    // unica: modo real con una sola cooperativa (no hay «Cambiar de municipio»).
-    await montar($('app'), { N, diseno: d, vitrina: false, taxicun: MODO_REAL ? { porGps, cooperativa: coop, unica } : { porGps, cooperativa: coop } });
+    // unica: modo real con una sola cooperativa (no hay «Cambiar de municipio»). otras: las demás que
+    // atienden de verdad (para «Aquí te atiende…» cuando el punto queda en su municipio).
+    await montar($('app'), {
+      N, diseno: d, vitrina: false,
+      taxicun: MODO_REAL ? { porGps, cooperativa: coop, unica, otras: REALES.filter((c) => c.id !== coop.id) } : { porGps, cooperativa: coop },
+    });
   } catch (e) {
     console.error(e);
     $('app').innerHTML = `<p class="tc-error">No se pudo abrir TaxiCun para ${escapar(coop.nombre)}. ${escapar(e.message || '')}</p>`;
@@ -162,6 +222,9 @@ function mostrarLista(lista, { rol, version, motivo, pos = null, pueblo = '', to
   };
   const varias = motivo === 'varias';
   const [titulo, detalle] = mensajes[motivo] || mensajes.elegir;
+  // Modo real: las activas que aún no atienden (les falta zona, tarifas o conductores) salen al
+  // final como «Pronto», sin poder abrirlas. No en «¿Con quién pides…?» (solo las de ese pueblo).
+  const pronto = MODO_REAL && !varias ? [...PRONTO].sort((a, b) => a.pueblo.localeCompare(b.pueblo, 'es')) : [];
   caja.innerHTML = `
     <header class="tc-elegir-cabeza">
       <img src="${new URL('img/taxicun/logo-blanco.svg', RAIZ).href}" alt="TaxiCun" width="200" height="50">
@@ -179,9 +242,15 @@ function mostrarLista(lista, { rol, version, motivo, pos = null, pueblo = '', to
           <span class="tc-lista-texto">${varias
             ? `<b>${escapar(c.nombre)}</b><small>${escapar(c.razonSocial || c.pueblo)}</small>`
             : `<b>${escapar(c.pueblo)}</b><small>${escapar(c.nombre)}${pos && c.centro ? ` · a ${Math.round(distanciaKm(pos, c.centro))} km` : ''}</small>`}</span>
-          ${c.estado === 'propuesta' ? '<span class="tc-demo">Demo</span>' : ''}
+          ${c.estado === 'propuesta' && !MODO_REAL ? '<span class="tc-demo">Demo</span>' : ''}
           <svg class="tc-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
         </button></li>`).join('')}
+      ${pronto.map((c) => `
+        <li><div class="tc-pronto" style="--c:${escapar(colorSeguro(c.color))}" aria-disabled="true">
+          <img src="${escapar(urlInterna(c.icono, RAIZ))}" alt="" width="48" height="48">
+          <span class="tc-lista-texto"><b>${escapar(c.pueblo)}</b><small>${escapar(c.nombre)} · muy pronto en TaxiCun</small></span>
+          <span class="tc-demo tc-chip-pronto">Pronto</span>
+        </div></li>`).join('')}
     </ul>
     ${varias ? '<button type="button" class="tc-enlace" data-todas>Ver todos los municipios</button>' : ''}
     <p class="tc-elegir-pie">TaxiCun · desarrollada por interOS</p>`;

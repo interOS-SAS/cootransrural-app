@@ -1,9 +1,13 @@
 // Ubicación, direcciones y rutas. Usa servicios gratuitos (Nominatim y OSRM) y,
 // si fallan o no hay internet, responde con aproximaciones locales.
-import { CENTRO, ZONA, SERVICIOS, PUNTO_RECOGIDA } from './config.js';
+import { CENTRO, ZONA, SERVICIOS, PUNTO_RECOGIDA, ZONA_SERVICIO } from './config.js';
 import { LUGARES, CATEGORIAS, DESTINOS_TARIFA, TARIFAS } from './datos.js';
-import { distanciaKm, pesos } from './util.js';
+import { distanciaKm, pesos, dentroDeZona } from './util.js';
 import { posicion, seguir, MODO_REAL } from './plataforma.js';
+
+// Zona de servicio (§5.7 del diseño del panel): la misma cuenta que hace la central (el servidor la
+// toma de la copia fijada de util.js). Ver revisarZona, abajo.
+export { dentroDeZona } from './util.js';
 
 const cacheDirecciones = new Map();
 let ultimaConsultaNominatim = 0;
@@ -56,6 +60,21 @@ export function seguirPosicion(fn, { precisa = true, alFallar = () => {}, interv
 // prueba la demo desde otra ciudad).
 export function fueraDeZona(p) {
   return distanciaKm(p, CENTRO) > 60;
+}
+
+// Punto de recogida y zona de servicio de la cooperativa (fase 2 del panel, §5.7). null si la
+// cooperativa no tiene zona (las 76 demos y el archivo de git: no se revisa nada) o el punto no
+// sirve; si no, { estado, metros, km, avisarHastaKm, texto }:
+//   'dentro' → normal;
+//   'cerca'  → afuera, a avisarHastaKm o menos del borde: se avisa y se deja pedir;
+//   'lejos'  → más lejos: no se deja pedir (la central lo rechaza con fuera_de_zona).
+export function revisarZona(punto, zona = ZONA_SERVICIO) {
+  if (!zona) return null;
+  const r = dentroDeZona(zona, punto);
+  if (!r) return null;
+  const limite = Math.max(0, Number(zona.avisarHastaKm) || 0);
+  const estado = r.dentro ? 'dentro' : r.km <= limite ? 'cerca' : 'lejos';
+  return { estado, metros: r.metros, km: r.km, avisarHastaKm: limite, texto: zona.texto || '' };
 }
 
 function lugarCercano(p, maxKm = 0.06) {

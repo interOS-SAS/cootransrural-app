@@ -51,6 +51,75 @@ export function distanciaKm(a, b) {
   return 2 * R * Math.asin(Math.sqrt(s));
 }
 
+/* ---------------- Polígonos: casco urbano y zona de servicio ----------------
+ * Un anillo es [[lat, lng], …] (al menos 3 puntos; no hace falta repetir el primero al final).
+ * Los usan tarifador.js (casco urbano) y la zona de servicio (§5.7 del diseño del panel). El
+ * servidor tiene su copia fijada de este archivo: la misma cuenta en la app y en la central. */
+
+// ¿p está dentro del anillo? (regla par-impar)
+export function dentroDeAnillo(p, anillo) {
+  let dentro = false;
+  for (let i = 0, j = anillo.length - 1; i < anillo.length; j = i++) {
+    const [yi, xi] = anillo[i];
+    const [yj, xj] = anillo[j];
+    if ((yi > p.lat) !== (yj > p.lat) && p.lng < ((xj - xi) * (p.lat - yi)) / (yj - yi) + xi) dentro = !dentro;
+  }
+  return dentro;
+}
+
+// Distancia (km) de p al borde de un anillo, en un plano local (vale para unas decenas de km).
+export function distanciaAlBordeKm(p, anillo) {
+  const kx = 111.32 * Math.cos((p.lat * Math.PI) / 180);
+  const ky = 110.57;
+  let min = Infinity;
+  for (let i = 0, j = anillo.length - 1; i < anillo.length; j = i++) {
+    const ax = (anillo[j][1] - p.lng) * kx;
+    const ay = (anillo[j][0] - p.lat) * ky;
+    const bx = (anillo[i][1] - p.lng) * kx;
+    const by = (anillo[i][0] - p.lat) * ky;
+    const dx = bx - ax;
+    const dy = by - ay;
+    const l = dx * dx + dy * dy;
+    const t = l ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / l)) : 0;
+    min = Math.min(min, Math.hypot(ax + t * dx, ay + t * dy));
+  }
+  return min;
+}
+
+const esCoordenada = (c) => Array.isArray(c) && c.length >= 2 && Number.isFinite(c[0]) && Number.isFinite(c[1])
+  && Math.abs(c[0]) <= 90 && Math.abs(c[1]) <= 180;
+const esAnillo = (a) => Array.isArray(a) && a.length >= 3 && a.every(esCoordenada);
+
+// Los anillos válidos de una zona { poligonos: [anillo, …] } (o la lista de anillos sola). Un polígono
+// con huecos ([exterior, hueco, …]) cuenta por su borde exterior. Lo que no tenga forma se ignora.
+export function anillosDeZona(zona) {
+  const lista = Array.isArray(zona) ? zona : zona && typeof zona === 'object' ? zona.poligonos : null;
+  if (!Array.isArray(lista)) return [];
+  const anillos = [];
+  for (const x of lista.slice(0, 50)) {
+    if (esAnillo(x)) anillos.push(x);
+    else if (Array.isArray(x) && esAnillo(x[0])) anillos.push(x[0]);
+  }
+  return anillos;
+}
+
+// Zona de servicio (§5.7): ¿el punto está dentro y a qué distancia del borde? → { dentro, km, metros }
+// (km: distancia al borde más cercano, adentro o afuera; metros: la misma, en metros enteros) o null si la
+// zona no tiene polígonos válidos o el punto no es un punto. Sin zona no se revisa nada (las 76 demos).
+// La central decide igual (src/zona.js del servidor: dentro; afuera, avisa hasta avisarHastaKm con km sin
+// redondear; más lejos, fuera_de_zona).
+export function dentroDeZona(zona, punto) {
+  const anillos = anillosDeZona(zona);
+  const lat = Number(punto?.lat);
+  const lng = Number(punto?.lng);
+  if (!anillos.length || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  const p = { lat, lng };
+  const dentro = anillos.some((a) => dentroDeAnillo(p, a));
+  let km = Infinity;
+  for (const a of anillos) km = Math.min(km, distanciaAlBordeKm(p, a));
+  return { dentro, km, metros: Math.round(km * 1000) };
+}
+
 // Rumbo en grados (0 = norte, 90 = oriente) de a hacia b.
 export function rumbo(a, b) {
   const rad = Math.PI / 180;
@@ -121,12 +190,71 @@ export function fechaTexto(fecha) {
   return FORMATO_FECHA.format(new Date(fecha));
 }
 
-// Hora y día de la semana en Bogotá, sin depender de la zona del equipo.
+// Hora, día de la semana y fecha en Bogotá, sin depender de la zona del equipo. festivo: el día es
+// festivo en Colombia (esFestivo, abajo). fecha: «aaaa-mm-dd» del día en Bogotá.
+const FORMATO_BOGOTA = new Intl.DateTimeFormat('en-US', {
+  hour: 'numeric', hour12: false, weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'America/Bogota',
+});
 export function horaBogota(fecha = new Date()) {
-  const partes = new Intl.DateTimeFormat('en-US', { hour: 'numeric', hour12: false, weekday: 'short', timeZone: 'America/Bogota' }).formatToParts(new Date(fecha));
-  const hora = Number(partes.find((p) => p.type === 'hour').value) % 24;
-  const dia = partes.find((p) => p.type === 'weekday').value;
-  return { hora, domingo: dia === 'Sun' };
+  const partes = FORMATO_BOGOTA.formatToParts(new Date(fecha));
+  const parte = (tipo) => partes.find((p) => p.type === tipo)?.value;
+  const hora = Number(parte('hour')) % 24;
+  const dia = parte('weekday');
+  const ymd = `${parte('year')}-${parte('month')}-${parte('day')}`;
+  return { hora, domingo: dia === 'Sun', festivo: festivosDe(Number(parte('year'))).has(ymd), fecha: ymd };
+}
+
+/* ---------------- Festivos de Colombia (Ley 51 de 1983) ----------------
+ * §5.6 del diseño del panel. Fijos: 1-ene, 1-may, 20-jul, 7-ago, 8-dic y 25-dic. Se pasan al lunes
+ * siguiente (si no caen en lunes): 6-ene, 19-mar, 29-jun, 15-ago, 12-oct, 1-nov y 11-nov. Según la
+ * Pascua: Jueves y Viernes Santo, y en lunes la Ascensión (+43), Corpus Christi (+64) y el Sagrado
+ * Corazón (+71). 2026: 1-ene, 12-ene, 23-mar, 2-abr, 3-abr, 1-may, 18-may, 8-jun, 15-jun, 29-jun,
+ * 20-jul, 7-ago, 17-ago, 12-oct, 2-nov, 16-nov, 8-dic y 25-dic. */
+const FESTIVOS = new Map(); // año → Set('aaaa-mm-dd')
+const DIA_MS = 86400000;
+const ymdUTC = (t) => new Date(t).toISOString().slice(0, 10);
+
+// Domingo de Pascua (calendario gregoriano, algoritmo de Meeus/Jones/Butcher), en ms UTC.
+function pascua(anio) {
+  const a = anio % 19;
+  const b = Math.floor(anio / 100);
+  const c = anio % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const mes = Math.floor((h + l - 7 * m + 114) / 31);
+  const dia = ((h + l - 7 * m + 114) % 31) + 1;
+  return Date.UTC(anio, mes - 1, dia);
+}
+
+// Si el día no es lunes, el lunes siguiente.
+const alLunes = (t) => t + (((8 - new Date(t).getUTCDay()) % 7) * DIA_MS);
+
+// Los festivos de un año como 'aaaa-mm-dd' (Set; vacío para un año fuera de 1984 a 2200).
+export function festivosDe(anio) {
+  if (!Number.isInteger(anio) || anio < 1984 || anio > 2200) return new Set();
+  let f = FESTIVOS.get(anio);
+  if (f) return f;
+  const dia = (mes, d) => Date.UTC(anio, mes - 1, d);
+  const p = pascua(anio);
+  f = new Set([
+    dia(1, 1), dia(5, 1), dia(7, 20), dia(8, 7), dia(12, 8), dia(12, 25),
+    ...[[1, 6], [3, 19], [6, 29], [8, 15], [10, 12], [11, 1], [11, 11]].map(([mes, d]) => alLunes(dia(mes, d))),
+    p - 3 * DIA_MS, p - 2 * DIA_MS, p + 43 * DIA_MS, p + 64 * DIA_MS, p + 71 * DIA_MS,
+  ].map(ymdUTC));
+  FESTIVOS.set(anio, f);
+  return f;
+}
+
+// ¿La fecha (Date, ms o texto que entienda Date) cae en un festivo de Colombia, según el día en Bogotá?
+export function esFestivo(fecha = new Date()) {
+  return horaBogota(fecha).festivo;
 }
 
 export function saludo(fecha = new Date()) {

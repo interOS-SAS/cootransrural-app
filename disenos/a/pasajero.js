@@ -8,6 +8,11 @@
 // Sin el modo real todo sigue como en la demo.
 // App nativa 1.2 (con los plugins nuevos, ver disenos/a/nativa.js): al pedir el primer taxi
 // se ofrecen los avisos; tocar uno trae el viaje a la vista; bloqueo opcional con Face ID.
+// Fase 2 del panel (modo real, cooperativas con zona de servicio): aviso en el inicio y en
+// «Confirma tu viaje» si la recogida queda fuera de la zona, y la hoja de fuera de zona al pedir
+// (§5.7): cerca del borde, «Pedir de todas formas» o «Llamar a la central»; muy lejos, no deja
+// pedir («Mover el punto», «Llamar…» y, si el punto es de otra cooperativa que atiende en TaxiCun,
+// «Aquí te atiende…»). Sin zona (las 76 demos) no aparece nada.
 import {
   el, esc, $, $$, icono, ICONO_CATEGORIA, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos,
   modal, elegirOpcion, abrirMenu, estrellas, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
@@ -19,6 +24,8 @@ import { ofrecerAvisos, montarBloqueo } from './nativa.js';
 import { abrirMisViajes, abrirProgramados, abrirTarifas, abrirPromociones, abrirAjustes, abrirAyuda, abrirAvisos, abrirMiCuenta } from './pasajero-secciones.js';
 
 const REAL = EM.MODO_REAL;
+// Zona de servicio de la cooperativa (fase 2): solo en modo real y si la ficha la trae.
+const CON_ZONA = REAL && Boolean(EM.ZONA_SERVICIO);
 
 const MENSAJES_BUSQUEDA = [
   'Avisando a los taxis cercanos…',
@@ -239,12 +246,95 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     if (lugar) ponerTexto(aviso, '[data-aviso-recogida-txt]', typeof lugar.noRecoger === 'string' ? lugar.noRecoger : `En ${lugar.nombre} no se recogen pasajeros.`);
   }
 
+  /* ---------------- zona de servicio (fase 2, §5.7) ---------------- */
+  // Texto corto del aviso (inicio y «Confirma tu viaje»); '' si el punto está dentro o no hay zona.
+  function textoZona(z) {
+    if (!z || z.estado === 'dentro') return '';
+    if (z.estado === 'cerca') return `Fuera de la zona de servicio de ${EM.NOMBRE}, a ${N.kmTexto(z.km)} del límite. Puedes pedir, pero puede que ningún taxi acepte.`;
+    return `Este punto está muy lejos de la zona de servicio de ${EM.NOMBRE}. Desde aquí no puedes pedir un taxi de la ${EM.TIPO}.`;
+  }
+
+  function pintarAvisoZona(aviso, z) {
+    if (!aviso) return;
+    const txt = textoZona(z);
+    aviso.hidden = !txt;
+    aviso.dataset.estado = txt ? z.estado : '';
+    if (txt) ponerTexto(aviso, '[data-aviso-zona-txt]', txt);
+  }
+
+  function revisarZonaRecogida() {
+    if (!CON_ZONA || !p) return;
+    const o = ui.origen;
+    pintarAvisoZona($(hoja.contenido, '[data-aviso-zona]'), o && !o.provisional ? p.zonaDe(o) : null);
+  }
+
+  // Otra cooperativa que atiende en TaxiCun (modo real) y cubre el punto: la del municipio más cercano
+  // dentro de su radio. null si ninguna.
+  function otraQueAtiende(punto) {
+    let mejor = null;
+    for (const c of taxicun?.otras || []) {
+      if (!c?.centro || !/^[a-z0-9-]{1,40}$/.test(String(c.id || ''))) continue;
+      const d = N.distanciaKm(punto, c.centro);
+      if (d <= (Number(c.radioKm) || 9) && (!mejor || d < mejor.d)) mejor = { c, d };
+    }
+    return mejor?.c || null;
+  }
+
+  // Hoja de fuera de zona. Devuelve true solo si la persona elige «Pedir de todas formas» (cerca).
+  // soloInfo: abierta desde «Ver opciones» del inicio (sin «Pedir de todas formas»).
+  async function hojaFueraDeZona(z, { soloInfo = false } = {}) {
+    if (!z || z.estado === 'dentro') return true;
+    const tel = EM.TELEFONO ? N.enlaceTel(EM.TELEFONO) : '';
+    const llamar = tel ? [{ texto: z.estado === 'lejos' ? `Llamar ${EM.TELEFONO_VISIBLE}` : 'Llamar a la central', href: tel, valor: 'llamar', icono: 'telefono' }] : [];
+    if (z.estado === 'cerca') {
+      const r = await modal(app, {
+        titulo: `Estás fuera de la zona de servicio de ${EM.NOMBRE}`,
+        texto: N.ZONA_SERVICIO?.texto || `Puedes pedir, pero puede que ningún taxi de ${EM.NOMBRE} acepte.`,
+        cuerpo: `<p class="a-zona-km" data-zona-km>${icono('pin', { tam: 16 })}<span>${esc(`A ${N.kmTexto(z.km)} del límite de la zona.`)}</span></p>`,
+        icono: `<span class="a-zona-ico">${icono('alerta', { tam: 30 })}</span>`,
+        clase: 'a-modal-zona',
+        acciones: [
+          ...(soloInfo ? [] : [{ texto: 'Pedir de todas formas', valor: 'pedir', clase: 'a-btn-primario' }]),
+          ...llamar,
+          { texto: 'Mover el punto', valor: 'mover', clase: 'a-btn-suave' },
+        ],
+      });
+      if (r === 'mover') moverPunto();
+      return r === 'pedir';
+    }
+    const otra = otraQueAtiende(ui.origen || z);
+    const urlOtra = otra ? N.urlDelSitio(`taxicun/?e=${otra.id}`) : '';
+    const r = await modal(app, {
+      titulo: `Este punto está muy lejos de la zona de ${EM.NOMBRE}`,
+      texto: `Desde aquí no puedes pedir un taxi de ${EM.NOMBRE}. Mueve el punto de recogida dentro de la zona o llama a la central.`,
+      cuerpo: `<p class="a-zona-km" data-zona-km>${icono('pin', { tam: 16 })}<span>${esc(`A ${N.kmTexto(z.km)} del límite de la zona.`)}</span></p>`
+        + (otra && urlOtra ? `<p class="a-zona-otra" data-zona-otra>${icono('info', { tam: 16 })}<span>${esc(`Aquí te atiende ${otra.nombre} (${otra.pueblo}).`)}</span></p>` : ''),
+      icono: `<span class="a-zona-ico a-zona-ico-lejos">${icono('alerta', { tam: 30 })}</span>`,
+      clase: 'a-modal-zona',
+      acciones: [
+        { texto: 'Mover el punto', valor: 'mover', clase: 'a-btn-primario', icono: 'mapa' },
+        ...llamar,
+        ...(otra && urlOtra ? [{ texto: `Cambiar a ${otra.nombre}`, href: urlOtra, valor: 'otra', clase: 'a-btn-suave' }] : []),
+      ],
+    });
+    if (r === 'mover') moverPunto();
+    return false;
+  }
+
+  // «Mover el punto»: vuelve al inicio con el pin de la recogida.
+  function moverPunto() {
+    if (ui.modo === 'inicio') return;
+    ui.modo = 'inicio';
+    pintar();
+  }
+
   function pintarPunto(tipo, cargando) {
     const c = hoja.contenido;
     if (tipo === 'origen') {
       ponerTexto(c, '[data-origen-titulo]', cargando && ui.origen?.provisional ? 'Buscando dirección…' : ui.origen?.titulo || 'Punto en el mapa');
       ponerTexto(c, '[data-origen-detalle]', cargando ? '' : ui.origen?.detalle || '');
       revisarRecogida();
+      revisarZonaRecogida();
     } else {
       ponerTexto(c, '[data-destino-titulo]', ui.destinoProvisional?.titulo || 'Mueve el mapa');
       ponerTexto(c, '[data-destino-detalle]', cargando ? '' : ui.destinoProvisional?.detalle || '');
@@ -893,6 +983,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           </div>
           <div class="a-aviso-gps" data-aviso-gps hidden>${icono('info', { tam: 18 })}<span>${esc(EM.TEXTO_SIN_GPS)}</span></div>
           ${EM.LUGARES_SIN_RECOGIDA.length ? `<div class="a-aviso-gps a-aviso-recogida" data-aviso-recogida hidden role="status">${icono('alerta', { tam: 18 })}<span><span data-aviso-recogida-txt></span>${N.PARADERO ? ` <button type="button" class="a-btn-texto a-ir-paradero" data-ir-paradero>Ir al paradero</button>` : ''}</span></div>` : ''}
+          ${CON_ZONA ? `<div class="a-aviso-gps a-aviso-zona" data-aviso-zona hidden role="status">${icono('alerta', { tam: 18 })}<span><span data-aviso-zona-txt></span> <button type="button" class="a-btn-texto" data-zona-opciones>Ver opciones</button></span></div>` : ''}
           <div class="a-campo-destino">
             <button type="button" class="a-campo-destino-btn" data-buscar>${icono('buscar', { tam: 22, grosor: 2.4 })}<span>¿A dónde vas?</span></button>
             ${REAL ? '' : `<button type="button" class="a-campo-prog" data-programar aria-label="Programar un viaje">${icono('calendario', { tam: 18 })}<span>Programar</span></button>`}
@@ -927,6 +1018,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           if (t.closest('[data-buscar]')) return abrirBuscador();
           if (t.closest('[data-programar]')) return ctx().programarViaje();
           if (t.closest('[data-ir-paradero]') && N.PARADERO) return centrarVisible(N.PARADERO, 17, ui.pinY);
+          if (t.closest('[data-zona-opciones]')) return hojaFueraDeZona(p.zonaDe(ui.origen), { soloInfo: true });
           if (t.closest('[data-promos]')) return abrirPromociones(ctx());
           if (t.closest('[data-ver-programados]')) return abrirProgramados(ctx());
           const g = t.closest('[data-guardar]');
@@ -1013,6 +1105,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <span class="a-tarifa-txt"><small data-tarifa-titulo>${TARIFA_EJEMPLO ? 'Tarifa estimada' : 'Valor del viaje'}</small><strong data-total class="a-esqueleto-txt">$——</strong>${TARIFA_EJEMPLO ? `<span class="a-chip-ejemplo">${icono('info', { tam: 13 })} Tarifa de ejemplo</span>` : '<span class="a-chip-ejemplo a-chip-tarifa" data-chip-tarifa hidden></span>'}</span>
           <span class="a-tarifa-taxi" aria-hidden="true"><svg viewBox="0 0 40 64" width="30" height="48">${N.svgTaxi ? N.svgTaxi({ tamano: 48 }).replace(/<svg[^>]*>|<\/svg>/g, '') : ''}</svg><small>${esc(EM.VEHICULO)}<br>4 puestos</small></span>
         </div>
+        ${CON_ZONA ? `<div class="a-aviso-gps a-aviso-zona" data-zona-confirmar hidden role="status">${icono('alerta', { tam: 18 })}<span><span data-aviso-zona-txt></span></span></div>` : ''}
         <button type="button" class="a-ver-detalle" data-detalle aria-expanded="false">${icono('lista', { tam: 16 })} Ver detalle de la tarifa ${icono('abajo', { tam: 16 })}</button>
         <div class="a-detalle" data-detalle-lista hidden></div>
         ${REAL
@@ -1492,15 +1585,19 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     total.classList.remove('a-cambia');
     void total.offsetWidth;
     total.classList.add('a-cambia');
-    // Con tarifas oficiales: oficial (precio cerrado del decreto), estimada o de referencia.
-    const oficial = !TARIFA_EJEMPLO && tarifa.tipo === 'oficial';
+    // Con tarifas oficiales: oficial (precio cerrado del decreto), estimada o de referencia. Fase 2:
+    // 'fijada' (precio a otro municipio que la cooperativa fijó en el panel) también es precio cerrado.
+    const cerrado = !TARIFA_EJEMPLO && (tarifa.tipo === 'oficial' || tarifa.tipo === 'fijada');
     const chip = $(c, '[data-chip-tarifa]');
     if (chip) {
-      chip.innerHTML = `${icono(oficial ? 'check' : 'info', { tam: 13, grosor: oficial ? 3 : 2 })} ${esc(tarifa.etiqueta || N.etiquetaTarifa(tarifa))}`;
+      chip.innerHTML = `${icono(cerrado ? 'check' : 'info', { tam: 13, grosor: cerrado ? 3 : 2 })} ${esc(tarifa.etiqueta || N.etiquetaTarifa(tarifa))}`;
       chip.dataset.tipo = tarifa.tipo || '';
       chip.hidden = false;
     }
-    const tipoRuta = !tarifa.rutaFija ? '' : TARIFA_EJEMPLO || tarifa.tipo !== 'referencia' ? ' · ruta con tarifa fija' : ' · precio de referencia';
+    const tipoRuta = !tarifa.rutaFija ? ''
+      : TARIFA_EJEMPLO ? ' · ruta con tarifa fija'
+        : tarifa.tipo === 'referencia' ? ' · precio de referencia'
+          : tarifa.tipo === 'fijada' ? ` · precio fijado por ${EM.NOMBRE}` : ' · ruta con tarifa fija';
     ponerTexto(c, '[data-ruta-sub]', rt ? `${N.kmTexto(rt.km)} · ${N.minutosTexto(rt.min)}${rt.aproximada ? ' (aprox.)' : ''}${tipoRuta}` : 'Destino a convenir con el conductor');
     const minimaTexto = TARIFA_EJEMPLO ? ' (mínima de ejemplo)' : EM.TARIFAS_OFICIALES ? ` (mínima oficial ${N.pesos(N.TARIFAS.minimaUrbana)})` : '';
     ponerTexto(c, '[data-ruta-datos]', rt ? `${N.kmTexto(rt.km)} · ${N.minutosTexto(rt.min)} de viaje · llegas a las ${N.horaTexto((ui.programar && ui.fecha ? ui.fecha.getTime() : Date.now()) + rt.min * 60000 + 5 * 60000)}` : `El conductor te cobra según el recorrido${minimaTexto}.`);
@@ -1509,10 +1606,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const urlFuente = N.urlDecreto(fuente?.url);
     const pieDetalle = TARIFA_EJEMPLO
       ? `Tarifas de ejemplo: la ${EM.TIPO} confirmará las oficiales. Con taxímetro o ruta fija, el valor final puede variar.`
-      : [...(tarifa.notas || []), oficial ? '' : 'El valor final lo confirma el conductor.'].filter(Boolean).map(esc).join(' ')
+      : [...(tarifa.notas || []), cerrado ? '' : 'El valor final lo confirma el conductor.'].filter(Boolean).map(esc).join(' ')
         + (urlFuente ? ` <a href="${esc(urlFuente)}" target="_blank" rel="noopener" data-enlace-decreto>Ver el ${esc(fuente.acto)}</a>` : '');
     $(c, '[data-detalle-lista]').innerHTML = `<ul>${tarifa.detalle.map((d) => `<li class="${d.valor < 0 ? 'a-descuento' : ''}"><span>${esc(d.concepto)}</span><b>${d.valor < 0 ? '−' : ''}${N.pesos(Math.abs(d.valor))}</b></li>`).join('')}
-      <li class="a-detalle-total"><span>${oficial && !tarifa.descuento ? 'Total' : 'Total estimado'}</span><b>${N.pesos(tarifa.total)}</b></li></ul>
+      <li class="a-detalle-total"><span>${cerrado && !tarifa.descuento ? 'Total' : 'Total estimado'}</span><b>${N.pesos(tarifa.total)}</b></li></ul>
       <p>${icono('info', { tam: 14 })} <span>${TARIFA_EJEMPLO ? esc(pieDetalle) : pieDetalle}</span></p>`;
     const info = $(c, '[data-programar-info]');
     if (info) {
@@ -1527,10 +1624,26 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     }
     ponerTexto(hoja.pie, '[data-total-boton]', N.pesos(tarifa.total));
     $(hoja.pie, '[data-pedir]')?.removeAttribute('disabled');
+    marcarZonaConfirmar();
     if (rt?.coords && ui.destino) ruta.poner(rt.coords, { color: '#121212' });
     else ruta.quitar();
     hoja.fijar(hoja.estado);
     encuadrar([ui.origen, ui.destino]);
+  }
+
+  // «Confirma tu viaje» con la recogida fuera de la zona: el aviso y, muy lejos, «Pedir taxi» queda
+  // desactivado (aria-disabled: al tocarlo se abre la hoja con las opciones).
+  function marcarZonaConfirmar() {
+    if (!CON_ZONA) return;
+    const z = p.zonaDe(ui.origen);
+    pintarAvisoZona($(hoja.contenido, '[data-zona-confirmar]'), z);
+    const b = $(hoja.pie, '[data-pedir]');
+    if (!b) return;
+    const lejos = z?.estado === 'lejos';
+    b.classList.toggle('a-btn-bloqueado', lejos);
+    if (lejos) b.setAttribute('aria-disabled', 'true');
+    else b.removeAttribute('aria-disabled');
+    ponerTexto(hoja.pie, '[data-pedir-txt]', lejos ? 'Fuera de la zona' : ui.programar ? 'Programar viaje' : 'Pedir taxi');
   }
 
   async function pedir() {
@@ -1539,6 +1652,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       else mostrarBienvenida(app, { N, alTerminar: alRegistrarse });
       return;
     }
+    // Fuera de la zona de servicio (fase 2): cerca del borde se pregunta; muy lejos no se pide.
+    const zona = p.zonaDe(ui.origen);
+    if (zona && zona.estado !== 'dentro' && !(await hojaFueraDeZona(zona))) return;
     const b = $(hoja.pie, '[data-pedir]');
     b.disabled = true;
     b.classList.add('a-ocupado');

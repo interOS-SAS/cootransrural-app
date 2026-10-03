@@ -126,6 +126,8 @@
 .a-sol-ruta > div > span:last-child { min-width: 0; }
 .a-sol-ruta small { display: block; font: 800 10.5px var(--a-fb); text-transform: uppercase; letter-spacing: .06em; color: var(--a-texto-2); }
 .a-sol-ruta strong { display: block; font: 700 14.5px/1.3 var(--a-fb); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Fase 2 del panel: la recogida está fuera de la zona de servicio (§5.7). */
+.a-chip-zona { display: inline-flex; gap: 5px; align-items: center; margin-top: 5px; padding: 4px 9px; border-radius: 999px; font: 800 11.5px/1.2 var(--a-fb); font-style: normal; background: var(--a-rojo-claro); color: var(--a-rojo-txt); }
 .a-sol-nota { display: flex; gap: 8px; align-items: center; margin: 0; padding: 10px 14px; border-radius: 16px; background: rgba(255, 255, 255, .55); font-weight: 600; font-size: 14px; }
 .a-hoja-contenido .a-sol-nota { background: var(--a-ambar-claro); margin-top: 10px; }
 .a-sol-acciones { flex: none; padding: 12px 18px calc(16px + var(--a-inf)); display: flex; flex-direction: column; gap: 10px; }
@@ -337,7 +339,9 @@
 .a-revision-taxi small { display: block; font-size: 12.5px; color: var(--a-texto-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .a-revision-taxi .a-placa { flex: none; }
 .a-revision-chip { display: inline-block; margin-bottom: 4px; padding: 4px 9px; border-radius: 999px; font: 800 11px/1.2 var(--a-fb); font-style: normal; text-transform: uppercase; letter-spacing: .06em; background: var(--a-ambar-claro); color: var(--a-ambar-osc); }
-.a-revision-suspendido .a-revision-chip { background: var(--a-rojo-claro); color: var(--a-rojo-txt); }
+.a-revision-suspendido .a-revision-chip, .a-revision-rechazado .a-revision-chip, .a-revision-retirado .a-revision-chip { background: var(--a-rojo-claro); color: var(--a-rojo-txt); }
+/* El motivo que escribió la cooperativa (texto plano). */
+.a-revision-motivo { margin: -4px 0 4px; padding: 10px 12px; border-radius: 14px; background: var(--a-gris); font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
 .a-revision .a-btn + .a-btn { margin-top: -4px; }
 
 /* Turno: la píldora espera a la central */

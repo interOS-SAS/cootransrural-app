@@ -25,8 +25,17 @@
 //   · rutas a otros municipios (RUTAS) → precio de referencia por confirmar ('referencia').
 // El decreto fija precios desde el centro: si la recogida no está en el casco urbano (de una
 // vereda a otra, por ejemplo), el valor es estimado y la tarifa lo dice.
-import { distanciaKm, redondear, horaBogota, pesos } from './util.js';
+//
+// Fase 2 del panel:
+//   · una ruta con «fijada: true» (el precio a otro municipio lo puso la cooperativa en el panel) es
+//     'fijada': «Precio fijado por <cooperativa>», sin «por confirmar»;
+//   · festivos (§5.6): el recargo dominical se cobra también en los festivos de Colombia, salvo que
+//     TARIFAS.recargoDominicalEnFestivos sea false (lo define cada decreto). esFestivo está en util.js.
+import { distanciaKm, redondear, horaBogota, pesos, dentroDeAnillo, distanciaAlBordeKm } from './util.js';
 import { urlDecreto } from './enlaces.js';
+
+// Festivos de Colombia (Ley 51 de 1983), los mismos que usa el cálculo.
+export { esFestivo, festivosDe } from './util.js';
 
 // Lo que falte en TARIFAS de la ficha se completa con estos valores de EJEMPLO (nunca NaN).
 // Son los mismos de herramientas/generar-empresas.py y crear-ficha.py.
@@ -71,37 +80,6 @@ const RADIO_MUNICIPIO = 9;
 
 const ubicado = (d) => Number.isFinite(d?.lat) && Number.isFinite(d?.lng);
 const normalizar = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
-
-/* ---------------- casco urbano ---------------- */
-
-function dentroDeAnillo(p, anillo) {
-  let dentro = false;
-  for (let i = 0, j = anillo.length - 1; i < anillo.length; j = i++) {
-    const [yi, xi] = anillo[i];
-    const [yj, xj] = anillo[j];
-    if ((yi > p.lat) !== (yj > p.lat) && p.lng < ((xj - xi) * (p.lat - yi)) / (yj - yi) + xi) dentro = !dentro;
-  }
-  return dentro;
-}
-
-// Distancia (km) de p al borde de un anillo, en un plano local (vale para pocos km).
-function distanciaAlBorde(p, anillo) {
-  const kx = 111.32 * Math.cos((p.lat * Math.PI) / 180);
-  const ky = 110.57;
-  let min = Infinity;
-  for (let i = 0, j = anillo.length - 1; i < anillo.length; j = i++) {
-    const ax = (anillo[j][1] - p.lng) * kx;
-    const ay = (anillo[j][0] - p.lat) * ky;
-    const bx = (anillo[i][1] - p.lng) * kx;
-    const by = (anillo[i][0] - p.lat) * ky;
-    const dx = bx - ax;
-    const dy = by - ay;
-    const l = dx * dx + dy * dy;
-    const t = l ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / l)) : 0;
-    min = Math.min(min, Math.hypot(ax + t * dx, ay + t * dy));
-  }
-  return min;
-}
 
 /* ---------------- tabla oficial (sin ficha) ---------------- */
 
@@ -150,11 +128,13 @@ export function crearTarifador(ficha) {
 
   const POR_ID = new Map(DESTINOS_TARIFA.map((d) => [d.id, d]));
   const tipoEmpresa = () => (EMPRESA?.tipo === 'empresa' ? 'empresa' : 'cooperativa');
+  // Quién fija los precios de las rutas «fijada» (texto plano de la ficha; las pantallas lo escapan).
+  const NOMBRE = String(EMPRESA?.nombreCorto || EMPRESA?.nombre || '').trim() || `la ${tipoEmpresa()}`;
 
   // ¿El punto está en el casco urbano? margenKm: tolerancia por el error del GPS en el borde.
   function enCascoUrbano(p, margenKm = 0.08) {
     if (!p || !Number.isFinite(p.lat) || !Number.isFinite(p.lng) || !CASCO_URBANO.length) return false;
-    return CASCO_URBANO.some((a) => dentroDeAnillo(p, a) || (margenKm > 0 && distanciaAlBorde(p, a) <= margenKm));
+    return CASCO_URBANO.some((a) => dentroDeAnillo(p, a) || (margenKm > 0 && distanciaAlBordeKm(p, a) <= margenKm));
   }
 
   // Destino de la tabla oficial que corresponde a un punto { lat, lng, titulo, idTarifa }:
@@ -220,12 +200,14 @@ export function crearTarifador(ficha) {
   /* ---------------- etiquetas ---------------- */
 
   // Lo que dice el chip de la tarifa: «Tarifa oficial · Decreto 05 de 2026», «Tarifa estimada»,
-  // «Precio de referencia» o, en las fichas de ejemplo, «Tarifa de ejemplo».
+  // «Precio de referencia», «Precio fijado por Cootransrural» o, en las fichas de ejemplo,
+  // «Tarifa de ejemplo».
   function etiquetaTarifa(t) {
     if (TARIFAS.ejemplo) return 'Tarifa de ejemplo';
     const tipo = typeof t === 'string' ? t : t?.tipo;
     if (tipo === 'oficial') return FUENTE_TARIFAS ? `Tarifa oficial · ${FUENTE_TARIFAS.acto}` : 'Tarifa oficial';
     if (tipo === 'referencia') return 'Precio de referencia';
+    if (tipo === 'fijada') return `Precio fijado por ${NOMBRE}`;
     return 'Tarifa estimada';
   }
 
@@ -247,8 +229,8 @@ export function crearTarifador(ficha) {
   /* ---------------- cálculo ---------------- */
 
   // Devuelve el detalle de la tarifa. `km` es la distancia por vía (si se conoce).
-  // Además del total y el detalle: tipo ('oficial' | 'estimada' | 'referencia'), etiqueta (para
-  // el chip), fuente (la del decreto, si es oficial), destinoOficial y notas (por qué es así).
+  // Además del total y el detalle: tipo ('oficial' | 'estimada' | 'referencia' | 'fijada'), etiqueta
+  // (para el chip), fuente (la del decreto, si es oficial), destinoOficial y notas (por qué es así).
   function calcularTarifa({ origen, destino, km, fecha = new Date(), programado = false, viajesPrevios = 0 }) {
     const detalle = [];
     const notas = [];
@@ -266,7 +248,15 @@ export function crearTarifador(ficha) {
       return valor;
     };
 
-    if (!TARIFAS_OFICIALES) {
+    if (ruta && ruta.fijada === true) {
+      // Precio a otro municipio que la cooperativa fijó en el panel (fase 2): no lo fija el decreto.
+      base = ruta.valor;
+      tipo = 'fijada';
+      detalle.push({ concepto: `Precio fijado por ${NOMBRE}: ${pueblo} → ${ruta.destino}`, valor: ruta.valor });
+      notas.push(TARIFAS_OFICIALES
+        ? `El ${acto} no fija viajes a otros municipios: este precio lo fija ${NOMBRE}.`
+        : `Este precio lo fija ${NOMBRE}.`);
+    } else if (!TARIFAS_OFICIALES) {
       // Tarifas de ejemplo (o sin tabla oficial): ruta fija o recorrido, como siempre.
       if (ruta) {
         base = ruta.valor;
@@ -306,16 +296,18 @@ export function crearTarifador(ficha) {
       notas.push(`Este destino no está en la tabla del ${acto}: el valor se estima por la distancia.`);
     }
 
-    const { hora, domingo } = horaBogota(fecha);
+    const { hora, domingo, festivo } = horaBogota(fecha);
     let recargos = 0;
     if (TARIFAS.recargoNocturno > 0 && (hora >= TARIFAS.nocheDesde || hora < TARIFAS.nocheHasta)) {
       recargos += TARIFAS.recargoNocturno;
       detalle.push({ concepto: 'Recargo nocturno', valor: TARIFAS.recargoNocturno });
     }
+    // El dominical vale también en los festivos (§5.6), salvo que el decreto diga otra cosa.
+    const festivoConRecargo = festivo && TARIFAS.recargoDominicalEnFestivos !== false;
     // Algunos decretos (p. ej. Chía) fijan un solo recargo, no acumulable: noche o domingo.
-    if (domingo && TARIFAS.recargoDominical > 0 && !(TARIFAS.recargoUnico && recargos > 0)) {
+    if ((domingo || festivoConRecargo) && TARIFAS.recargoDominical > 0 && !(TARIFAS.recargoUnico && recargos > 0)) {
       recargos += TARIFAS.recargoDominical;
-      detalle.push({ concepto: 'Recargo dominical', valor: TARIFAS.recargoDominical });
+      detalle.push({ concepto: domingo ? 'Recargo dominical' : 'Recargo festivo', valor: TARIFAS.recargoDominical });
     }
     if (TARIFAS_OFICIALES && !(TARIFAS.recargoNocturno > 0) && !(TARIFAS.recargoDominical > 0)) {
       notas.push(`Sin recargo nocturno ni dominical: el ${acto} no los fija (por confirmar con la ${tipoEmpresa()}).`);

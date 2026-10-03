@@ -107,6 +107,12 @@ export function fidelidad(completados) {
   return f && Number.isFinite(f.meta) && f.meta > 0 && Number.isFinite(f.completados) ? f : null;
 }
 
+// Zona de servicio (fase 2 del panel, §5.7): { poligonos, avisarHastaKm, texto } o null. Solo la traen
+// las cooperativas con configuración publicada en el panel; las 76 demos no.
+export const ZONA_SERVICIO = N.ZONA_SERVICIO || null;
+// Versión de la configuración publicada ({ version, publicada, fuente }) o null (archivo de git).
+export const VERSION_CONFIG = N.VERSION_CONFIG || null;
+
 // ¿Las tarifas de la ficha son de ejemplo (la cooperativa aún no confirma las oficiales)?
 export const TARIFAS_EJEMPLO = Boolean(N.TARIFAS?.ejemplo);
 // ¿Tiene tabla oficial de precios (Cootransrural: Decreto 05 de 2026 de El Rosal)?

@@ -5,6 +5,9 @@ import { ilustracionVacia, sellosFidelidad } from './ilustraciones.js';
 import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio, bloqueCuenta, enlacePrivacidad, bloqueSeguridad } from './ajustes-comunes.js';
 import * as EM from './empresa.js';
 
+// «6 de octubre de 2026» (hora de Bogotá): desde cuándo rigen las tarifas publicadas en el panel.
+const FECHA_LARGA = new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Bogota' });
+
 const ESTADOS = {
   finalizado: { texto: 'Finalizado', clase: 'a-ok' },
   cancelado: { texto: 'Cancelado', clase: 'a-mal' },
@@ -125,7 +128,11 @@ export function abrirTarifas({ N, app, pedirA = null, puedePedir = false }) {
   ].filter(Boolean);
   const notasReglas = oficiales ? [T.notaRecargos, T.notaEstimacion].filter(Boolean) : [];
   const rutas = (N.RUTAS || []).filter((r) => r && r.destino && hay(r.valor));
-  const referencia = oficiales && T.rutasReferencia;
+  // Fase 2: las rutas con «fijada» las puso la cooperativa en el panel («Precio fijado por …»); las
+  // demás, con tabla oficial, siguen siendo precio de referencia por confirmar.
+  const fijada = (r) => !T.ejemplo && r.fijada === true;
+  const referencia = oficiales && T.rutasReferencia && rutas.some((r) => !fijada(r));
+  const todasFijadas = rutas.length > 0 && rutas.every(fijada);
   const ofertas = [
     !EM.MODO_REAL && hay(T.horasAnticipacion) && hay(T.descuentoProgramado) && `<div class="a-oferta">${icono('calendario', { tam: 22 })}<span><strong>Programa con ${T.horasAnticipacion} h: ${Math.round(T.descuentoProgramado * 100)} % menos</strong><small>Se aplica solo al programar con anticipación.</small></span></div>`,
     // En modo real no hay tarjeta de viajes (ver EM.fidelidad).
@@ -140,9 +147,12 @@ export function abrirTarifas({ N, app, pedirA = null, puedePedir = false }) {
       : `<div class="a-aviso-ejemplo">${icono('info', { tam: 20 })}<span><strong>Valores de ejemplo</strong><small>${esc(EM.NOMBRE)} debe confirmar las tarifas oficiales antes de publicar la app.</small></span></div>`;
   const zonas = oficiales ? N.zonasTarifa() : [];
   const total = zonas.reduce((n, z) => n + z.destinos.length, 0);
+  // Fase 2: desde cuándo rige la versión publicada en el panel (la ficha armada trae VERSION_CONFIG).
+  const vigencia = EM.VERSION_CONFIG?.publicada ? `Vigentes desde el ${FECHA_LARGA.format(new Date(EM.VERSION_CONFIG.publicada))}.` : '';
   const avisoOficial = !oficiales ? '' : `<div class="a-aviso-ejemplo a-aviso-oficial" data-aviso-oficial>${icono('check', { tam: 20, grosor: 3 })}<span>
       <strong>${esc(fuente ? `Tarifas oficiales · ${fuente.acto}` : 'Tarifas oficiales')}</strong>
       <small>${esc(EM.unir([fuente?.entidad, fuente?.fecha], ', '))}${fuente ? '. ' : ''}${esc(`Precio cerrado desde ${N.ORIGEN_OFICIAL} a ${total} destinos en ${zonas.length} zonas.`)}</small>
+      ${vigencia ? `<small data-vigencia>${esc(vigencia)}</small>` : ''}
       ${N.urlDecreto(fuente?.url) ? `<a class="a-enlace-decreto" href="${esc(N.urlDecreto(fuente.url))}" target="_blank" rel="noopener" data-enlace-decreto>${icono('externo', { tam: 15 })} Ver el ${esc(fuente.acto)}</a>` : ''}
     </span></div>`;
   const fila = (d) => {
@@ -173,12 +183,12 @@ export function abrirTarifas({ N, app, pedirA = null, puedePedir = false }) {
           ${notasReglas.map((t) => `<p class="a-ayuda-txt">${icono('info', { tam: 14 })}<span>${esc(t)}</span></p>`).join('')}
         </section>` : ''}
         ${tablaOficial}
-        ${rutas.length ? `<section class="a-grupo"><h3>${esc(referencia ? 'Otros municipios: precio de referencia' : `Rutas con tarifa fija desde ${EM.PUEBLO}`)}</h3>
+        ${rutas.length ? `<section class="a-grupo"><h3>${esc(todasFijadas ? `Otros municipios: precios de ${EM.NOMBRE}` : referencia ? 'Otros municipios: precio de referencia' : `Rutas con tarifa fija desde ${EM.PUEBLO}`)}</h3>
           ${referencia && T.notaRutas ? `<p class="a-ayuda-txt a-nota-rutas">${icono('alerta', { tam: 14 })}<span>${esc(T.notaRutas)}</span></p>` : ''}
           <table class="a-tabla" data-tabla-rutas>
             <caption class="a-solo-lector">${referencia ? 'Precios de referencia a otros municipios, por confirmar' : `Rutas intermunicipales con tarifa fija${ejemplo ? ' (valores de ejemplo)' : ''}`}</caption>
             <thead><tr><th scope="col">Destino</th><th scope="col">Distancia</th><th scope="col">Tiempo</th><th scope="col">Valor</th></tr></thead>
-            <tbody>${rutas.map((r) => `<tr><th scope="row">${esc(r.destino)}</th><td>${hay(r.km) ? `${r.km} km` : '—'}</td><td>${hay(r.min) ? esc(N.minutosTexto(r.min)) : '—'}</td><td><b>${N.pesos(r.valor)}</b></td></tr>`).join('')}</tbody>
+            <tbody>${rutas.map((r) => `<tr${fijada(r) ? ' data-fijada' : ''}><th scope="row">${esc(r.destino)}${fijada(r) ? `<small>${esc(`Precio fijado por ${EM.NOMBRE}`)}</small>` : ''}</th><td>${hay(r.km) ? `${r.km} km` : '—'}</td><td>${hay(r.min) ? esc(N.minutosTexto(r.min)) : '—'}</td><td><b>${N.pesos(r.valor)}</b></td></tr>`).join('')}</tbody>
           </table>
         </section>` : ''}
         ${ofertas.length ? `<section class="a-grupo"><h3>Ofertas de la ${EM.TIPO}</h3>${ofertas.join('')}</section>` : ''}`;

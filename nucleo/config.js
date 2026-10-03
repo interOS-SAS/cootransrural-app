@@ -1,6 +1,8 @@
 // Configuración general de la app de taxis (sirve para varias cooperativas).
 // Todo lo que cambie de un despliegue a otro (relés, sala, tiempos) vive aquí.
 import { urlInterna } from './enlaces.js';
+import { anillosDeZona } from './util.js';
+import { MODO_REAL as REAL, appOculta, alCambiarVisibilidad } from './plataforma.js';
 
 // Cooperativa activa. Cada página la fija con window.CT_EMPRESA antes de cargar
 // los módulos (o con ?e=id en la URL); sin nada, es Cootransrural. Sus datos
@@ -16,10 +18,13 @@ function idPedido() {
 
 async function cargarFicha(id) {
   // Hasta 3 intentos: en datos móviles la primera petición a veces falla.
+  // Modo real: la ficha de una cooperativa con capa la sirve la API (fase 2 del panel, sin caché);
+  // se revalida siempre para que la recarga por el mensaje «config» traiga la versión nueva.
+  const opciones = REAL ? { cache: 'no-cache' } : undefined;
   let error;
   for (let i = 0; i < 3; i++) {
     try {
-      const r = await fetch(new URL(`empresas/${id}/ficha.json`, RAIZ));
+      const r = await fetch(new URL(`empresas/${id}/ficha.json`, RAIZ), opciones);
       if (r.status === 404) throw Object.assign(new Error(`No existe la cooperativa «${id}»`), { definitivo: true });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       return await r.json();
@@ -54,6 +59,46 @@ export const ZONA = ficha.ZONA;
 // app propone cuando no hay GPS; sin paradero, el centro del pueblo.
 export const PARADERO = ficha.PARADERO && Number.isFinite(ficha.PARADERO.lat) && Number.isFinite(ficha.PARADERO.lng) ? ficha.PARADERO : null;
 export const PUNTO_RECOGIDA = PARADERO ? { lat: PARADERO.lat, lng: PARADERO.lng } : CENTRO;
+
+/* ---------------- Fase 2 del panel: lo que la API agrega a la ficha ----------------
+ * Las cooperativas con capa publicada en el panel reciben la ficha armada por la API (archivo + capa,
+ * §5.2 y §5.3 del diseño del panel). Las 76 demos siguen con su archivo: sin estas claves, todo igual.
+ * Todo lo que viene de la ficha es TEXTO (S30): se pinta con textContent o escapado. */
+
+// Texto plano de la ficha: sin caracteres de control ni de dirección, espacios simples y con tope.
+export function textoPlano(t, max = 300) {
+  if (typeof t !== 'string') return '';
+  return t.replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2028-\u202e\u2066-\u2069\ufeff]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
+}
+
+// Zona de servicio (§5.7): { poligonos: [anillo, …], avisarHastaKm, texto } o null. Fuera de ella se
+// avisa hasta avisarHastaKm del borde (por defecto 2; 0 = no deja pedir afuera; 99 = solo avisa) y más
+// lejos no se deja pedir. Sin zona (las 76 demos) no se revisa nada.
+function zonaServicio(z) {
+  const poligonos = anillosDeZona(z && typeof z === 'object' && !Array.isArray(z) ? z : null);
+  if (!poligonos.length) return null;
+  const km = Number(z.avisarHastaKm);
+  return Object.freeze({
+    poligonos,
+    avisarHastaKm: z.avisarHastaKm != null && Number.isFinite(km) && km >= 0 ? Math.min(km, 99) : 2,
+    texto: textoPlano(z.texto, 160),
+  });
+}
+export const ZONA_SERVICIO = zonaServicio(ficha.ZONA_SERVICIO);
+
+// Versión de la configuración publicada (la pone la API): { version, publicada, fuente } o null (archivo).
+// version: entero ≥ 1; publicada: fecha ISO de entrada en vigencia (o ''); fuente: { acto, entidad, fecha }.
+function versionConfig(v) {
+  if (!v || typeof v !== 'object' || !Number.isInteger(v.version) || v.version < 1) return null;
+  const fecha = typeof v.publicada === 'string' && !Number.isNaN(Date.parse(v.publicada)) ? v.publicada : '';
+  const f = v.fuente && typeof v.fuente === 'object' ? v.fuente : {};
+  return Object.freeze({
+    version: v.version,
+    publicada: fecha,
+    fuente: Object.freeze({ acto: textoPlano(f.acto, 120), entidad: textoPlano(f.entidad, 120), fecha: textoPlano(f.fecha, 60) }),
+  });
+}
+export const VERSION_CONFIG = versionConfig(ficha.VERSION_CONFIG);
 
 // Quién desarrolla la app (pie de página y franja de propuesta).
 export const PROVEEDOR = { nombre: 'interOS', web: 'https://interos.com.co' };
@@ -170,4 +215,107 @@ export function urlApp(rol = 'pasajero', extra = {}) {
 // Cambiar de municipio dentro de TaxiCun (muestra la lista de cooperativas).
 export function urlElegirMunicipio(rol = 'pasajero') {
   return new URL(rol === 'conductor' ? 'taxicun/conductor/?elegir=1' : 'taxicun/?elegir=1', RAIZ).href;
+}
+
+/* ---------------- Recarga con el mensaje «config» (fase 2 del panel) ----------------
+ * Cuando entra en vigencia una versión nueva de la configuración de la cooperativa, la central manda por
+ * el tiempo real { tipo: 'config', datos: { empresa, version } } (§6.5 del diseño del panel). La app
+ * recarga para leer la ficha nueva:
+ *   - con un viaje activo (ocupado()), espera a que termine;
+ *   - sin viaje, recarga en silencio: de una vez si la app está en segundo plano, o cuando la persona
+ *     lleva QUIETO_MS sin tocar la pantalla (así no se le borra lo que está escribiendo).
+ * Solo en modo real (BusServidor): en la demo los relés MQTT son públicos y cualquiera podría mandar
+ * un «config». Nunca recarga dos veces por la misma versión (si la ficha que llega sigue siendo la
+ * vieja, p. ej. mientras nginx aún sirve el archivo de git, no entra en un ciclo de recargas). */
+const QUIETO_MS = 60000;
+const REVISAR_MS = 5000;
+const CLAVE_RECARGAS = 'tc.config.recargas'; // localStorage { <id>: { version, t } }
+const VIDA_RECARGA_MS = 24 * 3600 * 1000;
+
+function recargasHechas() {
+  try {
+    const r = JSON.parse(globalThis.localStorage?.getItem(CLAVE_RECARGAS) || '{}');
+    return r && typeof r === 'object' && !Array.isArray(r) ? r : {};
+  } catch {
+    return {};
+  }
+}
+
+function yaRecargada(version) {
+  const r = recargasHechas()[ID_EMPRESA];
+  return Boolean(r) && Number(r.version) >= version && Date.now() - Number(r.t || 0) < VIDA_RECARGA_MS;
+}
+
+function anotarRecarga(version) {
+  try {
+    const r = recargasHechas();
+    for (const [id, x] of Object.entries(r)) if (!(Date.now() - Number(x?.t || 0) < VIDA_RECARGA_MS)) delete r[id];
+    r[ID_EMPRESA] = { version, t: Date.now() };
+    globalThis.localStorage?.setItem(CLAVE_RECARGAS, JSON.stringify(r));
+  } catch {
+    /* sin almacenamiento: igual se recarga una vez */
+  }
+}
+
+// Versión que anuncia un mensaje «config» para ESTA cooperativa, o 0 si no aplica.
+export function versionAnunciada(datos) {
+  if (!datos || typeof datos !== 'object' || datos.empresa !== ID_EMPRESA) return 0;
+  const v = Number(datos.version);
+  return Number.isInteger(v) && v >= 1 && v <= 1e9 ? v : 0;
+}
+
+// bus: el del controlador (solo cuenta si es el del servidor). ocupado(): ¿hay un viaje activo?
+// emisor: el controlador (su evento 'cambio' vuelve a revisar, p. ej. al terminar el viaje).
+// recargar: para las pruebas (por defecto, location.reload). Devuelve cómo dejar de vigilar.
+export function vigilarConfig(bus, { ocupado = () => false, emisor = null, recargar = () => globalThis.location?.reload() } = {}) {
+  if (!bus || bus.real !== true || typeof bus.on !== 'function') return () => {};
+  const actual = VERSION_CONFIG?.version || 0;
+  let pendiente = 0;
+  let reloj = null;
+  let hecha = false;
+  let ultimoToque = Date.now();
+  const tocar = () => {
+    ultimoToque = Date.now();
+  };
+  const eventos = ['pointerdown', 'keydown', 'touchstart', 'wheel'];
+  for (const e of eventos) globalThis.document?.addEventListener(e, tocar, { capture: true, passive: true });
+  const revisar = () => {
+    clearTimeout(reloj);
+    reloj = null;
+    if (!pendiente || hecha) return;
+    let enUso = true;
+    try {
+      enUso = Boolean(ocupado());
+    } catch {
+      enUso = true;
+    }
+    if (!enUso && (appOculta() || Date.now() - ultimoToque >= QUIETO_MS)) {
+      hecha = true;
+      anotarRecarga(pendiente);
+      recargar();
+      return;
+    }
+    // Con la app oculta no hace falta el reloj: al ocultarse o al cambiar el viaje se revisa de nuevo.
+    if (!appOculta()) reloj = setTimeout(revisar, REVISAR_MS);
+  };
+  const quitarBus = bus.on('config', (datos) => {
+    const v = versionAnunciada(datos);
+    if (!v || v <= actual || v <= pendiente || yaRecargada(v)) return;
+    pendiente = v;
+    revisar();
+  });
+  const quitarVisibilidad = alCambiarVisibilidad((oculta) => {
+    if (pendiente) revisar();
+    else if (oculta) clearTimeout(reloj);
+  });
+  const quitarCambio = emisor?.on?.('cambio', () => {
+    if (pendiente && !reloj) revisar();
+  });
+  return () => {
+    clearTimeout(reloj);
+    quitarBus?.();
+    quitarVisibilidad?.();
+    quitarCambio?.();
+    for (const e of eventos) globalThis.document?.removeEventListener(e, tocar, { capture: true });
+  };
 }

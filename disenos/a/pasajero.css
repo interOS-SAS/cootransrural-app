@@ -471,6 +471,18 @@ html[data-modo="real"] .a-banner-puerta { animation-iteration-count: 1, 3; }
 .a-chip-tarifa[data-tipo="oficial"] { background: var(--a-tinta); color: #fff; }
 .a-aviso-recogida { background: #FFE4E1; }
 .a-aviso-recogida > svg { color: #B42318; flex: none; }
+/* Zona de servicio (fase 2 del panel, §5.7): cerca del borde en ámbar; muy lejos en rojo. */
+.a-aviso-zona > svg { color: #8A5A00; flex: none; }
+.a-aviso-zona[data-estado="lejos"] { background: #FFE4E1; }
+.a-aviso-zona[data-estado="lejos"] > svg { color: #B42318; }
+.a-modal-zona { text-align: center; }
+.a-modal-zona .a-modal-acciones { flex-direction: column; }
+.a-modal-zona .a-modal-acciones .a-btn { width: 100%; flex: none; }
+.a-zona-ico { width: 72px; height: 72px; border-radius: 50%; background: var(--a-ambar-claro); color: #8A5A00; display: grid; place-items: center; box-shadow: 0 0 0 8px rgba(255, 193, 7, .14); }
+.a-zona-ico-lejos { background: var(--a-rojo-claro); color: var(--a-rojo-txt); box-shadow: 0 0 0 8px rgba(229, 57, 53, .08); }
+.a-zona-km, .a-zona-otra { display: flex; gap: 8px; align-items: center; justify-content: center; margin: 0 0 8px; font-weight: 700; font-size: 14px; }
+.a-zona-otra { padding: 10px 12px; border-radius: 14px; background: var(--a-ambar-claro); }
+.a-btn-pedir.a-btn-bloqueado { opacity: .5; box-shadow: none; cursor: not-allowed; }
 .a-ir-paradero { display: inline; margin: 0; padding: 0; min-height: 0; font-size: 13px; color: var(--a-tinta); }
 .a-oferta { display: flex; gap: 12px; align-items: center; padding: 14px; border-radius: 20px; background: #fff; margin-bottom: 8px; }
 .a-oferta > svg { width: 44px; height: 44px; padding: 10px; border-radius: 14px; background: var(--a-ambar-claro); }

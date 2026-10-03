@@ -5,6 +5,8 @@
 // recargos a varias horas en día normal, domingo y festivo, programado y fidelidad) y una muestra de
 // 21 demos (pruebas/tarifas-casos.mjs). La generó nucleo/tarifas.js ANTES de partirlo en
 // tarifador.js (puro) y el envoltorio, así que esta prueba demuestra que el refactor no cambió nada.
+// Fase 2 (festivos, §5.6): se regeneró a propósito; solo cambiaron los 237 casos fes-* de las 17 demos de
+// la muestra con recargo dominical (el festivo ahora lo cobra). Cootransrural no cambió.
 //
 // Comprueba dos caminos, cada caso contra la dorada (cifras y huella del resultado completo):
 //   1) directo: crearTarifador(ficha) de nucleo/tarifador.js, como lo usarán el panel y el servidor;

@@ -1095,7 +1095,7 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
     contenido.querySelector('[data-detalle]').innerHTML =
       tarifa.detalle.map((d) => `<li><span>${esc(d.concepto)}</span><strong class="${d.valor < 0 ? 'c-descuento' : ''}">${d.valor < 0 ? '−' + N.pesos(-d.valor) : N.pesos(d.valor)}</strong></li>`).join('') +
       `<li class="c-total-detalle"><span>Total estimado</span><strong>${N.pesos(tarifa.total)}</strong></li>` +
-      (tarifa.rutaFija ? `<li class="c-nota-detalle"><span>${icono('ruta')} ${!N.TARIFAS.ejemplo && tarifa.tipo === 'referencia' ? 'Precio de referencia' : 'Ruta con tarifa fija'} hacia ${esc(tarifa.rutaFija.destino)}</span></li>` : '') +
+      (tarifa.rutaFija ? `<li class="c-nota-detalle"><span>${icono('ruta')} ${!N.TARIFAS.ejemplo && tarifa.tipo === 'referencia' ? 'Precio de referencia' : !N.TARIFAS.ejemplo && tarifa.tipo === 'fijada' ? esc(tarifa.etiqueta) : 'Ruta con tarifa fija'} hacia ${esc(tarifa.rutaFija.destino)}</span></li>` : '') +
       (ui.sinDestino ? `<li class="c-nota-detalle"><span>${icono('info')} El valor final depende del destino que le digas al conductor.</span></li>` : '') +
       (ruta?.aproximada ? `<li class="c-nota-detalle"><span>${icono('info')} Distancia aproximada (sin conexión al servicio de rutas).</span></li>` : '');
     if (ruta && ui.destino && !ui.sinDestino) {

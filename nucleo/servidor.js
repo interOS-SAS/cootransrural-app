@@ -81,6 +81,8 @@ const TEXTOS = {
   // Servidor 0.2.2: topes de precio con las tarifas de la cooperativa.
   tarifa_invalida: 'No pudimos calcular la tarifa de ese viaje. Revisa el destino e intenta de nuevo.',
   valor_invalido: 'Ese valor no es válido para este viaje. Corrígelo e intenta de nuevo.',
+  // Servidor 0.6.0 (fase 2 del panel): la recogida está muy lejos de la zona de servicio.
+  fuera_de_zona: 'Ese punto está fuera de la zona de servicio de la cooperativa. Mueve el punto de recogida o llama a la central.',
 };
 
 const TEXTO_DESCONOCIDO = 'Algo falló. Intenta de nuevo.';
@@ -164,7 +166,14 @@ export async function entrar(correo, codigo) {
   });
   if (!r.token) throw new ErrorServidor('error_interno', 200);
   guardarToken(r.token);
-  return { usuario: r.usuario, conductor: r.conductor ?? null };
+  return conMotivo({ usuario: r.usuario, conductor: r.conductor ?? null }, r);
+}
+
+// Servidor 0.6.0: el motivo de un conductor rechazado o retirado (conductor.motivo, o motivo_conductor) pasa
+// tal cual; la app lo pinta como texto (S30).
+function conMotivo(salida, r) {
+  if (typeof r?.motivo_conductor === 'string') salida.motivo_conductor = r.motivo_conductor;
+  return salida;
 }
 
 /* ---------------- Ingreso rápido (app 1.2: Face ID / huella) ----------------
@@ -184,7 +193,7 @@ export async function entrarConLlave(id, secreto) {
   }, { avisarSesion: false, publica: true });
   if (!r.token) throw new ErrorServidor('error_interno', 200);
   guardarToken(r.token);
-  return { usuario: r.usuario, conductor: r.conductor ?? null };
+  return conMotivo({ usuario: r.usuario, conductor: r.conductor ?? null }, r);
 }
 
 export const yo = () => api('GET', 'yo'); // { usuario, conductor }

@@ -1518,9 +1518,9 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       ${zonasHTML}
       <section class="vb-tarjeta vb-rutas">
         <h2>${ic('ruta', 24)} ${esc(MARCA.pueblo ? `Rutas desde ${MARCA.pueblo}` : 'Rutas a otros municipios')}</h2>
-        <p class="vb-sub">${oficiales && T.rutasReferencia ? 'Precio de referencia por trayecto, por confirmar con la cooperativa (el decreto no fija viajes a otros municipios). Toca una ruta para pedirla.' : 'Tarifa fija por trayecto. Toca una ruta para pedirla.'}</p>
+        <p class="vb-sub">${oficiales && T.rutasReferencia && N.RUTAS.some((r) => r.fijada !== true) ? 'Precio de referencia por trayecto, por confirmar con la cooperativa (el decreto no fija viajes a otros municipios). Toca una ruta para pedirla.' : 'Tarifa fija por trayecto. Toca una ruta para pedirla.'}</p>
         <ul>${N.RUTAS.map((r) => `<li><button type="button" data-accion="ruta-pedir" data-id="${esc(r.id)}">
-            <span class="vb-ruta-nombre"><b>${esc(r.destino)}</b><small>${r.km} km · ${N.minutosTexto(r.min)}</small></span>
+            <span class="vb-ruta-nombre"><b>${esc(r.destino)}</b><small>${r.km} km · ${N.minutosTexto(r.min)}${!T.ejemplo && r.fijada === true ? ` · ${esc(`fijado por ${MARCA.nombre}`)}` : ''}</small></span>
             <span class="vb-ruta-valor">${N.pesos(r.valor)}</span>${ic('flecha', 20)}</button></li>`).join('')}</ul>
       </section>
       <p class="vb-letra-chica centro">Los valores pueden cambiar por peajes, esperas o paradas adicionales.</p>

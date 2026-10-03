@@ -152,6 +152,8 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
     const T = N.TARIFAS;
     // Tabla oficial (Cootransrural: Decreto 05 de 2026). Banderazo y valor por km, estimados.
     const oficiales = Boolean(N.TARIFAS_OFICIALES);
+    // Fase 2: las rutas «fijada» las puso la cooperativa en el panel; las demás, precio de referencia.
+    const referencia = oficiales && T.rutasReferencia && N.RUTAS.some((r) => r.fijada !== true);
     const fuente = N.FUENTE_TARIFAS;
     const estimados = new Set(Array.isArray(T.estimados) ? T.estimados : []);
     const zonas = oficiales ? N.zonasTarifa() : [];
@@ -180,12 +182,12 @@ export function crearSecciones({ N, p, app, ui, avisar, irATab, repintar, abrirE
       </div>
       ${oficiales ? [T.notaRecargos, T.notaEstimacion].filter(Boolean).map((x) => `<p class="c-nota-prueba">${icono('info')} ${esc(x)}</p>`).join('') : ''}
       ${zonasHTML}
-      <h2 class="c-seccion-titulo">${oficiales && T.rutasReferencia ? 'Otros municipios: precio de referencia' : `Rutas con tarifa fija${E.pueblo ? ` desde ${esc(E.pueblo)}` : ''}`}</h2>
-      ${oficiales && T.rutasReferencia && T.notaRutas ? `<p class="c-nota-prueba">${icono('info')} ${esc(T.notaRutas)}</p>` : ''}
+      <h2 class="c-seccion-titulo">${referencia ? 'Otros municipios: precio de referencia' : `Rutas con tarifa fija${E.pueblo ? ` desde ${esc(E.pueblo)}` : ''}`}</h2>
+      ${referencia && T.notaRutas ? `<p class="c-nota-prueba">${icono('info')} ${esc(T.notaRutas)}</p>` : ''}
       <div class="c-bloque">
         <table class="c-tabla" data-tabla-rutas>
           <thead><tr><th scope="col">Destino</th><th scope="col">Distancia</th><th scope="col">Valor</th></tr></thead>
-          <tbody>${N.RUTAS.map((r) => `<tr><td>${esc(r.destino)}<small class="c-tabla-sub">${N.minutosTexto(r.min)} aprox.</small></td><td>${r.km} km</td><td><strong>${N.pesos(r.valor)}</strong></td></tr>`).join('')}</tbody>
+          <tbody>${N.RUTAS.map((r) => `<tr><td>${esc(r.destino)}<small class="c-tabla-sub">${N.minutosTexto(r.min)} aprox.${!T.ejemplo && r.fijada === true ? ` · ${esc(`fijado por ${E.nombre}`)}` : ''}</small></td><td>${r.km} km</td><td><strong>${N.pesos(r.valor)}</strong></td></tr>`).join('')}</tbody>
         </table>
       </div>
       <p class="c-nota-prueba">${icono('info')} Los descuentos no se acumulan: se aplica el mayor.</p>

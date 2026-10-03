@@ -22,9 +22,10 @@ export const MUESTRA_DEMOS = Object.freeze([
 ]);
 export const COOPERATIVAS_DORADAS = Object.freeze([COOPERATIVA_OFICIAL, ...MUESTRA_DEMOS]);
 
-// Días: jueves normal, domingo y lunes festivo (12-oct-2026, Día de la Raza). Hoy la app no cuenta los
-// festivos (§5.6 llega en la fase 2): la dorada guarda lo que cobra HOY un festivo, para que el cambio
-// se vea cuando llegue.
+// Días: jueves normal, domingo y lunes festivo (12-oct-2026, Día de la Raza). Desde la fase 2 (§5.6) el
+// festivo cobra el recargo dominical (salvo recargoDominicalEnFestivos: false): la dorada se regeneró a
+// propósito con ese cambio y solo cambiaron los casos fes-* de las demos con recargo dominical
+// (Cootransrural no cambia: sus recargos son $0).
 const DIAS = { jue: '2026-10-08', dom: '2026-10-11', fes: '2026-10-12' };
 // Horas: madrugada (noche para todas), 5:30 (noche si termina a las 6), día, y los bordes de las
 // noches que empiezan a las 18, 19, 20 y 21.
