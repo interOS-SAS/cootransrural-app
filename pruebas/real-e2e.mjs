@@ -19,7 +19,9 @@
 //  e) el pasajero pide, recarga mientras busca (sigue el mismo viaje) y cancela:
 //     al conductor se le quita la oferta; e2) el conductor cancela un servicio
 //     asignado: el pasajero vuelve a buscar con un id de viaje nuevo (con el servidor
-//     0.2.2 esa búsqueda ya no le llega al mismo conductor: 15 min de exclusión);
+//     0.2.2 esa búsqueda ya no le llega al mismo conductor: 15 min de exclusión; con la
+//     central de «Reglas del despacho», la pausa solo vale si hay otro taxi: como es el
+//     único, sí le llega y el pasajero no queda «sin conductores»);
 //  f) «Eliminar mi cuenta» del pasajero (Mi cuenta): vuelve al ingreso y
 //     GET /api/yo con el token viejo da 401; g) lo mismo para el conductor (menú).
 // Con el servidor 0.2.2, además:
@@ -143,8 +145,19 @@ function vigilar(p, nombre) {
     if (r.status() >= 500) errores.push(`[${nombre}] ${r.status()} ${r.url()}`);
   });
   p.on('request', (r) => peticiones.push(r.url()));
-  p.on('websocket', (ws) => sockets.push(`[${nombre}] ${ws.url()}`));
+  p.on('websocket', (ws) => {
+    sockets.push(`[${nombre}] ${ws.url()}`);
+    // Central con «Reglas del despacho» (la bienvenida trae reglas): cambia la pausa tras cancelar (ver e2).
+    ws.on('framereceived', (f) => {
+      const s = typeof f.payload === 'string' ? f.payload : '';
+      if (s.includes('"tipo":"bienvenida"') && s.includes('"reglas"')) CENTRAL_CON_REGLAS = true;
+      if (s.includes('"tipo":"sin_conductores"')) sinConductores.push(`[${nombre}] ${s}`);
+    });
+  });
 }
+// La central manda bienvenida.reglas (rama reglas-despacho del servidor) y los sin_conductores que llegaron.
+let CENTRAL_CON_REGLAS = false;
+const sinConductores = [];
 const foto = (p, n) => p.screenshot({ path: `${DIR}${n}.png` }).catch(() => {});
 const vista = (p, v, timeout = 30000) => p.waitForSelector(`.a-app[data-vista="${v}"]`, { timeout });
 const texto = (p, sel = 'body') => p.evaluate((s) => document.querySelector(s)?.innerText.replace(/\s+/g, ' ') || '', sel);
@@ -838,7 +851,15 @@ async function cancelaConductor() {
   const idDespues = await pp.evaluate(() => JSON.parse(localStorage.getItem('tc.real.viaje.pasajero') || 'null')?.estado?.viaje?.id || null);
   ok(idAntes && idDespues && idDespues !== idAntes, `pasajero: busca con un id de viaje nuevo (${idAntes} → ${idDespues})`);
   let deNuevo;
-  if (desde('0.2.2')) {
+  const sinAntes = sinConductores.length;
+  if (CENTRAL_CON_REGLAS) {
+    // Reglas del despacho (exclusionSoloSiHayOtro, por defecto): la pausa tras cancelar solo vale si hay otro taxi que
+    // pueda recibir el pedido. Aquí es el único: la nueva búsqueda le llega a él también y el pasajero nunca queda sin
+    // nadie que la reciba.
+    deNuevo = await intento(pc.waitForSelector('.a-solicitud.a-abierta', { timeout: 20000 }));
+    ok(deNuevo, 'conductor: es el único taxi: la nueva búsqueda le llega (la pausa tras cancelar solo vale si hay otro)');
+    ok(sinConductores.length === sinAntes && !(await pp.$('[data-sin-taxis]:not([hidden])')), 'pasajero: no queda «sin conductores»');
+  } else if (desde('0.2.2')) {
     // Servidor 0.2.2: al conductor que canceló no le llegan las solicitudes de ese pasajero por 15 min.
     deNuevo = await intento(pc.waitForSelector('.a-solicitud.a-abierta', { timeout: 6000 }));
     ok(!deNuevo, 'conductor: la nueva búsqueda de ese pasajero no le llega (15 min de exclusión tras cancelar)');

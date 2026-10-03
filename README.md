@@ -170,5 +170,12 @@ node pruebas/servidor-local.mjs --puerto=8799 --api=http://127.0.0.1:3199   # si
 node pruebas/real-e2e.mjs http://localhost:8799/    # pasajero y conductor: registro, viaje, recargas, cancelaciones y eliminar cuenta
 ```
 
+Reglas del despacho (las edita el gerente en el panel y llegan en la bienvenida del bus; ver
+`nucleo/README.md`): `node pruebas/reglas-despacho.mjs http://localhost:8765/` con el servidor simulado
+(oferta que dura lo que diga la cooperativa, «Llegué» a sus metros, `oferta_vista` y `rechazo` del conductor,
+«No hay taxis…» con «Llamar a la central» para el pasajero) y `node pruebas/reglas-despacho-e2e.mjs
+http://localhost:8799/` contra el servidor de la rama reglas-despacho (con dos conductores y la pausa tras
+cancelar).
+
 Librerías incluidas en `vendor/`: Leaflet (BSD-2), MQTT.js (MIT),
 qrcode-generator (MIT) y jsQR (Apache-2.0). Mapas © OpenStreetMap y CARTO.
