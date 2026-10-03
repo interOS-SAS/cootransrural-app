@@ -173,6 +173,8 @@ export class Bus extends Emisor {
  *                     sin_sesion, conductor_no_aprobado, empresa_desconocida,
  *                     empresa_no_disponible
  *   'error'           { codigo } errores del servidor ya conectado (sin viajeId)
+ * Un mensaje de la central con el tipo de uno de esos eventos ('rechazo', 'conexion', 'estado_conexion',
+ * 'mensaje') solo sale como 'mensaje' (ver EVENTOS_PROPIOS).
  * El cierre 4400 («falta_hola») no es definitivo: llega cuando el saludo tardó más de
  * 10 s (red muy lenta o app suspendida justo al abrir) y se reintenta como cualquier corte.
  *
@@ -200,6 +202,10 @@ const SIN_VENCER = new Set(['estado', 'cancelacion', 'pago', 'pago_confirmado', 
 const VIDA_COLA_CIERRES_MS = 12 * 3600 * 1000;
 // Si en este tiempo no llega la bienvenida, se corta y se vuelve a intentar.
 const ESPERA_BIENVENIDA_MS = 15000;
+// Eventos propios de este bus (no mensajes de la central): un mensaje del servidor con ese tipo solo sale como
+// 'mensaje'. «rechazo» es además lo que el conductor le manda a la central al rechazar una oferta (reglas.js):
+// si alguna vez volviera por el bus, no debe parecer que la central no lo deja entrar.
+const EVENTOS_PROPIOS = new Set(['rechazo', 'conexion', 'estado_conexion', 'mensaje']);
 // En segundo plano el teléfono no contesta el ping del servidor (cada 25 s) y la conexión
 // muere sin aviso: si la app estuvo oculta más que esto, al volver se reconecta de una vez.
 const OCULTA_MAX_MS = 25000;
@@ -475,6 +481,7 @@ export class BusServidor extends Emisor {
     // viaje_actual puede llegar con datos null («no hay viaje»).
     const datos = m.tipo === 'viaje_actual' ? (m.datos ?? null) : (m.datos ?? {});
     this.emit('mensaje', { ...m, via: 'servidor' });
+    if (EVENTOS_PROPIOS.has(m.tipo)) return;
     this.emit(m.tipo, datos);
   }
 }

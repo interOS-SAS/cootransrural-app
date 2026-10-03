@@ -1195,7 +1195,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     clearInterval(ui.relojSolicitud);
     ui.solicitudVista = s.viajeId;
     app.classList.add('a-con-solicitud');
-    const total = N.TIEMPOS?.aceptar || 25000;
+    // Lo que dura esta oferta (modo real: segundosOferta de las reglas de la cooperativa; en la demo, 25 s).
+    const total = s.expira - s.recibida || N.TIEMPOS?.aceptar || 25000;
     const circ = 2 * Math.PI * 34;
     const minHasta = Math.max(1, Math.round(((s.distanciaAMi * 1.3) / 25) * 60));
     const capa = el(`<section class="a-solicitud" role="alertdialog" aria-modal="true" aria-labelledby="a-sol-titulo" aria-describedby="a-sol-desc">

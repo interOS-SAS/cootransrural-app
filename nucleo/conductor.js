@@ -17,6 +17,10 @@
 // 'rechazado') y 'error_servidor' ({ codigo, texto }). El estado lleva además estadoBus;
 // el viaje en 'confirmando' lleva esperaTexto y esperaHasta; en 'cobrando', pagoAnunciado
 // cuando el pasajero dice que ya pagó (se espera confirmarEfectivo()).
+// Reglas del despacho (bienvenida.reglas y el mensaje «reglas», ver nucleo/reglas.js): la oferta dura
+// segundosOferta y «Llegué» vale a metrosLlegue del punto (sin reglas, 25 s y 150 m, como siempre). La oferta que
+// queda en pantalla con la app a la vista sale como oferta_vista (una vez) y «Rechazar» como rechazo: la central no
+// repite por push lo visto y no vuelve a ofrecer lo rechazado. La demo no cambia.
 // Modo revisor (bienvenida.revision: las cuentas de los revisores de Apple y Google): la central
 // manda un «pasajero automático» a ~120 m, con el código de abordaje fijo (codigoAbordaje, 1234).
 // Ese código va en la nota de la solicitud y en viaje.codigoRevision (el diseño lo muestra al
@@ -32,8 +36,10 @@ import * as perfil from './perfil.js';
 import * as servidor from './servidor.js';
 import { Emisor, hashCorto, distanciaKm, pesos, kmTexto, minutosTexto } from './util.js';
 import { GPS_CON_INTERVALO, alCambiarVisibilidad, appOculta } from './plataforma.js';
+import { MENSAJES, reglasGuardadas, reglasDeBienvenida } from './reglas.js';
 
-// Distancia máxima (km) al pasajero para poder marcar «Llegué» con GPS real.
+// Distancia máxima (km) al pasajero para poder marcar «Llegué» con GPS real (en modo real, la de las
+// reglas de la cooperativa: metrosLlegue).
 const DISTANCIA_LLEGADA_KM = 0.15;
 // Con el pasajero automático del modo revisor (el GPS bajo techo se mueve decenas de metros).
 const DISTANCIA_LLEGADA_REVISION_KM = 0.4;
@@ -155,6 +161,8 @@ class ControladorConductor extends Emisor {
       // enviando() }). Con el plugin activo la presencia lleva segundoPlano: true; mientras él
       // envía (app oculta), el JS no manda presencia ni ubicación por el bus. Sin él, nada cambia.
       this.nativo = null;
+      // Reglas del despacho de la cooperativa (las guardadas hasta la próxima bienvenida).
+      this.reglas = reglasGuardadas();
     }
   }
 
@@ -312,7 +320,18 @@ class ControladorConductor extends Emisor {
 
   // Distancia para «Llegué» (más holgada con el pasajero automático del modo revisor).
   #distanciaLlegada(v) {
-    return v?.codigoRevision ? DISTANCIA_LLEGADA_REVISION_KM : DISTANCIA_LLEGADA_KM;
+    const km = this.#kmLlegue();
+    return v?.codigoRevision ? Math.max(km, DISTANCIA_LLEGADA_REVISION_KM) : km;
+  }
+
+  // Modo real: la de las reglas de la cooperativa (metrosLlegue); en la demo, la de siempre.
+  #kmLlegue() {
+    return this.real ? this.reglas.metrosLlegue / 1000 : DISTANCIA_LLEGADA_KM;
+  }
+
+  // Modo real: cuánto dura una oferta (segundosOferta de las reglas); en la demo, la de siempre.
+  #msOferta() {
+    return this.real ? this.reglas.segundosOferta * 1000 : TIEMPOS.aceptar;
   }
 
   // Modo revisor: el pasajero automático aparece al lado y, con el teléfono quieto (en un escritorio
@@ -330,17 +349,28 @@ class ControladorConductor extends Emisor {
     if (codigo && !String(s.nota || '').includes(codigo)) s = { ...s, nota: [s.nota, `Código de abordaje: ${codigo}`].filter(Boolean).join(' · ') };
     const pos = this.estado.pos || CENTRO;
     const distanciaAMi = distanciaKm(pos, s.origen);
-    const solicitud = { ...s, distanciaAMi, recibida: Date.now(), expira: Date.now() + TIEMPOS.aceptar };
+    const dura = this.#msOferta();
+    const solicitud = { ...s, distanciaAMi, recibida: Date.now(), expira: Date.now() + dura };
     this.#cambiar({ solicitudes: [...this.estado.solicitudes, solicitud] });
     this.#avisar({
       titulo: 'Nueva solicitud de servicio',
       cuerpo: `${s.pasajero.nombre} · a ${kmTexto(distanciaAMi)} · ${s.destino?.titulo || 'Destino a convenir'} · ${pesos(s.tarifa)}`,
       tipo: 'solicitud',
     });
-    this.temporizadores.set(s.viajeId, setTimeout(() => this.rechazar(s.viajeId, true), TIEMPOS.aceptar));
+    this.temporizadores.set(s.viajeId, setTimeout(() => this.#quitarOferta(s.viajeId, true), dura));
   }
 
+  // El conductor rechaza la oferta («Rechazar»). En modo real se le avisa a la central (rechazo) para que no se la
+  // vuelva a ofrecer (ni por push ni por el bus). (vencida: como cuando se acaba la cuenta regresiva, sin avisar.)
   rechazar(viajeId, vencida = false) {
+    if (vencida) return this.#quitarOferta(viajeId, true);
+    const s = this.estado.solicitudes.find((x) => x.viajeId === viajeId);
+    if (this.real && s && !s.simulada) this.bus.publicar(MENSAJES.rechazo, { viajeId });
+    this.#quitarOferta(viajeId);
+  }
+
+  // Quita la oferta de la lista: se venció, la tomó otro, se canceló o el conductor la rechazó.
+  #quitarOferta(viajeId, vencida = false) {
     clearTimeout(this.temporizadores.get(viajeId));
     this.temporizadores.delete(viajeId);
     const quedan = this.estado.solicitudes.filter((s) => s.viajeId !== viajeId);
@@ -473,7 +503,7 @@ class ControladorConductor extends Emisor {
     if (this.real && v && this.estado.gpsReal) {
       const objetivo = v.fase === 'hacia_origen' ? v.origen : v.fase === 'en_viaje' ? v.destino : null;
       const clave = `${v.id}:${v.fase}`;
-      if (objetivo && this.llegadaAvisada !== clave && distanciaKm(p, objetivo) <= (v.fase === 'hacia_origen' ? this.#distanciaLlegada(v) : DISTANCIA_LLEGADA_KM)) {
+      if (objetivo && this.llegadaAvisada !== clave && distanciaKm(p, objetivo) <= (v.fase === 'hacia_origen' ? this.#distanciaLlegada(v) : this.#kmLlegue())) {
         this.llegadaAvisada = clave;
         this.emit('llegada', v.fase);
       }
@@ -697,7 +727,7 @@ class ControladorConductor extends Emisor {
             this.#terminar();
           }
         } else if (d.conductorId !== yo) {
-          this.rechazar(d.viajeId);
+          this.#quitarOferta(d.viajeId);
         }
         break;
       }
@@ -705,7 +735,7 @@ class ControladorConductor extends Emisor {
         if (this.real && d.por === 'sistema' && d.motivo === 'cuenta_borrada') {
           // El pasajero eliminó su cuenta (servidor 0.2.2): la central ya canceló el viaje,
           // en la fase que sea. Se quita la oferta y se suelta el servicio sin cancelarlo allá.
-          this.rechazar(d.viajeId);
+          this.#quitarOferta(d.viajeId);
           if (this.aceptadaReciente?.s?.viajeId === d.viajeId) this.aceptadaReciente = null;
           if (v && v.id === d.viajeId && v.fase !== 'calificar') {
             if (v.fase !== 'confirmando') this.#guardarEnHistorial('cancelado', { motivo: 'El pasajero canceló el servicio' });
@@ -716,7 +746,7 @@ class ControladorConductor extends Emisor {
         }
         if (this.real && d.por === 'sistema') {
           // Nadie lo tomó en 10 min: se quita la oferta (y se suelta si se estaba confirmando).
-          this.rechazar(d.viajeId);
+          this.#quitarOferta(d.viajeId);
           if (v && v.id === d.viajeId && v.fase === 'confirmando') {
             this.#avisar({ titulo: 'El servicio ya no está disponible', cuerpo: 'Sigue atento a nuevas solicitudes.', tipo: 'info' });
             this.#terminar();
@@ -724,7 +754,7 @@ class ControladorConductor extends Emisor {
           break;
         }
         if (d.por !== 'pasajero') break;
-        this.rechazar(d.viajeId);
+        this.#quitarOferta(d.viajeId);
         if (v && v.id === d.viajeId && !['cobrando', 'calificar'].includes(v.fase)) {
           this.#guardarEnHistorial('cancelado', { motivo: `Pasajero: ${d.motivo || ''}` });
           this.#avisar({ titulo: 'El pasajero canceló', cuerpo: d.motivo || '', tipo: 'alerta' });
@@ -787,6 +817,11 @@ class ControladorConductor extends Emisor {
       this.#reconciliar(d ?? null);
     });
     this.bus.on('error', (d) => this.#alErrorServidor(d));
+    // El gerente cambió las reglas del despacho con la app abierta: valen desde ya (la oferta en pantalla sigue
+    // con su cuenta).
+    this.bus.on(MENSAJES.reglas, (d) => {
+      this.reglas = reglasDeBienvenida(d);
+    });
     this.bus.on('rechazo', (d) => {
       this.ultimoRechazo = d?.codigo || null;
       // Sin la central no se puede estar en línea (el viaje en curso, si hay, se conserva).
@@ -939,6 +974,8 @@ class ControladorConductor extends Emisor {
   // Al volver a la app: en turno o con servicio, que el seguimiento esté vivo; fuera de turno (no
   // se sigue el GPS), después de un rato, una lectura suelta para que el mapa muestre dónde está.
   #alCambiarVisibilidad(oculta) {
+    // La oferta que llegó con la app oculta y sigue en pantalla: ahora sí se ve.
+    if (!oculta) this.#marcarVista();
     if (oculta) {
       if (!this.ocultaDesde) this.ocultaDesde = Date.now();
       // Con el seguimiento nativo enviando, el del JS se suelta ya (ver #modoGps) y la posición queda vieja.
@@ -1065,6 +1102,8 @@ class ControladorConductor extends Emisor {
   #alBienvenida(d) {
     // El id c_… de la bienvenida es con el que la central asigna los servicios.
     if (d?.conductor) perfil.fijarConductorServidor(d.conductor);
+    // Reglas del despacho de la cooperativa (sin ellas, las de siempre: la central es anterior).
+    this.reglas = reglasDeBienvenida(d);
     this.revision = Boolean(d?.revision); // modo revisor (cuentas de los revisores de las tiendas)
     // Un servicio de otra cuenta (entró otro conductor en este celular) no se retoma.
     const propio = this.estado.viaje?.conductorId;
@@ -1327,6 +1366,21 @@ class ControladorConductor extends Emisor {
     // Modo real: el GPS se sigue o se suelta según el turno y el servicio.
     if (this.real) this.#ajustarSeguimiento();
     this.emit('cambio', this.estado);
+    if (this.real) this.#marcarVista();
+  }
+
+  // Modo real: la oferta que queda en pantalla (la primera, sin un servicio; los diseños muestran esa) con la app a
+  // la vista se le avisa a la central (oferta_vista), una vez cada vez que llega. Así, si el conductor la deja pasar
+  // o la rechaza y minimiza antes de su próxima presencia, no le vuelve a llegar por push, y la central cuenta sus
+  // segundosOferta desde ahí. Las que esperan detrás («+1 en espera») o llegaron con la app oculta no se han visto:
+  // esas sí pueden llegarle por push. Si la central la vuelve a mandar después de quitarse, es otra vez.
+  #marcarVista() {
+    if (!this.real || appOculta() || !this.estado.conectado || this.estado.viaje) return;
+    const s = this.estado.solicitudes[0];
+    if (!s || s.simulada || s.vista) return;
+    s.vista = Date.now();
+    // Sin conexión queda en la cola del bus (60 s) y sale con la bienvenida.
+    this.bus.publicar(MENSAJES.ofertaVista, { viajeId: s.viajeId });
   }
 
   // Cambia entre GPS real y simulado (true/false/null = automático).

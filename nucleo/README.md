@@ -53,7 +53,8 @@ codigo` de 4 dígitos, `simulado`), `conductor` (`movil, nombre, placa, vehiculo
 color, calificacion, viajes, tel`), `posConductor`, `rutaConductor`, `etaMin`,
 `cobro` (`valor`), `pago`, `calificacionRecibida`, `miPosicion` (`real: false`
 si no hubo GPS), `taxisCercanos`, `conductoresReales`, `conexion`
-(`local` | `en-vivo`), `sala`.
+(`local` | `en-vivo`), `sala`. En modo real, además, `sinConductores` (`{ viajeId, desde }` mientras la
+central diga que la búsqueda no le llegó a ningún taxi; `null` si no; ver «Reglas del despacho»).
 
 Un punto (`origen`, `destino`) es `{ lat, lng, titulo, detalle }`.
 
@@ -68,7 +69,7 @@ c.on('vencida', (viajeId) => ...) // una solicitud expiró sin respuesta
 N.perfil.ingresarConductor({ movil, pin })  // cualquier PIN de 4 dígitos en la demo
 c.conectar() / c.desconectar()
 await c.simularSolicitud()        // pasajero de prueba cerca
-await c.aceptar(viajeId); c.rechazar(viajeId)
+await c.aceptar(viajeId); c.rechazar(viajeId)   // en modo real, «Rechazar» avisa a la central (rechazo)
 c.llegue()
 await c.iniciar(codigo)           // false si el código no coincide; { sinCodigo: true } para saltarlo
 c.finalizar(valorManual?)         // → { valor, url }  (url = contenido del QR de cobro)
@@ -80,10 +81,46 @@ await c.usarGpsSimulado(true|false|null)
 
 `estado`: `conectado, pos, gpsReal, solicitudes[]` (`viajeId, pasajero, origen,
 destino, tarifa, km, min, metodoPago, nota, distanciaAMi, expira, simulada,
-codigo` solo en simuladas), `viaje` (`fase`: `confirmando → hacia_origen →
+codigo` solo en simuladas; `recibida`; `expira`: en modo real, a los `segundosOferta` de las reglas),
+`viaje` (`fase`: `confirmando → hacia_origen →
 en_origen → en_viaje → cobrando → calificar`; `urlCobro`, `valor`, `pago`,
 `codigoSimulado`), `rutaActual`, `etaMin`, `kmRestantes`, `mensajePasajero`,
 `resumen` (`viajes, ganado, porQR, efectivo, promedio, km`).
+
+## Reglas del despacho (modo real, `nucleo/reglas.js`)
+
+El gerente de cada cooperativa las edita en el panel (Reglas → «Reglas del despacho») y la central se las
+manda a la app en la bienvenida del bus: `bienvenida.reglas = { segundosOferta, metrosLlegue,
+minutosBusqueda }`; si cambian con la app abierta, en el mensaje `reglas` (las tres sueltas, valen desde ya).
+`reglasDeBienvenida(d)` las completa y las lleva a los topes del panel (15–60 s, 50–300 m,
+3–20 min); sin reglas (central anterior) quedan los valores de siempre (25 s, 150 m, 10 min). Se guardan por
+cooperativa (`tc.real.reglas.<id>`) para antes de la próxima bienvenida. Como `N.reglas.*`.
+
+- Conductor: la oferta dura `segundosOferta` (el anillo del diseño A cuenta desde ahí) y «Llegué» vale a
+  `metrosLlegue` del punto (en modo revisor, al menos 400 m).
+- Pasajero: una búsqueda que la central ya no tiene se vuelve a pedir si tiene menos de `minutosBusqueda`.
+
+Mensajes nuevos del bus (los nombres están solo en `MENSAJES` de `reglas.js`; las centrales anteriores
+ignoran los del conductor y no mandan los del pasajero, así que nada cambia con ellas):
+
+- `oferta_vista { viajeId }` (conductor → central): la oferta quedó en pantalla (la primera, sin servicio) con
+  la app a la vista, una vez cada vez que llega (`solicitud.vista`). La que llega con la app oculta sale al
+  volver si sigue en pantalla. La central no la repite por push y cuenta sus `segundosOferta` desde ahí.
+- `rechazo { viajeId }` (conductor → central): tocó «Rechazar». No sale al vencerse la cuenta regresiva ni
+  cuando la oferta se quita sola. La central no se la vuelve a ofrecer (ni por push ni por el bus).
+- `sin_conductores { viajeId, motivo }` (central → pasajero): la búsqueda no le llegó a nadie que la pueda
+  tomar; `motivo`: `sin_taxis` (nadie en turno en el radio), `ocupados`, `rechazado` (la rechazaron o se les
+  venció) o `excluidos` (solo hay taxis en pausa con él). `estado.sinConductores = { viajeId, desde, motivo }`
+  y un aviso (una vez por búsqueda); el diseño A muestra el texto de `textoSinConductores(motivo)` («No hay
+  taxis en turno cerca», «Los taxis cercanos están ocupados», «Ningún taxi tomó tu solicitud» o «No hay taxis
+  disponibles ahora», que no habla de la pausa) con «Llamar a la central» (sin ella en modo revisor). La
+  búsqueda sigue. `con_conductores { viajeId }` lo quita y avisa «Tu solicitud ya le llegó a un taxi». Con
+  cada bienvenida se olvida: al reconectarse, la central lo repite después de `viaje_actual` si sigue así.
+  Si la central suelta la búsqueda así, el aviso dice «No hubo taxis disponibles» (o «Ningún conductor
+  aceptó» si la rechazaron).
+
+Un mensaje de la central con el tipo de un evento propio del bus (`rechazo`, `conexion`, `estado_conexion`,
+`mensaje`) solo sale como `mensaje`: un `rechazo` que volviera por el bus no saca al conductor del turno.
 
 ## Mapa
 

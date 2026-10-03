@@ -543,3 +543,13 @@ html[data-modo="real"] .a-banner-puerta { animation-iteration-count: 1, 3; }
 /* Avisos por encima de la capa de ingreso: «Tu sesión se cerró» y «Tu cuenta se
    eliminó» salen junto con el ingreso con correo (en la demo no cambia nada). */
 html[data-modo="real"] .a-pasajero > .a-avisos { z-index: 105; }
+
+/* Modo real: «No hay taxis disponibles ahora» (sin_conductores) mientras se sigue buscando */
+.a-sin-taxis { margin-top: 14px; padding: 14px; border-radius: 18px; background: var(--a-ambar-claro); border: 1.5px solid var(--a-ambar-3); }
+.a-sin-taxis[hidden] { display: none; }
+.a-sin-taxis-txt { display: flex; gap: 12px; align-items: flex-start; }
+.a-sin-taxis-txt > svg { width: 42px; height: 42px; padding: 10px; border-radius: 14px; background: var(--a-ambar); color: var(--a-tinta); flex: none; }
+.a-sin-taxis-txt > span { flex: 1; min-width: 0; }
+.a-sin-taxis strong { display: block; font: 700 15px/1.3 var(--a-ft); color: var(--a-tinta); }
+.a-sin-taxis small { display: block; margin-top: 3px; color: var(--a-texto-2); font-size: 13px; line-height: 1.45; }
+.a-sin-taxis .a-btn { margin-top: 12px; text-decoration: none; }

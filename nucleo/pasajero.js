@@ -13,6 +13,12 @@
 //   'bienvenida' (datos), 'rechazo' ({ codigo, motivo }), 'conexion' (estado del bus:
 //   'sin_conectar'|'conectando'|'en_linea'|'reconectando'|'rechazado'),
 //   'error_servidor' ({ codigo, texto }). El estado lleva además estadoBus.
+// Reglas del despacho (bienvenida.reglas y el mensaje «reglas», ver nucleo/reglas.js): la búsqueda que se
+// perdió se vuelve a pedir si tiene menos de minutosBusqueda (sin reglas, 10 min, como siempre). Si la central
+// dice que la búsqueda no le llegó a nadie que la pueda tomar (sin_conductores), estado.sinConductores =
+// { viajeId, desde, motivo } (null cuando ya le llegó a alguien, con con_conductores, con cada bienvenida —la
+// central lo repite si sigue así— o fuera de «buscando»): la búsqueda sigue igual, el diseño lo dice y ofrece
+// llamar a la central. Se avisa una vez por búsqueda. La demo no cambia.
 // Modo revisor (bienvenida.revision: las cuentas de los revisores de Apple y Google, que prueban
 // desde otro país): si el GPS está lejos de la cooperativa, miPosicion pasa a ser el parque
 // principal (con revision: true), se avisa una vez y se emite 'revision_lejos' (punto) para que el
@@ -29,6 +35,7 @@ import * as perfil from './perfil.js';
 import * as servidor from './servidor.js';
 import { Emisor, uid, codigoNumerico, hashCorto, distanciaKm, pesos, minutosTexto, primerNombre, enlaceMapa, fechaTexto, horaTexto } from './util.js';
 import { relojVisible, appOculta, alCambiarVisibilidad } from './plataforma.js';
+import { MENSAJES, reglasGuardadas, reglasDeBienvenida, textoSinConductores } from './reglas.js';
 
 export const FASES = ['inicio', 'buscando', 'asignado', 'llego', 'en_viaje', 'pagar', 'calificar'];
 
@@ -36,7 +43,7 @@ export const FASES = ['inicio', 'buscando', 'asignado', 'llego', 'en_viaje', 'pa
 const CLAVE_VIAJE_REAL = 'tc.real.viaje.pasajero'; // localStorage: en la app nativa sessionStorage se pierde
 const FASES_ACTIVAS = ['buscando', 'asignado', 'llego', 'en_viaje']; // las que el servidor tiene «activas»
 const ESPERA_VIAJE_ACTUAL_MS = 2500; // el servidor 0.1 solo manda viaje_actual si hay viaje
-const BUSQUEDA_MAX_MS = 10 * 60 * 1000; // el servidor suelta la búsqueda a los 10 min
+// El servidor suelta la búsqueda a los minutosBusqueda de las reglas de la cooperativa (10 min sin reglas).
 const VIDA_COLA_MS = 60000; // lo que el bus guarda sin conexión (ver BusServidor)
 const VIAJE_GUARDADO_MAX_MS = 12 * 3600 * 1000;
 // Batería (modo real). Los taxis cercanos se recalculan cuando llega una presencia (en las fases
@@ -105,6 +112,9 @@ class ControladorPasajero extends Emisor {
       this.ultimoRechazo = null;
       this.revision = false; // modo revisor (bienvenida.revision)
       this.avisoLejos = false;
+      // Reglas del despacho de la cooperativa (las guardadas hasta la próxima bienvenida).
+      this.reglas = reglasGuardadas();
+      this.estado.sinConductores = null;
     }
   }
 
@@ -585,6 +595,50 @@ class ControladorPasajero extends Emisor {
       this.ultimoRechazo = d?.codigo || null;
       this.emit('rechazo', d);
     });
+    this.bus.on(MENSAJES.sinConductores, (d) => this.#alSinConductores(true, d));
+    this.bus.on(MENSAJES.conConductores, (d) => this.#alSinConductores(false, d));
+    // El gerente cambió las reglas con la app abierta: valen desde ya.
+    this.bus.on(MENSAJES.reglas, (d) => {
+      this.reglas = reglasDeBienvenida(d);
+    });
+  }
+
+  // ¿La búsqueda le llegó a alguien que la pueda tomar? (sin_conductores / con_conductores.) sin: true = a nadie
+  // (d.motivo: sin_taxis, ocupados, rechazado o excluidos); false = ya le llegó a alguien. Solo cambia lo que ve el
+  // pasajero: la búsqueda sigue y la central se la ofrece al primero que pueda.
+  #alSinConductores(sin, d) {
+    const { viaje, fase } = this.estado;
+    if (fase !== 'buscando' || !viaje) return;
+    const viajeId = d?.viajeId;
+    if (viajeId && viajeId !== viaje.id && !(viaje.idsPrevios || []).includes(viajeId)) return;
+    const motivo = typeof d?.motivo === 'string' ? d.motivo.slice(0, 40) : '';
+    const antes = this.estado.sinConductores;
+    if (sin && antes) {
+      if (antes.motivo !== motivo) this.#cambiar({ sinConductores: { ...antes, motivo } });
+      return;
+    }
+    if (!sin && !antes) return;
+    this.#cambiar({ sinConductores: sin ? { viajeId: viaje.id, desde: Date.now(), motivo } : null });
+    const clave = sin ? 'sin_conductores' : 'con_conductores';
+    if (this.avisosDados.has(clave)) return;
+    this.avisosDados.add(clave);
+    if (sin) {
+      const central = this.#hayCentral() ? ' Si tienes afán, llama a la central.' : '';
+      this.#avisar({ titulo: textoSinConductores(motivo, EMPRESA?.nombre).titulo, cuerpo: `Seguimos buscando tu taxi.${central}`, tipo: 'alerta' });
+    } else {
+      this.#avisar({ titulo: 'Tu solicitud ya le llegó a un taxi', cuerpo: 'Esperamos a que el conductor acepte.', tipo: 'info' });
+    }
+  }
+
+  // ¿Se le puede ofrecer llamar a la central? (Con teléfono en la ficha y fuera del modo revisor: a los revisores
+  // de las tiendas no se les ofrece la central de verdad.)
+  #hayCentral() {
+    return !this.revision && String(EMPRESA?.telefono || '').replace(/\D/g, '').length >= 7;
+  }
+
+  // Cuánto busca la central antes de soltar una búsqueda (reglas de la cooperativa).
+  #msBusqueda() {
+    return this.reglas.minutosBusqueda * 60 * 1000;
   }
 
   // Lo guardado en el teléfono (localStorage) se retoma y después se confirma con el servidor.
@@ -617,6 +671,11 @@ class ControladorPasajero extends Emisor {
 
   #alBienvenida(d) {
     perfil.fijarIdPasajero(d?.pasajeroId);
+    // Reglas del despacho de la cooperativa (sin ellas, las de siempre: la central es anterior).
+    this.reglas = reglasDeBienvenida(d);
+    // «Sin conductores» se olvida: si la búsqueda sigue así, la central lo repite después de viaje_actual (y si en
+    // la desconexión apareció alguien, el con_conductores se perdió).
+    if (this.estado.sinConductores) this.#cambiar({ sinConductores: null });
     // Modo revisor: con el GPS lejos de la cooperativa, la recogida pasa al parque principal.
     this.revision = Boolean(d?.revision);
     const antes = this.estado.miPosicion;
@@ -702,7 +761,7 @@ class ControladorPasajero extends Emisor {
     if (!activo || recien) return;
     // Un viaje pedido después de la bienvenida no se revisa: el servidor ya lo tiene.
     if (!porReenviar && (!aRevisar || (viaje.id !== aRevisar && !(viaje.idsPrevios || []).includes(aRevisar)))) return;
-    if (fase === 'buscando' && Date.now() - (viaje.solicitadoEn || viaje.creado) < BUSQUEDA_MAX_MS) {
+    if (fase === 'buscando' && Date.now() - (viaje.solicitadoEn || viaje.creado) < this.#msBusqueda()) {
       // La central no tiene esta búsqueda: la solicitud se perdió (cola descartada o borrada
       // al recargar, conexión medio muerta) o el servidor 0.1 la soltó al reiniciarse. Se
       // vuelve a pedir con id nuevo: si el viejo quedó cerrado, el servidor lo ignoraría.
@@ -848,10 +907,14 @@ class ControladorPasajero extends Emisor {
         this.#buscarOtroTaxi({ titulo: 'El conductor ya no está disponible', cuerpo: 'Buscamos otro taxi.', tipo: 'alerta' });
         return;
       }
-      // Pasaron 10 minutos sin que nadie aceptara.
+      // Pasó el tiempo de búsqueda (minutosBusqueda) sin que nadie aceptara.
       if (fase !== 'buscando') return;
-      perfil.agregarAlHistorialPasajero(this.#resumenViaje('cancelado', { motivo: 'Ningún conductor aceptó' }));
-      this.#avisar({ titulo: 'Ningún conductor aceptó', cuerpo: 'Intenta de nuevo.', tipo: 'error' });
+      // Modo real con la búsqueda sin nadie que la pudiera tomar (sin_conductores, salvo que la rechazaran): no es
+      // que nadie aceptó.
+      const sinTaxis = Boolean(this.estado.sinConductores) && this.estado.sinConductores.motivo !== 'rechazado';
+      const motivo = sinTaxis ? 'No hubo taxis disponibles' : 'Ningún conductor aceptó';
+      perfil.agregarAlHistorialPasajero(this.#resumenViaje('cancelado', { motivo }));
+      this.#avisar({ titulo: motivo, cuerpo: sinTaxis && this.#hayCentral() ? 'Intenta de nuevo en unos minutos o llama a la central.' : 'Intenta de nuevo.', tipo: 'error' });
       this.#cerrarViaje('sin-conductor');
       return;
     }
@@ -965,6 +1028,8 @@ class ControladorPasajero extends Emisor {
 
   #cambiar(cambios, { silencioso = false } = {}) {
     Object.assign(this.estado, cambios);
+    // Modo real: «sin conductores» es de la búsqueda en curso (se olvida al salir de «buscando»).
+    if (this.real && this.estado.sinConductores && (this.estado.fase !== 'buscando' || !this.estado.viaje)) this.estado.sinConductores = null;
     if (!silencioso) {
       const { taxisCercanos, ...persistible } = this.estado;
       this.ubicacionSinGuardar = false;

@@ -33,6 +33,8 @@ const MENSAJES_BUSQUEDA_REAL = [
   `Esperamos a que un conductor de ${EM.NOMBRE} acepte`,
 ];
 const SIN_RED_BUSCANDO = 'Sin conexión: enviaremos tu solicitud al reconectar';
+// Modo real: la central dijo que la búsqueda no le llegó a ningún taxi (sin_conductores); sigue buscando.
+const SIN_TAXIS_BUSCANDO = 'Seguimos buscando un taxi libre…';
 // La tarifa se marca «de ejemplo» solo mientras la ficha lo diga (las 76 cooperativas de la
 // demo). Con tarifas oficiales (Cootransrural) el chip dice si es oficial, estimada o de referencia.
 const TARIFA_EJEMPLO = Boolean(EM.TARIFAS_EJEMPLO);
@@ -796,8 +798,28 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   function sinRedBuscando() {
     return Boolean(p) && (p.bus?.estado !== 'en_linea' || Boolean(p.estado.viaje?.enCola));
   }
+  // Modo real: ¿la central dijo que ningún taxi puede recibir la solicitud ahora? (sin_conductores)
+  function sinTaxisBuscando() {
+    return Boolean(p?.estado?.sinConductores);
+  }
   function textoBuscandoReal(i) {
-    return sinRedBuscando() ? SIN_RED_BUSCANDO : MENSAJES_BUSQUEDA_REAL[i % MENSAJES_BUSQUEDA_REAL.length];
+    if (sinRedBuscando()) return SIN_RED_BUSCANDO;
+    return sinTaxisBuscando() ? SIN_TAXIS_BUSCANDO : MENSAJES_BUSQUEDA_REAL[i % MENSAJES_BUSQUEDA_REAL.length];
+  }
+
+  // Modo real: la central dijo que la búsqueda no le llega a nadie que la pueda tomar (sin_conductores, con su
+  // motivo: el texto sale de N.reglas.textoSinConductores) y «Llamar a la central». La búsqueda sigue: apenas un
+  // taxi pueda, la central le manda la solicitud. A los revisores de las tiendas no se les ofrece la central de verdad.
+  function bloqueSinTaxis() {
+    if (!REAL) return '';
+    const tel = p?.revision ? '' : EM.TELEFONO;
+    return `<div class="a-sin-taxis" data-sin-taxis role="status" hidden>
+      <div class="a-sin-taxis-txt">${icono('alerta', { tam: 22 })}<span>
+        <strong data-sin-taxis-titulo></strong>
+        <small data-sin-taxis-detalle></small>
+      </span></div>
+      ${tel ? `<a class="a-btn a-btn-tinta a-btn-grande" href="tel:${esc(tel)}" data-llamar-central aria-label="Llamar a la central${EM.TELEFONO_VISIBLE ? `, ${esc(EM.TELEFONO_VISIBLE)}` : ''}">${icono('telefono', { tam: 18 })} Llamar a la central</a>` : ''}
+    </div>`;
   }
 
   function acciones(c) {
@@ -1125,6 +1147,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         </div>
         <div class="a-barra-progreso" aria-hidden="true"><span></span></div>
         <p class="a-taxis-cerca" data-taxis-cerca></p>
+        ${bloqueSinTaxis()}
         <div data-corte></div>
         ${trayecto(v.origen, v.destino, { datos: false })}
         <div class="a-resumen-pago">
@@ -1141,8 +1164,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         const parar = N.relojVisible(() => {
           const nodo = $(c, '[data-mensaje]');
           if (!nodo) return;
-          // Modo real: sin conexión no se rota (la solicitud espera en la cola).
-          const siguiente = REAL ? textoBuscandoReal(sinRedBuscando() ? i : (i = (i + 1) % MENSAJES_BUSQUEDA_REAL.length)) : MENSAJES_BUSQUEDA[(i = (i + 1) % MENSAJES_BUSQUEDA.length)];
+          // Modo real: sin conexión o sin taxis que la reciban no se rota (la solicitud espera).
+          const siguiente = REAL ? textoBuscandoReal(sinRedBuscando() || sinTaxisBuscando() ? i : (i = (i + 1) % MENSAJES_BUSQUEDA_REAL.length)) : MENSAJES_BUSQUEDA[(i = (i + 1) % MENSAJES_BUSQUEDA.length)];
           if (nodo.textContent === siguiente) return;
           nodo.classList.remove('a-entra-txt');
           void nodo.offsetWidth;
@@ -1161,7 +1184,22 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       },
       actualizar(e) {
         const libres = (e.taxisCercanos || []).filter((t) => !t.ocupado).length;
-        ponerTexto(hoja.contenido, '[data-taxis-cerca]', libres ? `${libres} ${libres === 1 ? 'taxi libre' : 'taxis libres'} cerca de ti · ${(e.taxisCercanos || []).length} en línea` : '');
+        // Con «No hay taxis disponibles» no se cuentan taxis en el mapa (pueden estar lejos u ocupados).
+        const sinTaxis = REAL && Boolean(e.sinConductores);
+        ponerTexto(hoja.contenido, '[data-taxis-cerca]', libres && !sinTaxis ? `${libres} ${libres === 1 ? 'taxi libre' : 'taxis libres'} cerca de ti · ${(e.taxisCercanos || []).length} en línea` : '');
+        const caja = REAL && $(hoja.contenido, '[data-sin-taxis]');
+        if (caja && sinTaxis) {
+          const t = N.reglas.textoSinConductores(e.sinConductores.motivo, EM.NOMBRE);
+          ponerTexto(caja, '[data-sin-taxis-titulo]', t.titulo);
+          ponerTexto(caja, '[data-sin-taxis-detalle]', t.detalle);
+        }
+        if (caja && caja.hidden === sinTaxis) {
+          caja.hidden = !sinTaxis;
+          // El mensaje de arriba cambia ya (sin esperar a que rote) y la hoja se acomoda: con el aviso, al
+          // menos a media altura para que se vea (va antes del corte).
+          ponerTexto(hoja.contenido, '[data-mensaje]', textoBuscandoReal(0));
+          hoja.fijar(sinTaxis && hoja.estado === 'contraida' ? 'media' : hoja.estado);
+        }
       },
     },
 
