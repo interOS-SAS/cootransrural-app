@@ -5,6 +5,9 @@
 // App nativa 1.2 (con los plugins nuevos, ver disenos/a/nativa.js): «Entrar con Face ID»,
 // avisos de servicios nuevos con la app cerrada (se ofrecen al ponerse en turno la primera
 // vez; tocar uno vuelve a poner en turno y trae la oferta) y bloqueo opcional con Face ID.
+// Con el plugin UbicacionTurno (ubicación con la app minimizada): el aviso «Tu ubicación mientras
+// estás conectado» al ponerse en turno la primera vez, nativo.vigilarTurno() en el controlador, el
+// WebSocket que se cierra al minimizar también en viaje y los avisos si el plugin se detuvo solo.
 import {
   el, esc, $, $$, icono, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos, modal, elegirOpcion,
   abrirMenu, estrellas, casillasCodigo, deslizador, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
@@ -13,7 +16,7 @@ import {
 import * as EM from './empresa.js';
 import { taxiLateral } from './ilustraciones.js';
 import { abrirGanancias, abrirHistorial, abrirDocumentos, abrirMiTaxi, abrirAjustesConductor, abrirAvisosConductor } from './conductor-secciones.js';
-import { ofrecerAvisos, ofrecerBiometria, ingresoBiometria, montarBloqueo } from './nativa.js';
+import { ofrecerAvisos, ofrecerBiometria, ingresoBiometria, montarBloqueo, ofrecerSegundoPlano } from './nativa.js';
 
 // Foto de portada del ingreso (generada para la web, sin marcas: ver img/web/creditos.json).
 const FOTO_CONDUCTOR = new URL('./img/conductor.jpg', import.meta.url).href;
@@ -920,6 +923,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   }
 
   // Suelta el controlador (cierra el bus sin reintentos) y deja la pantalla de carga.
+  // Sin controlador no hay turno: el seguimiento nativo (plugin UbicacionTurno) se detiene, con
+  // el último aviso a la central si la sesión sigue (cerrar sesión, rechazo) y sin él si no.
   function soltarControlador() {
     const viejo = c;
     c = null;
@@ -929,6 +934,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       try { viejo.desconectar(); } catch { /* ya estaba desconectado */ }
       try { viejo.destruir(); } catch (err) { console.error(err); }
     }
+    const dejarTurno = ui.dejarTurno;
+    ui.dejarTurno = null;
+    try { dejarTurno?.(); } catch (err) { console.error(err); }
     clearInterval(ui.relojSolicitud);
     ui.solicitudVista = null;
     ui.llegoEn = null;
@@ -977,6 +985,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     // El servidor cierra el bus con «sesión cerrada»: no es un cierre inesperado.
     ui.saliendo = true;
     try {
+      // Con el plugin: deja de enviar la ubicación ya (el último aviso sale con la sesión viva).
+      await N.nativo?.detenerTurnoNativo?.('turno_apagado');
       await N.nativo?.olvidarPush?.();
       await servidor.eliminarCuenta();
     } catch (err) {
@@ -1320,7 +1330,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
               : `<button type="button" class="a-atajo-c" data-documentos>${icono('documento', { tam: 20 })}<span>Documentos</span></button>`}
           </div>
           ${REAL
-            ? `<p class="a-ayuda-txt">${icono('info', { tam: 14 })} Para recibir servicios, deja la app abierta con la ubicación activada.</p>`
+            ? `<p class="a-ayuda-txt">${icono('info', { tam: 14 })} <span data-ayuda-turno>${esc(textoAyudaTurno())}</span></p>`
             : `<p class="a-ayuda-txt">${icono('info', { tam: 14 })} Con el botón «Simular solicitud» te llega un pasajero de prueba para enseñar la app.</p>`}`;
       },
       montar(cont) {
@@ -1356,7 +1366,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           ponerTexto(cnt, '[data-pildora-titulo]', p.titulo);
           ponerTexto(cnt, '[data-pildora-sub]', p.sub);
         }
-        if (REAL) pintarPildoraReal(e);
+        if (REAL) {
+          pintarPildoraReal(e);
+          ponerTexto(cnt, '[data-ayuda-turno]', textoAyudaTurno());
+        }
         ponerTexto(cnt, '[data-ganado]', N.pesos(e.resumen.ganado));
         ponerTexto(cnt, '[data-viajes]', String(e.resumen.viajes));
         ponerTexto(cnt, '[data-prom]', textoPromedio(e));
@@ -1783,6 +1796,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     ponerTexto(cnt, '[data-pildora-titulo]', p.titulo);
     ponerTexto(cnt, '[data-pildora-sub]', p.sub);
   }
+  // Ayuda de la vista libre (modo real). Con el plugin UbicacionTurno, el aviso aceptado y los
+  // avisos del celular listos, ya no hace falta dejar la app abierta.
+  function textoAyudaTurno() {
+    const minimizable = NATIVA && N.nativo?.turnoNativoDisponible?.() && N.nativo.aceptoSegundoPlano() && N.nativo.pushListo();
+    return minimizable
+      ? 'Puedes usar otras apps o bloquear el celular: mientras estés conectado te llegan los servicios y tu ubicación sigue al día.'
+      : 'Para recibir servicios, deja la app abierta con la ubicación activada.';
+  }
   // Calificación de la vista libre: en modo real el promedio que manda la central
   // (no las estrellas de cada pasajero); en las demos, el promedio del día.
   function textoPromedio(e) {
@@ -1796,6 +1817,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     // App nativa 1.2: la primera vez, «Te avisamos de servicios nuevos…» antes de quedar en turno.
     if (NATIVA && N.nativo?.pushDisponible?.()) {
       await ofrecerAvisos(app, { N, rol: 'conductor' }).catch(() => {});
+      if (ctl !== c || turnoBloqueado(ctl.estado) || ctl.estado.conectado) return;
+    }
+    // Con el plugin UbicacionTurno: la primera vez, «Tu ubicación mientras estás conectado» antes de
+    // que arranque el seguimiento (lo arranca nativo.vigilarTurno al quedar en turno).
+    if (NATIVA && N.nativo?.turnoNativoDisponible?.()) {
+      await ofrecerSegundoPlano(app, { N }).catch(() => {});
       if (ctl !== c || turnoBloqueado(ctl.estado) || ctl.estado.conectado) return;
     }
     try {
@@ -1922,6 +1949,49 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     }, 500);
   }
 
+  /* ---------------- ubicación con la app minimizada (plugin UbicacionTurno) ----------------
+   * El plugin se detuvo sin que la app lo pidiera (nativo.alDetenerTurno). alCargar: se supo al
+   * abrir la app (la página se recargó con el teléfono vivo); el conductor ya arranca fuera de turno.
+   * Si se detuvo por otra cosa ('servidor'), nativo.vigilarTurno lo vuelve a iniciar con la app al
+   * frente mientras siga en turno. */
+  function alDetenerTurno({ motivo = '', alCargar = false } = {}) {
+    const ctl = c;
+    const enTurnoLibre = Boolean(ctl?.estado.conectado && !ctl.estado.viaje);
+    switch (motivo) {
+      case 'turno_apagado':
+        // «Salir de turno» en la notificación fija de Android.
+        if (ctl?.estado.viaje && !alCargar) {
+          avisos.mostrar({ titulo: 'Sigues con un servicio en curso', cuerpo: 'Termínalo para salir de turno; mientras tanto tu pasajero sigue viendo por dónde vas.', tipo: 'alerta' });
+          break;
+        }
+        if (enTurnoLibre) ctl.desconectar();
+        avisos.mostrar({ titulo: 'Te desconectaste desde la notificación.', cuerpo: 'Ya no te llegan servicios. Conéctate cuando quieras seguir.', tipo: 'info' });
+        break;
+      case 'permiso':
+        avisos.mostrar({ titulo: 'Sin permiso de ubicación', cuerpo: 'Actívalo en Ajustes para seguir conectado.', tipo: 'error' });
+        break;
+      case 'tope':
+        if (enTurnoLibre) ctl.desconectar();
+        avisos.mostrar({ titulo: 'Tu turno se cerró después de 14 horas', cuerpo: 'Conéctate otra vez si sigues trabajando.', tipo: 'info' });
+        break;
+      case 'sin_sesion':
+        // La central le dijo al plugin que la sesión no sirve: si es así, GET /api/yo responde 401
+        // y la app vuelve al ingreso (servidor.sesion 'cerrada'). Si la sesión sí sirve, se vuelve
+        // a saludar a la central: con la bienvenida, el seguimiento arranca otra vez.
+        if (servidor?.haySesion() && ui.pantalla === 'app') {
+          servidor.yo().then(() => ctl === c && reconectarCentral(ctl)).catch(() => {});
+        }
+        break;
+      case 'conductor_no_aprobado':
+      case 'empresa_no_disponible':
+        // La central lo confirma al saludar (rechazo) y la app muestra por qué.
+        if (ctl?.real && ui.pantalla === 'app') reconectarCentral(ctl);
+        break;
+      default:
+        break;
+    }
+  }
+
   // Chip de conexión con la central y píldora (el estado del bus cambia sin «cambio»).
   function pintarConexionReal() {
     const est = estadoCentral();
@@ -2033,8 +2103,19 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         if (REAL && c.real) {
           // App nativa 1.2: en turno, libre y con los avisos del celular listos, el WebSocket se
           // cierra al minimizar: la central lo deja «en turno en segundo plano» y le manda las
-          // solicitudes por push (con un viaje en curso sigue abierto, como hoy).
-          c.bus.cerrarAlOcultar = () => Boolean(N.nativo?.pushListo?.()) && nuevo.estado.conectado && !nuevo.estado.viaje;
+          // solicitudes por push. Con un viaje en curso sigue abierto, salvo que la ubicación siga
+          // por el plugin UbicacionTurno: entonces todo va por HTTP nativo + push y no queda un
+          // WebSocket «medio vivo» que muere con el ping. Sin avisos no se cierra nunca (sería el
+          // único camino para enterarse, por ejemplo, de una cancelación).
+          c.bus.cerrarAlOcultar = () => {
+            const e = nuevo.estado;
+            if (!e.conectado || !N.nativo?.pushListo?.()) return false;
+            return !e.viaje || Boolean(N.nativo?.turnoNativoActivo?.());
+          };
+          // Con el plugin: lo arranca, le cambia el modo o lo detiene según el turno, el viaje y los
+          // avisos, y retoma el turno si la página se recargó con el seguimiento vivo (sin el
+          // plugin no hace nada).
+          ui.dejarTurno = NATIVA ? N.nativo?.vigilarTurno?.(nuevo, { libre: () => Boolean(N.nativo?.pushListo?.()) }) || null : null;
           c.on('bienvenida', () => vigente() && alBienvenida());
           c.bus.on('rechazo', (d) => vigente() && alRechazo(d || {}));
           c.bus.on('conexion', () => vigente() && pintarConexionReal());
@@ -2084,6 +2165,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       // push solo sin WebSocket); se reconecta ya y con la bienvenida sale la consulta.
       N.nativo.eventos.on('recibida', () => {
         if (ui.pantalla === 'app') reconectarCentral();
+      });
+      // Con el plugin UbicacionTurno: el seguimiento se detuvo sin que la app lo pidiera, o el
+      // teléfono solo da la ubicación aproximada.
+      N.nativo.alDetenerTurno?.(alDetenerTurno);
+      N.nativo.eventos.on('turno_impreciso', () => {
+        const android = N.nativo.plataforma?.() === 'android';
+        avisos.mostrar({
+          titulo: android ? 'Activa «Usar ubicación precisa»' : 'Activa «Ubicación exacta»',
+          cuerpo: `Para que tu pasajero te vea llegar. Está en los ajustes del celular, en ${EM.APP} Conductor › Ubicación.`,
+          tipo: 'alerta',
+        });
       });
     }
     arrancarReal();

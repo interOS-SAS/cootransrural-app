@@ -730,6 +730,11 @@ html, body { overflow-x: hidden; -webkit-text-size-adjust: 100%; text-size-adjus
 .a-modal-nativa .a-modal { text-align: center; }
 .a-modal-nativa .a-modal-acciones { flex-direction: column; }
 .a-modal-nativa .a-modal-acciones .a-btn { width: 100%; flex: none; }
+/* «Tu ubicación mientras estás conectado» (plugin UbicacionTurno): el texto largo en puntos. */
+.a-modal-segundo-plano .a-modal-texto { margin-bottom: 12px; }
+.a-nat-lista { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 9px; text-align: left; }
+.a-nat-lista li { display: flex; gap: 10px; align-items: flex-start; color: var(--a-texto-2); font-size: 13.5px; line-height: 1.4; }
+.a-nat-lista .a-ico { flex: none; margin-top: 1px; color: var(--a-tinta); }
 .a-bio-ingreso { display: flex; flex-direction: column; gap: 10px; animation: a-aparece .3s; }
 .a-btn-bio { gap: 12px; }
 .a-btn-bio .a-ico { color: var(--a-ambar); }

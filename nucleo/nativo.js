@@ -45,7 +45,37 @@
 // Cerrar sesión conserva la llave (para volver con Face ID); eliminar la cuenta la borra.
 // Los errores de la biometría se lanzan como ErrorBiometria (codigo: 'cancelada',
 // 'no_reconocida', 'bloqueada', 'no_disponible' o 'fallo'); los del servidor, como ErrorServidor.
-import { ES_NATIVA } from './plataforma.js';
+//
+// Ubicación en turno (plugin local «UbicacionTurno», solo en la app del conductor; ver
+// /tmp/cootrans/v12/DISENO-segundo-plano.md): con la app minimizada, el teléfono sigue enviando
+// la ubicación del conductor en turno por HTTP nativo (POST conductor/ubicacion), no por el JS.
+//   turnoNativoDisponible()        ¿hay plugin? (sin él: la web, las demos, la 1.0 y la 1.2 (261))
+//   aceptoSegundoPlano()           el conductor aceptó el aviso «Tu ubicación mientras estás conectado»
+//   avisoSegundoPlano()            'si' | 'no' («Ahora no») | null (aún no se le mostró)
+//   fijarAceptoSegundoPlano(si)    lo guarda (localStorage taxicun.turno.aviso) y se aplica ya
+//   iniciarTurnoNativo({ modo, libre })  arranca (o actualiza) el seguimiento: url = URL_API +
+//                                  'conductor/ubicacion', token = el de la sesión. Solo con la app
+//                                  al frente. Lanza el código del plugin (SIN_PERMISO, SEGUNDO_PLANO…).
+//   cambiarModoTurno(modo, { libre })  'libre' | 'viaje' (precisión y frecuencia del plugin)
+//   detenerTurnoNativo(motivo, { avisar })  lo detiene; avisar: el plugin manda el último POST con
+//                                  fin = motivo (la central lo saca de turno). Borra la marca.
+//   estadoTurnoNativo()            { activo, modo, desde, motivo, precisa } (lo que dice el plugin)
+//   turnoNativoActivo()            lo último que se sabe (sin esperar al plugin)
+//   alDetenerTurno(fn)             fn({ motivo, alCargar }) cuando el plugin se detuvo SIN que la web
+//                                  lo pidiera: 'turno_apagado' (botón «Salir de turno» de la
+//                                  notificación de Android), 'permiso', 'tope' (14 h), 'sin_sesion',
+//                                  'conductor_no_aprobado', 'empresa_no_disponible', 'servidor'.
+//                                  Si llega antes de que alguien escuche, se entrega al suscribirse.
+//                                  También como evento 'turno_detenido' de «eventos».
+//   vigilarTurno(ctl, { libre })   aplica las reglas (§2.1) con cada cambio del controlador: corre si
+//                                  está en turno, aceptó el aviso y (tiene un viaje activo o libre():
+//                                  el teléfono puede recibir avisos). Al cargar y al volver a la app,
+//                                  la recuperación del §2.2 (paso 7). Una sola vez por controlador;
+//                                  devuelve cómo quitarlo (y entonces lo detiene).
+// La marca localStorage 'tc.turno.conductor' = { desde } dice que la web dejó el turno al plugin:
+// la web la borra siempre que lo detiene, así que «plugin detenido + marca» = lo detuvo el plugin
+// (o la notificación) o se cerró la app.
+import { ES_NATIVA, URL_API, appOculta, alCambiarVisibilidad } from './plataforma.js';
 import * as servidor from './servidor.js';
 import { Emisor } from './util.js';
 
@@ -101,7 +131,7 @@ function plugin(nombre) {
 const push = () => plugin('PushNotifications');
 const bio = () => plugin('NativeBiometric');
 
-function plataforma() {
+export function plataforma() {
   try {
     return globalThis.Capacitor?.getPlatform?.() === 'android' ? 'android' : 'ios';
   } catch {
@@ -124,7 +154,12 @@ const estadoPush = {
   enviado: false, // el servidor ya tiene el token con la sesión actual
   enviando: null,
   noInsistir: false, // el servidor no tiene la ruta (0.2.x, 404) o rechaza el token (400): no se insiste
+  resuelto: false, // en esta carga ya se supo si el token llega al servidor (o que no habrá)
 };
+const CARGA = Date.now();
+// Al abrir la app, el token guardado tarda un momento en volver a llegar al servidor: hasta que se
+// sepa (o pasen 30 s), el seguimiento nativo que ya iba en modo libre no se detiene por eso.
+const PUSH_PENDIENTE_MS = 30000;
 
 const normalizarPermiso = (r) => (r === 'granted' ? 'granted' : r === 'denied' ? 'denied' : 'prompt');
 
@@ -147,11 +182,14 @@ async function enviarToken() {
     try {
       await servidor.api('PUT', 'yo/dispositivo', { app, plataforma: plataforma(), token, entorno: 'production' });
       estadoPush.enviado = token === estadoPush.token;
+      estadoPush.resuelto = true;
       eventos.emit('registrado', { app, token });
       return true;
     } catch (e) {
       estadoPush.enviado = false;
+      estadoPush.resuelto = true;
       if (e?.estado === 404 || e?.estado === 400) estadoPush.noInsistir = true;
+      eventos.emit('registro_fallido', { codigo: e?.codigo || '' });
       return false;
     } finally {
       estadoPush.enviando = null;
@@ -246,7 +284,10 @@ function escucharPush() {
   };
   oyentesPush = Promise.all([
     poner('registration', alRegistrar),
-    poner('registrationError', (e) => eventos.emit('error_registro', { error: String(e?.error || '') })),
+    poner('registrationError', (e) => {
+      estadoPush.resuelto = true;
+      eventos.emit('error_registro', { error: String(e?.error || '') });
+    }),
     poner('pushNotificationReceived', (n) => eventos.emit('recibida', datosDe(n))),
     // iOS y Android guardan el toque hasta que haya quien lo escuche (app abierta desde la notificación).
     poner('pushNotificationActionPerformed', alTocar),
@@ -285,17 +326,29 @@ export async function registrarPush(app = appActual(), { pedir = true } = {}) {
     if (pedir && normalizarPermiso(s?.receive) === 'prompt') s = await P.requestPermissions();
     permiso = normalizarPermiso(s?.receive);
   } catch {
+    resolverSinPush();
     return 'no-disponible';
   }
-  if (permiso !== 'granted') return permiso;
+  if (permiso !== 'granted') {
+    resolverSinPush();
+    return permiso;
+  }
   await escucharPush();
   if (estadoPush.app === 'conductor' && plataforma() === 'android') await crearCanalServicios();
   try {
     await P.register();
   } catch {
+    resolverSinPush();
     return 'error';
   }
   return 'granted';
+}
+
+// Sin permiso (o sin poder registrarse) en esta carga: los avisos no van a llegar.
+function resolverSinPush() {
+  if (estadoPush.resuelto) return;
+  estadoPush.resuelto = true;
+  eventos.emit('registro_fallido', { codigo: 'sin_permiso' });
 }
 
 export const reanudarPush = (app = appActual()) => registrarPush(app, { pedir: false });
@@ -303,6 +356,10 @@ export const reanudarPush = (app = appActual()) => registrarPush(app, { pedir: f
 // ¿El servidor ya tiene el token de este teléfono con la sesión actual? (los avisos llegarán
 // con la app cerrada; el bus puede cerrar el WebSocket al pasar a segundo plano).
 export const pushListo = () => pushDisponible() && estadoPush.enviado;
+
+// Recién abierta la app: hay un token de antes que todavía no vuelve a llegar al servidor.
+const pushPendiente = () => pushDisponible() && !estadoPush.enviado && !estadoPush.resuelto && Boolean(estadoPush.token)
+  && !estadoPush.noInsistir && servidor.haySesion() && Date.now() - CARGA < PUSH_PENDIENTE_MS;
 
 export function reintentarPush() {
   if (!pushDisponible() || estadoPush.enviado || !estadoPush.token) return Promise.resolve(false);
@@ -551,5 +608,408 @@ export function vigilarBloqueo(alBloquear, { haySesion = servidor.haySesion, tra
 export async function olvidarTodo() {
   fijarBloqueo(false);
   estadoPush.enviado = false;
+  // La cuenta nueva que entre en este teléfono vuelve a ver el aviso de la ubicación en turno.
+  try {
+    localStorage.removeItem(CLAVE_AVISO_TURNO);
+  } catch {
+    /* sin almacenamiento */
+  }
   await olvidarLlave();
+}
+
+/* ---------------- ubicación en turno (segundo plano) ---------------- */
+
+const CLAVE_AVISO_TURNO = 'taxicun.turno.aviso'; // '1' «Entendido»; '0' «Ahora no»
+const CLAVE_MARCA_TURNO = 'tc.turno.conductor'; // { desde }: la web dejó el turno al plugin
+// Con estas fases el pasajero sigue el taxi: el plugin va en modo 'viaje' (GPS fino, ~3 s).
+const FASES_VIAJE_TURNO = ['hacia_origen', 'en_origen', 'en_viaje'];
+// Con estos motivos el plugin no se vuelve a iniciar solo hasta que la central salude otra vez.
+const MOTIVOS_FINALES = new Set(['sin_sesion', 'conductor_no_aprobado', 'empresa_no_disponible']);
+// Lo que avise el plugin mientras la web lo está deteniendo es de esa misma parada.
+const VENTANA_PROPIA_MS = 1500;
+
+const turnoPlugin = () => plugin('UbicacionTurno');
+export const turnoNativoDisponible = () => appActual() === 'conductor' && Boolean(turnoPlugin());
+
+const turno = {
+  activo: false, // el plugin sigue el turno (lo último que se sabe)
+  modo: null,
+  libre: null,
+  token: null, // con qué sesión se inició
+  precisa: true,
+  motivo: '', // por qué se detuvo la última vez
+  propias: 0, // paradas pedidas por la web en curso
+  corrida: leerJson(CLAVE_MARCA_TURNO) ? 1 : 0, // cada seguimiento (para avisar una sola vez su parada)
+  avisada: 0,
+  bloqueo: null, // motivo final: no se reinicia solo hasta la próxima bienvenida
+  cola: Promise.resolve(), // las llamadas al plugin, de a una
+};
+
+export function avisoSegundoPlano() {
+  try {
+    const v = localStorage.getItem(CLAVE_AVISO_TURNO);
+    return v === '1' ? 'si' : v === '0' ? 'no' : null;
+  } catch {
+    return null;
+  }
+}
+
+export const aceptoSegundoPlano = () => avisoSegundoPlano() === 'si';
+
+export function fijarAceptoSegundoPlano(si) {
+  try {
+    localStorage.setItem(CLAVE_AVISO_TURNO, si ? '1' : '0');
+  } catch {
+    /* sin almacenamiento */
+  }
+  vigilante?.aplicar({ reintentar: true });
+}
+
+export const turnoNativoActivo = () => turnoNativoDisponible() && turno.activo;
+
+const marcaTurno = (desde = Date.now()) => guardarJson(CLAVE_MARCA_TURNO, { desde });
+
+function codigoDe(e) {
+  return String(e?.code || e?.codigo || e?.message || 'ERROR');
+}
+
+export async function estadoTurnoNativo() {
+  const P = turnoPlugin();
+  const local = { activo: turno.activo, modo: turno.modo, desde: leerJson(CLAVE_MARCA_TURNO)?.desde ?? null, motivo: turno.motivo, precisa: turno.precisa };
+  if (!P?.estado) return { ...local, activo: false };
+  try {
+    const r = (await P.estado()) || {};
+    return {
+      activo: Boolean(r.activo),
+      modo: r.modo === 'viaje' ? 'viaje' : r.activo ? 'libre' : null,
+      desde: Number(r.desde) || null,
+      motivo: String(r.motivo || ''),
+      precisa: r.precisa !== false,
+    };
+  } catch {
+    return local;
+  }
+}
+
+export async function iniciarTurnoNativo({ modo = 'libre', libre = true } = {}) {
+  const P = turnoPlugin();
+  if (!P) throw Object.assign(new Error('Sin el plugin UbicacionTurno'), { code: 'NO_DISPONIBLE' });
+  const token = servidor.token();
+  if (!token) throw Object.assign(new Error('Sin sesión'), { code: 'SIN_SESION' });
+  const m = modo === 'viaje' ? 'viaje' : 'libre';
+  const nuevo = !turno.activo;
+  const r = (await P.iniciar({ url: `${URL_API}conductor/ubicacion`, token, modo: m, libre: Boolean(libre) })) || {};
+  turno.activo = true;
+  turno.modo = m;
+  turno.libre = Boolean(libre);
+  turno.token = token;
+  turno.motivo = '';
+  turno.precisa = r.precisa !== false;
+  if (nuevo) turno.corrida += 1;
+  // Si la página se recarga sin que la app muera, la web retoma el turno con esto (§2.2, paso 7).
+  if (nuevo || !leerJson(CLAVE_MARCA_TURNO)) marcaTurno(Number(r.desde) || Date.now());
+  eventos.emit('turno', { activo: true, modo: m });
+  return r;
+}
+
+export async function cambiarModoTurno(modo, { libre } = {}) {
+  const P = turnoPlugin();
+  if (!P || !turno.activo) return null;
+  const m = modo === 'viaje' ? 'viaje' : 'libre';
+  const datos = { modo: m };
+  if (typeof libre === 'boolean') datos.libre = libre;
+  const r = await P.cambiarModo(datos);
+  turno.modo = m;
+  if (typeof libre === 'boolean') turno.libre = libre;
+  eventos.emit('turno', { activo: true, modo: m });
+  return r;
+}
+
+// motivo: el fin que va en el último POST si avisar ('turno_apagado' al salir de turno). Sin
+// avisar (ajustes, sin viaje ni avisos, sesión vencida) no sale nada: el turno sigue en la central.
+export async function detenerTurnoNativo(motivo = 'turno_apagado', { avisar = true } = {}) {
+  if (!turnoNativoDisponible()) return null; // la web, las demos y las apps sin el plugin
+  guardarJson(CLAVE_MARCA_TURNO, null);
+  const P = turnoPlugin();
+  const estaba = turno.activo;
+  turno.activo = false;
+  turno.modo = null;
+  turno.libre = null;
+  turno.motivo = motivo;
+  turno.avisada = turno.corrida; // esta parada la pidió la web: no se avisa como inesperada
+  if (estaba) eventos.emit('turno', { activo: false, motivo });
+  if (!P) return null;
+  turno.propias += 1;
+  try {
+    return await P.detener({ motivo, avisar: Boolean(avisar) });
+  } catch {
+    return null;
+  } finally {
+    setTimeout(() => {
+      turno.propias -= 1;
+    }, VENTANA_PROPIA_MS);
+  }
+}
+
+/* ----- paradas que no pidió la web ----- */
+
+const manejadoresParada = new Set();
+let paradaPendiente = null;
+
+export function alDetenerTurno(fn) {
+  manejadoresParada.add(fn);
+  if (paradaPendiente) {
+    const p = paradaPendiente;
+    paradaPendiente = null;
+    setTimeout(() => entregarA(fn, p), 0);
+  }
+  return () => manejadoresParada.delete(fn);
+}
+
+function entregarA(fn, p) {
+  try {
+    fn(p);
+  } catch (e) {
+    console.error('[turno detenido]', e);
+  }
+}
+
+// Una vez por seguimiento (el evento del plugin y la revisión al volver pueden decir lo mismo).
+function avisarParada(motivo, { alCargar = false } = {}) {
+  if (turno.avisada === turno.corrida) return;
+  turno.avisada = turno.corrida;
+  const p = { motivo, alCargar };
+  eventos.emit('turno_detenido', p);
+  if (!manejadoresParada.size) {
+    paradaPendiente = p;
+    return;
+  }
+  for (const fn of [...manejadoresParada]) entregarA(fn, p);
+}
+
+function alPararseElPlugin(motivo) {
+  const propia = turno.propias > 0;
+  const tenia = turno.activo || Boolean(leerJson(CLAVE_MARCA_TURNO));
+  turno.activo = false;
+  turno.modo = null;
+  turno.libre = null;
+  turno.motivo = motivo;
+  eventos.emit('turno', { activo: false, motivo });
+  if (propia || !tenia) return;
+  guardarJson(CLAVE_MARCA_TURNO, null);
+  if (MOTIVOS_FINALES.has(motivo)) turno.bloqueo = motivo;
+  avisarParada(motivo);
+  vigilante?.aplicar();
+}
+
+let oyenteTurno = null;
+function escucharTurno() {
+  if (oyenteTurno) return oyenteTurno;
+  const P = turnoPlugin();
+  if (!P?.addListener) return Promise.resolve(null);
+  try {
+    // retainUntilConsumed: una parada con la app suspendida llega al poner el oyente.
+    oyenteTurno = Promise.resolve(P.addListener('detenido', (d) => alPararseElPlugin(String(d?.motivo || '')))).catch(() => null);
+  } catch {
+    oyenteTurno = Promise.resolve(null);
+  }
+  return oyenteTurno;
+}
+
+/* ----- reglas (§2.1) y recuperación (§2.2) ----- */
+
+let vigilante = null;
+
+export function vigilarTurno(ctl, { libre = pushListo } = {}) {
+  if (!turnoNativoDisponible() || !ctl?.real) return () => {};
+  if (ctl.vigilanciaTurno) return ctl.vigilanciaTurno;
+  vigilante?.quitar({ detener: false });
+  let quitado = false;
+  let retomarAlVolver = false;
+  let impreciso = false; // ya se avisó «Ubicación exacta» con este controlador
+  const fallo = { codigo: null, clave: null }; // el último iniciar que no se pudo (no se insiste)
+  const dejar = [];
+
+  const encolar = (fn) => {
+    turno.cola = turno.cola.then(() => (quitado ? null : fn())).catch((e) => console.error('[turno]', e));
+    return turno.cola;
+  };
+
+  function deseado() {
+    const e = ctl.estado;
+    if (ctl.destruido || !servidor.haySesion() || !aceptoSegundoPlano() || !e.conectado) return null;
+    const enViaje = FASES_VIAJE_TURNO.includes(e.viaje?.fase);
+    let puede = false;
+    try {
+      puede = Boolean(libre());
+    } catch {
+      puede = false;
+    }
+    // Recargó con el seguimiento libre andando: mientras el token de los avisos vuelve a llegar
+    // al servidor, se deja como iba (si no, se detendría y, con la app oculta, no volvería).
+    if (!puede && turno.activo && turno.libre !== false && pushPendiente()) puede = true;
+    // Sin avisos (Android sin Firebase, notificaciones negadas): solo durante los viajes. Así nunca
+    // se ve en el mapa un taxi libre que no se entera de los servicios.
+    if (!enViaje && !puede) return null;
+    return { modo: enViaje ? 'viaje' : 'libre', libre: puede };
+  }
+
+  function motivoParada() {
+    if (!servidor.haySesion()) return ['sesion', false];
+    if (!ctl.estado.conectado || ctl.destruido) return ['turno_apagado', true];
+    if (!aceptoSegundoPlano()) return ['ajustes', false];
+    return ['sin_viaje', false]; // sigue en turno con la app abierta, como en la 1.2
+  }
+
+  async function paso() {
+    // Recargó con la app oculta y el seguimiento vivo: hasta retomar el turno al volver, nada.
+    if (retomarAlVolver) return;
+    const d = deseado();
+    if (!d) {
+      if (turno.activo) {
+        const [motivo, avisar] = motivoParada();
+        await detenerTurnoNativo(motivo, { avisar });
+      }
+      return;
+    }
+    if (turno.bloqueo) return;
+    const clave = `${d.modo}|${d.libre}`;
+    // Lo que ya falló con estos datos no se repite hasta volver a la app o cambiar algo.
+    const yaFallo = Boolean(fallo.codigo) && fallo.clave === clave;
+    if (turno.activo) {
+      // Otra sesión (o retomado al cargar): el plugin necesita el token de ahora. iniciar con el
+      // seguimiento en marcha solo actualiza los datos, pero también pide la app al frente.
+      if (servidor.token() !== turno.token && !appOculta() && !yaFallo) return iniciarYa(d, clave);
+      if (d.modo !== turno.modo || d.libre !== turno.libre) await cambiarModoTurno(d.modo, { libre: d.libre }).catch(() => {});
+      return;
+    }
+    // iOS y Android solo dejan arrancarlo con la app al frente: si no, al volver.
+    if (appOculta() || yaFallo) return;
+    await iniciarYa(d, clave);
+  }
+
+  async function iniciarYa(d, clave) {
+    try {
+      const r = await iniciarTurnoNativo(d);
+      fallo.codigo = null;
+      if (r?.precisa === false && !impreciso) {
+        impreciso = true;
+        eventos.emit('turno_impreciso', {});
+      }
+      // La presencia sale ya con segundoPlano: true (la central no lo saca del mapa al minimizar).
+      ctl.anunciarPresencia?.();
+    } catch (e) {
+      fallo.codigo = codigoDe(e);
+      fallo.clave = clave;
+      eventos.emit('turno', { activo: false, error: fallo.codigo });
+    }
+  }
+
+  // Recarga de la página sin que la app muera (§2.2, paso 7) y vuelta a la app.
+  async function revisar({ alCargar = false } = {}) {
+    const est = await estadoTurnoNativo();
+    const marca = leerJson(CLAVE_MARCA_TURNO);
+    if (est.activo) {
+      turno.activo = true;
+      turno.modo = est.modo;
+      turno.precisa = est.precisa;
+      if (!alCargar) return;
+      // Al cargar no se sabe con qué datos va: se le pasan otra vez (token de esta sesión).
+      turno.token = null;
+      turno.libre = null;
+      if (!marca || !servidor.haySesion()) {
+        await detenerTurnoNativo('turno_apagado', { avisar: servidor.haySesion() });
+        return;
+      }
+      if (!ctl.estado.conectado) {
+        // Retomar lee el GPS: con la app oculta (el JS de iOS no lo recibe), al volver.
+        if (appOculta()) retomarAlVolver = true;
+        else await retomar();
+      }
+      return;
+    }
+    // El plugin no sigue el turno.
+    const tenia = turno.activo || Boolean(marca);
+    turno.activo = false;
+    turno.modo = null;
+    turno.libre = null;
+    if (est.motivo) turno.motivo = est.motivo;
+    if (!marca) return;
+    guardarJson(CLAVE_MARCA_TURNO, null);
+    // Con la marca puesta la web no lo detuvo: se cerró la app (al cargar arranca fuera de turno,
+    // como siempre) o lo detuvo el plugin o la notificación (se avisa, una sola vez).
+    if (tenia && est.motivo && est.motivo !== 'app_cerrada') {
+      if (MOTIVOS_FINALES.has(est.motivo)) turno.bloqueo = est.motivo;
+      avisarParada(est.motivo, { alCargar });
+    }
+  }
+
+  async function retomar() {
+    retomarAlVolver = false;
+    if (ctl.destruido || ctl.estado.conectado || !servidor.haySesion()) return;
+    const ok = await ctl.conectar();
+    if (ok) eventos.emit('turno_retomado', {});
+  }
+
+  const aplicar = ({ reintentar = false } = {}) => {
+    if (quitado) return;
+    if (reintentar) fallo.codigo = null;
+    encolar(paso);
+  };
+
+  // El núcleo pregunta esto: con el plugin activo la presencia lleva segundoPlano: true y, con
+  // la app oculta, el JS no manda presencia ni ubicación (las manda el plugin por HTTP).
+  ctl.nativo = {
+    activo: () => turnoNativoActivo(),
+    enviando: () => turnoNativoActivo() && appOculta(),
+  };
+
+  dejar.push(ctl.on('cambio', () => aplicar()));
+  dejar.push(ctl.on('bienvenida', () => {
+    // La central lo dejó entrar: la sesión y la aprobación están bien.
+    turno.bloqueo = null;
+    aplicar();
+  }));
+  dejar.push(eventos.on('registrado', () => aplicar()));
+  dejar.push(eventos.on('registro_fallido', () => aplicar()));
+  dejar.push(eventos.on('error_registro', () => aplicar()));
+  dejar.push(alCambiarVisibilidad((oculta) => {
+    if (oculta || quitado) return;
+    fallo.codigo = null;
+    encolar(async () => {
+      await revisar();
+      if (retomarAlVolver) await retomar();
+      await paso();
+    });
+  }));
+
+  function quitar({ detener = true } = {}) {
+    if (quitado) return;
+    quitado = true;
+    for (const f of dejar) f?.();
+    if (ctl.nativo) ctl.nativo = null;
+    ctl.vigilanciaTurno = null;
+    if (vigilante?.ctl === ctl) vigilante = null;
+    // Sin controlador no hay turno (cerró sesión, se eliminó la cuenta, la central lo rechazó).
+    if (detener && (turno.activo || leerJson(CLAVE_MARCA_TURNO))) {
+      const avisar = servidor.haySesion();
+      turno.cola = turno.cola.then(() => detenerTurnoNativo('turno_apagado', { avisar })).catch(() => {});
+    }
+  }
+
+  vigilante = { ctl, aplicar, quitar };
+  ctl.vigilanciaTurno = () => quitar();
+  encolar(async () => {
+    await escucharTurno();
+    await revisar({ alCargar: true });
+    await paso();
+  });
+  return ctl.vigilanciaTurno;
+}
+
+if (turnoNativoDisponible()) {
+  escucharTurno();
+  // Sin sesión no hay turno: un seguimiento que quedó de antes (la página se recargó, se borraron
+  // los datos) se suelta. Si no había ninguno, el plugin no hace nada.
+  if (!servidor.haySesion()) detenerTurnoNativo('sesion', { avisar: false });
 }

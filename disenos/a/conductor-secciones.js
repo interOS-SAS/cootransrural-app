@@ -5,9 +5,12 @@
 // documentos de ejemplo, sin GPS simulado, sala ni relés; calificación y viajes solo
 // si los manda la central; en Ajustes, «Tu cuenta» con Cerrar sesión y Eliminar mi
 // cuenta. En la app nativa (ctx.nativa), sin «Instalar» ni «Cambiar de municipio».
+// Con el plugin UbicacionTurno, «Ubicación con la app minimizada» (activa / solo durante los
+// viajes / apagada) y, en Android, cómo evitar que el teléfono cierre la app.
 import { el, esc, icono, abrirPanel, chipPrueba, decimal, placa, franjaCuadros, celularTexto } from './ui.js';
 import { ilustracionVacia, taxiLateral } from './ilustraciones.js';
-import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio, bloqueSeguridad } from './ajustes-comunes.js';
+import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio, bloqueSeguridad, interruptor } from './ajustes-comunes.js';
+import { ofrecerSegundoPlano } from './nativa.js';
 import * as EM from './empresa.js';
 
 // Colores validados para las dos categorías (QR / efectivo) sobre fondo claro.
@@ -254,6 +257,8 @@ export function abrirAjustesConductor({ N, app, c, avisos, diseno, cambiarMunici
           ...[
             nativa ? '' : bloqueMunicipio(N, { alCambiar: cambiarMunicipio, unica }),
             gps,
+            // Con el plugin UbicacionTurno (en la web y sin el plugin no aparece).
+            nativa ? bloqueSegundoPlano({ N, app }) : '',
             bloqueSonidoYAvisos(N, { rol: 'conductor' }),
             // App nativa 1.2: Face ID / huella (en la web no aparece).
             bloqueSeguridad(N, { correo: cuenta?.usuario?.correo || '' }),
@@ -290,6 +295,56 @@ export function abrirAjustesConductor({ N, app, c, avisos, diseno, cambiarMunici
       );
     },
   });
+}
+
+// «Ubicación con la app minimizada»: activa (con los avisos del celular), solo durante los viajes
+// (sin avisos no se muestra en el mapa un taxi libre que no se entera de los servicios) o apagada
+// (dijo «Ahora no»). Encenderla muestra otra vez el aviso «Tu ubicación mientras estás conectado».
+function bloqueSegundoPlano({ N, app }) {
+  if (!EM.MODO_REAL || !EM.ES_NATIVA || !N.nativo?.turnoNativoDisponible?.()) return '';
+  const android = N.nativo.plataforma?.() === 'android';
+  const s = el(`<section class="a-grupo a-segundo-plano" data-segundo-plano><h3>Con la app minimizada</h3>
+    <div class="a-tarjeta-lista" data-lista></div>
+    <p class="a-ayuda-txt" data-sp-ahora hidden></p>
+    ${android ? `<div class="a-tarjeta-blanca a-sp-marcas" data-sp-marcas>
+      <strong>¿Tu teléfono cierra ${esc(EM.APP)} Conductor cuando no la estás usando?</strong>
+      <ul>
+        <li><b>Samsung:</b> Ajustes › Batería › Límites de uso en segundo plano › quita ${esc(EM.APP)} Conductor de «Aplicaciones en suspensión».</li>
+        <li><b>Xiaomi:</b> Ajustes › Aplicaciones › ${esc(EM.APP)} Conductor › Ahorro de batería › Sin restricciones.</li>
+        <li><b>Huawei:</b> Ajustes › Batería › Inicio de aplicaciones › ${esc(EM.APP)} Conductor › Gestionar manualmente, con «Ejecutar en segundo plano».</li>
+        <li><b>Otras marcas:</b> Ajustes › Aplicaciones › ${esc(EM.APP)} Conductor › Batería › Sin restricciones.</li>
+      </ul>
+    </div>` : ''}
+  </section>`);
+  const estadoTxt = () => {
+    if (!N.nativo.aceptoSegundoPlano()) return 'Apagada · Solo con la app abierta.';
+    if (!N.nativo.pushListo()) return 'Solo durante los viajes · Activa las notificaciones para recibir servicios con la app minimizada.';
+    return 'Activa · Mientras estés conectado te llegan servicios y tu pasajero te ve, aunque uses otra app.';
+  };
+  const fila = interruptor({
+    id: 'a-aj-segundo-plano', titulo: 'Ubicación con la app minimizada', detalle: estadoTxt(), icono: 'gps', activo: N.nativo.aceptoSegundoPlano(),
+    alCambiar: async (v) => {
+      let si = true;
+      if (v) si = await ofrecerSegundoPlano(app, { N, forzar: true });
+      else N.nativo.fijarAceptoSegundoPlano(false);
+      setTimeout(pintar, 0);
+      return si;
+    },
+  });
+  s.querySelector('[data-lista]').append(fila);
+  const ahora = s.querySelector('[data-sp-ahora]');
+  async function pintar() {
+    const det = fila.querySelector('small');
+    if (det) det.textContent = estadoTxt();
+    const est = await N.nativo.estadoTurnoNativo();
+    let txt = '';
+    if (est.activo) txt = est.precisa ? 'Ahora la estás compartiendo porque estás conectado.' : `Ahora la estás compartiendo, pero aproximada: activa «${android ? 'Usar ubicación precisa' : 'Ubicación exacta'}» para que tu pasajero te vea llegar.`;
+    else if (est.motivo === 'permiso' && N.nativo.aceptoSegundoPlano()) txt = 'Se detuvo porque la app no tiene permiso de ubicación. Actívalo en los ajustes del celular.';
+    ahora.textContent = txt;
+    ahora.hidden = !txt;
+  }
+  pintar();
+  return s;
 }
 
 export function abrirAvisosConductor({ N, app, avisos }) {

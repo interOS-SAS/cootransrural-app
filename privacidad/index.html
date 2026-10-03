@@ -101,7 +101,7 @@
         <h2>En pocas palabras</h2>
         <ul>
           <li><svg class="icono" aria-hidden="true"><use href="#i-usuario"/></svg><span>Pedimos solo lo necesario para que llegue tu taxi: tu correo, tu nombre, tu celular y los datos de tus viajes. A los conductores, además, los datos de su taxi.</span></li>
-          <li><svg class="icono" aria-hidden="true"><use href="#i-pin"/></svg><span>Usamos tu ubicación solo mientras usas la app para pedir o prestar un servicio. Con la app cerrada no la leemos.</span></li>
+          <li><svg class="icono" aria-hidden="true"><use href="#i-pin"/></svg><span>Usamos tu ubicación solo mientras usas la app para pedir o prestar un servicio. Si eres conductor y estás conectado, la app la sigue enviando aunque la minimices, hasta que te desconectes o la cierres. Con la app cerrada no la leemos.</span></li>
           <li><svg class="icono" aria-hidden="true"><use href="#i-celular"/></svg><span>Si los activas, te avisamos con notificaciones cuando llega tu taxi o, si eres conductor, cuando hay un servicio nuevo. También puedes entrar con tu huella o tu rostro: esos datos nunca salen de tu celular.</span></li>
           <li><svg class="icono" aria-hidden="true"><use href="#i-personas"/></svg><span>Tus datos los ve la cooperativa que presta el servicio y, en cada viaje, solo lo necesario para encontrarse: tu celular le llega únicamente al conductor que acepta el viaje.</span></li>
           <li><svg class="icono" aria-hidden="true"><use href="#i-cerrar"/></svg><span>No vendemos tus datos, no hay publicidad y no usamos rastreadores de terceros.</span></li>
@@ -157,7 +157,7 @@
           <li>Tu <b>correo</b>, tu <b>nombre</b> y tu <b>celular</b>.</li>
           <li>Los datos de tu taxi: la <b>cooperativa</b> con la que trabajas, tu <b>número de móvil</b>, la <b>placa</b>, el <b>vehículo</b> y su <b>color</b>.</li>
           <li>El estado de tu registro: en revisión, aprobado o suspendido.</li>
-          <li>Tu <b>ubicación</b> mientras estás conectado para recibir servicios (lee <a href="#ubicacion">Tu ubicación</a>).</li>
+          <li>Tu <b>ubicación</b> mientras estás conectado para recibir servicios, también con la app minimizada si lo aceptas (lee <a href="#ubicacion">Tu ubicación</a>).</li>
           <li>Los viajes que haces y las calificaciones que das y recibes.</li>
         </ul>
         <h3>Datos técnicos</h3>
@@ -178,10 +178,12 @@
 
       <section id="ubicacion">
         <h2>3. Tu ubicación</h2>
-        <p>La app te pide permiso para usar tu ubicación <b>solo mientras la usas</b>. No pedimos ubicación en segundo plano: con la app cerrada, TaxiCun no lee tu ubicación.</p>
+        <p>La app te pide permiso para usar tu ubicación <b>solo mientras la usas</b>; nunca te pide el permiso «Siempre». Con la app cerrada, TaxiCun no lee tu ubicación. Si eres pasajero, tampoco con la app minimizada. Si eres conductor, la app la sigue usando con la app minimizada mientras estás conectado, como se explica abajo.</p>
         <ul>
           <li><b>Pasajeros:</b> tu ubicación sirve para mostrarte en el mapa, proponerte el punto de recogida y, si hace falta, reconocer tu municipio. A nuestro servidor solo llegan el punto de recogida y el destino, cuando pides un taxi.</li>
-          <li><b>Conductores:</b> mientras estás conectado, la app envía tu posición a nuestro servidor para ofrecerte los servicios cercanos y, durante un viaje, para que tu pasajero vea el taxi acercarse. Los pasajeros de tu cooperativa que tienen la app abierta ven en el mapa tu número de móvil y una posición <b>aproximada</b> de tu taxi, no la exacta; la posición exacta solo la ve tu pasajero, durante su viaje. No guardamos un historial de tus recorridos: el servidor solo conoce tu última posición. Si sales de la app sin desconectarte y tienes los avisos activados, seguimos usando la última posición que envió tu taxi antes de salir (ya no se actualiza) hasta por 30 minutos, para avisarte de los servicios cercanos. Pasado ese tiempo, o si te desconectas, la borramos y te avisamos que tu turno quedó en pausa.</li>
+          <li><b>Conductores:</b> mientras estás conectado, la app envía tu posición a nuestro servidor para ofrecerte los servicios cercanos y, durante un viaje, para que tu pasajero vea el taxi acercarse. Los pasajeros de tu cooperativa que tienen la app abierta ven en el mapa tu número de móvil y una posición <b>aproximada</b> de tu taxi, no la exacta; la posición exacta solo la ve tu pasajero, durante su viaje. No guardamos un historial de tus recorridos: el servidor solo conoce tu última posición.</li>
+          <li><b>Conductores, con la app minimizada:</b> la primera vez que te conectas, la app te explica que, mientras estés conectado, seguirá enviando tu ubicación aunque uses otra app (por ejemplo WhatsApp o Waze) o bloquees el celular. Si lo aceptas, así funciona: la ubicación se lee y se envía también con la app minimizada, para ofrecerte los servicios cercanos y para que tu pasajero vea por dónde vas. En iPhone lo ves con el indicador azul de ubicación, y en Android con la notificación fija «Estás en turno», que trae el botón «Salir de turno». Se deja de enviar cuando te desconectas, cuando cierras la app o a las 14 horas de estar conectado. Si tu celular no puede recibir nuestros avisos, solo se envía con la app minimizada durante un viaje. Si dejan de llegar tus posiciones, a los 3 minutos dejas de aparecer en el mapa y a los 10 minutos sales de turno. Puedes apagarlo cuando quieras en <span class="ruta-app"><b>Ajustes</b> → <b>Ubicación con la app minimizada</b></span>.</li>
+          <li><b>Conductores que no lo aceptan, o con una versión de la app que no lo hace:</b> la ubicación se envía solo con la app abierta. Si sales de la app sin desconectarte y tienes los avisos activados, seguimos usando la última posición que envió tu taxi antes de salir (ya no se actualiza) hasta por 30 minutos, para avisarte de los servicios cercanos. Pasado ese tiempo, o si te desconectas, la borramos y te avisamos que tu turno quedó en pausa.</li>
         </ul>
         <p>Puedes negar el permiso o quitarlo cuando quieras en los ajustes del teléfono. Sin ubicación, el pasajero puede mover el mapa para marcar dónde lo recogen; el conductor, en cambio, no puede conectarse a recibir servicios.</p>
       </section>
@@ -237,7 +239,7 @@
           <li>No hay publicidad en TaxiCun, y no usamos tus datos para publicidad.</li>
           <li>La app no lleva herramientas de analítica ni rastreadores de terceros.</li>
           <li>No te enviamos correos comerciales: tu correo es solo para el código de ingreso y para responderte cuando nos escribes.</li>
-          <li>Con la app cerrada no leemos tu ubicación.</li>
+          <li>Con la app cerrada no leemos tu ubicación. Con la app minimizada solo la leemos si eres conductor y estás conectado, y nunca te pedimos el permiso de ubicación «Siempre».</li>
           <li>No recibimos ni guardamos tu huella ni tu rostro.</li>
         </ul>
       </section>
@@ -248,7 +250,7 @@
           <li><b>Tu cuenta y tus datos de perfil:</b> mientras la tengas activa.</li>
           <li><b>Tu sesión:</b> vence al año; antes, si cierras sesión o eliminas la cuenta.</li>
           <li><b>El código de ingreso:</b> vence a los 10 minutos.</li>
-          <li><b>La posición de los conductores:</b> solo mientras están conectados y, si salen de la app sin desconectarse, hasta 30 minutos más. No se guarda un historial.</li>
+          <li><b>La posición de los conductores:</b> solo la última, mientras están conectados (también con la app minimizada, si lo aceptaron). Si dejan de llegar posiciones, la borramos a los 10 minutos; con las versiones de la app que solo la envían con la app abierta, hasta 30 minutos después de salir de la app. No se guarda un historial.</li>
           <li><b>El identificador de notificaciones:</b> hasta que cierres sesión, elimines tu cuenta o Google o Apple nos digan que ya no sirve (por ejemplo, porque desinstalaste la app). Guardamos como máximo los 10 más recientes por cuenta.</li>
           <li><b>La llave de «Entrar con huella o rostro»:</b> hasta que la quites en Ajustes o elimines tu cuenta. Si cierras sesión, se queda en tu celular para que vuelvas a entrar con tu huella o tu rostro. Cada cuenta tiene como máximo 5 llaves vigentes: al crear una sexta, la más vieja deja de servir. Las que ya no sirven se borran al eliminar la cuenta.</li>
           <li><b>Los viajes y las calificaciones:</b> se conservan como registro de la operación de la cooperativa, para atender reclamos y cumplir obligaciones legales. Si eliminas tu cuenta, quedan sin tu nombre, tu correo ni tu celular.</li>

@@ -136,6 +136,30 @@ El diseño A lo usa en `disenos/a/nativa.js` (modales en el momento justo, «Ent
 capa de bloqueo) y en Ajustes («Seguridad» y las notificaciones del celular). Prueba con
 Capacitor y servidor simulados: `node pruebas/nativo-v12.mjs http://localhost:8823/`.
 
+### Ubicación con la app minimizada (plugin local `UbicacionTurno`, solo en la app del conductor)
+
+Con el plugin (detrás de `ES_NATIVA && isPluginAvailable('UbicacionTurno')`), el conductor en
+turno que minimiza la app o usa otra sigue enviando su ubicación por HTTP nativo
+(`POST /api/conductor/ubicacion`, servidor 0.4.0); el JS no manda nada mientras tanto.
+
+- `turnoNativoDisponible()`, `aceptoSegundoPlano()` / `avisoSegundoPlano()` /
+  `fijarAceptoSegundoPlano(si)` (localStorage `taxicun.turno.aviso`), `iniciarTurnoNativo({ modo, libre })`,
+  `cambiarModoTurno(modo, { libre })`, `detenerTurnoNativo(motivo, { avisar })`,
+  `estadoTurnoNativo()` (`{ activo, modo, desde, motivo, precisa }`), `turnoNativoActivo()`,
+  `alDetenerTurno(fn)` (el plugin se detuvo solo: `turno_apagado` desde la notificación, `permiso`,
+  `tope`, `sin_sesion`…; también `eventos.on('turno_detenido')`).
+- `vigilarTurno(ctl, { libre })`: corre si está en turno, aceptó el aviso y tiene un viaje activo
+  o el teléfono puede recibir avisos (`pushListo()`); modo `viaje` con el pasajero en camino o a
+  bordo, `libre` si no. Lo inicia solo con la app al frente; al cargar y al volver revisa el
+  plugin (retoma el turno si la página se recargó con el seguimiento vivo y la marca
+  `tc.turno.conductor`; si no, arranca fuera de turno). Le da al controlador `ctl.nativo`
+  (`activo()`, `enviando()`): presencia con `segundoPlano: true`, y con la app oculta el JS suelta
+  su GPS y no manda presencia ni ubicación.
+
+El diseño A: `ofrecerSegundoPlano()` (aviso «Tu ubicación mientras estás conectado», antes de
+iniciar), «Con la app minimizada» en Ajustes y los avisos cuando el plugin se detiene. Prueba:
+`node pruebas/segundo-plano.mjs http://localhost:8961/`.
+
 ## Red
 
 Sin servidor propio. Las pestañas del mismo navegador se hablan por

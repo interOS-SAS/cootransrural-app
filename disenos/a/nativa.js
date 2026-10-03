@@ -9,11 +9,49 @@
 //   ingresoBiometria({ N, alEntrar, alError }) bloque «Entrar con Face ID» (o null si no hay llave)
 //   montarBloqueo(app, { N, alSalir })      capa «TaxiCun está bloqueada» al abrir y al volver
 //                                            tras más de 60 s (si está puesto en Ajustes)
+//   ofrecerSegundoPlano(app, { N, forzar })  «Tu ubicación mientras estás conectado» (con el plugin
+//                                            UbicacionTurno): la primera vez que se pone en turno,
+//                                            antes de iniciar el seguimiento; forzar: desde Ajustes
 import { el, esc, icono, modal, franjaCuadros } from './ui.js';
 import * as EM from './empresa.js';
 
 // ¿App nativa del modo real con el núcleo 1.2?
 const activa = (N) => Boolean(EM.MODO_REAL && EM.ES_NATIVA && N?.nativo);
+
+/* ---------------- ubicación con la app minimizada (plugin UbicacionTurno) ---------------- */
+
+// El aviso va ANTES de iniciar el seguimiento: para Google es la «divulgación destacada» del
+// servicio en primer plano de ubicación. «Entendido» lo guarda; «Ahora no», solo con la app
+// abierta, como hasta ahora (se puede activar en Ajustes). Cerrarlo sin elegir no guarda nada.
+// Devuelve true si quedó aceptado.
+export async function ofrecerSegundoPlano(app, { N, forzar = false }) {
+  if (!activa(N) || !N.nativo.turnoNativoDisponible?.()) return false;
+  const dicho = N.nativo.avisoSegundoPlano();
+  if (dicho === 'si') return true;
+  if (dicho === 'no' && !forzar) return false;
+  const android = N.nativo.plataforma?.() === 'android';
+  const lista = [
+    ['candado', 'La ves solo tú, la central y el pasajero de tu servicio; no guardamos tu recorrido.'],
+    android
+      ? ['campana', 'En Android verás una notificación fija «Estás en turno»; desde ahí también puedes salir de turno.']
+      : ['gps', 'En iPhone verás el indicador azul de ubicación arriba en la pantalla.'],
+    ['potencia', 'Para que se detenga, desconéctate o cierra la app.'],
+  ];
+  const si = await modal(app, {
+    titulo: 'Tu ubicación mientras estás conectado',
+    texto: `Mientras estés conectado, ${EM.APP} Conductor sigue enviando tu ubicación aunque uses WhatsApp, Waze u otra app, o bloquees el teléfono. Así te llegan los servicios cercanos y tu pasajero ve por dónde vas.`,
+    cuerpo: `<ul class="a-nat-lista">${lista.map(([ico, t]) => `<li>${icono(ico, { tam: 18 })}<span>${esc(t)}</span></li>`).join('')}</ul>`,
+    icono: `<span class="a-nat-ico">${icono('gps', { tam: 32 })}</span>`,
+    clase: 'a-modal-nativa a-modal-segundo-plano',
+    acciones: [
+      { texto: 'Entendido', valor: true, clase: 'a-btn-primario', icono: 'check' },
+      { texto: 'Ahora no', valor: false, clase: 'a-btn-suave' },
+    ],
+  });
+  if (si == null) return false;
+  N.nativo.fijarAceptoSegundoPlano(Boolean(si));
+  return Boolean(si);
+}
 
 /* ---------------- avisos (notificaciones push) ---------------- */
 

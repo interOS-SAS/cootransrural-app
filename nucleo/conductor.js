@@ -146,6 +146,10 @@ class ControladorConductor extends Emisor {
       this.relojReintentoGps = null;
       this.esperaReintentoGps = 0;
       this.gpsLeidoEn = 0; // cuándo llegó la última lectura buena del GPS
+      // App nativa con el plugin UbicacionTurno: lo pone nativo.vigilarTurno() ({ activo(),
+      // enviando() }). Con el plugin activo la presencia lleva segundoPlano: true; mientras él
+      // envía (app oculta), el JS no manda presencia ni ubicación por el bus. Sin él, nada cambia.
+      this.nativo = null;
     }
   }
 
@@ -241,10 +245,17 @@ class ControladorConductor extends Emisor {
     return true;
   }
 
+  // Modo real: vuelve a mandar la presencia ya (por ejemplo, al arrancar el seguimiento nativo).
+  anunciarPresencia() {
+    if (this.real && this.estado.conectado) this.#anunciar();
+  }
+
   #anunciar() {
     const c = this.perfil;
     if (!c) return;
     if (this.real) {
+      // Con la app oculta y el seguimiento nativo activo, la posición la manda el plugin por HTTP.
+      if (this.nativo?.enviando?.()) return;
       // Siempre con la posición del GPS de verdad: sin pos el servidor le mandaría al
       // conductor todas las solicitudes de la cooperativa. Sin GPS, no disponible.
       const conGps = Boolean(this.estado.gpsReal && this.estado.pos);
@@ -253,6 +264,9 @@ class ControladorConductor extends Emisor {
         movil: c.movil,
         disponible: conGps && this.estado.conectado && !this.estado.viaje,
         ...(conGps ? { pos: this.estado.pos } : {}),
+        // Servidor 0.4.0: al minimizar no lo saca del mapa (el plugin sigue enviando). Los
+        // servidores anteriores ignoran el campo.
+        ...(this.nativo?.activo?.() ? { segundoPlano: true } : {}),
       });
       return;
     }
@@ -431,7 +445,8 @@ class ControladorConductor extends Emisor {
     this.estado.pos = p;
     const v = this.estado.viaje;
     const ahora = Date.now();
-    if (v && !v.simulado && ['hacia_origen', 'en_origen', 'en_viaje'].includes(v.fase) && ahora - (this.ultimaUbicacion || 0) >= TIEMPOS.ubicacion) {
+    // Con la app oculta y el seguimiento nativo activo, la ubicación del viaje la manda el plugin.
+    if (v && !v.simulado && ['hacia_origen', 'en_origen', 'en_viaje'].includes(v.fase) && ahora - (this.ultimaUbicacion || 0) >= TIEMPOS.ubicacion && !this.nativo?.enviando?.()) {
       this.ultimaUbicacion = ahora;
       const objetivo = v.fase === 'en_viaje' ? v.destino : v.origen;
       const etaMin = objetivo ? (distanciaKm(p, objetivo) * 1.3 / 25) * 60 : null;
@@ -838,6 +853,10 @@ class ControladorConductor extends Emisor {
   // ninguno.
   #modoGps() {
     if (this.gpsNegado) return null;
+    // App oculta con el seguimiento nativo (UbicacionTurno): lee y envía el plugin. En Android, con
+    // su servicio en primer plano, el seguimiento del JS (alta precisión) seguiría recibiendo
+    // lecturas en segundo plano y gastaría batería de más; se suelta y se pide otro al volver.
+    if (this.nativo?.enviando?.()) return null;
     if (this.estado.viaje) return 'viaje';
     if (this.estado.conectado) return 'libre';
     return this.estado.gpsReal ? null : 'espera';
@@ -911,6 +930,8 @@ class ControladorConductor extends Emisor {
   #alCambiarVisibilidad(oculta) {
     if (oculta) {
       if (!this.ocultaDesde) this.ocultaDesde = Date.now();
+      // Con el seguimiento nativo enviando, el del JS se suelta ya (ver #modoGps).
+      if (this.nativo?.enviando?.()) this.#ajustarSeguimiento();
       return;
     }
     const fuera = this.ocultaDesde ? Date.now() - this.ocultaDesde : 0;
