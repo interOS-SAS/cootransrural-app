@@ -485,11 +485,13 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
   function htmlAccionesNavegar(punto) {
     const v = c.estado.viaje;
     const cel = String(v?.pasajero?.celular || '').replace(/\D/g, '');
+    // Enlaces armados con datos del servidor: solo los permitidos (S30).
+    const tel = cel ? N.enlaceTel(`+57${cel}`) : '';
     return `<div class="vb-c-acciones">
-      <a class="vb-accion" href="${esc(N.enlaceNavegacion(punto, 'google'))}" target="_blank" rel="noopener">${ic('navegar')}<span>Google Maps</span></a>
-      <a class="vb-accion" href="${esc(N.enlaceNavegacion(punto, 'waze'))}" target="_blank" rel="noopener">${ic('mapa')}<span>Waze</span></a>
-      ${cel ? `<a class="vb-accion" href="tel:+57${cel}">${ic('telefono')}<span>Llamar</span></a>
-        <a class="vb-accion" href="${esc(N.enlaceWhatsApp(cel, `Hola, soy tu conductor de ${MARCA.nombre}.`))}" target="_blank" rel="noopener">${ic('chat')}<span>WhatsApp</span></a>` : ''}
+      <a class="vb-accion" href="${esc(N.urlSegura(N.enlaceNavegacion(punto, 'google')))}" target="_blank" rel="noopener">${ic('navegar')}<span>Google Maps</span></a>
+      <a class="vb-accion" href="${esc(N.urlSegura(N.enlaceNavegacion(punto, 'waze')))}" target="_blank" rel="noopener">${ic('mapa')}<span>Waze</span></a>
+      ${tel ? `<a class="vb-accion" href="${esc(tel)}">${ic('telefono')}<span>Llamar</span></a>
+        <a class="vb-accion" href="${esc(N.urlSegura(N.enlaceWhatsApp(cel, `Hola, soy tu conductor de ${MARCA.nombre}.`)))}" target="_blank" rel="noopener">${ic('chat')}<span>WhatsApp</span></a>` : ''}
     </div>`;
   }
 
@@ -836,7 +838,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       <div class="vb-menu">
         <a class="vb-menu-item" href="${esc(enlaceApp('pasajero', diseno))}" data-enlace-pasajero><span class="vb-menu-ic">${ic('usuario', 24)}</span><span><b>App del pasajero</b><small>Para pedir un taxi</small></span>${ic('flecha', 20)}</a>
         ${MARCA.telefono
-          ? `<a class="vb-menu-item" href="${telCentral()}"><span class="vb-menu-ic">${ic('telefono', 24)}</span><span><b>Llamar a la central</b><small>${esc(MARCA.telefonoVisible)}</small></span>${ic('flecha', 20)}</a>`
+          ? `<a class="vb-menu-item" href="${esc(telCentral())}"><span class="vb-menu-ic">${ic('telefono', 24)}</span><span><b>Llamar a la central</b><small>${esc(MARCA.telefonoVisible)}</small></span>${ic('flecha', 20)}</a>`
           : `<div class="vb-menu-item sin-enlace" data-sin-telefono><span class="vb-menu-ic">${ic('telefono', 24)}</span><span><b>Central de la ${MARCA.tipo}</b><small>Teléfono de la central: pronto</small></span></div>`}
         <button type="button" class="vb-menu-item rojo" data-accion="salir"><span class="vb-menu-ic">${ic('salir', 24)}</span><span><b>Cerrar sesión</b><small>Terminar el turno en este celular</small></span></button>
       </div>

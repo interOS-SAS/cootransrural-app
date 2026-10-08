@@ -149,7 +149,7 @@ function codigosQR() {
   // Módulos cuadrados: el estilo redondeado no siempre lo lee jsQR (el lector de la app en iPhone).
   caja.innerHTML = N.qrSVG(urlDescarga, { nivel: 'H', color: colorQR(), margen: 1 }) + `<img class="qr-logo" src="${ICONO_TAXICUN}" alt="" width="48" height="48">`;
   const enlace = $('#qr-descarga-url');
-  enlace.href = urlDescarga;
+  enlace.href = N.urlInterna(urlDescarga);
   // La dirección completa solo en la cooperativa principal: en las demás, la del
   // sitio de pruebas lleva el nombre del repositorio y confunde; queda el texto del enlace.
   if (N.ID_EMPRESA === 'cootransrural') enlace.textContent = urlDescarga.replace(/^https?:\/\//, '').replace(/\?.*$/, '');
@@ -169,6 +169,59 @@ function codigosQR() {
     lista.innerHTML = N.BILLETERAS.map((b) => `<li><i style="--c:${b.color}"></i>${N.escaparHTML(b.nombre)}</li>`).join('');
   }
 }
+
+/* ---------------- Precios vigentes (fase 2 del panel) ----------------
+ * La página se genera con los precios del archivo de git. Con el panel, la ficha de una cooperativa
+ * con configuración publicada la sirve la API (archivo + capa): aquí cada elemento marcado por la
+ * plantilla muestra el valor VIGENTE de esa ficha (siempre como texto):
+ *   data-precio="minimaUrbana" | "banderazo" | "porKm" | "recargoNocturno" | "recargoDominical"
+ *   data-precio="destino:<id>" (tabla oficial) | "ruta:<id>" (otros municipios)
+ *   data-precio-zona="<n>" (el rango de la zona: «$6.100» o «$7.400 a $18.100»)
+ *   data-texto-tarifas="nota" (la nota de las tarifas) y data-enlace-fuente (el enlace al acto
+ *   oficial: solo https: de *.gov.co, ya filtrado por el núcleo; si no hay, se quita).
+ * Lo que la ficha no trae se deja como lo puso la plantilla. Con el archivo de git (las 76 demos y
+ * Cootransrural hoy) los valores son los mismos: no cambia nada. */
+const CLAVES_PRECIO = new Set(['minimaUrbana', 'banderazo', 'porKm', 'recargoNocturno', 'recargoDominical']);
+
+function valorVigente(clave) {
+  if (clave.startsWith('destino:')) return (N.DESTINOS_TARIFA || []).find((d) => d.id === clave.slice(8))?.valor;
+  if (clave.startsWith('ruta:')) return (N.RUTAS || []).find((r) => r.id === clave.slice(5))?.valor;
+  return CLAVES_PRECIO.has(clave) ? N.TARIFAS?.[clave] : undefined;
+}
+
+function ponerTexto(el, texto) {
+  if (el && el.textContent !== texto) el.textContent = texto;
+}
+
+function preciosVigentes() {
+  for (const el of $$('[data-precio]')) {
+    const v = Number(valorVigente(el.dataset.precio || ''));
+    if (Number.isFinite(v) && v >= 0) ponerTexto(el, N.pesos(v));
+  }
+  if (N.TARIFAS_OFICIALES) {
+    for (const z of N.zonasTarifa()) {
+      const valores = z.destinos.map((d) => Number(d.valor)).filter(Number.isFinite);
+      if (!valores.length) continue;
+      const [min, max] = [Math.min(...valores), Math.max(...valores)];
+      for (const el of $$(`[data-precio-zona="${z.zona}"]`)) ponerTexto(el, min === max ? N.pesos(min) : `${N.pesos(min)} a ${N.pesos(max)}`);
+    }
+  }
+  const T = N.TARIFAS || {};
+  const nota = typeof T.nota === 'string' ? T.nota.trim() : '';
+  if (nota) ponerTexto($('[data-texto-tarifas="nota"]'), nota);
+  const enlace = $('[data-enlace-fuente]');
+  if (enlace) {
+    const f = N.FUENTE_TARIFAS;
+    if (f?.url && f.acto) {
+      if (enlace.getAttribute('href') !== f.url) enlace.setAttribute('href', f.url);
+      ponerTexto(enlace, `Ver el ${f.acto}`);
+    } else enlace.remove();
+  }
+}
+
+// Rutas «fijada» (fase 2): el precio a otro municipio lo puso la cooperativa en el panel.
+const NOMBRE_CORTO = String(E?.nombreCorto || E?.nombre || '').trim() || `la ${N.TIPO_EMPRESA || 'cooperativa'}`;
+const esFijada = (r) => !N.TARIFAS?.ejemplo && r?.fijada === true;
 
 /* ---------------- Tarifas y cotizador ---------------- */
 
@@ -196,10 +249,18 @@ function tarifas() {
   const rutas = [...N.RUTAS].sort((a, b) => a.valor - b.valor || a.km - b.km);
   // Sin rutas con tarifa fija en la ficha: no se muestra una tabla vacía.
   if (!rutas.length) $('.tabla-caja')?.setAttribute('hidden', '');
+  // Todas las rutas con precio fijado por la cooperativa (fase 2): el título ya no dice «referencia».
+  const todasFijadas = rutas.length > 0 && rutas.every(esFijada);
+  if (todasFijadas) {
+    ponerTexto($('#rutas-titulo'), `Otros municipios: precios de ${NOMBRE_CORTO}`);
+    ponerTexto($('#rutas-texto'), N.TARIFAS_OFICIALES && N.FUENTE_TARIFAS?.acto
+      ? `Estos precios los fija ${NOMBRE_CORTO}: el ${N.FUENTE_TARIFAS.acto} no fija viajes a otros municipios.`
+      : `Estos precios los fija ${NOMBRE_CORTO}.`);
+  }
   $('#tabla-rutas').innerHTML = rutas.map((r) => `
-    <tr>
-      <td><span class="destino"><svg class="icono"><use href="#i-pin"/></svg>${N.escaparHTML(r.destino)}</span></td>
-      <td class="col-km">${r.km} km</td>
+    <tr${esFijada(r) ? ' data-fijada' : ''}>
+      <td><span class="destino"><svg class="icono"><use href="#i-pin"/></svg>${N.escaparHTML(r.destino)}</span>${esFijada(r) && !todasFijadas ? `<small class="nota-destino">${N.escaparHTML(`Precio fijado por ${NOMBRE_CORTO}`)}</small>` : ''}</td>
+      <td class="col-km">${N.escaparHTML(String(r.km))} km</td>
       <td>${N.minutosTexto(r.min)}</td>
       <td><b>${N.pesos(r.valor)}</b></td>
     </tr>`).join('');
@@ -219,8 +280,8 @@ function tarifas() {
   select.innerHTML = `<option value="urbano">Dentro de ${esc(E.pueblo)} (${oficiales ? 'tarifa única' : 'carrera mínima'})</option>` +
     (oficiales
       ? N.zonasTarifa().map((z) => `<optgroup label="${esc(`Zona ${z.zona} · ${z.sector}`)}">${z.destinos.map((d) => `<option value="t:${esc(d.id)}">${esc(d.destino)}</option>`).join('')}</optgroup>`).join('')
-        + (rutas.length ? `<optgroup label="Otros municipios (precio de referencia)">${rutas.map((r) => `<option value="${r.id}">${esc(r.destino)}</option>`).join('')}</optgroup>` : '')
-      : rutas.map((r) => `<option value="${r.id}">${esc(r.destino)}</option>`).join(''));
+        + (rutas.length ? `<optgroup label="${esc(todasFijadas ? `Otros municipios (precio fijado por ${NOMBRE_CORTO})` : 'Otros municipios (precio de referencia)')}">${rutas.map((r) => `<option value="${esc(r.id)}">${esc(r.destino)}</option>`).join('')}</optgroup>` : '')
+      : rutas.map((r) => `<option value="${esc(r.id)}">${esc(r.destino)}</option>`).join(''));
   select.value = rutas.find((r) => r.id === 'aeropuerto') ? 'aeropuerto' : rutas[0]?.id || 'urbano';
 
   const calcular = () => {
@@ -235,7 +296,7 @@ function tarifas() {
       salida.textContent = `La ${N.TIPO_EMPRESA || 'cooperativa'} está confirmando sus tarifas. Muy pronto podrás calcular tu viaje aquí.`;
       return;
     }
-    const oficial = !t.ejemplo && t.tipo === 'oficial';
+    const oficial = !t.ejemplo && (t.tipo === 'oficial' || t.tipo === 'fijada');
     salida.innerHTML = `
       <div class="cotizacion-total"><span>${oficial && !t.descuento ? 'Total' : 'Total estimado'}</span><b>${N.pesos(t.total)}</b></div>
       ${t.ejemplo ? '' : `<p class="cotizacion-tipo" data-tipo="${esc(t.tipo || '')}">${esc(t.etiqueta || N.etiquetaTarifa(t))}</p>`}
@@ -392,13 +453,15 @@ function formulario() {
       `• Fecha y hora: ${N.fechaTexto(cuando)}, ${N.horaTexto(cuando)}`,
     ];
     if (descuento) lineas.push('', `Lo estoy programando con ${HORAS} horas de anticipación (${DESCUENTO} % de descuento).`);
-    const url = N.enlaceWhatsApp(whatsapp, lineas.join('\n'));
+    // Enlace armado con el WhatsApp de la ficha: solo https://wa.me (S30).
+    const url = N.urlSegura(N.enlaceWhatsApp(whatsapp, lineas.join('\n')));
+    if (!url) return;
     const ventana = window.open(url, '_blank');
     if (ventana) ventana.opener = null;
     enviado.hidden = false;
     enviado.innerHTML = ventana
       ? '¡Listo! Te abrimos WhatsApp con tu mensaje. Solo falta tocar «Enviar».'
-      : `Toca aquí para abrir WhatsApp con tu mensaje: <a href="${url}" target="_blank" rel="noopener">enviar a la central</a>.`;
+      : `Toca aquí para abrir WhatsApp con tu mensaje: <a href="${N.escaparHTML(url)}" target="_blank" rel="noopener">enviar a la central</a>.`;
   });
 }
 
@@ -478,6 +541,7 @@ intentar('barra', barraSuperior);
 intentar('revelar', revelarAlVer);
 intentar('contadores', contadores);
 intentar('qr', codigosQR);
+intentar('precios', preciosVigentes);
 intentar('tarifas', tarifas);
 intentar('mapa', mapaOficina);
 intentar('formulario', formulario);

@@ -23,10 +23,14 @@
 // desde otro país): si el GPS está lejos de la cooperativa, miPosicion pasa a ser el parque
 // principal (con revision: true), se avisa una vez y se emite 'revision_lejos' (punto) para que el
 // diseño lleve allá el mapa y el punto de recogida. Sin esa bandera, nada cambia.
+// Fase 2 del panel (modo real): p.zonaDe(punto) dice si la recogida está dentro de la zona de
+// servicio de la cooperativa ('dentro' | 'cerca' | 'lejos', ver geo.revisarZona; null sin zona o
+// en el modo revisor); solicitar() no pide un taxi «lejos» (ErrorServidor fuera_de_zona). Con el
+// mensaje «config» de la central la app recarga la ficha nueva al quedar sin viaje (config.js).
 import { crearBus } from './bus.js';
-import { TIEMPOS, CENTRO, EMPRESA } from './config.js';
+import { TIEMPOS, CENTRO, EMPRESA, vigilarConfig } from './config.js';
 import { LUGARES } from './datos.js';
-import { calcularRuta, obtenerPosicion, seguirPosicion, fueraDeZona } from './geo.js';
+import { calcularRuta, obtenerPosicion, seguirPosicion, fueraDeZona, revisarZona } from './geo.js';
 import { calcularTarifa } from './tarifas.js';
 import { avisar } from './avisos.js';
 import { TaxisAmbiente, ConductorSimulado } from './simulador.js';
@@ -130,6 +134,8 @@ class ControladorPasajero extends Emisor {
     if (this.real) {
       this.#escucharServidor();
       this.#retomarReal();
+      // Configuración nueva de la cooperativa (fase 2): recarga cuando no haya viaje.
+      this.dejarConfig = vigilarConfig(this.bus, { ocupado: () => this.estado.fase !== 'inicio', emisor: this });
       // Lo que quedó sin guardar por la espera de GUARDAR_UBICACION_MS (matar la app pasa antes
       // por segundo plano; recargar o cerrar la pestaña, por pagehide).
       this.alSalir = () => this.#guardarUbicacionPendiente();
@@ -187,6 +193,13 @@ class ControladorPasajero extends Emisor {
 
   viajesCompletados() {
     return perfil.viajesCompletadosPasajero();
+  }
+
+  // Zona de servicio (fase 2, solo modo real): null si la cooperativa no tiene zona, en el modo
+  // revisor (Apple y Google prueban desde otro país) o en la demo; si no, lo de geo.revisarZona.
+  zonaDe(punto) {
+    if (!this.real || this.revision || punto?.revision) return null;
+    return revisarZona(punto);
   }
 
   // Ruta y tarifa estimada para mostrar antes de pedir.
@@ -270,6 +283,8 @@ class ControladorPasajero extends Emisor {
         this.bus.conectar();
         throw new servidor.ErrorServidor(this.ultimoRechazo || 'sin_sesion');
       }
+      // Muy lejos de la zona de servicio (fase 2): la central lo rechazaría (fuera_de_zona).
+      if (this.zonaDe(origen)?.estado === 'lejos') throw new servidor.ErrorServidor('fuera_de_zona');
       if (this.bus.estado === 'sin_conectar') this.bus.conectar();
       metodoPago = 'efectivo'; // por ahora solo efectivo
     }
@@ -884,9 +899,10 @@ class ControladorPasajero extends Emisor {
       }
       this.#avisar({ titulo: 'No pudimos pedir el taxi', cuerpo: servidor.textoError(codigo), tipo: 'error' });
       this.#cerrarViaje('error');
-    } else if (codigo === 'solicitud_invalida' || codigo === 'origen_invalido' || codigo === 'tarifa_invalida') {
+    } else if (codigo === 'solicitud_invalida' || codigo === 'origen_invalido' || codigo === 'tarifa_invalida' || codigo === 'fuera_de_zona') {
       // tarifa_invalida (servidor 0.2.2): la tarifa no cabe en las de la cooperativa y la
-      // central no guardó nada; no se vuelve a mandar igual.
+      // central no guardó nada; no se vuelve a mandar igual. fuera_de_zona (0.6.0): la recogida
+      // está muy lejos de la zona de servicio (p. ej. la zona cambió mientras se pedía).
       this.#avisar({ titulo: 'No pudimos pedir el taxi', cuerpo: servidor.textoError(codigo), tipo: 'error' });
       this.#cerrarViaje('error');
     }
@@ -1040,6 +1056,7 @@ class ControladorPasajero extends Emisor {
   }
 
   destruir() {
+    this.dejarConfig?.();
     this.dejarVisibilidad?.();
     if (this.alSalir) globalThis.removeEventListener?.('pagehide', this.alSalir);
     this.pararRelojTaxis?.();

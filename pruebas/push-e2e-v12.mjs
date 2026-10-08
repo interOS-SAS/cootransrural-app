@@ -350,7 +350,7 @@ async function pedirTaxi(p, destino) {
 /* ------------------------------------------------------------------ */
 async function preparar() {
   const salud = await api('GET', 'salud');
-  await debe(salud.estado === 200 && /^0\.[345]\./.test(salud.datos?.version || ''), `servidor 1.2 (0.3), 0.4 o 0.5 por el proxy (${salud.datos?.version || salud.estado})`);
+  await debe(salud.estado === 200 && /^0\.[3456]\./.test(salud.datos?.version || ''), `servidor 1.2 (0.3), 0.4, 0.5 o 0.6 por el proxy (${salud.datos?.version || salud.estado})`);
   await debe(existsSync(AVISOS), `el servidor escribe los avisos simulados en ${AVISOS} (PUSH_SIMULADO)`);
   marcaInicio = leerAvisos().length;
   for (const c of [PAS, CA, CB]) {

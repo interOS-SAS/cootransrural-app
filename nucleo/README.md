@@ -19,12 +19,38 @@ textos dicen «la ${TIPO_EMPRESA}»), `COLORES`, `CENTRO`, `ZONA`, `ES_PROPUESTA
 Si la ficha no carga, el módulo falla (nunca muestra otra cooperativa) y la
 pantalla de carga avisa a los 15 s.
 
-- `urlDelSitio(ruta)`: raíz del sitio (librerías, `pagar/`).
-- `urlEmpresa(ruta)`: raíz de la cooperativa (`<id>/descargar/`…).
+- `urlDelSitio(ruta)`: raíz del sitio (librerías, `pagar/`). Solo rutas del mismo sitio:
+  cualquier otra cosa da `''`.
+- `urlEmpresa(ruta)`: raíz de la cooperativa (`<id>/descargar/`…), con la misma regla. La
+  carpeta (`FICHA.carpeta`) y el id solo pueden ser nombres simples (a-z, 0-9 y guiones).
 - `perfil.*` guarda con prefijo `ct.<id>.` (Cootransrural: `ct.`).
 - Bus: `BroadcastChannel apptaxi-<id>-<sala>` y temas `apptaxi-demo/v2/<id>/<sala>`.
 - Pendiente conocido: el viaje en curso va en `sessionStorage['ct.viaje.pasajero']`
   (común a todas). Cada diseño lo aparta por cooperativa al abrir.
+
+## Enlaces seguros (`enlaces.js`)
+
+Con el panel, la ficha la escriben los gerentes: **todo `href` o `src` armado con datos
+de la ficha o del servidor pasa por estos ayudantes** (requisito S30 del diseño del
+panel). Si el dato no cumple, devuelven `''` y la pantalla no pinta el enlace.
+
+- `urlSegura(u)`: solo `https:`, sin usuario, clave ni puerto, y de un dominio de
+  `DOMINIOS_PERMITIDOS` (WhatsApp, Google Maps, Waze, interOS, TaxiCun, *.gov.co y
+  `SITIOS_COOPERATIVAS`, la lista revisada de páginas oficiales de las cooperativas).
+  Una cooperativa nueva con página propia se agrega a esa lista: `pruebas/enlaces-seguros.mjs`
+  falla si alguna ficha no pasa.
+- `urlDecreto(u)`: la fuente oficial de las tarifas, solo `*.gov.co`. `FUENTE_TARIFAS.url`
+  ya sale filtrada por aquí.
+- `urlInterna(u)`: rutas del mismo sitio (privacidad, la otra app, íconos).
+- `enlaceTel(n)` y `enlaceCorreo(c)`: `tel:` solo con dígitos (y `+`) y `mailto:` con un
+  correo sencillo.
+- `hrefSeguro(u)`: cualquiera de los anteriores (acciones de un diálogo, ítems de un menú).
+- Al cargarse pone una barrera de clics: un enlace `javascript:`, `data:` u otro esquema
+  que ejecute código no navega (los `blob:`, solo si son de este mismo sitio).
+
+`enlaces.js` no depende de la ficha: `web/taxicun.js` lo usa antes de escoger la cooperativa.
+Las páginas no llevan manejadores en línea (`onclick`, `onerror`, `onsubmit`): la CSP de
+taxicun.com no los deja.
 
 ## Pasajero
 
@@ -148,6 +174,88 @@ m.ajustar([p1, p2], { margenAbajo }); m.centrar(p, zoom); m.centro(); m.alMovers
 - `N.instalar()`, `N.puedeInstalar()`, `N.instruccionesInstalacion()`, `N.yaInstalada()`
 - `N.pesos(v)`, `N.minutosTexto(m)`, `N.kmTexto(km)`, `N.horaTexto(t)`, `N.saludo()`, `N.enlaceWhatsApp(n, texto)`, `N.enlaceNavegacion(p, 'waze')`
 - `N.perfil.*`: historial, lugares guardados, recientes, programados, ajustes (`simulacion: 'auto'|'real'`), diseño elegido.
+
+## Tarifas: un solo cálculo (`tarifador.js`)
+
+El cálculo de la tarifa vive **solo** en `tarifador.js` (§5.5 del diseño del panel). Es puro: sin
+DOM, sin red y sin `config.js` ni `datos.js`; todo sale de la ficha que se le pasa, y solo importa
+`util.js` y `enlaces.js`.
+
+```js
+import { crearTarifador, tablasTarifa, TARIFAS_BASE } from './tarifador.js';
+const T = crearTarifador(ficha);   // ficha = empresas/<id>/ficha.json, o la que arma la API (archivo + capa)
+T.calcularTarifa({ origen, destino, km, fecha, programado, viajesPrevios });
+// y T.TARIFAS, T.RUTAS, T.LUGARES, T.DESTINOS_TARIFA, T.CASCO_URBANO, T.TARIFAS_OFICIALES,
+// T.FUENTE_TARIFAS, T.ORIGEN_OFICIAL, T.enCascoUrbano, T.destinoOficial, T.rutaFija, …
+```
+
+- `tarifas.js` es el envoltorio: `crearTarifador(FICHA)` con la ficha de la página. Las apps y la
+  web siguen importando `N.calcularTarifa`, `N.TARIFAS_OFICIALES`… como antes.
+- `datos.js` toma `TARIFAS`, `RUTAS`, `LUGARES`, `DESTINOS_TARIFA` y `CASCO_URBANO` de
+  `tablasTarifa(FICHA)`: son los mismos objetos que usa el tarifador de la página.
+- **Prueba dorada:** `node pruebas/tarifas-doradas.mjs` (sin navegador, unos 8 s). Compara
+  los 3.425 casos de Cootransrural (los 191 destinos del Decreto 05 por lista, por nombre y por
+  cercanía, sin destino, las 14 rutas, los lugares, los bordes de cada radio y los recargos a varias
+  horas en día normal, domingo y festivo) y de 21 demos con `pruebas/tarifas-doradas.json`, que se
+  generó con el `tarifas.js` de antes del refactor y se regeneró a propósito con los festivos de la
+  fase 2 (solo cambiaron los casos `fes-*` de las demos con recargo dominical). Si una ficha de la
+  muestra cambia, también falla.
+  Un cambio de precios **a propósito**: `node pruebas/tarifas-doradas.mjs --regenerar` y revisar el
+  diff de la dorada en el PR. Los casos están en `pruebas/tarifas-casos.mjs` (sin importaciones: el
+  servidor los lee del commit fijado).
+- **Copia fijada en el panel y el servidor:** `taxicun-servidor` lleva `tarifador.js`, `util.js` y
+  `enlaces.js` en `panel/vendor/nucleo/`, copiados de un commit concreto de este repo con su SHA-256
+  (`panel/vendor/FUENTES.json` y `SHA256SUMS`; `node bin/panel-vendor.mjs copiar --web=<este repo>`).
+  El panel la usa para la vista previa de «Precios» y el servidor para la prueba dorada con la ficha
+  armada (S33) y, más adelante, para los topes por destino (S31). **Cambiar `tarifador.js` aquí no
+  cambia nada allá** hasta que se vuelva a fijar el commit; no le agregues importaciones (la copia
+  lleva solo esos tres archivos).
+
+## Fase 2 del panel: la ficha armada por la API (`panel.taxicun.com`, «Precios y zona»)
+
+Las cooperativas con configuración publicada en el panel reciben `empresas/<id>/ficha.json` armada por
+la API (archivo + capa; nginx manda a la API solo esas fichas). Las 76 demos siguen con su archivo: sin
+estas claves, todo queda igual. Todo lo que viene de la ficha o del servidor es **texto** (S30).
+
+- **Índice con las compuertas** (`web/taxicun.js`, pedido de Oscar del 3-oct). En modo real, cuáles
+  cooperativas atienden de verdad lo dice `GET /api/empresas/indice` (el `indice.json` con `real: true`
+  para las que están activas en el panel, con zona y tarifas publicadas y al menos un conductor aprobado,
+  y `pronto: true` para las activas a las que les falta algo). De ahí solo se toman `real` y `pronto` de
+  los ids que ya están en el índice de la web; si no responde bien (servidor 0.5.0, sin red), queda el
+  `real` del archivo. Las «pronto» salen en la lista como «Pronto» y no se abren; con una sola real se
+  abre directo, como hoy. La demo no pregunta nada.
+- **Zona de servicio** (§5.7). `N.ZONA_SERVICIO` (`{ poligonos, avisarHastaKm, texto }` o `null`),
+  `N.dentroDeZona(zona, punto)` (`util.js`: `{ dentro, km, metros }`, la misma cuenta de la central) y
+  `N.revisarZona(punto)` (`geo.js`: `null` sin zona; si no, `estado` `'dentro'`, `'cerca'` —afuera, a
+  `avisarHastaKm` o menos— o `'lejos'`). El controlador del pasajero: `p.zonaDe(punto)` (`null` en la demo
+  y en el modo revisor) y `solicitar()` no pide un taxi «lejos» (`fuera_de_zona`). El diseño A avisa en el
+  inicio y en «Confirma tu viaje» y abre la hoja de fuera de zona al pedir; el conductor ve el chip
+  «Fuera de zona · 1,4 km del límite» (`fueraZona: { km }` de la oferta).
+- **Recarga con «config»** (`config.js`: `vigilarConfig(bus, { ocupado, emisor })`, ya lo llaman los dos
+  controladores). Con `{ tipo: 'config', datos: { empresa, version } }` y una versión mayor que
+  `N.VERSION_CONFIG.version`: con viaje espera; sin viaje recarga en silencio (al ocultarse la app o tras
+  un minuto sin tocarla); el conductor, solo fuera de turno. Solo el bus del servidor; nunca dos veces por
+  la misma versión (`localStorage['tc.config.recargas']`). En modo real la ficha se pide con
+  `cache: 'no-cache'`.
+- **Festivos** (§5.6, `util.js`): `esFestivo(fecha)`, `festivosDe(año)` y `horaBogota()` con `festivo`
+  y `fecha`. El recargo dominical se cobra también en los festivos («Recargo festivo»), salvo
+  `TARIFAS.recargoDominicalEnFestivos: false`. La dorada se regeneró a propósito: solo cambiaron los casos
+  `fes-*` de las demos con recargo dominical; Cootransrural no cambia (recargos en $0).
+- **Precio fijado por la cooperativa**: una ruta con `fijada: true` da `tipo: 'fijada'` y la etiqueta
+  «Precio fijado por Cootransrural» (sin «por confirmar»). Los diseños A, B y C y la web lo dicen.
+- **Conductor rechazado o retirado** (servidor 0.6.0): su pantalla, con el motivo de la cooperativa
+  (`conductor.motivo` o `motivo_conductor` de `GET /api/yo`) pintado con `textContent`.
+- **`data-precio`** (`web/sitio.js`): la plantilla marca los precios de la página
+  (`data-precio="minimaUrbana"`, `"destino:<id>"`, `data-precio-zona`, `data-texto-tarifas="nota"`,
+  `data-enlace-fuente`) y la página pone los vigentes de la ficha que cargó.
+- `N.VERSION_CONFIG` (`{ version, publicada, fuente }` o `null`) y `N.textoPlano(t, max)`.
+
+La copia fijada del servidor (`tarifador.js`, `util.js` y `enlaces.js`) **cambia** con esta fase
+(festivos y geometría en `util.js`, rutas «fijada» y festivos en `tarifador.js`): hay que volver a fijar el
+commit en `panel/vendor/FUENTES.json` del servidor.
+
+Pruebas: `node pruebas/festivos-zona.mjs` (sin navegador) y `node pruebas/fase2-web.mjs <url>` (servidor
+simulado: índice, fuera de zona, precio fijado, conductor, recarga y `data-precio`).
 
 ## App nativa 1.2 (`N.nativo`)
 

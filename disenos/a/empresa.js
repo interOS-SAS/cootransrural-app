@@ -62,7 +62,7 @@ export const PROVEEDOR = limpio(N.PROVEEDOR?.nombre) || 'interOS';
 export const TELEFONO = digitos(E.telefono).length >= 7 ? digitos(E.telefono) : '';
 export const TELEFONO_VISIBLE = TELEFONO ? limpio(E.telefonoVisible) || TELEFONO : '';
 export const WHATSAPP = digitos(E.whatsapp).length >= 10 ? digitos(E.whatsapp) : '';
-export const CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(limpio(E.correo)) ? limpio(E.correo) : '';
+export const CORREO = N.enlaceCorreo(limpio(E.correo)) ? limpio(E.correo) : '';
 export const SERVICIO_24H = E.servicio24h !== false;
 
 // Cifras: si no se conocen, no se muestran.
@@ -106,6 +106,12 @@ export function fidelidad(completados) {
   const f = N.progresoFidelidad(completados);
   return f && Number.isFinite(f.meta) && f.meta > 0 && Number.isFinite(f.completados) ? f : null;
 }
+
+// Zona de servicio (fase 2 del panel, §5.7): { poligonos, avisarHastaKm, texto } o null. Solo la traen
+// las cooperativas con configuración publicada en el panel; las 76 demos no.
+export const ZONA_SERVICIO = N.ZONA_SERVICIO || null;
+// Versión de la configuración publicada ({ version, publicada, fuente }) o null (archivo de git).
+export const VERSION_CONFIG = N.VERSION_CONFIG || null;
 
 // ¿Las tarifas de la ficha son de ejemplo (la cooperativa aún no confirma las oficiales)?
 export const TARIFAS_EJEMPLO = Boolean(N.TARIFAS?.ejemplo);
@@ -267,12 +273,12 @@ export function encabezadoMarca({ tam = 36, detalle = '' } = {}) {
 // no, la otra app usa el mismo diseño guardado o el que eligió la cooperativa).
 export function urlOtraApp(rol, diseno) {
   const conDiseno = !EN_TAXICUN || new URLSearchParams(globalThis.location?.search || '').has('d');
-  return N.urlApp(rol, { d: conDiseno ? diseno : '' });
+  return N.urlInterna(N.urlApp(rol, { d: conDiseno ? diseno : '' }));
 }
 
 // Cambiar de municipio (solo dentro de TaxiCun): vuelve a la lista de cooperativas.
 export function urlCambiarMunicipio(rol = 'pasajero') {
-  return EN_TAXICUN ? N.urlElegirMunicipio(rol) : '';
+  return EN_TAXICUN ? N.urlInterna(N.urlElegirMunicipio(rol)) : '';
 }
 
 /* ------------------------------------------------------------------ */
@@ -298,5 +304,5 @@ export const clave = (nombre) => (ES_PRINCIPAL ? `ct.a.${nombre}` : `ct.a.${ID}.
 // En modo real los datos los guarda TaxiCun (interOS) en su servidor: se enlaza la
 // política de TaxiCun, en privacidad/ de la raíz del sitio.
 export function urlPrivacidad() {
-  return MODO_REAL ? N.urlDelSitio('privacidad/') : N.urlEmpresa('privacidad/');
+  return N.urlInterna(MODO_REAL ? N.urlDelSitio('privacidad/') : N.urlEmpresa('privacidad/'));
 }

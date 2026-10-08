@@ -36,7 +36,11 @@
       var c = document.getElementById('carga');
       if (!c || c.classList.contains('oculta')) return;
       var p = c.querySelector('p');
-      if (p) p.innerHTML = 'No pudimos cargar la app.<br><small>Revisa tu conexión a internet e inténtalo de nuevo.</small><br><button type="button" onclick="location.reload()" style="margin-top:14px;min-height:44px;padding:0 20px;border:0;border-radius:999px;background:#fff;color:#111;font:700 15px system-ui,sans-serif;cursor:pointer">Reintentar</button>';
+      if (p) {
+        p.innerHTML = 'No pudimos cargar la app.<br><small>Revisa tu conexión a internet e inténtalo de nuevo.</small><br><button type="button" style="margin-top:14px;min-height:44px;padding:0 20px;border:0;border-radius:999px;background:#fff;color:#111;font:700 15px system-ui,sans-serif;cursor:pointer">Reintentar</button>';
+        // Sin manejador onclick en línea (la CSP no lo deja).
+        p.querySelector('button').addEventListener('click', function () { location.reload(); });
+      }
       c.querySelector('img') && (c.querySelector('img').style.animation = 'none');
     }, 15000);
   </script>

@@ -26,7 +26,7 @@
 // Ese código va en la nota de la solicitud y en viaje.codigoRevision (el diseño lo muestra al
 // pedir el código), y «Llegué» se acepta hasta a 400 m. Sin esa bandera, nada cambia.
 import { crearBus } from './bus.js';
-import { TIEMPOS, CENTRO } from './config.js';
+import { TIEMPOS, CENTRO, vigilarConfig } from './config.js';
 import { calcularRuta, obtenerPosicion, seguirPosicion, fueraDeZona, direccionDe } from './geo.js';
 import { calcularTarifa } from './tarifas.js';
 import { avisar } from './avisos.js';
@@ -178,6 +178,12 @@ class ControladorConductor extends Emisor {
       this.#escucharServidor();
       this.#retomarReal();
       this.dejarVisibilidad = alCambiarVisibilidad((oculta) => this.#alCambiarVisibilidad(oculta));
+      // Configuración nueva de la cooperativa (fase 2, mensaje «config»): recarga solo fuera de turno,
+      // sin servicio ni ofertas (recargar en turno lo sacaría de turno).
+      this.dejarConfig = vigilarConfig(this.bus, {
+        ocupado: () => this.estado.conectado || Boolean(this.estado.viaje) || this.estado.solicitudes.length > 0,
+        emisor: this,
+      });
     }
     await this.#configurarGps();
     if (this.real && this.estado.viaje) this.#rutaHaciaObjetivo();
@@ -1402,6 +1408,7 @@ class ControladorConductor extends Emisor {
 
   destruir() {
     this.destruido = true;
+    this.dejarConfig?.();
     clearInterval(this.relojPresencia);
     clearTimeout(this.relojViajeActual);
     clearTimeout(this.relojReintentoGps);

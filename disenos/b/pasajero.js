@@ -662,11 +662,11 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
   // no hay ninguno, lleva a Ayuda con un texto honesto (sin enlaces tel: vacíos).
   function htmlMosaicoCentral() {
     if (MARCA.telefono) {
-      return `<a class="vb-mosaico m-verde" href="${telCentral()}">
+      return `<a class="vb-mosaico m-verde" href="${esc(telCentral())}">
           <span class="vb-mosaico-ic">${ic('telefono', 28)}</span><b>Llamar a la central</b><span>${esc(sinCorte(MARCA.telefonoVisible))}${MARCA.servicio24h ? '<br>Las 24 horas' : ''}</span></a>`;
     }
     if (MARCA.whatsapp) {
-      return `<a class="vb-mosaico m-verde" href="${esc(N.enlaceWhatsApp(MARCA.whatsapp, `Hola ${MARCA.nombre}, necesito un taxi.`))}" target="_blank" rel="noopener">
+      return `<a class="vb-mosaico m-verde" href="${esc(N.urlSegura(N.enlaceWhatsApp(MARCA.whatsapp, `Hola ${MARCA.nombre}, necesito un taxi.`)))}" target="_blank" rel="noopener">
           <span class="vb-mosaico-ic">${ic('chat', 28)}</span><b>Escribir a la central</b><span>Por WhatsApp${MARCA.servicio24h ? '<br>Las 24 horas' : ''}</span></a>`;
     }
     return `<button type="button" class="vb-mosaico m-verde" data-accion="ir" data-pantalla="ayuda">
@@ -1094,11 +1094,12 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       <button type="button" class="vb-accion" data-accion="compartir">${ic('compartir')}<span>Compartir</span></button>
       <button type="button" class="vb-accion sos" data-accion="sos">${ic('sos')}<span>SOS</span></button></div>`;
     }
-    const llamar = tel
-      ? `<a class="vb-accion" href="tel:+57${tel}">${ic('telefono')}<span>Llamar</span></a>`
+    // Enlaces armados con el celular que manda el servidor: solo dígitos (S30).
+    const llamar = tel && N.enlaceTel(`+57${tel}`)
+      ? `<a class="vb-accion" href="${esc(N.enlaceTel(`+57${tel}`))}">${ic('telefono')}<span>Llamar</span></a>`
       : `<button type="button" class="vb-accion" disabled>${ic('telefono')}<span>Llamar</span></button>`;
     const wa = tel
-      ? `<a class="vb-accion" href="${esc(N.enlaceWhatsApp(tel, `Hola, soy tu pasajero de ${MARCA.nombre}.`))}" target="_blank" rel="noopener">${ic('chat')}<span>WhatsApp</span></a>`
+      ? `<a class="vb-accion" href="${esc(N.urlSegura(N.enlaceWhatsApp(tel, `Hola, soy tu pasajero de ${MARCA.nombre}.`)))}" target="_blank" rel="noopener">${ic('chat')}<span>WhatsApp</span></a>`
       : `<button type="button" class="vb-accion" disabled>${ic('chat')}<span>WhatsApp</span></button>`;
     return `<div class="vb-acciones">${llamar}${wa}
       <button type="button" class="vb-accion" data-accion="compartir">${ic('compartir')}<span>Compartir</span></button>
@@ -1239,9 +1240,9 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       html: `<p class="vb-sub">Si estás en peligro, llama ya. Tu ubicación y los datos del taxi van en el mensaje.</p>
         <a class="vb-btn vb-btn-rojo vb-btn-xl" href="tel:123">${ic('telefono')} Llamar al 123 (Policía)</a>
         ${contacto?.celular
-          ? `<a class="vb-btn vb-btn-oro vb-btn-xl" href="${esc(N.enlaceWhatsApp(contacto.celular, `🚨 Necesito ayuda.\n${texto}`))}" target="_blank" rel="noopener">${ic('chat')} Avisar a ${esc(contacto.nombre || 'mi contacto')}</a>`
+          ? `<a class="vb-btn vb-btn-oro vb-btn-xl" href="${esc(N.urlSegura(N.enlaceWhatsApp(contacto.celular, `🚨 Necesito ayuda.\n${texto}`)))}" target="_blank" rel="noopener">${ic('chat')} Avisar a ${esc(contacto.nombre || 'mi contacto')}</a>`
           : `<p class="vb-nota-gps">${ic('info', 20)}<span>Agrega un contacto de emergencia en tu Perfil para avisarle con un toque.</span></p>`}
-        ${MARCA.telefono ? `<a class="vb-btn vb-btn-borde vb-btn-xl" href="${telCentral()}">${ic('telefono')} Llamar a la central</a>` : ''}
+        ${MARCA.telefono ? `<a class="vb-btn vb-btn-borde vb-btn-xl" href="${esc(telCentral())}">${ic('telefono')} Llamar a la central</a>` : ''}
         <button type="button" class="vb-btn vb-btn-suave vb-btn-xl" data-accion="compartir">${ic('compartir')} Compartir mi viaje</button>
         ${c ? `<p class="vb-letra-chica">Tu taxi: móvil ${esc(c.movil)} · placa ${esc(c.placa)} · ${esc(c.nombre)}</p>` : ''}`,
     });
@@ -1489,7 +1490,7 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     const totalDestinos = zonas.reduce((n, z) => n + z.destinos.length, 0);
     const aviso = T.ejemplo
       ? `<p class="vb-aviso-ejemplo">${ic('info', 22)}<span><b>Tarifas de ejemplo.</b> Son valores de prueba para esta demostración; los oficiales los define la ${MARCA.tipo}.</span></p>`
-      : fuente ? `<p class="vb-aviso-ejemplo vb-aviso-oficial" data-aviso-oficial>${ic('check', 22)}<span><b>Tarifas oficiales · ${esc(fuente.acto)}.</b> ${esc([fuente.entidad, fuente.fecha].filter(Boolean).join(', '))}${oficiales ? `: precio cerrado desde ${esc(N.ORIGEN_OFICIAL)} a ${totalDestinos} destinos.` : '.'}${fuente.url ? ` <a href="${esc(fuente.url)}" target="_blank" rel="noopener" data-enlace-decreto>Ver el decreto</a>` : ''}</span></p>` : '';
+      : fuente ? `<p class="vb-aviso-ejemplo vb-aviso-oficial" data-aviso-oficial>${ic('check', 22)}<span><b>Tarifas oficiales · ${esc(fuente.acto)}.</b> ${esc([fuente.entidad, fuente.fecha].filter(Boolean).join(', '))}${oficiales ? `: precio cerrado desde ${esc(N.ORIGEN_OFICIAL)} a ${totalDestinos} destinos.` : '.'}${N.urlDecreto(fuente.url) ? ` <a href="${esc(N.urlDecreto(fuente.url))}" target="_blank" rel="noopener" data-enlace-decreto>Ver el decreto</a>` : ''}</span></p>` : '';
     const zonasHTML = !oficiales ? '' : `<section class="vb-tarjeta vb-zonas-tarifa" data-tabla-oficial>
         <h2>${ic('ruta', 24)} ${esc(`Precios desde ${N.ORIGEN_OFICIAL}`)}</h2>
         <p class="vb-sub">${esc(`${fuente?.acto || 'Tabla oficial'}: ${totalDestinos} destinos en ${zonas.length} zonas. Toca una zona.`)}</p>
@@ -1517,9 +1518,9 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
       ${zonasHTML}
       <section class="vb-tarjeta vb-rutas">
         <h2>${ic('ruta', 24)} ${esc(MARCA.pueblo ? `Rutas desde ${MARCA.pueblo}` : 'Rutas a otros municipios')}</h2>
-        <p class="vb-sub">${oficiales && T.rutasReferencia ? 'Precio de referencia por trayecto, por confirmar con la cooperativa (el decreto no fija viajes a otros municipios). Toca una ruta para pedirla.' : 'Tarifa fija por trayecto. Toca una ruta para pedirla.'}</p>
+        <p class="vb-sub">${oficiales && T.rutasReferencia && N.RUTAS.some((r) => r.fijada !== true) ? 'Precio de referencia por trayecto, por confirmar con la cooperativa (el decreto no fija viajes a otros municipios). Toca una ruta para pedirla.' : 'Tarifa fija por trayecto. Toca una ruta para pedirla.'}</p>
         <ul>${N.RUTAS.map((r) => `<li><button type="button" data-accion="ruta-pedir" data-id="${esc(r.id)}">
-            <span class="vb-ruta-nombre"><b>${esc(r.destino)}</b><small>${r.km} km · ${N.minutosTexto(r.min)}</small></span>
+            <span class="vb-ruta-nombre"><b>${esc(r.destino)}</b><small>${r.km} km · ${N.minutosTexto(r.min)}${!T.ejemplo && r.fijada === true ? ` · ${esc(`fijado por ${MARCA.nombre}`)}` : ''}</small></span>
             <span class="vb-ruta-valor">${N.pesos(r.valor)}</span>${ic('flecha', 20)}</button></li>`).join('')}</ul>
       </section>
       <p class="vb-letra-chica centro">Los valores pueden cambiar por peajes, esperas o paradas adicionales.</p>
@@ -1668,9 +1669,9 @@ export async function montar(raiz, { N, diseno = 'b' } = {}) {
     const pregunta = (q, r) => `<details class="vb-tarjeta vb-pregunta"><summary>${q}</summary><p>${r}</p></details>`;
     // Solo los medios de contacto que la ficha trae; si falta el teléfono, se dice con honestidad.
     const contacto = [
-      MARCA.telefono ? `<a class="vb-btn vb-btn-primario vb-btn-xl" href="${telCentral()}">${ic('telefono')} Llamar a la central</a>` : '',
-      MARCA.whatsapp ? `<a class="vb-btn vb-btn-oro vb-btn-xl" href="${esc(N.enlaceWhatsApp(MARCA.whatsapp, `Hola ${MARCA.nombre}, necesito ayuda con la app.`))}" target="_blank" rel="noopener">${ic('chat')} Escribir por WhatsApp</a>` : '',
-      MARCA.correo ? `<a class="vb-btn vb-btn-borde vb-btn-xl" href="mailto:${esc(MARCA.correo)}">${ic('correo')} ${esc(MARCA.correo)}</a>` : '',
+      MARCA.telefono ? `<a class="vb-btn vb-btn-primario vb-btn-xl" href="${esc(telCentral())}">${ic('telefono')} Llamar a la central</a>` : '',
+      MARCA.whatsapp ? `<a class="vb-btn vb-btn-oro vb-btn-xl" href="${esc(N.urlSegura(N.enlaceWhatsApp(MARCA.whatsapp, `Hola ${MARCA.nombre}, necesito ayuda con la app.`)))}" target="_blank" rel="noopener">${ic('chat')} Escribir por WhatsApp</a>` : '',
+      MARCA.correo ? `<a class="vb-btn vb-btn-borde vb-btn-xl" href="${esc(N.enlaceCorreo(MARCA.correo))}">${ic('correo')} ${esc(MARCA.correo)}</a>` : '',
     ].filter(Boolean).join('');
     const sinTelefono = MARCA.telefono ? '' : `<p class="vb-nota-gps" role="note" data-sin-telefono>${ic('info', 20)}<span><b>Teléfono de la central: pronto.</b> Mientras tanto, pide tu taxi desde la app${MARCA.whatsapp ? ' o escríbenos por WhatsApp' : ''}.</span></p>`;
     const lineaOficina = [MARCA.telefono ? esc(MARCA.telefonoVisible) : '', MARCA.servicio24h ? 'Servicio 24 horas' : ''].filter(Boolean).join(' · ');

@@ -628,9 +628,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     }, 350);
   }
 
+  // Motivo del estado del conductor (servidor 0.6.0): motivo_conductor de GET /api/yo (o conductor.motivo).
+  // Texto plano de hasta 200 caracteres; cualquier otra cosa se ignora.
+  function motivoDe(r) {
+    const m = [r?.motivo_conductor, r?.conductor?.motivo, r?.motivo].find((x) => typeof x === 'string') || '';
+    return N.textoPlano ? N.textoPlano(m, 200) : '';
+  }
+  const motivoConductor = () => ui.cuenta?.motivo || '';
+
   // Decide a dónde va el conductor según su cuenta ({usuario, conductor} del servidor).
   function seguirConCuenta(r, { recienEntra = false } = {}) {
-    ui.cuenta = { usuario: r?.usuario || ui.cuenta?.usuario || {}, conductor: r?.conductor ?? null };
+    ui.cuenta = { usuario: r?.usuario || ui.cuenta?.usuario || {}, conductor: r?.conductor ?? null, motivo: motivoDe(r) };
     // Si en este celular estaban los datos de otra cuenta (historial, ganancias, el servicio
     // guardado), se borran antes de seguir.
     N.perfil.fijarDueno?.(ui.cuenta.usuario.correo);
@@ -701,6 +709,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         ui.cuenta = {
           usuario: r?.usuario || { ...u, nombre, celular },
           conductor: r && 'conductor' in r ? r.conductor : ui.cuenta?.conductor ?? null,
+          motivo: r ? motivoDe(r) : ui.cuenta?.motivo || '',
         };
         // El servidor toma el nombre y el celular al saludar: si el bus ya estaba abierto, se reabre.
         if (cambio && c?.real && c.bus.estado === 'en_linea') c.bus.reconectar();
@@ -808,14 +817,16 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     enfocar(dc.movil ? f.placa : f.movil);
   }
 
-  // «Tu registro está en revisión» (pendiente), suspendido, o sin conexión con la
-  // central (motivo = código del error). Aquí también va «Eliminar mi cuenta»: el
-  // menú no abre sin un conductor aprobado.
+  // «Tu registro está en revisión» (pendiente), suspendido, rechazado o retirado (servidor 0.6.0,
+  // fase 2 del panel), o sin conexión con la central (motivo = código del error). El motivo que
+  // escribió la cooperativa (motivo_conductor de GET /api/yo) es texto plano: va con textContent (S30).
+  // Aquí también va «Eliminar mi cuenta»: el menú no abre sin un conductor aprobado.
   function pantallaRevision({ motivo = '' } = {}) {
     const dc = ui.cuenta?.conductor;
     const u = ui.cuenta?.usuario || {};
-    const estado = motivo ? 'error' : dc?.estado === 'suspendido' ? 'suspendido' : 'pendiente';
-    const clave = JSON.stringify([estado, motivo, dc?.movil, dc?.placa, dc?.vehiculo, dc?.color, u.nombre]);
+    const estado = motivo ? 'error' : ['suspendido', 'rechazado', 'retirado'].includes(dc?.estado) ? dc.estado : 'pendiente';
+    const porQue = estado === 'pendiente' || estado === 'error' ? '' : motivoConductor();
+    const clave = JSON.stringify([estado, motivo, porQue, dc?.movil, dc?.placa, dc?.vehiculo, dc?.color, u.nombre]);
     // «Revisar de nuevo» sin cambios: no se repinta (no salta la pantalla).
     if (ui.pantalla === 'revision' && ui.claveRevision === clave && ui.capa?.isConnected) return;
     const textos = {
@@ -829,6 +840,16 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         texto: `Por ahora no puedes recibir servicios. Comunícate con ${EM.NOMBRE} para revisar tu caso.`,
         chip: 'Suspendida',
       },
+      rechazado: {
+        titulo: 'Tu registro no fue aprobado',
+        texto: `${EM.NOMBRE} revisó tus datos y no aprobó tu registro. Si crees que es un error, comunícate con la ${EM.TIPO}.`,
+        chip: 'No aprobado',
+      },
+      retirado: {
+        titulo: `Ya no estás en ${EM.NOMBRE}`,
+        texto: `${EM.NOMBRE} te retiró de su lista de conductores en ${EM.APP}. Si crees que es un error, comunícate con la ${EM.TIPO}.`,
+        chip: 'Retirado',
+      },
       error: {
         titulo: 'No pudimos conectarte',
         texto: servidor.textoError(motivo),
@@ -838,6 +859,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const caja = ponerPaso('revision', textos.titulo, `<div class="a-ingreso-form a-revision a-revision-${estado}">
         <h1>${esc(textos.titulo)}</h1>
         <p class="a-sub">${esc(textos.texto)}</p>
+        ${porQue ? `<p class="a-revision-motivo" data-motivo-conductor><strong>Motivo:</strong> <span data-motivo-texto></span></p>` : ''}
         ${dc ? `<div class="a-revision-taxi">
           ${placa(dc.placa || '')}
           <span>${textos.chip ? `<em class="a-revision-chip">${esc(textos.chip)}</em>` : ''}<strong>${esc(EM.unir([dc.movil ? `Móvil ${dc.movil}` : '', dc.vehiculo, dc.color]))}</strong><small>${esc(EM.unir([u.nombre, u.correo]))}</small></span>
@@ -845,14 +867,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         ${estado === 'pendiente' ? `<p class="a-nota-prueba">${icono('info', { tam: 16 })}<span>Puedes cerrar la app: cuando vuelvas, revisamos de nuevo.</span></p>` : ''}
         <p class="a-error" data-error role="alert"></p>
         <button type="button" class="a-btn a-btn-primario a-btn-grande" data-revisar>${icono('reloj', { tam: 20 })}<span>${estado === 'error' ? 'Reintentar' : 'Revisar de nuevo'}</span></button>
-        ${dc ? `<button type="button" class="a-btn a-btn-suave a-btn-grande" data-corregir>${icono('documento', { tam: 20 })}<span>Corregir mis datos</span></button>` : ''}
-        ${EM.TELEFONO && estado !== 'error' ? `<a class="a-btn a-btn-suave a-btn-grande" href="tel:${esc(EM.TELEFONO)}">${icono('telefono', { tam: 20 })}<span>${esc(`Llamar a ${EM.NOMBRE}`)}</span></a>` : ''}
+        ${dc && estado !== 'retirado' && estado !== 'rechazado' ? `<button type="button" class="a-btn a-btn-suave a-btn-grande" data-corregir>${icono('documento', { tam: 20 })}<span>Corregir mis datos</span></button>` : ''}
+        ${EM.TELEFONO && estado !== 'error' ? `<a class="a-btn a-btn-suave a-btn-grande" href="${esc(N.enlaceTel(EM.TELEFONO))}">${icono('telefono', { tam: 20 })}<span>${esc(`Llamar a ${EM.NOMBRE}`)}</span></a>` : ''}
         <div class="a-ingreso-acciones">
           <button type="button" class="a-btn-texto" data-salir>Cerrar sesión</button>
           <button type="button" class="a-btn-texto a-texto-peligro" data-eliminar>Eliminar mi cuenta</button>
         </div>
       </div>`);
     ui.claveRevision = clave;
+    // El motivo, como texto (nunca HTML).
+    const motivoEl = $(caja, '[data-motivo-texto]');
+    if (motivoEl) motivoEl.textContent = porQue;
     $(caja, '[data-revisar]').addEventListener('click', () => revisarCuenta());
     $(caja, '[data-corregir]')?.addEventListener('click', () => pasoDatos({ corrigiendo: true }));
     $(caja, '[data-salir]').addEventListener('click', cerrarSesion);
@@ -871,7 +896,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       seguirConCuenta(r);
       const ahora = ui.cuenta?.conductor?.estado;
       if (!silencioso && ui.pantalla === 'revision' && ahora === antes) {
-        avisos.mostrar({ titulo: ahora === 'suspendido' ? 'Tu cuenta sigue suspendida' : 'Tu registro sigue en revisión', cuerpo: 'Te avisamos aquí apenas cambie.', tipo: 'info' });
+        const sigue = { suspendido: 'Tu cuenta sigue suspendida', rechazado: 'Tu registro sigue sin aprobar', retirado: `Sigues fuera de ${EM.NOMBRE}` }[ahora] || 'Tu registro sigue en revisión';
+        avisos.mostrar({ titulo: sigue, cuerpo: 'Te avisamos aquí apenas cambie.', tipo: 'info' });
       }
     } catch (err) {
       if (err?.codigo !== 'sin_sesion' && !silencioso) {
@@ -1044,7 +1070,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     let r = null;
     try { r = await servidor.yo(); } catch (err) { if (err?.codigo === 'sin_sesion') return; }
     if (ui.saliendo || c || ui.pantalla === 'ingreso') return;
-    if (r) ui.cuenta = { usuario: r.usuario || ui.cuenta?.usuario || {}, conductor: r.conductor ?? null };
+    if (r) ui.cuenta = { usuario: r.usuario || ui.cuenta?.usuario || {}, conductor: r.conductor ?? null, motivo: motivoDe(r) };
     const dc = ui.cuenta?.conductor;
     if (dc && dc.estado === 'aprobado') ui.cuenta.conductor = { ...dc, estado: 'pendiente' };
     // Sin registro de taxi (lo borraron): a registrarlo. Sin datos (sin red): revisión.
@@ -1098,18 +1124,20 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   function navegar(p) {
     if (!p) return '';
     return `<div class="a-nav">
-      <a class="a-nav-btn" href="${esc(N.enlaceNavegacion(p, 'google'))}" target="_blank" rel="noopener">${icono('navegar', { tam: 18 })}<span>Google Maps</span></a>
-      <a class="a-nav-btn" href="${esc(N.enlaceNavegacion(p, 'waze'))}" target="_blank" rel="noopener">${icono('navegar', { tam: 18 })}<span>Waze</span></a>
+      <a class="a-nav-btn" href="${esc(N.urlSegura(N.enlaceNavegacion(p, 'google')))}" target="_blank" rel="noopener">${icono('navegar', { tam: 18 })}<span>Google Maps</span></a>
+      <a class="a-nav-btn" href="${esc(N.urlSegura(N.enlaceNavegacion(p, 'waze')))}" target="_blank" rel="noopener">${icono('navegar', { tam: 18 })}<span>Waze</span></a>
     </div>`;
   }
   // Llamar o escribir al pasajero. En modo real el celular llega con la asignación
   // (viaje.pasajero.celular); si no lo registró, se dice.
   function contacto(v) {
     const cel = v.pasajero?.celular;
-    if (!cel) return REAL ? `<p class="a-sin-celular">${icono('telefono', { tam: 16 })}<span>El pasajero no tiene celular registrado</span></p>` : '';
+    // El celular llega del servidor: el enlace solo con dígitos (S30).
+    const tel = N.enlaceTel(cel);
+    if (!cel || !tel) return REAL ? `<p class="a-sin-celular">${icono('telefono', { tam: 16 })}<span>El pasajero no tiene celular registrado</span></p>` : '';
     return `<div class="a-nav a-nav-contacto">
-      <a class="a-nav-btn" href="tel:${esc(cel)}">${icono('telefono', { tam: 18 })}<span>Llamar</span></a>
-      <a class="a-nav-btn" href="${esc(N.enlaceWhatsApp(cel, `Hola ${nombreCorto(v.pasajero.nombre)}, soy el conductor del móvil ${yoConductor()?.movil || ''} de ${EM.NOMBRE}.`))}" target="_blank" rel="noopener">${icono('chat', { tam: 18 })}<span>WhatsApp</span></a>
+      <a class="a-nav-btn" href="${esc(tel)}">${icono('telefono', { tam: 18 })}<span>Llamar</span></a>
+      <a class="a-nav-btn" href="${esc(N.urlSegura(N.enlaceWhatsApp(cel, `Hola ${nombreCorto(v.pasajero.nombre)}, soy el conductor del móvil ${yoConductor()?.movil || ''} de ${EM.NOMBRE}.`)))}" target="_blank" rel="noopener">${icono('chat', { tam: 18 })}<span>WhatsApp</span></a>
     </div>`;
   }
   function tarjetaPasajero(v) {
@@ -1172,6 +1200,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   }
 
   /* ---------------- solicitud entrante ---------------- */
+  // Fase 2 del panel: la central marca la oferta cuya recogida está fuera de la zona de servicio
+  // (fueraZona: { km } del límite, §5.7). Solo números: el texto lo arma la app.
+  function chipFueraDeZona(s) {
+    const fz = s?.fueraZona;
+    if (!fz) return '';
+    // km null: la central retomó el viaje y no guardó la distancia (solo sabe que estaba fuera).
+    const km = fz.km == null || fz.km === '' ? NaN : Number(fz.km);
+    const texto = Number.isFinite(km) && km >= 0 && km < 1000 ? `Fuera de zona · ${N.kmTexto(km)} del límite` : 'Fuera de zona';
+    return `<em class="a-chip-zona" data-fuera-zona>${icono('alerta', { tam: 14 })} ${esc(texto)}</em>`;
+  }
+
   function pintarSolicitud(e) {
     const s = !e.viaje && e.solicitudes.length ? e.solicitudes[0] : null;
     if (!s) {
@@ -1223,7 +1262,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <span><strong>${s.km ? esc(N.kmTexto(s.km)) : '—'}</strong><small>de viaje${s.min ? ` · ${esc(N.minutosTexto(s.min))}` : ''}</small></span>
         </div>
         <div class="a-sol-ruta">
-          <div><span class="a-punto a-punto-verde"></span><span><small>Recoger en</small><strong>${esc(s.origen?.titulo || 'Punto en el mapa')}</strong></span></div>
+          <div><span class="a-punto a-punto-verde"></span><span><small>Recoger en</small><strong>${esc(s.origen?.titulo || 'Punto en el mapa')}</strong>${chipFueraDeZona(s)}</span></div>
           <div><span class="a-punto a-punto-negro"></span><span><small>Destino</small><strong>${esc(s.destino?.titulo || 'A convenir con el pasajero')}</strong></span></div>
         </div>
         ${s.nota ? `<p class="a-sol-nota">${icono('mensaje', { tam: 16 })}<span>«${esc(s.nota)}»</span></p>` : ''}

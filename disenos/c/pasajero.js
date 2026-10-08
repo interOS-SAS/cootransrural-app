@@ -410,8 +410,8 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
     return `<div class="c-acciones-viaje${llamar ? '' : ' c-acciones-dos'}">
       ${llamar && demo ? `<button type="button" class="c-accion" data-accion="llamada-demo">${icono('telefono')}<span>Llamar</span></button>
       <button type="button" class="c-accion" data-accion="llamada-demo">${icono('chat')}<span>WhatsApp</span></button>` : ''}
-      ${llamar && !demo ? `<a class="c-accion" href="tel:${esc(tel)}">${icono('telefono')}<span>Llamar</span></a>
-      <a class="c-accion" href="${esc(wa)}" target="_blank" rel="noopener">${icono('chat')}<span>WhatsApp</span></a>` : ''}
+      ${llamar && !demo ? `<a class="c-accion" href="${esc(N.enlaceTel(tel))}">${icono('telefono')}<span>Llamar</span></a>
+      <a class="c-accion" href="${esc(N.urlSegura(wa))}" target="_blank" rel="noopener">${icono('chat')}<span>WhatsApp</span></a>` : ''}
       <button type="button" class="c-accion" data-accion="compartir">${icono('compartir')}<span>Compartir</span></button>
       <button type="button" class="c-accion c-accion-sos" data-accion="sos">${icono('escudo')}<span>SOS</span></button>
     </div>${cancelar ? `<button type="button" class="c-boton-texto c-cancelar" data-accion="cancelar-viaje">Cancelar servicio</button>` : ''}`;
@@ -1095,7 +1095,7 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
     contenido.querySelector('[data-detalle]').innerHTML =
       tarifa.detalle.map((d) => `<li><span>${esc(d.concepto)}</span><strong class="${d.valor < 0 ? 'c-descuento' : ''}">${d.valor < 0 ? '−' + N.pesos(-d.valor) : N.pesos(d.valor)}</strong></li>`).join('') +
       `<li class="c-total-detalle"><span>Total estimado</span><strong>${N.pesos(tarifa.total)}</strong></li>` +
-      (tarifa.rutaFija ? `<li class="c-nota-detalle"><span>${icono('ruta')} ${!N.TARIFAS.ejemplo && tarifa.tipo === 'referencia' ? 'Precio de referencia' : 'Ruta con tarifa fija'} hacia ${esc(tarifa.rutaFija.destino)}</span></li>` : '') +
+      (tarifa.rutaFija ? `<li class="c-nota-detalle"><span>${icono('ruta')} ${!N.TARIFAS.ejemplo && tarifa.tipo === 'referencia' ? 'Precio de referencia' : !N.TARIFAS.ejemplo && tarifa.tipo === 'fijada' ? esc(tarifa.etiqueta) : 'Ruta con tarifa fija'} hacia ${esc(tarifa.rutaFija.destino)}</span></li>` : '') +
       (ui.sinDestino ? `<li class="c-nota-detalle"><span>${icono('info')} El valor final depende del destino que le digas al conductor.</span></li>` : '') +
       (ruta?.aproximada ? `<li class="c-nota-detalle"><span>${icono('info')} Distancia aproximada (sin conexión al servicio de rutas).</span></li>` : '');
     if (ruta && ui.destino && !ui.sinDestino) {
@@ -1247,8 +1247,8 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
       contenido: `<p>Envía el móvil, la placa, el conductor y tu ubicación en vivo a alguien de confianza.</p>
         <pre class="c-texto-compartir">${esc(texto)}</pre>
         ${'share' in navigator ? `<button type="button" class="c-opcion" data-accion="compartir-nativo">${icono('compartir')}<span>Compartir con otra app<small>WhatsApp, mensajes, correo…</small></span></button>` : ''}
-        ${contacto?.celular ? `<a class="c-opcion" href="${esc(N.enlaceWhatsApp(contacto.celular, texto))}" target="_blank" rel="noopener">${icono('usuarios')}<span>Enviar a ${esc(contacto.nombre)}<small>Tu contacto de emergencia · ${esc(C.formatoCelular(contacto.celular))}</small></span></a>` : ''}
-        <a class="c-opcion" href="${esc(N.enlaceWhatsApp('', texto))}" target="_blank" rel="noopener">${icono('chat')}<span>Enviar por WhatsApp<small>Elige el contacto en WhatsApp</small></span></a>
+        ${contacto?.celular ? `<a class="c-opcion" href="${esc(N.urlSegura(N.enlaceWhatsApp(contacto.celular, texto)))}" target="_blank" rel="noopener">${icono('usuarios')}<span>Enviar a ${esc(contacto.nombre)}<small>Tu contacto de emergencia · ${esc(C.formatoCelular(contacto.celular))}</small></span></a>` : ''}
+        <a class="c-opcion" href="${esc(N.urlSegura(N.enlaceWhatsApp('', texto)))}" target="_blank" rel="noopener">${icono('chat')}<span>Enviar por WhatsApp<small>Elige el contacto en WhatsApp</small></span></a>
         <button type="button" class="c-opcion" data-accion="copiar-viaje">${icono('copiar')}<span>Copiar el texto</span></button>`,
     });
   }
@@ -1278,10 +1278,10 @@ export async function montar(raiz, { N, vitrina = false, taxicun = null } = {}) 
       persistente: true,
       contenido: `<p>Si estás en peligro, llama a la línea de emergencias. ${cd ? `Tu viaje: <strong>${sinCorte(`móvil ${cd.movil}`)}</strong> · placa <strong>${sinCorte(cd.placa)}</strong>.` : ''}</p>
         <a class="c-opcion c-opcion-peligro c-opcion-sos" href="tel:123">${icono('telefono')}<span>Llamar al 123<small>Línea nacional de emergencias</small></span></a>
-        ${E.telefono ? `<a class="c-opcion" href="tel:${esc(E.telefono)}">${icono('taxi')}<span>Llamar a la central ${esc(E.nombre)}<small>${esc(E.telefonoVisible)}${E.servicio24h ? ' · 24 horas' : ''}</small></span></a>` : ''}
+        ${E.telefono ? `<a class="c-opcion" href="${esc(N.enlaceTel(E.telefono))}">${icono('taxi')}<span>Llamar a la central ${esc(E.nombre)}<small>${esc(E.telefonoVisible)}${E.servicio24h ? ' · 24 horas' : ''}</small></span></a>` : ''}
         ${contacto?.celular
-          ? `<a class="c-opcion" href="${esc(N.enlaceWhatsApp(contacto.celular, texto))}" target="_blank" rel="noopener">${icono('usuarios')}<span>Avisar a ${esc(contacto.nombre)}<small>Le enviamos tu viaje y ubicación por WhatsApp</small></span></a>`
-          : `<a class="c-opcion" href="${esc(N.enlaceWhatsApp('', texto))}" target="_blank" rel="noopener">${icono('chat')}<span>Enviar mi viaje por WhatsApp<small>Agrega un contacto de emergencia en Perfil › Ajustes</small></span></a>`}`,
+          ? `<a class="c-opcion" href="${esc(N.urlSegura(N.enlaceWhatsApp(contacto.celular, texto)))}" target="_blank" rel="noopener">${icono('usuarios')}<span>Avisar a ${esc(contacto.nombre)}<small>Le enviamos tu viaje y ubicación por WhatsApp</small></span></a>`
+          : `<a class="c-opcion" href="${esc(N.urlSegura(N.enlaceWhatsApp('', texto)))}" target="_blank" rel="noopener">${icono('chat')}<span>Enviar mi viaje por WhatsApp<small>Agrega un contacto de emergencia en Perfil › Ajustes</small></span></a>`}`,
     });
   }
 

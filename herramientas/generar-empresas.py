@@ -843,8 +843,15 @@ def derivados(ficha):
         'horario_nocturno': f"De {hora12(T.get('nocheDesde', 20))} a {hora12(T.get('nocheHasta', 6))}",
         'minima_texto': 'Dentro del casco urbano',
         'recorrido_titulo': 'Por recorrido',
-        'recorrido_texto': f"de arranque + {pesos(T.get('porKm') or 0)} por km",
+        # «de arranque + $1.300 por km»: el valor por km va aparte (data-precio="porKm", web/sitio.js
+        # lo cambia por el vigente si la ficha la sirve la API con otro valor).
+        'recorrido_antes': 'de arranque + ',
+        'recorrido_despues': ' por km',
     }
+    # Fase 2 del panel: la página pinta el precio VIGENTE (web/sitio.js, data-precio) sobre el que quedó
+    # aquí. El lead de las tarifas oficiales lleva la mínima aparte (tarifas_lead_minima).
+    p['tarifas_lead_minima'] = ''
+    p['tarifas_lead_fin'] = ''
     # Tarifas oficiales (ejemplo: false, fuente y tabla DESTINOS_TARIFA; Cootransrural: Decreto 05
     # de 2026 de El Rosal): mínima oficial, tabla por zonas, recorrido estimado y rutas de referencia.
     destinos_tarifa = [d for d in ficha.get('DESTINOS_TARIFA') or [] if d.get('destino') and isinstance(d.get('valor'), (int, float))]
@@ -865,7 +872,7 @@ def derivados(ficha):
         for d in destinos_tarifa:
             z = zonas.setdefault(d['zona'], {'zona': d['zona'], 'sector': d.get('sector') or f"Zona {d['zona']}", 'destinos': []})
             nota = '' if d.get('precision') in ('exacta', 'aproximada') else ('Sin ubicar en el mapa' if d.get('precision') == 'sin_ubicar' or 'lat' not in d else 'Punto aproximado (centro de la vereda)')
-            z['destinos'].append({'destino': d['destino'], 'valor': pesos(d['valor']), 'nota': nota})
+            z['destinos'].append({'id': str(d.get('id') or ''), 'destino': d['destino'], 'valor': pesos(d['valor']), 'nota': nota})
         for z in zonas.values():
             valores = [d['valor'] for d in destinos_tarifa if d['zona'] == z['zona']]
             z['rango'] = pesos(min(valores)) if min(valores) == max(valores) else f'{pesos(min(valores))} a {pesos(max(valores))}'
@@ -874,11 +881,13 @@ def derivados(ficha):
         p['tarifas_origen'] = origen
         p['tarifas_total'] = len(destinos_tarifa)
         p['tarifas_lead'] = (f"Desde {origen}, TaxiCun cobra el precio oficial del {fuente['acto']} a {len(destinos_tarifa)} destinos del municipio; "
-                             f"dentro del casco urbano rige la tarifa única de {pesos(T.get('minimaUrbana') or 0)}.")
+                             f"dentro del casco urbano rige la tarifa única de ")
+        p['tarifas_lead_minima'] = pesos(T.get('minimaUrbana') or 0)
+        p['tarifas_lead_fin'] = '.'
         p['tarifa_inicial']['minima_texto'] = f"Tarifa única urbana · {fuente['acto']}"
         if 'banderazo' in estimados or 'porKm' in estimados:
             p['tarifa_inicial']['recorrido_titulo'] = 'Por recorrido (estimado)'
-            p['tarifa_inicial']['recorrido_texto'] = f"de arranque + {pesos(T.get('porKm') or 0)} por km, solo para destinos fuera de la tabla (el decreto no lo fija)"
+            p['tarifa_inicial']['recorrido_despues'] = ' por km, solo para destinos fuera de la tabla (el decreto no lo fija)'
         if T.get('rutasReferencia'):
             p['tabla_rutas_titulo'] = 'Otros municipios: precio de referencia'
             p['tabla_rutas_texto'] = str(T.get('notaRutas') or 'Precios de referencia, por confirmar con la cooperativa.')

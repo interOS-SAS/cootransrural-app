@@ -43,7 +43,10 @@
         if (c.classList.contains('oculta') || !document.getElementById('elegir').hidden || c.dataset.espera) return;
         if (++segundos < 20) return;
         clearInterval(reloj);
-        document.getElementById('carga-texto').innerHTML = 'No pudimos cargar TaxiCun.<br><small>Revisa tu conexión a internet e inténtalo de nuevo.</small><br><button type="button" class="tc-boton" onclick="location.reload()">Reintentar</button>';
+        var texto = document.getElementById('carga-texto');
+        texto.innerHTML = 'No pudimos cargar TaxiCun.<br><small>Revisa tu conexión a internet e inténtalo de nuevo.</small><br><button type="button" class="tc-boton">Reintentar</button>';
+        // Sin manejador onclick en línea (la CSP no lo deja).
+        texto.querySelector('button').addEventListener('click', function () { location.reload(); });
       }, 1000);
     })();
   </script>
