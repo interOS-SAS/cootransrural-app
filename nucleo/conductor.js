@@ -296,6 +296,11 @@ class ControladorConductor extends Emisor {
         // Servidor 0.4.0: al minimizar no lo saca del mapa (el plugin sigue enviando). Los
         // servidores anteriores ignoran el campo.
         ...(this.nativo?.activo?.() ? { segundoPlano: true } : {}),
+        // Fase 3 (servidor 0.7.0): «sé que la central me sacó de turno» (el acuse). Con él, la central levanta su
+        // marca enseguida y el siguiente «Conectarme» lo vuelve a poner en turno; sin él, la central no le haría caso
+        // a una presencia «no disponible» llegada en los 2 s siguientes (podía venir de antes del aviso) y el conductor
+        // quedaría fuera de turno hasta 30 minutos aunque se volviera a conectar.
+        ...(this.estado.sacado && !this.estado.conectado ? { sacado: true } : {}),
       });
       return;
     }
@@ -1432,6 +1437,8 @@ class ControladorConductor extends Emisor {
       // bienvenida, una vez, o el mensaje) o lo pidió la persona (tocó el push). El plugin detenido no dice nada aquí.
       if (origen === 'plugin') return false;
       this.#cambiar({ sacado: { motivo, en, desde: Date.now() } });
+      // El acuse a la central (presencia no disponible con sacado: true): así su «Conectarme» de después vale.
+      this.#anunciar();
       this.#emitirSacado({ motivo, yaFuera: true, origen });
       return true;
     }

@@ -10,6 +10,10 @@
 //        volver a ponerse en turno («Conectarme»), con su presencia disponible: true de siempre.
 //        La app, sin servicio: queda «Desconectado» (sin ofertas, presencia disponible: false) y dice «La central te
 //        sacó de turno» con el motivo. Con un servicio en curso: lo termina y queda «Desconectado» al terminarlo.
+//        Acuse (integración con la 0.7.0): la presencia «no disponible» que manda la app sabiéndose sacada lleva
+//        sacado: true (también cuando se entera estando ya fuera de turno, por la bienvenida o el push). La central
+//        levanta su marca con ese acuse y el «Conectarme» de después lo vuelve a poner en turno; sin el acuse, la
+//        central ignora un «no disponible» de los primeros 2 s y el conductor quedaría fuera hasta 30 minutos.
 //      - Sin WebSocket (app minimizada o cerrada):
 //          · push al conductor con datos { tipo: 'sacado_de_turno', motivo, en } (el texto lo arma el servidor:
 //            «La central te sacó de turno: {motivo}.»);

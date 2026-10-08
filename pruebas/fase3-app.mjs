@@ -477,6 +477,7 @@ async function conductorWeb() {
   ok(!(await enTurno(p)), 'a1) queda «Desconectado»');
   ok(/La central te sacó de turno/.test(await texto(p, '[data-pildora-sub]')), `a1) la píldora lo dice («${await texto(p, '[data-pildora-sub]')}»)`);
   ok(Boolean(await hasta(() => msjDesde(m0, 'conductor', 'presencia').some((m) => m.datos?.disponible === false), 4000)), 'a1) manda presencia disponible: false');
+  ok(msjDesde(m0, 'conductor', 'presencia').some((m) => m.datos?.disponible === false && m.datos?.sacado === true), 'a1) con el acuse sacado: true (la central 0.7.0 levanta su marca y «Conectarme» vale)');
   await foto(p, 'a1-sacado-de-turno');
   ofrecer('v-fuera', {}, { forzar: true });
   await p.waitForTimeout(1500);
@@ -487,6 +488,7 @@ async function conductorWeb() {
   m0 = srv.mensajes.length;
   ok(await conectar(p), 'a1) puede volver a ponerse en turno («Conectarme»)');
   ok(Boolean(await hasta(() => msjDesde(m0, 'conductor', 'presencia').some((m) => m.datos?.disponible === true), 6000)), 'a1) y vuelve a anunciarse disponible');
+  ok(!msjDesde(m0, 'conductor', 'presencia').some((m) => m.datos?.disponible === true && m.datos?.sacado), 'a1) ya sin el acuse');
   ok(/Recibiendo solicitudes cercanas/.test(await texto(p, '[data-pildora-sub]')), 'a1) la píldora ya no dice que lo sacaron');
   srv.ofertas.delete('v-fuera');
 
@@ -571,6 +573,7 @@ async function conductorWeb() {
   await p.waitForTimeout(1500);
   const pres5 = msjDesde(m0, 'conductor', 'presencia');
   ok(!pres5.some((m) => m.datos?.disponible === true) && pres5.some((m) => m.datos?.disponible === false), `a5) ninguna presencia disponible: true después de la bienvenida (${pres5.map((m) => m.datos?.disponible).join(',')})`);
+  ok(pres5.some((m) => m.datos?.disponible === false && m.datos?.sacado === true), 'a5) y el acuse sacado: true');
   ok(!(await enTurno(p)), 'a5) «Desconectado»');
   await foto(p, 'a5-sacado-en-la-bienvenida');
   await ctx.close();
