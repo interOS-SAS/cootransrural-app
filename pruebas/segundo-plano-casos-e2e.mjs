@@ -691,7 +691,7 @@ const idPorMovil = (movil) => recibidosP.find((m) => m.tipo === 'presencia' && N
 /* ------------------------------------------------------------------ */
 async function preparar() {
   const salud = await api('GET', 'salud');
-  await debe(salud.estado === 200 && /^0\.[4567]\./.test(salud.datos?.version || ''), `servidor 0.4, 0.5, 0.6 o 0.7 (segundo plano) por el proxy (${salud.datos?.version || salud.estado})`);
+  await debe(salud.estado === 200 && /^0\.[45678]\./.test(salud.datos?.version || ''), `servidor 0.4, 0.5, 0.6, 0.7 o 0.8 (segundo plano) por el proxy (${salud.datos?.version || salud.estado})`);
   await debe(existsSync(AVISOS), `el servidor escribe los avisos simulados en ${AVISOS} (PUSH_SIMULADO)`);
   marcaInicio = leerAvisos().length;
   for (const c of [PAS, CA, CB]) {
