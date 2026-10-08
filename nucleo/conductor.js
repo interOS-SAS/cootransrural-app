@@ -42,7 +42,7 @@ import * as servidor from './servidor.js';
 import { Emisor, hashCorto, distanciaKm, pesos, kmTexto, minutosTexto } from './util.js';
 import { GPS_CON_INTERVALO, alCambiarVisibilidad, appOculta } from './plataforma.js';
 import { MENSAJES, reglasGuardadas, reglasDeBienvenida } from './reglas.js';
-import { MENSAJES_CENTRAL, POR_CENTRAL, motivoCentral, horaCentral, ofrecidaPorCentral, textosCentral } from './central.js';
+import { MENSAJES_CENTRAL, canceladaPorCentral, motivoCentral, motivoDeCancelacion, horaCentral, ofrecidaPorCentral, textosCentral } from './central.js';
 
 // Distancia máxima (km) al pasajero para poder marcar «Llegué» con GPS real (en modo real, la de las
 // reglas de la cooperativa: metrosLlegue).
@@ -757,7 +757,7 @@ class ControladorConductor extends Emisor {
       }
       case 'cancelacion': {
         // Fase 3: la central canceló el pedido desde su mapa («Cancelar y avisar al pasajero»).
-        if (this.real && d.por === POR_CENTRAL) {
+        if (this.real && canceladaPorCentral(d)) {
           this.#canceladoPorCentral(d);
           break;
         }
@@ -1460,10 +1460,11 @@ class ControladorConductor extends Emisor {
     this.#avisar({ ...textos, tipo: 'alerta', clave: 'sacado_de_turno' });
   }
 
-  // cancelacion { viajeId, por: 'central', motivo }: se quita la oferta o se suelta el servicio; sigue en turno.
+  // cancelacion de la central ({ viajeId, por: 'sistema', motivo: 'central' } o { por: 'central', motivo }): se quita
+  // la oferta o se suelta el servicio; sigue en turno.
   #canceladoPorCentral(d) {
     const v = this.estado.viaje;
-    const motivo = motivoCentral(d.motivo);
+    const motivo = motivoDeCancelacion(d);
     const tenia = this.estado.solicitudes.some((s) => s.viajeId === d.viajeId);
     this.#quitarOferta(d.viajeId);
     if (this.aceptadaReciente?.s?.viajeId === d.viajeId) this.aceptadaReciente = null;

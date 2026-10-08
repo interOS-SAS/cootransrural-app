@@ -4,9 +4,9 @@
 // Contrato (§6.3, §6.5 y §4.7 del diseño del panel; los nombres de los mensajes están solo aquí):
 //
 //   1) «Sacar de turno» (POST /api/panel/c/:coop/en-vivo/conductores/:id/sacar { motivo }):
-//      - Con el WebSocket abierto: sacado_de_turno (central → conductor) { motivo, en }. motivo: texto plano que
-//        escribió la central (el servidor lo valida, S30; la app lo pinta como texto y corta a 200); en: hora (ms) en
-//        que lo sacó (opcional). La central NO cierra el bus (no es un 4403): el conductor sigue con su sesión y puede
+//      - Con el WebSocket abierto: sacado_de_turno (central → conductor) { motivo, en, alTerminar }. motivo: texto
+//        plano que escribió la central (el servidor lo valida, S30; la app lo pinta como texto y corta a 200); en: hora
+//        (ms) en que lo sacó (opcional); alTerminar: tenía un servicio en curso (la app lo sabe sola y no lo usa). La central NO cierra el bus (no es un 4403): el conductor sigue con su sesión y puede
 //        volver a ponerse en turno («Conectarme»), con su presencia disponible: true de siempre.
 //        La app, sin servicio: queda «Desconectado» (sin ofertas, presencia disponible: false) y dice «La central te
 //        sacó de turno» con el motivo. Con un servicio en curso: lo termina y queda «Desconectado» al terminarlo.
@@ -16,12 +16,17 @@
 //          · el siguiente POST /api/conductor/ubicacion del plugin recibe { ok: true, seguir: false } sin que lo haya
 //            pedido (sin fin): el plugin se detiene con el motivo 'servidor';
 //          · en la siguiente conexión de esa cuenta (si no volvió a ponerse en turno), la bienvenida trae
-//            sacadoDeTurno: { motivo, en } (una sola vez). Así la app no anuncia presencia disponible al volver.
+//            sacadoDeTurno: { motivo, en }. Así la app no anuncia presencia disponible al volver. El servidor 0.7.0,
+//            además, repite sacado_de_turno después de viaje_actual mientras dure la marca (hasta que la app diga
+//            «no disponible» sin servicio, o 30 min): la app que ya quedó fuera no lo vuelve a mostrar.
 //        La app lo aplica también sola (sin esperar la bienvenida) al tocar ese push y cuando el plugin se detiene
 //        con 'servidor' estando en turno y sin servicio; después vuelve a saludar a la central.
 //   2) «Cancelar y avisar al pasajero» (POST …/en-vivo/viajes/:id/cancelar { motivo }):
 //      cancelacion (central → pasajero y conductores que lo tenían, ofrecido o asignado)
-//        { viajeId, por: 'central', motivo, conductorId? }.
+//        { viajeId, por: 'sistema', motivo: 'central', conductorId? } (servidor 0.7.0: así las apps anteriores la
+//        toman como una cancelación del sistema). El motivo que escribe la central NO viaja: solo queda en la bitácora
+//        del panel, y la app dice que la canceló la central, sin motivo. Por si una central futura lo manda, también
+//        vale { por: 'central', motivo: <texto> } (canceladaPorCentral y motivoDeCancelacion, abajo).
 //      - Pasajero: no busca otro taxi solo (la central lo canceló a propósito): cierra el viaje, lo guarda en «Mis
 //        viajes» como «Cancelado por la central» y avisa con el motivo y «Llamar a la central». Sin WebSocket, la
 //        central le manda un push y, como hace con el final del viaje, le reenvía esta cancelación una vez al
@@ -38,8 +43,22 @@ export const MENSAJES_CENTRAL = Object.freeze({
   sacadoDeTurno: 'sacado_de_turno',
 });
 
-// cancelacion.por cuando cancela la central desde el panel.
+// cancelacion.por cuando cancela la central desde el panel (forma futura; la 0.7.0 manda por: 'sistema' con
+// motivo: 'central', ver canceladaPorCentral).
 export const POR_CENTRAL = 'central';
+// cancelacion.motivo con el que la central 0.7.0 dice «la canceló la central» (es un código, no un texto).
+export const MOTIVO_CENTRAL = 'central';
+
+// ¿Esta cancelación la hizo la central desde el panel? { por: 'sistema', motivo: 'central' } (0.7.0) o
+// { por: 'central' }.
+export function canceladaPorCentral(d) {
+  return Boolean(d) && typeof d === 'object' && (d.por === POR_CENTRAL || (d.por === 'sistema' && d.motivo === MOTIVO_CENTRAL));
+}
+
+// El motivo que se puede mostrar de una cancelación de la central: '' si solo trae el código 'central'.
+export function motivoDeCancelacion(d) {
+  return !d || d.motivo === MOTIVO_CENTRAL ? '' : motivoCentral(d.motivo);
+}
 
 // Motivo del plugin UbicacionTurno cuando la central respondió seguir: false sin que la app lo pidiera.
 export const PARADA_POR_CENTRAL = 'servidor';

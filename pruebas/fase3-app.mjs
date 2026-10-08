@@ -230,6 +230,12 @@ function cancelaCentral(rol, viajeId, motivo) {
   srv.ofertas.delete(viajeId);
   enviarA(rol, 'cancelacion', { viajeId, por: 'central', motivo, ...(rol === 'pasajero' ? {} : { conductorId: 'c_luis' }) });
 }
+// Como la manda el servidor 0.7.0: { por: 'sistema', motivo: 'central' }, sin el texto que escribió la central.
+function cancelaCentralReal(rol, viajeId) {
+  for (const [correo, v] of srv.viajes) if (v.viajeId === viajeId) srv.viajes.delete(correo);
+  srv.ofertas.delete(viajeId);
+  enviarA(rol, 'cancelacion', { viajeId, por: 'sistema', motivo: 'central', ...(rol === 'pasajero' ? {} : { conductorId: 'c_luis' }) });
+}
 
 /* ------------------------------------------------------------------ */
 /* Capacitor simulado (como segundo-plano.mjs)                         */
@@ -541,6 +547,18 @@ async function conductorWeb() {
   ok(Boolean(await hasta(async () => !(await enTurno(p)), 4000)) && !/Sigues en turno/.test(await texto(p, '.a-avisos')), 'a4b) y queda «Desconectado» (sin «Sigues en turno»)');
   ok(await conectar(p), 'a4b) vuelve a conectarse');
 
+  // a4c) Como lo manda el servidor 0.7.0 ({ por: 'sistema', motivo: 'central' }, sin el texto de la central).
+  ok(await aceptarViaje(p, 'v-4c'), 'a4c) acepta otro servicio');
+  m0 = srv.mensajes.length;
+  cancelaCentralReal('conductor', 'v-4c');
+  ok(Boolean(await intento(vista(p, 'libre', 10000))), 'a4c) la central 0.7.0 lo cancela → libre');
+  ok(await conAviso(p, /La central canceló el servicio/), 'a4c) «La central canceló el servicio»');
+  const t4c = await p.evaluate(() => [...document.querySelectorAll('.a-avisos .a-toast:not(.a-sale)')].map((t) => t.textContent.replace(/\s+/g, ' ').trim()).filter((t) => /La central canceló el servicio/.test(t)).pop() || '');
+  ok(/Sigues en turno\./.test(t4c) && !/Motivo/.test(t4c), `a4c) sin motivo (el código «central» no se muestra) y «Sigues en turno.» («${t4c.slice(0, 120)}»)`);
+  ok(await enTurno(p), 'a4c) sigue en turno');
+  const h4c = (await historial(p, 'conductor')).find((v) => v.id === 'v-4c');
+  ok(h4c?.estado === 'cancelado' && h4c.motivo === 'Cancelado por la central', `a4c) en su historial: «${h4c?.motivo}»`);
+
   // a5) La central lo sacó sin el bus abierto: la bienvenida lo dice (sin anunciarse disponible ni un instante).
   ok(await enTurno(p), 'a5) en turno');
   srv.sacadoAlSaludar.set(LUIS, { motivo: 'Revisión de documentos', en: Date.now() });
@@ -678,6 +696,20 @@ async function pasajero() {
   await p.waitForTimeout(2500);
   ok(solicitudes(t0).length === 0 && (await p.evaluate(() => document.querySelector('.a-app')?.dataset.vista)) === 'inicio', 'c4) al inicio, sin buscar otro taxi solo');
   await foto(p, 'c4-servicio-cancelado-por-la-central');
+  await tocarModal(p, 'Entendido', 'a-modal-central');
+
+  // c5) Como lo manda el servidor 0.7.0 ({ por: 'sistema', motivo: 'central' }): sin el texto de la central.
+  const v5 = await pedir(p);
+  t0 = Date.now();
+  cancelaCentralReal('pasajero', v5);
+  ok(Boolean(await intento(p.waitForSelector('.a-modal-central.a-abierto .a-modal h2', { timeout: 8000 }))) && (await texto(p, '.a-modal-central .a-modal h2')) === 'Cootransrural canceló tu solicitud', 'c5) la forma de la 0.7.0 → «Cootransrural canceló tu solicitud»');
+  const tc5 = await p.evaluate(() => document.querySelector('.a-modal-central .a-modal-texto')?.textContent || '');
+  ok(tc5 === 'Si aún necesitas un taxi, llama a la central o pide otro.', `c5) sin motivo («${tc5}»)`);
+  await p.waitForTimeout(3000);
+  ok(solicitudes(t0).length === 0 && (await p.evaluate(() => document.querySelector('.a-app')?.dataset.vista)) === 'inicio', 'c5) al inicio, sin volver a pedir solo (no es «Ningún conductor aceptó»)');
+  const h5 = (await historial(p, 'pasajero')).find((v) => v.id === v5);
+  ok(h5?.estado === 'cancelado' && h5.motivo === 'Cancelado por la central', `c5) en «Mis viajes»: «${h5?.motivo}»`);
+  await foto(p, 'c5-cancelado-por-la-central-0.7.0');
 }
 
 /* ------------------------------------------------------------------ */

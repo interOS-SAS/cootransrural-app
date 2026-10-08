@@ -44,7 +44,7 @@ import * as servidor from './servidor.js';
 import { Emisor, uid, codigoNumerico, hashCorto, distanciaKm, pesos, minutosTexto, primerNombre, enlaceMapa, fechaTexto, horaTexto } from './util.js';
 import { relojVisible, appOculta, alCambiarVisibilidad } from './plataforma.js';
 import { MENSAJES, reglasGuardadas, reglasDeBienvenida, textoSinConductores } from './reglas.js';
-import { POR_CENTRAL, motivoCentral, textosCentral } from './central.js';
+import { canceladaPorCentral, motivoDeCancelacion, textosCentral } from './central.js';
 
 export const FASES = ['inicio', 'buscando', 'asignado', 'llego', 'en_viaje', 'pagar', 'calificar'];
 
@@ -501,7 +501,7 @@ class ControladorPasajero extends Emisor {
     if (this.real && tipo === 'aceptacion' && viaje && fase === 'buscando' && viaje.idsPrevios?.includes(d.viajeId)) viaje.id = d.viajeId;
     // Fase 3: la cancelación de la central con el id anterior (la app ya lo había vuelto a pedir con otro) también llega
     // (#canceladoPorCentral decide).
-    const deLaCentral = this.real && tipo === 'cancelacion' && d?.por === POR_CENTRAL && Boolean(viaje?.idsPrevios?.includes(d.viajeId));
+    const deLaCentral = this.real && tipo === 'cancelacion' && canceladaPorCentral(d) && Boolean(viaje?.idsPrevios?.includes(d.viajeId));
     if (!viaje || (d.viajeId !== viaje.id && !deLaCentral)) return;
 
     switch (tipo) {
@@ -918,7 +918,7 @@ class ControladorPasajero extends Emisor {
 
   #cancelacionReal(d) {
     const { fase, conductor } = this.estado;
-    if (d.por === POR_CENTRAL) return this.#canceladoPorCentral(d);
+    if (canceladaPorCentral(d)) return this.#canceladoPorCentral(d);
     if (d.por === 'sistema') {
       // El conductor eliminó su cuenta (servidor 0.2.2): la central canceló el viaje.
       if (d.motivo === 'cuenta_borrada' && ['asignado', 'llego', 'en_viaje'].includes(fase)) {
@@ -967,7 +967,7 @@ class ControladorPasajero extends Emisor {
       if (fase !== 'buscando') return;
       this.bus.publicar('cancelacion', { viajeId: viaje.id, por: 'pasajero', motivo: 'Cancelado por la central' });
     }
-    const motivo = motivoCentral(d.motivo);
+    const motivo = motivoDeCancelacion(d);
     const t = textosCentral.canceladoPasajero({ motivo, buscando: fase === 'buscando', empresa: EMPRESA?.nombre || 'La cooperativa', hayCentral: this.#hayCentral() });
     perfil.agregarAlHistorialPasajero(this.#resumenViaje('cancelado', { motivo: t.historial }));
     // Si la central lo volviera a mandar en viaje_actual (no debería), no se retoma: se le repite la cancelación.
