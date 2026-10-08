@@ -6,8 +6,12 @@
   <title>TaxiCun GPS (borrador) · GPS para tu taxi, instalado en tu municipio</title>
   <!-- Tienda de TaxiCun GPS. Mientras sea borrador (herramientas/gps-planes.json): fuera de Google (noindex), sin
        enlaces desde el resto del sitio, fuera del precacheo del service worker y con la franja «BORRADOR».
-       Los precios salen SOLO de herramientas/gps-planes.json. Sin nada de terceros: ni analítica, ni fuentes
-       de afuera, ni captcha; sin scripts en línea ni manejadores (CSP: script-src 'self'). -->
+       Los precios los cambia interOS desde el panel: tienda.js los lee de GET /api/gps/planes y, si la API no responde
+       o manda algo que no cumple, queda lo de aquí, armado con el respaldo de herramientas/gps-planes.json (todo o nada).
+       Marcas que rehace tienda.js: data-gps-planes, data-gps-extras, data-gps-compara, data-gps-opciones-plan,
+       data-gps="<id>.<campo>" (la nota de arriba), data-gps-flotas y data-gps-faq-permanencia; y deja la fuente y la
+       versión en data-gps-fuente y data-gps-version. Sin nada de terceros: ni analítica, ni fuentes de afuera, ni
+       captcha; sin scripts en línea ni manejadores (CSP: script-src 'self'). -->
   <meta name="robots" content="noindex, nofollow">
   <meta name="description" content="TaxiCun GPS: equipo 4G escondido y cableado en tu taxi, instalado en tu municipio. Mira dónde está en vivo, sus recorridos, kilómetros y horas de motor; botón de pánico a la central de tu cooperativa y bloqueo de encendido.">
   <meta name="theme-color" content="#0A2552">
@@ -21,8 +25,8 @@
   <link rel="apple-touch-icon" href="../img/taxicun/apple-touch-icon.png">
   <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
   <link rel="stylesheet" href="../web/inicio.css?v=22423e9e39">
-  <link rel="stylesheet" href="tienda.css?v=0297ab6da8">
-  <script src="tienda.js?v=94418e317d" defer></script>
+  <link rel="stylesheet" href="tienda.css?v=8dbc72637b">
+  <script src="tienda.js?v=2ecf6078fa" defer></script>
 </head>
 <body class="gps gps-con-franja">
   <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -89,7 +93,7 @@
             <li><svg class="icono" aria-hidden="true"><use href="#i-sirena"/></svg>Botón de pánico</li>
             <li><svg class="icono" aria-hidden="true"><use href="#i-celular"/></svg>Lo ves en tu celular</li>
           </ul>
-          <p class="nota">$29.900 al mes con el equipo comprado, o $49.900 al mes sin cuota inicial (precios en borrador). Con IVA y sin pagos en línea: te llamamos y te enviamos la factura electrónica.</p>
+          <p class="nota" data-gps-nota><span data-gps="compra.mes">$29.900</span> al mes con el equipo comprado, o <span data-gps="sin_cuota.mes">$49.900</span> al mes sin cuota inicial (precios en borrador). Con IVA y sin pagos en línea: te llamamos y te enviamos la factura electrónica.</p>
         </div>
         <div class="gps-arte gps-arte-portada">
           <img src="../img/gps/portada.svg" alt="Un taxi amarillo con su GPS y, en el celular, el mapa con el recorrido del taxi" width="620" height="640">
@@ -229,25 +233,26 @@
           <li><svg class="icono" aria-hidden="true"><use href="#i-herramienta"/></svg><h3>Técnicos de interOS</h3><p>Instalación oculta y cableada, con el botón de pánico y el relé.</p></li>
           <li><svg class="icono" aria-hidden="true"><use href="#i-documento"/></svg><h3>El aviso y el formato</h3><p>Te dejamos el aviso para el taxi y el formato para que tus conductores lo firmen.</p></li>
         </ul>
-        <p class="gps-flotas"><svg class="icono" aria-hidden="true"><use href="#i-personas"/></svg><span><b>¿Tienes 10 taxis o más, o eres la cooperativa?</b> Hacemos una jornada de instalación en la sede, con precio especial.</span></p>
+        <p class="gps-flotas"><svg class="icono" aria-hidden="true"><use href="#i-personas"/></svg><span><b>¿Tienes <span data-gps-flotas>10</span> taxis o más, o eres la cooperativa?</b> Hacemos una jornada de instalación en la sede, con precio especial.</span></p>
       </div>
     </section>
 
     <!-- ============ PLANES ============ -->
-    <section class="seccion seccion-azul gps-seccion-planes" id="planes" aria-labelledby="titulo-planes">
+    <section class="seccion seccion-azul gps-seccion-planes" id="planes" aria-labelledby="titulo-planes" data-gps-fuente="respaldo" data-gps-version="1"
+             data-gps-api="/api/gps/planes" data-gps-borrador="true" data-gps-topes="{&quot;version&quot;:[1,1000000],&quot;bytes&quot;:32768,&quot;multiplo&quot;:100,&quot;planes&quot;:[1,6],&quot;idPatron&quot;:&quot;^[a-z][a-z0-9_]{1,23}$&quot;,&quot;idsReservados&quot;:[&quot;combo&quot;,&quot;no_se&quot;],&quot;nombre&quot;:[2,40],&quot;lema&quot;:[0,80],&quot;condiciones&quot;:[0,5],&quot;condicion&quot;:[3,140],&quot;comboNombre&quot;:[2,40],&quot;comboLema&quot;:[0,80],&quot;precioEquipo&quot;:[0,1500000],&quot;instalacion&quot;:[0,300000],&quot;mes&quot;:[10000,300000],&quot;permanenciaMeses&quot;:[0,36],&quot;ahorroMesMin&quot;:1000,&quot;licenciaMes&quot;:[10000,100000],&quot;flotasDesde&quot;:[2,200],&quot;extras&quot;:[0,6],&quot;extraTexto&quot;:[3,80],&quot;extraValor&quot;:[0,500000]}">
       <div class="contenedor">
         <div class="encabezado">
           <span class="antetitulo">Planes <span class="etiqueta-borrador">borrador</span></span>
           <h2 id="titulo-planes">Elige cómo pagarlo</h2>
           <p class="lead">Todos traen el equipo, la instalación, la SIM con datos, el botón de pánico, el relé de bloqueo, «Mi taxi» y soporte por WhatsApp y correo. Precios con IVA incluido.</p>
         </div>
-        <div class="gps-planes">
+        <div class="gps-planes" data-gps-planes>
           
           <article class="gps-plan" aria-labelledby="plan-compra">
             <h3 id="plan-compra">Compra</h3>
             <p class="gps-plan-lema">El equipo queda tuyo</p>
             <dl class="gps-precios">
-              <div><dt>Al instalar</dt><dd>$339.000 <span class="etiqueta-borrador">borrador</span></dd></div>
+              <div><dt>Al instalar</dt><dd>$339.000 <span class="etiqueta-borrador">borrador</span></dd><dd class="gps-desglose">equipo $289.000 + instalación $50.000</dd></div>
               <div class="gps-precio-mes"><dt>Cada mes</dt><dd>$29.900 <span class="etiqueta-borrador">borrador</span></dd></div>
               <div><dt>Primer año</dt><dd>$697.800</dd></div>
             </dl>
@@ -260,7 +265,7 @@
             <h3 id="plan-sin_cuota">Sin cuota inicial</h3>
             <p class="gps-plan-lema">Empiezas sin pagar el equipo</p>
             <dl class="gps-precios">
-              <div><dt>Al instalar</dt><dd>$0 <span class="etiqueta-borrador">borrador</span></dd></div>
+              <div><dt>Al instalar</dt><dd>$0 <span class="etiqueta-borrador">borrador</span></dd><dd class="gps-desglose">instalación incluida</dd></div>
               <div class="gps-precio-mes"><dt>Cada mes</dt><dd>$49.900 <span class="etiqueta-borrador">borrador</span></dd></div>
               <div><dt>Primer año</dt><dd>$598.800</dd></div>
             </dl>
@@ -291,13 +296,13 @@
               <p class="gps-ahorro">Te ahorras $7.000 al mes frente a pagarlos por separado.</p>
             </div>
             
-            <p class="gps-plan-pie">Incluye la licencia de TaxiCun para ese taxi (Plan B, $27.000 al mes) y las mismas condiciones del plan del equipo. Si tu cooperativa usa TaxiCun, te sale más barato.</p>
+            <p class="gps-plan-pie">Incluye la licencia de TaxiCun para ese taxi (Plan B, $27.000 al mes) y las mismas condiciones del plan del equipo.</p>
           </article>
         </div>
         <div class="gps-planes-pie">
           <div>
             <h3>Otros valores <span class="etiqueta-borrador">borrador</span></h3>
-            <ul class="gps-extras">
+            <ul class="gps-extras" data-gps-extras>
               <li><span>Pasar el equipo a otro taxi</span><b>$80.000</b></li><li><span>Visita fallida por causa del cliente</span><b>$30.000</b></li><li><span>Botón de pánico adicional</span><b>$25.000</b></li>
             </ul>
           </div>
@@ -323,14 +328,14 @@
             <thead><tr><th scope="col">Opción</th><th scope="col">Al instalar</th><th scope="col">Cada mes</th><th scope="col">Primer año</th></tr></thead>
             <tbody>
               
-              <tr class="gps-fila-taxicun">
+              <tr class="gps-fila-taxicun" data-gps-compara>
                 <th scope="row">TaxiCun GPS · Compra</th>
                 <td data-titulo="Al instalar">$339.000<small>equipo e instalación</small></td>
                 <td data-titulo="Cada mes">$29.900</td>
                 <td data-titulo="Primer año"><b>$697.800</b></td>
               </tr>
               
-              <tr class="gps-fila-taxicun">
+              <tr class="gps-fila-taxicun" data-gps-compara>
                 <th scope="row">TaxiCun GPS · Sin cuota inicial</th>
                 <td data-titulo="Al instalar">$0<small>instalación incluida</small></td>
                 <td data-titulo="Cada mes">$49.900</td>
@@ -407,8 +412,8 @@
           <details><summary>¿Puede apagar el motor andando?</summary><p>No, a propósito. Solo impide volver a encenderlo.</p></details>
           <details><summary>¿El conductor tiene que saberlo?</summary><p>Sí, la ley lo exige: la ubicación del taxi es un dato personal de quien lo maneja. Te damos el aviso para el taxi y un formato para que tus conductores lo firmen.</p></details>
           <details><summary>¿Cuánto tiempo se guarda el recorrido?</summary><p>90 días. El resumen de cada día (kilómetros y horas de motor), 13 meses.</p></details>
-          <details><summary>¿Hay permanencia?</summary><p>En el plan Compra, no. En los planes sin cuota inicial, 12 meses, porque el equipo es nuestro.</p></details>
-          <details><summary>¿Qué pasa si vendo el taxi?</summary><p>Pasamos el equipo a tu otro taxi ($80.000) o se lo traspasas al nuevo dueño.</p></details>
+          <details><summary>¿Hay permanencia?</summary><p data-gps-faq-permanencia>En «Compra», no. En «Sin cuota inicial», 12 meses, porque el equipo es nuestro. En el combo, la misma del plan del equipo.</p></details>
+          <details><summary>¿Qué pasa si vendo el taxi?</summary><p>Pasamos el equipo a tu otro taxi (el valor está en «Otros valores», con los planes) o se lo traspasas al nuevo dueño.</p></details>
           <details><summary>¿Cómo pago?</summary><p>Por transferencia o Bre-B, cada mes, con factura electrónica de interOS. Por ahora no hay pagos en línea.</p></details>
           <details><summary>¿Funciona fuera de Cundinamarca?</summary><p>Sí, en cualquier parte con señal 4G. Pero la instalación la hacemos en los municipios donde está TaxiCun.</p></details>
         </div>
@@ -538,7 +543,7 @@
 
             <fieldset class="campo campo-opciones">
               <legend>Plan que te interesa</legend>
-              <div class="opciones">
+              <div class="opciones" data-gps-opciones-plan>
                 <label><input type="radio" name="plan" value="compra"><span>Compra</span></label>
                 <label><input type="radio" name="plan" value="sin_cuota"><span>Sin cuota inicial</span></label>
                 <label><input type="radio" name="plan" value="combo"><span>Combo con TaxiCun</span></label>

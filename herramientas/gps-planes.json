@@ -1,65 +1,154 @@
 {
   "_leeme": [
-    "Precios y estado de la tienda TaxiCun GPS (taxicun.com/gps/). Es el ÚNICO lugar donde se cambian los precios.",
-    "Valores en pesos colombianos, con IVA incluido. El primer año y el ahorro de los combos se calculan solos.",
-    "precios_aprobados: false muestra la etiqueta «borrador» junto a cada precio. Ponlo en true cuando Oscar los apruebe.",
+    "Tienda TaxiCun GPS (taxicun.com/gps/). Los precios los cambia interOS desde el panel (interOS → GPS → Planes y precios) y la tienda los lee de GET /api/gps/planes al abrirse.",
+    "respaldo es EXACTAMENTE el cuerpo de GET /api/gps/planes de la versión 1 (§14.2.1 del diseño del GPS): con él se arma la página estática y es lo que se ve si la API no responde, falla o manda algo que no cumple los topes. La tienda nunca mezcla: o todo de la API, o todo del respaldo.",
+    "Valores en pesos colombianos, con IVA incluido. alInstalar = precioEquipo + instalacion; primerAnio = alInstalar + 12 × mes; combo.ahorroMes = mes del plan base + licenciaMes − mes. El generador se niega si algo no cuadra, se sale de los topes (TOPES_GPS en generar-empresas.py, los de src/gps/planes.js del servidor) o licenciaMes no es la cuota del Plan B del sitio.",
+    "Para poner aquí una versión nueva publicada en el panel: copia el cuerpo de https://taxicun.com/api/gps/planes en respaldo, tal cual, y vuelve a generar.",
+    "precios_aprobados: false muestra la etiqueta «borrador» junto a cada precio (también en lo que llega de la API). Ponlo en true cuando Oscar los apruebe.",
     "pagina_publica: false deja la página fuera de Google (noindex), con la franja «BORRADOR» y el título «(borrador)».",
     "textos_legales_aprobados: false marca «BORRADOR · por revisar con el abogado» el aviso para el taxi y el formato del conductor (gps/aviso/ y gps/formato-conductor/), también al imprimir.",
+    "El capítulo GPS de la política de privacidad se enciende en herramientas/politica.json (publicar_capitulo_gps).",
     "Después de cambiar algo: python3 herramientas/generar-empresas.py && python3 herramientas/versionar.py"
   ],
   "precios_aprobados": false,
   "pagina_publica": false,
   "textos_legales_aprobados": false,
-  "planes": [
-    {
-      "id": "compra",
-      "nombre": "Compra",
-      "lema": "El equipo queda tuyo",
-      "al_instalar": 339000,
-      "mes": 29900,
-      "condiciones": [
-        "Sin permanencia.",
-        "Si dejas de pagar, el equipo se queda sin servicio; reactivarlo no tiene costo.",
-        "Garantía del equipo: 12 meses."
-      ]
+  "respaldo": {
+    "version": 1,
+    "moneda": "COP",
+    "ivaIncluido": true,
+    "licenciaMes": 27000,
+    "flotasDesde": 10,
+    "combo": {
+      "nombre": "Combo TaxiCun + GPS",
+      "lema": "El GPS y la app de pedidos, para ese taxi"
     },
-    {
-      "id": "sin_cuota",
-      "nombre": "Sin cuota inicial",
-      "lema": "Empiezas sin pagar el equipo",
-      "al_instalar": 0,
-      "mes": 49900,
-      "destacado": true,
-      "condiciones": [
-        "Permanencia de 12 meses.",
-        "El equipo es de interOS (en comodato): lo cuidas mientras lo tengas.",
-        "Garantía del equipo mientras dure el contrato."
-      ]
-    }
-  ],
-  "combo": {
-    "id": "combo",
-    "nombre": "Combo TaxiCun + GPS",
-    "lema": "El GPS y la app de pedidos, para ese taxi",
-    "variantes": [
-      { "base": "compra", "nombre": "Con compra del equipo", "mes": 49900 },
-      { "base": "sin_cuota", "nombre": "Sin cuota inicial", "mes": 69900 }
+    "planes": [
+      {
+        "id": "compra",
+        "nombre": "Compra",
+        "lema": "El equipo queda tuyo",
+        "equipo": "propio",
+        "precioEquipo": 289000,
+        "instalacion": 50000,
+        "alInstalar": 339000,
+        "mes": 29900,
+        "primerAnio": 697800,
+        "permanenciaMeses": 0,
+        "destacado": false,
+        "combo": null,
+        "condiciones": [
+          "Si dejas de pagar, el equipo se queda sin servicio; reactivarlo no tiene costo.",
+          "Garantía del equipo: 12 meses."
+        ]
+      },
+      {
+        "id": "sin_cuota",
+        "nombre": "Sin cuota inicial",
+        "lema": "Empiezas sin pagar el equipo",
+        "equipo": "comodato",
+        "precioEquipo": 0,
+        "instalacion": 0,
+        "alInstalar": 0,
+        "mes": 49900,
+        "primerAnio": 598800,
+        "permanenciaMeses": 12,
+        "destacado": true,
+        "combo": null,
+        "condiciones": [
+          "El equipo es de interOS (en comodato): lo cuidas mientras lo tengas.",
+          "Garantía del equipo mientras dure el contrato."
+        ]
+      },
+      {
+        "id": "combo_compra",
+        "nombre": "Con compra del equipo",
+        "lema": "",
+        "equipo": "propio",
+        "precioEquipo": 289000,
+        "instalacion": 50000,
+        "alInstalar": 339000,
+        "mes": 49900,
+        "primerAnio": 937800,
+        "permanenciaMeses": 0,
+        "destacado": false,
+        "combo": {
+          "base": "compra",
+          "ahorroMes": 7000
+        },
+        "condiciones": []
+      },
+      {
+        "id": "combo_sin_cuota",
+        "nombre": "Sin cuota inicial",
+        "lema": "",
+        "equipo": "comodato",
+        "precioEquipo": 0,
+        "instalacion": 0,
+        "alInstalar": 0,
+        "mes": 69900,
+        "primerAnio": 838800,
+        "permanenciaMeses": 12,
+        "destacado": false,
+        "combo": {
+          "base": "sin_cuota",
+          "ahorroMes": 7000
+        },
+        "condiciones": []
+      }
+    ],
+    "extras": [
+      {
+        "texto": "Pasar el equipo a otro taxi",
+        "valor": 80000
+      },
+      {
+        "texto": "Visita fallida por causa del cliente",
+        "valor": 30000
+      },
+      {
+        "texto": "Botón de pánico adicional",
+        "valor": 25000
+      }
     ]
   },
-  "extras": [
-    { "texto": "Pasar el equipo a otro taxi", "valor": 80000 },
-    { "texto": "Visita fallida por causa del cliente", "valor": 30000 },
-    { "texto": "Botón de pánico adicional", "valor": 25000 }
-  ],
-  "flotas_desde": 10,
   "competencia": {
     "consultado": "3 de octubre de 2026",
     "_nota": "Sin nombres en la página (decisión D-G2 del diseño). Los nombres y la prueba de cada precio están en la investigación (memoria taxicun-gps-tienda).",
     "otros": [
-      { "etiqueta": "Otro GPS para taxi (A)", "al_instalar": 350000, "al_instalar_nota": "kit instalado", "mes": [46000, 46000] },
-      { "etiqueta": "Otro GPS para taxi (B), equipo comprado", "al_instalar": 416500, "mes": [27380, 42760] },
-      { "etiqueta": "Otro GPS para taxi (B), equipo a cuotas", "al_instalar": 0, "mes": [44040, 59420], "mes_nota": "incluye $16.660 de la cuota del equipo" },
-      { "etiqueta": "Otro GPS para taxi (C)", "al_instalar": 357000, "al_instalar_nota": "instalación gratis", "mes": null, "mes_nota": "los 2 primeros meses gratis" }
+      {
+        "etiqueta": "Otro GPS para taxi (A)",
+        "al_instalar": 350000,
+        "al_instalar_nota": "kit instalado",
+        "mes": [
+          46000,
+          46000
+        ]
+      },
+      {
+        "etiqueta": "Otro GPS para taxi (B), equipo comprado",
+        "al_instalar": 416500,
+        "mes": [
+          27380,
+          42760
+        ]
+      },
+      {
+        "etiqueta": "Otro GPS para taxi (B), equipo a cuotas",
+        "al_instalar": 0,
+        "mes": [
+          44040,
+          59420
+        ],
+        "mes_nota": "incluye $16.660 de la cuota del equipo"
+      },
+      {
+        "etiqueta": "Otro GPS para taxi (C)",
+        "al_instalar": 357000,
+        "al_instalar_nota": "instalación gratis",
+        "mes": null,
+        "mes_nota": "los 2 primeros meses gratis"
+      }
     ]
   },
   "autorizacion": {

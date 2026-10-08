@@ -1362,9 +1362,158 @@ _CACHE = {}
 # ---------------------------------------------------------------------------
 # Tienda TaxiCun GPS (plantillas/_raiz/gps/ → gps/)
 # ---------------------------------------------------------------------------
-# Los precios y el estado de la tienda viven SOLO en herramientas/gps-planes.json: aquí se calculan
-# el primer año, el ahorro de los combos (contra la licencia del Plan B, CUOTA_MES) y los textos.
+# Los precios los cambia interOS desde el panel y la tienda los lee de GET /api/gps/planes (gps/tienda.js). La página
+# estática se arma con el RESPALDO de herramientas/gps-planes.json, que es el mismo cuerpo de esa API (versión 1, §14.2.1
+# del diseño del GPS): es lo que se ve si la API no responde o manda algo que no cumple. Las reglas de dibujo (tarjetas,
+# combos, comparación, opciones del formulario, permanencia) son las mismas aquí y en gps/tienda.js: una prueba compara
+# lo que pinta cada uno con los mismos datos (pruebas/gps-tienda.mjs).
 GPS_PLANES = RAIZ / 'herramientas' / 'gps-planes.json'
+# Topes de los planes (§14.1.2 del diseño del GPS): los mismos de TOPES en src/gps/planes.js del servidor. La página los
+# lleva en data-gps-topes para que gps/tienda.js revise con ellos lo que llega de la API (todo o nada).
+TOPES_GPS = {
+    'version': [1, 1000000], 'bytes': 32768, 'multiplo': 100,
+    'planes': [1, 6], 'idPatron': '^[a-z][a-z0-9_]{1,23}$', 'idsReservados': ['combo', 'no_se'],
+    'nombre': [2, 40], 'lema': [0, 80], 'condiciones': [0, 5], 'condicion': [3, 140],
+    'comboNombre': [2, 40], 'comboLema': [0, 80],
+    'precioEquipo': [0, 1500000], 'instalacion': [0, 300000], 'mes': [10000, 300000], 'permanenciaMeses': [0, 36],
+    'ahorroMesMin': 1000, 'licenciaMes': [10000, 100000], 'flotasDesde': [2, 200],
+    'extras': [0, 6], 'extraTexto': [3, 80], 'extraValor': [0, 500000],
+}
+# Texto plano (S30, textoPlano de src/config-validar.js del servidor), más lo de la tienda: sin enlaces ni saltos de línea.
+_PROHIBIDOS_TEXTO = re.compile('[<>`\x00-\x1f\x7f-\x9f\u200b-\u200f\u2028\u2029\u202a-\u202e\u2060-\u2064\u2066-\u2069\ufeff]')
+_ATRIBUTOS_TEXTO = 'on[a-z]+|style|src|srcset|srcdoc|href|xlink:href|formaction|action|background|poster|xmlns'
+_INYECCION_TEXTO = re.compile(
+    '["\'][\\s/]*[a-z_:-]+\\s*='
+    '|["\'][\\s\\S]*?(^|[^a-z0-9_:-])(' + _ATRIBUTOS_TEXTO + ')\\s*='
+    '|(javascript|vbscript)\\s*:'
+    '|^\\s*(data|blob|file)\\s*:'
+    '|(^|[^a-z\u00c0-\u024f])(data|blob|file):\\S', re.I)
+_ENLACE_TEXTO = re.compile(r'://|www\.', re.I)
+
+
+def texto_plano_gps(t):
+    return isinstance(t, str) and not _PROHIBIDOS_TEXTO.search(t) and not _INYECCION_TEXTO.search(t) and not _ENLACE_TEXTO.search(t)
+
+
+def revisar_planes_gps(d, T=TOPES_GPS):
+    """Revisa un cuerpo de GET /api/gps/planes (o el respaldo) con los topes y las reglas de §14.1.2.
+    Devuelve la lista de problemas [(ruta, codigo)], vacía si cumple. La misma revisión hace gps/tienda.js."""
+    mal = []
+
+    def es_int(v):
+        return isinstance(v, int) and not isinstance(v, bool)
+
+    def pesos_ok(v, ruta, tope):
+        if not es_int(v):
+            mal.append((ruta, 'no_entero'))
+        elif v % T['multiplo']:
+            mal.append((ruta, 'no_multiplo_100'))
+        elif not T[tope][0] <= v <= T[tope][1]:
+            mal.append((ruta, 'fuera_de_tope'))
+
+    def texto_ok(v, ruta, tope):
+        if not isinstance(v, str):
+            mal.append((ruta, 'no_texto'))
+        elif not texto_plano_gps(v):
+            mal.append((ruta, 'texto_no_permitido'))
+        elif len(v) < T[tope][0]:
+            mal.append((ruta, 'texto_corto'))
+        elif len(v) > T[tope][1]:
+            mal.append((ruta, 'texto_largo'))
+
+    if not isinstance(d, dict):
+        return [('', 'no_objeto')]
+    if not es_int(d.get('version')) or not T['version'][0] <= d['version'] <= T['version'][1]:
+        mal.append(('version', 'fuera_de_tope'))
+    if d.get('moneda') != 'COP':
+        mal.append(('moneda', 'no_cop'))
+    if d.get('ivaIncluido') is not True:
+        mal.append(('ivaIncluido', 'sin_iva'))
+    pesos_ok(d.get('licenciaMes'), 'licenciaMes', 'licenciaMes')
+    if not es_int(d.get('flotasDesde')) or not T['flotasDesde'][0] <= d['flotasDesde'] <= T['flotasDesde'][1]:
+        mal.append(('flotasDesde', 'fuera_de_tope'))
+    combo = d.get('combo')
+    if not isinstance(combo, dict):
+        mal.append(('combo', 'no_objeto'))
+    else:
+        texto_ok(combo.get('nombre'), 'combo.nombre', 'comboNombre')
+        texto_ok(combo.get('lema'), 'combo.lema', 'comboLema')
+    planes = d.get('planes')
+    if not isinstance(planes, list) or not all(isinstance(p, dict) for p in planes):
+        return mal + [('planes', 'no_lista')]
+    if not T['planes'][0] <= len(planes) <= T['planes'][1]:
+        mal.append(('planes', 'demasiados'))
+    ids = {}
+    patron = re.compile(T['idPatron'])
+    for i, p in enumerate(planes):
+        pid = p.get('id')
+        r = f'planes[{pid if isinstance(pid, str) and patron.fullmatch(pid) else i}]'
+        if not isinstance(pid, str) or not patron.fullmatch(pid):
+            mal.append((f'{r}.id', 'id_invalido'))
+        elif pid in T['idsReservados']:
+            mal.append((f'{r}.id', 'id_reservado'))
+        elif pid in ids:
+            mal.append((f'{r}.id', 'id_repetido'))
+        else:
+            ids[pid] = p
+        texto_ok(p.get('nombre'), f'{r}.nombre', 'nombre')
+        texto_ok(p.get('lema'), f'{r}.lema', 'lema')
+        if p.get('equipo') not in ('propio', 'comodato'):
+            mal.append((f'{r}.equipo', 'equipo_invalido'))
+        for campo in ('precioEquipo', 'instalacion', 'mes'):
+            pesos_ok(p.get(campo), f'{r}.{campo}', campo)
+        if not es_int(p.get('permanenciaMeses')) or not T['permanenciaMeses'][0] <= p['permanenciaMeses'] <= T['permanenciaMeses'][1]:
+            mal.append((f'{r}.permanenciaMeses', 'fuera_de_tope'))
+        if not isinstance(p.get('destacado'), bool):
+            mal.append((f'{r}.destacado', 'no_booleano'))
+        cond = p.get('condiciones')
+        if not isinstance(cond, list):
+            mal.append((f'{r}.condiciones', 'no_lista'))
+        else:
+            if not T['condiciones'][0] <= len(cond) <= T['condiciones'][1]:
+                mal.append((f'{r}.condiciones', 'demasiados'))
+            for j, c in enumerate(cond):
+                texto_ok(c, f'{r}.condiciones[{j}]', 'condicion')
+        if p.get('equipo') == 'comodato' and p.get('precioEquipo') != 0:
+            mal.append((f'{r}.precioEquipo', 'comodato_con_precio'))
+        if all(es_int(p.get(c)) for c in ('precioEquipo', 'instalacion', 'mes')):
+            if p.get('alInstalar') != p['precioEquipo'] + p['instalacion']:
+                mal.append((f'{r}.alInstalar', 'no_cuadra'))
+            elif p.get('primerAnio') != p['alInstalar'] + 12 * p['mes']:
+                mal.append((f'{r}.primerAnio', 'no_cuadra'))
+        if p.get('combo') is not None and not (isinstance(p.get('combo'), dict) and isinstance(p['combo'].get('base'), str)):
+            mal.append((f'{r}.combo', 'combo_sin_base'))
+    if sum(1 for p in planes if p.get('destacado') is True) > 1:
+        mal.append(('planes', 'destacado_repetido'))
+    if not any(p.get('combo') is None for p in planes):
+        mal.append(('planes', 'sin_plan_base'))
+    for p in planes:
+        c = p.get('combo')
+        if not isinstance(c, dict) or not isinstance(c.get('base'), str):
+            continue
+        r = f"planes[{p.get('id')}].combo"
+        base = ids.get(c['base'])
+        if (base is None or base.get('combo') is not None or base.get('equipo') != p.get('equipo')
+                or not es_int(base.get('permanenciaMeses')) or not es_int(p.get('permanenciaMeses'))
+                or p['permanenciaMeses'] < base['permanenciaMeses']):
+            mal.append((r, 'combo_sin_base'))
+            continue
+        if all(es_int(x) for x in (base.get('mes'), d.get('licenciaMes'), p.get('mes'))):
+            ahorro = base['mes'] + d['licenciaMes'] - p['mes']
+            if c.get('ahorroMes') != ahorro:
+                mal.append((f'{r}.ahorroMes', 'no_cuadra'))
+            elif ahorro < T['ahorroMesMin']:
+                mal.append((f'{r}.ahorroMes', 'combo_sin_ahorro'))
+    extras = d.get('extras')
+    if not isinstance(extras, list) or not all(isinstance(e, dict) for e in extras):
+        mal.append(('extras', 'no_lista'))
+    else:
+        if not T['extras'][0] <= len(extras) <= T['extras'][1]:
+            mal.append(('extras', 'demasiados'))
+        for j, e in enumerate(extras):
+            texto_ok(e.get('texto'), f'extras[{j}].texto', 'extraTexto')
+            pesos_ok(e.get('valor'), f'extras[{j}].valor', 'extraValor')
+    return mal
 
 
 def rango_pesos(minimo, maximo):
@@ -1375,32 +1524,73 @@ def sin_tildes(t):
     return ''.join(c for c in unicodedata.normalize('NFD', str(t)) if unicodedata.category(c) != 'Mn').lower()
 
 
-def pesos_gps(valor, que):
-    if not isinstance(valor, int) or isinstance(valor, bool) or valor < 0:
-        raise ValueError(f'gps-planes.json: {que} debe ser un número entero de pesos, no {valor!r}')
-    return valor
+# Reglas de dibujo de los planes (§14.4): las mismas en gps/tienda.js (y en la vista previa del panel).
+def gps_meses(n):
+    return f"{n} {'mes' if n == 1 else 'meses'}"
+
+
+def gps_permanencia(n):
+    return 'Sin permanencia.' if n == 0 else f'Permanencia de {gps_meses(n)}.'
+
+
+def gps_desglose(p):
+    """Lo que va debajo de «Al instalar» en la tarjeta."""
+    if p['precioEquipo'] > 0 and p['instalacion'] > 0:
+        return f"equipo {pesos(p['precioEquipo'])} + instalación {pesos(p['instalacion'])}"
+    return 'instalación incluida' if p['alInstalar'] == 0 else ''
+
+
+def gps_nota_compara(p):
+    """La nota de «Al instalar» en la fila de TaxiCun de la comparación."""
+    if p['alInstalar'] == 0:
+        return 'instalación incluida'
+    if p['precioEquipo'] > 0 and p['instalacion'] > 0:
+        return 'equipo e instalación'
+    return 'equipo, con la instalación incluida' if p['precioEquipo'] > 0 else 'instalación'
+
+
+def gps_faq_permanencia(planes):
+    """La respuesta de «¿Hay permanencia?», armada con los planes (nunca contradice las tarjetas)."""
+    por_id = {p['id']: p for p in planes}
+    partes = []
+    for p in planes:
+        if p['combo'] is not None:
+            continue
+        n = p['permanenciaMeses']
+        partes.append(f"En «{p['nombre']}», no." if n == 0 else
+                      f"En «{p['nombre']}», {gps_meses(n)}{', porque el equipo es nuestro' if p['equipo'] == 'comodato' else ''}.")
+    combos = [p for p in planes if p['combo'] is not None]
+    if combos and all(c['permanenciaMeses'] == por_id[c['combo']['base']]['permanenciaMeses'] for c in combos):
+        partes.append('En el combo, la misma del plan del equipo.')
+    else:
+        for c in combos:
+            n = c['permanenciaMeses']
+            partes.append(f"En el combo «{c['nombre']}», {'no' if n == 0 else gps_meses(n)}.")
+    return ' '.join(partes)
 
 
 def gps_tienda():
     if 'gps' in _CACHE:
         return _CACHE['gps']
     d = json.loads(GPS_PLANES.read_text(encoding='utf-8'))
+    r = d['respaldo']
+    mal = revisar_planes_gps(r)
+    if mal:
+        raise ValueError('herramientas/gps-planes.json: el respaldo no cumple los topes o las reglas de los planes: '
+                         + '; '.join(f'{ruta or "(cuerpo)"} {codigo}' for ruta, codigo in mal))
+    if r['licenciaMes'] != CUOTA_MES:
+        raise ValueError(f"herramientas/gps-planes.json: respaldo.licenciaMes ({pesos(r['licenciaMes'])}) no es la cuota del Plan B del sitio ({pesos(CUOTA_MES)})")
+    por_id = {p['id']: p for p in r['planes']}
     planes = []
-    for p in d['planes']:
-        al, mes = pesos_gps(p['al_instalar'], f"{p['id']}.al_instalar"), pesos_gps(p['mes'], f"{p['id']}.mes")
-        planes.append({'id': p['id'], 'nombre': p['nombre'], 'lema': p.get('lema') or '', 'destacado': bool(p.get('destacado')),
-                       'al_instalar': al, 'mes': mes, 'al_instalar_texto': pesos(al), 'mes_texto': pesos(mes),
-                       'primer_anio_texto': pesos(al + 12 * mes), 'condiciones': list(p.get('condiciones') or [])})
-    por_id = {p['id']: p for p in planes}
-    variantes = []
-    for v in d['combo']['variantes']:
-        base = por_id[v['base']]
-        mes = pesos_gps(v['mes'], f"combo.{v['base']}.mes")
-        ahorro = base['mes'] + CUOTA_MES - mes
-        if ahorro <= 0:
-            raise ValueError(f"gps-planes.json: el combo «{v['nombre']}» ({pesos(mes)}) no sale más barato que {base['nombre']} más la licencia")
-        variantes.append({'nombre': v['nombre'], 'al_instalar_texto': base['al_instalar_texto'], 'mes_texto': pesos(mes),
-                          'primer_anio_texto': pesos(base['al_instalar'] + 12 * mes), 'ahorro_texto': pesos(ahorro)})
+    for p in r['planes']:
+        if p['combo'] is not None:
+            continue
+        planes.append({'id': p['id'], 'nombre': p['nombre'], 'lema': p['lema'], 'destacado': p['destacado'],
+                       'al_instalar_texto': pesos(p['alInstalar']), 'desglose': gps_desglose(p),
+                       'mes_texto': pesos(p['mes']), 'primer_anio_texto': pesos(p['primerAnio']),
+                       'permanencia_texto': gps_permanencia(p['permanenciaMeses']), 'condiciones': list(p['condiciones'])})
+    variantes = [{'id': p['id'], 'nombre': p['nombre'], 'al_instalar_texto': pesos(p['alInstalar']), 'mes_texto': pesos(p['mes']),
+                  'ahorro_texto': pesos(p['combo']['ahorroMes'])} for p in r['planes'] if p['combo'] is not None]
     otros = []
     for o in d['competencia']['otros']:
         al = o.get('al_instalar')
@@ -1411,9 +1601,12 @@ def gps_tienda():
             'mes_texto': rango_pesos(*mes) if mes else 'Por confirmar', 'mes_nota': o.get('mes_nota') or '',
             'primer_anio_texto': rango_pesos(al + 12 * mes[0], al + 12 * mes[1]) if mes and al is not None else '—',
         })
-    comparacion = [{'etiqueta': f"TaxiCun GPS · {p['nombre']}", 'es_taxicun': True, 'al_instalar_texto': p['al_instalar_texto'],
-                    'al_instalar_nota': 'equipo e instalación' if p['al_instalar'] else 'instalación incluida',
-                    'mes_texto': p['mes_texto'], 'mes_nota': '', 'primer_anio_texto': p['primer_anio_texto']} for p in planes] + otros
+    comparacion = [{'etiqueta': f"TaxiCun GPS · {p['nombre']}", 'es_taxicun': True, 'al_instalar_texto': pesos(p['alInstalar']),
+                    'al_instalar_nota': gps_nota_compara(p), 'mes_texto': pesos(p['mes']), 'mes_nota': '',
+                    'primer_anio_texto': pesos(p['primerAnio'])} for p in r['planes'] if p['combo'] is None] + otros
+    # La nota de arriba nombra «compra» y «sin_cuota»: si el respaldo no los tiene, no sale.
+    nota_arriba = ({'compra': pesos(por_id['compra']['mes']), 'sin_cuota': pesos(por_id['sin_cuota']['mes'])}
+                   if 'compra' in por_id and 'sin_cuota' in por_id else None)
     # Municipios y cooperativas para el formulario (todas, por municipio; «Otra» va en la plantilla).
     grupos = {}
     for f in fichas():
@@ -1426,16 +1619,21 @@ def gps_tienda():
     publica = bool(d.get('pagina_publica'))
     _CACHE['gps'] = {
         # Mientras los precios no estén aprobados o la página no sea pública: franja «BORRADOR», noindex
-        # y el título con «(borrador)». Los precios llevan la etiqueta «borrador» hasta que se aprueben.
+        # y el título con «(borrador)». Los precios llevan la etiqueta «borrador» hasta que se aprueben
+        # (también los que llegan de la API).
         'borrador': borrador, 'publica': publica, 'aviso_borrador': borrador or not publica,
         'legal_borrador': not d.get('textos_legales_aprobados'),
         'ocho': list(range(8)),  # gps/aviso/: 8 adhesivos de 10 × 6 cm por hoja carta
         'robots': 'index, follow' if publica else 'noindex, nofollow',
-        'planes': planes, 'compra': por_id['compra'], 'sin_cuota': por_id['sin_cuota'],
-        'combo': {'nombre': d['combo']['nombre'], 'lema': d['combo'].get('lema') or '', 'variantes': variantes,
-                  'licencia_texto': pesos(CUOTA_MES)},
-        'extras': [{'texto': e['texto'], 'valor_texto': pesos(pesos_gps(e['valor'], e['texto']))} for e in d.get('extras') or []],
-        'flotas_desde': d.get('flotas_desde') or 10,
+        'version': r['version'],
+        'topes_json': json.dumps(TOPES_GPS, ensure_ascii=False, separators=(',', ':')),
+        'planes': planes,
+        'combo': {'nombre': r['combo']['nombre'], 'lema': r['combo']['lema'], 'variantes': variantes,
+                  'licencia_texto': pesos(r['licenciaMes'])},
+        'extras': [{'texto': e['texto'], 'valor_texto': pesos(e['valor'])} for e in r['extras']],
+        'flotas_desde': r['flotasDesde'],
+        'nota_arriba': nota_arriba,
+        'faq_permanencia': gps_faq_permanencia(r['planes']),
         'comparacion': comparacion, 'consultado': d['competencia']['consultado'],
         'cooperativas': cooperativas, 'n_cooperativas': sum(len(g['opciones']) for g in cooperativas),
         # El texto exacto de la casilla: el formulario manda su versión y el servidor guarda la huella de SU copia
@@ -1595,6 +1793,10 @@ def revisar_imagenes(lista):
 def generar():
     escritos = 0
     lista = fichas()
+    # La tienda GPS y la política se revisan antes de escribir nada: si algo no cumple, el generador se niega sin dejar
+    # páginas a medias.
+    gps_tienda()
+    politica_privacidad()
     for plantilla in sorted(PLANTILLAS.rglob('*')):
         if not plantilla.is_file():
             continue

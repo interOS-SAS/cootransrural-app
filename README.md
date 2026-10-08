@@ -83,7 +83,7 @@ buscadores y no usan logos de la cooperativa: aún no son clientes.
 | `propuesta/` | Propuesta comercial de TaxiCun, desarrollada por interOS (6 hojas carta; 7 con el anexo de Coptaxi; imprimible; no se indexa) |
 | `taxicun/` | La app TaxiCun (raíz del sitio): escoge la cooperativa por `?e=`, la elección guardada o el GPS |
 | `cooperativas/` | Portada de TaxiCun con todas las cooperativas (raíz del sitio) |
-| `gps/` | Tienda TaxiCun GPS (raíz del sitio): planes, comparación, preguntas y el formulario «Quiero GPS» (`POST /api/gps/interes`; si el servidor no responde, lleva al correo). **Oculta mientras sea borrador:** noindex, sin enlaces desde el resto del sitio, franja «BORRADOR» y la etiqueta en cada precio. Precios y estado SOLO en `herramientas/gps-planes.json`. Para imprimir: `gps/aviso/` (adhesivo para el taxi) y `gps/formato-conductor/` (autorización del conductor), por revisar con el abogado |
+| `gps/` | Tienda TaxiCun GPS (raíz del sitio): planes, comparación, preguntas y el formulario «Quiero GPS» (`POST /api/gps/interes`; si el servidor no responde, lleva al correo). **Oculta mientras sea borrador:** noindex, sin enlaces desde el resto del sitio, franja «BORRADOR» y la etiqueta en cada precio. Los planes y precios los cambia interOS desde el panel (interOS → GPS → Planes y precios): `gps/tienda.js` los lee de `GET /api/gps/planes` y, si la API no responde o manda algo fuera de los topes, queda entero el respaldo de `herramientas/gps-planes.json` (el cuerpo de la versión 1). Estado de la página (borrador, pública) en ese mismo archivo; el capítulo GPS de la privacidad, apagado en `herramientas/politica.json`. Para imprimir: `gps/aviso/` (adhesivo para el taxi) y `gps/formato-conductor/` (autorización del conductor), por revisar con el abogado |
 
 ## Los 3 diseños
 
@@ -159,7 +159,9 @@ node pruebas/stickers.mjs http://localhost:8765/
 node pruebas/stickers-empresas.mjs http://localhost:8765/
 node herramientas/propuestas-pdf.mjs http://localhost:8765/ --copiar     # PDF de cada propuesta en /tmp/cootrans/propuestas/<id>/ y copia en <id>/propuesta/
 node pruebas/propuestas.mjs http://localhost:8765/                       # propuestas web y PDF (datos, precios, QR)
-node pruebas/gps-tienda.mjs                                              # tienda GPS con el receptor falso en 127.0.0.1:4641 (CSP estricta, formulario, capturas)
+node pruebas/gps-tienda.mjs                                              # tienda GPS con el servidor falso en 127.0.0.1:4721 (planes desde la API y su respaldo, CSP estricta, formulario, capturas)
+node pruebas/gps-respaldo.mjs                                            # el generador se niega con un respaldo de gps-planes.json fuera de los topes
+node pruebas/gps-politica.mjs                                            # la política con el capítulo GPS: apagado = la de main byte a byte; encendido = 1.4
 node herramientas/gps-ilustraciones.mjs                                  # vuelve a dibujar img/gps/*.svg (ilustraciones propias)
 ```
 

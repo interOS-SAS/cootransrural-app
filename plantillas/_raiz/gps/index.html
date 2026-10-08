@@ -6,8 +6,12 @@
   <title>TaxiCun GPS{{#si gps.aviso_borrador}} (borrador){{/si}} · GPS para tu taxi, instalado en tu municipio</title>
   <!-- Tienda de TaxiCun GPS. Mientras sea borrador (herramientas/gps-planes.json): fuera de Google (noindex), sin
        enlaces desde el resto del sitio, fuera del precacheo del service worker y con la franja «BORRADOR».
-       Los precios salen SOLO de herramientas/gps-planes.json. Sin nada de terceros: ni analítica, ni fuentes
-       de afuera, ni captcha; sin scripts en línea ni manejadores (CSP: script-src 'self'). -->
+       Los precios los cambia interOS desde el panel: tienda.js los lee de GET /api/gps/planes y, si la API no responde
+       o manda algo que no cumple, queda lo de aquí, armado con el respaldo de herramientas/gps-planes.json (todo o nada).
+       Marcas que rehace tienda.js: data-gps-planes, data-gps-extras, data-gps-compara, data-gps-opciones-plan,
+       data-gps="<id>.<campo>" (la nota de arriba), data-gps-flotas y data-gps-faq-permanencia; y deja la fuente y la
+       versión en data-gps-fuente y data-gps-version. Sin nada de terceros: ni analítica, ni fuentes de afuera, ni
+       captcha; sin scripts en línea ni manejadores (CSP: script-src 'self'). -->
   <meta name="robots" content="{{gps.robots}}">
   <meta name="description" content="TaxiCun GPS: equipo 4G escondido y cableado en tu taxi, instalado en tu municipio. Mira dónde está en vivo, sus recorridos, kilómetros y horas de motor; botón de pánico a la central de tu cooperativa y bloqueo de encendido.">
   <meta name="theme-color" content="#0A2552">
@@ -89,7 +93,7 @@
             <li><svg class="icono" aria-hidden="true"><use href="#i-sirena"/></svg>Botón de pánico</li>
             <li><svg class="icono" aria-hidden="true"><use href="#i-celular"/></svg>Lo ves en tu celular</li>
           </ul>
-          <p class="nota">{{gps.compra.mes_texto}} al mes con el equipo comprado, o {{gps.sin_cuota.mes_texto}} al mes sin cuota inicial{{#si gps.borrador}} (precios en borrador){{/si}}. Con IVA y sin pagos en línea: te llamamos y te enviamos la factura electrónica.</p>
+          {{#si gps.nota_arriba}}<p class="nota" data-gps-nota><span data-gps="compra.mes">{{gps.nota_arriba.compra}}</span> al mes con el equipo comprado, o <span data-gps="sin_cuota.mes">{{gps.nota_arriba.sin_cuota}}</span> al mes sin cuota inicial{{#si gps.borrador}} (precios en borrador){{/si}}. Con IVA y sin pagos en línea: te llamamos y te enviamos la factura electrónica.</p>{{/si}}
         </div>
         <div class="gps-arte gps-arte-portada">
           <img src="{{RAIZ}}img/gps/portada.svg" alt="Un taxi amarillo con su GPS y, en el celular, el mapa con el recorrido del taxi" width="620" height="640">
@@ -229,36 +233,37 @@
           <li><svg class="icono" aria-hidden="true"><use href="#i-herramienta"/></svg><h3>Técnicos de interOS</h3><p>Instalación oculta y cableada, con el botón de pánico y el relé.</p></li>
           <li><svg class="icono" aria-hidden="true"><use href="#i-documento"/></svg><h3>El aviso y el formato</h3><p>Te dejamos el aviso para el taxi y el formato para que tus conductores lo firmen.</p></li>
         </ul>
-        <p class="gps-flotas"><svg class="icono" aria-hidden="true"><use href="#i-personas"/></svg><span><b>¿Tienes {{gps.flotas_desde}} taxis o más, o eres la cooperativa?</b> Hacemos una jornada de instalación en la sede, con precio especial.</span></p>
+        <p class="gps-flotas"><svg class="icono" aria-hidden="true"><use href="#i-personas"/></svg><span><b>¿Tienes <span data-gps-flotas>{{gps.flotas_desde}}</span> taxis o más, o eres la cooperativa?</b> Hacemos una jornada de instalación en la sede, con precio especial.</span></p>
       </div>
     </section>
 
     <!-- ============ PLANES ============ -->
-    <section class="seccion seccion-azul gps-seccion-planes" id="planes" aria-labelledby="titulo-planes">
+    <section class="seccion seccion-azul gps-seccion-planes" id="planes" aria-labelledby="titulo-planes" data-gps-fuente="respaldo" data-gps-version="{{gps.version}}"
+             data-gps-api="/api/gps/planes" data-gps-borrador="{{gps.borrador}}" data-gps-topes="{{gps.topes_json}}">
       <div class="contenedor">
         <div class="encabezado">
           <span class="antetitulo">Planes{{#si gps.borrador}} <span class="etiqueta-borrador">borrador</span>{{/si}}</span>
           <h2 id="titulo-planes">Elige cómo pagarlo</h2>
           <p class="lead">Todos traen el equipo, la instalación, la SIM con datos, el botón de pánico, el relé de bloqueo, «Mi taxi» y soporte por WhatsApp y correo. Precios con IVA incluido.</p>
         </div>
-        <div class="gps-planes">
+        <div class="gps-planes" data-gps-planes>
           {{#cada gps.planes}}
           <article class="gps-plan{{#si destacado}} gps-plan-destacado{{/si}}" aria-labelledby="plan-{{id}}">
             <h3 id="plan-{{id}}">{{nombre}}</h3>
-            <p class="gps-plan-lema">{{lema}}</p>
+            {{#si lema}}<p class="gps-plan-lema">{{lema}}</p>{{/si}}
             <dl class="gps-precios">
-              <div><dt>Al instalar</dt><dd>{{al_instalar_texto}}{{#si gps.borrador}} <span class="etiqueta-borrador">borrador</span>{{/si}}</dd></div>
+              <div><dt>Al instalar</dt><dd>{{al_instalar_texto}}{{#si gps.borrador}} <span class="etiqueta-borrador">borrador</span>{{/si}}</dd>{{#si desglose}}<dd class="gps-desglose">{{desglose}}</dd>{{/si}}</div>
               <div class="gps-precio-mes"><dt>Cada mes</dt><dd>{{mes_texto}}{{#si gps.borrador}} <span class="etiqueta-borrador">borrador</span>{{/si}}</dd></div>
               <div><dt>Primer año</dt><dd>{{primer_anio_texto}}</dd></div>
             </dl>
             <ul class="gps-condiciones">
-              {{#cada condiciones}}<li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>{{este}}</li>{{/cada}}
+              <li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>{{permanencia_texto}}</li>{{#cada condiciones}}<li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>{{este}}</li>{{/cada}}
             </ul>
           </article>
           {{/cada}}
-          <article class="gps-plan gps-plan-combo" aria-labelledby="plan-combo">
+          {{#si gps.combo.variantes}}<article class="gps-plan gps-plan-combo" aria-labelledby="plan-combo">
             <h3 id="plan-combo">{{gps.combo.nombre}}</h3>
-            <p class="gps-plan-lema">{{gps.combo.lema}}</p>
+            {{#si gps.combo.lema}}<p class="gps-plan-lema">{{gps.combo.lema}}</p>{{/si}}
             {{#cada gps.combo.variantes}}
             <div class="gps-variante">
               <h4>{{nombre}}</h4>
@@ -269,13 +274,13 @@
               <p class="gps-ahorro">Te ahorras {{ahorro_texto}} al mes frente a pagarlos por separado.</p>
             </div>
             {{/cada}}
-            <p class="gps-plan-pie">Incluye la licencia de TaxiCun para ese taxi (Plan B, {{gps.combo.licencia_texto}} al mes) y las mismas condiciones del plan del equipo. Si tu cooperativa usa TaxiCun, te sale más barato.</p>
-          </article>
+            <p class="gps-plan-pie">Incluye la licencia de TaxiCun para ese taxi (Plan B, {{gps.combo.licencia_texto}} al mes) y las mismas condiciones del plan del equipo.</p>
+          </article>{{/si}}
         </div>
         <div class="gps-planes-pie">
-          <div>
+          <div{{#no gps.extras}} hidden{{/no}}>
             <h3>Otros valores{{#si gps.borrador}} <span class="etiqueta-borrador">borrador</span>{{/si}}</h3>
-            <ul class="gps-extras">
+            <ul class="gps-extras" data-gps-extras>
               {{#cada gps.extras}}<li><span>{{texto}}</span><b>{{valor_texto}}</b></li>{{/cada}}
             </ul>
           </div>
@@ -301,7 +306,7 @@
             <thead><tr><th scope="col">Opción</th><th scope="col">Al instalar</th><th scope="col">Cada mes</th><th scope="col">Primer año</th></tr></thead>
             <tbody>
               {{#cada gps.comparacion}}
-              <tr{{#si es_taxicun}} class="gps-fila-taxicun"{{/si}}>
+              <tr{{#si es_taxicun}} class="gps-fila-taxicun" data-gps-compara{{/si}}>
                 <th scope="row">{{etiqueta}}</th>
                 <td data-titulo="Al instalar">{{al_instalar_texto}}{{#si al_instalar_nota}}<small>{{al_instalar_nota}}</small>{{/si}}</td>
                 <td data-titulo="Cada mes">{{mes_texto}}{{#si mes_nota}}<small>{{mes_nota}}</small>{{/si}}</td>
@@ -350,8 +355,8 @@
           <details><summary>¿Puede apagar el motor andando?</summary><p>No, a propósito. Solo impide volver a encenderlo.</p></details>
           <details><summary>¿El conductor tiene que saberlo?</summary><p>Sí, la ley lo exige: la ubicación del taxi es un dato personal de quien lo maneja. Te damos el aviso para el taxi y un formato para que tus conductores lo firmen.</p></details>
           <details><summary>¿Cuánto tiempo se guarda el recorrido?</summary><p>90 días. El resumen de cada día (kilómetros y horas de motor), 13 meses.</p></details>
-          <details><summary>¿Hay permanencia?</summary><p>En el plan Compra, no. En los planes sin cuota inicial, 12 meses, porque el equipo es nuestro.</p></details>
-          <details><summary>¿Qué pasa si vendo el taxi?</summary><p>Pasamos el equipo a tu otro taxi ({{gps.extras.0.valor_texto}}) o se lo traspasas al nuevo dueño.</p></details>
+          <details><summary>¿Hay permanencia?</summary><p data-gps-faq-permanencia>{{gps.faq_permanencia}}</p></details>
+          <details><summary>¿Qué pasa si vendo el taxi?</summary><p>Pasamos el equipo a tu otro taxi (el valor está en «Otros valores», con los planes) o se lo traspasas al nuevo dueño.</p></details>
           <details><summary>¿Cómo pago?</summary><p>Por transferencia o Bre-B, cada mes, con factura electrónica de interOS. Por ahora no hay pagos en línea.</p></details>
           <details><summary>¿Funciona fuera de Cundinamarca?</summary><p>Sí, en cualquier parte con señal 4G. Pero la instalación la hacemos en los municipios donde está TaxiCun.</p></details>
         </div>
@@ -433,11 +438,10 @@
 
             <fieldset class="campo campo-opciones">
               <legend>Plan que te interesa</legend>
-              <div class="opciones">
-                <label><input type="radio" name="plan" value="compra"><span>{{gps.compra.nombre}}</span></label>
-                <label><input type="radio" name="plan" value="sin_cuota"><span>{{gps.sin_cuota.nombre}}</span></label>
-                <label><input type="radio" name="plan" value="combo"><span>Combo con TaxiCun</span></label>
-                <label><input type="radio" name="plan" value="no_se" checked><span>No sé todavía</span></label>
+              <div class="opciones" data-gps-opciones-plan>
+                {{#cada gps.planes}}<label><input type="radio" name="plan" value="{{id}}"><span>{{nombre}}</span></label>
+                {{/cada}}{{#si gps.combo.variantes}}<label><input type="radio" name="plan" value="combo"><span>Combo con TaxiCun</span></label>
+                {{/si}}<label><input type="radio" name="plan" value="no_se" checked><span>No sé todavía</span></label>
               </div>
             </fieldset>
 
