@@ -64,7 +64,8 @@
 //   alDetenerTurno(fn)             fn({ motivo, alCargar }) cuando el plugin se detuvo SIN que la web
 //                                  lo pidiera: 'turno_apagado' (botón «Salir de turno» de la
 //                                  notificación de Android), 'permiso', 'tope' (14 h), 'sin_sesion',
-//                                  'conductor_no_aprobado', 'empresa_no_disponible', 'servidor'.
+//                                  'conductor_no_aprobado', 'empresa_no_disponible', 'servidor'
+//                                  (seguir: false: la central lo sacó de turno, fase 3).
 //                                  Si llega antes de que alguien escuche, se entrega al suscribirse.
 //                                  También como evento 'turno_detenido' de «eventos».
 //   vigilarTurno(ctl, { libre })   aplica las reglas (§2.1) con cada cambio del controlador: corre si
@@ -623,8 +624,10 @@ const CLAVE_AVISO_TURNO = 'taxicun.turno.aviso'; // '1' «Entendido»; '0' «Aho
 const CLAVE_MARCA_TURNO = 'tc.turno.conductor'; // { desde }: la web dejó el turno al plugin
 // Con estas fases el pasajero sigue el taxi: el plugin va en modo 'viaje' (GPS fino, ~3 s).
 const FASES_VIAJE_TURNO = ['hacia_origen', 'en_origen', 'en_viaje'];
-// Con estos motivos el plugin no se vuelve a iniciar solo hasta que la central salude otra vez.
-const MOTIVOS_FINALES = new Set(['sin_sesion', 'conductor_no_aprobado', 'empresa_no_disponible']);
+// Con estos motivos el plugin no se vuelve a iniciar solo hasta que la central salude otra vez. 'servidor': la
+// central respondió seguir: false sin que la web lo pidiera (fase 3: lo sacó de turno desde su mapa); la bienvenida
+// dice si sigue fuera (sacadoDeTurno) o si se puede volver a iniciar.
+const MOTIVOS_FINALES = new Set(['sin_sesion', 'conductor_no_aprobado', 'empresa_no_disponible', 'servidor']);
 // Lo que avise el plugin mientras la web lo está deteniendo es de esa misma parada.
 const VENTANA_PROPIA_MS = 1500;
 

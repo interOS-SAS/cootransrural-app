@@ -480,6 +480,8 @@ html[data-modo="real"] .a-banner-puerta { animation-iteration-count: 1, 3; }
 .a-modal-zona .a-modal-acciones .a-btn { width: 100%; flex: none; }
 .a-zona-ico { width: 72px; height: 72px; border-radius: 50%; background: var(--a-ambar-claro); color: #8A5A00; display: grid; place-items: center; box-shadow: 0 0 0 8px rgba(255, 193, 7, .14); }
 .a-zona-ico-lejos { background: var(--a-rojo-claro); color: var(--a-rojo-txt); box-shadow: 0 0 0 8px rgba(229, 57, 53, .08); }
+/* Fase 3 del panel: la central canceló el pedido desde su mapa (el motivo lo escribió la central: se corta si es largo). */
+.a-modal-central .a-modal-texto { overflow-wrap: anywhere; }
 .a-zona-km, .a-zona-otra { display: flex; gap: 8px; align-items: center; justify-content: center; margin: 0 0 8px; font-weight: 700; font-size: 14px; }
 .a-zona-otra { padding: 10px 12px; border-radius: 14px; background: var(--a-ambar-claro); }
 .a-btn-pedir.a-btn-bloqueado { opacity: .5; box-shadow: none; cursor: not-allowed; }

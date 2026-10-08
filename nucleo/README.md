@@ -148,6 +148,36 @@ ignoran los del conductor y no mandan los del pasajero, así que nada cambia con
 Un mensaje de la central con el tipo de un evento propio del bus (`rechazo`, `conexion`, `estado_conexion`,
 `mensaje`) solo sale como `mensaje`: un `rechazo` que volviera por el bus no saca al conductor del turno.
 
+## Fase 3 del panel: la central desde su mapa (modo real, `nucleo/central.js`)
+
+Desde el mapa en vivo del panel (servidor 0.7.0) la central saca a un conductor de turno, cancela un pedido y le
+ofrece un pedido a un móvil. El contrato completo está en la cabecera de `central.js` (los nombres, solo ahí); las
+centrales anteriores no mandan nada de esto y todo sigue igual. Los textos salen de `textosCentral` (todos los
+diseños los mismos) y el motivo que escribió la central es texto plano: `motivoCentral()` lo limpia y lo corta a 200,
+y el diseño lo pinta con `textContent` o escapado (S30).
+
+- **Sacar de turno.** `sacado_de_turno { motivo, en }` (con el bus abierto) o `bienvenida.sacadoDeTurno` (lo sacó
+  sin el bus abierto; llega antes de anunciarse, así no queda disponible ni un instante). El conductor queda
+  `conectado: false` y `estado.sacado = { motivo, en, desde }` hasta su próximo «Conectarme» (lo puede hacer
+  cuando quiera); con un servicio en curso lo termina y queda fuera al terminarlo (también si la página se recarga
+  en medio). Evento `'sacado_de_turno'` ({ motivo, conServicio, alTerminar, actualizado, yaFuera, origen, titulo,
+  cuerpo }) y el aviso con `clave: 'sacado_de_turno'`. `c.sacadoDeTurno(datos, { origen })` lo aplica desde el
+  diseño: al tocar el push `{ tipo: 'sacado_de_turno', motivo, en }` y cuando el plugin UbicacionTurno se detiene
+  con `'servidor'` (la central respondió `seguir: false`); `nativo.js` no lo vuelve a iniciar hasta la próxima
+  bienvenida.
+- **Cancelar.** `cancelacion { viajeId, por: 'central', motivo }`. El conductor quita la oferta o suelta el servicio
+  y sigue en turno. El pasajero cierra el viaje SIN buscar otro taxi, lo guarda en «Mis viajes» como «Cancelado por
+  la central: …» y emite `'cancelado_por_central'` ({ viajeId, motivo, fase, titulo, cuerpo }); el diseño A lo
+  muestra con «Llamar a la central». Si llega con el id anterior y la app ya lo había vuelto a pedir, cancela
+  también la búsqueda nueva (si ya la tomó un conductor, el viaje sigue).
+- **Ofrecer a un móvil.** La solicitud de siempre con `central: true` (`ofrecidaPorCentral(s)`): el aviso dice «La
+  central te ofrece un servicio» y la hoja amarilla del diseño A «La central te ofrece este servicio».
+
+**Política de privacidad (S36).** `N.POLITICA = { version, vigenteDesde, avisar }` sale de `nucleo/politica.js`, que
+escribe `herramientas/generar-empresas.py` desde `herramientas/politica.json` (`publicar_1_3`). Con `avisar`, el
+diseño A muestra una vez por versión la tarjeta «Actualizamos la política de privacidad» (`disenos/a/politica.js`;
+`taxicun.politica.vista` en el celular), solo en modo real; quien entra aceptando la política ya la tiene vista.
+
 ## Mapa
 
 ```js

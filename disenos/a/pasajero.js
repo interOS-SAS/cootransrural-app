@@ -21,6 +21,7 @@ import {
 import * as EM from './empresa.js';
 import { mostrarBienvenida } from './registro.js';
 import { ofrecerAvisos, montarBloqueo } from './nativa.js';
+import { avisarPolitica, politicaPendiente } from './politica.js';
 import { abrirMisViajes, abrirProgramados, abrirTarifas, abrirPromociones, abrirAjustes, abrirAyuda, abrirAvisos, abrirMiCuenta } from './pasajero-secciones.js';
 
 const REAL = EM.MODO_REAL;
@@ -133,6 +134,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   /* ---------------- estado de la interfaz ---------------- */
   let p = null;
   const ui = {
+    // Fase 3: el diálogo «… canceló tu solicitud» (la central canceló el pedido desde su mapa) abierto.
+    modalCentral: null,
     modo: 'inicio',
     vista: null,
     fase: null,
@@ -964,6 +967,25 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       icono: `<span class="a-sos-ico">${icono('sos', { tam: 34 })}</span>`,
       clase: 'a-modal-sos',
       acciones: acc,
+    });
+  }
+
+  // Fase 3: la central canceló el pedido desde su mapa. El núcleo ya cerró el viaje (sin buscar otro taxi) y lo anotó
+  // en «Mis viajes»; aquí se dice con el motivo (texto escapado, S30) y se ofrece llamar a la central.
+  function canceladoPorCentral(d) {
+    if (ui.modalCentral) return;
+    const tel = p?.revision ? '' : EM.TELEFONO ? N.enlaceTel(EM.TELEFONO) : '';
+    ui.modalCentral = modal(app, {
+      titulo: d.titulo || `${EM.NOMBRE} canceló tu solicitud`,
+      texto: d.cuerpo || '',
+      icono: `<span class="a-zona-ico a-zona-ico-lejos">${icono('alerta', { tam: 30 })}</span>`,
+      clase: 'a-modal-central',
+      acciones: [
+        ...(tel ? [{ texto: 'Llamar a la central', href: tel, valor: 'llamar', clase: 'a-btn-tinta', icono: 'telefono' }] : []),
+        { texto: 'Entendido', valor: true, clase: tel ? 'a-btn-suave' : 'a-btn-primario' },
+      ],
+    }).finally(() => {
+      ui.modalCentral = null;
     });
   }
 
@@ -1825,7 +1847,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   function pintarAhora() {
     if (!p) return;
     const e = p.estado;
-    if (ui.fase && ui.fase !== 'inicio' && e.fase === 'inicio') reiniciarUI();
+    if (ui.fase && ui.fase !== 'inicio' && e.fase === 'inicio') {
+      reiniciarUI();
+      revisarPolitica();
+    }
     if (e.fase !== ui.fase) anotarViaje(e.fase);
     ui.fase = e.fase;
     const clave = e.fase === 'inicio' ? ui.modo : e.fase;
@@ -1938,6 +1963,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     // App nativa 1.2: con el permiso ya dado, este teléfono queda registrado para los avisos.
     if (REAL) N.nativo?.reanudarPush?.('pasajero');
     atenderAvisoTocado();
+    revisarPolitica();
+  }
+
+  // S36: «Actualizamos la política de privacidad» (con la 1.3 publicada, una vez). Con la sesión lista, en el inicio y
+  // sin otro diálogo abierto; si no se puede ahora, al volver al inicio (pintar).
+  function revisarPolitica() {
+    if (!REAL || !conSesion || !p || !politicaPendiente(N)) return;
+    if (p.estado.fase !== 'inicio' || app.querySelector('.a-modal-capa, .a-registro, .a-bienvenida')) return;
+    setTimeout(() => {
+      if (p?.estado.fase === 'inicio' && !app.querySelector('.a-modal-capa, .a-registro, .a-bienvenida')) avisarPolitica(app, { N, rol: 'pasajero' }).catch(() => {});
+    }, 1200);
   }
 
   // App nativa 1.2: se tocó una notificación del viaje (aceptado, en la puerta, terminado,
@@ -2155,7 +2191,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       p = REAL ? await N.crearPasajero({ ambiente: false }) : await N.crearPasajero();
       p.on('cambio', pintar);
       // «¡Tu taxi está en la puerta!» ya se ve en el banner grande: solo va al historial.
-      p.on('aviso', (a) => avisos.mostrar(a, { silencioso: p.estado.fase === 'llego' && /puerta/i.test(a.titulo) }));
+      // «… canceló tu solicitud» (la central): el diálogo ya lo dice; el aviso va solo a la campana.
+      p.on('aviso', (a) => avisos.mostrar(a, { silencioso: (p.estado.fase === 'llego' && /puerta/i.test(a.titulo)) || (a.clave === 'cancelado_por_central' && Boolean(ui.modalCentral)) }));
+      p.on('cancelado_por_central', (d) => canceladoPorCentral(d || {}));
       // Modo revisor (revisores de las tiendas, desde otro país): el núcleo cambió la posición al
       // paradero de taxis; si aún no hay un punto de recogida en la zona, el mapa y el pin van allá.
       // El GPS se afinó (al abrir, al volver o con «mi ubicación»): si el pin de recogida no se

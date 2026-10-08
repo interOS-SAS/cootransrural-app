@@ -23,6 +23,10 @@
 // desde otro país): si el GPS está lejos de la cooperativa, miPosicion pasa a ser el parque
 // principal (con revision: true), se avisa una vez y se emite 'revision_lejos' (punto) para que el
 // diseño lleve allá el mapa y el punto de recogida. Sin esa bandera, nada cambia.
+// Fase 3 del panel (nucleo/central.js): si la central cancela el pedido desde su mapa (cancelacion con por:
+// 'central'), el viaje se cierra sin buscar otro taxi (lo canceló a propósito), queda en «Mis viajes» como «Cancelado
+// por la central» y se emite 'cancelado_por_central' ({ viajeId, motivo, fase, titulo, cuerpo }) para que el diseño
+// lo muestre con «Llamar a la central». Vale también para el id anterior (la búsqueda que ya se había vuelto a pedir).
 // Fase 2 del panel (modo real): p.zonaDe(punto) dice si la recogida está dentro de la zona de
 // servicio de la cooperativa ('dentro' | 'cerca' | 'lejos', ver geo.revisarZona; null sin zona o
 // en el modo revisor); solicitar() no pide un taxi «lejos» (ErrorServidor fuera_de_zona). Con el
@@ -40,6 +44,7 @@ import * as servidor from './servidor.js';
 import { Emisor, uid, codigoNumerico, hashCorto, distanciaKm, pesos, minutosTexto, primerNombre, enlaceMapa, fechaTexto, horaTexto } from './util.js';
 import { relojVisible, appOculta, alCambiarVisibilidad } from './plataforma.js';
 import { MENSAJES, reglasGuardadas, reglasDeBienvenida, textoSinConductores } from './reglas.js';
+import { POR_CENTRAL, motivoCentral, textosCentral } from './central.js';
 
 export const FASES = ['inicio', 'buscando', 'asignado', 'llego', 'en_viaje', 'pagar', 'calificar'];
 
@@ -494,7 +499,10 @@ class ControladorPasajero extends Emisor {
     // Modo real: la aceptación de una búsqueda anterior de este mismo viaje (cambió de id
     // al volver a pedir) también vale; el servidor solo deja un viaje activo por pasajero.
     if (this.real && tipo === 'aceptacion' && viaje && fase === 'buscando' && viaje.idsPrevios?.includes(d.viajeId)) viaje.id = d.viajeId;
-    if (!viaje || d.viajeId !== viaje.id) return;
+    // Fase 3: la cancelación de la central con el id anterior (la app ya lo había vuelto a pedir con otro) también llega
+    // (#canceladoPorCentral decide).
+    const deLaCentral = this.real && tipo === 'cancelacion' && d?.por === POR_CENTRAL && Boolean(viaje?.idsPrevios?.includes(d.viajeId));
+    if (!viaje || (d.viajeId !== viaje.id && !deLaCentral)) return;
 
     switch (tipo) {
       case 'aceptacion': {
@@ -910,6 +918,7 @@ class ControladorPasajero extends Emisor {
 
   #cancelacionReal(d) {
     const { fase, conductor } = this.estado;
+    if (d.por === POR_CENTRAL) return this.#canceladoPorCentral(d);
     if (d.por === 'sistema') {
       // El conductor eliminó su cuenta (servidor 0.2.2): la central canceló el viaje.
       if (d.motivo === 'cuenta_borrada' && ['asignado', 'llego', 'en_viaje'].includes(fase)) {
@@ -944,6 +953,28 @@ class ControladorPasajero extends Emisor {
     }
     if (!['asignado', 'llego'].includes(fase)) return;
     this.#buscarOtroTaxi({ titulo: 'El conductor canceló', cuerpo: `${d.motivo ? `${d.motivo}. ` : ''}Buscamos otro taxi.`, tipo: 'alerta' });
+  }
+
+  // Fase 3: la central canceló el pedido desde su mapa. No se busca otro taxi solo: lo canceló a propósito (por
+  // ejemplo, no hay taxis para esa vereda) y lo dice el motivo. Si llega con el id anterior y la app ya lo había vuelto
+  // a pedir (volvió sin enterarse), esa búsqueda también se cancela; si ya la tomó otro conductor, el viaje sigue.
+  #canceladoPorCentral(d) {
+    const { viaje, fase } = this.estado;
+    if (!viaje || !FASES_ACTIVAS.includes(fase)) return;
+    const anterior = d.viajeId !== viaje.id && (viaje.idsPrevios || []).includes(d.viajeId);
+    if (d.viajeId !== viaje.id && !anterior) return;
+    if (anterior) {
+      if (fase !== 'buscando') return;
+      this.bus.publicar('cancelacion', { viajeId: viaje.id, por: 'pasajero', motivo: 'Cancelado por la central' });
+    }
+    const motivo = motivoCentral(d.motivo);
+    const t = textosCentral.canceladoPasajero({ motivo, buscando: fase === 'buscando', empresa: EMPRESA?.nombre || 'La cooperativa', hayCentral: this.#hayCentral() });
+    perfil.agregarAlHistorialPasajero(this.#resumenViaje('cancelado', { motivo: t.historial }));
+    // Si la central lo volviera a mandar en viaje_actual (no debería), no se retoma: se le repite la cancelación.
+    perfil.anotarViajeCerrado('pasajero', { id: viaje.id, ids: viaje.idsPrevios || [], final: 'cancelado', motivo: 'Cancelado por la central' });
+    this.emit('cancelado_por_central', { viajeId: d.viajeId, motivo, fase, titulo: t.titulo, cuerpo: t.cuerpo });
+    this.#avisar({ titulo: t.titulo, cuerpo: t.cuerpo, tipo: 'alerta', clave: 'cancelado_por_central' });
+    this.#cerrarViaje('cancelado');
   }
 
   // El servidor dejó ese viaje cancelado: se busca otro taxi con un id nuevo (con el
@@ -1029,6 +1060,8 @@ class ControladorPasajero extends Emisor {
 
   async #avisar(aviso) {
     const a = await avisar(aviso);
+    // clave: de qué es el aviso, para el diseño (p. ej. 'cancelado_por_central', que el diseño muestra en grande).
+    if (aviso.clave) a.clave = aviso.clave;
     this.estado.ultimoAviso = a;
     this.emit('aviso', a);
   }

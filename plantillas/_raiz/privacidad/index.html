@@ -92,7 +92,7 @@
         <span class="pildora"><svg class="icono" aria-hidden="true"><use href="#i-escudo"/></svg>Privacidad en TaxiCun</span>
         <h1>Política de privacidad</h1>
         <p>Cómo tratamos tus datos en las apps TaxiCun (para pasajeros) y TaxiCun Conductor, y qué puedes hacer con ellos.</p>
-        <p class="vigencia"><svg class="icono" aria-hidden="true"><use href="#i-calendario"/></svg>Vigente desde el 3 de octubre de 2026</p>
+        <p class="vigencia"><svg class="icono" aria-hidden="true"><use href="#i-calendario"/></svg>{{#si politica.v13}}Versión 1.3 · Vigente desde el {{politica.vigencia}} · <a href="#cambios">Qué cambió</a></p>{{/si}}{{#no politica.v13}}Vigente desde el 3 de octubre de 2026</p>{{/no}}
       </div>
     </div>
 
@@ -103,7 +103,7 @@
           <li><svg class="icono" aria-hidden="true"><use href="#i-usuario"/></svg><span>Pedimos solo lo necesario para que llegue tu taxi: tu correo, tu nombre, tu celular y los datos de tus viajes. A los conductores, además, los datos de su taxi.</span></li>
           <li><svg class="icono" aria-hidden="true"><use href="#i-pin"/></svg><span>Usamos tu ubicación solo mientras usas la app para pedir o prestar un servicio. Si eres conductor y estás conectado, la app la sigue enviando aunque la minimices, hasta que te desconectes o la cierres. Con la app cerrada no la leemos.</span></li>
           <li><svg class="icono" aria-hidden="true"><use href="#i-celular"/></svg><span>Si los activas, te avisamos con notificaciones cuando llega tu taxi o, si eres conductor, cuando hay un servicio nuevo. También puedes entrar con tu huella o tu rostro: esos datos nunca salen de tu celular.</span></li>
-          <li><svg class="icono" aria-hidden="true"><use href="#i-personas"/></svg><span>Tus datos los ve la cooperativa que presta el servicio y, en cada viaje, solo lo necesario para encontrarse: tu celular le llega únicamente al conductor que acepta el viaje.</span></li>
+          <li><svg class="icono" aria-hidden="true"><use href="#i-personas"/></svg>{{#si politica.v13}}<span>Tus datos los ve la cooperativa que presta el servicio, en su panel y solo lo necesario: en los viajes ve tu primer nombre y la inicial de tu apellido, y tu celular solo con un motivo (por ejemplo, un pedido sin taxi o un reclamo), que queda registrado. En cada viaje, tu celular le llega únicamente al conductor que acepta el viaje.</span>{{/si}}{{#no politica.v13}}<span>Tus datos los ve la cooperativa que presta el servicio y, en cada viaje, solo lo necesario para encontrarse: tu celular le llega únicamente al conductor que acepta el viaje.</span>{{/no}}</li>
           <li><svg class="icono" aria-hidden="true"><use href="#i-cerrar"/></svg><span>No vendemos tus datos, no hay publicidad y no usamos rastreadores de terceros.</span></li>
           <li><svg class="icono" aria-hidden="true"><use href="#i-basura"/></svg><span>Puedes eliminar tu cuenta desde la app, en <span class="ruta-app"><b>Mi cuenta</b> → <b>Eliminar mi cuenta</b></span>, o escribiendo a <a href="mailto:info@taxicun.com">info@taxicun.com</a>.</span></li>
         </ul>
@@ -156,7 +156,8 @@
         <ul>
           <li>Tu <b>correo</b>, tu <b>nombre</b> y tu <b>celular</b>.</li>
           <li>Los datos de tu taxi: la <b>cooperativa</b> con la que trabajas, tu <b>número de móvil</b>, la <b>placa</b>, el <b>vehículo</b> y su <b>color</b>.</li>
-          <li>El estado de tu registro: en revisión, aprobado o suspendido.</li>
+          {{#si politica.v13}}<li>El estado de tu registro (en revisión, aprobado, suspendido, rechazado o retirado) y el motivo que te dé tu cooperativa.</li>
+          <li>Las fechas de vencimiento de tu licencia, el SOAT, la revisión técnico-mecánica y la tarjeta de operación, y quién las revisó, que anota tu cooperativa en su panel. No guardamos fotos ni números de esos documentos.</li>{{/si}}{{#no politica.v13}}<li>El estado de tu registro: en revisión, aprobado o suspendido.</li>{{/no}}
           <li>Tu <b>ubicación</b> mientras estás conectado para recibir servicios, también con la app minimizada si lo aceptas (lee <a href="#ubicacion">Tu ubicación</a>).</li>
           <li>Los viajes que haces y las calificaciones que das y recibes.</li>
         </ul>
@@ -172,7 +173,13 @@
         <p>Tu contacto de emergencia, los lugares que guardas (casa, trabajo), tus búsquedas recientes, la copia de tu historial que muestra la app, tus ajustes, la llave de «Entrar con huella o rostro» (en el almacenamiento seguro del celular) y el ajuste para pedirla al abrir la app se guardan <b>solo en tu celular</b>. No los enviamos a nuestro servidor.</p>
         <p>Si eres conductor, tu celular guarda además la lista de tus últimos servicios (hasta 100: el primer nombre del pasajero, el punto de recogida, el destino y el valor), para mostrarte tu historial y tus ganancias del día. En los dos casos la app guarda también las rutas que calculó hace poco (los puntos de inicio y de llegada), para no pedirlas de nuevo.</p>
         <p>Todo esto se borra si eliminas tu cuenta desde la app. Si en ese mismo celular entra otra cuenta, lo que guardó la anterior también se borra.</p>
-        <h3>Lo que no pedimos</h3>
+{{#si politica.v13}}        <h3>Si usas el panel de una cooperativa o de interOS</h3>
+        <ul>
+          <li>Tu correo, tu nombre, tu cooperativa y tu rol (gerente u operador).</li>
+          <li>Tus ingresos: fecha, hora, navegador y ciudad aproximada, para avisarte si alguien entra con tu cuenta.</li>
+          <li>Lo que haces en el panel (qué cambiaste, qué dato viste, con qué motivo y cuándo), en un registro que no se puede alterar.</li>
+        </ul>
+{{/si}}        <h3>Lo que no pedimos</h3>
         <p>La app no pide documentos de identidad, fotos, los contactos de tu agenda ni datos de tarjetas o cuentas bancarias. TaxiCun no cobra dentro de la app: el viaje se paga en efectivo, directamente al conductor.</p>
       </section>
 
@@ -181,7 +188,7 @@
         <p>La app te pide permiso para usar tu ubicación <b>solo mientras la usas</b>; nunca te pide el permiso «Siempre». Con la app cerrada, TaxiCun no lee tu ubicación. Si eres pasajero, tampoco con la app minimizada. Si eres conductor, la app la sigue usando con la app minimizada mientras estás conectado, como se explica abajo.</p>
         <ul>
           <li><b>Pasajeros:</b> tu ubicación sirve para mostrarte en el mapa, proponerte el punto de recogida y, si hace falta, reconocer tu municipio. A nuestro servidor solo llegan el punto de recogida y el destino, cuando pides un taxi.</li>
-          <li><b>Conductores:</b> mientras estás conectado, la app envía tu posición a nuestro servidor para ofrecerte los servicios cercanos y, durante un viaje, para que tu pasajero vea el taxi acercarse. Los pasajeros de tu cooperativa que tienen la app abierta ven en el mapa tu número de móvil y una posición <b>aproximada</b> de tu taxi, no la exacta; la posición exacta solo la ve tu pasajero, durante su viaje. No guardamos un historial de tus recorridos: el servidor solo conoce tu última posición.</li>
+          <li><b>Conductores:</b> mientras estás conectado, la app envía tu posición a nuestro servidor para ofrecerte los servicios cercanos y, durante un viaje, para que tu pasajero vea el taxi acercarse. Los pasajeros de tu cooperativa que tienen la app abierta ven en el mapa tu número de móvil y una posición <b>aproximada</b> de tu taxi, {{#si politica.v13}}no la exacta; la posición exacta solo la ven tu pasajero, durante su viaje, y tu cooperativa, mientras estás en turno.{{/si}}{{#no politica.v13}}no la exacta; la posición exacta solo la ve tu pasajero, durante su viaje.{{/no}} {{#si politica.v13}}Mientras estás en turno, tu cooperativa ve en su panel la posición de tu taxi, tu número de móvil y tu estado (libre, yendo por el pasajero o con pasajero), para despachar los servicios y por seguridad. Cuando sales de turno deja de verla. No guardamos un historial de tus recorridos: el servidor solo conoce tu última posición, y tampoco tu cooperativa guarda un historial.</li>{{/si}}{{#no politica.v13}}No guardamos un historial de tus recorridos: el servidor solo conoce tu última posición.</li>{{/no}}
           <li><b>Conductores, con la app minimizada:</b> la primera vez que te conectas, la app te explica que, mientras estés conectado, seguirá enviando tu ubicación aunque uses otra app (por ejemplo WhatsApp o Waze) o bloquees el celular. Si lo aceptas, así funciona: la ubicación se lee y se envía también con la app minimizada, para ofrecerte los servicios cercanos y para que tu pasajero vea por dónde vas. En iPhone lo ves con el indicador azul de ubicación, y en Android con la notificación fija «Estás en turno», que trae el botón «Salir de turno» cuando no tienes un servicio en curso. Se deja de enviar cuando te desconectas, cuando cierras la app o a las 14 horas de estar conectado. Si tu celular no puede recibir nuestros avisos, solo se envía con la app minimizada durante un viaje. Si dejan de llegar tus posiciones, a los 3 minutos dejas de aparecer en el mapa y a los 10 minutos sales de turno. Puedes apagarlo cuando quieras en <span class="ruta-app"><b>Ajustes</b> → <b>Ubicación con la app minimizada</b></span>.</li>
           <li><b>Conductores que no lo aceptan, o con una versión de la app que no lo hace:</b> la ubicación se envía solo con la app abierta. Si sales de la app sin desconectarte y tienes los avisos activados, seguimos usando la última posición que envió tu taxi antes de salir (ya no se actualiza) hasta por 30 minutos, para avisarte de los servicios cercanos. Pasado ese tiempo, o si te desconectas, la borramos y te avisamos que tu turno quedó en pausa.</li>
         </ul>
@@ -196,7 +203,7 @@
           <li>Mostrarles al pasajero y al conductor lo que necesitan para encontrarse: nombre, celular, móvil, placa, vehículo, ubicación y estado del viaje.</li>
           <li>Avisarte con notificaciones del estado de tu viaje o, si eres conductor, de servicios nuevos, si activas los avisos.</li>
           <li>Dejarte entrar con tu huella o tu rostro, si lo activas, y evitar que alguien use una llave robada (limitamos los intentos fallidos).</li>
-          <li>Que la cooperativa revise y apruebe a sus conductores, lleve el registro de sus servicios y atienda reclamos.</li>
+          {{#si politica.v13}}<li>Que la cooperativa revise, apruebe y supervise a sus conductores; despache desde su central (ofrecer un pedido a un taxi, sacar a un conductor de turno o cancelar un pedido que no encuentra taxi, con el motivo); lleve el registro de sus servicios y atienda reclamos, objetos olvidados y emergencias.</li>{{/si}}{{#no politica.v13}}<li>Que la cooperativa revise y apruebe a sus conductores, lleve el registro de sus servicios y atienda reclamos.</li>{{/no}}
           <li>Cuidar la seguridad del servicio: el código de abordaje, las calificaciones, la prevención de fraudes y abusos, y la atención de incidentes.</li>
           <li>Darte soporte y responder tus solicitudes.</li>
           <li>Cumplir obligaciones legales y atender los requerimientos de las autoridades.</li>
@@ -207,13 +214,19 @@
       <section id="compartir">
         <h2>5. Quién ve tus datos</h2>
         <ul>
-          <li><b>La cooperativa de taxis que presta el servicio.</b> Recibe los datos de los viajes que se hacen con ella y los de sus conductores, para despachar, revisar y aprobar conductores, atender reclamos y llevar sus registros. Con cada cooperativa solo compartimos lo que tiene que ver con su servicio, y ella es responsable del uso que les dé.</li>
+          {{#si politica.v13}}<li><b>La cooperativa de taxis que presta el servicio</b>, en su panel (panel.taxicun.com). Solo ve lo de su propio servicio:
+            <ul>
+              <li><b>Si eres conductor:</b> los datos de tu registro, tus viajes, tus calificaciones y las fechas de vencimiento de tus documentos, para aprobarte y supervisar el servicio. Mientras estás en turno, la posición de tu taxi (lee <a href="#ubicacion">Tu ubicación</a>). No se guarda un historial.</li>
+              <li><b>Si eres pasajero:</b> en los viajes ve tu primer nombre y la inicial de tu apellido, el origen, el destino, la tarifa y el estado. Pasadas 24 horas, el origen y el destino se ven solo por sector. <b>Tu celular</b> solo lo ve si atiende un pedido tuyo que no encuentra taxi, un reclamo tuyo, un objeto olvidado, una situación de seguridad o un requerimiento de autoridad, y queda registrado quién lo vio, cuándo y por qué. Nunca ve tu correo.</li>
+              <li>El gerente puede descargar un listado de los viajes, <b>sin</b> tu celular, tu correo ni tus notas.</li>
+            </ul>
+            La cooperativa trata estos datos por encargo de interOS, solo para estas finalidades, bajo un acuerdo firmado con nosotros que le prohíbe usarlos para publicidad o compartirlos. Las personas de la cooperativa y de interOS que usan el panel entran con un código personal y lo que hacen queda registrado.</li>{{/si}}{{#no politica.v13}}<li><b>La cooperativa de taxis que presta el servicio.</b> Recibe los datos de los viajes que se hacen con ella y los de sus conductores, para despachar, revisar y aprobar conductores, atender reclamos y llevar sus registros. Con cada cooperativa solo compartimos lo que tiene que ver con su servicio, y ella es responsable del uso que les dé.</li>{{/no}}
           <li><b>Los conductores, cuando pides un taxi.</b> Los conductores libres y cercanos de la cooperativa reciben la oferta del servicio con el punto de recogida, el destino, la tarifa, la nota que escribiste, tu primer nombre y tu calificación promedio. <b>Tu celular solo le llega al conductor que acepta el viaje</b>, para que pueda llamarte.</li>
           <li><b>Tu pasajero, si eres conductor.</b> Cuando aceptas un servicio, el pasajero ve tu nombre, tu número de móvil, la placa, el vehículo y su color, tu celular, tu calificación promedio y cuántos viajes has hecho, y sigue tu ubicación hasta que termina el viaje.</li>
           <li><b>Los demás pasajeros de tu cooperativa, si eres conductor.</b> Mientras estás conectado ven tu número de móvil, si estás libre y una posición aproximada de tu taxi. No ven tu nombre, tu celular ni tu placa.</li>
           <li><b>Las autoridades</b>, solo cuando una ley o una orden judicial nos obligue.</li>
         </ul>
-        <p>Las estrellas, las etiquetas y los comentarios de cada calificación no se le muestran a la otra persona: solo se usa el promedio. Fuera de lo que dice esta sección y la siguiente, no compartimos tus datos con nadie.</p>
+        <p>Las estrellas, las etiquetas y los comentarios de cada calificación {{#si politica.v13}}no se le muestran a la otra persona: solo se usa el promedio. Tu cooperativa sí las ve en su panel, para revisar el servicio.{{/si}}{{#no politica.v13}}no se le muestran a la otra persona: solo se usa el promedio.{{/no}} Fuera de lo que dice esta sección y la siguiente, no compartimos tus datos con nadie.</p>
       </section>
 
       <section id="proveedores">
@@ -255,7 +268,9 @@
           <li><b>La llave de «Entrar con huella o rostro»:</b> hasta que la quites en Ajustes o elimines tu cuenta. Si cierras sesión, se queda en tu celular para que vuelvas a entrar con tu huella o tu rostro. Cada cuenta tiene como máximo 5 llaves vigentes: al crear una sexta, la más vieja deja de servir. Las que ya no sirven se borran al eliminar la cuenta.</li>
           <li><b>Los viajes y las calificaciones:</b> se conservan como registro de la operación de la cooperativa, para atender reclamos y cumplir obligaciones legales. Si eliminas tu cuenta, quedan sin tu nombre, tu correo ni tu celular.</li>
           <li><b>Los registros técnicos:</b> el tiempo necesario para la seguridad del servicio.</li>
-          <li><b>Lo que está en tu celular:</b> hasta que elimines tu cuenta desde la app, borres los datos de la app o la desinstales.</li>
+{{#si politica.v13}}          <li><b>El registro de lo que se hace en el panel:</b> {{politica.bitacora}}, como prueba de quién vio o cambió qué. No guarda tu celular ni tu correo, solo que alguien lo vio y por qué.</li>
+          <li><b>Los listados que descarga una cooperativa:</b> no se guardan en nuestro servidor; la cooperativa los conserva bajo el acuerdo que firmó con nosotros.</li>
+{{/si}}          <li><b>Lo que está en tu celular:</b> hasta que elimines tu cuenta desde la app, borres los datos de la app o la desinstales.</li>
         </ul>
       </section>
 
@@ -266,7 +281,8 @@
           <li>No guardamos tu código de ingreso ni tu llave de sesión: solo huellas cifradas que no permiten reconstruirlos.</li>
           <li>Tampoco guardamos tu llave de «Entrar con huella o rostro»: solo una huella cifrada. Tu huella y tu rostro nunca salen de tu celular.</li>
           <li>Solo personas autorizadas de interOS entran al servidor, y solo para operar el servicio y dar soporte.</li>
-          <li>Ningún sistema es infalible. Si ocurre un incidente que afecte tus datos, lo informaremos a la Superintendencia de Industria y Comercio como manda la ley y te avisaremos.</li>
+{{#si politica.v13}}          <li>El panel de las cooperativas tiene su propio ingreso con código, sesiones que se cierran solas, topes diarios para ver celulares o descargar listados, y un registro de cada acción que ni nosotros podemos alterar. Cada cooperativa solo ve lo suyo.</li>
+{{/si}}          <li>Ningún sistema es infalible. Si ocurre un incidente que afecte tus datos, lo informaremos a la Superintendencia de Industria y Comercio como manda la ley y te avisaremos.</li>
         </ul>
       </section>
 
@@ -330,12 +346,13 @@
       <section id="cambios">
         <h2>14. Cambios a esta política</h2>
         <p>Podemos actualizar esta política, por ejemplo si TaxiCun agrega funciones o proveedores. La versión vigente siempre estará en <a href="{{url_sitio}}privacidad/">taxicun.com/privacidad</a>, con su fecha. Si el cambio es importante (por ejemplo, datos o finalidades nuevas), te avisaremos en la app antes de que empiece a aplicar y, cuando la ley lo pida, te pediremos de nuevo tu autorización.</p>
-      </section>
+{{#si politica.v13}}        <p><b>Qué cambió en la versión 1.3 ({{politica.vigencia}}):</b> contamos qué ve tu cooperativa en su panel (la posición de los taxis en turno, los viajes con tu nombre abreviado y tu celular solo con motivo registrado), para qué lo usa, y qué datos guardamos de quienes usan el panel.</p>
+{{/si}}      </section>
 
       <section id="contacto">
         <h2>15. Contacto</h2>
         <p>Para consultas, reclamos o para ejercer tus derechos sobre tus datos, escríbenos a <a href="mailto:info@taxicun.com">info@taxicun.com</a>.</p>
-        <p class="nota-suave">interOS S.A.S. · NIT 901.213.197-5 · Subachoque, Cundinamarca, Colombia · <a href="{{url_sitio}}">taxicun.com</a><br>Política de privacidad de TaxiCun, vigente desde el 3 de octubre de 2026.</p>
+        <p class="nota-suave">interOS S.A.S. · NIT 901.213.197-5 · Subachoque, Cundinamarca, Colombia · <a href="{{url_sitio}}">taxicun.com</a><br>{{#si politica.v13}}Política de privacidad de TaxiCun, versión 1.3, vigente desde el {{politica.vigencia}}.</p>{{/si}}{{#no politica.v13}}Política de privacidad de TaxiCun, vigente desde el 3 de octubre de 2026.</p>{{/no}}
       </section>
     </article>
   </main>

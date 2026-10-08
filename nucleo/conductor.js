@@ -21,6 +21,11 @@
 // segundosOferta y «Llegué» vale a metrosLlegue del punto (sin reglas, 25 s y 150 m, como siempre). La oferta que
 // queda en pantalla con la app a la vista sale como oferta_vista (una vez) y «Rechazar» como rechazo: la central no
 // repite por push lo visto y no vuelve a ofrecer lo rechazado. La demo no cambia.
+// Fase 3 del panel (nucleo/central.js): la central puede sacarlo de turno (sacado_de_turno, la bienvenida con
+// sacadoDeTurno, el push o el plugin detenido con 'servidor': sacadoDeTurno()) y queda «Desconectado» (con un servicio,
+// al terminarlo); estado.sacado = { motivo, en, desde } hasta que vuelve a conectarse, y el evento 'sacado_de_turno'
+// ({ motivo, conServicio, alTerminar, actualizado, origen }). También cancelar un servicio (cancelacion con
+// por: 'central': quita la oferta o suelta el servicio y sigue en turno) y ofrecerle uno (solicitud con central: true).
 // Modo revisor (bienvenida.revision: las cuentas de los revisores de Apple y Google): la central
 // manda un «pasajero automático» a ~120 m, con el código de abordaje fijo (codigoAbordaje, 1234).
 // Ese código va en la nota de la solicitud y en viaje.codigoRevision (el diseño lo muestra al
@@ -37,6 +42,7 @@ import * as servidor from './servidor.js';
 import { Emisor, hashCorto, distanciaKm, pesos, kmTexto, minutosTexto } from './util.js';
 import { GPS_CON_INTERVALO, alCambiarVisibilidad, appOculta } from './plataforma.js';
 import { MENSAJES, reglasGuardadas, reglasDeBienvenida } from './reglas.js';
+import { MENSAJES_CENTRAL, POR_CENTRAL, motivoCentral, horaCentral, ofrecidaPorCentral, textosCentral } from './central.js';
 
 // Distancia máxima (km) al pasajero para poder marcar «Llegué» con GPS real (en modo real, la de las
 // reglas de la cooperativa: metrosLlegue).
@@ -129,6 +135,7 @@ class ControladorConductor extends Emisor {
       conexion: this.bus.conexion,
       sala: this.bus.sala,
       pasajerosEnLinea: 0,
+      sacado: null, // modo real: la central lo sacó de turno ({ motivo, en, desde }) y no ha vuelto a conectarse
     };
     this.pasajeroSim = null;
     this.recorrido = null;
@@ -163,6 +170,9 @@ class ControladorConductor extends Emisor {
       this.nativo = null;
       // Reglas del despacho de la cooperativa (las guardadas hasta la próxima bienvenida).
       this.reglas = reglasGuardadas();
+      // La central lo sacó de turno con un servicio en curso: queda «Desconectado» al terminarlo ({ motivo, en }).
+      this.sacadoPendiente = null;
+      this.enTurnoDesde = 0; // cuándo se puso en turno por última vez («Conectarme»)
     }
   }
 
@@ -359,7 +369,8 @@ class ControladorConductor extends Emisor {
     const solicitud = { ...s, distanciaAMi, recibida: Date.now(), expira: Date.now() + dura };
     this.#cambiar({ solicitudes: [...this.estado.solicitudes, solicitud] });
     this.#avisar({
-      titulo: 'Nueva solicitud de servicio',
+      // Fase 3: «Ofrecer a un móvil» desde el mapa de la central (solicitud con central: true).
+      titulo: this.real && ofrecidaPorCentral(s) ? 'La central te ofrece un servicio' : 'Nueva solicitud de servicio',
       cuerpo: `${s.pasajero.nombre} · a ${kmTexto(distanciaAMi)} · ${s.destino?.titulo || 'Destino a convenir'} · ${pesos(s.tarifa)}`,
       tipo: 'solicitud',
     });
@@ -695,8 +706,15 @@ class ControladorConductor extends Emisor {
     this.pasajeroSim = null;
     // El pasajero simulado puede calificar unos segundos después.
     if (sim) setTimeout(() => sim.detener(), 5000);
-    this.#cambiar({ viaje: null, rutaActual: null, etaMin: null, kmRestantes: null, mensajePasajero: null, resumen: perfil.resumenDelDia() });
+    // La central lo sacó de turno durante el servicio: al terminarlo queda «Desconectado» (la presencia que sale
+    // ahora ya dice disponible: false).
+    const sacado = this.real ? this.sacadoPendiente : null;
+    this.sacadoPendiente = null;
+    const fuera = sacado && this.estado.conectado ? { conectado: false, solicitudes: [], sacado: { ...sacado, desde: Date.now() } } : {};
+    if (fuera.sacado) clearInterval(this.relojPresencia);
+    this.#cambiar({ viaje: null, rutaActual: null, etaMin: null, kmRestantes: null, mensajePasajero: null, resumen: perfil.resumenDelDia(), ...fuera });
     this.#anunciar();
+    if (fuera.sacado) this.#emitirSacado({ motivo: sacado.motivo, alTerminar: true, origen: sacado.origen });
   }
 
   /* ---------------- mensajes ---------------- */
@@ -738,6 +756,11 @@ class ControladorConductor extends Emisor {
         break;
       }
       case 'cancelacion': {
+        // Fase 3: la central canceló el pedido desde su mapa («Cancelar y avisar al pasajero»).
+        if (this.real && d.por === POR_CENTRAL) {
+          this.#canceladoPorCentral(d);
+          break;
+        }
         if (this.real && d.por === 'sistema' && d.motivo === 'cuenta_borrada') {
           // El pasajero eliminó su cuenta (servidor 0.2.2): la central ya canceló el viaje,
           // en la fase que sea. Se quita la oferta y se suelta el servicio sin cancelarlo allá.
@@ -828,6 +851,8 @@ class ControladorConductor extends Emisor {
     this.bus.on(MENSAJES.reglas, (d) => {
       this.reglas = reglasDeBienvenida(d);
     });
+    // Fase 3: la central lo sacó de turno desde su mapa (con el bus abierto).
+    this.bus.on(MENSAJES_CENTRAL.sacadoDeTurno, (d) => this.#alSacadoDeTurno(d, { origen: 'bus' }));
     this.bus.on('rechazo', (d) => {
       this.ultimoRechazo = d?.codigo || null;
       // Sin la central no se puede estar en línea (el viaje en curso, si hay, se conserva).
@@ -856,15 +881,17 @@ class ControladorConductor extends Emisor {
       return;
     }
     this.estado.viaje = g.viaje;
-    // Si estaba en línea, sigue en línea al terminar el servicio (se anuncia con la bienvenida).
+    // Si estaba en línea, sigue en línea al terminar el servicio (se anuncia con la bienvenida), salvo que la central
+    // lo haya sacado de turno durante el servicio: entonces queda «Desconectado» al terminarlo.
     if (g.conectado) this.estado.conectado = true;
+    if (g.sacado && typeof g.sacado === 'object') this.sacadoPendiente = { motivo: motivoCentral(g.sacado.motivo), en: horaCentral(g.sacado.en) };
   }
 
   #guardarReal() {
     const v = this.estado.viaje;
     try {
       if (!v || v.simulado) localStorage.removeItem(CLAVE_VIAJE_REAL);
-      else localStorage.setItem(CLAVE_VIAJE_REAL, JSON.stringify({ guardado: Date.now(), conectado: this.estado.conectado, viaje: v }));
+      else localStorage.setItem(CLAVE_VIAJE_REAL, JSON.stringify({ guardado: Date.now(), conectado: this.estado.conectado, viaje: v, ...(this.sacadoPendiente ? { sacado: this.sacadoPendiente } : {}) }));
     } catch {
       /* almacenamiento lleno o bloqueado */
     }
@@ -1091,7 +1118,8 @@ class ControladorConductor extends Emisor {
       }
       return false;
     }
-    this.#cambiar({ conectado: true });
+    this.enTurnoDesde = Date.now();
+    this.#cambiar({ conectado: true, sacado: null });
     // Si la central aún no saluda, la presencia sale con la bienvenida.
     this.#anunciar();
     this.bus.publicar('consulta_solicitudes', {});
@@ -1117,6 +1145,9 @@ class ControladorConductor extends Emisor {
       this.aceptadaReciente = null;
       this.#terminar();
     }
+    // Fase 3: la central lo sacó de turno mientras no tenía el bus abierto (app minimizada o cerrada): queda fuera de
+    // turno ANTES de anunciarse (así no vuelve a quedar disponible ni un instante).
+    if (d?.sacadoDeTurno && typeof d.sacadoDeTurno === 'object') this.#alSacadoDeTurno(d.sacadoDeTurno, { origen: 'bienvenida' });
     // Solo se revisa el servicio que había al conectar: uno aceptado después es de esta conexión.
     const v = this.estado.viaje;
     this.viajeARevisar = v && !v.simulado && FASES_ACTIVAS.includes(v.fase) ? v.id : null;
@@ -1363,7 +1394,87 @@ class ControladorConductor extends Emisor {
 
   async #avisar(aviso) {
     const a = await avisar(aviso);
+    // clave: de qué es el aviso, para el diseño (p. ej. 'sacado_de_turno', que el diseño muestra en grande).
+    if (aviso.clave) a.clave = aviso.clave;
     this.emit('aviso', a);
+  }
+
+  /* ---------------- fase 3: lo que hace la central desde su mapa (nucleo/central.js) ---------------- */
+
+  // La central lo sacó de turno. origen: 'bus' (sacado_de_turno), 'bienvenida' (sacadoDeTurno: lo sacó sin el bus
+  // abierto), 'push' (tocó el aviso) o 'plugin' (UbicacionTurno se detuvo con seguir: false). Sin servicio queda
+  // «Desconectado» ya; con uno, al terminarlo. Devuelve true si cambió algo.
+  sacadoDeTurno(d = {}, { origen = 'push' } = {}) {
+    return this.#alSacadoDeTurno(d, { origen });
+  }
+
+  #alSacadoDeTurno(d, { origen = 'bus' } = {}) {
+    if (!this.real) return false;
+    const motivo = motivoCentral(d?.motivo);
+    const en = horaCentral(d?.en);
+    const v = this.estado.viaje;
+    // Un aviso tocado tarde: si después de que la central lo sacara ya se volvió a conectar, no aplica (2 min de
+    // margen por la hora del celular). Lo que dicen el bus y la bienvenida es de ahora.
+    if (origen === 'push' && en && this.enTurnoDesde && en + 2 * 60 * 1000 < this.enTurnoDesde) return false;
+    const ya = this.estado.sacado;
+    if (!this.estado.conectado) {
+      // Ya estaba fuera de turno por esto mismo: el motivo puede llegar después (el plugin se detuvo antes de que
+      // el bus o la bienvenida lo trajeran).
+      if (ya) {
+        if (motivo && !ya.motivo) {
+          this.#cambiar({ sacado: { ...ya, motivo } });
+          this.#emitirSacado({ motivo, actualizado: true, origen });
+          return true;
+        }
+        return false;
+      }
+      // Fuera de turno sin saberlo la app (estuvo cerrada, o ya se había desconectado): lo dice la central (la
+      // bienvenida, una vez, o el mensaje) o lo pidió la persona (tocó el push). El plugin detenido no dice nada aquí.
+      if (origen === 'plugin') return false;
+      this.#cambiar({ sacado: { motivo, en, desde: Date.now() } });
+      this.#emitirSacado({ motivo, yaFuera: true, origen });
+      return true;
+    }
+    if (v && !v.simulado) {
+      // No se deja a nadie a mitad de camino: termina este servicio y después queda fuera de turno (#terminar).
+      const antes = this.sacadoPendiente;
+      this.sacadoPendiente = { motivo: motivo || antes?.motivo || '', en: en || antes?.en || null, origen };
+      this.#guardarReal();
+      if (antes && (antes.motivo || !motivo)) return false;
+      this.#emitirSacado({ motivo: this.sacadoPendiente.motivo, conServicio: true, actualizado: Boolean(antes), origen });
+      return true;
+    }
+    clearInterval(this.relojPresencia);
+    for (const t of this.temporizadores.values()) clearTimeout(t);
+    this.temporizadores.clear();
+    this.aceptadaReciente = null;
+    this.#cambiar({ conectado: false, solicitudes: [], sacado: { motivo, en, desde: Date.now() } });
+    this.#anunciar(); // disponible: false
+    this.#emitirSacado({ motivo, origen });
+    return true;
+  }
+
+  #emitirSacado(datos) {
+    const textos = textosCentral.sacado(datos);
+    this.emit('sacado_de_turno', { motivo: '', conServicio: false, alTerminar: false, actualizado: false, yaFuera: false, ...datos, ...textos });
+    this.#avisar({ ...textos, tipo: 'alerta', clave: 'sacado_de_turno' });
+  }
+
+  // cancelacion { viajeId, por: 'central', motivo }: se quita la oferta o se suelta el servicio; sigue en turno.
+  #canceladoPorCentral(d) {
+    const v = this.estado.viaje;
+    const motivo = motivoCentral(d.motivo);
+    const tenia = this.estado.solicitudes.some((s) => s.viajeId === d.viajeId);
+    this.#quitarOferta(d.viajeId);
+    if (this.aceptadaReciente?.s?.viajeId === d.viajeId) this.aceptadaReciente = null;
+    const t = textosCentral.canceladoConductor({ motivo, sigueEnTurno: !this.sacadoPendiente });
+    if (v && v.id === d.viajeId && !v.simulado && !['cobrando', 'calificar'].includes(v.fase)) {
+      if (v.fase !== 'confirmando') this.#guardarEnHistorial('cancelado', { motivo: t.historial });
+      this.#avisar({ titulo: t.titulo, cuerpo: t.cuerpo, tipo: v.fase === 'confirmando' ? 'info' : 'alerta', clave: 'cancelado_por_central' });
+      this.#terminar();
+      return;
+    }
+    if (tenia) this.#avisar({ titulo: t.tituloOferta, cuerpo: t.cuerpoOferta, tipo: 'info', clave: 'cancelado_por_central' });
   }
 
   #cambiar(cambios) {

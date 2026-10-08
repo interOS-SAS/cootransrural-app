@@ -17,6 +17,7 @@ import * as EM from './empresa.js';
 import { taxiLateral } from './ilustraciones.js';
 import { abrirGanancias, abrirHistorial, abrirDocumentos, abrirMiTaxi, abrirAjustesConductor, abrirAvisosConductor } from './conductor-secciones.js';
 import { ofrecerAvisos, ofrecerBiometria, ingresoBiometria, montarBloqueo, ofrecerSegundoPlano } from './nativa.js';
+import { avisarPolitica, marcarPoliticaVista, politicaPendiente } from './politica.js';
 
 // Foto de portada del ingreso (generada para la web, sin marcas: ver img/web/creditos.json).
 const FOTO_CONDUCTOR = new URL('./img/conductor.jpg', import.meta.url).href;
@@ -132,6 +133,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     revisando: false,
     saliendo: false,
     saludado: false,
+    // Fase 3: el diálogo «La central te sacó de turno» abierto (la promesa) y su caja (para poner el motivo).
+    modalSacado: null,
+    cajaSacado: null,
     firmaYo: '',
     claveRevision: '',
     // App nativa 1.2: notificación tocada antes de tener el controlador, reloj de la oferta
@@ -554,6 +558,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       ocupar(entrarBtn, true);
       try {
         const r = await servidor.entrar(correo, codigo);
+        // «Al continuar aceptas la política de privacidad»: la vigente ya la aceptó (no se le muestra la tarjeta).
+        marcarPoliticaVista(N);
         // Otra persona pudo usar este celular: el perfil local lo vuelve a llenar la central.
         N.perfil.cerrarSesionConductor();
         seguirConCuenta(r, { recienEntra: true });
@@ -1093,6 +1099,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       ui.saludado = true;
       avisos.mostrar({ titulo: `¡Buen turno, ${nombreCorto(yo?.nombre || '') || 'conductor'}!`, cuerpo: 'Conéctate para empezar a recibir servicios.', tipo: 'exito' });
     }
+    revisarPolitica();
+  }
+
+  // S36: «Actualizamos la política de privacidad» (con la 1.3 publicada, una vez). Solo fuera de turno, sin servicio y
+  // sin otro diálogo: el diálogo quedaría encima de una oferta. Si no se puede ahora, en la próxima bienvenida.
+  function revisarPolitica() {
+    const ctl = c;
+    if (!REAL || !ctl?.real || ui.pantalla !== 'app' || !politicaPendiente(N)) return;
+    const e = ctl.estado;
+    if (e.conectado || e.viaje || e.solicitudes.length || $(app, '.a-modal-capa')) return;
+    avisarPolitica(app, { N, rol: 'conductor' }).catch(() => {});
   }
 
   // Estado de la conexión con la central (modo real).
@@ -1247,7 +1264,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             <span><b data-seg>${Math.ceil((s.expira - Date.now()) / 1000)}</b><small>seg</small></span>
           </div>
           <div class="a-sol-quien">
-            <small>${icono('campana', { tam: 14 })} Nueva solicitud${s.simulada ? ' · demo' : ''}</small>
+            ${REAL && N.ofrecidaPorCentral(s)
+    ? `<small class="a-sol-central" data-de-central>${icono('antena', { tam: 14 })} La central te ofrece este servicio</small>`
+    : `<small>${icono('campana', { tam: 14 })} Nueva solicitud${s.simulada ? ' · demo' : ''}</small>`}
             <h2 id="a-sol-titulo">${esc(s.pasajero?.nombre || 'Pasajero')}</h2>
             <span>${icono('estrella', { tam: 14 })} ${decimal(s.pasajero?.calificacion || 5)} · pasajero verificado</span>
           </div>
@@ -1818,6 +1837,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     if (REAL && e.conectado && !e.gpsReal) {
       return { titulo: 'Conectado', sub: 'Sin GPS: no te llegan servicios', alerta: true };
     }
+    // Fase 3: la central lo sacó de turno (hasta que vuelva a conectarse).
+    if (REAL && !e.conectado && e.sacado) {
+      return { titulo: 'Desconectado', sub: 'La central te sacó de turno. Toca para volver', alerta: true };
+    }
     return {
       titulo: e.conectado ? 'Conectado' : 'Desconectado',
       sub: e.conectado ? 'Recibiendo solicitudes cercanas' : 'Toca para empezar a recibir servicios',
@@ -1890,6 +1913,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       return;
     }
     ui.avisoTocado = null;
+    // Fase 3: «La central te sacó de turno». Vale aunque se haya tocado hace rato (no pone en turno a nadie).
+    if (a.tipo === 'sacado_de_turno') {
+      abrirSacado(a);
+      return;
+    }
     // Uno que esperó mucho (por ejemplo, mientras se volvía a ingresar) ya no pone en turno.
     if (Date.now() - (a.cuando || Date.now()) > AVISO_VIGENTE_MS) {
       if (a.tipo === 'turno_pausa' && c.real && !c.estado.conectado && !c.estado.viaje) avisarPonteEnTurno();
@@ -1934,6 +1962,43 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     // En turno: con la bienvenida salen otra vez la presencia y consulta_solicitudes.
     reconectarCentral(ctl);
   }
+  // Se tocó «La central te sacó de turno»: queda «Desconectado» ya (si después no se volvió a conectar) y se saluda a
+  // la central, que con la bienvenida lo confirma (sacadoDeTurno) y trae el motivo si el aviso no lo traía.
+  function abrirSacado(a) {
+    const ctl = c;
+    if (!ctl?.real) return;
+    $$(app, '.a-panel, .a-menu-capa').forEach((x) => x.remove());
+    ctl.sacadoDeTurno({ motivo: a.datos?.motivo, en: a.datos?.en }, { origen: 'push' });
+    reconectarCentral(ctl);
+  }
+
+  // Fase 3: la central lo sacó de turno (el núcleo ya lo dejó «Desconectado» o lo deja al terminar el servicio, y
+  // manda el aviso con el texto). Sin servicio, un diálogo que se queda hasta que lo cierre: con la app minimizada el
+  // aviso pequeño se iría sin verse. Si el motivo llega después (bienvenida), se pone en el diálogo abierto.
+  function alSacadoDeTurno(d) {
+    if (c && ui.vista === 'libre') pintarPildoraReal(c.estado);
+    if (d.conServicio || d.alTerminar) return; // el aviso lo dice; la píldora queda «Desconectado»
+    if (ui.modalSacado) {
+      if (ui.cajaSacado) ponerTexto(ui.cajaSacado, '.a-modal-texto', d.cuerpo);
+      return;
+    }
+    if (d.actualizado) return; // sin el diálogo abierto, el aviso con el motivo sale como siempre
+    $$(app, '.a-menu-capa').forEach((x) => x.remove());
+    ui.modalSacado = modal(app, {
+      titulo: d.titulo,
+      texto: d.cuerpo,
+      icono: `<span class="a-sacado-ico">${icono('alerta', { tam: 30 })}</span>`,
+      clase: 'a-modal-sacado',
+      acciones: [{ texto: 'Entendido', valor: true, clase: 'a-btn-primario' }],
+      alAbrir: (_cuerpo, _cerrar, caja) => {
+        ui.cajaSacado = caja;
+      },
+    }).finally(() => {
+      ui.modalSacado = null;
+      ui.cajaSacado = null;
+    });
+  }
+
   // datos.hasta: hasta cuándo pudo seguir buscando ese servicio (ms; en Android llega como texto).
   // Con 2 min de margen por si la hora del celular no está bien. Sin el dato (otro servidor), no vence.
   function ofertaVencida(a) {
@@ -1994,8 +2059,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   /* ---------------- ubicación con la app minimizada (plugin UbicacionTurno) ----------------
    * El plugin se detuvo sin que la app lo pidiera (nativo.alDetenerTurno). alCargar: se supo al
    * abrir la app (la página se recargó con el teléfono vivo); el conductor ya arranca fuera de turno.
-   * Si se detuvo por otra cosa ('servidor'), nativo.vigilarTurno lo vuelve a iniciar con la app al
-   * frente mientras siga en turno. */
+   * 'servidor' (seguir: false sin pedirlo): la central lo sacó de turno (fase 3). Por otra cosa,
+   * nativo.vigilarTurno lo vuelve a iniciar con la app al frente mientras siga en turno. */
   function alDetenerTurno({ motivo = '', alCargar = false } = {}) {
     const ctl = c;
     const enTurnoLibre = Boolean(ctl?.estado.conectado && !ctl.estado.viaje);
@@ -2032,6 +2097,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       case 'empresa_no_disponible':
         // La central lo confirma al saludar (rechazo) y la app muestra por qué.
         if (ctl?.real && ui.pantalla === 'app') reconectarCentral(ctl);
+        break;
+      case 'servidor':
+        // La central respondió seguir: false sin que la app lo pidiera (fase 3: lo sacó de turno desde su mapa). Queda
+        // «Desconectado» ya (con un servicio, al terminarlo) y se saluda a la central: la bienvenida trae el motivo
+        // (sacadoDeTurno). El plugin no se vuelve a iniciar hasta esa bienvenida (nucleo/nativo.js).
+        if (!ctl?.real) break;
+        ctl.sacadoDeTurno({}, { origen: 'plugin' });
+        if (ui.pantalla === 'app') reconectarCentral(ctl);
         break;
       default:
         break;
@@ -2144,7 +2217,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           if (!vigente()) return;
           // El pasajero de prueba manda una referencia también cuando paga en efectivo: no aplica.
           const aviso = /efectivo/i.test(a.titulo || '') ? { ...a, cuerpo: String(a.cuerpo || '').replace(/ · Ref\. \S+/, '') } : a;
-          avisos.mostrar(aviso, { silencioso: a.tipo === 'solicitud' });
+          // «La central te sacó de turno» con el diálogo abierto: solo a la campana (el diálogo ya lo dice).
+          avisos.mostrar(aviso, { silencioso: a.tipo === 'solicitud' || (a.clave === 'sacado_de_turno' && Boolean(ui.modalSacado)) });
         });
         c.on('llegada', () => {
           if (!vigente()) return;
@@ -2176,6 +2250,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           // plugin no hace nada).
           ui.dejarTurno = NATIVA ? N.nativo?.vigilarTurno?.(nuevo, { libre: () => Boolean(N.nativo?.pushListo?.()) }) || null : null;
           c.on('bienvenida', () => vigente() && alBienvenida());
+          // Fase 3: la central lo sacó de turno desde su mapa (bus, bienvenida, push o el plugin detenido).
+          c.on('sacado_de_turno', (d) => vigente() && alSacadoDeTurno(d || {}));
           c.on('cambio', () => vigente() && salirSiQuedoPendiente());
           c.bus.on('rechazo', (d) => vigente() && alRechazo(d || {}));
           c.bus.on('conexion', () => vigente() && pintarConexionReal());

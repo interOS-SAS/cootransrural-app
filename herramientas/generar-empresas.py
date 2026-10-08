@@ -1360,6 +1360,49 @@ def datos_propuesta(ficha, p):
 _CACHE = {}
 
 
+# Política de privacidad de TaxiCun (plantillas/_raiz/privacidad/) y la tarjeta de las apps (nucleo/politica.js).
+# La 1.3 (fase 3 del panel: lo que ve la cooperativa en su panel) está escrita en la plantilla y sale solo con
+# publicar_1_3 en herramientas/politica.json; apagada, la política publicada sale igual que antes (la 1.2).
+POLITICA_JSON = RAIZ / 'herramientas' / 'politica.json'
+POLITICA_JS = RAIZ / 'nucleo' / 'politica.js'
+VIGENCIA_POLITICA_1_2 = '3 de octubre de 2026'  # la de la versión publicada (1.2)
+
+
+def politica_privacidad():
+    if 'politica' in _CACHE:
+        return _CACHE['politica']
+    p = json.loads(POLITICA_JSON.read_text(encoding='utf-8'))
+    v13 = p.get('publicar_1_3') is True
+    vigencia = VIGENCIA_POLITICA_1_2
+    if v13:
+        vigencia = str(p.get('vigente_desde_1_3') or '').strip()
+        if not re.fullmatch(r'\d{1,2} de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre) de 20\d\d', vigencia):
+            raise ValueError('herramientas/politica.json: para publicar la política 1.3, pon «vigente_desde_1_3» (p. ej. «20 de octubre de 2026»)')
+    bitacora = str(p.get('conservacion_bitacora') or '').strip()
+    if v13 and not bitacora:
+        raise ValueError('herramientas/politica.json: falta «conservacion_bitacora» (p. ej. «2 años»)')
+    _CACHE['politica'] = {'v13': v13, 'version': '1.3' if v13 else '1.2', 'vigencia': vigencia, 'bitacora': bitacora}
+    return _CACHE['politica']
+
+
+def escribir_politica_js():
+    """nucleo/politica.js: la versión vigente para las apps (la tarjeta «Actualizamos la política de privacidad»)."""
+    pol = politica_privacidad()
+    datos = {'version': pol['version'], 'vigenteDesde': pol['vigencia'], 'avisar': pol['v13']}
+    texto_js = (
+        '// Versión vigente de la política de privacidad de TaxiCun (taxicun.com/privacidad/) para las apps: con avisar,\n'
+        '// la tarjeta «Actualizamos la política de privacidad» (§7.5 del diseño del panel, S36) sale una vez por versión.\n'
+        '// LO ESCRIBE herramientas/generar-empresas.py desde herramientas/politica.json: no lo edites a mano.\n'
+        f'export const POLITICA = Object.freeze({json.dumps(datos, ensure_ascii=False, separators=(",", ":"))});\n'
+    )
+    anterior = POLITICA_JS.read_text(encoding='utf-8') if POLITICA_JS.exists() else None
+    if anterior == texto_js:
+        return 0
+    POLITICA_JS.write_text(texto_js, encoding='utf-8')
+    print('generado: nucleo/politica.js')
+    return 1
+
+
 def contexto(ficha, destino_rel):
     """Datos disponibles en las plantillas para un archivo generado."""
     profundidad = len(pathlib.PurePosixPath(destino_rel).parts) - 1
@@ -1377,6 +1420,8 @@ def contexto(ficha, destino_rel):
         'RAIZ': raiz,
         'RAIZ_EMPRESA': raiz_empresa,
         'cooperativas': lista_cooperativas(),
+        # La política de privacidad de TaxiCun (raíz): versión, vigencia y la 1.3 (herramientas/politica.json).
+        'politica': politica_privacidad() if destino_rel.startswith('privacidad/') else None,
         # Para scripts (p. ej. la página 404, que adapta colores y enlaces según la carpeta).
         'cooperativas_json': json.dumps([{k: c[k] for k in ('id', 'ruta', 'nombre', 'razonSocial', 'es_propuesta', 'servicio24h', 'tel', 'tel_visible', 'primario', 'primario2', 'claro', 'oscuro', 'acento', 'icono')}
                                          for c in lista_cooperativas()], ensure_ascii=False).replace('</', '<\\/'),
@@ -1467,6 +1512,7 @@ def generar():
                 print('generado:', destino_rel)
     escritos += escribir_indice(lista)
     escritos += escribir_redirecciones(lista)
+    escritos += escribir_politica_js()
     print(f'{escritos} archivo(s) escritos para {len(lista)} cooperativa(s)')
     revisar_imagenes(lista)
 

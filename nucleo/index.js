@@ -24,3 +24,7 @@ export { textoError, ErrorServidor } from './servidor.js';
 export * as nativo from './nativo.js';
 // Reglas del despacho de la cooperativa (las manda la central en la bienvenida) y los mensajes nuevos del bus.
 export * as reglas from './reglas.js';
+// Fase 3 del panel: lo que hace la central desde su mapa (sacar de turno, cancelar, ofrecer) y sus textos.
+export * from './central.js';
+// Versión vigente de la política de privacidad (la escribe herramientas/generar-empresas.py): la tarjeta de las apps.
+export { POLITICA } from './politica.js';

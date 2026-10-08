@@ -8,6 +8,7 @@
 import { el, esc, icono, casillasCodigo, celularTexto, franjaCuadros, nombreCorto, modal } from './ui.js';
 import { ilustracionUbicacion, ilustracionSeguridad, ilustracionPago } from './ilustraciones.js';
 import { ingresoBiometria, ofrecerBiometria } from './nativa.js';
+import { marcarPoliticaVista } from './politica.js';
 import * as EM from './empresa.js';
 
 const DIAPOSITIVAS = [
@@ -357,6 +358,8 @@ export function mostrarBienvenida(app, { N, alTerminar, paso = null, usuario = n
       verificando.hidden = false;
       try {
         const r = await N.servidor.entrar(cuenta.correo, v);
+        // Entró con la casilla «Acepto los términos y la política de privacidad»: la vigente ya la aceptó.
+        if (cuenta.terminos) marcarPoliticaVista(N);
         trasEntrar(r, 'codigo');
       } catch (err) {
         verificando.hidden = true;
