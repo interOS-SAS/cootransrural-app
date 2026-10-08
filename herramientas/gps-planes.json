@@ -1,0 +1,69 @@
+{
+  "_leeme": [
+    "Precios y estado de la tienda TaxiCun GPS (taxicun.com/gps/). Es el ÚNICO lugar donde se cambian los precios.",
+    "Valores en pesos colombianos, con IVA incluido. El primer año y el ahorro de los combos se calculan solos.",
+    "precios_aprobados: false muestra la etiqueta «borrador» junto a cada precio. Ponlo en true cuando Oscar los apruebe.",
+    "pagina_publica: false deja la página fuera de Google (noindex), con la franja «BORRADOR» y el título «(borrador)».",
+    "textos_legales_aprobados: false marca «BORRADOR · por revisar con el abogado» el aviso para el taxi y el formato del conductor (gps/aviso/ y gps/formato-conductor/), también al imprimir.",
+    "Después de cambiar algo: python3 herramientas/generar-empresas.py && python3 herramientas/versionar.py"
+  ],
+  "precios_aprobados": false,
+  "pagina_publica": false,
+  "textos_legales_aprobados": false,
+  "planes": [
+    {
+      "id": "compra",
+      "nombre": "Compra",
+      "lema": "El equipo queda tuyo",
+      "al_instalar": 339000,
+      "mes": 29900,
+      "condiciones": [
+        "Sin permanencia.",
+        "Si dejas de pagar, el equipo se queda sin servicio; reactivarlo no tiene costo.",
+        "Garantía del equipo: 12 meses."
+      ]
+    },
+    {
+      "id": "sin_cuota",
+      "nombre": "Sin cuota inicial",
+      "lema": "Empiezas sin pagar el equipo",
+      "al_instalar": 0,
+      "mes": 49900,
+      "destacado": true,
+      "condiciones": [
+        "Permanencia de 12 meses.",
+        "El equipo es de interOS (en comodato): lo cuidas mientras lo tengas.",
+        "Garantía del equipo mientras dure el contrato."
+      ]
+    }
+  ],
+  "combo": {
+    "id": "combo",
+    "nombre": "Combo TaxiCun + GPS",
+    "lema": "El GPS y la app de pedidos, para ese taxi",
+    "variantes": [
+      { "base": "compra", "nombre": "Con compra del equipo", "mes": 49900 },
+      { "base": "sin_cuota", "nombre": "Sin cuota inicial", "mes": 69900 }
+    ]
+  },
+  "extras": [
+    { "texto": "Pasar el equipo a otro taxi", "valor": 80000 },
+    { "texto": "Visita fallida por causa del cliente", "valor": 30000 },
+    { "texto": "Botón de pánico adicional", "valor": 25000 }
+  ],
+  "flotas_desde": 10,
+  "competencia": {
+    "consultado": "3 de octubre de 2026",
+    "_nota": "Sin nombres en la página (decisión D-G2 del diseño). Los nombres y la prueba de cada precio están en la investigación (memoria taxicun-gps-tienda).",
+    "otros": [
+      { "etiqueta": "Otro GPS para taxi (A)", "al_instalar": 350000, "al_instalar_nota": "kit instalado", "mes": [46000, 46000] },
+      { "etiqueta": "Otro GPS para taxi (B), equipo comprado", "al_instalar": 416500, "mes": [27380, 42760] },
+      { "etiqueta": "Otro GPS para taxi (B), equipo a cuotas", "al_instalar": 0, "mes": [44040, 59420], "mes_nota": "incluye $16.660 de la cuota del equipo" },
+      { "etiqueta": "Otro GPS para taxi (C)", "al_instalar": 357000, "al_instalar_nota": "instalación gratis", "mes": null, "mes_nota": "los 2 primeros meses gratis" }
+    ]
+  },
+  "autorizacion": {
+    "version": "1.0",
+    "texto": "Autorizo a interOS S.A.S. (NIT 901.213.197-5) a usar estos datos para contactarme sobre TaxiCun GPS y agendar la instalación. Los guardan hasta 12 meses si no contrato. Puedo pedir que los borren en info@taxicun.com."
+  }
+}

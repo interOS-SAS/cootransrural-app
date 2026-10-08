@@ -1,0 +1,59 @@
+/* Páginas para imprimir de TaxiCun GPS: el aviso para el taxi (gps/aviso/) y el formato de autorización del
+   conductor (gps/formato-conductor/). Hoja carta; en pantalla se ven como la hoja con sus instrucciones. */
+:root { --azul: #0A2552; --azul-2: #1A4FA0; --amarillo: #FFC21A; --tinta: #0E1726; --suave: #4A5568; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 24px 16px 48px; background: #E9EDF3; color: var(--tinta); font: 400 1rem/1.5 'Plus Jakarta Sans', system-ui, sans-serif; }
+h1, h2 { font-family: 'Sora', 'Plus Jakarta Sans', system-ui, sans-serif; letter-spacing: -.01em; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.marca-borrador {
+  max-width: 216mm; margin: 0 auto 16px; padding: 8px 14px; border-radius: 10px; text-align: center;
+  background: repeating-linear-gradient(-45deg, #FFC21A 0 14px, #FFD54F 14px 28px); font: 800 .85rem/1.3 'Sora', sans-serif; letter-spacing: .06em;
+}
+.pantalla { max-width: 216mm; margin: 0 auto 16px; }
+.pantalla h1 { margin: 0 0 6px; font-size: 1.5rem; color: var(--azul); }
+.pantalla p { margin: 0; color: var(--suave); }
+h2.pantalla { font-size: 1.05rem; color: var(--azul); margin: 0 0 4mm; }
+.hoja { width: 216mm; min-height: 279mm; margin: 0 auto 24px; padding: 11mm 6mm; background: #fff; box-shadow: 0 10px 30px -16px rgba(10, 37, 82, .5); }
+
+/* Aviso de 10 × 6 cm, 8 por hoja (2 × 4) */
+.avisos { display: grid; grid-template-columns: repeat(2, 100mm); grid-auto-rows: 60mm; gap: 4mm; justify-content: center; }
+.aviso {
+  display: grid; grid-template-columns: 22mm 1fr; gap: 4mm; align-items: center; padding: 5mm; border-radius: 4mm;
+  border: .6mm solid var(--azul); background: #fff; outline: .3mm dashed #B5BDCB; outline-offset: 1.5mm;
+}
+.aviso-ic { display: grid; place-items: center; width: 22mm; height: 22mm; border-radius: 5mm; background: var(--amarillo); }
+.aviso-ic svg { width: 14mm; height: 14mm; fill: none; stroke: var(--azul); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.aviso p { margin: 0 0 1.5mm; font-size: 3.4mm; line-height: 1.35; }
+.aviso .aviso-titulo { font: 800 5mm/1.15 'Sora', sans-serif; color: var(--azul); }
+.aviso .aviso-pie { margin: 0; font-size: 2.5mm; color: var(--suave); }
+
+/* Formato del conductor */
+.formato { padding: 18mm 20mm; font-size: 4mm; line-height: 1.75; }
+.formato-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 8mm; padding-bottom: 5mm; border-bottom: .4mm solid var(--azul); }
+.formato-cabeza img { width: 40mm; height: auto; }
+.formato-cabeza p { margin: 0; color: var(--suave); font-size: 3.2mm; }
+.formato h2 { margin: 9mm 0 6mm; font-size: 5.6mm; color: var(--azul); line-height: 1.3; }
+.formato p { margin: 0 0 4mm; text-align: justify; }
+.raya { display: inline-block; width: 38mm; border-bottom: .3mm solid var(--tinta); height: 1.1em; vertical-align: baseline; }
+.raya-corta { width: 24mm; }
+.raya-larga { width: 62mm; }
+.raya-firma { width: 70mm; }
+.firmas { display: flex; justify-content: space-between; gap: 10mm; margin-top: 18mm; }
+.firmas p { margin: 0; text-align: center; color: var(--suave); }
+.formato .formato-nota { margin-top: 14mm; font-size: 3.2mm; color: var(--suave); }
+
+@page { size: letter; margin: 0; }
+@media print {
+  body { padding: 0; background: #fff; }
+  .pantalla { display: none; }
+  .marca-borrador { position: fixed; top: 2.5mm; left: 50%; transform: translateX(-50%); margin: 0; padding: 1mm 4mm; white-space: nowrap; font-size: 2.8mm; z-index: 2; }
+  .hoja { width: 216mm; height: 279mm; min-height: 0; margin: 0; overflow: hidden; box-shadow: none; break-after: page; }
+  .hoja:last-of-type { break-after: auto; }
+}
+@media screen and (max-width: 860px) {
+  .hoja { width: 100%; min-height: 0; padding: 16px; }
+  .avisos { grid-template-columns: 1fr; grid-auto-rows: auto; }
+  .aviso { min-height: 52mm; }
+  .formato { font-size: 1rem; }
+  .raya, .raya-larga { width: 9em; }
+}

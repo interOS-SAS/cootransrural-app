@@ -83,6 +83,7 @@ buscadores y no usan logos de la cooperativa: aún no son clientes.
 | `propuesta/` | Propuesta comercial de TaxiCun, desarrollada por interOS (6 hojas carta; 7 con el anexo de Coptaxi; imprimible; no se indexa) |
 | `taxicun/` | La app TaxiCun (raíz del sitio): escoge la cooperativa por `?e=`, la elección guardada o el GPS |
 | `cooperativas/` | Portada de TaxiCun con todas las cooperativas (raíz del sitio) |
+| `gps/` | Tienda TaxiCun GPS (raíz del sitio): planes, comparación, preguntas y el formulario «Quiero GPS» (`POST /api/gps/interes`; si el servidor no responde, lleva al correo). **Oculta mientras sea borrador:** noindex, sin enlaces desde el resto del sitio, franja «BORRADOR» y la etiqueta en cada precio. Precios y estado SOLO en `herramientas/gps-planes.json`. Para imprimir: `gps/aviso/` (adhesivo para el taxi) y `gps/formato-conductor/` (autorización del conductor), por revisar con el abogado |
 
 ## Los 3 diseños
 
@@ -158,6 +159,8 @@ node pruebas/stickers.mjs http://localhost:8765/
 node pruebas/stickers-empresas.mjs http://localhost:8765/
 node herramientas/propuestas-pdf.mjs http://localhost:8765/ --copiar     # PDF de cada propuesta en /tmp/cootrans/propuestas/<id>/ y copia en <id>/propuesta/
 node pruebas/propuestas.mjs http://localhost:8765/                       # propuestas web y PDF (datos, precios, QR)
+node pruebas/gps-tienda.mjs                                              # tienda GPS con el receptor falso en 127.0.0.1:4641 (CSP estricta, formulario, capturas)
+node herramientas/gps-ilustraciones.mjs                                  # vuelve a dibujar img/gps/*.svg (ilustraciones propias)
 ```
 
 Modo real (`?real=1`) de punta a punta contra el servidor de TaxiCun en local

@@ -4,9 +4,12 @@
     "publicar_1_3: false deja publicada la 1.2 tal cual, byte a byte (la 1.3 queda escrita en la plantilla, sin salir) y las apps sin tarjeta. Así la rama se puede fusionar sin publicar la 1.3.",
     "Para publicar la 1.3, cuando el abogado la apruebe (documentos/POLITICA-1.3-CAMBIOS.md de la fase 3): publicar_1_3 en true y vigente_desde_1_3 con la fecha en que empieza a regir, p. ej. «20 de octubre de 2026» (si falta, el generador se niega). Conviene hacerlo al menos 10 días antes de esa fecha: ese mismo día sale la tarjeta en las apps. conservacion_bitacora es lo que dice la política sobre cuánto se guarda el registro del panel (lo confirma el abogado).",
     "El mismo día de la vigencia, en el servidor: la constante de la política a «1.3» (sin ella ningún gerente entra al panel).",
+    "publicar_capitulo_gps: false deja el capítulo «GPS para taxis» (TaxiCun GPS) escrito en la plantilla, sin salir. Va en la versión que sigue a la 1.3 (la 1.4): pide publicar_1_3 en true. Para publicarlo, cuando el abogado lo apruebe: true y vigente_desde_gps con la fecha (si falta, el generador se niega); ese día la tarjeta de las apps sale para la 1.4. El mismo día, en el servidor: POLITICA_GPS_PUBLICADA (src/gps/config.js) en true y POLITICA_PRIVACIDAD_VIGENTE (src/panel/config.js) en «1.4».",
     "Después de cambiar algo: python3 herramientas/generar-empresas.py && python3 herramientas/versionar.py"
   ],
   "publicar_1_3": false,
   "vigente_desde_1_3": "",
-  "conservacion_bitacora": "2 años"
+  "conservacion_bitacora": "2 años",
+  "publicar_capitulo_gps": false,
+  "vigente_desde_gps": ""
 }

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Autorización del conductor · TaxiCun GPS{{#si gps.legal_borrador}} (borrador){{/si}}</title>
+  <!-- Formato que el propietario hace firmar a cada persona que maneja el taxi con TaxiCun GPS (Ley 1581 de 2012).
+       Lo guarda el propietario; interOS no lo recibe salvo que lo pida. Se imprime en carta. Oculta: noindex y sin
+       enlaces. Texto por revisar con el abogado (D-G12). -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{RAIZ}}img/taxicun/favicon-32.png">
+  <link rel="stylesheet" href="{{RAIZ}}fuentes/fuentes.css">
+  <link rel="stylesheet" href="../imprimibles.css">
+</head>
+<body>
+  {{#si gps.legal_borrador}}<p class="marca-borrador">BORRADOR · Por revisar con el abogado · No usar todavía</p>{{/si}}
+  <header class="pantalla">
+    <h1>Formato de autorización del conductor</h1>
+    <p>El propietario lo hace firmar a cada persona que maneje el taxi, antes de que lo maneje, y lo guarda. Imprime en hoja carta.</p>
+  </header>
+
+  <article class="hoja formato">
+    <div class="formato-cabeza">
+      <img src="{{RAIZ}}img/taxicun/logo.svg" alt="TaxiCun" width="150" height="38">
+      <p>TaxiCun GPS · interOS S.A.S. · NIT 901.213.197-5</p>
+    </div>
+    <h2>Autorización para el tratamiento de datos de ubicación del vehículo</h2>
+    <p class="formato-linea">Yo, <span class="raya raya-larga"></span>, con cédula <span class="raya"></span>, manejo el vehículo de placa <span class="raya raya-corta"></span>, de propiedad de <span class="raya raya-larga"></span>.</p>
+    <p>Me informaron que el vehículo tiene un equipo GPS de TaxiCun (interOS S.A.S., NIT 901.213.197-5), que envía a todas horas su ubicación, su velocidad, si el motor está encendido y las alarmas, como el botón de pánico. Esos datos los ven el propietario, la central de la cooperativa <span class="raya"></span> (si el propietario lo autorizó) e interOS, para la seguridad del vehículo y de quien lo maneja, y para el control del servicio. El recorrido se guarda 90 días.</p>
+    <p>Sé que el vehículo puede tener bloqueo de encendido para casos de robo o emergencia, que nunca apaga el motor en marcha.</p>
+    <p>Autorizo ese tratamiento. Sé que puedo conocer, actualizar y rectificar mis datos y presentar quejas escribiendo a info@taxicun.com o ante la Superintendencia de Industria y Comercio. La política de privacidad está en taxicun.com/privacidad.</p>
+    <div class="firmas">
+      <p><span class="raya raya-firma"></span><br>Firma</p>
+      <p><span class="raya raya-firma"></span><br>Fecha</p>
+    </div>
+    <p class="formato-nota">El propietario guarda este formato firmado y lo muestra si interOS o una autoridad lo piden.</p>
+  </article>
+</body>
+</html>

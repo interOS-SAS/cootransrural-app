@@ -1359,13 +1359,104 @@ def datos_propuesta(ficha, p):
 
 _CACHE = {}
 
+# ---------------------------------------------------------------------------
+# Tienda TaxiCun GPS (plantillas/_raiz/gps/ → gps/)
+# ---------------------------------------------------------------------------
+# Los precios y el estado de la tienda viven SOLO en herramientas/gps-planes.json: aquí se calculan
+# el primer año, el ahorro de los combos (contra la licencia del Plan B, CUOTA_MES) y los textos.
+GPS_PLANES = RAIZ / 'herramientas' / 'gps-planes.json'
+
+
+def rango_pesos(minimo, maximo):
+    return pesos(minimo) if minimo == maximo else f'{pesos(minimo)} a {pesos(maximo)}'
+
+
+def sin_tildes(t):
+    return ''.join(c for c in unicodedata.normalize('NFD', str(t)) if unicodedata.category(c) != 'Mn').lower()
+
+
+def pesos_gps(valor, que):
+    if not isinstance(valor, int) or isinstance(valor, bool) or valor < 0:
+        raise ValueError(f'gps-planes.json: {que} debe ser un número entero de pesos, no {valor!r}')
+    return valor
+
+
+def gps_tienda():
+    if 'gps' in _CACHE:
+        return _CACHE['gps']
+    d = json.loads(GPS_PLANES.read_text(encoding='utf-8'))
+    planes = []
+    for p in d['planes']:
+        al, mes = pesos_gps(p['al_instalar'], f"{p['id']}.al_instalar"), pesos_gps(p['mes'], f"{p['id']}.mes")
+        planes.append({'id': p['id'], 'nombre': p['nombre'], 'lema': p.get('lema') or '', 'destacado': bool(p.get('destacado')),
+                       'al_instalar': al, 'mes': mes, 'al_instalar_texto': pesos(al), 'mes_texto': pesos(mes),
+                       'primer_anio_texto': pesos(al + 12 * mes), 'condiciones': list(p.get('condiciones') or [])})
+    por_id = {p['id']: p for p in planes}
+    variantes = []
+    for v in d['combo']['variantes']:
+        base = por_id[v['base']]
+        mes = pesos_gps(v['mes'], f"combo.{v['base']}.mes")
+        ahorro = base['mes'] + CUOTA_MES - mes
+        if ahorro <= 0:
+            raise ValueError(f"gps-planes.json: el combo «{v['nombre']}» ({pesos(mes)}) no sale más barato que {base['nombre']} más la licencia")
+        variantes.append({'nombre': v['nombre'], 'al_instalar_texto': base['al_instalar_texto'], 'mes_texto': pesos(mes),
+                          'primer_anio_texto': pesos(base['al_instalar'] + 12 * mes), 'ahorro_texto': pesos(ahorro)})
+    otros = []
+    for o in d['competencia']['otros']:
+        al = o.get('al_instalar')
+        mes = o.get('mes')
+        otros.append({
+            'etiqueta': o['etiqueta'], 'es_taxicun': False,
+            'al_instalar_texto': pesos(al) if al is not None else 'Por confirmar', 'al_instalar_nota': o.get('al_instalar_nota') or '',
+            'mes_texto': rango_pesos(*mes) if mes else 'Por confirmar', 'mes_nota': o.get('mes_nota') or '',
+            'primer_anio_texto': rango_pesos(al + 12 * mes[0], al + 12 * mes[1]) if mes and al is not None else '—',
+        })
+    comparacion = [{'etiqueta': f"TaxiCun GPS · {p['nombre']}", 'es_taxicun': True, 'al_instalar_texto': p['al_instalar_texto'],
+                    'al_instalar_nota': 'equipo e instalación' if p['al_instalar'] else 'instalación incluida',
+                    'mes_texto': p['mes_texto'], 'mes_nota': '', 'primer_anio_texto': p['primer_anio_texto']} for p in planes] + otros
+    # Municipios y cooperativas para el formulario (todas, por municipio; «Otra» va en la plantilla).
+    grupos = {}
+    for f in fichas():
+        E = f['EMPRESA']
+        grupos.setdefault(E.get('pueblo') or E.get('municipio') or 'Otro', []).append({'id': f['id'], 'nombre': E.get('nombre') or f['id']})
+    cooperativas = [{'pueblo': pueblo, 'opciones': sorted(ops, key=lambda o: sin_tildes(o['nombre']))}
+                    for pueblo, ops in sorted(grupos.items(), key=lambda g: sin_tildes(g[0]))]
+    aut = d['autorizacion']
+    borrador = not d.get('precios_aprobados')
+    publica = bool(d.get('pagina_publica'))
+    _CACHE['gps'] = {
+        # Mientras los precios no estén aprobados o la página no sea pública: franja «BORRADOR», noindex
+        # y el título con «(borrador)». Los precios llevan la etiqueta «borrador» hasta que se aprueben.
+        'borrador': borrador, 'publica': publica, 'aviso_borrador': borrador or not publica,
+        'legal_borrador': not d.get('textos_legales_aprobados'),
+        'ocho': list(range(8)),  # gps/aviso/: 8 adhesivos de 10 × 6 cm por hoja carta
+        'robots': 'index, follow' if publica else 'noindex, nofollow',
+        'planes': planes, 'compra': por_id['compra'], 'sin_cuota': por_id['sin_cuota'],
+        'combo': {'nombre': d['combo']['nombre'], 'lema': d['combo'].get('lema') or '', 'variantes': variantes,
+                  'licencia_texto': pesos(CUOTA_MES)},
+        'extras': [{'texto': e['texto'], 'valor_texto': pesos(pesos_gps(e['valor'], e['texto']))} for e in d.get('extras') or []],
+        'flotas_desde': d.get('flotas_desde') or 10,
+        'comparacion': comparacion, 'consultado': d['competencia']['consultado'],
+        'cooperativas': cooperativas, 'n_cooperativas': sum(len(g['opciones']) for g in cooperativas),
+        # El texto exacto de la casilla: el formulario manda su versión y el servidor guarda la huella de SU copia
+        # del texto (src/gps/interes.js, AUTORIZACIONES): los dos textos tienen que ser idénticos.
+        'autorizacion': {'version': aut['version'], 'texto': aut['texto']},
+    }
+    return _CACHE['gps']
+
 
 # Política de privacidad de TaxiCun (plantillas/_raiz/privacidad/) y la tarjeta de las apps (nucleo/politica.js).
 # La 1.3 (fase 3 del panel: lo que ve la cooperativa en su panel) está escrita en la plantilla y sale solo con
 # publicar_1_3 en herramientas/politica.json; apagada, la política publicada sale igual que antes (la 1.2).
+# El capítulo «GPS para taxis» (TaxiCun GPS) también está escrito y sale solo con publicar_capitulo_gps: va en la
+# versión que sigue a la 1.3 (la 1.4), así que pide la 1.3 publicada. Entra después de «Tu ubicación» y los
+# números de las demás secciones se corren solos. Con todo apagado, la política sale byte a byte como antes.
 POLITICA_JSON = RAIZ / 'herramientas' / 'politica.json'
 POLITICA_JS = RAIZ / 'nucleo' / 'politica.js'
 VIGENCIA_POLITICA_1_2 = '3 de octubre de 2026'  # la de la versión publicada (1.2)
+SECCIONES_POLITICA = ('responsable', 'datos', 'ubicacion', 'gps', 'finalidades', 'compartir', 'proveedores', 'no-hacemos',
+                      'conservacion', 'seguridad', 'derechos', 'eliminar-cuenta', 'menores', 'uso', 'cambios', 'contacto')
+FECHA_POLITICA = re.compile(r'\d{1,2} de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre) de 20\d\d')
 
 
 def politica_privacidad():
@@ -1373,22 +1464,35 @@ def politica_privacidad():
         return _CACHE['politica']
     p = json.loads(POLITICA_JSON.read_text(encoding='utf-8'))
     v13 = p.get('publicar_1_3') is True
-    vigencia = VIGENCIA_POLITICA_1_2
+    gps = p.get('publicar_capitulo_gps') is True
+    vigencia_1_3 = ''
     if v13:
-        vigencia = str(p.get('vigente_desde_1_3') or '').strip()
-        if not re.fullmatch(r'\d{1,2} de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre) de 20\d\d', vigencia):
+        vigencia_1_3 = str(p.get('vigente_desde_1_3') or '').strip()
+        if not FECHA_POLITICA.fullmatch(vigencia_1_3):
             raise ValueError('herramientas/politica.json: para publicar la política 1.3, pon «vigente_desde_1_3» (p. ej. «20 de octubre de 2026»)')
     bitacora = str(p.get('conservacion_bitacora') or '').strip()
     if v13 and not bitacora:
         raise ValueError('herramientas/politica.json: falta «conservacion_bitacora» (p. ej. «2 años»)')
-    _CACHE['politica'] = {'v13': v13, 'version': '1.3' if v13 else '1.2', 'vigencia': vigencia, 'bitacora': bitacora}
+    vigencia_gps = ''
+    if gps:
+        if not v13:
+            raise ValueError('herramientas/politica.json: el capítulo GPS va en la versión que sigue a la 1.3 (la 1.4); publica antes la 1.3 (publicar_1_3)')
+        vigencia_gps = str(p.get('vigente_desde_gps') or '').strip()
+        if not FECHA_POLITICA.fullmatch(vigencia_gps):
+            raise ValueError('herramientas/politica.json: para publicar el capítulo GPS de la política, pon «vigente_desde_gps» (p. ej. «5 de noviembre de 2026»)')
+    version = '1.4' if gps else '1.3' if v13 else '1.2'
+    vigencia = vigencia_gps if gps else vigencia_1_3 if v13 else VIGENCIA_POLITICA_1_2
+    ids = [i for i in SECCIONES_POLITICA if gps or i != 'gps']
+    _CACHE['politica'] = {'v13': v13, 'gps': gps, 'version': version, 'vigencia': vigencia, 'vigencia_1_3': vigencia_1_3,
+                          'vigencia_gps': vigencia_gps, 'bitacora': bitacora,
+                          'n': {i.replace('-', '_'): n for n, i in enumerate(ids, 1)}}
     return _CACHE['politica']
 
 
 def escribir_politica_js():
     """nucleo/politica.js: la versión vigente para las apps (la tarjeta «Actualizamos la política de privacidad»)."""
     pol = politica_privacidad()
-    datos = {'version': pol['version'], 'vigenteDesde': pol['vigencia'], 'avisar': pol['v13']}
+    datos = {'version': pol['version'], 'vigenteDesde': pol['vigencia'], 'avisar': pol['v13'] or pol['gps']}
     texto_js = (
         '// Versión vigente de la política de privacidad de TaxiCun (taxicun.com/privacidad/) para las apps: con avisar,\n'
         '// la tarjeta «Actualizamos la política de privacidad» (§7.5 del diseño del panel, S36) sale una vez por versión.\n'
@@ -1420,8 +1524,10 @@ def contexto(ficha, destino_rel):
         'RAIZ': raiz,
         'RAIZ_EMPRESA': raiz_empresa,
         'cooperativas': lista_cooperativas(),
-        # La política de privacidad de TaxiCun (raíz): versión, vigencia y la 1.3 (herramientas/politica.json).
-        'politica': politica_privacidad() if destino_rel.startswith('privacidad/') else None,
+        # La tienda TaxiCun GPS (gps/ y sus páginas para imprimir).
+        'gps': gps_tienda() if destino_rel.startswith('gps/') else None,
+        # La política de privacidad de TaxiCun (raíz): números de sección, vigencia y el capítulo GPS.
+        'politica': politica_privacidad() if destino_rel.startswith(('privacidad/', 'gps/')) else None,
         # Para scripts (p. ej. la página 404, que adapta colores y enlaces según la carpeta).
         'cooperativas_json': json.dumps([{k: c[k] for k in ('id', 'ruta', 'nombre', 'razonSocial', 'es_propuesta', 'servicio24h', 'tel', 'tel_visible', 'primario', 'primario2', 'claro', 'oscuro', 'acento', 'icono')}
                                          for c in lista_cooperativas()], ensure_ascii=False).replace('</', '<\\/'),
