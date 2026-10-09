@@ -224,6 +224,10 @@ export const textosCentral = Object.freeze({
       confirmarDetalle: 'Este pedido lo tomó la central por teléfono: no tiene código de abordaje. Pregúntale su nombre antes de iniciar el viaje.',
       iniciar: 'Iniciar viaje',
       historial: 'Pedido de la central',
+      // Quien llamó no tiene la app: nadie recibe «Llegué» ni la cancelación, salvo la central.
+      llegue: { titulo: 'Llegaste al punto', cuerpo: `Si no ves a ${n}, llámalo.` },
+      llegueAyuda: 'Estás en el punto de recogida. Toca «Llegué» y, si no ves a quien llamó, llámalo.',
+      cancelar: 'Le avisamos a la central.',
     };
   },
   // Ronda 4A: «Avisar a la central» (SOS) de las dos apps. empresa: el nombre de la cooperativa.

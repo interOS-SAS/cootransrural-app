@@ -586,7 +586,8 @@ class ControladorConductor extends Emisor {
     if (!this.estado.gpsReal || v.simulado) this.#moverA({ ...v.origen, rumbo: this.estado.pos?.rumbo || 0 });
     this.#faseViaje('en_origen');
     if (!v.simulado) this.bus.publicar('estado', { viajeId: v.id, conductorId: this.perfil.id, fase: 'llego' });
-    this.#avisar({ titulo: 'Le avisamos al pasajero', cuerpo: 'Ya sabe que estás en la puerta.', tipo: 'info' });
+    // Ronda 4A: quien llamó a la central no tiene la app (no recibe el «Llegué»).
+    this.#avisar(this.real && v.pedidoCentral ? { ...textosCentral.pedidoCentral({ nombre: v.pasajero?.nombre }).llegue, tipo: 'info' } : { titulo: 'Le avisamos al pasajero', cuerpo: 'Ya sabe que estás en la puerta.', tipo: 'info' });
     this.pasajeroSim?.alLlegarConductor();
     return true;
   }

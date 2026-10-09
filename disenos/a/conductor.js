@@ -1242,7 +1242,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   }
 
   async function cancelarServicio() {
-    const motivo = await elegirOpcion(app, { titulo: '¿Por qué cancelas el servicio?', texto: 'Le avisamos al pasajero.', opciones: N.MOTIVOS_CANCELACION.conductor, confirmar: 'Cancelar servicio', clasePeligro: true });
+    // Ronda 4A: en el pedido de la central no hay app del pasajero: se entera la central.
+    const central = REAL && c?.estado?.viaje?.pedidoCentral;
+    const motivo = await elegirOpcion(app, { titulo: '¿Por qué cancelas el servicio?', texto: central ? N.textosCentral.pedidoCentral().cancelar : 'Le avisamos al pasajero.', opciones: N.MOTIVOS_CANCELACION.conductor, confirmar: 'Cancelar servicio', clasePeligro: true });
     if (motivo) c.cancelar(motivo);
   }
 
@@ -1551,7 +1553,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             <span class="a-eta"><strong data-eta-num>—</strong><small>min</small></span>
             <span class="a-estado-txt"><h2>Recoge a ${esc(nombreCorto(v.pasajero?.nombre || 'tu pasajero'))}</h2><small data-estado-sub>Calculando la ruta…</small></span>
           </div>
-          <div class="a-llegaste" data-llegaste hidden>${icono('pin', { tam: 18 })}<span>Estás en el punto de recogida. Toca <b>Llegué</b> para avisarle.</span></div>
+          <div class="a-llegaste" data-llegaste hidden>${icono('pin', { tam: 18 })}<span>${REAL && v.pedidoCentral ? esc(N.textosCentral.pedidoCentral().llegueAyuda) : 'Estás en el punto de recogida. Toca <b>Llegué</b> para avisarle.'}</span></div>
           <div class="a-dir">${icono('pin', { tam: 20 })}<span><small>Punto de recogida</small><strong>${esc(v.origen?.titulo || 'Punto en el mapa')}</strong>${v.origen?.detalle ? `<em>${esc(v.origen.detalle)}</em>` : ''}</span></div>
           ${navegar(v.origen)}
           <div class="a-msj-pasajero" data-msj hidden></div>

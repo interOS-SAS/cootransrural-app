@@ -582,10 +582,12 @@ async function conductorWeb() {
   // b3) «Llegué» → «Confirma que es {nombre}» e «Iniciar viaje» sin código.
   await p.click('[data-llegue]');
   ok(Boolean(await intento(vista(p, 'en_origen', 10000))), 'b3) «Llegué» → en el punto');
+  ok(await conAviso(p, /Llegaste al punto.*Si no ves a Juan <i>Pérez<\/i>, llámalo\./, 5000) && !(await conAviso(p, /Le avisamos al pasajero/, 500)), 'b3) dice «Llegaste al punto · Si no ves a …, llámalo.» (no «Le avisamos al pasajero»: no tiene la app)');
   ok((await textoCrudo(p, '[data-llamante-confirmar]')) === `Confirma que es ${LLAMANTE}`, `b3) «Confirma que es ${LLAMANTE}»`);
   ok(/no tiene código de abordaje/.test(await texto(p, '[data-confirmar-llamante]')) && !(await p.$('.a-hoja .a-casillas')) && !(await p.$('[data-sin-codigo]')), 'b3) sin casillas de código ni «Iniciar sin código»');
   ok(Boolean(await p.$('[data-iniciar-central]:not([disabled])')), 'b3) «Iniciar viaje» habilitado');
   ok(Boolean(await hasta(async () => !(await p.$('.a-solicitud')), 3000)), 'b3) la hoja amarilla ya se fue');
+  await p.waitForTimeout(600);
   await foto(p, 'b3-confirma-que-es');
   let m0 = srv.mensajes.length;
   await p.click('[data-iniciar-central]');
@@ -759,6 +761,7 @@ async function avisosPasajero() {
   ok((await texto(p, '.a-fila-interruptor[data-avisos-cooperativa] strong')) === 'Avisos de Cootransrural' && /nunca publicidad/.test(await texto(p, '.a-fila-interruptor[data-avisos-cooperativa] small')), `c6) con su explicación («${await texto(p, '.a-fila-interruptor[data-avisos-cooperativa]')}»)`);
   const sw = '[data-avisos-cooperativa] [role=switch]';
   ok((await p.getAttribute(sw, 'aria-checked')) === 'true', 'c6) encendido (sin baja)');
+  await p.waitForTimeout(500);
   await foto(p, 'c6-ajustes-avisos');
   await p.click(sw);
   ok(Boolean(await hasta(() => pide('PUT', 'yo/avisos').some((x) => x.cuerpo?.empresa === 'cootransrural' && x.cuerpo?.recibir === false), 5000)), 'c6) apagarlo → PUT /api/yo/avisos { empresa: cootransrural, recibir: false }');
