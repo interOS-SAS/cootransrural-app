@@ -445,7 +445,7 @@ async function aceptarViaje(p, viajeId, nombre = 'Marta') {
   ofrecer(viajeId, nombre);
   await p.waitForSelector('.a-solicitud.a-abierta', { timeout: 15000 });
   await p.waitForTimeout(500);
-  await p.click('.a-solicitud [data-aceptar]');
+  await p.press('.a-solicitud .a-deslizador-mango', 'Enter');
   return intento(vista(p, 'hacia_origen', 15000));
 }
 // Mueve el GPS del navegador un poco (unos 100 m) para que el JS lea una posición nueva.

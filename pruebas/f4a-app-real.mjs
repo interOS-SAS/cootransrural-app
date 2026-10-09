@@ -114,7 +114,7 @@ try {
     const titulo = await pc.textContent('#a-sol-titulo').catch(() => '');
     prueba(titulo === 'Rosa' && !/verificado/.test(await pc.innerText('.a-sol-quien').catch(() => '')), `2 con el primer nombre de quien llamó y sin estrellas («${titulo}»)`);
     await foto(pc, '2-pedido-de-la-central');
-    await pc.click('.a-solicitud [data-aceptar]');
+    await pc.press('.a-solicitud .a-deslizador-mango', 'Enter');
     await vista(pc, 'hacia_origen');
     const href = await pc.getAttribute('[data-llamar-llamante]', 'href').catch(() => null);
     prueba(href === `tel:${LLAMANTE.celular}`, `2 «Llamar a Rosa» va al celular que anotó la central (${href})`);
@@ -190,7 +190,7 @@ try {
   await vista(pp, 'buscando', 10000);
   await pc.waitForSelector('.a-solicitud.a-abierta', { timeout: 20000 });
   await pc.waitForTimeout(500);
-  await pc.click('.a-solicitud [data-aceptar]');
+  await pc.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await vista(pp, 'asignado', 20000);
   prueba(true, '5 el pasajero tiene su taxi (asignado)');
   await pp.click('[data-sos] >> nth=0');

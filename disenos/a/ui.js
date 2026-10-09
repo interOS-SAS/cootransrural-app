@@ -699,6 +699,8 @@ export function deslizador({ texto = 'Deslizar para aceptar', alConfirmar = () =
     relleno.style.width = x > 0 ? `${x + mango.offsetWidth + 5}px` : '0px';
     d.style.setProperty('--avance', String(x / Math.max(1, max())));
   };
+  const etiqueta = d.querySelector('.a-deslizador-texto');
+  const original = etiqueta.innerHTML;
   const confirmar = () => {
     if (hecho) return;
     hecho = true;
@@ -706,6 +708,16 @@ export function deslizador({ texto = 'Deslizar para aceptar', alConfirmar = () =
     d.classList.add('a-hecho');
     setTimeout(alConfirmar, 180);
   };
+  // Vuelve al principio (p. ej. si otro conductor ya tomó el servicio) para poder intentarlo de nuevo.
+  const reiniciar = () => {
+    hecho = false;
+    activo = false;
+    d.classList.remove('a-hecho');
+    etiqueta.innerHTML = original;
+    poner(0, true);
+  };
+  // Un texto mientras se confirma («Aceptando…»); va como texto, nunca como HTML.
+  const ponerTexto = (t) => { etiqueta.textContent = t; };
   mango.addEventListener('pointerdown', (e) => {
     if (hecho) return;
     activo = true;
@@ -731,7 +743,7 @@ export function deslizador({ texto = 'Deslizar para aceptar', alConfirmar = () =
     }
   });
   requestAnimationFrame(() => poner(0, false));
-  return { el: d, confirmar };
+  return { el: d, confirmar, reiniciar, ponerTexto };
 }
 
 /* ------------------------------------------------------------------ */

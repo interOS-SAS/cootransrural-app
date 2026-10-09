@@ -620,9 +620,9 @@ async function iphoneViejo() {
 /* ================================================================== */
 async function aceptarYViajar(p, viajeId) {
   ofrecer(viajeId);
-  await p.waitForSelector('.a-solicitud [data-aceptar]', { timeout: 15000 });
+  await p.waitForSelector('.a-solicitud .a-deslizador-mango', { timeout: 15000 });
   await p.waitForTimeout(500);
-  await p.click('.a-solicitud [data-aceptar]');
+  await p.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await vista(p, 'hacia_origen', 15000);
   await p.click('[data-llegue]');
   await vista(p, 'en_origen', 10000);

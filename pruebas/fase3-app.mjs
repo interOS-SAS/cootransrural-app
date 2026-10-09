@@ -423,7 +423,7 @@ async function aceptarViaje(p, viajeId) {
   ofrecer(viajeId);
   await p.waitForSelector('.a-solicitud.a-abierta', { timeout: 15000 });
   await p.waitForTimeout(500);
-  await p.click('.a-solicitud [data-aceptar]');
+  await p.press('.a-solicitud .a-deslizador-mango', 'Enter');
   return intento(vista(p, 'hacia_origen', 15000));
 }
 async function entrarPasajero(p, url = `${BASE}taxicun/?real=1`) {

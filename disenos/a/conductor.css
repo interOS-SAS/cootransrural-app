@@ -136,7 +136,7 @@
 .a-sol-nota { display: flex; gap: 8px; align-items: center; margin: 0; padding: 10px 14px; border-radius: 16px; background: rgba(255, 255, 255, .55); font-weight: 600; font-size: 14px; }
 .a-hoja-contenido .a-sol-nota { background: var(--a-ambar-claro); margin-top: 10px; }
 .a-sol-acciones { flex: none; padding: 12px 18px calc(16px + var(--a-inf)); display: flex; flex-direction: column; gap: 10px; }
-.a-sol-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.a-sol-botones { display: grid; grid-template-columns: 1fr; gap: 8px; }
 .a-sol-botones .a-btn-suave { background: rgba(255, 255, 255, .62); }
 .a-sol-botones .a-btn { min-height: 52px; }
 

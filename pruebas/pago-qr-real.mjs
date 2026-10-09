@@ -171,7 +171,7 @@ try {
   await pp.click('[data-pedir]');
   await pc.waitForSelector('.a-solicitud.a-abierta', { timeout: 25000 });
   await pc.waitForTimeout(600);
-  await pc.click('.a-solicitud [data-aceptar]');
+  await pc.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await vista(pc, 'hacia_origen', 20000);
   await vista(pp, 'asignado', 20000);
   const codigo = await pp.getAttribute('[data-codigo]', 'data-codigo');

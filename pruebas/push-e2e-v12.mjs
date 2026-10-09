@@ -483,7 +483,7 @@ async function viaje() {
   ok(await hasta(() => !dormido(CA.correo), 5000), 'conductor 1.2: conectado, ya no está dormido');
   ok(await hasta(() => dispositivosDe(CA.correo) === `conductor|ios|production|${tA}`, 5000), 'conductor 1.2: su teléfono sigue registrado (uno solo)');
   await foto(pa, 'c01-oferta-desde-aviso');
-  await pa.click('.a-solicitud [data-aceptar]');
+  await pa.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await debe(vista(pa, 'hacia_origen', 20000), 'conductor 1.2: acepta → «Recoge a Ana»');
   ok(await hasta(() => sql(`select estado from viajes where id = ${cita(viajeId)}`) === 'asignado', 5000), 'central: viaje asignado');
   await espera(2000);
