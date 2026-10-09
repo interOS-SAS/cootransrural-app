@@ -118,10 +118,16 @@ function tarjetaMetodo(m, { copiar = true, avisar = () => {} } = {}) {
 /* ================= pasajero ================= */
 
 // Devuelve el método con el que dijo que pagó, o null si cerró la hoja.
+// Lo que identifica a los métodos que se están mostrando (entidad, tipo, llave y QR): si el `cobro` cambia con la hoja
+// abierta (el conductor cambió o quitó cómo le pagan), la app del pasajero la cierra (disenos/a/pasajero.js).
+export function firmaMetodos(metodos) {
+  return (metodos || []).map(C.limpiarMetodo).filter(Boolean).map((m) => [m.entidad, m.llaveTipo, m.llave, m.qrTexto].join('|')).join('\n');
+}
+
 export function hojaPagoQR(app, { metodos, valor, avisar = () => {} }) {
   asegurarEstilos();
   const lista = (metodos || []).map(C.limpiarMetodo).filter(Boolean);
-  const cuerpo = h('div', { clase: 'a-pq', attrs: { 'data-hoja-pago-qr': '' } },
+  const cuerpo = h('div', { clase: 'a-pq', attrs: { 'data-hoja-pago-qr': firmaMetodos(metodos) } },
     h('p', { clase: 'a-pq-nota', texto: 'Le pagas directo al conductor desde la app de tu banco o billetera. TaxiCun no recibe tu dinero ni cobra comisión.' }),
     ...lista.map((m) => tarjetaMetodo(m, { avisar })),
     h('div', { clase: 'a-pq-valor' }, h('span', { texto: 'Valor a pagar' }), h('strong', { texto: N.pesos(valor), attrs: { 'data-valor': '' } })));

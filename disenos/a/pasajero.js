@@ -26,7 +26,7 @@ import { mostrarBienvenida } from './registro.js';
 import { ofrecerAvisos, montarBloqueo } from './nativa.js';
 import { avisarPolitica, politicaPendiente } from './politica.js';
 import { seguirSos, montarAvisosCentral } from './central.js';
-import { hojaPagoQR } from './pago-qr.js';
+import { firmaMetodos, hojaPagoQR } from './pago-qr.js';
 import { abrirMisViajes, abrirProgramados, abrirTarifas, abrirPromociones, abrirAjustes, abrirAyuda, abrirAvisos, abrirMiCuenta } from './pasajero-secciones.js';
 
 const REAL = EM.MODO_REAL;
@@ -1545,6 +1545,13 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         const hay = Boolean(e.cobro?.metodos?.length);
         const b = $(hoja.contenido, '[data-pagar-qr-llave]');
         if (b && b.hidden === hay) b.hidden = !hay;
+        // Ataque a la ronda (9-oct): el conductor cambió o quitó cómo le pagan con la hoja «Pagar con QR o llave»
+        // abierta (el servidor manda el `cobro` de ahora): se cierra, para no pagarle a lo de antes.
+        const abierta = document.querySelector('.a-modal-pago-qr.a-abierto [data-hoja-pago-qr]');
+        if (abierta && abierta.getAttribute('data-hoja-pago-qr') !== firmaMetodos(e.cobro?.metodos)) {
+          abierta.closest('.a-modal-capa')?.querySelector('.a-modal-acciones button')?.click(); // «Volver»
+          avisos.mostrar({ titulo: 'El conductor cambió cómo le pagan', cuerpo: hay ? 'Revisa su QR o su llave antes de pagar.' : 'Págale en efectivo.', tipo: 'info' });
+        }
         const sub = $(hoja.contenido, '[data-subtitulo-pago]');
         if (sub) sub.textContent = hay ? '¿Cómo pagaste?' : 'Pagas en efectivo';
         const tot = $(hoja.contenido, '[data-total-pagar]');

@@ -111,7 +111,12 @@ export function camposEMV(texto) {
 // esta es la misma, para avisar antes de subir.
 export const DOMINIOS_QR = ['nequi.com.co', 'daviplata.com', 'bancolombia.com'];
 
+// Las mismas reglas del servidor (src/cobro.js, leerEnlace): sin espacios, comillas ni barras invertidas, y (ataque a la
+// ronda) sin «@», «//» ni «..» en ninguna parte, ni codificados (%40, %2e, %2f, %5c): nada que un lector de enlaces laxo
+// lea como otro host (https://nequi.com.co/@otro.com). También vale para el pasajero: un enlace así no se redibuja.
 function enlaceDeEntidad(texto) {
+  if (!/^https:\/\/[A-Za-z0-9.-]+(?:\/[A-Za-z0-9._~!$&'()*+,;=:@%/?#-]*)?$/.test(texto)) return false;
+  if (/@|\.\.|%(?:40|2e|2f|5c)/i.test(texto) || texto.slice('https://'.length).includes('//') || /\/\.(?:\/|[?#]|$)/.test(texto)) return false;
   let u;
   try {
     u = new URL(texto);

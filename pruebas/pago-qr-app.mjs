@@ -424,6 +424,13 @@ async function nucleo() {
       js: qr('javascript:alert(1)').ok,
       data: qr('data:text/html,<b>x</b>').ok,
       largo: qr(`https://nequi.com.co/${'a'.repeat(600)}`).error,
+      // ataque a la ronda (9-oct): «@», «//» y «..» (también codificados) no pasan; lo normal sí
+      ambiguos: ['https://nequi.com.co/@evil.com/pay', 'https://nequi.com.co//..//@evil.com/pay', 'https://nequi.com.co/pago?x=@evil.com',
+        'https://nequi.com.co/a/../b', 'https://nequi.com.co/a//b', 'https://nequi.com.co/./x', 'https://nequi.com.co/%40evil.com',
+        'https://nequi.com.co/%2e%2e/x', 'https://nequi.com.co/a%2F%2Fevil.com', 'https://nequi.com.co/p?volver=https://evil.com',
+        'https://nequi.com.co/a b', 'https://nequi.com.co/a\\b'].filter((t) => qr(t).ok),
+      normales: ['https://nequi.com.co/pago/v1.2/abc', 'https://nequi.com.co/p?n=Juan%20P&v=9500', 'https://www.bancolombia.com/a#b'].filter((t) => !qr(t).ok),
+      ambiguoAlPasajero: C.limpiarMetodo({ entidad: 'nequi', llaveTipo: 'celular', llave: '3109876543', qrTexto: 'https://nequi.com.co/@evil.com/pay' })?.qrTexto,
       llaves: [
         C.validarLlave('celular', '3109876543'), C.validarLlave('celular', '2109876543'), C.validarLlave('celular', C.normalizarLlave('celular', '+57 310 987 6543')),
         C.validarLlave('cedula', '12345'), C.validarLlave('cedula', '1234'), C.validarLlave('cedula', '12345678901'),
@@ -448,6 +455,8 @@ async function nucleo() {
   ok(r.emv.ok && r.emv.tipo === 'emv' && r.emv.titular === 'LUIS RODRIGUEZ', `a1) EMVCo bueno, con el titular del campo 59 (${JSON.stringify(r.emv)})`);
   ok(r.crcMalo === 'qr_crc' && r.cortado === 'qr_no_valido' && r.control === false && r.invisible === false, `a1) CRC malo, cortado, de control e invisibles: no (${r.crcMalo}, ${r.cortado})`);
   ok(r.nequi && r.davi && !r.http && !r.ajeno && !r.ip && !r.puerto && !r.js && !r.data && r.largo === 'qr_muy_largo', 'a1) enlaces: solo https de la lista (nada de http, otro dominio, IP, puerto, javascript:, data:, > 512)');
+  ok(!r.ambiguos.length && !r.normales.length, `a1) enlaces con «@», «//» o «..» (o codificados), espacios o barra invertida: no; los normales sí (pasan: ${JSON.stringify(r.ambiguos)}; rechazados: ${JSON.stringify(r.normales)})`);
+  ok(r.ambiguoAlPasajero === '', `a1) al pasajero, un enlace ambiguo que mande el servidor no se redibuja (${JSON.stringify(r.ambiguoAlPasajero)})`);
   ok(JSON.stringify(r.llaves) === JSON.stringify([null, 'llave_no_valida', null, null, 'llave_no_valida', 'llave_no_valida', null, 'llave_no_valida', 'llave_no_valida', null, 'llave_no_valida', 'llave_no_valida', 'llave_no_valida', 'llave_tipo_invalido']), `a1) llaves por tipo (${JSON.stringify(r.llaves)})`);
   ok(JSON.stringify(r.titulares) === JSON.stringify([null, 'titular_no_valido', 'titular_no_valido', 'titular_no_valido', 'titular_no_valido']), `a1) titular: texto plano ≤ 40 (${JSON.stringify(r.titulares)})`);
   ok(JSON.stringify(r.uas) === JSON.stringify([true, false, false, true, true, true]), `a2) imagen del QR: navegador sí, iPhone sin versión y 1.2.0 no, 1.2.1 y 1.3 sí, Android sí (${JSON.stringify(r.uas)})`);
@@ -753,6 +762,26 @@ async function pasajeroPago() {
   await p.waitForTimeout(300);
   await foto(p, 'e8-revisor-llave-de-prueba');
   await tocarModal(p, 'Volver');
+
+  // e9) Ataque a la ronda: el conductor cambia o quita cómo le pagan con la hoja abierta → la hoja se cierra y avisa.
+  enviarA('pasajero', 'cobro', { viajeId: v, conductorId: 'c_luis', valor: 9700, metodos: [metodoNequi()] });
+  await p.waitForSelector('[data-pagar-qr-llave]:not([hidden])', { timeout: 8000 });
+  await p.click('[data-pagar-qr-llave]');
+  await p.waitForSelector('.a-modal-pago-qr.a-abierto [data-hoja-pago-qr]', { timeout: 8000 });
+  const m3 = srv.mensajes.length;
+  enviarA('pasajero', 'cobro', { viajeId: v, conductorId: 'c_luis', valor: 9700, metodos: [metodoNequi({ llave: '3109876500', qrTexto: '' })] });
+  const cerrada = await hasta(async () => !(await p.$('.a-modal-pago-qr.a-abierto [data-hoja-pago-qr]')), 6000);
+  ok(cerrada && /cambió cómo le pagan/.test(await texto(p, 'body')), 'e9) cambió la llave con la hoja abierta: la hoja se cierra y avisa «El conductor cambió cómo le pagan»');
+  await p.waitForTimeout(400);
+  await p.click('[data-pagar-qr-llave]');
+  await p.waitForSelector('.a-modal-pago-qr.a-abierto [data-hoja-pago-qr]', { timeout: 8000 });
+  ok((await textoCrudo(p, '.a-modal-pago-qr.a-abierto [data-llave]')) === '3109876500' && !(await p.$('.a-modal-pago-qr.a-abierto [data-qr]')), 'e9) al abrirla otra vez: la llave nueva y sin el QR de antes');
+  enviarA('pasajero', 'cobro', { viajeId: v, conductorId: 'c_luis', valor: 9700, metodos: [] });
+  const cerrada2 = await hasta(async () => !(await p.$('.a-modal-pago-qr.a-abierto [data-hoja-pago-qr]')), 6000);
+  await p.waitForTimeout(300);
+  ok(cerrada2 && (await p.$eval('[data-pagar-qr-llave]', (n) => n.hidden)) && /Pagas en efectivo/.test(await texto(p, '.a-hoja')), 'e9) quitó su cobro: se cierra, sin «Pagar con QR o llave» y «Pagas en efectivo»');
+  ok(!msjDesde(m3, 'pasajero', 'pago').length, 'e9) cerrar la hoja no manda ningún pago');
+  await foto(p, 'e9-cobro-cambiado');
   ok(await sinXss(p), 'e) nada del HTML corrió');
   await ctx.close();
   srv.viajePasajero = null;
