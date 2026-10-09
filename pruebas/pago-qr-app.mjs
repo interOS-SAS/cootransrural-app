@@ -733,9 +733,11 @@ async function pasajeroPago() {
   await p.click('[data-omitir]');
   await vista(p, 'inicio', 10000);
 
-  // e7) Recarga en «pagar» sin el cobro guardado: lo vuelve a pedir.
+  // e7) Recarga en «pagar» sin el cobro guardado: lo vuelve a pedir. Como el servidor de verdad (0.10.0), viaje_actual
+  // llega VACÍO: el servidor solo lo manda de los viajes activos, nunca de uno finalizado (integración: antes el falso
+  // mandaba el viaje «finalizado» y la app solo pedía el cobro en ese caso, que con el servidor real no pasa).
   v = await hastaPagar(p);
-  srv.viajePasajero = { ...srv.viajePasajero, estado: 'finalizado' };
+  srv.viajePasajero = null;
   const m2 = srv.mensajes.length;
   await p.reload();
   await vista(p, 'pagar', 20000);

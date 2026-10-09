@@ -846,6 +846,10 @@ class ControladorPasajero extends Emisor {
       return;
     }
 
+    // 0.10.0: el servidor solo manda viaje_actual de los viajes activos (buscando, asignado, llego, en_viaje), nunca de uno
+    // ya finalizado. Si la app se abrió otra vez en «pagar» sin el `cobro` (se cerró antes de que llegara, o venía de una
+    // versión anterior de la web), se lo pide aquí (`cobro` {viajeId}): el servidor lo vuelve a mandar mientras se pueda.
+    if (fase === 'pagar' && viaje && !this.estado.cobro?.metodos) this.pedirCobro();
     if (!activo || recien) return;
     // Un viaje pedido después de la bienvenida no se revisa: el servidor ya lo tiene.
     if (!porReenviar && (!aRevisar || (viaje.id !== aRevisar && !(viaje.idsPrevios || []).includes(aRevisar)))) return;
