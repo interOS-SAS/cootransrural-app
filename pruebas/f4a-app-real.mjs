@@ -79,7 +79,8 @@ try {
   const martha = await C.entrarPanel('martha@cootransrural.test');
   const panel = (metodo, ruta, cuerpo) => C.panel(metodo, `/api/panel/c/${COOP}/${ruta}`, { cookie: martha, cuerpo });
   const salud = await C.app('GET', '/api/salud');
-  prueba(/^0\.9\./.test(salud.cuerpo?.version || ''), `el servidor es la 0.9 (${salud.cuerpo?.version})`);
+  // La 0.9 o posterior (la 0.10.0 del pago con QR o llave trae todo lo de la ronda 4A).
+  prueba(/^0\.(9|[1-9]\d)\./.test(salud.cuerpo?.version || ''), `el servidor es la 0.9 o posterior (${salud.cuerpo?.version})`);
   // ¿La cooperativa puede recibir el SOS y los datos nuevos (política 1.3 y acuerdo)?
   const sos0 = await panel('GET', 'sos?estado=abiertas');
   const conCompuerta = sos0.status === 200;
