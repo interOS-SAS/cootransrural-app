@@ -702,7 +702,7 @@ const idPorMovil = (movil) => recibidosP.find((m) => m.tipo === 'presencia' && N
 /* ------------------------------------------------------------------ */
 async function preparar() {
   const salud = await api('GET', 'salud');
-  await debe(salud.estado === 200 && /^0\.[4-9]\./.test(salud.datos?.version || ''), `servidor de la 0.4 a la 0.9 (segundo plano) por el proxy (${salud.datos?.version || salud.estado})`);
+  await debe(salud.estado === 200 && /^0\.([4-9]|[1-9]\d)\./.test(salud.datos?.version || ''), `servidor de la 0.4 a la 0.9 (segundo plano) por el proxy (${salud.datos?.version || salud.estado})`);
   await debe(existsSync(AVISOS), `el servidor escribe los avisos simulados en ${AVISOS} (PUSH_SIMULADO)`);
   marcaInicio = leerAvisos().length;
   for (const c of [PAS, CA, CB]) {

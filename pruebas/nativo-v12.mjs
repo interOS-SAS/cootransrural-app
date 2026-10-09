@@ -891,7 +891,7 @@ async function entrarNode(c) {
 // Cuentas de prueba limpias: el pasajero con su perfil y el conductor registrado y aprobado.
 async function prepararReal() {
   const salud = await apiNode('GET', 'salud');
-  ok(salud.estado === 200 && /^0\.[3-9]\./.test(salud.datos?.version || ''), `real: servidor ${salud.datos?.version || '?'} (1.2: de la 0.3 a la 0.9)`);
+  ok(salud.estado === 200 && /^0\.([3-9]|[1-9]\d)\./.test(salud.datos?.version || ''), `real: servidor ${salud.datos?.version || '?'} (1.2: de la 0.3 a la 0.9)`);
   for (const c of [PRUEBA_P, PRUEBA_C]) {
     const r = await entrarNode(c);
     if (r.datos?.token) await apiNode('DELETE', 'yo', undefined, r.datos.token);
