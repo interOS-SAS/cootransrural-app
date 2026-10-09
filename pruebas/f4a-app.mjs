@@ -561,7 +561,7 @@ async function conductorWeb() {
   await foto(p, 'b1-pedido-de-la-central');
 
   // b2) Acepta: «Llamar a {nombre}» con el celular de la asignación, sin WhatsApp ni estrellas.
-  await p.click('.a-solicitud [data-aceptar]');
+  await p.press('.a-solicitud .a-deslizador-mango', 'Enter');
   ok(Boolean(await intento(vista(p, 'hacia_origen', 15000))), 'b2) acepta → la central lo asigna');
   const llamar = await p.$('[data-llamar-llamante]');
   ok(Boolean(llamar) && (await llamar.getAttribute('href')) === `tel:${CEL_LLAMANTE}`, `b2) «Llamar» va al celular de quien llamó (${await llamar?.getAttribute('href')})`);
@@ -650,7 +650,7 @@ async function conductorWeb() {
   await p.waitForSelector('.a-solicitud.a-abierta', { timeout: 10000 });
   await p.waitForTimeout(400);
   ok(!(await p.$('.a-solicitud [data-pedido-central]')) && /pasajero verificado/.test(await texto(p, '.a-solicitud .a-sol-quien')), 'b8) un pedido normal sigue como siempre (estrellas y «pasajero verificado»)');
-  await p.click('.a-solicitud [data-aceptar]');
+  await p.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await vista(p, 'hacia_origen', 15000);
   ok(Boolean(await p.$('.a-hoja a[href*="wa.me"]')) && !(await p.$('[data-llamar-llamante]')), 'b8) y con WhatsApp y «Llamar» de siempre');
   const t8 = Date.now();

@@ -841,7 +841,7 @@ async function servicioPorPush() {
   await debe(pa.waitForSelector('.a-solicitud.a-abierta', { timeout: 20000 }), `A: toca «Nuevo servicio» → vuelve a la app y ve la oferta (${s(Date.now() - t0)})`);
   ok(telA.busAbierto(), 'A: al volver, la web reabre el bus');
   await debe(hasta(() => !dormido(CA.correo), 5000), 'central: A ya no está dormido (volvió a conectarse)');
-  await pa.click('.a-solicitud [data-aceptar]');
+  await pa.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await debe(vista(pa, 'hacia_origen', 20000), 'A: acepta → «Recoge a Ana»');
   await debe(vista(pp, 'asignado', 15000), 'pasajero: su taxi va en camino');
   await debe(hasta(() => telA.plugin.modo === 'viaje', 5000), 'A: con el viaje, la web pasa el plugin a modo viaje (cambiarModo)');
@@ -984,7 +984,7 @@ async function cancelaConLaAppMinimizada() {
   const marca = leerAvisos().length;
   await debe(pedirTaxi(pp, SEGUNDO), `pasajero: pide otro taxi (${SEGUNDO.nombre})`);
   await debe(pa.waitForSelector('.a-solicitud.a-abierta', { timeout: 20000 }), 'A (al frente): le llega la oferta por el bus');
-  await pa.click('.a-solicitud [data-aceptar]');
+  await pa.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await debe(vista(pa, 'hacia_origen', 20000), 'A: acepta');
   await debe(vista(pp, 'asignado', 15000), 'pasajero: asignado');
   await debe(hasta(() => telA.plugin.modo === 'viaje', 5000), 'A: plugin en modo viaje');

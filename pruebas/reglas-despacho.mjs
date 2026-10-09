@@ -376,7 +376,7 @@ async function conductor() {
   ofrecer('v-r4', 'Lucía');
   await p.waitForSelector('.a-solicitud.a-abierta', { timeout: 10000 });
   await p.waitForTimeout(500);
-  await p.click('.a-solicitud [data-aceptar]');
+  await p.press('.a-solicitud .a-deslizador-mango', 'Enter');
   ok(Boolean(await intento(vista(p, 'hacia_origen', 15000))), 'conductor: acepta la oferta 4 (hacia el punto, a ~100 m)');
   await p.waitForTimeout(800);
   await p.click('[data-llegue]');

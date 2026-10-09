@@ -1377,7 +1377,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         <div data-deslizar></div>
         <div class="a-sol-botones">
           <button type="button" class="a-btn a-btn-suave" data-rechazar>${icono('cerrar', { tam: 18 })} Rechazar</button>
-          <button type="button" class="a-btn a-btn-tinta" data-aceptar>${icono('check', { tam: 18 })} Aceptar</button>
+          <!-- Aceptar se hace deslizando (evita aceptar sin querer). Este botón es solo para el lector de pantalla
+               (VoiceOver/TalkBack), que no puede deslizar: no se ve. -->
+          <button type="button" class="a-solo-lector" data-aceptar>Aceptar el servicio</button>
         </div>
       </div>
     </section>`);
@@ -1396,12 +1398,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       N.prepararSonido();
       // Modo real: se nota que ya se está aceptando (la central asigna al primero).
       const boton = $(capa, '[data-aceptar]');
-      const antes = boton.innerHTML;
       if (REAL) {
         capa.classList.add('a-aceptando');
         boton.disabled = true;
         $(capa, '[data-rechazar]').disabled = true;
-        boton.innerHTML = '<span class="a-girador"></span> Aceptando…';
+        d.ponerTexto('Aceptando…');
       }
       const ok = await c.aceptar(s.viajeId);
       if (!ok) {
@@ -1411,7 +1412,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           capa.classList.remove('a-aceptando');
           boton.disabled = false;
           $(capa, '[data-rechazar]').disabled = false;
-          boton.innerHTML = antes;
+          d.reiniciar();
         }
       }
     };
@@ -1433,7 +1434,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     if (s.destino) m.ponerDestino(s.destino);
     requestAnimationFrame(() => {
       capa.classList.add('a-abierta');
-      $(capa, '[data-aceptar]').focus({ preventScroll: true });
+      $(capa, '.a-deslizador-mango').focus({ preventScroll: true });
       // El mapa queda arriba, en la franja que deja la hoja amarilla.
       const alto = capa.offsetHeight;
       const yo = e.pos || N.CENTRO;

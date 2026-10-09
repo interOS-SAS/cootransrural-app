@@ -276,7 +276,7 @@ async function recorrido() {
   await debe(ofertaAbierta(pb, 15000), 'B: le llega la oferta');
   ok(Boolean(await hasta(() => msj('pasajero', 'llega', 'con_conductores', (d) => d.viajeId === v1).length >= 2, 10000)), 'pasajero: con_conductores al llegarle a B');
   ok(Boolean(await hasta(async () => !(await cajaVisible(pp)), 5000)), 'pasajero: el aviso se va');
-  await pb.click('.a-solicitud [data-aceptar]');
+  await pb.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await debe(vista(pb, 'hacia_origen', 20000), 'B: la acepta');
   await debe(vista(pp, 'asignado', 15000), 'pasajero: asignado a B');
   const sinesAntes = msj('pasajero', 'llega', 'sin_conductores').length;
@@ -311,7 +311,7 @@ async function recorrido() {
   ok(await ofertaAbierta(pb, 15000), 'A se fue: el pedido le llega a B (no hay otro)');
   ok(!(await cajaVisible(pp)), 'pasajero: sin «sin conductores»');
   await foto(pb, 'b01-sin-otro');
-  await pb.click('.a-solicitud [data-aceptar]');
+  await pb.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await debe(vista(pp, 'asignado', 15000), 'pasajero: asignado a B');
   await cancelar(pp, '[data-cancelar]');
   await vista(pp, 'inicio', 10000).catch(() => {});

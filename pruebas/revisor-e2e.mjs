@@ -310,7 +310,7 @@ async function conductor() {
   const metros = Number((oferta.match(/(\d+) m\b/) || [])[1]);
   ok(metros >= 80 && metros <= 220, `conductor: el pasajero está a su lado (${metros} m)`);
   await foto(pc, 'c02-solicitud');
-  await pc.click('.a-solicitud [data-aceptar]');
+  await pc.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await debe(vista(pc, 'hacia_origen', 20000), 'conductor: acepta → «Recoge a Pasajero»');
   ok(await intento(pc.waitForSelector('[data-llegue].a-resaltar', { timeout: 15000 })), 'conductor: está en el punto: «Llegué» resaltado');
   await foto(pc, 'c03-hacia-origen');

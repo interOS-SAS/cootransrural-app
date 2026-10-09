@@ -964,7 +964,7 @@ async function e4OfertaTrasPush(retenerMs) {
     // Acepta antes de la primera lectura del GPS del JS: la aceptación sale sin pos y la central pone la
     // del plugin (junto al pasajero), no la de donde minimizó.
     const ta = Date.now();
-    await pa.click('.a-solicitud [data-aceptar]');
+    await pa.press('.a-solicitud .a-deslizador-mango', 'Enter');
     const acepto = await hasta(() => recibidosP.find((m) => m.tipo === 'aceptacion' && m.t >= ta), 8000, 100);
     const lejos = acepto?.datos?.pos ? Math.round(metros(acepto.datos.pos, P_NEAR)) : null;
     ok(Date.now() - t0 < retenerMs && acepto && lejos !== null && lejos < 300 && acepto.datos.etaMin > 0 && acepto.datos.etaMin < 5,
@@ -996,7 +996,7 @@ async function e5SalirEnViaje() {
   await debe(pedirTaxi(pp, DESTINO), 'pasajero: pide un taxi');
   await tocarModal(pp, 'Sí, avisarme').catch(() => {});
   await debe(pb.waitForSelector('.a-solicitud.a-abierta', { timeout: 15000 }), 'B: ve la oferta');
-  await pb.click('.a-solicitud [data-aceptar]');
+  await pb.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await debe(vista(pb, 'hacia_origen', 20000), 'B: acepta');
   await debe(hasta(() => telB.plugin.modo === 'viaje', 6000), 'B: plugin en modo viaje');
   await visibilidad(pb, true, telB);

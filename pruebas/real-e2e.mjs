@@ -480,7 +480,7 @@ async function viajeCompleto() {
   ok(oferta.includes(DESTINO.nombre), `conductor: la oferta trae el destino (${DESTINO.nombre})`);
   ok(oferta.includes('Estoy en la portería'), 'conductor: la oferta trae la nota del pasajero');
   await foto(pc, 'c10-solicitud');
-  await pc.click('.a-solicitud [data-aceptar]');
+  await pc.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await debe(vista(pc, 'hacia_origen', 20000), 'conductor: acepta → «Recoge a Ana»');
   await foto(pc, 'c11-hacia-origen');
 
@@ -639,7 +639,7 @@ async function finSinSenal() {
   await pp.click('[data-pedir]');
   await debe(vista(pp, 'buscando', 15000), 'pasajero: buscando [cierre sin señal]');
   await debe(pc.waitForSelector('.a-solicitud.a-abierta', { timeout: 20000 }), 'conductor: le llega la solicitud [cierre sin señal]');
-  await pc.click('.a-solicitud [data-aceptar]');
+  await pc.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await debe(vista(pc, 'hacia_origen', 20000), 'conductor: la acepta [cierre sin señal]');
   await debe(vista(pp, 'asignado', 15000), 'pasajero: conductor asignado [cierre sin señal]');
   await pp.waitForTimeout(800);
@@ -787,7 +787,7 @@ async function cuentaBorrada() {
   await pp.click('[data-pedir]');
   await debe(vista(pp, 'buscando', 15000), 'pasajero: buscando [cuenta borrada]');
   await debe(pc.waitForSelector('.a-solicitud.a-abierta', { timeout: 20000 }), 'conductor: le llega la solicitud [cuenta borrada]');
-  await pc.click('.a-solicitud [data-aceptar]');
+  await pc.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await debe(vista(pc, 'hacia_origen', 20000), 'conductor: la acepta [cuenta borrada]');
   await debe(vista(pp, 'asignado', 15000), 'pasajero: conductor asignado [cuenta borrada]');
   const token = await pp.evaluate(() => localStorage.getItem('taxicun.token'));
@@ -835,7 +835,7 @@ async function cancelaConductor() {
   await debe(vista(pp, 'buscando', 15000), 'pasajero: buscando el tercer taxi');
   const idAntes = await pp.evaluate(() => JSON.parse(localStorage.getItem('tc.real.viaje.pasajero') || 'null')?.estado?.viaje?.id || null);
   await debe(pc.waitForSelector('.a-solicitud.a-abierta', { timeout: 20000 }), 'conductor: le llega la tercera solicitud');
-  await pc.click('.a-solicitud [data-aceptar]');
+  await pc.press('.a-solicitud .a-deslizador-mango', 'Enter');
   await debe(vista(pc, 'hacia_origen', 20000), 'conductor: la acepta');
   await debe(vista(pp, 'asignado', 15000), 'pasajero: conductor asignado');
   await pc.click('.a-hoja [data-cancelar]');
