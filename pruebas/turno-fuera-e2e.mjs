@@ -844,6 +844,7 @@ async function f1WebPierdeElPlugin() {
   await moverSoloPlugin(POS_CERCA);
   await debe(hasta(() => telA.envios.at(-1)?.respuesta?.visible === true, 5000), 'A minimizado en turno: POST del plugin con visible:true');
   await debe(hasta(() => taxiEnMapa(pp, CA.movil), 8000), 'pasajero: ve a A (en turno, minimizado)');
+  await foto(pp, 'f1-pasajero-ve-a-minimizado');
   const viejo = separarPlugin(telA);
   telA.alFrente = true;
   const tAbre = Date.now();
@@ -939,6 +940,7 @@ async function f3VuelveATurno() {
   const env = await hasta(() => telA.envios.at(-1)?.estado && telA.envios.at(-1), 5000, 100);
   ok(env?.respuesta?.seguir === true && env.respuesta.visible === true, `A minimizado: el POST del plugin vale otra vez (${JSON.stringify(env?.respuesta)})`);
   await debe(hasta(() => taxiEnMapa(pp, CA.movil), 8000), 'pasajero: ve a A minimizado en turno');
+  await foto(pp, 'f3-pasajero-ve-a-en-turno');
   await visibilidad(pa, false, telA);
   await debe(hasta(() => enTurnoWeb(pa), 10000), 'A vuelve a la app: sigue en turno');
 }
