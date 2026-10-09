@@ -315,7 +315,7 @@ async function conductorLejos() {
   ok(env.rol === 'conductor' && env.municipio === 'Medellín' && env.cooperativa === HTML_LIMPIO && env.nombre === 'Luis Alberto Rodríguez' && env.celular === '3201234567', `rol, municipio, cooperativa (sin < > ni comillas invertidas), nombre y celular (${env.cooperativa})`);
   ok(env.autorizo === true && env.version === '1.0' && env.plataforma === 'web', 'autorizo: true, version 1.0 y plataforma web');
   ok(typeof env.distanciaKm === 'number' && env.distanciaKm > 200 && env.distanciaKm < 260, `distanciaKm: la de /api/cercania (${env.distanciaKm})`);
-  ok(Number.isInteger(env.tiempoMs) && env.tiempoMs > 0, `tiempoMs desde que se abrió el formulario (${env.tiempoMs})`);
+  ok(Number.isInteger(env.tiempoMs) && env.tiempoMs >= 3200, `tiempoMs desde que se abrió el formulario, nunca menos de 3,2 s (${env.tiempoMs})`);
   ok(env.sitioWeb === undefined && env.pos === undefined && env.empresa === undefined, 'sin el campo trampa, sin posición y sin empresa');
   const g = await texto(p, '[data-lejos-gracias]');
   ok(g.includes('& "Cía"') && (await sinXss(p)), 'lo escrito se pinta como texto (sin HTML)');
@@ -413,6 +413,7 @@ async function pasajeroLejos() {
   const env = pide('POST', 'interesados', correo)[0]?.cuerpo || {};
   ok(env.rol === 'pasajero' && env.municipio === 'Medellín' && env.cooperativa === undefined && env.celular === '3001234567' && env.autorizo === true && env.version === '1.0', `POST /api/interesados con rol pasajero, sin cooperativa (${JSON.stringify(env)})`);
   ok(soloClaves(env, CLAVES_INTERESADO) && typeof env.distanciaKm === 'number' && env.pos === undefined, 'solo los campos del esquema, con distanciaKm y sin posición');
+  ok(env.tiempoMs >= 3200, `aunque se envió enseguida, la app esperó a los 3,2 s (tiempoMs ${env.tiempoMs}): el servidor no lo toma por trampa`);
   ok(/Te avisamos al 300 123 4567 cuando TaxiCun llegue a Medellín/.test(await texto(p, '.a-modal-lejos [data-lejos-gracias]')), '«Te avisamos al 300 123 4567 cuando TaxiCun llegue a Medellín.»');
   await foto(p, 'P7-gracias-pasajero');
   await p.click('.a-modal-lejos [data-lejos-listo]');

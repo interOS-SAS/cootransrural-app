@@ -26,6 +26,10 @@ import { ES_NATIVA } from './plataforma.js';
 export const LEJOS_KM = 30;
 export const CORREO_INFO = 'info@taxicun.com';
 
+// El servidor descarta sin decirlo un envío a menos de 3 s de abrir el formulario (trampa para robots): la app nunca manda
+// antes de este tiempo (espera lo que falte).
+export const ESPERA_MINIMA_MS = 3200;
+
 // Topes del formulario (los mismos que revisa el servidor).
 export const TOPES = Object.freeze({ municipio: 60, cooperativa: 80, nombre: 80 });
 

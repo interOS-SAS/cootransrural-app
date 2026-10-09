@@ -416,7 +416,8 @@ anterior, 404): no hay aviso ni se bloquea nada.
   dígitos), sin enlaces, y la casilla con el texto de la autorización TAL CUAL (`N.lejos.AUTORIZACION`, versión 1.0).
   `POST /api/interesados { rol, nombre, celular, municipio, cooperativa?, distanciaKm?, plataforma, autorizo: true,
   version: '1.0', tiempoMs, sitioWeb? }` (esquema cerrado: `N.lejos.cuerpoInteresado`) → siempre `{ ok }`. El servidor
-  descarta sin decirlo un envío a menos de 3 s de abrir el formulario o con el campo escondido `sitioWeb` lleno. Sin la
+  descarta sin decirlo un envío a menos de 3 s de abrir el formulario o con el campo escondido `sitioWeb` lleno: la app
+  nunca manda antes de `N.lejos.ESPERA_MINIMA_MS` (3,2 s; si la persona fue más rápida, espera con el botón ocupado). Sin la
   ruta (404) o sin red: «No pudimos enviar tus datos ahora.» con info@taxicun.com. Lo escrito se pinta con
   `textContent`.
 

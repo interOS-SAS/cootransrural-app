@@ -20,7 +20,8 @@ function enlaceDemo(N, rol, clase = 'a-btn a-btn-suave a-btn-grande') {
 // inicial: { nombre, celular } de la cuenta; km: la distancia que dio /api/cercania (va como distanciaKm). Errores del
 // servidor: el texto; si la ruta no existe o no hay red, cómo escribir a info@taxicun.com.
 // El servidor toma por trampa un envío a menos de 3 s de abrir el formulario o con el campo escondido «sitioWeb» lleno:
-// se manda tiempoMs (desde que se pintó) y sitioWeb tal como quedó (una persona no lo ve ni lo llena).
+// se manda tiempoMs (desde que se pintó; si fue más rápido, la app espera a completar ESPERA_MINIMA_MS) y sitioWeb tal
+// como quedó (una persona no lo ve ni lo llena).
 export function formularioInteresado({ N, rol = 'conductor', km = null, inicial = {}, alEnviado = () => {}, alVolver = null }) {
   const conductor = rol === 'conductor';
   const T = N.lejos.TOPES;
@@ -98,6 +99,11 @@ export function formularioInteresado({ N, rol = 'conductor', km = null, inicial 
     b.disabled = true;
     b.classList.add('a-ocupado');
     try {
+      // Una persona rápida (nombre y celular ya vienen de la cuenta) puede enviar antes de los 3 s que el servidor toma
+      // por trampa y su envío se perdería sin aviso: la app espera lo que falta, con el botón ocupado.
+      const falta = N.lejos.ESPERA_MINIMA_MS - (Date.now() - abierto);
+      if (falta > 0) await new Promise((listo) => { setTimeout(listo, falta); });
+      if (!f.isConnected) return;
       await N.servidor.interesado(N.lejos.cuerpoInteresado(r.datos, { distanciaKm: km, tiempoMs: Date.now() - abierto, sitioWeb: f.sitioWeb.value }));
       alEnviado(r.datos);
     } catch (err) {
