@@ -393,6 +393,34 @@ la red que vuelve o un vistazo con la app oculta, la vuelta con el GPS del JS le
 Android en un servicio sin «Salir de turno»): `node pruebas/segundo-plano-casos-e2e.mjs
 http://localhost:8971/`, con el mismo montaje.
 
+## «Lejos de toda cooperativa» (modo real, `nucleo/lejos.js` y `disenos/a/lejos.js`, 9-oct-2026)
+
+Solo en TaxiCun en modo real (diseño A). La distancia es la de la zona de servicio de la cooperativa abierta (0
+adentro; `ZONA_SERVICIO` de la ficha) o, sin zona, la de su centro, y la del centro de las otras cooperativas que el
+servidor marca reales (`taxicun.otras`); «lejos» es a más de `N.lejos.LEJOS_KM` (30 km) de todas.
+
+- Conductor: al «Enviar registro» de «Tu taxi» por primera vez, una lectura del GPS (sin precisión, tope 15 s). Lejos →
+  «Todavía no hay una cooperativa de TaxiCun cerca de ti» con «Quiero TaxiCun en mi cooperativa» (formulario de
+  interesados), «Ver cómo funciona» (la demo: `urlApp(rol, { real: '0' })` en otra pestaña; en la app nativa, el
+  navegador de adentro) y «Sí soy de <cooperativa>, continuar» (manda el registro con lo que ya escribió). El registro
+  lleva `pos: { lat, lng, precision }` (4 decimales) y, si confirmó, `confirmoLejos: true`. Sin GPS o sin permiso:
+  sin aviso ni posición.
+- Pasajero: con la sesión lista y la bienvenida de la central, si `miPosicion` es del GPS de verdad (no el punto de la
+  ficha ni el del modo revisor) y está lejos: el diálogo «Todavía no llegamos a tu zona» con «Avísame cuando llegue»
+  (el mismo formulario, rol pasajero), «Ver cómo funciona» y «Ahora no». «Ahora no» lo guarda un día y el envío 30
+  (`localStorage` `taxicun.lejos.pasajero`).
+- Cuenta de revisión: el pasajero la reconoce por `bienvenida.revision`; el conductor, antes del tiempo real, por
+  `revision: true|false` en la respuesta de la cuenta (`auth/entrar`, `auth/llave`, `GET`/`PATCH yo`, `PUT conductor`).
+  Si el servidor no manda `revision` (anterior a la ronda), el conductor no ve el aviso ni manda la posición.
+- Formulario: municipio (60), cooperativa (80; opcional para el pasajero), nombre (80, sin dígitos ni @) y celular
+  (3 + 9 dígitos), texto plano (`N.lejos.revisarInteresado`). `POST /api/interesados { rol, municipio, cooperativa,
+  nombre, celular, empresa, pos?: { lat, lng } (2 decimales) }` → `{ ok }`; errores `datos_invalidos`,
+  `demasiados_interesados` (429). Sin la ruta (404) o sin red: «No pudimos enviar tus datos ahora.» con
+  info@taxicun.com. Lo escrito se pinta con `textContent`.
+
+Prueba: `node pruebas/lejos-app.mjs http://localhost:5221/` (servidor simulado con `page.route`: lejos, cerca, sin GPS,
+revisor, servidor anterior, ruta inexistente, «Ahora no» y la demo de verdad).
+
 ## Red
 
 Sin servidor propio. Las pestañas del mismo navegador se hablan por

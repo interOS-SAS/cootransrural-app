@@ -86,6 +86,8 @@ const TEXTOS = {
   // Servidor 0.9.0 (ronda 4A): «Avisar a la central» (SOS).
   sos_no_disponible: 'La central de tu cooperativa no recibe avisos por la app. Si estás en peligro, llama al 123.',
   demasiados_sos: 'Ya le avisaste a la central hace un momento.',
+  // «Lejos de toda cooperativa» (9-oct): el formulario de interesados.
+  demasiados_interesados: 'Ya recibimos tus datos. Si quieres cambiar algo, escríbenos a info@taxicun.com.',
 };
 
 const TEXTO_DESCONOCIDO = 'Algo falló. Intenta de nuevo.';
@@ -177,8 +179,11 @@ export async function entrar(correo, codigo) {
 
 // Servidor 0.6.0: el motivo de un conductor rechazado o retirado (conductor.motivo, o motivo_conductor) pasa
 // tal cual; la app lo pinta como texto (S30).
+// «Lejos de toda cooperativa» (9-oct): la bandera de la cuenta de revisión (revision: true|false) también pasa, para que la
+// app del conductor sepa, antes del tiempo real, que no debe mostrar el aviso (nucleo/lejos.js).
 function conMotivo(salida, r) {
   if (typeof r?.motivo_conductor === 'string') salida.motivo_conductor = r.motivo_conductor;
+  if (typeof r?.revision === 'boolean') salida.revision = r.revision;
   return salida;
 }
 
@@ -204,7 +209,12 @@ export async function entrarConLlave(id, secreto) {
 
 export const yo = () => api('GET', 'yo'); // { usuario, conductor }
 export const actualizarYo = (datos) => api('PATCH', 'yo', datos); // { nombre?, celular? } → { usuario, conductor }
-export const registrarConductor = (d) => api('PUT', 'conductor', d); // { empresa, movil, placa, vehiculo?, color? } → { usuario, conductor }
+export const registrarConductor = (d) => api('PUT', 'conductor', d); // { empresa, movil, placa, vehiculo?, color?, pos?, confirmoLejos? } → { usuario, conductor }
+
+// «Lejos de toda cooperativa» (9-oct, nucleo/lejos.js): «Quiero TaxiCun en mi cooperativa» / «Avísame cuando llegue».
+// { rol, municipio, cooperativa, nombre, celular, empresa?, pos? } → { ok }. Errores: datos_invalidos, demasiados_interesados
+// (429). Con un servidor anterior, 404 (rutaNoDisponible): la app ofrece escribir a info@taxicun.com.
+export const interesado = (d) => api('POST', 'interesados', d);
 
 /* ---------------- Ronda 4A: SOS y avisos de la cooperativa (servidor 0.9.0) ----------------
  * Contrato en la cabecera de nucleo/central.js. Con un servidor anterior estas rutas responden 404 (no_existe o

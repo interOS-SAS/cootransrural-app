@@ -27,6 +27,7 @@ import { ofrecerAvisos, montarBloqueo } from './nativa.js';
 import { avisarPolitica, politicaPendiente } from './politica.js';
 import { seguirSos, montarAvisosCentral } from './central.js';
 import { firmaMetodos, hojaPagoQR } from './pago-qr.js';
+import { avisoPasajero } from './lejos.js';
 import { abrirMisViajes, abrirProgramados, abrirTarifas, abrirPromociones, abrirAjustes, abrirAyuda, abrirAvisos, abrirMiCuenta } from './pasajero-secciones.js';
 
 const REAL = EM.MODO_REAL;
@@ -2128,6 +2129,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   // al ingreso con correo. borrarTodo (eliminar cuenta): también historial y lugares.
   function terminarSesionLocal({ borrarTodo = false } = {}) {
     conSesion = false;
+    bienvenidaLejos = null;
     clearTimeout(reintentoYo);
     avisoTocado = null;
     bloqueo?.quitar();
@@ -2156,6 +2158,32 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     });
     // Respaldo por si algún cambio de estado no llega como evento (solo con la app a la vista).
     N.relojVisible(pintarConexion, 3000);
+  }
+
+  /* ---------------- «Lejos de toda cooperativa» (9-oct, nucleo/lejos.js) ----------------
+   * Con la sesión lista y la bienvenida de la central (que dice si es la cuenta de revisión), si el GPS de verdad está a
+   * más de 30 km de la zona (o del centro) de toda cooperativa real: «Todavía no llegamos a tu zona» con «Avísame
+   * cuando llegue» (formulario de interesados, rol pasajero) y «Ver cómo funciona». Una vez: «Ahora no» lo guarda un
+   * día y «Avísame» 30. Sin GPS (o el punto de la ficha por falta de permiso): nada. Revisión: nunca. */
+  let bienvenidaLejos = null; // { revision } de la última bienvenida de esta sesión
+  let lejosAbierto = false;
+  function cooperativasReales() {
+    const actual = taxicun?.cooperativa || { id: N.ID_EMPRESA, nombre: EM.NOMBRE, pueblo: EM.PUEBLO, centro: N.CENTRO };
+    return N.lejos.cooperativasReales({ actual, zona: N.ZONA_SERVICIO, centro: N.CENTRO, otras: taxicun?.otras || [] });
+  }
+  function revisarLejos() {
+    if (!REAL || !EM.EN_TAXICUN || !conSesion || !p || lejosAbierto || !bienvenidaLejos || bienvenidaLejos.revision || p.revision) return;
+    const pos = p.estado.miPosicion;
+    if (!pos?.real || pos.revision || p.estado.fase !== 'inicio') return;
+    if (app.querySelector('.a-modal-capa, .a-registro, .a-bienvenida, .a-buscador, .a-panel, .a-menu-capa')) return;
+    if (!N.lejos.avisoPasajeroPendiente() || !N.lejos.estaLejos(pos, cooperativasReales())) return;
+    lejosAbierto = true;
+    avisoPasajero(app, { N, pos, inicial: N.perfil.pasajero() || {} })
+      .then((v) => N.lejos.posponerAvisoPasajero({ enviado: v === 'enviado' }))
+      .catch(() => {})
+      .finally(() => {
+        lejosAbierto = false;
+      });
   }
 
   /* ---------------- arranque ---------------- */
@@ -2261,6 +2289,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       });
       if (REAL) {
         escucharBus();
+        p.on('bienvenida', (d) => {
+          bienvenidaLejos = { revision: d?.revision === true };
+          setTimeout(revisarLejos, 600);
+        });
+        p.on('cambio', () => revisarLejos());
         // Ronda 4A: los avisos de la cooperativa como tarjeta (sin tapar el ingreso ni otro diálogo) y en la campana.
         montarAvisosCentral(app, {
           N,

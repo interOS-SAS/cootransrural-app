@@ -779,3 +779,23 @@ html[data-modo="real"] .a-pasajero > .a-modal-capa { z-index: 110; }
 .a-aviso-central-item .a-aviso-punto { background: var(--a-tinta); }
 .a-aviso-nuevo .a-aviso-punto { background: var(--a-ambar-2); }
 .a-aviso-nuevo-chip { align-self: flex-start; font: 800 10.5px var(--a-fb); font-style: normal; text-transform: uppercase; letter-spacing: .06em; padding: 2px 8px; border-radius: 999px; background: var(--a-ambar); color: var(--a-tinta); }
+
+/* ---------------- «Lejos de toda cooperativa» (9-oct, disenos/a/lejos.js) ---------------- */
+.a-lejos-ico { width: 64px; height: 64px; border-radius: 22px; display: grid; place-items: center; background: var(--a-ambar-3); color: var(--a-tinta); }
+.a-lejos-ico-ok { background: var(--a-verde-claro); color: var(--a-verde-txt); }
+.a-lejos .a-btn-grande, .a-lejos-acciones .a-btn-grande { width: 100%; }
+.a-lejos-acciones { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.a-lejos-acciones .a-btn-texto { align-self: center; min-height: 44px; }
+.a-lejos-gracias { display: flex; flex-direction: column; gap: 10px; }
+.a-lejos-gracias h1 { font: 800 25px/1.15 var(--a-ft); margin: 0; letter-spacing: -.02em; }
+.a-lejos-form { display: flex; flex-direction: column; gap: 14px; }
+.a-modal-lejos .a-lejos-form { padding: 0; }
+.a-lejos-form h1 { font: 800 25px/1.15 var(--a-ft); margin: 0; letter-spacing: -.02em; }
+.a-lejos-form .a-campo small { font-weight: 600; color: var(--a-texto-2); }
+.a-lejos-form .a-btn-texto { align-self: center; }
+.a-lejos-correo { margin: 0; font-size: 14px; line-height: 1.45; color: var(--a-texto-2); }
+.a-lejos-correo a { color: inherit; font-weight: 700; }
+.a-modal-lejos .a-modal-ico .a-lejos-ico, .a-modal-lejos .a-modal-ico > svg { margin: 0; }
+.a-modal-lejos .a-modal-ico { justify-content: flex-start; }
+.a-modal-lejos [hidden] { display: none !important; }
+.a-lejos-form .a-ingreso-acciones { display: flex; justify-content: center; }

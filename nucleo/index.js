@@ -30,3 +30,5 @@ export * as reglas from './reglas.js';
 export * from './central.js';
 // Versión vigente de la política de privacidad (la escribe herramientas/generar-empresas.py): la tarjeta de las apps.
 export { POLITICA } from './politica.js';
+// «Lejos de toda cooperativa» (9-oct): distancia a las cooperativas reales, formulario de interesados y la demostración.
+export * as lejos from './lejos.js';

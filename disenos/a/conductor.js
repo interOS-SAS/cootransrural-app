@@ -24,6 +24,7 @@ import { ofrecerAvisos, ofrecerBiometria, ingresoBiometria, montarBloqueo, ofrec
 import { avisarPolitica, marcarPoliticaVista, politicaPendiente } from './politica.js';
 import { seguirSos, montarAvisosCentral } from './central.js';
 import { abrirComoMePagan } from './pago-qr.js';
+import { avisoConductor } from './lejos.js';
 
 // Foto de portada del ingreso (generada para la web, sin marcas: ver img/web/creditos.json).
 const FOTO_CONDUCTOR = new URL('./img/conductor.jpg', import.meta.url).href;
@@ -133,6 +134,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     // Modo real: cuenta del servidor ({usuario, conductor} de GET /api/yo), pantalla
     // de cuenta abierta ('ingreso' | 'datos' | 'taxi' | 'revision' | 'app') y banderas.
     cuenta: null,
+    // «Lejos de toda cooperativa» (9-oct): revision de la cuenta (true | false | null si el servidor no la manda) y lo
+    // que se vio al registrar el taxi ({ correo, pos, km, confirmado }; pos null = sin GPS: no se bloquea).
+    revisionCuenta: null,
+    lejos: null,
     pantalla: null,
     capa: null,
     relojReenvio: null,
@@ -658,6 +663,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
 
   // Decide a dónde va el conductor según su cuenta ({usuario, conductor} del servidor).
   function seguirConCuenta(r, { recienEntra = false } = {}) {
+    anotarRevision(r, { recienEntra });
     ui.cuenta = { usuario: r?.usuario || ui.cuenta?.usuario || {}, conductor: r?.conductor ?? null, motivo: motivoDe(r) };
     // Si en este celular estaban los datos de otra cuenta (historial, ganancias, el servicio
     // guardado), se borran antes de seguir.
@@ -726,6 +732,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       try {
         const cambio = nombre !== u.nombre || celular !== u.celular;
         const r = cambio ? await servidor.actualizarYo({ nombre, celular }) : null;
+        if (r) anotarRevision(r);
         ui.cuenta = {
           usuario: r?.usuario || { ...u, nombre, celular },
           conductor: r && 'conductor' in r ? r.conductor : ui.cuenta?.conductor ?? null,
@@ -749,21 +756,25 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
 
   // Paso «Tu taxi»: móvil, placa, vehículo y color (PUT /api/conductor). Queda pendiente
   // hasta que la cooperativa o interOS lo aprueben.
-  function pasoTaxi({ corrigiendo = false } = {}) {
+  // previo: lo que ya escribió (vuelve del aviso «lejos» con «Sí soy de …, continuar»); enviar: lo manda de una vez.
+  function pasoTaxi({ corrigiendo = false, previo = null, enviar = false } = {}) {
     const dc = ui.cuenta?.conductor || {};
-    const vehiculo = dc.vehiculo || N.EMPRESA?.vehiculo || '';
-    const color = dc.color || N.EMPRESA?.colorTaxi || 'Amarillo';
+    // La primera vez (sin taxi registrado) es «registrarse»: ahí va el aviso «lejos» y la posición del registro.
+    const primera = !corrigiendo && !ui.cuenta?.conductor;
+    const base = previo || dc;
+    const vehiculo = base.vehiculo || N.EMPRESA?.vehiculo || '';
+    const color = base.color || N.EMPRESA?.colorTaxi || 'Amarillo';
     const caja = ponerPaso('taxi', 'Tu taxi', `<form class="a-ingreso-form" novalidate>
         <h1>Tu taxi</h1>
         <p class="a-sub">${esc(`Con estos datos ${EM.NOMBRE} revisa y aprueba tu registro.`)}</p>
         <div class="a-fila-2 a-fila-taxi">
           <label class="a-campo">
             <span>Número de móvil</span>
-            <span class="a-campo-tel"><span class="a-prefijo">MÓVIL</span><input name="movil" inputmode="numeric" maxlength="3" placeholder="001" value="${esc(dc.movil || '')}" autocomplete="off" required></span>
+            <span class="a-campo-tel"><span class="a-prefijo">MÓVIL</span><input name="movil" inputmode="numeric" maxlength="3" placeholder="001" value="${esc(base.movil || '')}" autocomplete="off" required></span>
           </label>
           <label class="a-campo">
             <span>Placa</span>
-            <input name="placa" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="7" placeholder="ABC123" value="${esc(dc.placa || '')}" required>
+            <input name="placa" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="7" placeholder="ABC123" value="${esc(base.placa || '')}" required>
           </label>
         </div>
         <div class="a-fila-2">
@@ -818,8 +829,31 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       const b = $(f, '[type="submit"]');
       if (b.disabled) return;
       ocupar(b, true);
+      // «Lejos de toda cooperativa»: la primera vez, con el servidor que lo sabe (revision: false), se mira el GPS.
+      if (primera && ui.revisionCuenta === false && !lejosVisto()) {
+        const texto = $(b, 'span');
+        const antes = texto?.textContent;
+        if (texto) texto.textContent = 'Revisando tu ubicación…';
+        const pos = await posicionDelRegistro();
+        if (!f.isConnected) return;
+        if (texto) texto.textContent = antes;
+        const cercana = pos ? N.lejos.masCercana(pos, cooperativasReales()) : null;
+        ui.lejos = { correo: correoCuenta(), pos, km: cercana ? cercana.km : null, confirmado: false };
+        if (cercana && cercana.km > N.lejos.LEJOS_KM) {
+          ocupar(b, false);
+          pasoLejos(datos, cercana);
+          return;
+        }
+      }
+      // La posición del registro (el servidor guarda a qué distancia se hizo) y si dijo que sí es de la cooperativa.
+      const extra = {};
+      if (primera && lejosVisto()) {
+        const pos = N.lejos.posParaServidor(ui.lejos.pos, 4);
+        if (pos) extra.pos = pos;
+        if (ui.lejos.confirmado) extra.confirmoLejos = true;
+      }
       try {
-        const r = await servidor.registrarConductor(datos);
+        const r = await servidor.registrarConductor({ ...datos, ...extra });
         seguirConCuenta(r?.usuario || r?.conductor ? r : { usuario: ui.cuenta?.usuario, conductor: { ...dc, ...datos, estado: 'pendiente' } });
       } catch (err) {
         ocupar(b, false);
@@ -834,7 +868,63 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         if (err?.codigo === 'placa_invalida' || err?.codigo === 'placa_registrada') f.placa.classList.add('a-invalido');
       }
     });
-    enfocar(dc.movil ? f.placa : f.movil);
+    if (enviar) {
+      f.requestSubmit();
+      return;
+    }
+    enfocar(base.movil ? f.placa : f.movil);
+  }
+
+  /* ---------------- «Lejos de toda cooperativa» (9-oct, nucleo/lejos.js) ----------------
+   * Al registrar el taxi por primera vez, a más de 30 km de la zona (o del centro) de toda cooperativa real:
+   * «Todavía no hay una cooperativa de TaxiCun cerca de ti» con «Quiero TaxiCun en mi cooperativa», «Ver cómo funciona»
+   * y «Sí soy de …, continuar» (el registro sigue con la posición y confirmoLejos). Sin GPS o sin permiso: sigue normal
+   * (sin aviso ni posición). La cuenta de revisión (revision: true) y un servidor que no manda revision: sin aviso. */
+  const correoCuenta = () => String(ui.cuenta?.usuario?.correo || '').toLowerCase();
+  const lejosVisto = () => Boolean(ui.lejos && ui.lejos.correo === correoCuenta());
+
+  function anotarRevision(r, { recienEntra = false } = {}) {
+    const v = N.lejos.revisionDe(r);
+    if (v !== null) ui.revisionCuenta = v;
+    else if (recienEntra) ui.revisionCuenta = null; // otra cuenta, otro servidor: no se arrastra la anterior
+  }
+
+  // Una lectura del GPS para el registro (sin pedir precisión). null si no hay GPS, permiso o señal: no se bloquea.
+  async function posicionDelRegistro() {
+    let reloj = null;
+    try {
+      const p = await Promise.race([
+        N.posicion({ precisa: false, espera: 8000, edad: 5 * 60 * 1000 }),
+        // El diálogo del permiso no cuenta en la espera del GPS: un tope para no quedarse esperando.
+        new Promise((_, no) => { reloj = setTimeout(() => no(new Error('tiempo')), 15000); }),
+      ]);
+      return Number.isFinite(p?.lat) && Number.isFinite(p?.lng) ? { lat: p.lat, lng: p.lng, precision: p.precision } : null;
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(reloj);
+    }
+  }
+
+  // Las cooperativas que atienden de verdad: esta (con su zona, si la tiene) y las otras reales del índice.
+  function cooperativasReales() {
+    const actual = taxicun?.cooperativa || { id: N.ID_EMPRESA, nombre: EM.NOMBRE, pueblo: EM.PUEBLO, centro: N.CENTRO };
+    return N.lejos.cooperativasReales({ actual, zona: N.ZONA_SERVICIO, centro: N.CENTRO, otras: taxicun?.otras || [] });
+  }
+
+  function pasoLejos(datos, cercana) {
+    const caja = ponerPaso('lejos', 'Todavía no hay una cooperativa de TaxiCun cerca de ti', '');
+    avisoConductor(caja, {
+      N,
+      cercana,
+      pos: ui.lejos?.pos || null,
+      inicial: ui.cuenta?.usuario || {},
+      alContinuar: () => {
+        if (ui.lejos) ui.lejos.confirmado = true;
+        pasoTaxi({ previo: datos, enviar: true });
+      },
+      alSalir: cerrarSesion,
+    });
   }
 
   // «Tu registro está en revisión» (pendiente), suspendido, rechazado o retirado (servidor 0.6.0,
@@ -1094,6 +1184,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     let r = null;
     try { r = await servidor.yo(); } catch (err) { if (err?.codigo === 'sin_sesion') return; }
     if (ui.saliendo || c || ui.pantalla === 'ingreso') return;
+    if (r) anotarRevision(r);
     if (r) ui.cuenta = { usuario: r.usuario || ui.cuenta?.usuario || {}, conductor: r.conductor ?? null, motivo: motivoDe(r) };
     const dc = ui.cuenta?.conductor;
     if (dc && dc.estado === 'aprobado') ui.cuenta.conductor = { ...dc, estado: 'pendiente' };
