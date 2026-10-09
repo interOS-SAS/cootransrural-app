@@ -2130,6 +2130,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   function terminarSesionLocal({ borrarTodo = false } = {}) {
     conSesion = false;
     bienvenidaLejos = null;
+    lejosSesion = { estado: 'nada', intento: 0, r: null };
     clearTimeout(reintentoYo);
     avisoTocado = null;
     bloqueo?.quitar();
@@ -2160,30 +2161,53 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     N.relojVisible(pintarConexion, 3000);
   }
 
-  /* ---------------- «Lejos de toda cooperativa» (9-oct, nucleo/lejos.js) ----------------
-   * Con la sesión lista y la bienvenida de la central (que dice si es la cuenta de revisión), si el GPS de verdad está a
-   * más de 30 km de la zona (o del centro) de toda cooperativa real: «Todavía no llegamos a tu zona» con «Avísame
-   * cuando llegue» (formulario de interesados, rol pasajero) y «Ver cómo funciona». Una vez: «Ahora no» lo guarda un
-   * día y «Avísame» 30. Sin GPS (o el punto de la ficha por falta de permiso): nada. Revisión: nunca. */
+  /* ---------------- «Lejos de toda cooperativa» (9-oct, nucleo/lejos.js; servidor 0.11.0, CONTRATO §13) ----------------
+   * Con la sesión lista y la bienvenida de la central, con el GPS de verdad (no el punto de la ficha por falta de
+   * permiso), la app le pregunta al servidor (POST /api/cercania, una vez por sesión) si está a más de 30 km de la zona
+   * (o del centro) de toda cooperativa real. Si sí: «Todavía no llegamos a tu zona» con «Avísame cuando llegue»
+   * (formulario de interesados, rol pasajero) y «Ver cómo funciona». «Ahora no» lo guarda un día y «Avísame» 30. Sin GPS,
+   * sin red o con un error de la ruta (un servidor anterior): nada. La cuenta de revisión (bienvenida.revision, o el
+   * servidor responde exento, igual que a las cuentas de prueba): nunca. */
   let bienvenidaLejos = null; // { revision } de la última bienvenida de esta sesión
-  let lejosAbierto = false;
-  function cooperativasReales() {
-    const actual = taxicun?.cooperativa || { id: N.ID_EMPRESA, nombre: EM.NOMBRE, pueblo: EM.PUEBLO, centro: N.CENTRO };
-    return N.lejos.cooperativasReales({ actual, zona: N.ZONA_SERVICIO, centro: N.CENTRO, otras: taxicun?.otras || [] });
-  }
+  // estado: 'nada' (sin preguntar) | 'preguntando' | 'listo' (respuesta en r) | 'visto' (ya se mostró o no hace falta)
+  let lejosSesion = { estado: 'nada', intento: 0, r: null };
+  const REINTENTO_LEJOS_MS = 60_000;
   function revisarLejos() {
-    if (!REAL || !EM.EN_TAXICUN || !conSesion || !p || lejosAbierto || !bienvenidaLejos || bienvenidaLejos.revision || p.revision) return;
+    if (!REAL || !EM.EN_TAXICUN || !conSesion || !p || !bienvenidaLejos || bienvenidaLejos.revision || p.revision) return;
+    if (lejosSesion.estado === 'visto' || lejosSesion.estado === 'preguntando') return;
     const pos = p.estado.miPosicion;
     if (!pos?.real || pos.revision || p.estado.fase !== 'inicio') return;
+    if (!N.lejos.avisoPasajeroPendiente()) {
+      lejosSesion.estado = 'visto';
+      return;
+    }
+    if (lejosSesion.estado === 'nada') {
+      const ubicacion = N.lejos.ubicacionParaServidor(pos);
+      if (!ubicacion || Date.now() - lejosSesion.intento < REINTENTO_LEJOS_MS) return;
+      lejosSesion.estado = 'preguntando';
+      lejosSesion.intento = Date.now();
+      const sesion = lejosSesion;
+      N.servidor.cercania(ubicacion)
+        .then((r) => N.lejos.respuestaCercania(r))
+        .catch(() => null)
+        .then((r) => {
+          if (lejosSesion !== sesion) return; // se cerró la sesión mientras tanto
+          if (!r) {
+            lejosSesion.estado = 'nada'; // sin red o ruta que falla: otra vez en un minuto (con el próximo cambio)
+            return;
+          }
+          lejosSesion.r = r;
+          lejosSesion.estado = r.lejos && !r.exento ? 'listo' : 'visto';
+          revisarLejos();
+        });
+      return;
+    }
+    // 'listo': el servidor dijo «lejos»; se muestra cuando no hay otra capa encima.
     if (app.querySelector('.a-modal-capa, .a-registro, .a-bienvenida, .a-buscador, .a-panel, .a-menu-capa')) return;
-    if (!N.lejos.avisoPasajeroPendiente() || !N.lejos.estaLejos(pos, cooperativasReales())) return;
-    lejosAbierto = true;
-    avisoPasajero(app, { N, pos, inicial: N.perfil.pasajero() || {} })
+    lejosSesion.estado = 'visto';
+    avisoPasajero(app, { N, km: lejosSesion.r?.km ?? null, inicial: N.perfil.pasajero() || {} })
       .then((v) => N.lejos.posponerAvisoPasajero({ enviado: v === 'enviado' }))
-      .catch(() => {})
-      .finally(() => {
-        lejosAbierto = false;
-      });
+      .catch(() => {});
   }
 
   /* ---------------- arranque ---------------- */

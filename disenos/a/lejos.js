@@ -2,7 +2,8 @@
 //  - avisoConductor(caja, …): «Todavía no hay una cooperativa de TaxiCun cerca de ti» con sus tres opciones (va en la
 //    capa de cuenta del conductor, como un paso más del registro).
 //  - avisoPasajero(app, …): «Todavía no llegamos a tu zona» con «Avísame cuando llegue» y «Ver cómo funciona» (diálogo).
-//  - formularioInteresado(…): municipio, cooperativa, nombre y celular → POST /api/interesados (rol conductor o pasajero).
+//  - formularioInteresado(…): municipio, cooperativa, nombre, celular y la casilla de la autorización → POST
+//    /api/interesados (rol conductor o pasajero; contrato en nucleo/lejos.js).
 // Todo lo que escribió la persona o vino del servidor se pinta con textContent (nunca como HTML).
 import { el, esc, icono, celularTexto, modal } from './ui.js';
 import * as EM from './empresa.js';
@@ -16,11 +17,14 @@ function enlaceDemo(N, rol, clase = 'a-btn a-btn-suave a-btn-grande') {
 }
 
 // Formulario corto de interesados. Devuelve el <form> listo; alEnviado(datos) al guardar; alVolver() con «Volver».
-// inicial: { nombre, celular } de la cuenta. Errores del servidor: el texto; si la ruta no existe o no hay red, cómo
-// escribir a info@taxicun.com.
-export function formularioInteresado({ N, rol = 'conductor', pos = null, inicial = {}, alEnviado = () => {}, alVolver = null }) {
+// inicial: { nombre, celular } de la cuenta; km: la distancia que dio /api/cercania (va como distanciaKm). Errores del
+// servidor: el texto; si la ruta no existe o no hay red, cómo escribir a info@taxicun.com.
+// El servidor toma por trampa un envío a menos de 3 s de abrir el formulario o con el campo escondido «sitioWeb» lleno:
+// se manda tiempoMs (desde que se pintó) y sitioWeb tal como quedó (una persona no lo ve ni lo llena).
+export function formularioInteresado({ N, rol = 'conductor', km = null, inicial = {}, alEnviado = () => {}, alVolver = null }) {
   const conductor = rol === 'conductor';
   const T = N.lejos.TOPES;
+  const abierto = Date.now();
   const f = el(`<form class="a-ingreso-form a-lejos-form" novalidate data-lejos-form="${conductor ? 'conductor' : 'pasajero'}">
       <h1 tabindex="-1">${conductor ? 'Quiero TaxiCun en mi cooperativa' : 'Avísame cuando llegue'}</h1>
       <p class="a-sub">${conductor
@@ -42,13 +46,20 @@ export function formularioInteresado({ N, rol = 'conductor', pos = null, inicial
         <span>Celular</span>
         <span class="a-campo-tel"><span class="a-prefijo">+57</span><input name="celular" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="300 123 4567" maxlength="12" required></span>
       </label>
+      <label class="a-check a-lejos-autorizo">
+        <input type="checkbox" name="autorizo" required>
+        <span class="a-check-caja" aria-hidden="true">${icono('check', { tam: 16, grosor: 3 })}</span>
+        <span data-autorizacion></span>
+      </label>
+      <label class="a-solo-lector" aria-hidden="true">Sitio web (déjalo vacío)<input name="sitioWeb" tabindex="-1" autocomplete="off"></label>
       <p class="a-error" data-error role="alert"></p>
       <p class="a-lejos-correo" data-correo hidden></p>
       <button type="submit" class="a-btn a-btn-primario a-btn-grande">${icono('mensaje', { tam: 20 })}<span>Enviar</span></button>
       ${alVolver ? '<div class="a-ingreso-acciones"><button type="button" class="a-btn-texto" data-volver>Volver</button></div>' : ''}
       <p class="a-nota-prueba">${icono('candado', { tam: 16 })}<span>Solo los usa el equipo de TaxiCun para contactarte. No se publican.</span></p>
     </form>`);
-  // Lo de la cuenta se pone como valor (no en el HTML).
+  // El texto de la autorización, TAL CUAL (versión en nucleo/lejos.js), y lo de la cuenta como valor (no en el HTML).
+  f.querySelector('[data-autorizacion]').textContent = N.lejos.AUTORIZACION.texto;
   f.nombre.value = String(inicial.nombre || '').slice(0, T.nombre);
   f.celular.value = celularTexto(String(inicial.celular || '').replace(/\D/g, '').slice(0, 10)) || '';
   const error = f.querySelector('[data-error]');
@@ -75,7 +86,7 @@ export function formularioInteresado({ N, rol = 'conductor', pos = null, inicial
   };
   f.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const r = N.lejos.revisarInteresado({ rol, municipio: f.municipio.value, cooperativa: f.cooperativa.value, nombre: f.nombre.value, celular: f.celular.value });
+    const r = N.lejos.revisarInteresado({ rol, municipio: f.municipio.value, cooperativa: f.cooperativa.value, nombre: f.nombre.value, celular: f.celular.value, autorizo: f.autorizo.checked });
     if (r.error) {
       error.textContent = r.error.texto;
       f[r.error.campo]?.classList.add('a-invalido');
@@ -86,9 +97,8 @@ export function formularioInteresado({ N, rol = 'conductor', pos = null, inicial
     if (b.disabled) return;
     b.disabled = true;
     b.classList.add('a-ocupado');
-    const p = N.lejos.posParaServidor(pos, 2);
     try {
-      await N.servidor.interesado({ ...r.datos, empresa: N.ID_EMPRESA, ...(p ? { pos: p } : {}) });
+      await N.servidor.interesado(N.lejos.cuerpoInteresado(r.datos, { distanciaKm: km, tiempoMs: Date.now() - abierto, sitioWeb: f.sitioWeb.value }));
       alEnviado(r.datos);
     } catch (err) {
       b.disabled = false;
@@ -118,8 +128,9 @@ function gracias(N, rol, datos) {
 }
 
 // Conductor: el aviso dentro de la capa de cuenta. caja: el contenedor del paso (ponerPaso).
-// cercana: { coop, km } (la cooperativa real más cercana). alContinuar(): «Sí soy de …, continuar».
-export function avisoConductor(caja, { N, cercana, pos, inicial = {}, alContinuar, alSalir }) {
+// cercana: { km, lugar } (lo que dijo /api/cercania: a cuántos km está la cooperativa real más cercana y dónde queda).
+// alContinuar(): «Sí soy de …, continuar».
+export function avisoConductor(caja, { N, cercana, inicial = {}, alContinuar, alSalir }) {
   const nombre = EM.NOMBRE;
   const pintarAviso = () => {
     caja.replaceChildren(el(`<div class="a-ingreso-form a-lejos" data-lejos="conductor">
@@ -131,8 +142,8 @@ export function avisoConductor(caja, { N, cercana, pos, inicial = {}, alContinua
         <button type="button" class="a-btn a-btn-tinta a-btn-grande" data-lejos-continuar>${icono('adelante', { tam: 20 })}<span>${esc(`Sí soy de ${nombre}, continuar`)}</span></button>
         <div class="a-ingreso-acciones"><button type="button" class="a-btn-texto" data-salir>Cerrar sesión</button></div>
       </div>`));
-    const donde = cercana?.coop ? `${cercana.coop.pueblo || cercana.coop.nombre}` : '';
-    caja.querySelector('[data-lejos-texto]').textContent = donde
+    const donde = cercana?.lugar || '';
+    caja.querySelector('[data-lejos-texto]').textContent = donde && Number.isFinite(cercana?.km)
       ? `Estás a unos ${N.lejos.kmTexto(cercana.km)} de ${donde}, donde está la cooperativa de TaxiCun más cercana. Si tu cooperativa quiere TaxiCun, cuéntanos.`
       : 'Por ahora TaxiCun funciona con pocas cooperativas de Cundinamarca. Si tu cooperativa quiere TaxiCun, cuéntanos.';
     caja.querySelector('[data-lejos-quiero]').addEventListener('click', pintarFormulario);
@@ -142,7 +153,7 @@ export function avisoConductor(caja, { N, cercana, pos, inicial = {}, alContinua
   };
   const pintarFormulario = () => {
     const f = formularioInteresado({
-      N, rol: 'conductor', pos, inicial,
+      N, rol: 'conductor', km: cercana?.km ?? null, inicial,
       alVolver: pintarAviso,
       alEnviado: (datos) => {
         const g = gracias(N, 'conductor', datos);
@@ -164,7 +175,8 @@ export function avisoConductor(caja, { N, cercana, pos, inicial = {}, alContinua
 }
 
 // Pasajero: el diálogo. Devuelve la promesa del modal (se resuelve al cerrarlo: 'enviado' | null).
-export function avisoPasajero(app, { N, pos, inicial = {} }) {
+// km: lo que dijo /api/cercania (va con el interesado).
+export function avisoPasajero(app, { N, km = null, inicial = {} }) {
   let enviado = false;
   return modal(app, {
     titulo: 'Todavía no llegamos a tu zona',
@@ -192,7 +204,7 @@ export function avisoPasajero(app, { N, pos, inicial = {} }) {
       const pintarFormulario = () => {
         encabezado(false);
         const f = formularioInteresado({
-          N, rol: 'pasajero', pos, inicial,
+          N, rol: 'pasajero', km, inicial,
           alVolver: () => {
             encabezado(true);
             pintarOpciones();

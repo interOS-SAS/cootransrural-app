@@ -395,31 +395,34 @@ http://localhost:8971/`, con el mismo montaje.
 
 ## «Lejos de toda cooperativa» (modo real, `nucleo/lejos.js` y `disenos/a/lejos.js`, 9-oct-2026)
 
-Solo en TaxiCun en modo real (diseño A). La distancia es la de la zona de servicio de la cooperativa abierta (0
-adentro; `ZONA_SERVICIO` de la ficha) o, sin zona, la de su centro, y la del centro de las otras cooperativas que el
-servidor marca reales (`taxicun.otras`); «lejos» es a más de `N.lejos.LEJOS_KM` (30 km) de todas.
+Solo en TaxiCun en modo real (diseño A). Quien decide es el servidor 0.11.0 (`docs/CONTRATO.md` §13):
+`POST /api/cercania { lat, lng, precisionM? }` (con el token) → `{ lejos, km, umbralKm, exento, cooperativa }`, «lejos» a
+más de 30 km de la zona (o del centro) de toda cooperativa real. La cuenta de revisión de las tiendas y las de prueba
+responden `exento: true` (nunca hay aviso). Sin GPS, sin permiso, sin red o con un error de la ruta (un servidor
+anterior, 404): no hay aviso ni se bloquea nada.
 
-- Conductor: al «Enviar registro» de «Tu taxi» por primera vez, una lectura del GPS (sin precisión, tope 15 s). Lejos →
-  «Todavía no hay una cooperativa de TaxiCun cerca de ti» con «Quiero TaxiCun en mi cooperativa» (formulario de
-  interesados), «Ver cómo funciona» (la demo: `urlApp(rol, { real: '0' })` en otra pestaña; en la app nativa, el
-  navegador de adentro) y «Sí soy de <cooperativa>, continuar» (manda el registro con lo que ya escribió). El registro
-  lleva `pos: { lat, lng, precision }` (4 decimales) y, si confirmó, `confirmoLejos: true`. Sin GPS o sin permiso:
-  sin aviso ni posición.
-- Pasajero: con la sesión lista y la bienvenida de la central, si `miPosicion` es del GPS de verdad (no el punto de la
-  ficha ni el del modo revisor) y está lejos: el diálogo «Todavía no llegamos a tu zona» con «Avísame cuando llegue»
-  (el mismo formulario, rol pasajero), «Ver cómo funciona» y «Ahora no». «Ahora no» lo guarda un día y el envío 30
-  (`localStorage` `taxicun.lejos.pasajero`).
-- Cuenta de revisión: el pasajero la reconoce por `bienvenida.revision`; el conductor, antes del tiempo real, por
-  `revision: true|false` en la respuesta de la cuenta (`auth/entrar`, `auth/llave`, `GET`/`PATCH yo`, `PUT conductor`).
-  Si el servidor no manda `revision` (anterior a la ronda), el conductor no ve el aviso ni manda la posición.
-- Formulario: municipio (60), cooperativa (80; opcional para el pasajero), nombre (80, sin dígitos ni @) y celular
-  (3 + 9 dígitos), texto plano (`N.lejos.revisarInteresado`). `POST /api/interesados { rol, municipio, cooperativa,
-  nombre, celular, empresa, pos?: { lat, lng } (2 decimales) }` → `{ ok }`; errores `datos_invalidos`,
-  `demasiados_interesados` (429). Sin la ruta (404) o sin red: «No pudimos enviar tus datos ahora.» con
-  info@taxicun.com. Lo escrito se pinta con `textContent`.
+- Conductor: al «Enviar registro» de «Tu taxi» por primera vez, una lectura del GPS (sin precisión, tope 15 s) y
+  `/api/cercania`. Lejos → «Todavía no hay una cooperativa de TaxiCun cerca de ti» (con los km y el municipio de la
+  cooperativa más cercana) con «Quiero TaxiCun en mi cooperativa» (formulario de interesados), «Ver cómo funciona» (la
+  demo: `urlApp(rol, { real: '0' })` en otra pestaña; en la app nativa, el navegador de adentro) y «Sí soy de
+  <cooperativa>, continuar» (manda el registro con lo que ya escribió). El registro lleva `ubicacion: { lat, lng,
+  precisionM }` (4 decimales) si `/api/cercania` respondió y no es exento, haya habido aviso o no: el servidor guarda a
+  cuántos km se hizo y el panel dice «Se registró a N km».
+- Pasajero: con la sesión lista y la bienvenida de la central (sin `revision`), si `miPosicion` es del GPS de verdad (no
+  el punto de la ficha ni el del modo revisor), una consulta a `/api/cercania` por sesión (si falla, otra al minuto). Lejos
+  → el diálogo «Todavía no llegamos a tu zona» con «Avísame cuando llegue» (el mismo formulario, rol pasajero), «Ver cómo
+  funciona» y «Ahora no». «Ahora no» lo guarda un día y el envío 30 (`localStorage` `taxicun.lejos.pasajero`).
+- Formulario: municipio (60), cooperativa (80; opcional para el pasajero), nombre (80, sin dígitos ni @), celular (3 + 9
+  dígitos), sin enlaces, y la casilla con el texto de la autorización TAL CUAL (`N.lejos.AUTORIZACION`, versión 1.0).
+  `POST /api/interesados { rol, nombre, celular, municipio, cooperativa?, distanciaKm?, plataforma, autorizo: true,
+  version: '1.0', tiempoMs, sitioWeb? }` (esquema cerrado: `N.lejos.cuerpoInteresado`) → siempre `{ ok }`. El servidor
+  descarta sin decirlo un envío a menos de 3 s de abrir el formulario o con el campo escondido `sitioWeb` lleno. Sin la
+  ruta (404) o sin red: «No pudimos enviar tus datos ahora.» con info@taxicun.com. Lo escrito se pinta con
+  `textContent`.
 
-Prueba: `node pruebas/lejos-app.mjs http://localhost:5221/` (servidor simulado con `page.route`: lejos, cerca, sin GPS,
-revisor, servidor anterior, ruta inexistente, «Ahora no» y la demo de verdad).
+Pruebas: `node pruebas/lejos-app.mjs http://localhost:5221/` (servidor simulado con `page.route`: lejos, cerca, sin GPS,
+exento, servidor anterior, ruta inexistente, «Ahora no» y la demo de verdad). Contra el servidor de verdad, el recorrido
+`pruebas/lejos-e2e.mjs` del servidor (apps y panel).
 
 ## Red
 

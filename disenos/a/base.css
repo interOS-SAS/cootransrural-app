@@ -799,3 +799,10 @@ html[data-modo="real"] .a-pasajero > .a-modal-capa { z-index: 110; }
 .a-modal-lejos .a-modal-ico { justify-content: flex-start; }
 .a-modal-lejos [hidden] { display: none !important; }
 .a-lejos-form .a-ingreso-acciones { display: flex; justify-content: center; }
+/* La casilla de la autorización (la misma .a-check del registro del pasajero, que el conductor no carga). */
+.a-lejos-form .a-check { position: relative; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 13.5px; line-height: 1.45; min-height: 44px; padding-top: 2px; color: var(--a-texto-2); }
+.a-lejos-form .a-check input { position: absolute; opacity: 0; width: 26px; height: 26px; margin: 0; }
+.a-lejos-form .a-check-caja { width: 26px; height: 26px; border-radius: 8px; border: 2px solid #737985; display: grid; place-items: center; color: transparent; flex: none; background: #fff; transition: background .15s, border-color .15s; }
+.a-lejos-form .a-check input:checked + .a-check-caja { background: var(--a-tinta); border-color: var(--a-tinta); color: var(--a-ambar); }
+.a-lejos-form .a-check input:focus-visible + .a-check-caja { outline: 3px solid var(--a-tinta); box-shadow: 0 0 0 6px var(--a-ambar); }
+.a-lejos-form .a-check input.a-invalido + .a-check-caja { border-color: var(--a-rojo); background: var(--a-rojo-claro); }

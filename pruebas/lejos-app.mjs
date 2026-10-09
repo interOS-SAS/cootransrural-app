@@ -1,23 +1,27 @@
 // «Lejos de toda cooperativa» (9-oct-2026) en la app TaxiCun, diseño A, modo real (?real=1), con el servidor de TaxiCun
-// simulado aquí mismo (page.route y routeWebSocket, como f4a-app.mjs). Contrato propuesto: cabecera de nucleo/lejos.js.
+// simulado aquí mismo (page.route y routeWebSocket, como f4a-app.mjs) según el contrato REAL del servidor 0.11.0
+// (docs/CONTRATO.md §13): POST /api/cercania decide (exento para la cuenta de revisión y las de prueba), POST
+// /api/interesados con esquema cerrado (autorizo, version 1.0, tiempoMs, plataforma…) y PUT /api/conductor con ubicacion.
 //
 //  Conductor (registro del taxi, la primera vez):
-//   1) lejos (Medellín) y el servidor dice revision: false → al «Enviar registro», «Todavía no hay una cooperativa de
-//      TaxiCun cerca de ti» con «Quiero TaxiCun en mi cooperativa», «Ver cómo funciona» (la demo, en otra pestaña) y «Sí
-//      soy de Cootransrural, continuar»; el formulario (municipio, cooperativa, nombre y celular de la cuenta), sus
-//      errores, el envío (POST /api/interesados: rol conductor, posición a ~1 km) y el texto escrito pintado como texto;
-//      «continuar» → PUT /api/conductor con la posición y confirmoLejos → «Tu registro está en revisión».
-//   2) cerca (El Rosal) → sin aviso; el registro lleva la posición y no confirmoLejos.
-//   3) sin GPS (permiso negado) → sin aviso ni posición.
-//   4) cuenta de revisión (revision: true) en Cupertino → sin aviso ni posición.
-//   5) servidor anterior (sin revision en la cuenta) en Medellín → sin aviso ni posición (ningún revisor lo vería).
+//   1) lejos (Medellín) → al «Enviar registro», POST /api/cercania y «Todavía no hay una cooperativa de TaxiCun cerca de
+//      ti» (con los km y El Rosal) con «Quiero TaxiCun en mi cooperativa», «Ver cómo funciona» (la demo, en otra
+//      pestaña) y «Sí soy de Cootransrural, continuar»; el formulario (nombre y celular de la cuenta), sus errores (también
+//      sin la casilla de la autorización, con su texto TAL CUAL), el envío (POST /api/interesados: solo los campos del
+//      esquema cerrado, distanciaKm, tiempoMs, sin posición) y lo escrito pintado como texto; «continuar» → PUT
+//      /api/conductor con ubicacion { lat, lng, precisionM } y sin campos de más → «Tu registro está en revisión».
+//   1b) «continuar» sin el formulario. 2) cerca (El Rosal) → sin aviso; el registro lleva la ubicación.
+//   3) sin GPS (permiso negado) → sin /api/cercania, sin aviso ni ubicación.
+//   4) cuenta de revisión en Cupertino → /api/cercania responde exento → sin aviso ni ubicación.
+//   5) servidor anterior (/api/cercania 404) en Medellín → sin aviso ni ubicación.
 //   6) la ruta de interesados no existe (servidor anterior) → «No pudimos enviar…» con info@taxicun.com.
 //  Pasajero (con la sesión y la bienvenida de la central):
 //   7) lejos → «Todavía no llegamos a tu zona» con «Avísame cuando llegue», «Ver cómo funciona» y «Ahora no»; el
-//      formulario (cooperativa opcional) → POST rol pasajero → «¡Gracias…!» → «Listo»; al volver a abrir, no sale.
+//      formulario (cooperativa opcional: no va) → POST rol pasajero → «¡Gracias…!» → «Listo»; al volver a abrir, no sale.
 //   8) «Ahora no» → no sale otra vez (un día).
-//   9) cerca → nada. 10) sin GPS → nada. 11) cuenta de revisión en Cupertino (bienvenida revision: true) → nada, y sigue
-//      el aviso del modo revisor de siempre («Estás lejos de El Rosal»).
+//   9) cerca → nada. 10) sin GPS → nada (ni /api/cercania). 11) cuenta de revisión en Cupertino (bienvenida revision:
+//      true) → nada, sin preguntar, y sigue el aviso del modo revisor de siempre («Estás lejos de El Rosal»).
+//  11b) cuenta de prueba (exento sin revision en la bienvenida) → nada. 11c) servidor anterior (404) → nada.
 //  12) «Ver cómo funciona» abre la demo de verdad (sin el modo real).
 //
 // Uso: node pruebas/lejos-app.mjs [url_base]   (estático del repositorio, p. ej.
@@ -35,7 +39,17 @@ const MEDELLIN = { latitude: 6.2442, longitude: -75.5812, accuracy: 30 };
 const CUPERTINO = { latitude: 37.3349, longitude: -122.009, accuracy: 20 };
 const EL_ROSAL = { latitude: CENTRO.lat + 0.004, longitude: CENTRO.lng, accuracy: 12 };
 const CODIGO = '123456';
-const HTML = '<img src=x onerror="window.__xss=1">Coop <b>Norte</b>';
+const HTML = '<img src=x onerror="window.__xss=1">Coop <b>Norte</b> & "Cía"';
+// Lo que guarda el servidor (y la app manda): sin < > ` (se quitan), espacios simples.
+const HTML_LIMPIO = 'img src=x onerror="window.__xss=1"Coop bNorte/b & "Cía"';
+const AUTORIZACION = 'Autorizo a interOS S.A.S. (NIT 901.213.197-5) a usar estos datos para contactarme sobre la llegada de TaxiCun a mi municipio o cooperativa. Los guardan hasta 12 meses. Puedo pedir que los borren en info@taxicun.com.';
+const CLAVES_INTERESADO = new Set(['rol', 'nombre', 'celular', 'municipio', 'cooperativa', 'distanciaKm', 'plataforma', 'autorizo', 'version', 'tiempoMs', 'sitioWeb']);
+const CLAVES_CONDUCTOR = new Set(['empresa', 'movil', 'placa', 'vehiculo', 'color', 'ubicacion']);
+const kmEntre = (a, b) => {
+  const r = (g) => (g * Math.PI) / 180;
+  const x = Math.sin(r(b.lat - a.lat) / 2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(r(b.lng - a.lng) / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.min(1, Math.sqrt(x)));
+};
 
 let bien = 0;
 let fallas = 0;
@@ -74,7 +88,8 @@ const srv = {
   sesiones: new Map(),
   usuarios: new Map(), // correo → { nombre, celular, conductor }
   peticiones: [],
-  revision: 'false', // lo que dice la cuenta: 'false' | 'true' | 'ausente' (servidor anterior)
+  exentos: new Set(), // correos de la cuenta de revisión y de las de prueba: /api/cercania responde exento
+  cercania: 'ok', // ok | 404 (servidor anterior)
   revisionBus: false,
   interesados: 'ok', // ok | 404
 };
@@ -84,9 +99,7 @@ const usuario = (correo, extra = {}) => {
 };
 const yoDe = (correo) => {
   const u = srv.usuarios.get(correo);
-  const r = { usuario: { id: `u-${correo}`, correo, nombre: u.nombre, celular: u.celular }, conductor: u.conductor };
-  if (srv.revision !== 'ausente') r.revision = srv.revision === 'true';
-  return r;
+  return { usuario: { id: `u-${correo}`, correo, nombre: u.nombre, celular: u.celular }, conductor: u.conductor };
 };
 const pide = (metodo, ruta, correo = null) => srv.peticiones.filter((x) => x.metodo === metodo && x.ruta === ruta && (!correo || x.correo === correo));
 
@@ -115,17 +128,29 @@ async function atenderApi(route) {
     return responder(200, { token: t, ...yoDe(c) });
   }
   if (metodo === 'POST' && ruta === 'auth/salir') return responder(200, { ok: true });
+  // Las dos rutas públicas del §13 (con o sin token).
+  if (metodo === 'POST' && ruta === 'cercania') {
+    if (srv.cercania === '404') return route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ message: 'Route POST:/api/cercania not found', error: 'Not Found', statusCode: 404 }) });
+    const claves = Object.keys(cuerpo || {});
+    if (typeof cuerpo?.lat !== 'number' || typeof cuerpo?.lng !== 'number' || claves.some((k) => !['lat', 'lng', 'precisionM'].includes(k))) return responder(400, { error: 'datos_invalidos' });
+    if (correo && srv.exentos.has(correo)) return responder(200, { lejos: false, km: null, umbralKm: 30, exento: true, cooperativa: null });
+    const km = Math.round(kmEntre(cuerpo, CENTRO) * 10) / 10;
+    return responder(200, { lejos: km > 30, km, umbralKm: 30, exento: false, cooperativa: { id: 'cootransrural', nombre: 'Cootransrural' } });
+  }
+  if (metodo === 'POST' && ruta === 'interesados') {
+    if (srv.interesados === '404') return route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ message: 'Route POST:/api/interesados not found', error: 'Not Found', statusCode: 404 }) });
+    const c = cuerpo || {};
+    const bien = Object.keys(c).every((k) => CLAVES_INTERESADO.has(k)) && ['conductor', 'pasajero'].includes(c.rol) && c.autorizo === true && c.version === '1.0'
+      && typeof c.nombre === 'string' && typeof c.municipio === 'string' && /^3\d{9}$/.test(c.celular || '');
+    return bien ? responder(200, { ok: true }) : responder(400, { error: 'datos_invalidos' });
+  }
   if (!correo) return responder(401, { error: 'sin_sesion' });
   if (metodo === 'GET' && ruta === 'yo') return responder(200, yoDe(correo));
   if (metodo === 'PATCH' && ruta === 'yo') return responder(200, yoDe(correo));
   if (metodo === 'PUT' && ruta === 'conductor') {
     const u = srv.usuarios.get(correo);
-    u.conductor = { estado: srv.revision === 'true' ? 'aprobado' : 'pendiente', empresa: cuerpo.empresa, movil: cuerpo.movil, placa: cuerpo.placa, vehiculo: cuerpo.vehiculo, color: cuerpo.color };
+    u.conductor = { estado: srv.exentos.has(correo) ? 'aprobado' : 'pendiente', empresa: cuerpo.empresa, movil: cuerpo.movil, placa: cuerpo.placa, vehiculo: cuerpo.vehiculo, color: cuerpo.color };
     return responder(200, yoDe(correo));
-  }
-  if (metodo === 'POST' && ruta === 'interesados') {
-    if (srv.interesados === '404') return route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ message: 'Route POST:/api/interesados not found', error: 'Not Found', statusCode: 404 }) });
-    return responder(200, { ok: true });
   }
   if (ruta === 'yo/dispositivo') return responder(200, { ok: true });
   if (metodo === 'GET' && ruta === 'avisos') return responder(200, { avisos: [] });
@@ -228,19 +253,30 @@ async function entrarPasajero(p, correo) {
 const avisoPasajero = (p, timeout = 12000) => intento(p.waitForSelector('.a-modal-lejos.a-abierto [data-lejos="pasajero"]', { timeout }));
 
 /* ---------------- Conductor ---------------- */
+const soloClaves = (o, permitidas) => Object.keys(o || {}).every((k) => permitidas.has(k));
+
+async function llenarFormulario(p, { municipio, cooperativa = null, celular = null, autorizo = true }) {
+  await p.fill('[data-lejos-form] input[name=municipio]', municipio);
+  if (cooperativa !== null) await p.fill('[data-lejos-form] input[name=cooperativa]', cooperativa);
+  if (celular !== null) await p.fill('[data-lejos-form] input[name=celular]', celular);
+  if (autorizo && !(await p.isChecked('[data-lejos-form] input[name=autorizo]'))) await p.click('[data-lejos-form] .a-lejos-autorizo');
+}
+
 async function conductorLejos() {
-  console.log('\n— 1) Conductor lejos (Medellín), servidor con revision: false');
-  srv.revision = 'false';
+  console.log('\n— 1) Conductor lejos (Medellín)');
+  srv.cercania = 'ok';
   srv.interesados = 'ok';
-  const correo = usuario('lejos1@prueba.taxicun.com');
+  const correo = usuario('lejos1@correo.test');
   const { ctx, p } = await contexto('conductor-lejos', { geo: MEDELLIN });
   ok(await conductorHastaTuTaxi(p, correo), 'entra y llega a «Tu taxi»');
   await enviarRegistro(p);
   ok(await avisoConductor(p), 'al «Enviar registro» sale el aviso');
   await foto(p, 'C1-aviso-conductor');
+  const cer = pide('POST', 'cercania', correo)[0]?.cuerpo || {};
+  ok(cer.lat === 6.2442 && cer.lng === -75.5812 && cer.precisionM === 30 && soloClaves(cer, new Set(['lat', 'lng', 'precisionM'])), `POST /api/cercania con la posición y su precisión (${JSON.stringify(cer)})`);
   const t = await texto(p, '[data-lejos="conductor"]');
   ok(/Todavía no hay una cooperativa de TaxiCun cerca de ti/.test(t), 'título «Todavía no hay una cooperativa de TaxiCun cerca de ti»');
-  ok(/Estás a unos \d{3} km de El Rosal/.test(t), `dice a cuántos km está («${(t.match(/Estás a unos [^,]*/) || [''])[0]}»)`);
+  ok(/Estás a unos \d{3} km de El Rosal/.test(t), `dice a cuántos km está y dónde («${(t.match(/Estás a unos [^,]*/) || [''])[0]}»)`);
   ok(/Quiero TaxiCun en mi cooperativa/.test(t) && /Ver cómo funciona/.test(t) && /Sí soy de Cootransrural, continuar/.test(t), 'las tres opciones');
   ok(pide('PUT', 'conductor', correo).length === 0, 'el registro todavía no se mandó');
   const demo = await p.$eval('[data-lejos="conductor"] [data-lejos-demo]', (a) => ({ href: a.href, target: a.target }));
@@ -250,38 +286,53 @@ async function conductorLejos() {
   await p.waitForSelector('[data-lejos-form="conductor"]', { timeout: 5000 });
   ok(await p.inputValue('[data-lejos-form] input[name=nombre]') === 'Luis Alberto Rodríguez', 'el nombre viene de la cuenta');
   ok((await p.inputValue('[data-lejos-form] input[name=celular]')).replace(/\D/g, '') === '3109876543', 'el celular viene de la cuenta');
+  ok(await texto(p, '[data-lejos-form] [data-autorizacion]') === AUTORIZACION, 'la casilla trae el texto de la autorización TAL CUAL (versión 1.0)');
+  ok(!(await p.isChecked('[data-lejos-form] input[name=autorizo]')), 'la casilla empieza sin marcar');
+  ok(await p.$eval('[data-lejos-form] input[name=sitioWeb]', (i) => i.closest('.a-solo-lector') !== null && i.tabIndex === -1 && i.value === ''), 'el campo trampa «sitioWeb» está escondido, fuera del tabulador y vacío');
   await p.click('[data-lejos-form] [type=submit]');
   ok(/Escribe tu municipio/.test(await texto(p, '[data-lejos-form] [data-error]')), 'sin municipio: «Escribe tu municipio.»');
   await p.fill('[data-lejos-form] input[name=municipio]', 'Medellín');
   await p.click('[data-lejos-form] [type=submit]');
   ok(/cooperativa/.test(await texto(p, '[data-lejos-form] [data-error]')), 'sin cooperativa: la pide (conductor)');
+  await p.fill('[data-lejos-form] input[name=cooperativa]', 'www.coopnorte.com');
+  await p.click('[data-lejos-form] [type=submit]');
+  ok(/sin enlaces/.test(await texto(p, '[data-lejos-form] [data-error]')), 'una cooperativa con enlace: «sin enlaces» (el servidor la rechazaría)');
   await p.fill('[data-lejos-form] input[name=cooperativa]', HTML);
   await p.fill('[data-lejos-form] input[name=celular]', '2101234567');
   await p.click('[data-lejos-form] [type=submit]');
   ok(/10 dígitos/.test(await texto(p, '[data-lejos-form] [data-error]')), 'celular que no empieza por 3: error');
   await p.fill('[data-lejos-form] input[name=celular]', '3201234567');
+  await p.click('[data-lejos-form] [type=submit]');
+  ok(/marca la casilla/.test(await texto(p, '[data-lejos-form] [data-error]')), 'sin la casilla: «marca la casilla de la autorización»');
+  ok(pide('POST', 'interesados', correo).length === 0, 'con errores no se manda nada');
+  await p.click('[data-lejos-form] .a-lejos-autorizo');
   await foto(p, 'C1-formulario-conductor');
   await p.click('[data-lejos-form] [type=submit]');
   ok(await intento(p.waitForSelector('[data-lejos-gracias]', { timeout: 8000 })), '«¡Gracias…!» después de enviar');
-  const env = pide('POST', 'interesados', correo)[0]?.cuerpo || {};
-  ok(env.rol === 'conductor' && env.municipio === 'Medellín' && env.cooperativa === HTML.slice(0, 80) && env.nombre === 'Luis Alberto Rodríguez' && env.celular === '3201234567' && env.empresa === 'cootransrural', 'POST /api/interesados con rol, municipio, cooperativa, nombre, celular y empresa');
-  ok(env.pos && env.pos.lat === 6.24 && env.pos.lng === -75.58 && env.pos.precision === undefined, `la posición del interesado va redondeada a ~1 km (${JSON.stringify(env.pos)})`);
+  const envio = pide('POST', 'interesados', correo)[0];
+  const env = envio?.cuerpo || {};
+  ok(envio && soloClaves(env, CLAVES_INTERESADO), `solo los campos del esquema cerrado (${Object.keys(env).join(', ')})`);
+  ok(env.rol === 'conductor' && env.municipio === 'Medellín' && env.cooperativa === HTML_LIMPIO && env.nombre === 'Luis Alberto Rodríguez' && env.celular === '3201234567', `rol, municipio, cooperativa (sin < > ni comillas invertidas), nombre y celular (${env.cooperativa})`);
+  ok(env.autorizo === true && env.version === '1.0' && env.plataforma === 'web', 'autorizo: true, version 1.0 y plataforma web');
+  ok(typeof env.distanciaKm === 'number' && env.distanciaKm > 200 && env.distanciaKm < 260, `distanciaKm: la de /api/cercania (${env.distanciaKm})`);
+  ok(Number.isInteger(env.tiempoMs) && env.tiempoMs > 0, `tiempoMs desde que se abrió el formulario (${env.tiempoMs})`);
+  ok(env.sitioWeb === undefined && env.pos === undefined && env.empresa === undefined, 'sin el campo trampa, sin posición y sin empresa');
   const g = await texto(p, '[data-lejos-gracias]');
-  ok(g.includes('<b>Norte</b>') && (await sinXss(p)), 'lo escrito se pinta como texto (sin HTML)');
+  ok(g.includes('& "Cía"') && (await sinXss(p)), 'lo escrito se pinta como texto (sin HTML)');
   await foto(p, 'C1-gracias-conductor');
   await p.click('[data-lejos-continuar]');
   ok(await enRevision(p), '«Sí soy de Cootransrural, continuar» → «Tu registro está en revisión»');
   const put = pide('PUT', 'conductor', correo).at(-1)?.cuerpo || {};
   ok(put.movil === '045' && put.placa === 'WFK123' && put.empresa === 'cootransrural', 'el registro lleva los datos del taxi que ya había escrito');
-  ok(put.pos && Math.abs(put.pos.lat - 6.2442) < 1e-4 && Math.abs(put.pos.lng + 75.5812) < 1e-4 && put.pos.precision === 30, `y la posición del registro (${JSON.stringify(put.pos)})`);
-  ok(put.confirmoLejos === true, 'y confirmoLejos: true');
+  ok(put.ubicacion && put.ubicacion.lat === 6.2442 && put.ubicacion.lng === -75.5812 && put.ubicacion.precisionM === 30, `y la ubicación del registro (${JSON.stringify(put.ubicacion)})`);
+  ok(soloClaves(put, CLAVES_CONDUCTOR) && put.pos === undefined && put.confirmoLejos === undefined, 'sin campos fuera del contrato (ni pos ni confirmoLejos)');
+  ok(pide('POST', 'cercania', correo).length === 1, '/api/cercania una sola vez');
   await ctx.close();
 }
 
 async function conductorLejosDirecto() {
-  console.log('\n— 1b) Conductor lejos: «continuar» sin el formulario; un error del registro deja los datos');
-  srv.revision = 'false';
-  const correo = usuario('lejos1b@prueba.taxicun.com');
+  console.log('\n— 1b) Conductor lejos: «continuar» sin el formulario');
+  const correo = usuario('lejos1b@correo.test');
   const { ctx, p } = await contexto('conductor-lejos-b', { geo: MEDELLIN });
   await conductorHastaTuTaxi(p, correo);
   await enviarRegistro(p);
@@ -289,40 +340,41 @@ async function conductorLejosDirecto() {
   await p.click('[data-lejos="conductor"] [data-lejos-continuar]');
   ok(await enRevision(p), '«continuar» manda el registro');
   const puts = pide('PUT', 'conductor', correo);
-  ok(puts.length === 1 && puts[0].cuerpo.confirmoLejos === true, 'una sola vez, con confirmoLejos');
+  ok(puts.length === 1 && puts[0].cuerpo.ubicacion?.lat === 6.2442, 'una sola vez, con la ubicación');
   ok(pide('POST', 'interesados', correo).length === 0, 'sin formulario no se manda ningún interesado');
   await ctx.close();
 }
 
-async function conductorSinAviso(nombre, { geo, permiso = true, revision, conPos, etiqueta }) {
+async function conductorSinAviso(nombre, { geo, permiso = true, exento = false, cercania = 'ok', preguntaCercania, conUbicacion, etiqueta }) {
   console.log(`\n— ${etiqueta}`);
-  srv.revision = revision;
-  const correo = usuario(`${nombre}@prueba.taxicun.com`);
+  srv.cercania = cercania;
+  const correo = usuario(`${nombre}@correo.test`);
+  if (exento) srv.exentos.add(correo);
   const { ctx, p } = await contexto(nombre, { geo, permiso });
   ok(await conductorHastaTuTaxi(p, correo), 'llega a «Tu taxi»');
   await enviarRegistro(p);
-  const ruta = revision === 'true' ? intento(p.waitForSelector('.a-ingreso-real', { state: 'detached', timeout: 20000 })) : enRevision(p);
-  ok(await ruta, revision === 'true' ? 'el registro pasa sin aviso (la cuenta de revisión queda aprobada)' : 'el registro pasa sin aviso («Tu registro está en revisión»)');
+  const ruta = exento ? intento(p.waitForSelector('.a-ingreso-real', { state: 'detached', timeout: 20000 })) : enRevision(p);
+  ok(await ruta, exento ? 'el registro pasa sin aviso (la cuenta de revisión queda aprobada)' : 'el registro pasa sin aviso («Tu registro está en revisión»)');
   ok(!(await p.$('[data-lejos]')), 'nunca se vio el aviso');
+  ok((pide('POST', 'cercania', correo).length > 0) === preguntaCercania, preguntaCercania ? 'le preguntó al servidor (/api/cercania)' : 'no le preguntó nada al servidor (sin posición no hay a qué preguntar)');
   const put = pide('PUT', 'conductor', correo).at(-1)?.cuerpo || {};
-  ok(conPos ? Boolean(put.pos) : put.pos === undefined, conPos ? `el registro lleva la posición (${JSON.stringify(put.pos)})` : 'el registro no lleva posición');
-  ok(put.confirmoLejos === undefined, 'ni confirmoLejos');
+  ok(conUbicacion ? Boolean(put.ubicacion?.lat) : put.ubicacion === undefined, conUbicacion ? `el registro lleva la ubicación (${JSON.stringify(put.ubicacion)})` : 'el registro no lleva ubicación');
+  ok(soloClaves(put, CLAVES_CONDUCTOR), 'ni campos de más');
   await foto(p, `C-${nombre}`);
   await ctx.close();
+  srv.cercania = 'ok';
 }
 
 async function conductorSinRuta() {
   console.log('\n— 6) La ruta de interesados no existe (servidor anterior)');
-  srv.revision = 'false';
   srv.interesados = '404';
-  const correo = usuario('sinruta@prueba.taxicun.com');
+  const correo = usuario('sinruta@correo.test');
   const { ctx, p } = await contexto('conductor-sin-ruta', { geo: MEDELLIN });
   await conductorHastaTuTaxi(p, correo);
   await enviarRegistro(p);
   await avisoConductor(p);
   await p.click('[data-lejos-quiero]');
-  await p.fill('[data-lejos-form] input[name=municipio]', 'Medellín');
-  await p.fill('[data-lejos-form] input[name=cooperativa]', 'Coop Norte');
+  await llenarFormulario(p, { municipio: 'Medellín', cooperativa: 'Coop Norte' });
   await p.click('[data-lejos-form] [type=submit]');
   ok(await intento(p.waitForSelector('[data-lejos-form] [data-correo]:not([hidden])', { timeout: 8000 })), 'dice cómo escribirnos');
   const t = await texto(p, '[data-lejos-form]');
@@ -338,12 +390,12 @@ async function conductorSinRuta() {
 /* ---------------- Pasajero ---------------- */
 async function pasajeroLejos() {
   console.log('\n— 7) Pasajero lejos (Medellín)');
-  srv.revision = 'false';
   srv.revisionBus = false;
-  const correo = usuario('ana.lejos@prueba.taxicun.com', { nombre: 'Ana María Gómez', celular: '3001234567' });
+  const correo = usuario('ana.lejos@correo.test', { nombre: 'Ana María Gómez', celular: '3001234567' });
   const { ctx, p } = await contexto('pasajero-lejos', { geo: MEDELLIN });
   await entrarPasajero(p, correo);
   ok(await avisoPasajero(p), 'sale «Todavía no llegamos a tu zona»');
+  ok(pide('POST', 'cercania', correo).length === 1, 'después de preguntarle al servidor una vez (/api/cercania con la sesión)');
   await p.waitForTimeout(400);
   await foto(p, 'P7-aviso-pasajero');
   const t = await texto(p, '.a-modal-lejos .a-modal');
@@ -354,28 +406,31 @@ async function pasajeroLejos() {
   await p.waitForSelector('.a-modal-lejos [data-lejos-form="pasajero"]', { timeout: 5000 });
   ok(await p.$eval('.a-modal-lejos .a-modal > h2', (h) => h.hidden), 'el formulario reemplaza el título del aviso');
   ok(await p.inputValue('[data-lejos-form] input[name=nombre]') === 'Ana María Gómez', 'el nombre viene de la cuenta');
-  await p.fill('[data-lejos-form] input[name=municipio]', 'Medellín');
+  await llenarFormulario(p, { municipio: 'Medellín' });
   await foto(p, 'P7-formulario-pasajero');
   await p.click('[data-lejos-form] [type=submit]');
   ok(await intento(p.waitForSelector('.a-modal-lejos [data-lejos-gracias]', { timeout: 8000 })), 'sin cooperativa también se envía (opcional para el pasajero)');
   const env = pide('POST', 'interesados', correo)[0]?.cuerpo || {};
-  ok(env.rol === 'pasajero' && env.municipio === 'Medellín' && env.cooperativa === '' && env.celular === '3001234567' && env.pos?.lat === 6.24, 'POST /api/interesados con rol pasajero');
+  ok(env.rol === 'pasajero' && env.municipio === 'Medellín' && env.cooperativa === undefined && env.celular === '3001234567' && env.autorizo === true && env.version === '1.0', `POST /api/interesados con rol pasajero, sin cooperativa (${JSON.stringify(env)})`);
+  ok(soloClaves(env, CLAVES_INTERESADO) && typeof env.distanciaKm === 'number' && env.pos === undefined, 'solo los campos del esquema, con distanciaKm y sin posición');
   ok(/Te avisamos al 300 123 4567 cuando TaxiCun llegue a Medellín/.test(await texto(p, '.a-modal-lejos [data-lejos-gracias]')), '«Te avisamos al 300 123 4567 cuando TaxiCun llegue a Medellín.»');
   await foto(p, 'P7-gracias-pasajero');
   await p.click('.a-modal-lejos [data-lejos-listo]');
   ok(await intento(p.waitForSelector('.a-modal-lejos', { state: 'detached', timeout: 5000 })), '«Listo» cierra');
   const hasta30 = await p.evaluate(() => JSON.parse(localStorage.getItem('taxicun.lejos.pasajero') || 'null')?.hasta - Date.now());
   ok(hasta30 > 29 * 864e5 && hasta30 <= 30 * 864e5, 'no vuelve a salir en 30 días');
+  const antes = pide('POST', 'cercania', correo).length;
   await p.reload();
   await p.waitForSelector('.a-app[data-vista="inicio"]', { timeout: 20000 });
   ok(!(await avisoPasajero(p, 6000)), 'al volver a abrir la app no sale');
+  ok(pide('POST', 'cercania', correo).length === antes, 'y ni siquiera le pregunta al servidor');
   await ctx.close();
 }
 
 async function pasajeroAhoraNo() {
   console.log('\n— 8) Pasajero lejos: «Ahora no»');
   srv.revisionBus = false;
-  const correo = usuario('ana.ahorano@prueba.taxicun.com', { nombre: 'Ana María Gómez', celular: '3001234567' });
+  const correo = usuario('ana.ahorano@correo.test', { nombre: 'Ana María Gómez', celular: '3001234567' });
   const { ctx, p } = await contexto('pasajero-ahora-no', { geo: MEDELLIN });
   await entrarPasajero(p, correo);
   ok(await avisoPasajero(p), 'sale el aviso');
@@ -390,10 +445,12 @@ async function pasajeroAhoraNo() {
   await ctx.close();
 }
 
-async function pasajeroSinAviso(nombre, { geo, permiso = true, revisionBus = false, etiqueta }) {
+async function pasajeroSinAviso(nombre, { geo, permiso = true, revisionBus = false, exento = false, cercania = 'ok', preguntaCercania, etiqueta }) {
   console.log(`\n— ${etiqueta}`);
   srv.revisionBus = revisionBus;
-  const correo = usuario(`${nombre}@prueba.taxicun.com`, { nombre: 'Ana María Gómez', celular: '3001234567' });
+  srv.cercania = cercania;
+  const correo = usuario(`${nombre}@correo.test`, { nombre: 'Ana María Gómez', celular: '3001234567' });
+  if (exento) srv.exentos.add(correo);
   const { ctx, p } = await contexto(nombre, { geo, permiso });
   await p.addInitScript(() => {
     window.__avisos = [];
@@ -401,10 +458,12 @@ async function pasajeroSinAviso(nombre, { geo, permiso = true, revisionBus = fal
   });
   await entrarPasajero(p, correo);
   ok(!(await avisoPasajero(p, 9000)), 'no sale «Todavía no llegamos a tu zona»');
+  ok((pide('POST', 'cercania', correo).length > 0) === preguntaCercania, preguntaCercania ? 'le preguntó al servidor (/api/cercania)' : 'no le preguntó nada al servidor');
   if (revisionBus) ok(await hasta(() => p.evaluate(() => window.__avisos.some((a) => /Estás lejos de El Rosal/.test(a))), 8000), 'sigue el aviso del modo revisor («Estás lejos de El Rosal»)');
   await foto(p, `P-${nombre}`);
   await ctx.close();
   srv.revisionBus = false;
+  srv.cercania = 'ok';
 }
 
 async function demoDeVerdad() {
@@ -427,16 +486,18 @@ async function demoDeVerdad() {
 try {
   await conductorLejos();
   await conductorLejosDirecto();
-  await conductorSinAviso('cerca', { geo: EL_ROSAL, revision: 'false', conPos: true, etiqueta: '2) Conductor cerca (El Rosal)' });
-  await conductorSinAviso('singps', { geo: MEDELLIN, permiso: false, revision: 'false', conPos: false, etiqueta: '3) Conductor sin GPS (permiso negado)' });
-  await conductorSinAviso('revisor', { geo: CUPERTINO, revision: 'true', conPos: false, etiqueta: '4) Cuenta de revisión en Cupertino (revision: true)' });
-  await conductorSinAviso('anterior', { geo: MEDELLIN, revision: 'ausente', conPos: false, etiqueta: '5) Servidor anterior (sin revision) en Medellín' });
+  await conductorSinAviso('cerca', { geo: EL_ROSAL, preguntaCercania: true, conUbicacion: true, etiqueta: '2) Conductor cerca (El Rosal)' });
+  await conductorSinAviso('singps', { geo: MEDELLIN, permiso: false, preguntaCercania: false, conUbicacion: false, etiqueta: '3) Conductor sin GPS (permiso negado)' });
+  await conductorSinAviso('revisor', { geo: CUPERTINO, exento: true, preguntaCercania: true, conUbicacion: false, etiqueta: '4) Cuenta de revisión en Cupertino (el servidor responde exento)' });
+  await conductorSinAviso('anterior', { geo: MEDELLIN, cercania: '404', preguntaCercania: true, conUbicacion: false, etiqueta: '5) Servidor anterior (/api/cercania 404) en Medellín' });
   await conductorSinRuta();
   await pasajeroLejos();
   await pasajeroAhoraNo();
-  await pasajeroSinAviso('ana-cerca', { geo: EL_ROSAL, etiqueta: '9) Pasajero cerca (El Rosal)' });
-  await pasajeroSinAviso('ana-singps', { geo: MEDELLIN, permiso: false, etiqueta: '10) Pasajero sin GPS' });
-  await pasajeroSinAviso('ana-revisor', { geo: CUPERTINO, revisionBus: true, etiqueta: '11) Pasajero de la cuenta de revisión en Cupertino' });
+  await pasajeroSinAviso('ana-cerca', { geo: EL_ROSAL, preguntaCercania: true, etiqueta: '9) Pasajero cerca (El Rosal)' });
+  await pasajeroSinAviso('ana-singps', { geo: MEDELLIN, permiso: false, preguntaCercania: false, etiqueta: '10) Pasajero sin GPS' });
+  await pasajeroSinAviso('ana-revisor', { geo: CUPERTINO, revisionBus: true, exento: true, preguntaCercania: false, etiqueta: '11) Pasajero de la cuenta de revisión en Cupertino (bienvenida revision)' });
+  await pasajeroSinAviso('ana-prueba', { geo: MEDELLIN, exento: true, preguntaCercania: true, etiqueta: '11b) Pasajero de una cuenta de prueba en Medellín (exento)' });
+  await pasajeroSinAviso('ana-anterior', { geo: MEDELLIN, cercania: '404', preguntaCercania: true, etiqueta: '11c) Pasajero con un servidor anterior (/api/cercania 404)' });
   await demoDeVerdad();
 } catch (e) {
   ok(false, `la prueba se detuvo: ${e.message.split('\n')[0]}`);
