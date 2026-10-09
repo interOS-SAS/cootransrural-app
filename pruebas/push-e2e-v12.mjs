@@ -839,7 +839,8 @@ async function turnoEnPausa() {
   const t0 = Date.now();
   const aviso = await hasta(() => pausasNuevas()[0], (plazo + 30) * 1000, 300);
   await debe(aviso, `central → conductor: «Tu turno quedó en pausa» al vencerse (${((Date.now() - t0) / 1000).toFixed(1)} s después de cerrar; ${aviso ? resumen(aviso) : 'nada'})`);
-  ok(!dormido(CA.correo), 'pausa · ya no está dormido');
+  // El servidor borra la fila de turnos_dormidos sin esperar (en paralelo con el aviso): se le da un momento.
+  ok(await hasta(() => !dormido(CA.correo), 3000, 100), 'pausa · ya no está dormido');
   ok(aviso.plataforma === 'ios' && aviso.token === tA && aviso.entorno === 'production', 'pausa · al iPhone del conductor');
   ok(aviso.titulo === 'Tu turno quedó en pausa' && aviso.cuerpo === 'Toca aquí para seguir recibiendo servicios.', `pausa · «Tu turno quedó en pausa» / «${aviso.cuerpo}»`);
   ok(aviso.apns.tema === 'com.taxicun.conductor' && aviso.apns.cuerpo.aps.alert.title === 'Tu turno quedó en pausa', 'pausa · tema com.taxicun.conductor y título en aps');
