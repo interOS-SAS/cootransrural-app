@@ -148,6 +148,9 @@ html[data-vitrina="1"] .a-escritorio { display: none !important; }
 .a-app .leaflet-bottom { bottom: var(--hoja-alto, 0px); transition: bottom .38s var(--a-facil); }
 .a-app .leaflet-control-attribution { font-size: 9px; padding: 1px 6px; background: rgba(255, 255, 255, .78) !important; border-radius: 8px 0 0 0; }
 .a-app .ct-taxi-etiqueta { background: var(--a-tinta); font: 800 11px/1 var(--a-fb); padding: 4px 7px; border-radius: 8px; top: -24px; box-shadow: 0 2px 6px rgba(0, 0, 0, .3); border: 1.5px solid var(--a-ambar); }
+/* Lote final: el taxi propio fuera de turno (gris) lleva «Tú · fuera de turno» sin el borde amarillo. */
+.a-app .ct-taxi-etiqueta:has(.a-etiqueta-fuera) { background: #4B5563; border-color: #9AA3AE; white-space: nowrap; }
+.a-app .ct-taxi-marcador:has(.a-etiqueta-fuera) .ct-taxi-destacado { filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .35)); }
 
 /* ---------------- botones ---------------- */
 .a-btn {

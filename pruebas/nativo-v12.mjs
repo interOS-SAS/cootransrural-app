@@ -708,7 +708,7 @@ async function conductor() {
   ok(Boolean(await intento(p.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 10000 }))), 'conductor: vuelve a quedar en turno sin tocar la píldora');
   ok(Boolean(await hasta(() => srv.mensajes.slice(msjPausa).some((m) => m.rol === 'conductor' && m.tipo === 'presencia' && m.datos?.disponible === true) && srv.mensajes.slice(msjPausa).some((m) => m.rol === 'conductor' && m.tipo === 'consulta_solicitudes'), 6000)), 'conductor: manda presencia disponible + consulta_solicitudes');
   const vivos = await avisosVivos(p);
-  ok(!vivos.some((t) => /Estás en línea/.test(t)) && !vivos.some((t) => /Ponte en turno/.test(t)), `conductor: un solo aviso en pantalla, sin «Estás en línea» (${vivos.join(' | ')})`);
+  ok(!vivos.some((t) => /Estás en (línea|turno)/.test(t)) && !vivos.some((t) => /Ponte en turno/.test(t)), `conductor: un solo aviso en pantalla, sin «Estás en turno» (${vivos.join(' | ')})`);
   await p.waitForTimeout(1200);
   await foto(p, 'c02b-pausa-vuelve-al-turno');
 

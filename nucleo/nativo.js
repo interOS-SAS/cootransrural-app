@@ -72,7 +72,12 @@
 //                                  está en turno, aceptó el aviso y (tiene un viaje activo o libre():
 //                                  el teléfono puede recibir avisos). Al cargar y al volver a la app,
 //                                  la recuperación del §2.2 (paso 7). Una sola vez por controlador;
-//                                  devuelve cómo quitarlo (y entonces lo detiene).
+//                                  devuelve cómo quitarlo (y entonces lo detiene). Pone ctl.nativo =
+//                                  { activo(), enviando(), enCurso(), revisado() }: enCurso, el plugin lleva el
+//                                  turno o la app lo va a retomar; revisado, la promesa de la revisión al cargar.
+//                                  0.11.1: al salir de turno (evento 'fuera_de_turno' del controlador) detiene el
+//                                  plugin aunque la web no supiera que seguía (con el «fin»), y si no pudo retomar el
+//                                  turno al cargar, el controlador se lo dice a la central (ctl.reconciliarTurno).
 // La marca localStorage 'tc.turno.conductor' = { desde } dice que la web dejó el turno al plugin:
 // la web la borra siempre que lo detiene, así que «plugin detenido + marca» = lo detuvo el plugin
 // (o la notificación) o se cerró la app.
@@ -956,6 +961,9 @@ export function vigilarTurno(ctl, { libre = pushListo } = {}) {
     if (ctl.destruido || ctl.estado.conectado || !servidor.haySesion()) return;
     const ok = await ctl.conectar();
     if (ok) eventos.emit('turno_retomado', {});
+    // 0.11.1: no pudo (sin GPS, sin la central…): queda fuera de turno y la central lo tiene que saber (el paso que sigue
+    // detiene el plugin con su «fin»; esto lo dice también por el bus o por REST).
+    else ctl.reconciliarTurno?.();
   }
 
   const aplicar = ({ reintentar = false } = {}) => {
@@ -969,9 +977,20 @@ export function vigilarTurno(ctl, { libre = pushListo } = {}) {
   ctl.nativo = {
     activo: () => turnoNativoActivo(),
     enviando: () => turnoNativoActivo() && appOculta(),
+    // 0.11.1: el plugin lleva el turno, su marca dice que lo llevaba o la app lo va a retomar al volver: la app no le dice
+    // «fuera de turno» a la central al saludar (lo retoma, o al no poder, ver retomar).
+    enCurso: () => turnoNativoEnCurso() || retomarAlVolver,
+    revisado: () => primeraRevision,
   };
 
   dejar.push(ctl.on('cambio', () => aplicar()));
+  // 0.11.1: salió de turno. El paso de 'cambio' detiene el plugin si la web sabe que corre; si la web lo perdió de vista
+  // (lo dice estado()), también se detiene, con el «fin».
+  dejar.push(ctl.on('fuera_de_turno', () => encolar(async () => {
+    if (turno.activo || ctl.estado.conectado) return;
+    const est = await estadoTurnoNativo();
+    if (est.activo && !ctl.estado.conectado) await detenerTurnoNativo('turno_apagado', { avisar: servidor.haySesion() });
+  })));
   dejar.push(ctl.on('bienvenida', () => {
     // La central lo dejó entrar: la sesión y la aprobación están bien.
     turno.bloqueo = null;
@@ -1006,7 +1025,7 @@ export function vigilarTurno(ctl, { libre = pushListo } = {}) {
 
   vigilante = { ctl, aplicar, quitar };
   ctl.vigilanciaTurno = () => quitar();
-  encolar(async () => {
+  const primeraRevision = encolar(async () => {
     await escucharTurno();
     await revisar({ alCargar: true });
     await paso();

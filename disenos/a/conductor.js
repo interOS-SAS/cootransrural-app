@@ -36,6 +36,8 @@ const PASOS = ['Recoger', 'Llegué', 'Viaje', 'Cobrar'];
 // App nativa 1.2: una notificación tocada hace más que esto ya no pone en turno.
 const AVISO_VIGENTE_MS = 2 * 60 * 1000;
 const PASO_DE_FASE = { confirmando: 0, hacia_origen: 0, en_origen: 1, en_viaje: 2, cobrando: 3, calificar: 3 };
+// Lote final: el taxi propio fuera de turno (gris; en turno, el amarillo de siempre).
+const COLOR_TAXI_FUERA = '#9AA3AE';
 
 export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun = null }) {
   // Modo real: TaxiCun contra el servidor (app nativa o ?real=1). Sin él, todo
@@ -1551,7 +1553,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           ? `<small class="a-ok-txt">${icono('check', { tam: 14 })} Registro aprobado</small>`
           : `<small class="${alDia ? 'a-ok-txt' : 'a-mal-txt'}">${icono(alDia ? 'check' : 'alerta', { tam: 14 })} ${alDia ? 'Documentos al día' : 'Revisa tus documentos'}</small>`;
         return `
-          <button type="button" class="a-pildora" role="switch" aria-checked="${e.conectado}" data-conectar aria-label="Turno: ${e.conectado ? 'conectado' : 'desconectado'}"${turnoBloqueado(e) ? ' disabled' : ''}>
+          <button type="button" class="a-pildora" role="switch" aria-checked="${e.conectado}" data-conectar aria-label="Turno: ${e.conectado ? 'en turno' : 'fuera de turno'}"${turnoBloqueado(e) ? ' disabled' : ''}>
             <span class="a-pildora-perilla">${icono('potencia', { tam: 26, grosor: 2.6 })}</span>
             <span class="a-pildora-txt"><strong data-pildora-titulo>${p.titulo}</strong><small data-pildora-sub>${p.sub}</small></span>
           </button>
@@ -1610,7 +1612,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         if (b && b.getAttribute('aria-checked') !== String(e.conectado)) {
           const p = textoPildora(e);
           b.setAttribute('aria-checked', String(e.conectado));
-          b.setAttribute('aria-label', `Turno: ${e.conectado ? 'conectado' : 'desconectado'}`);
+          b.setAttribute('aria-label', `Turno: ${e.conectado ? 'en turno' : 'fuera de turno'}`);
           ponerTexto(cnt, '[data-pildora-titulo]', p.titulo);
           ponerTexto(cnt, '[data-pildora-sub]', p.sub);
         }
@@ -2079,29 +2081,31 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   }
 
   /* ---------------- turno y conexión en modo real ---------------- */
-  // Textos de la píldora de turno. En las demos, los de siempre.
+  // Textos de la píldora de turno (lote final: «En turno» / «Fuera de turno», lo mismo que cree la central).
+  const TITULO_TURNO = { true: 'En turno', false: 'Fuera de turno' };
   function textoPildora(e) {
+    const titulo = TITULO_TURNO[Boolean(e.conectado)];
     // Modo real: mientras se espera la primera lectura del GPS (hasta 7 s).
     if (REAL && !e.conectado && (c?.conectandoTurno || c?.buscandoGps)) {
-      return { titulo: 'Desconectado', sub: 'Buscando tu ubicación…' };
+      return { titulo, sub: 'Buscando tu ubicación…' };
     }
     if (REAL && estadoCentral() !== 'en_linea') {
       const est = estadoCentral();
       return {
-        titulo: e.conectado ? 'Conectado' : 'Desconectado',
+        titulo,
         sub: est === 'reconectando' ? 'Sin conexión, reintentando…' : est === 'rechazado' ? 'Sin conexión con la central' : 'Conectando con la central…',
       };
     }
     // Modo real: en línea pero sin GPS, la central no le manda servicios (no está disponible).
     if (REAL && e.conectado && !e.gpsReal) {
-      return { titulo: 'Conectado', sub: 'Sin GPS: no te llegan servicios', alerta: true };
+      return { titulo, sub: 'Sin GPS: no te llegan servicios', alerta: true };
     }
     // Fase 3: la central lo sacó de turno (hasta que vuelva a conectarse).
     if (REAL && !e.conectado && e.sacado) {
-      return { titulo: 'Desconectado', sub: 'La central te sacó de turno. Toca para volver', alerta: true };
+      return { titulo, sub: 'La central te sacó de turno. Toca para volver', alerta: true };
     }
     return {
-      titulo: e.conectado ? 'Conectado' : 'Desconectado',
+      titulo,
       sub: e.conectado ? 'Recibiendo solicitudes cercanas' : 'Toca para empezar a recibir servicios',
     };
   }
@@ -2287,7 +2291,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       if (ctl === c && ui.vista === 'libre') pintarPildoraReal(ctl.estado);
       // Si no se pudo (sin GPS, sin sesión…), el núcleo ya dijo por qué.
       if (!enTurno || ctl !== c) return;
-      avisos.limpiar(['exito']); // este aviso reemplaza a «Estás en línea»
+      avisos.limpiar(['exito']); // este aviso reemplaza a «Estás en turno»
     }
     avisos.mostrar({ titulo: 'Volviste a estar en turno.', cuerpo: 'Te llegarán las solicitudes cercanas.', tipo: 'exito' });
   }
@@ -2384,10 +2388,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     avisos.mostrar({ titulo: 'Te desconectaste desde la notificación.', cuerpo: 'Ya no te llegan servicios. Conéctate cuando quieras seguir.', tipo: 'info' });
   }
 
-  // Chip de conexión con la central y píldora (el estado del bus cambia sin «cambio»).
+  // Chip de conexión con la central y píldora (el estado del bus cambia sin «cambio»). Lote final: el aviso de arriba solo
+  // se ve cuando hay un problema (conectando, sin conexión); «En línea» no se dice.
   function pintarConexionReal() {
     const est = estadoCentral();
     const chip = $(app, '[data-conexion]');
+    chip.hidden = est === 'en_linea';
     chip.classList.toggle('a-vivo', est === 'en_linea');
     chip.classList.toggle('a-reintentando', est === 'reconectando' || est === 'rechazado');
     ponerTexto(app, '[data-conexion-txt]', textoCentral());
@@ -2396,10 +2402,16 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
 
   function actualizarMapa(e) {
     const movil = yoConductor()?.movil || '';
-    if (e.pos && (e.pos !== ui.ultimaPos || movil !== ui.movilEtiqueta)) {
+    // Lote final: fuera de turno (y sin un servicio) el taxi propio va gris con «Tú · fuera de turno»: así se ve en el mapa
+    // que nadie lo está viendo como disponible.
+    const fuera = !e.conectado && !e.viaje;
+    if (e.pos && (e.pos !== ui.ultimaPos || movil !== ui.movilEtiqueta || fuera !== ui.taxiFuera)) {
       ui.ultimaPos = e.pos;
       ui.movilEtiqueta = movil;
-      m.ponerTaxi('yo', e.pos, { rumbo: e.pos.rumbo || 0, destacado: true, etiqueta: movil ? esc(`Móvil ${movil}`) : '' });
+      ui.taxiFuera = fuera;
+      m.ponerTaxi('yo', e.pos, fuera
+        ? { rumbo: e.pos.rumbo || 0, destacado: true, color: COLOR_TAXI_FUERA, etiqueta: '<span class="a-etiqueta-fuera">Tú · fuera de turno</span>' }
+        : { rumbo: e.pos.rumbo || 0, destacado: true, etiqueta: movil ? esc(`Móvil ${movil}`) : '' });
       if (e.conectado && !e.viaje) ponerPulso(e.pos);
       if (e.viaje) {
         ruta.recortar(e.pos);

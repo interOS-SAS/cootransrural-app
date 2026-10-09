@@ -344,7 +344,9 @@ async function registrarConductor() {
   await foto(pc, 'c06-libre');
   await pc.click('[data-conectar]');
   await debe(pc.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 15000 }), 'conductor: se conecta (turno abierto)');
-  ok((await texto(pc, '[data-conexion]')).includes('En línea'), 'conductor: el chip dice «En línea»');
+  // Lote final: en línea, el aviso de conexión de arriba no se ve (solo con un problema) y la píldora dice «En turno».
+  ok(await pc.evaluate(() => document.querySelector('[data-conexion]')?.hidden === true), 'conductor: en línea, sin el aviso de conexión de arriba');
+  ok((await texto(pc, '[data-pildora-titulo]')).trim() === 'En turno', 'conductor: la píldora dice «En turno»');
   await foto(pc, 'c07-conectado');
 
   // Menú y Ajustes del conductor sin piezas de la demo.

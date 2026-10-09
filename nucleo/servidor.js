@@ -214,6 +214,14 @@ export const registrarConductor = (d) => api('PUT', 'conductor', d); // { empres
 export const cercania = (pos) => api('POST', 'cercania', pos);
 export const interesado = (d) => api('POST', 'interesados', d);
 
+// Fuera de turno de verdad (servidor 0.11.1, docs/CONTRATO.md §14): la app del conductor sale de turno y la central no se
+// lo confirmó por el bus (bus medio caído o cerrado). → { ok, enTurno } (enTurno: true si tiene un servicio en curso).
+// Con un servidor anterior, 404 (rutaNoDisponible): no hay nada más que hacer (el «fin» del plugin ya lo dijo).
+// turnoEn: cuándo salió de turno (ms): si después volvió a entrar por el bus, la central no toma este aviso atrasado.
+export const fueraDeTurno = ({ motivo = 'turno_apagado', turnoEn = null } = {}) => api('POST', 'conductor/turno', {
+  enTurno: false, motivo: String(motivo).slice(0, 40), ...(Number(turnoEn) > 0 ? { turnoEn: Number(turnoEn) } : {}),
+});
+
 /* ---------------- Ronda 4A: SOS y avisos de la cooperativa (servidor 0.9.0) ----------------
  * Contrato en la cabecera de nucleo/central.js. Con un servidor anterior estas rutas responden 404 (no_existe o
  * error_interno): quien llama lo toma como «no disponible» y no le dice nada a la persona. */

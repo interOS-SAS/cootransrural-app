@@ -30,6 +30,12 @@
 // pedidoCentral: true) queda en viaje.pedidoCentral: se inicia sin código (codigoHash vacío) y no se califica (al
 // confirmar el efectivo se cierra). estado.avisarCentral (bienvenida.avisarCentral) dice si «¿Necesitas ayuda?» ofrece
 // «Avisar a la central»; c.avisarCentral() lo manda (nucleo/sos.js). c.bandeja: los avisos de la cooperativa.
+// Fuera de turno de verdad (servidor 0.11.1, lote final): la presencia lleva enTurno (lo que dice la píldora: «En turno» o
+// «Fuera de turno»). Al salir de turno se le pide a la central que lo confirme (presencia con confirmar: true → `turno`) y,
+// si no confirma en CONFIRMAR_FUERA_MS (bus medio caído, cerrado o reconectando), se le dice por REST (POST conductor/turno)
+// con reintentos mientras siga fuera. Al saludar (al abrir o reconectarse) fuera de turno, la app se lo dice a la central
+// (con confirmación si la bienvenida dice que la cree en turno, enTurno: true), salvo que esté por retomar el turno con el
+// plugin (nativo.enCurso). Evento 'fuera_de_turno' al salir de turno (nativo.vigilarTurno detiene el plugin).
 // Modo revisor (bienvenida.revision: las cuentas de los revisores de Apple y Google): la central
 // manda un «pasajero automático» a ~120 m, con el código de abordaje fijo (codigoAbordaje, 1234).
 // Ese código va en la nota de la solicitud y en viaje.codigoRevision (el diseño lo muestra al
@@ -94,6 +100,12 @@ const ESPERA_RUTA_ACEPTAR_MS = 1500;
 // Una aceptación que se soltó por tiempo (o al recargar) todavía se reconoce si la central
 // la asigna o la manda en viaje_actual.
 const ACEPTADA_VIGENTE_MS = 30 * 60 * 1000;
+// Fuera de turno de verdad (servidor 0.11.1): cuánto se espera la confirmación de la central por el bus antes de decirlo
+// por REST, y los reintentos por REST sin señal (5 s, 10, 20… hasta cada minuto, mientras siga fuera de turno).
+const CONFIRMAR_FUERA_MS = 4000;
+const REINTENTO_FUERA_MS = { primero: 5000, maximo: 60000 };
+// Al saludar fuera de turno se espera, como mucho esto, a que la app revise el plugin (¿va a retomar el turno?).
+const ESPERA_REVISION_NATIVA_MS = 3000;
 
 // Ruta para aceptar sin hacer esperar a la central: la de OSRM si llega a tiempo; si no,
 // una aproximada en línea recta (la misma que da calcularRuta sin internet).
@@ -180,6 +192,11 @@ class ControladorConductor extends Emisor {
       // La central lo sacó de turno con un servicio en curso: queda «Desconectado» al terminarlo ({ motivo, en }).
       this.sacadoPendiente = null;
       this.enTurnoDesde = 0; // cuándo se puso en turno por última vez («Conectarme»)
+      // 0.11.1: la salida de turno que la central aún no confirma ({ intento, uid }) y su reloj (ver #confirmarFuera).
+      this.fuera = null;
+      this.intentoFuera = 0;
+      this.relojFuera = null;
+      this.fueraDesde = Date.now(); // cuándo quedó fuera de turno (la app arranca fuera de turno)
       // Ronda 4A: la central recibe «Avisar a la central» (bienvenida.avisarCentral) y los avisos de la cooperativa.
       this.estado.avisarCentral = false;
       this.envioSos = null;
@@ -281,8 +298,77 @@ class ControladorConductor extends Emisor {
     if (this.estado.viaje) return false;
     clearInterval(this.relojPresencia);
     this.#cambiar({ conectado: false, solicitudes: [] });
-    this.#anunciar();
+    if (this.real) {
+      // 0.11.1: la ubicación nativa se detiene (nativo.vigilarTurno) y la central lo sabe con confirmación.
+      this.emit('fuera_de_turno', {});
+      this.#confirmarFuera();
+    } else this.#anunciar();
     return true;
+  }
+
+  // 0.11.1 (fuera de turno de verdad): la central tiene que saber que salió de turno: si no, una ubicación nativa que siga
+  // llegando lo vuelve a poner en el mapa. Por el bus pidiendo confirmación (`turno`); si en CONFIRMAR_FUERA_MS no confirma
+  // (bus medio caído; cerrado o reconectando, la presencia ni sale: no se guarda para después), por REST, con reintentos
+  // mientras siga fuera de turno.
+  #confirmarFuera() {
+    if (!this.real) return;
+    this.#soltarFuera();
+    const intento = ++this.intentoFuera;
+    const msj = this.bus.estado === 'en_linea' ? this.#anunciar({ confirmar: true }) : null;
+    this.fuera = { intento, uid: msj?.uid || null };
+    const vigente = () => this.fuera?.intento === intento && !this.estado.conectado && !this.destruido;
+    const porRest = async (espera) => {
+      this.relojFuera = null;
+      if (!vigente()) return;
+      try {
+        await servidor.fueraDeTurno({ turnoEn: this.fueraDesde || null });
+        if (vigente()) this.#soltarFuera();
+      } catch (e) {
+        if (!vigente()) return;
+        // Sin sesión, no aprobado o un servidor sin la ruta: por aquí no hay más que hacer (el bus o el «fin» del plugin).
+        if ([400, 401, 403, 404, 405].includes(e?.estado) || servidor.rutaNoDisponible(e)) {
+          this.#soltarFuera();
+          return;
+        }
+        this.relojFuera = setTimeout(() => porRest(Math.min(espera * 2, REINTENTO_FUERA_MS.maximo)), espera);
+      }
+    };
+    this.relojFuera = setTimeout(() => porRest(REINTENTO_FUERA_MS.primero), msj ? CONFIRMAR_FUERA_MS : 0);
+  }
+
+  // Cuándo entró o salió de turno (reloj del teléfono; 0 si no se sabe, p. ej. un servicio retomado al recargar).
+  #turnoEn() {
+    return (this.estado.conectado ? this.enTurnoDesde : this.fueraDesde) || 0;
+  }
+
+  #soltarFuera() {
+    clearTimeout(this.relojFuera);
+    this.relojFuera = null;
+    this.fuera = null;
+  }
+
+  // La central dice lo que cree del turno (respuesta a una presencia con confirmar).
+  #alConfirmarTurno(d) {
+    if (this.fuera && !this.estado.conectado && d?.enTurno === false) this.#soltarFuera();
+  }
+
+  // 0.11.1: saluda a la central (al abrir o al reconectarse) fuera de turno: se lo dice, así la central no lo tiene en turno
+  // por una ubicación nativa que quedó llegando (la escena de la app se rehízo y el plugin viejo sigue vivo). Si la central
+  // lo creía en turno (bienvenida.enTurno), con confirmación. Salvo que la app esté por retomar el turno con el plugin (la
+  // página se recargó con el seguimiento vivo: nativo.enCurso): eso lo anuncia ella al conectarse.
+  async #reconciliarFuera(d) {
+    if (!this.real) return;
+    const revisado = this.nativo?.revisado?.();
+    if (revisado) await Promise.race([revisado.catch(() => {}), new Promise((r) => setTimeout(r, ESPERA_REVISION_NATIVA_MS))]);
+    if (this.destruido || this.estado.conectado || this.estado.viaje || this.nativo?.enCurso?.()) return;
+    if (d?.enTurno === true) this.#confirmarFuera();
+    else if (this.bus.estado === 'en_linea') this.#anunciar();
+  }
+
+  // 0.11.1: nativo.vigilarTurno no pudo retomar el turno (la página se recargó con el plugin siguiendo el turno): la
+  // central lo sabe con confirmación.
+  reconciliarTurno() {
+    if (this.real && !this.destruido && !this.estado.conectado && !this.estado.viaje) this.#confirmarFuera();
   }
 
   // Modo real: vuelve a mandar la presencia ya (por ejemplo, al arrancar el seguimiento nativo).
@@ -290,16 +376,17 @@ class ControladorConductor extends Emisor {
     if (this.real && this.estado.conectado) this.#anunciar();
   }
 
-  #anunciar() {
+  // Devuelve el mensaje publicado (o null). confirmar (modo real): la central responde `turno` (ver #confirmarFuera).
+  #anunciar({ confirmar = false } = {}) {
     const c = this.perfil;
-    if (!c) return;
+    if (!c) return null;
     if (this.real) {
       // Con la app oculta y el seguimiento nativo activo, la posición la manda el plugin por HTTP.
-      if (this.nativo?.enviando?.()) return;
+      if (this.nativo?.enviando?.()) return null;
       // Siempre con la posición del GPS de verdad: sin pos el servidor le mandaría al
       // conductor todas las solicitudes de la cooperativa. Sin GPS, no disponible.
       const conGps = Boolean(this.estado.gpsReal && this.estado.pos);
-      this.bus.publicar('presencia', {
+      return this.bus.publicar('presencia', {
         conductorId: c.id,
         movil: c.movil,
         disponible: conGps && this.estado.conectado && !this.estado.viaje,
@@ -312,10 +399,14 @@ class ControladorConductor extends Emisor {
         // a una presencia «no disponible» llegada en los 2 s siguientes (podía venir de antes del aviso) y el conductor
         // quedaría fuera de turno hasta 30 minutos aunque se volviera a conectar.
         ...(this.estado.sacado && !this.estado.conectado ? { sacado: true } : {}),
+        // Servidor 0.11.1: lo que dice la píldora («En turno» / «Fuera de turno»). Sin GPS o con un servicio, disponible es
+        // false pero sigue en turno; «fuera de turno» es explícito: ninguna ubicación nativa lo vuelve a poner en turno.
+        enTurno: Boolean(this.estado.conectado),
+        ...(this.#turnoEn() ? { turnoEn: this.#turnoEn() } : {}),
+        ...(confirmar ? { confirmar: true } : {}),
       });
-      return;
     }
-    this.bus.publicar('presencia', {
+    return this.bus.publicar('presencia', {
       conductorId: c.id,
       movil: c.movil,
       disponible: this.estado.conectado && !this.estado.viaje,
@@ -924,6 +1015,8 @@ class ControladorConductor extends Emisor {
     });
     // Fase 3: la central lo sacó de turno desde su mapa (con el bus abierto).
     this.bus.on(MENSAJES_CENTRAL.sacadoDeTurno, (d) => this.#alSacadoDeTurno(d, { origen: 'bus' }));
+    // 0.11.1: la central confirma lo que cree del turno (respuesta a la presencia con confirmar).
+    this.bus.on('turno', (d) => this.#alConfirmarTurno(d));
     this.bus.on('rechazo', (d) => {
       this.ultimoRechazo = d?.codigo || null;
       // Sin la central no se puede estar en línea (el viaje en curso, si hay, se conserva).
@@ -1190,12 +1283,13 @@ class ControladorConductor extends Emisor {
       return false;
     }
     this.enTurnoDesde = Date.now();
+    this.#soltarFuera(); // 0.11.1: la salida de turno anterior ya no importa
     this.#cambiar({ conectado: true, sacado: null });
     // Si la central aún no saluda, la presencia sale con la bienvenida.
     this.#anunciar();
     this.bus.publicar('consulta_solicitudes', {});
     this.#arrancarRelojPresencia();
-    this.#avisar({ titulo: 'Estás en línea', cuerpo: 'Te llegarán las solicitudes cercanas.', tipo: 'exito' });
+    this.#avisar({ titulo: 'Estás en turno', cuerpo: 'Te llegarán las solicitudes cercanas.', tipo: 'exito' });
     return true;
   }
 
@@ -1231,7 +1325,7 @@ class ControladorConductor extends Emisor {
       this.#anunciar();
       if (!this.estado.viaje) this.bus.publicar('consulta_solicitudes', {});
       this.#arrancarRelojPresencia();
-    }
+    } else this.#reconciliarFuera(d); // 0.11.1: fuera de turno, también se lo dice (la pantalla y la central lo mismo)
     this.#cambiar({});
     this.emit('bienvenida', d);
   }
@@ -1580,6 +1674,8 @@ class ControladorConductor extends Emisor {
   }
 
   #cambiar(cambios) {
+    // 0.11.1: cuándo salió de turno (va como turnoEn: la central no toma un aviso atrasado por uno más nuevo).
+    if (this.real && cambios.conectado === false && this.estado.conectado) this.fueraDesde = Date.now();
     Object.assign(this.estado, cambios);
     if (this.real && ('viaje' in cambios || 'conectado' in cambios)) this.#guardarReal();
     // Modo real: el GPS se sigue o se suelta según el turno y el servicio.
@@ -1623,6 +1719,7 @@ class ControladorConductor extends Emisor {
     this.destruido = true;
     this.dejarConfig?.();
     clearInterval(this.relojPresencia);
+    clearTimeout(this.relojFuera);
     clearTimeout(this.relojViajeActual);
     clearTimeout(this.relojReintentoGps);
     this.recorrido?.detener();
