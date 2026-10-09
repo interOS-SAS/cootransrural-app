@@ -22,6 +22,8 @@ export * as servidor from './servidor.js';
 export { textoError, ErrorServidor } from './servidor.js';
 // App nativa 1.2: notificaciones push y Face ID / huella como N.nativo.* (sin los plugins, no hace nada).
 export * as nativo from './nativo.js';
+// Pago con QR o llave del conductor (servidor 0.10.0) como N.cobro.*: validación, lectura del QR de una imagen y la API.
+export * as cobro from './cobro.js';
 // Reglas del despacho de la cooperativa (las manda la central en la bienvenida) y los mensajes nuevos del bus.
 export * as reglas from './reglas.js';
 // Fase 3 del panel: lo que hace la central desde su mapa (sacar de turno, cancelar, ofrecer) y sus textos.

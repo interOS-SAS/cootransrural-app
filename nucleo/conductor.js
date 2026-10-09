@@ -41,6 +41,7 @@ import { calcularTarifa } from './tarifas.js';
 import { avisar } from './avisos.js';
 import { recorrer, duracionSimulada, crearSolicitudSimulada, PasajeroSimulado } from './simulador.js';
 import { urlPago } from './qr.js';
+import { ENTIDADES, nombreEntidad } from './cobro.js';
 import * as perfil from './perfil.js';
 import * as servidor from './servidor.js';
 import { Emisor, hashCorto, distanciaKm, pesos, kmTexto, minutosTexto } from './util.js';
@@ -628,6 +629,9 @@ class ControladorConductor extends Emisor {
       this.#faseViaje('cobrando', { valor, urlCobro: null, fin: Date.now() });
       this.#cambiar({ rutaActual: null, etaMin: 0, kmRestantes: 0 });
       this.bus.publicar('estado', { viajeId: v.id, conductorId: this.perfil?.id, fase: 'finalizado', valor, km: v.km });
+      // Servidor 0.10.0: con esto arma el `cobro` del pasajero con el QR y la llave guardados de ESTE conductor
+      // («Cómo me pagan»). Aquí no va url ni QR: en modo real el servidor no los acepta del teléfono.
+      if (!v.simulado) this.bus.publicar('cobro', { viajeId: v.id, conductorId: this.perfil?.id, valor });
       return { valor, url: null };
     }
     const url = urlPago({ viaje: v.id, valor, movil: this.perfil.movil, sala: this.bus.sala, conductor: this.perfil.id });
@@ -648,13 +652,27 @@ class ControladorConductor extends Emisor {
     this.#registrarPago({ metodo: 'efectivo', valor: v.valor });
   }
 
+  // Modo real: el conductor confirma que le llegó la transferencia (a su QR o su llave). La puede marcar aunque el
+  // pasajero no haya dicho nada. entidad: el nombre de su banco o billetera (va en metodo_pago del viaje).
+  confirmarTransferencia(entidad = null) {
+    const v = this.estado.viaje;
+    if (!v || v.fase !== 'cobrando' || !this.real) return;
+    const dicha = v.pagoAnunciado?.metodo === 'transferencia' ? v.pagoAnunciado : null;
+    // entidad (la de la lista) va al servidor para metodo_pago; si no viene, el servidor pone la del conductor.
+    this.#registrarPago({
+      metodo: 'transferencia', valor: v.valor,
+      billetera: String((entidad ? nombreEntidad(entidad) : dicha?.billetera) || '').slice(0, 40) || null,
+      entidad: entidad || dicha?.entidad || null,
+    });
+  }
+
   #registrarPago(pago) {
     const v = this.estado.viaje;
     if (!v || v.fase !== 'cobrando') return;
     // También en viajes simulados: la página pagar/ espera esta confirmación.
-    this.bus.publicar('pago_confirmado', { viajeId: v.id, conductorId: this.perfil.id, metodo: pago.metodo, valor: pago.valor, billetera: pago.billetera || null, ref: pago.ref || null });
+    this.bus.publicar('pago_confirmado', { viajeId: v.id, conductorId: this.perfil.id, metodo: pago.metodo, valor: pago.valor, billetera: pago.billetera || null, ref: pago.ref || null, ...(pago.entidad ? { entidad: pago.entidad } : {}) });
     const aviso = {
-      titulo: pago.metodo === 'qr' ? 'Pago recibido por QR (prueba)' : 'Pago en efectivo registrado',
+      titulo: pago.metodo === 'qr' ? 'Pago recibido por QR (prueba)' : pago.metodo === 'transferencia' ? 'Transferencia registrada' : 'Pago en efectivo registrado',
       cuerpo: `${pesos(pago.valor)}${pago.billetera ? ` · ${pago.billetera}` : ''}${pago.ref ? ` · Ref. ${pago.ref}` : ''}`,
       tipo: 'exito',
     };
@@ -676,7 +694,7 @@ class ControladorConductor extends Emisor {
     if (!v) return;
     perfil.anotarViajeCerrado('conductor', {
       id: v.id, final: 'finalizado', valor: v.valor ?? null, km: v.km ?? null,
-      pago: v.pago ? { metodo: v.pago.metodo, valor: v.pago.valor } : null,
+      pago: v.pago ? { metodo: v.pago.metodo, valor: v.pago.valor, billetera: v.pago.billetera || null } : null,
     });
     this.#guardarEnHistorial('finalizado');
     this.#terminar();
@@ -695,7 +713,7 @@ class ControladorConductor extends Emisor {
     if (this.real && !v.simulado) {
       perfil.anotarViajeCerrado('conductor', {
         id: v.id, final: 'finalizado', valor: v.valor ?? null, km: v.km ?? null,
-        pago: v.pago ? { metodo: v.pago.metodo, valor: v.pago.valor } : null, estrellas, etiquetas, comentario,
+        pago: v.pago ? { metodo: v.pago.metodo, valor: v.pago.valor, billetera: v.pago.billetera || null } : null, estrellas, etiquetas, comentario,
       });
     }
     this.pasajeroSim?.alCalificar();
@@ -843,8 +861,14 @@ class ControladorConductor extends Emisor {
           // En efectivo no basta con que el pasajero toque el botón: confirma el conductor.
           if (v && v.id === d.viajeId && v.fase === 'cobrando') {
             const valor = d.valor || v.valor;
-            this.#faseViaje('cobrando', { pagoAnunciado: { metodo: d.metodo || 'efectivo', valor } });
-            this.#avisar({ titulo: 'El pasajero dice que pagó en efectivo', cuerpo: `${pesos(valor)}. Confirma cuando lo recibas.`, tipo: 'info' });
+            // 0.10.0: también «Ya pagué por transferencia» (a su QR o su llave); la entidad llega como texto.
+            const transferencia = d.metodo === 'transferencia';
+            const billetera = transferencia && typeof d.billetera === 'string' ? d.billetera.slice(0, 40) : null;
+            const entidad = transferencia && ENTIDADES.some((e) => e.id === d.entidad) ? d.entidad : null;
+            this.#faseViaje('cobrando', { pagoAnunciado: { metodo: transferencia ? 'transferencia' : 'efectivo', valor, billetera, entidad } });
+            this.#avisar(transferencia
+              ? { titulo: 'El pasajero dice que te transfirió', cuerpo: `${pesos(valor)}${billetera ? ` · ${billetera}` : ''}. Revisa tu app del banco y confírmalo.`, tipo: 'info' }
+              : { titulo: 'El pasajero dice que pagó en efectivo', cuerpo: `${pesos(valor)}. Confirma cuando lo recibas.`, tipo: 'info' });
           }
           break;
         }
@@ -1292,7 +1316,7 @@ class ControladorConductor extends Emisor {
     else if (['cobrando', 'calificar'].includes(v.fase)) {
       this.bus.publicar('estado', { ...base, fase: 'finalizado', valor: v.valor, km: v.km });
       // Ya confirmó el efectivo: que al pasajero también le llegue.
-      if (v.fase === 'calificar' && v.pago) this.bus.publicar('pago_confirmado', { ...base, metodo: v.pago.metodo, valor: v.pago.valor, billetera: null, ref: null });
+      if (v.fase === 'calificar' && v.pago) this.bus.publicar('pago_confirmado', { ...base, metodo: v.pago.metodo, valor: v.pago.valor, billetera: v.pago.billetera || null, ref: null });
     }
   }
 
@@ -1306,7 +1330,7 @@ class ControladorConductor extends Emisor {
       // Si la central rechaza ese valor (valor_invalido), el servicio se retoma con estos datos.
       this.cierreRepetido = { d, cuando: Date.now() };
       this.bus.publicar('estado', { ...base, fase: 'finalizado', valor: cerrado.valor, km: cerrado.km });
-      if (cerrado.pago) this.bus.publicar('pago_confirmado', { ...base, metodo: cerrado.pago.metodo, valor: cerrado.pago.valor, billetera: null, ref: null });
+      if (cerrado.pago) this.bus.publicar('pago_confirmado', { ...base, metodo: cerrado.pago.metodo, valor: cerrado.pago.valor, billetera: cerrado.pago.billetera || null, ref: null });
       if (cerrado.estrellas) this.bus.publicar('calificacion', { viajeId, de: 'conductor', estrellas: cerrado.estrellas, etiquetas: cerrado.etiquetas || [], comentario: cerrado.comentario || '' });
     }
     // La central lo tenía ocupado con ese servicio: queda libre otra vez.

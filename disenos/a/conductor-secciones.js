@@ -50,6 +50,8 @@ export function abrirGanancias({ N, app, real = false, yo = null }) {
       const r = N.perfil.resumenDelDia();
       const total = r.ganado || 0;
       const pQR = total ? Math.round((r.porQR / total) * 100) : 0;
+      // Modo real (0.10.0): lo que le transfirieron a su QR o su llave.
+      const pTr = real && total ? Math.round(((r.porTransferencia || 0) / total) * 100) : 0;
       const semana = gananciasPorDia(N);
       const max = Math.max(1, ...semana.map((d) => d.total));
       const cal = real ? calificacionReal(yo || N.perfil.conductor()) : '';
@@ -67,13 +69,16 @@ export function abrirGanancias({ N, app, real = false, yo = null }) {
         </div>
         <section class="a-grupo"><h3>¿Cómo te pagaron hoy?</h3>
           <div class="a-tarjeta-blanca">
-            ${total ? `<div class="a-barra-apilada" role="img" aria-label="${real ? `Efectivo ${N.pesos(r.efectivo)}` : `QR ${N.pesos(r.porQR)} (${pQR} %), efectivo ${N.pesos(r.efectivo)} (${100 - pQR} %)`}">
+            ${total ? `<div class="a-barra-apilada" role="img" aria-label="${real ? `Efectivo ${N.pesos(r.efectivo)}${r.porTransferencia ? `, transferencia ${N.pesos(r.porTransferencia)}` : ''}` : `QR ${N.pesos(r.porQR)} (${pQR} %), efectivo ${N.pesos(r.efectivo)} (${100 - pQR} %)`}">
               ${r.porQR ? `<span style="flex:${r.porQR};background:${COLOR_QR}"></span>` : ''}
+              ${real && r.porTransferencia ? `<span style="flex:${r.porTransferencia};background:${COLOR_QR}"></span>` : ''}
               ${r.efectivo ? `<span style="flex:${r.efectivo};background:${COLOR_EFECTIVO}"></span>` : ''}
             </div>` : '<div class="a-barra-apilada a-vacia"></div>'}
             <ul class="a-leyenda">
-              ${real ? '' : `<li><i style="background:${COLOR_QR}"></i><span>QR (prueba)</span><b>${N.pesos(r.porQR)}</b><small>${pQR} %</small></li>`}
-              <li><i style="background:${COLOR_EFECTIVO}"></i><span>Efectivo</span><b>${N.pesos(r.efectivo)}</b><small>${total ? 100 - pQR : 0} %</small></li>
+              ${real
+                ? `<li><i style="background:${COLOR_QR}"></i><span>Transferencia</span><b>${N.pesos(r.porTransferencia || 0)}</b><small>${pTr} %</small></li>`
+                : `<li><i style="background:${COLOR_QR}"></i><span>QR (prueba)</span><b>${N.pesos(r.porQR)}</b><small>${pQR} %</small></li>`}
+              <li><i style="background:${COLOR_EFECTIVO}"></i><span>Efectivo</span><b>${N.pesos(r.efectivo)}</b><small>${total ? 100 - pQR - pTr : 0} %</small></li>
             </ul>
           </div>
         </section>

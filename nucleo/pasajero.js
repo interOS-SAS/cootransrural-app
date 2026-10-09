@@ -42,6 +42,7 @@ import { calcularTarifa } from './tarifas.js';
 import { avisar } from './avisos.js';
 import { TaxisAmbiente, ConductorSimulado } from './simulador.js';
 import { leerCobro, urlPago } from './qr.js';
+import { limpiarMetodo, nombreEntidad } from './cobro.js';
 import * as perfil from './perfil.js';
 import * as servidor from './servidor.js';
 import { Emisor, uid, codigoNumerico, hashCorto, distanciaKm, pesos, minutosTexto, primerNombre, enlaceMapa, fechaTexto, horaTexto } from './util.js';
@@ -443,11 +444,28 @@ class ControladorPasajero extends Emisor {
     return { ok: true, pago };
   }
 
+  // Modo real (0.10.0): el pasajero le transfirió al conductor con su QR o su llave. TaxiCun no ve ni mueve la
+  // plata: solo le avisa al conductor, que lo confirma con «Recibí la transferencia».
+  pagarPorTransferencia(metodo = null) {
+    const { viaje, cobro } = this.estado;
+    if (!this.real || !viaje || this.estado.fase !== 'pagar') return { ok: false };
+    const entidad = metodo?.entidad ? nombreEntidad(metodo.entidad) : null;
+    const pago = { metodo: 'transferencia', billetera: entidad, entidad: metodo?.entidad || null, valor: cobro?.valor || viaje.tarifa.total, ref: null, hora: Date.now() };
+    this.#confirmarPago(pago);
+    return { ok: true, pago };
+  }
+
+  // Si el `cobro` no llegó (se recargó la app en «pagar»), se le vuelve a pedir al servidor.
+  pedirCobro() {
+    const { viaje, fase } = this.estado;
+    if (this.real && viaje && !viaje.simulado && fase === 'pagar') this.bus.publicar('cobro', { viajeId: viaje.id });
+  }
+
   #confirmarPago(pago) {
     const { viaje, conductor } = this.estado;
-    if (this.real) this.bus.publicar('pago', { viajeId: viaje.id, metodo: pago.metodo, valor: pago.valor });
+    if (this.real) this.bus.publicar('pago', { viajeId: viaje.id, metodo: pago.metodo, valor: pago.valor, ...(pago.billetera ? { billetera: pago.billetera } : {}), ...(pago.entidad ? { entidad: pago.entidad } : {}) });
     else if (!viaje.simulado) this.bus.publicar('pago', { viajeId: viaje.id, conductorId: conductor?.id, ...pago });
-    this.#avisar({ titulo: pago.metodo === 'qr' ? 'Pago exitoso (prueba)' : 'Pago en efectivo', cuerpo: `${pesos(pago.valor)} · Móvil ${conductor?.movil || ''}`, tipo: 'exito' });
+    this.#avisar({ titulo: pago.metodo === 'qr' ? 'Pago exitoso (prueba)' : pago.metodo === 'transferencia' ? 'Le avisamos al conductor' : 'Pago en efectivo', cuerpo: `${pesos(pago.valor)} · Móvil ${conductor?.movil || ''}`, tipo: 'exito' });
     this.#cambiar({ fase: 'calificar', pago });
     this.simulado?.alPagar();
   }
@@ -567,12 +585,23 @@ class ControladorPasajero extends Emisor {
           this.#avisar({ titulo: 'Viaje iniciado', cuerpo: viaje.destino ? `Rumbo a ${viaje.destino.titulo || 'tu destino'}. ¡Buen viaje!` : '¡Buen viaje!', tipo: 'info' });
         } else if (d.fase === 'finalizado' && ['en_viaje', 'llego', 'asignado'].includes(fase)) {
           const valor = d.valor || viaje.tarifa.total;
-          this.#cambiar({ fase: 'pagar', cobro: { valor }, etaMin: 0, finViaje: Date.now(), kmFinal: d.km || viaje.ruta?.km || null });
-          this.#avisar({ titulo: 'Llegaste a tu destino', cuerpo: `Total: ${pesos(valor)}. ${this.real ? 'Paga en efectivo al conductor.' : 'Paga con QR o en efectivo.'}`, tipo: 'exito' });
+          // El `cobro` del servidor (con el QR y la llave del conductor) puede llegar antes que este fin: se conserva.
+          this.#cambiar({ fase: 'pagar', cobro: { ...(this.real ? this.estado.cobro || {} : {}), valor }, etaMin: 0, finViaje: Date.now(), kmFinal: d.km || viaje.ruta?.km || null });
+          this.#avisar({ titulo: 'Llegaste a tu destino', cuerpo: `Total: ${pesos(valor)}. ${this.real ? 'Págale al conductor.' : 'Paga con QR o en efectivo.'}`, tipo: 'exito' });
         }
         break;
       }
       case 'cobro': {
+        if (this.real) {
+          // Servidor 0.10.0: lo arma el servidor con lo guardado del conductor de ESTE viaje. Del teléfono del
+          // conductor no se toma ninguna url; los métodos se revisan otra vez y se pintan solo como texto.
+          if (!viaje || (d.viajeId !== viaje.id && !(viaje.idsPrevios || []).includes(d.viajeId))) break;
+          if (!['en_viaje', 'llego', 'asignado', 'pagar'].includes(fase)) break;
+          const metodos = (Array.isArray(d.metodos) ? d.metodos : []).slice(0, 4).map(limpiarMetodo).filter(Boolean);
+          const valor = Number.isFinite(d.valor) && d.valor > 0 ? d.valor : this.estado.cobro?.valor;
+          this.#cambiar({ cobro: { ...(this.estado.cobro || {}), ...(valor ? { valor } : {}), metodos } });
+          break;
+        }
         this.#cambiar({ cobro: { valor: d.valor, url: d.url || null } });
         break;
       }
@@ -846,7 +875,11 @@ class ControladorPasajero extends Emisor {
     if (!viaje.origen && d.origen) viaje.origen = d.origen;
     if (!viaje.destino && d.destino) viaje.destino = d.destino;
     if (!viaje.codigo) viaje.codigo = recuperarCodigo(viaje.id, d.codigoHash);
-    if (['pagar', 'calificar'].includes(fase)) return this.#cambiar({ viaje });
+    if (['pagar', 'calificar'].includes(fase)) {
+      this.#cambiar({ viaje });
+      if (fase === 'pagar' && !this.estado.cobro?.metodos) this.pedirCobro();
+      return;
+    }
     if (d.estado === 'buscando') {
       if (fase === 'buscando') return this.#cambiar({ viaje });
       return this.#cambiar({ fase: 'buscando', viaje, conductor: null, posConductor: null, rutaConductor: null, etaMin: null });

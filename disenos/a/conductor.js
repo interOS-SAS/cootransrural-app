@@ -23,6 +23,7 @@ import { abrirGanancias, abrirHistorial, abrirDocumentos, abrirMiTaxi, abrirAjus
 import { ofrecerAvisos, ofrecerBiometria, ingresoBiometria, montarBloqueo, ofrecerSegundoPlano } from './nativa.js';
 import { avisarPolitica, marcarPoliticaVista, politicaPendiente } from './politica.js';
 import { seguirSos, montarAvisosCentral } from './central.js';
+import { abrirComoMePagan } from './pago-qr.js';
 
 // Foto de portada del ingreso (generada para la web, sin marcas: ver img/web/creditos.json).
 const FOTO_CONDUCTOR = new URL('./img/conductor.jpg', import.meta.url).href;
@@ -266,6 +267,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         // En modo real no hay documentos de ejemplo.
         !REAL && { icono: 'documento', texto: 'Documentos', detalle: 'SOAT, técnico-mecánica, licencia', accion: () => abrirDocumentos(ctx()) },
         { icono: 'auto', texto: 'Mi taxi', detalle: REAL ? EM.unir([yo.vehiculo, yo.placa]) : `${yo.vehiculo} · ${yo.placa}`, accion: () => abrirMiTaxi(ctx()) },
+        REAL && { icono: 'dinero', texto: 'Cómo me pagan', detalle: 'Tu QR o tu llave para transferencias', accion: () => abrirComoMePagan(ctx()) },
         { icono: 'ajustes', texto: 'Ajustes', detalle: REAL ? 'GPS, sonido, tu cuenta' : 'GPS, sonido, sala, diseño', accion: () => abrirAjustesConductor(ctx()) },
         { separador: true },
         EM.EN_TAXICUN && !NATIVA && !UNICA && { icono: 'pin', texto: 'Cambiar de municipio', detalle: `Ahora: ${EM.PUEBLO} · ${EM.NOMBRE}`, accion: cambiarMunicipio },
@@ -1766,9 +1768,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <div class="a-cobro a-cobro-real">
             <small>Cobra a ${esc(nombreCorto(v.pasajero?.nombre || 'tu pasajero'))}</small>
             <strong class="a-cobro-valor">${N.pesos(v.valor)}</strong>
-            <span class="a-cobro-chips"><span class="a-chip-metodo">${icono('efectivo', { tam: 15 })} Pago en efectivo</span></span>
-            <p>Recibe el pago del pasajero y toca <b>Recibí efectivo</b> para registrarlo.</p>
-            <div class="a-pago-anunciado" role="status" data-pago-anunciado${v.pagoAnunciado ? '' : ' hidden'}>${icono('efectivo', { tam: 18 })}<span>El pasajero dice que ya te pagó. Confírmalo cuando tengas el efectivo.</span></div>
+            <span class="a-cobro-chips"><span class="a-chip-metodo">${icono('efectivo', { tam: 15 })} Pago en efectivo o transferencia</span></span>
+            <p>Recibe el pago del pasajero y toca <b>Recibí efectivo</b> o <b>Recibí la transferencia</b> para registrarlo. Si guardaste tu QR o tu llave en «Cómo me pagan», el pasajero los ve en su app.</p>
+            <div class="a-pago-anunciado" role="status" data-pago-anunciado${v.pagoAnunciado ? '' : ' hidden'}>${icono('efectivo', { tam: 18 })}<span data-pago-anunciado-txt></span></div>
           </div>`;
         }
         return `${barraPasos('cobrando')}
@@ -1781,8 +1783,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             <div class="a-esperando-pago" role="status"><span class="a-girador"></span>Esperando el pago…</div>
           </div>`;
       },
-      pie: () => `<button type="button" class="a-btn a-btn-verde a-btn-grande" data-efectivo>${icono('efectivo', { tam: 22 })}<span>Recibí efectivo</span></button>`,
+      pie: () => `<button type="button" class="a-btn a-btn-verde a-btn-grande" data-efectivo>${icono('efectivo', { tam: 22 })}<span>Recibí efectivo</span></button>${REAL ? `<button type="button" class="a-btn a-btn-suave a-btn-grande" data-transferencia>${icono('dinero', { tam: 22 })}<span>Recibí la transferencia</span></button>` : ''}`,
       montar(cont, pie) {
+        // Modo real (0.10.0): la transferencia a su QR o su llave; la puede marcar aunque el pasajero no lo diga.
+        $(pie, '[data-transferencia]')?.addEventListener('click', async () => {
+          const ok = await modal(app, {
+            titulo: '¿Te llegó la transferencia?',
+            texto: `Revisa en tu app del banco o billetera que te llegaron ${N.pesos(c.estado.viaje?.valor || 0)} antes de confirmar.`,
+            acciones: [{ texto: 'Todavía no', valor: false }, { texto: 'Sí, me llegó', valor: true, clase: 'a-btn-verde' }],
+          });
+          if (ok) c.confirmarTransferencia();
+        });
         $(pie, '[data-efectivo]').addEventListener('click', async () => {
           const ok = await modal(app, {
             titulo: '¿Recibiste el efectivo?',
@@ -1800,10 +1811,30 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       // Modo real: el pasajero avisa que pagó en efectivo; el conductor lo confirma.
       actualizar(e) {
         if (!REAL) return;
-        const dijo = Boolean(e.viaje?.pagoAnunciado);
+        const anuncio = e.viaje?.pagoAnunciado || null;
+        const dijo = Boolean(anuncio);
+        const porTransferencia = anuncio?.metodo === 'transferencia';
         const caja = $(hoja.contenido, '[data-pago-anunciado]');
         if (caja) caja.hidden = !dijo;
-        $(hoja.pie, '[data-efectivo]')?.classList.toggle('a-resaltar', dijo);
+        // La entidad la escribe la app del pasajero: va como texto.
+        const txt = $(hoja.contenido, '[data-pago-anunciado-txt]');
+        if (txt) {
+          txt.textContent = porTransferencia
+            ? `El pasajero dice que ya te transfirió${anuncio.billetera ? ` (${anuncio.billetera})` : ''}. Revisa tu app del banco y confírmalo.`
+            : 'El pasajero dice que ya te pagó. Confírmalo cuando tengas el efectivo.';
+        }
+        const be = $(hoja.pie, '[data-efectivo]');
+        if (be) {
+          be.classList.toggle('a-resaltar', dijo && !porTransferencia);
+          be.classList.toggle('a-btn-verde', !porTransferencia);
+          be.classList.toggle('a-btn-suave', porTransferencia);
+        }
+        const bt = $(hoja.pie, '[data-transferencia]');
+        if (bt) {
+          bt.classList.toggle('a-resaltar', porTransferencia);
+          bt.classList.toggle('a-btn-verde', porTransferencia);
+          bt.classList.toggle('a-btn-suave', !porTransferencia);
+        }
       },
     },
 
@@ -1814,10 +1845,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         const pago = v.pago || {};
         // En modo real no hay pago con QR de prueba.
         const esQR = !REAL && pago.metodo === 'qr';
+        const esTransferencia = REAL && pago.metodo === 'transferencia';
         return `${barraPasos('calificar')}
           <div class="a-pago-recibido" role="status">
             <span class="a-check-anim" aria-hidden="true">${icono('check', { tam: 30, grosor: 3 })}</span>
-            <small>${esQR ? 'Pago recibido por QR (prueba)' : 'Pago en efectivo registrado'}</small>
+            <small>${esQR ? 'Pago recibido por QR (prueba)' : esTransferencia ? `Transferencia registrada${pago.billetera ? ` · ${esc(pago.billetera)}` : ''}` : 'Pago en efectivo registrado'}</small>
             <strong>${N.pesos(pago.valor || v.valor)}</strong>
             <span>${esQR ? `${pago.billetera ? `${esc(pago.billetera)} · ` : ''}${pago.ref ? `Ref. ${esc(pago.ref)} ` : ''}${chipPrueba()}` : `Recibido a las ${esc(N.horaTexto(pago.hora || Date.now()))}`}</span>
           </div>

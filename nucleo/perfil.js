@@ -285,7 +285,8 @@ export function resumenDelDia(ahora = new Date()) {
   const conCalificacion = hoy.filter((v) => v.calificacionRecibida);
   const promedio = conCalificacion.length ? conCalificacion.reduce((s, v) => s + v.calificacionRecibida, 0) / conCalificacion.length : null;
   const porQR = hoy.filter((v) => v.metodoPago === 'qr').reduce((s, v) => s + (v.valor || 0), 0);
-  return { viajes: hoy.length, ganado, porQR, efectivo: ganado - porQR, promedio, km: hoy.reduce((s, v) => s + (v.km || 0), 0) };
+  const porTransferencia = hoy.filter((v) => v.metodoPago === 'transferencia').reduce((s, v) => s + (v.valor || 0), 0);
+  return { viajes: hoy.length, ganado, porQR, porTransferencia, efectivo: ganado - porQR - porTransferencia, promedio, km: hoy.reduce((s, v) => s + (v.km || 0), 0) };
 }
 
 /* ---------------- Ajustes ---------------- */

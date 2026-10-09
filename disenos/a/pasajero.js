@@ -26,6 +26,7 @@ import { mostrarBienvenida } from './registro.js';
 import { ofrecerAvisos, montarBloqueo } from './nativa.js';
 import { avisarPolitica, politicaPendiente } from './politica.js';
 import { seguirSos, montarAvisosCentral } from './central.js';
+import { hojaPagoQR } from './pago-qr.js';
 import { abrirMisViajes, abrirProgramados, abrirTarifas, abrirPromociones, abrirAjustes, abrirAyuda, abrirAvisos, abrirMiCuenta } from './pasajero-secciones.js';
 
 const REAL = EM.MODO_REAL;
@@ -1435,11 +1436,16 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <strong data-total-pagar>${N.pesos(valor)}</strong>
           <span class="a-total-detalle">${esc(EM.unir([e.kmFinal ? N.kmTexto(e.kmFinal) : '', c?.movil ? `Móvil ${c.movil}` : '', nombreCorto(c?.nombre || '')]))}</span>
         </div>
-        <h3 class="a-subtitulo">Pagas en efectivo</h3>
+        <h3 class="a-subtitulo" data-subtitulo-pago>Pagas en efectivo</h3>
         <div class="a-opciones-pago">
           <button type="button" class="a-op-pago a-op-destacada" data-efectivo>
             <span class="a-op-ico">${icono('efectivo')}</span>
             <span class="a-op-txt"><strong>Ya pagué en efectivo</strong><small>Le pagas directamente al conductor</small></span>
+            ${icono('adelante', { tam: 20 })}
+          </button>
+          <button type="button" class="a-op-pago" data-pagar-qr-llave hidden>
+            <span class="a-op-ico">${icono('qr')}</span>
+            <span class="a-op-txt"><strong>Pagar con QR o llave</strong><small>Transfiere directo al conductor desde tu banco</small></span>
             ${icono('adelante', { tam: 20 })}
           </button>
         </div>`;
@@ -1509,6 +1515,13 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             if (ok) p.pagarEnEfectivo();
           }
           if (t.closest('[data-escanear]')) escanear();
+          // Modo real (0.10.0): el QR y la llave del conductor de este viaje, que manda el servidor.
+          if (t.closest('[data-pagar-qr-llave]')) {
+            const metodos = p.estado.cobro?.metodos || [];
+            if (!metodos.length) return;
+            const metodo = await hojaPagoQR(app, { metodos, valor: p.estado.cobro?.valor || p.estado.viaje?.tarifa?.total || 0, avisar: (a) => avisos.mostrar(a) });
+            if (metodo && p.estado.fase === 'pagar') p.pagarPorTransferencia(metodo);
+          }
         });
         $(c, '[data-otro]')?.addEventListener('toggle', (e) => {
           if (!e.target.open) return;
@@ -1526,6 +1539,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         if (e.viaje.destino) m.ponerDestino(e.viaje.destino);
         if (e.posConductor) centrarVisible(e.posConductor, 17);
       },
+      // Modo real: «Pagar con QR o llave» aparece cuando llega el `cobro` con lo guardado del conductor.
+      actualizar(e) {
+        if (!REAL) return;
+        const hay = Boolean(e.cobro?.metodos?.length);
+        const b = $(hoja.contenido, '[data-pagar-qr-llave]');
+        if (b && b.hidden === hay) b.hidden = !hay;
+        const sub = $(hoja.contenido, '[data-subtitulo-pago]');
+        if (sub) sub.textContent = hay ? '¿Cómo pagaste?' : 'Pagas en efectivo';
+        const tot = $(hoja.contenido, '[data-total-pagar]');
+        if (tot && e.cobro?.valor) tot.textContent = N.pesos(e.cobro.valor);
+      },
     },
 
     calificar: {
@@ -1536,7 +1560,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         return `
         ${pago ? `<div class="a-pago-ok" role="status">
           <span class="a-check-anim" aria-hidden="true">${icono('check', { tam: 26, grosor: 3 })}</span>
-          <span><strong>${pago.metodo === 'qr' ? 'Pago exitoso (prueba)' : 'Pago en efectivo'}</strong>
+          <span><strong>${pago.metodo === 'qr' ? 'Pago exitoso (prueba)' : pago.metodo === 'transferencia' ? 'Pago por transferencia' : 'Pago en efectivo'}</strong>
           <small>${N.pesos(pago.valor)}${pago.billetera ? ` · ${esc(pago.billetera)}` : ''}${pago.ref ? ` · Ref. ${esc(pago.ref)}` : ''}</small></span>
           ${pago.metodo === 'qr' ? chipPrueba() : ''}
         </div>` : ''}
