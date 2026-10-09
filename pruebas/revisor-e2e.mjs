@@ -113,6 +113,9 @@ async function tocarModal(p, textoBoton) {
   await p.click(sel);
 }
 
+// 0.10.0 (pago con QR o llave): el conductor automático cobra con la llave de MUESTRA «@taxicunprueba».
+let servidorConCobro = false;
+
 /* 0) El servidor responde (0.2.4+) y la cuenta revisora queda limpia (se borra). */
 async function preparar() {
   const ctx = await b.newContext();
@@ -154,6 +157,7 @@ async function preparar() {
   await ctx.close();
   const v = String(r.salud.cuerpo?.version || '');
   const [, menor = 0, parche = 0] = v.split('.').map(Number);
+  servidorConCobro = menor >= 10;
   // 0.2.4 o más nueva (la 0.3.x de la app 1.2 también trae el modo revisor).
   await debe(r.salud.estado === 200 && v.startsWith('0.') && (menor > 2 || (menor === 2 && parche >= 4)), `el servidor local responde por el proxy (${BASE}api/salud → ${v || r.salud.estado}; hace falta 0.2.4+)`);
   await debe(r.revision === true, `la cuenta ${REVISOR.correo} es revisora (bienvenida.revision)${r.error ? ` (error ${r.error}: ¿está en CUENTAS_PRUEBA?)` : r.revision === false ? ' (¿está en REVISORES?)' : ''}`);
@@ -239,6 +243,20 @@ async function pasajero() {
   const total = Number((await texto(pp, '[data-total-pagar]')).replace(/\D/g, ''));
   ok(total === tarifaPasajero, `pasajero: el total es la tarifa del viaje (${total})`);
   await foto(pp, 'p06-pagar');
+  if (servidorConCobro) {
+    // Con la 0.10.0: «Pagar con QR o llave» con la llave de MUESTRA, marcada de prueba (nunca datos reales). Se vuelve
+    // y se paga en efectivo, como siempre.
+    const hay = await pp.waitForSelector('[data-pagar-qr-llave]:not([hidden])', { timeout: 10000 }).then(() => true).catch(() => false);
+    if (hay) {
+      await pp.click('[data-pagar-qr-llave]');
+      await pp.waitForSelector('.a-modal [data-hoja-pago-qr]', { timeout: 8000 });
+      const hoja = await texto(pp, '.a-modal [data-hoja-pago-qr]');
+      ok(/@taxicunprueba/.test(hoja) && /DE PRUEBA/.test(hoja) && /No transfieras dinero/.test(hoja), `pasajero: «Pagar con QR o llave» con la llave de MUESTRA «@taxicunprueba» DE PRUEBA (${hoja.slice(0, 140)})`);
+      await foto(pp, 'p06b-pagar-qr-llave-muestra');
+      await tocarModal(pp, 'Volver');
+      await pp.waitForTimeout(400);
+    } else ok(false, 'pasajero: con el servidor 0.10.0 aparece «Pagar con QR o llave» (llave de muestra)');
+  }
   await pp.click('[data-efectivo]');
   await tocarModal(pp, 'Sí, ya pagué');
   await debe(vista(pp, 'calificar', 10000), 'pasajero: paga en efectivo → calificar');
