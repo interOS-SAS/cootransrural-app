@@ -219,6 +219,10 @@
               <li><b>Si eres conductor:</b> los datos de tu registro, tus viajes, tus calificaciones y las fechas de vencimiento de tus documentos, para aprobarte y supervisar el servicio. Mientras estás en turno, la posición de tu taxi (lee <a href="#ubicacion">Tu ubicación</a>). No se guarda un historial.</li>
               <li><b>Si eres pasajero:</b> en los viajes ve tu primer nombre y la inicial de tu apellido, el origen, el destino, la tarifa y el estado. Pasadas 24 horas, el origen y el destino se ven solo por sector. <b>Tu celular</b> solo lo ve si atiende un pedido tuyo que no encuentra taxi, un reclamo tuyo, un objeto olvidado, una situación de seguridad o un requerimiento de autoridad, y queda registrado quién lo vio, cuándo y por qué. Nunca ve tu correo.</li>
               <li>El gerente puede descargar un listado de los viajes, <b>sin</b> tu celular, tu correo ni tus notas.</li>
+              <li><b>Si pides un taxi llamando a la central:</b> si pides un taxi llamando a la central de tu cooperativa, ella anota tu nombre y tu celular para despacharlo. El conductor que lo toma ve tu primer nombre y tu celular para llamarte. El celular se borra a los 90 días.</li>
+              <li><b>Si tocas «Avisar a la central»:</b> tu cooperativa recibe tu nombre (si eres conductor, tus datos de conductor), tu ubicación de ese momento y el viaje en curso. La ubicación se borra a los 90 días.</li>
+              <li><b>Tus horas en turno, si eres conductor:</b> tu cooperativa ve las horas en que estuviste en turno y qué servicios recibiste, aceptaste o rechazaste. Se guarda 13 meses.</li>
+              <li><b>Avisos de tu cooperativa:</b> tu cooperativa puede enviarte avisos del servicio, nunca publicidad. Si eres pasajero, los puedes apagar en <span class="ruta-app"><b>Ajustes</b></span>.</li>
             </ul>
             La cooperativa trata estos datos por encargo de interOS, solo para estas finalidades, bajo un acuerdo firmado con nosotros que le prohíbe usarlos para publicidad o compartirlos. Las personas de la cooperativa y de interOS que usan el panel entran con un código personal y lo que hacen queda registrado.</li>{{/si}}{{#no politica.v13}}<li><b>La cooperativa de taxis que presta el servicio.</b> Recibe los datos de los viajes que se hacen con ella y los de sus conductores, para despachar, revisar y aprobar conductores, atender reclamos y llevar sus registros. Con cada cooperativa solo compartimos lo que tiene que ver con su servicio, y ella es responsable del uso que les dé.</li>{{/no}}
           <li><b>Los conductores, cuando pides un taxi.</b> Los conductores libres y cercanos de la cooperativa reciben la oferta del servicio con el punto de recogida, el destino, la tarifa, la nota que escribiste, tu primer nombre y tu calificación promedio. <b>Tu celular solo le llega al conductor que acepta el viaje</b>, para que pueda llamarte.</li>
@@ -269,6 +273,8 @@
           <li><b>Los viajes y las calificaciones:</b> se conservan como registro de la operación de la cooperativa, para atender reclamos y cumplir obligaciones legales. Si eliminas tu cuenta, quedan sin tu nombre, tu correo ni tu celular.</li>
           <li><b>Los registros técnicos:</b> el tiempo necesario para la seguridad del servicio.</li>
 {{#si politica.v13}}          <li><b>El registro de lo que se hace en el panel:</b> {{politica.bitacora}}, como prueba de quién vio o cambió qué. No guarda tu celular ni tu correo, solo que alguien lo vio y por qué.</li>
+          <li><b>El celular de quien pide un taxi llamando a la central y la ubicación de «Avisar a la central»:</b> 90 días.</li>
+          <li><b>Las horas en turno de los conductores y los servicios que recibieron, aceptaron o rechazaron:</b> 13 meses.</li>
           <li><b>Los listados que descarga una cooperativa:</b> no se guardan en nuestro servidor; la cooperativa los conserva bajo el acuerdo que firmó con nosotros.</li>
 {{/si}}          <li><b>Lo que está en tu celular:</b> hasta que elimines tu cuenta desde la app, borres los datos de la app o la desinstales.</li>
         </ul>
@@ -346,7 +352,7 @@
       <section id="cambios">
         <h2>14. Cambios a esta política</h2>
         <p>Podemos actualizar esta política, por ejemplo si TaxiCun agrega funciones o proveedores. La versión vigente siempre estará en <a href="{{url_sitio}}privacidad/">taxicun.com/privacidad</a>, con su fecha. Si el cambio es importante (por ejemplo, datos o finalidades nuevas), te avisaremos en la app antes de que empiece a aplicar y, cuando la ley lo pida, te pediremos de nuevo tu autorización.</p>
-{{#si politica.v13}}        <p><b>Qué cambió en la versión 1.3 ({{politica.vigencia}}):</b> contamos qué ve tu cooperativa en su panel (la posición de los taxis en turno, los viajes con tu nombre abreviado y tu celular solo con motivo registrado), para qué lo usa, y qué datos guardamos de quienes usan el panel.</p>
+{{#si politica.v13}}        <p><b>Qué cambió en la versión 1.3 ({{politica.vigencia}}):</b> contamos qué ve tu cooperativa en su panel (la posición de los taxis en turno, los viajes con tu nombre abreviado y tu celular solo con motivo registrado), para qué lo usa, y qué datos guardamos de quienes usan el panel. También los pedidos que la central toma por teléfono, el botón «Avisar a la central», las horas en turno de los conductores y los avisos del servicio de tu cooperativa.</p>
 {{/si}}      </section>
 
       <section id="contacto">

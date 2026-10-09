@@ -122,6 +122,46 @@ export function bloqueSonidoYAvisos(N, { rol = globalThis.CT_ROL === 'conductor'
   return s;
 }
 
+// Ronda 4A (modo real, pasajero con sesión): «Avisos de {coop}», la baja voluntaria de los avisos que manda la
+// cooperativa (GET y PUT /api/yo/avisos). Aparece cuando el servidor responde; con una central anterior (sin la ruta)
+// o sin señal no aparece. Los textos van con textContent.
+export function bloqueAvisosCooperativa(N) {
+  if (!EM.MODO_REAL || !N.servidor?.haySesion?.()) return '';
+  const t = N.textosCentral.bajaAvisos({ empresa: EM.NOMBRE });
+  const s = el('<section class="a-grupo" data-avisos-cooperativa hidden><h3>Tu cooperativa</h3><div class="a-tarjeta-lista"></div><p class="a-ayuda-txt a-mal-txt" data-error hidden></p></section>');
+  const error = s.querySelector('[data-error]');
+  N.servidor.bajasAvisos().then((r) => {
+    const bajas = Array.isArray(r?.bajas) ? r.bajas : [];
+    const fila = interruptor({
+      id: 'a-aj-avisos-coop',
+      titulo: '',
+      icono: 'campana',
+      activo: !bajas.includes(N.ID_EMPRESA),
+      alCambiar: async (v) => {
+        error.hidden = true;
+        try {
+          await N.servidor.cambiarBajaAvisos(N.ID_EMPRESA, v);
+          return true;
+        } catch {
+          error.textContent = t.error;
+          error.hidden = false;
+          return false;
+        }
+      },
+    });
+    fila.dataset.avisosCooperativa = '';
+    fila.querySelector('strong').textContent = t.titulo;
+    const detalle = document.createElement('small');
+    detalle.textContent = t.detalle;
+    fila.querySelector('.a-fila-txt').append(detalle);
+    s.querySelector('.a-tarjeta-lista').append(fila);
+    s.hidden = false;
+  }).catch(() => {
+    /* central anterior (sin /api/yo/avisos) o sin señal: no se muestra */
+  });
+  return s;
+}
+
 // Notificaciones del celular (app nativa 1.2): estado del permiso y «Activar» si aún no se decidió.
 function filaAvisosNativos(N, rol) {
   const fila = el(`<div class="a-fila-interruptor" data-avisos-nativos>

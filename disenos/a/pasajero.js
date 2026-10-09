@@ -13,6 +13,9 @@
 // (§5.7): cerca del borde, «Pedir de todas formas» o «Llamar a la central»; muy lejos, no deja
 // pedir («Mover el punto», «Llamar…» y, si el punto es de otra cooperativa que atiende en TaxiCun,
 // «Aquí te atiende…»). Sin zona (las 76 demos) no aparece nada.
+// Ronda 4A (modo real, servidor 0.9.0; disenos/a/central.js): el SOS suma «Avisar a la central de {coop}» si la central
+// lo recibe (bienvenida.avisarCentral), los avisos de la cooperativa salen como tarjeta y en «Avisos» («De tu
+// cooperativa»), el toque de su notificación abre la tarjeta y Ajustes tiene «Avisos de {coop}» (la baja voluntaria).
 import {
   el, esc, $, $$, icono, ICONO_CATEGORIA, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos,
   modal, elegirOpcion, abrirMenu, estrellas, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
@@ -22,6 +25,7 @@ import * as EM from './empresa.js';
 import { mostrarBienvenida } from './registro.js';
 import { ofrecerAvisos, montarBloqueo } from './nativa.js';
 import { avisarPolitica, politicaPendiente } from './politica.js';
+import { seguirSos, montarAvisosCentral } from './central.js';
 import { abrirMisViajes, abrirProgramados, abrirTarifas, abrirPromociones, abrirAjustes, abrirAyuda, abrirAvisos, abrirMiCuenta } from './pasajero-secciones.js';
 
 const REAL = EM.MODO_REAL;
@@ -364,10 +368,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   /* ---------------- barra superior y menú ---------------- */
   function marcarCampana(n) {
     ui.sinLeer += n;
+    // Ronda 4A: también los avisos de la cooperativa sin leer.
+    const total = ui.sinLeer + (p?.bandeja?.sinLeer?.() || 0);
     const b = $(app, '[data-insignia]');
-    b.hidden = ui.sinLeer === 0;
-    b.textContent = ui.sinLeer > 9 ? '9+' : String(ui.sinLeer);
-    $(app, '[data-campana]').setAttribute('aria-label', ui.sinLeer ? `Avisos, ${ui.sinLeer} sin leer` : 'Avisos');
+    b.hidden = total === 0;
+    b.textContent = total > 9 ? '9+' : String(total);
+    $(app, '[data-campana]').setAttribute('aria-label', total ? `Avisos, ${total} sin leer` : 'Avisos');
   }
   $(app, '[data-campana]').addEventListener('click', () => {
     ui.sinLeer = 0;
@@ -955,19 +961,26 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   async function sos() {
     const yo = N.perfil.pasajero();
     const contacto = yo?.contactoEmergencia;
+    // Ronda 4A: «Avisar a la central» solo si la central lo recibe (bienvenida.avisarCentral; en la demo nunca).
+    const central = REAL && p?.estado?.avisarCentral === true;
     const acc = [
       { texto: 'Llamar a la Línea 123', href: 'tel:123', clase: 'a-btn-peligro', icono: 'telefono' },
+      central ? { texto: N.textosCentral.sos({ empresa: EM.NOMBRE }).boton, valor: 'central', clase: 'a-btn-aviso-central', icono: 'antena' } : null,
       contacto?.celular ? { texto: `Avisar a ${contacto.nombre || 'mi contacto'}`, href: N.enlaceWhatsApp(contacto.celular, `🆘 Necesito ayuda.\n${p.textoCompartir()}`), externo: true, clase: 'a-btn-tinta', icono: 'chat' } : null,
       EM.TELEFONO ? { texto: `Llamar a la central ${EM.NOMBRE}`, href: N.enlaceTel(EM.TELEFONO), clase: 'a-btn-suave', icono: 'telefono' } : null,
       { texto: 'Cancelar', valor: null, clase: 'a-btn-texto' },
     ].filter(Boolean);
-    await modal(app, {
+    const r = await modal(app, {
       titulo: '¿Necesitas ayuda?',
-      texto: 'Si estás en peligro, llama a la Línea 123 de la Policía. También puedes compartir tu viaje.',
+      texto: central
+        ? `Si estás en peligro, llama a la Línea 123 de la Policía. También puedes avisarle a la central de ${EM.NOMBRE}: le llegan tu ubicación y tu viaje.`
+        : 'Si estás en peligro, llama a la Línea 123 de la Policía. También puedes compartir tu viaje.',
       icono: `<span class="a-sos-ico">${icono('sos', { tam: 34 })}</span>`,
       clase: 'a-modal-sos',
       acciones: acc,
     });
+    // Un toque lo manda, sin otra confirmación (el núcleo toma la posición del momento y el viaje en curso).
+    if (r === 'central') seguirSos(app, { N, envio: p.avisarCentral(), empresa: EM.NOMBRE, avisos });
   }
 
   // Fase 3: la central canceló el pedido desde su mapa. El núcleo ya cerró el viaje (sin buscar otro taxi) y lo anotó
@@ -1987,6 +2000,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     if (!avisoTocado || !conSesion || !p) return;
     const a = avisoTocado;
     avisoTocado = null;
+    // Ronda 4A: un aviso de la cooperativa ({ tipo: 'aviso', id }): su tarjeta, aunque se toque mucho después.
+    if (a.tipo === 'aviso') {
+      app.querySelectorAll('.a-panel, .a-menu-capa, .a-buscador').forEach((n) => n.remove());
+      p.bandeja?.mostrar(a.datos?.id).catch(() => {});
+      return;
+    }
     if (Date.now() - (a.cuando || Date.now()) > 2 * 60 * 1000) return; // de hace rato: ya no aplica
     app.querySelectorAll('.a-panel, .a-menu-capa, .a-buscador').forEach((n) => n.remove());
     reconectarCentral();
@@ -2211,6 +2230,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       });
       if (REAL) {
         escucharBus();
+        // Ronda 4A: los avisos de la cooperativa como tarjeta (sin tapar el ingreso ni otro diálogo) y en la campana.
+        montarAvisosCentral(app, {
+          N,
+          bandeja: p.bandeja,
+          ocupado: () => !conSesion || Boolean(app.querySelector('.a-bienvenida, .a-registro, .a-buscador')),
+          alCambiar: () => marcarCampana(0),
+        });
+        marcarCampana(0);
         // App nativa 1.2: con los avisos del celular listos, el WebSocket se cierra al minimizar
         // y la central avisa por push (aceptación, «llegó», final); al volver se reconecta.
         p.bus.cerrarAlOcultar = () => Boolean(N.nativo?.pushListo?.());

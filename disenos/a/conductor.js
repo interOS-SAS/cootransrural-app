@@ -8,6 +8,10 @@
 // Con el plugin UbicacionTurno (ubicación con la app minimizada): el aviso «Tu ubicación mientras
 // estás conectado» al ponerse en turno la primera vez, nativo.vigilarTurno() en el controlador, el
 // WebSocket que se cierra al minimizar también en viaje y los avisos si el plugin se detuvo solo.
+// Ronda 4A (modo real, servidor 0.9.0; disenos/a/central.js): el «Pedido de la central» (chip, nombre sin estrellas,
+// «Llamar a {nombre}», «Confirma que es {nombre}» e «Iniciar viaje» sin código, sin calificar), el botón de ayuda
+// (en la barra y en la hoja del servicio: 123, «Avisar a la central» si la recibe y «Llamar a {coop}») y los avisos de
+// la cooperativa (tarjeta, «De tu cooperativa» en «Avisos» y el toque de su notificación).
 import {
   el, esc, $, $$, icono, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos, modal, elegirOpcion,
   abrirMenu, estrellas, casillasCodigo, deslizador, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
@@ -18,6 +22,7 @@ import { taxiLateral } from './ilustraciones.js';
 import { abrirGanancias, abrirHistorial, abrirDocumentos, abrirMiTaxi, abrirAjustesConductor, abrirAvisosConductor } from './conductor-secciones.js';
 import { ofrecerAvisos, ofrecerBiometria, ingresoBiometria, montarBloqueo, ofrecerSegundoPlano } from './nativa.js';
 import { avisarPolitica, marcarPoliticaVista, politicaPendiente } from './politica.js';
+import { seguirSos, montarAvisosCentral } from './central.js';
 
 // Foto de portada del ingreso (generada para la web, sin marcas: ver img/web/creditos.json).
 const FOTO_CONDUCTOR = new URL('./img/conductor.jpg', import.meta.url).href;
@@ -76,6 +81,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       <button class="a-cbarra-menu" type="button" data-menu aria-label="Abrir menú"><span data-avatar>${avatar('')}</span><span class="a-barra-menu-ico">${icono('menu', { tam: 13, grosor: 3 })}</span></button>
       <div class="a-cbarra-txt"><strong data-movil>Conductor</strong><small data-nombre>${esc(EM.NOMBRE)}</small></div>
       <span class="a-chip-gps" data-gps title="Fuente de la ubicación"><span class="a-led"></span><span data-gps-txt>GPS…</span></span>
+      ${REAL ? `<button class="a-icono-btn a-cbarra-sos" type="button" data-ayuda data-ayuda-barra aria-label="Ayuda: Línea 123 y la central" hidden>${icono('sos')}</button>` : ''}
       <button class="a-icono-btn a-cbarra-campana" type="button" data-campana aria-label="Avisos">${icono('campana')}<span class="a-insignia" data-insignia hidden></span></button>
     </header>
     ${chipConexion}
@@ -179,9 +185,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
 
   /* ---------------- barra, menú y avisos ---------------- */
   function pintarCampana() {
+    // Ronda 4A: también los avisos de la cooperativa sin leer.
+    const total = sinLeer + (c?.bandeja?.sinLeer?.() || 0);
     const b = $(app, '[data-insignia]');
-    b.hidden = sinLeer === 0;
-    b.textContent = sinLeer > 9 ? '9+' : String(sinLeer);
+    b.hidden = total === 0;
+    b.textContent = total > 9 ? '9+' : String(total);
   }
   $(app, '[data-campana]').addEventListener('click', () => {
     sinLeer = 0;
@@ -189,6 +197,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     abrirAvisosConductor(ctx());
   });
   $(app, '[data-menu]').addEventListener('click', abrirMenuConductor);
+  // Ronda 4A: «¿Necesitas ayuda?» desde la barra o desde la hoja del servicio.
+  app.addEventListener('click', (ev) => {
+    if (ev.target.closest?.('[data-ayuda]')) abrirAyuda();
+  });
   $(app, '[data-centrar]').addEventListener('click', () => {
     const e = c?.estado;
     if (!e?.pos) return;
@@ -976,6 +988,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     ui.rutaRef = null;
     ui.firmaYo = '';
     $(app, '.a-solicitud')?.remove();
+    // Ronda 4A: sin controlador no hay ayuda con la central (vuelve al entrar).
+    const ayuda = $(app, '[data-ayuda-barra]');
+    if (ayuda) ayuda.hidden = true;
+    pintarCampana();
     // El menú y los paneles abiertos quedarían debajo de la capa de cuenta.
     $$(app, '.a-panel, .a-menu-capa').forEach((x) => x.remove());
     app.classList.remove('a-con-solicitud', 'a-en-linea');
@@ -1151,6 +1167,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const cel = v.pasajero?.celular;
     // El celular llega del servidor: el enlace solo con dígitos (S30).
     const tel = N.enlaceTel(cel);
+    // Ronda 4A: el pedido de la central: «Llamar a {nombre}» con el celular de quien llamó (sin WhatsApp). Los textos
+    // con el nombre los pone rellenarCentral (textContent).
+    if (REAL && v.pedidoCentral) {
+      if (!cel || !tel) return `<p class="a-sin-celular">${icono('telefono', { tam: 16 })}<span data-llamante-sin-celular></span></p>`;
+      return `<div class="a-nav a-nav-contacto a-nav-llamante">
+      <a class="a-nav-btn" href="${esc(tel)}" data-llamar-llamante>${icono('telefono', { tam: 18 })}<span data-llamante-llamar></span></a>
+    </div>`;
+    }
     if (!cel || !tel) return REAL ? `<p class="a-sin-celular">${icono('telefono', { tam: 16 })}<span>El pasajero no tiene celular registrado</span></p>` : '';
     return `<div class="a-nav a-nav-contacto">
       <a class="a-nav-btn" href="${esc(tel)}">${icono('telefono', { tam: 18 })}<span>Llamar</span></a>
@@ -1158,12 +1182,65 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     </div>`;
   }
   function tarjetaPasajero(v) {
+    // Ronda 4A: el pedido de la central, sin estrellas (quien llamó no tiene calificación).
+    if (REAL && v?.pedidoCentral) {
+      return `<div class="a-pasajero-fila a-pasajero-central" data-pedido-central>
+      <span class="a-avatar a-avatar-tinta a-avatar-central" aria-hidden="true">${icono('telefono', { tam: 20 })}</span>
+      <span><strong data-llamante-nombre></strong><small><span class="a-chip-central">${icono('antena', { tam: 12 })} Pedido de la central</span> · ${metodoTexto(v.metodoPago)}</small></span>
+      <b>${N.pesos(v.tarifa)}</b>
+    </div>`;
+    }
     return `<div class="a-pasajero-fila">
       ${avatar(v.pasajero?.nombre || 'Pasajero', 'a-avatar-tinta')}
       <span><strong>${esc(v.pasajero?.nombre || 'Pasajero')}</strong><small>${icono('estrella', { tam: 12 })} ${decimal(v.pasajero?.calificacion || 5)} · ${metodoTexto(v.metodoPago)}${v.simulado ? ' · demo' : ''}</small></span>
       <b>${N.pesos(v.tarifa)}</b>
     </div>`;
   }
+  // Ronda 4A: el botón de ayuda en la hoja del servicio (solo modo real).
+  function botonAyuda() {
+    return REAL ? `<button type="button" class="a-btn a-btn-sos-c" data-ayuda data-ayuda-hoja>${icono('sos', { tam: 18 })}<span>¿Necesitas ayuda?</span></button>` : '';
+  }
+
+  // Ronda 4A: textos del pedido de la central con el nombre de quien llamó (texto plano de la central: textContent).
+  function rellenarCentral(raices, v) {
+    if (!REAL || !v?.pedidoCentral) return;
+    const t = N.textosCentral.pedidoCentral({ nombre: v.pasajero?.nombre });
+    const nombre = N.lineaCentral(v.pasajero?.nombre || '', 40) || 'Pedido de la central';
+    for (const r of raices) {
+      if (!r) continue;
+      for (const n of r.querySelectorAll('[data-llamante-nombre]')) n.textContent = nombre;
+      for (const n of r.querySelectorAll('[data-llamante-llamar]')) n.textContent = t.llamar;
+      for (const n of r.querySelectorAll('[data-llamante-sin-celular]')) n.textContent = t.sinCelular;
+      for (const n of r.querySelectorAll('[data-llamante-confirmar]')) n.textContent = t.confirmar;
+      for (const n of r.querySelectorAll('[data-llamante-confirmar-detalle]')) n.textContent = t.confirmarDetalle;
+    }
+  }
+
+  // Ronda 4A: «¿Necesitas ayuda?» del conductor: la Línea 123, «Avisar a la central» (si la central lo recibe) y la
+  // central por teléfono (a los revisores de las tiendas no se les ofrece la central de verdad).
+  async function abrirAyuda() {
+    const ctl = c;
+    if (!REAL || !ctl?.real || ui.pantalla !== 'app') return;
+    if ($(app, '.a-modal-sos')) return;
+    const central = ctl.estado.avisarCentral === true;
+    const tel = !ctl.revision && EM.TELEFONO ? N.enlaceTel(EM.TELEFONO) : '';
+    const r = await modal(app, {
+      titulo: '¿Necesitas ayuda?',
+      texto: central
+        ? `Si estás en peligro, llama a la Línea 123 de la Policía. También puedes avisarle a la central de ${EM.NOMBRE}: le llegan tu ubicación y tu servicio.`
+        : 'Si estás en peligro, llama a la Línea 123 de la Policía.',
+      icono: `<span class="a-sos-ico">${icono('sos', { tam: 34 })}</span>`,
+      clase: 'a-modal-sos a-modal-ayuda-c',
+      acciones: [
+        { texto: 'Llamar a la Línea 123', href: 'tel:123', clase: 'a-btn-peligro', icono: 'telefono' },
+        ...(central ? [{ texto: N.textosCentral.sos({ empresa: EM.NOMBRE }).botonCorto, valor: 'central', clase: 'a-btn-aviso-central', icono: 'antena' }] : []),
+        ...(tel ? [{ texto: `Llamar a ${EM.NOMBRE}`, href: tel, clase: 'a-btn-suave', icono: 'telefono' }] : []),
+        { texto: 'Cancelar', valor: null, clase: 'a-btn-texto' },
+      ],
+    });
+    if (r === 'central' && ctl === c) seguirSos(app, { N, envio: ctl.avisarCentral(), empresa: EM.NOMBRE, avisos });
+  }
+
   async function cancelarServicio() {
     const motivo = await elegirOpcion(app, { titulo: '¿Por qué cancelas el servicio?', texto: 'Le avisamos al pasajero.', opciones: N.MOTIVOS_CANCELACION.conductor, confirmar: 'Cancelar servicio', clasePeligro: true });
     if (motivo) c.cancelar(motivo);
@@ -1255,6 +1332,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const total = s.expira - s.recibida || N.TIEMPOS?.aceptar || 25000;
     const circ = 2 * Math.PI * 34;
     const minHasta = Math.max(1, Math.round(((s.distanciaAMi * 1.3) / 25) * 60));
+    // Ronda 4A: el pedido que la central tomó por teléfono (nombre de quien llamó, sin estrellas).
+    const pedidoCentral = REAL && N.esPedidoCentral(s);
     const capa = el(`<section class="a-solicitud" role="alertdialog" aria-modal="true" aria-labelledby="a-sol-titulo" aria-describedby="a-sol-desc">
       ${franjaCuadros()}
       <div class="a-sol-cuerpo">
@@ -1264,11 +1343,15 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             <span><b data-seg>${Math.ceil((s.expira - Date.now()) / 1000)}</b><small>seg</small></span>
           </div>
           <div class="a-sol-quien">
-            ${REAL && N.ofrecidaPorCentral(s)
-    ? `<small class="a-sol-central" data-de-central>${icono('antena', { tam: 14 })} La central te ofrece este servicio</small>`
-    : `<small>${icono('campana', { tam: 14 })} Nueva solicitud${s.simulada ? ' · demo' : ''}</small>`}
-            <h2 id="a-sol-titulo">${esc(s.pasajero?.nombre || 'Pasajero')}</h2>
-            <span>${icono('estrella', { tam: 14 })} ${decimal(s.pasajero?.calificacion || 5)} · pasajero verificado</span>
+            ${pedidoCentral
+    ? `<small class="a-sol-pedido-central" data-pedido-central>${icono('antena', { tam: 14 })} Pedido de la central</small>`
+    : REAL && N.ofrecidaPorCentral(s)
+      ? `<small class="a-sol-central" data-de-central>${icono('antena', { tam: 14 })} La central te ofrece este servicio</small>`
+      : `<small>${icono('campana', { tam: 14 })} Nueva solicitud${s.simulada ? ' · demo' : ''}</small>`}
+            <h2 id="a-sol-titulo">${pedidoCentral ? '' : esc(s.pasajero?.nombre || 'Pasajero')}</h2>
+            ${pedidoCentral
+    ? `<span data-pedido-detalle>${icono('telefono', { tam: 14 })} <span data-pedido-detalle-txt></span></span>`
+    : `<span>${icono('estrella', { tam: 14 })} ${decimal(s.pasajero?.calificacion || 5)} · pasajero verificado</span>`}
           </div>
           <span class="a-en-espera" data-en-espera></span>
         </div>
@@ -1284,7 +1367,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <div><span class="a-punto a-punto-verde"></span><span><small>Recoger en</small><strong>${esc(s.origen?.titulo || 'Punto en el mapa')}</strong>${chipFueraDeZona(s)}</span></div>
           <div><span class="a-punto a-punto-negro"></span><span><small>Destino</small><strong>${esc(s.destino?.titulo || 'A convenir con el pasajero')}</strong></span></div>
         </div>
-        ${s.nota ? `<p class="a-sol-nota">${icono('mensaje', { tam: 16 })}<span>«${esc(s.nota)}»</span></p>` : ''}
+        ${s.nota ? `<p class="a-sol-nota">${icono('mensaje', { tam: 16 })}<span data-sol-nota></span></p>` : ''}
       </div>
       <div class="a-sol-acciones">
         <div data-deslizar></div>
@@ -1294,6 +1377,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         </div>
       </div>
     </section>`);
+    // Lo que escribió la central o el pasajero va como texto (textContent).
+    const nota = $(capa, '[data-sol-nota]');
+    if (nota) nota.textContent = `«${s.nota}»`;
+    if (pedidoCentral) {
+      const t = N.textosCentral.pedidoCentral({ nombre: s.pasajero?.nombre });
+      $(capa, '#a-sol-titulo').textContent = N.lineaCentral(s.pasajero?.nombre || '', 40) || t.chip;
+      $(capa, '[data-pedido-detalle-txt]').textContent = N.ofrecidaPorCentral(s) ? `${t.detalle} · Te lo ofrece a ti` : t.detalle;
+    }
     app.append(capa);
     const aceptar = async () => {
       if (capa.dataset.ocupado) return;
@@ -1468,6 +1559,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           ${v.nota ? `<p class="a-sol-nota">${icono('mensaje', { tam: 16 })}<span>«${esc(v.nota)}»</span></p>` : ''}
           ${tarjetaPasajero(v)}
           ${contacto(v)}
+          ${botonAyuda()}
           <button type="button" class="a-btn-texto a-texto-peligro" data-cancelar>Cancelar servicio</button>`;
       },
       pie: () => `<button type="button" class="a-btn a-btn-primario a-btn-grande" data-llegue>${icono('check', { tam: 22, grosor: 2.6 })}<span>Llegué</span></button>`,
@@ -1503,6 +1595,21 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       maxMedia: 0.82,
       html(e) {
         const v = e.viaje;
+        // Ronda 4A: el pedido de la central no tiene código de abordaje: «Confirma que es {nombre}» e «Iniciar viaje».
+        if (REAL && v.pedidoCentral) {
+          return `${barraPasos('en_origen')}
+          <div class="a-codigo-c a-confirmar-llamante" data-confirmar-llamante>
+            <h2 data-llamante-confirmar></h2>
+            <p data-llamante-confirmar-detalle></p>
+          </div>
+          <div data-corte></div>
+          ${tarjetaPasajero(v)}
+          ${contacto(v)}
+          ${botonAyuda()}
+          <div class="a-fila-botones">
+            <button type="button" class="a-btn-texto a-texto-peligro" data-cancelar>Cancelar servicio</button>
+          </div>`;
+        }
         return `${barraPasos('en_origen')}
           <div class="a-codigo-c">
             <h2>Pide el código de abordaje</h2>
@@ -1516,13 +1623,33 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <div data-corte></div>
           ${tarjetaPasajero(v)}
           ${contacto(v)}
+          ${botonAyuda()}
           <div class="a-fila-botones">
             <button type="button" class="a-btn-texto" data-sin-codigo>Iniciar sin código</button>
             <button type="button" class="a-btn-texto a-texto-peligro" data-cancelar>Cancelar servicio</button>
           </div>`;
       },
-      pie: () => `<button type="button" class="a-btn a-btn-primario a-btn-grande" data-iniciar disabled>${icono('volante', { tam: 22 })}<span>Iniciar viaje</span></button>`,
+      pie: (e) => (REAL && e.viaje?.pedidoCentral
+        ? `<button type="button" class="a-btn a-btn-primario a-btn-grande" data-iniciar-central>${icono('volante', { tam: 22 })}<span>Iniciar viaje</span></button>`
+        : `<button type="button" class="a-btn a-btn-primario a-btn-grande" data-iniciar disabled>${icono('volante', { tam: 22 })}<span>Iniciar viaje</span></button>`),
       montar(cont, pie) {
+        // Ronda 4A: el pedido de la central se inicia sin código (codigoHash vacío).
+        const central = $(pie, '[data-iniciar-central]');
+        if (central) {
+          central.addEventListener('click', async () => {
+            if (central.classList.contains('a-ocupado')) return;
+            central.classList.add('a-ocupado');
+            try {
+              await c.iniciar(null, { sinCodigo: true });
+            } finally {
+              central.classList.remove('a-ocupado');
+            }
+          });
+          cont.addEventListener('click', (ev) => {
+            if (ev.target.closest('[data-cancelar]')) cancelarServicio();
+          });
+          return;
+        }
         const btn = $(pie, '[data-iniciar]');
         const error = $(cont, '[data-error]');
         const intentar = async (codigo) => {
@@ -1581,7 +1708,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <div class="a-llegaste" data-llegaste hidden>${icono('bandera', { tam: 18 })}<span>Llegaste al destino. Toca <b>Terminar viaje</b> para cobrar.</span></div>
           ${v.destino ? `<div class="a-dir">${icono('bandera', { tam: 20 })}<span><small>Destino</small><strong>${esc(v.destino.titulo || 'Punto en el mapa')}</strong>${v.destino.detalle ? `<em>${esc(v.destino.detalle)}</em>` : ''}</span></div>${navegar(v.destino)}` : ''}
           <div data-corte></div>
-          ${tarjetaPasajero(v)}`;
+          ${tarjetaPasajero(v)}
+          ${botonAyuda()}`;
       },
       pie: () => `<button type="button" class="a-btn a-btn-tinta a-btn-grande" data-terminar>${icono('bandera', { tam: 22 })}<span>Terminar viaje</span></button>`,
       montar(cont, pie) {
@@ -1767,6 +1895,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     hoja.contenido.innerHTML = v.html(e);
     hoja.pie.innerHTML = v.pie ? v.pie(e) : '';
     hoja.pie.hidden = !v.pie;
+    // Ronda 4A: los textos con el nombre de quien llamó a la central (textContent).
+    rellenarCentral([hoja.contenido, hoja.pie], e.viaje);
     hoja.contenido.scrollTop = 0;
     hoja.contenido.classList.remove('a-entra');
     void hoja.contenido.offsetWidth;
@@ -1816,6 +1946,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     }
     const fab = $(app, '[data-simular]');
     fab.hidden = REAL || !ingresado || Boolean(e.viaje) || e.solicitudes.length > 0;
+    // Ronda 4A: el botón de ayuda de la barra, con la app abierta (aprobado y con el controlador).
+    const ayuda = $(app, '[data-ayuda-barra]');
+    if (ayuda) ayuda.hidden = !(REAL && c?.real && ui.pantalla === 'app');
     app.classList.toggle('a-en-linea', e.conectado);
   }
 
@@ -1916,6 +2049,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     // Fase 3: «La central te sacó de turno». Vale aunque se haya tocado hace rato (no pone en turno a nadie).
     if (a.tipo === 'sacado_de_turno') {
       abrirSacado(a);
+      return;
+    }
+    // Ronda 4A: un aviso de la cooperativa ({ tipo: 'aviso', id }): su tarjeta, aunque se toque mucho después.
+    if (a.tipo === 'aviso') {
+      $$(app, '.a-panel, .a-menu-capa').forEach((x) => x.remove());
+      c.bandeja?.mostrar(a.datos?.id).catch(() => {});
       return;
     }
     // Uno que esperó mucho (por ejemplo, mientras se volvía a ingresar) ya no pone en turno.
@@ -2250,6 +2389,15 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           // plugin no hace nada).
           ui.dejarTurno = NATIVA ? N.nativo?.vigilarTurno?.(nuevo, { libre: () => Boolean(N.nativo?.pushListo?.()) }) || null : null;
           c.on('bienvenida', () => vigente() && alBienvenida());
+          // Ronda 4A: los avisos de la cooperativa como tarjeta y en la campana. La tarjeta espera a que no haya una oferta
+          // en pantalla, otro diálogo ni un servicio en curso (no se lee manejando: al terminarlo sale).
+          montarAvisosCentral(app, {
+            N,
+            bandeja: nuevo.bandeja,
+            ocupado: () => !vigente() || ui.pantalla !== 'app' || Boolean($(app, '.a-solicitud')) || nuevo.estado.solicitudes.length > 0 || Boolean(nuevo.estado.viaje),
+            alCambiar: () => vigente() && pintarCampana(),
+          });
+          pintarCampana();
           // Fase 3: la central lo sacó de turno desde su mapa (bus, bienvenida, push o el plugin detenido).
           c.on('sacado_de_turno', (d) => vigente() && alSacadoDeTurno(d || {}));
           c.on('cambio', () => vigente() && salirSiQuedoPendiente());

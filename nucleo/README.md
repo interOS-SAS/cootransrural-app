@@ -178,6 +178,43 @@ escribe `herramientas/generar-empresas.py` desde `herramientas/politica.json` (`
 diseño A muestra una vez por versión la tarjeta «Actualizamos la política de privacidad» (`disenos/a/politica.js`;
 `taxicun.politica.vista` en el celular), solo en modo real; quien entra aceptando la política ya la tiene vista.
 
+## Ronda 4A «Operación de la central» (modo real, servidor 0.9.0)
+
+El contrato está en la cabecera de `nucleo/central.js` (los textos, en `textosCentral`, iguales para los tres diseños).
+Las centrales anteriores no mandan nada de esto y las rutas nuevas que respondan 404 se ignoran en silencio: con el
+servidor 0.8 todo sigue igual. Lo que manda la central (el nombre de quien llamó, la nota, el título y el texto de un
+aviso) es texto plano: el diseño lo pinta con `textContent` (`lineaCentral()` y `avisoDeCentral()` lo limpian).
+
+- **Pedido por teléfono** (conductor). La solicitud, la asignación y `viaje_actual` con `pedidoCentral: true` dejan
+  `viaje.pedidoCentral` (`N.esPedidoCentral(x)`): el pasajero es quien llamó (primer nombre, sin calificación), al que gana
+  le llega su celular y `codigoHash: ''` (se inicia con `c.iniciar(null, { sinCodigo: true })`), y al confirmar el
+  efectivo el servicio se cierra sin pasar por «calificar» (no hay app del pasajero: no se manda `calificacion`). El
+  historial lo anota con `pedidoCentral: true`. El diseño A: «Pedido de la central» con el nombre en la hoja amarilla (sin
+  estrellas ni «pasajero verificado»), «Llamar a {nombre}» (solo `tel:`, sin WhatsApp) y, en «Recoger», «Confirma que es
+  {nombre}» con «Iniciar viaje».
+- **«Avisar a la central»** (SOS de las dos apps, `nucleo/sos.js`). `estado.avisarCentral` (de `bienvenida.avisarCentral`;
+  sin el campo, `false`) dice si se ofrece; `p.avisarCentral()` / `c.avisarCentral()` lo mandan sin otra confirmación
+  (`POST /api/sos { rol, empresa? (solo el pasajero), viajeId?, pos?, clave }`) con la posición del momento (el conductor
+  en turno usa la de su GPS; el modo revisor, la del paradero) y devuelven el envío (`on('estado')`, `listo`,
+  `cancelar()`). Sin señal o con la central caída reintenta con la MISMA clave a los 3, 5, 10 y cada 15 s hasta 2 minutos
+  (`'reintentando'`); finales: `'enviado'`, `'demasiados'` (429), `'no_disponible'` (403 o una central anterior: la
+  bandera se apaga hasta la próxima bienvenida), `'fallo'`, `'sin_sesion'` o `'error'`. El diseño A
+  (`disenos/a/central.js`, `seguirSos`): «Avisando a la central…», «Le avisamos a la central de {coop}. Si estás en peligro,
+  llama al 123.», «Sin señal: seguimos intentando…» o «Ya le avisaste a la central hace un momento.», siempre con la 123; el
+  pasajero lo tiene en su SOS (entre la 123 y «Llamar a la central») y el conductor en «¿Necesitas ayuda?» (botón en la
+  barra y en la hoja del servicio).
+- **Avisos de la cooperativa** (`nucleo/bandeja.js`, `ctl.bandeja`). El mensaje `aviso` del bus y, con cada bienvenida (a
+  lo sumo una vez por minuto), `GET /api/avisos?rol=`; `'nuevo'` (para la tarjeta, una vez por sesión), `'mostrar'` (el push
+  `{ tipo: 'aviso', id }` tocado: `bandeja.mostrar(id)`), `'cambio'`, `lista`, `sinLeer()` y `leer(ids)` (`POST
+  /api/avisos/leidos`; si no sale, se reintenta). Se guarda con el prefijo `tc.real.` (se borra si entra otra cuenta). Uno
+  `para` el otro rol se descarta. El diseño A: la tarjeta «Aviso de {coop}» («Entendido» lo deja leído; no tapa una oferta
+  ni otro diálogo), la sección «De tu cooperativa» en «Avisos» (verla los deja leídos), la insignia de la campana y, para
+  el pasajero, «Avisos de {coop}» en Ajustes (`GET`/`PUT /api/yo/avisos`, la baja voluntaria).
+
+Pruebas: `node pruebas/f4a-app.mjs <url>` (servidor y Capacitor simulados, ~2 min) y, contra la instalación local con el
+servidor 0.9.0, `node pruebas/f4a-app-real.mjs --dir=<instalación> --servidor=<árbol del servidor>`. Las e2e de siempre
+aceptan servidores 0.8 y 0.9.
+
 ## Mapa
 
 ```js

@@ -400,3 +400,15 @@ html[data-modo="real"] .a-resaltar { animation-iteration-count: 4; box-shadow: 0
 /* Modo real: valor del viaje al terminar */
 .a-campo-valor input { font: 800 24px/1.2 var(--a-ft); letter-spacing: .01em; }
 .a-modal [data-valor-ayuda] { margin-top: 6px; }
+
+/* ---------------- ronda 4A: pedido de la central y «¿Necesitas ayuda?» ---------------- */
+.a-cbarra .a-icono-btn.a-cbarra-sos { background: rgba(229, 57, 53, .22); color: #FFCDD2; }
+.a-cbarra .a-icono-btn.a-cbarra-sos:hover { background: rgba(229, 57, 53, .34); }
+.a-sol-quien small.a-sol-pedido-central { display: inline-flex; padding: 3px 9px; border-radius: 999px; background: var(--a-tinta); color: var(--a-ambar); letter-spacing: .04em; }
+.a-sol-quien small.a-sol-pedido-central svg { animation: none; }
+.a-chip-central { display: inline-flex; gap: 4px; align-items: center; padding: 1px 8px; border-radius: 999px; background: var(--a-tinta); color: var(--a-ambar); font-weight: 800; font-size: 11.5px; }
+.a-pasajero-fila small .a-chip-central svg { color: var(--a-ambar); }
+.a-avatar-central { display: grid; place-items: center; }
+.a-confirmar-llamante h2 { overflow-wrap: anywhere; }
+.a-btn-sos-c { width: 100%; margin-top: 12px; min-height: 48px; background: var(--a-rojo-claro); color: var(--a-rojo-txt); }
+.a-btn-sos-c:hover { background: #FBDADA; }

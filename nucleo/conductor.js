@@ -26,6 +26,10 @@
 // al terminarlo); estado.sacado = { motivo, en, desde } hasta que vuelve a conectarse, y el evento 'sacado_de_turno'
 // ({ motivo, conServicio, alTerminar, actualizado, origen }). También cancelar un servicio (cancelacion con
 // por: 'central': quita la oferta o suelta el servicio y sigue en turno) y ofrecerle uno (solicitud con central: true).
+// Ronda 4A (servidor 0.9.0, nucleo/central.js): el «Pedido de la central» (solicitud, asignacion y viaje_actual con
+// pedidoCentral: true) queda en viaje.pedidoCentral: se inicia sin código (codigoHash vacío) y no se califica (al
+// confirmar el efectivo se cierra). estado.avisarCentral (bienvenida.avisarCentral) dice si «¿Necesitas ayuda?» ofrece
+// «Avisar a la central»; c.avisarCentral() lo manda (nucleo/sos.js). c.bandeja: los avisos de la cooperativa.
 // Modo revisor (bienvenida.revision: las cuentas de los revisores de Apple y Google): la central
 // manda un «pasajero automático» a ~120 m, con el código de abordaje fijo (codigoAbordaje, 1234).
 // Ese código va en la nota de la solicitud y en viaje.codigoRevision (el diseño lo muestra al
@@ -42,7 +46,9 @@ import * as servidor from './servidor.js';
 import { Emisor, hashCorto, distanciaKm, pesos, kmTexto, minutosTexto } from './util.js';
 import { GPS_CON_INTERVALO, alCambiarVisibilidad, appOculta } from './plataforma.js';
 import { MENSAJES, reglasGuardadas, reglasDeBienvenida } from './reglas.js';
-import { MENSAJES_CENTRAL, canceladaPorCentral, motivoCentral, motivoDeCancelacion, horaCentral, ofrecidaPorCentral, textosCentral } from './central.js';
+import { MENSAJES_CENTRAL, canceladaPorCentral, motivoCentral, motivoDeCancelacion, horaCentral, ofrecidaPorCentral, esPedidoCentral, textosCentral } from './central.js';
+import { enviarSos, posicionParaSos } from './sos.js';
+import { crearBandeja } from './bandeja.js';
 
 // Distancia máxima (km) al pasajero para poder marcar «Llegué» con GPS real (en modo real, la de las
 // reglas de la cooperativa: metrosLlegue).
@@ -173,6 +179,10 @@ class ControladorConductor extends Emisor {
       // La central lo sacó de turno con un servicio en curso: queda «Desconectado» al terminarlo ({ motivo, en }).
       this.sacadoPendiente = null;
       this.enTurnoDesde = 0; // cuándo se puso en turno por última vez («Conectarme»)
+      // Ronda 4A: la central recibe «Avisar a la central» (bienvenida.avisarCentral) y los avisos de la cooperativa.
+      this.estado.avisarCentral = false;
+      this.envioSos = null;
+      this.bandeja = crearBandeja({ rol: 'conductor', bus: this.bus });
     }
   }
 
@@ -374,8 +384,9 @@ class ControladorConductor extends Emisor {
     const solicitud = { ...s, distanciaAMi, recibida: Date.now(), expira: Date.now() + dura };
     this.#cambiar({ solicitudes: [...this.estado.solicitudes, solicitud] });
     this.#avisar({
-      // Fase 3: «Ofrecer a un móvil» desde el mapa de la central (solicitud con central: true).
-      titulo: this.real && ofrecidaPorCentral(s) ? 'La central te ofrece un servicio' : 'Nueva solicitud de servicio',
+      // Fase 3: «Ofrecer a un móvil» desde el mapa de la central (solicitud con central: true). Ronda 4A: el pedido que
+      // la central tomó por teléfono (pedidoCentral: true).
+      titulo: this.real && esPedidoCentral(s) ? textosCentral.pedidoCentral().tituloOferta : this.real && ofrecidaPorCentral(s) ? 'La central te ofrece un servicio' : 'Nueva solicitud de servicio',
       cuerpo: `${s.pasajero.nombre} · a ${kmTexto(distanciaAMi)} · ${s.destino?.titulo || 'Destino a convenir'} · ${pesos(s.tarifa)}`,
       tipo: 'solicitud',
     });
@@ -432,6 +443,8 @@ class ControladorConductor extends Emisor {
       codigoSimulado: s.simulada ? s.codigo : null,
       codigoRevision: this.#codigoDePrueba(s),
       simulado: Boolean(s.simulada),
+      // Ronda 4A: el pedido que la central tomó por teléfono (sin código de abordaje y sin calificación).
+      pedidoCentral: this.real && esPedidoCentral(s),
       fase: s.simulada ? 'hacia_origen' : 'confirmando',
       aceptado: Date.now(),
       pago: null,
@@ -639,17 +652,43 @@ class ControladorConductor extends Emisor {
     if (!v || v.fase !== 'cobrando') return;
     // También en viajes simulados: la página pagar/ espera esta confirmación.
     this.bus.publicar('pago_confirmado', { viajeId: v.id, conductorId: this.perfil.id, metodo: pago.metodo, valor: pago.valor, billetera: pago.billetera || null, ref: pago.ref || null });
-    this.#faseViaje('calificar', { pago: { ...pago, hora: Date.now() } });
-    this.#avisar({
+    const aviso = {
       titulo: pago.metodo === 'qr' ? 'Pago recibido por QR (prueba)' : 'Pago en efectivo registrado',
       cuerpo: `${pesos(pago.valor)}${pago.billetera ? ` · ${pago.billetera}` : ''}${pago.ref ? ` · Ref. ${pago.ref}` : ''}`,
       tipo: 'exito',
+    };
+    // Ronda 4A: el pedido de la central no se califica (quien llamó no tiene la app): se cierra ya, sin pasar por la
+    // pantalla de calificar.
+    if (this.real && v.pedidoCentral && !v.simulado) {
+      this.estado.viaje = { ...v, pago: { ...pago, hora: Date.now() } };
+      this.#avisar(aviso);
+      this.#cerrarSinCalificar();
+      return;
+    }
+    this.#faseViaje('calificar', { pago: { ...pago, hora: Date.now() } });
+    this.#avisar(aviso);
+  }
+
+  // El pedido de la central ya cobrado: como calificar(), sin la calificación.
+  #cerrarSinCalificar() {
+    const v = this.estado.viaje;
+    if (!v) return;
+    perfil.anotarViajeCerrado('conductor', {
+      id: v.id, final: 'finalizado', valor: v.valor ?? null, km: v.km ?? null,
+      pago: v.pago ? { metodo: v.pago.metodo, valor: v.pago.valor } : null,
     });
+    this.#guardarEnHistorial('finalizado');
+    this.#terminar();
   }
 
   calificar(estrellas, { etiquetas = [], comentario = '' } = {}) {
     const v = this.estado.viaje;
     if (!v) return;
+    // Ronda 4A: el pedido de la central no se califica.
+    if (v.pedidoCentral && !v.simulado) {
+      if (v.fase === 'calificar') this.#cerrarSinCalificar();
+      return;
+    }
     if (!v.simulado) this.bus.publicar('calificacion', { viajeId: v.id, de: 'conductor', estrellas, etiquetas, comentario });
     // Si el cierre salió sin señal, la central lo sigue teniendo en curso un rato: no se retoma.
     if (this.real && !v.simulado) {
@@ -697,6 +736,7 @@ class ControladorConductor extends Emisor {
       km: v.km || null,
       simulado: v.simulado,
       calificacionRecibida: v.calificacionRecibida || null,
+      ...(v.pedidoCentral ? { pedidoCentral: true } : {}),
       ...extra,
     });
   }
@@ -746,7 +786,8 @@ class ControladorConductor extends Emisor {
             // El celular del pasajero solo le llega al que ganó (en la solicitud no viene).
             // Desde el servidor 0.2.1 la huella del código de abordaje también llega solo
             // aquí (la oferta ya no la trae); con 0.1/0.2.0 se conserva la de la solicitud.
-            this.#faseViaje('hacia_origen', this.real ? { pasajero: { ...v.pasajero, celular: d.pasajero?.celular || '' }, codigoHash: d.codigoHash || v.codigoHash || null, esperaTexto: null, esperaHasta: null } : {});
+            // Ronda 4A: en el pedido de la central el celular es el de quien llamó y codigoHash llega vacío.
+            this.#faseViaje('hacia_origen', this.real ? { pasajero: { ...v.pasajero, celular: d.pasajero?.celular || '' }, codigoHash: d.codigoHash || v.codigoHash || null, esperaTexto: null, esperaHasta: null, pedidoCentral: Boolean(v.pedidoCentral) || esPedidoCentral(d) } : {});
             this.#avisar({ titulo: 'Servicio confirmado', cuerpo: `Recoge a ${v.pasajero.nombre} en ${v.origen.titulo || 'el punto marcado'}.`, tipo: 'exito' });
             // En modo real el taxi lo mueve el GPS: solo se trae la ruta buena (al aceptar pudo ir la aproximada).
             if (this.real) this.#rutaHaciaObjetivo();
@@ -1144,6 +1185,8 @@ class ControladorConductor extends Emisor {
     // Reglas del despacho de la cooperativa (sin ellas, las de siempre: la central es anterior).
     this.reglas = reglasDeBienvenida(d);
     this.revision = Boolean(d?.revision); // modo revisor (cuentas de los revisores de las tiendas)
+    // Ronda 4A: «Avisar a la central» solo si la central dice que la cooperativa lo recibe (siempre en el modo revisor).
+    this.estado.avisarCentral = d?.avisarCentral === true;
     // Un servicio de otra cuenta (entró otro conductor en este celular) no se retoma.
     const propio = this.estado.viaje?.conductorId;
     if (propio && d?.conductor?.id && propio !== d.conductor.id) {
@@ -1190,7 +1233,7 @@ class ControladorConductor extends Emisor {
       // asignó. Con el servidor 0.1 este viaje_actual no trae origen: se usa la oferta.
       const aceptada = this.aceptadaReciente?.s;
       if (!v && aceptada?.viajeId === d.viajeId && d.estado === 'asignado') {
-        return this.#retomarAsignado({ pasajero: d.pasajero, codigoHash: d.codigoHash });
+        return this.#retomarAsignado({ pasajero: d.pasajero, codigoHash: d.codigoHash, pedidoCentral: d.pedidoCentral });
       }
       // La central tiene otro servicio para este conductor: el del teléfono ya no vale.
       if (v) {
@@ -1220,6 +1263,7 @@ class ControladorConductor extends Emisor {
     if (!v.origen && d.origen) extra.origen = d.origen;
     if (!v.destino && d.destino) extra.destino = d.destino;
     if (!v.codigoHash && d.codigoHash) extra.codigoHash = d.codigoHash;
+    if (esPedidoCentral(d) && !v.pedidoCentral) extra.pedidoCentral = true;
     const faseServidor = FASE_DEL_SERVIDOR[d.estado];
     if (!faseServidor) return this.#faseViaje(v.fase, extra);
     if (ORDEN_FASES[v.fase] < ORDEN_FASES[faseServidor]) {
@@ -1286,6 +1330,7 @@ class ControladorConductor extends Emisor {
       codigoSimulado: null,
       codigoRevision: this.#codigoDePrueba(d),
       simulado: false,
+      pedidoCentral: esPedidoCentral(d),
       fase,
       aceptado: Date.now(),
       pago: null,
@@ -1321,6 +1366,7 @@ class ControladorConductor extends Emisor {
       codigoSimulado: null,
       codigoRevision: this.#codigoDePrueba(s),
       simulado: false,
+      pedidoCentral: esPedidoCentral(s) || esPedidoCentral(d),
       fase: 'hacia_origen',
       aceptado: Date.now(),
       pago: null,
@@ -1402,6 +1448,29 @@ class ControladorConductor extends Emisor {
     // clave: de qué es el aviso, para el diseño (p. ej. 'sacado_de_turno', que el diseño muestra en grande).
     if (aviso.clave) a.clave = aviso.clave;
     this.emit('aviso', a);
+  }
+
+  /* ---------------- ronda 4A: «Avisar a la central» (SOS) ---------------- */
+
+  // Un toque lo manda con la posición del momento (la del GPS que ya sigue en turno o en un servicio; si no, una lectura
+  // nueva o la última buena) y el servicio en curso; sin señal reintenta 2 minutos con la misma clave (nucleo/sos.js).
+  // Devuelve el envío ({ on('estado'), listo, cancelar() }) o null si no se ofrece. Un segundo toque mientras el
+  // primero sigue intentando devuelve el mismo envío.
+  avisarCentral() {
+    if (!this.real || !this.estado.avisarCentral) return null;
+    if (this.envioSos && !this.envioSos.terminado) return this.envioSos;
+    const v = this.estado.viaje;
+    const ultima = this.estado.gpsReal && this.estado.pos ? this.estado.pos : null;
+    const viva = Boolean(ultima) && !this.posVieja && Date.now() - this.gpsLeidoEn < 30000;
+    this.envioSos = enviarSos({
+      rol: 'conductor',
+      viajeId: v && !v.simulado && v.fase !== 'confirmando' ? v.id : null,
+      pos: posicionParaSos(ultima, { leer: !viva && !this.revision }),
+    });
+    this.envioSos.on('estado', ({ estado }) => {
+      if (estado === 'no_disponible' && this.estado.avisarCentral) this.#cambiar({ avisarCentral: false });
+    });
+    return this.envioSos;
   }
 
   /* ---------------- fase 3: lo que hace la central desde su mapa (nucleo/central.js) ---------------- */

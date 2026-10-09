@@ -11,6 +11,7 @@ import { el, esc, icono, abrirPanel, chipPrueba, decimal, placa, franjaCuadros, 
 import { ilustracionVacia, taxiLateral } from './ilustraciones.js';
 import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio, bloqueSeguridad, interruptor } from './ajustes-comunes.js';
 import { ofrecerSegundoPlano } from './nativa.js';
+import { seccionBandeja } from './central.js';
 import * as EM from './empresa.js';
 
 // Colores validados para las dos categorías (QR / efectivo) sobre fondo claro.
@@ -347,14 +348,17 @@ function bloqueSegundoPlano({ N, app }) {
   return s;
 }
 
-export function abrirAvisosConductor({ N, app, avisos }) {
+export function abrirAvisosConductor({ N, app, avisos, c = null }) {
   abrirPanel(app, {
     titulo: 'Avisos',
     construir(cuerpo) {
       const h = avisos.historial;
+      // Ronda 4A: arriba, los avisos de la cooperativa («De tu cooperativa»; abrirla los da por leídos).
+      const bandeja = EM.MODO_REAL ? seccionBandeja(N, c?.bandeja) : null;
       cuerpo.innerHTML = h.length
         ? `<ul class="a-lista-avisos">${h.map((a) => `<li class="a-aviso-item a-aviso-${esc(a.tipo)}"><span class="a-aviso-punto"></span><span><strong>${esc(a.titulo)}</strong>${a.cuerpo ? `<small>${esc(a.cuerpo)}</small>` : ''}</span><time>${esc(N.horaTexto(a.hora))}</time></li>`).join('')}</ul>`
-        : ilustracionVacia('Aquí verás las solicitudes, los pagos y las calificaciones que recibas.');
+        : bandeja ? '' : ilustracionVacia('Aquí verás las solicitudes, los pagos y las calificaciones que recibas.');
+      if (bandeja) cuerpo.prepend(bandeja);
     },
   });
 }

@@ -27,12 +27,15 @@
 // 'central'), el viaje se cierra sin buscar otro taxi (lo canceló a propósito), queda en «Mis viajes» como «Cancelado
 // por la central» y se emite 'cancelado_por_central' ({ viajeId, motivo, fase, titulo, cuerpo }) para que el diseño
 // lo muestre con «Llamar a la central». Vale también para el id anterior (la búsqueda que ya se había vuelto a pedir).
+// Ronda 4A (servidor 0.9.0, nucleo/central.js): estado.avisarCentral (bienvenida.avisarCentral) dice si el SOS ofrece
+// «Avisar a la central»; p.avisarCentral() lo manda (nucleo/sos.js). p.bandeja: los avisos de la cooperativa
+// (nucleo/bandeja.js: 'nuevo' para la tarjeta, la lista para la bandeja).
 // Fase 2 del panel (modo real): p.zonaDe(punto) dice si la recogida está dentro de la zona de
 // servicio de la cooperativa ('dentro' | 'cerca' | 'lejos', ver geo.revisarZona; null sin zona o
 // en el modo revisor); solicitar() no pide un taxi «lejos» (ErrorServidor fuera_de_zona). Con el
 // mensaje «config» de la central la app recarga la ficha nueva al quedar sin viaje (config.js).
 import { crearBus } from './bus.js';
-import { TIEMPOS, CENTRO, EMPRESA, vigilarConfig } from './config.js';
+import { TIEMPOS, CENTRO, EMPRESA, ID_EMPRESA, vigilarConfig } from './config.js';
 import { LUGARES } from './datos.js';
 import { calcularRuta, obtenerPosicion, seguirPosicion, fueraDeZona, revisarZona } from './geo.js';
 import { calcularTarifa } from './tarifas.js';
@@ -45,6 +48,8 @@ import { Emisor, uid, codigoNumerico, hashCorto, distanciaKm, pesos, minutosText
 import { relojVisible, appOculta, alCambiarVisibilidad } from './plataforma.js';
 import { MENSAJES, reglasGuardadas, reglasDeBienvenida, textoSinConductores } from './reglas.js';
 import { canceladaPorCentral, motivoDeCancelacion, textosCentral } from './central.js';
+import { enviarSos, posicionParaSos } from './sos.js';
+import { crearBandeja } from './bandeja.js';
 
 export const FASES = ['inicio', 'buscando', 'asignado', 'llego', 'en_viaje', 'pagar', 'calificar'];
 
@@ -124,6 +129,10 @@ class ControladorPasajero extends Emisor {
       // Reglas del despacho de la cooperativa (las guardadas hasta la próxima bienvenida).
       this.reglas = reglasGuardadas();
       this.estado.sinConductores = null;
+      // Ronda 4A: la central recibe «Avisar a la central» (bienvenida.avisarCentral) y los avisos de la cooperativa.
+      this.estado.avisarCentral = false;
+      this.envioSos = null;
+      this.bandeja = crearBandeja({ rol: 'pasajero', bus: this.bus });
     }
   }
 
@@ -653,6 +662,29 @@ class ControladorPasajero extends Emisor {
     }
   }
 
+  // Ronda 4A: «Avisar a la central» (SOS). Un toque lo manda, sin otra confirmación, con la posición del momento (o la
+  // última que tenga la app) y el viaje en curso; sin señal reintenta 2 minutos con la misma clave (nucleo/sos.js).
+  // Devuelve el envío ({ on('estado'), listo, cancelar() }) o null si no se ofrece (demo, central sin la bandera). Un
+  // segundo toque mientras el primero sigue intentando devuelve el mismo envío. En el modo revisor la central lo marca
+  // de prueba y no le llega a nadie (la posición es la del paradero de la cooperativa, sin leer el GPS).
+  avisarCentral() {
+    if (!this.real || !this.estado.avisarCentral) return null;
+    if (this.envioSos && !this.envioSos.terminado) return this.envioSos;
+    const { viaje, fase } = this.estado;
+    const ultima = this.estado.miPosicion?.real ? this.estado.miPosicion : null;
+    this.envioSos = enviarSos({
+      rol: 'pasajero',
+      empresa: ID_EMPRESA,
+      viajeId: viaje && FASES_ACTIVAS.includes(fase) ? viaje.id : null,
+      pos: posicionParaSos(ultima, { leer: !this.revision }),
+    });
+    this.envioSos.on('estado', ({ estado }) => {
+      // La central dejó de recibirlo (o es anterior): ya no se ofrece hasta la próxima bienvenida.
+      if (estado === 'no_disponible' && this.estado.avisarCentral) this.#cambiar({ avisarCentral: false }, { silencioso: true });
+    });
+    return this.envioSos;
+  }
+
   // ¿Se le puede ofrecer llamar a la central? (Con teléfono en la ficha y fuera del modo revisor: a los revisores
   // de las tiendas no se les ofrece la central de verdad.)
   #hayCentral() {
@@ -678,6 +710,8 @@ class ControladorPasajero extends Emisor {
       return;
     }
     Object.assign(this.estado, g.estado);
+    // Ronda 4A: lo dice la próxima bienvenida (la cooperativa pudo dejar de recibirlo).
+    this.estado.avisarCentral = false;
     // La cola del bus vive en memoria: lo que había quedado en ella se perdió al recargar.
     // La solicitud se vuelve a mandar con la próxima bienvenida (ver #reconciliar).
     const v = this.estado.viaje;
@@ -699,6 +733,8 @@ class ControladorPasajero extends Emisor {
     // «Sin conductores» se olvida: si la búsqueda sigue así, la central lo repite después de viaje_actual (y si en
     // la desconexión apareció alguien, el con_conductores se perdió).
     if (this.estado.sinConductores) this.#cambiar({ sinConductores: null });
+    // Ronda 4A: «Avisar a la central» solo si la central dice que la cooperativa lo recibe (siempre en el modo revisor).
+    if (this.estado.avisarCentral !== (d?.avisarCentral === true)) this.#cambiar({ avisarCentral: d?.avisarCentral === true }, { silencioso: true });
     // Modo revisor: con el GPS lejos de la cooperativa, la recogida pasa al parque principal.
     this.revision = Boolean(d?.revision);
     const antes = this.estado.miPosicion;

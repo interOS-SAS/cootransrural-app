@@ -42,9 +42,29 @@
 //      conductor, con central: true. La app la muestra igual, con «La central te ofrece este servicio» en la hoja
 //      amarilla y en el aviso. Aceptar, «Rechazar» (rechazo), oferta_vista y segundosOferta, como cualquier oferta.
 //   Las centrales anteriores no mandan nada de esto (y el tipo 'central' no existe para ellas): todo sigue igual.
+//
+// Ronda 4A «Operación de la central» (servidor 0.9.0; DISENO-4A.md §2.5, §2.6 y §4.2). Las centrales anteriores no
+// mandan nada de esto y la app sigue igual con ellas (las rutas nuevas que respondan 404 se ignoran en silencio).
+//   4) «Pedido por teléfono»: la operadora o el gerente crean en el panel un pedido para alguien que llamó. Les llega a
+//      los conductores como la solicitud de siempre con pedidoCentral: true, pasajero { id, nombre: <primer nombre de
+//      quien llamó>, calificacion: null } y la nota de la central. Al que gana, la asignacion de siempre con
+//      pasajero.celular = el de quien llamó, codigoHash: '' y pedidoCentral: true; viaje_actual también trae
+//      pedidoCentral: true. La app: «Pedido de la central» con el nombre y sin estrellas, «Llamar a {nombre}», en
+//      «Recoger» «Confirma que es {nombre}» e «Iniciar viaje» sin código, y no lo califica (no hay app del pasajero).
+//   5) «Avisar a la central» (SOS): bienvenida.avisarCentral: true si la cooperativa lo puede recibir (siempre en el
+//      modo revisor, donde no le llega a nadie real); sin el campo no se ofrece. POST /api/sos { rol, empresa?,
+//      viajeId?, pos?: { lat, lng, precision? }, clave } → { ok, id, veces, prueba? }; 403 sos_no_disponible,
+//      429 demasiados_sos { retryS }. La misma clave no duplica la alerta: sin señal la app reintenta con ella hasta 2
+//      minutos (nucleo/sos.js). El SOS no manda push: la central lo ve en su panel.
+//   6) Avisos de la cooperativa (nucleo/bandeja.js): aviso (central → app) { id, titulo, texto, de, en,
+//      para: 'conductores' | 'pasajeros' }; GET /api/avisos?rol= → { avisos: [{ id, titulo, texto, de, en, leido }] }
+//      (los de 30 días); POST /api/avisos/leidos { ids }; push { tipo: 'aviso', id }. Texto plano sin enlaces: la app lo
+//      pinta con textContent (avisoDeCentral lo limpia). El pasajero apaga los de una cooperativa: GET /api/yo/avisos →
+//      { bajas: [empresa] } y PUT /api/yo/avisos { empresa, recibir }.
 
 export const MENSAJES_CENTRAL = Object.freeze({
   sacadoDeTurno: 'sacado_de_turno',
+  aviso: 'aviso',
 });
 
 // cancelacion.por cuando cancela la central desde el panel (forma futura; la 0.7.0 manda por: 'sistema' con
@@ -85,10 +105,67 @@ export function ofrecidaPorCentral(s) {
   return s?.central === true;
 }
 
+// Ronda 4A: ¿la solicitud (o el viaje) es un pedido que la central tomó por teléfono («Pedido de la central»)?
+export function esPedidoCentral(x) {
+  return x?.pedidoCentral === true;
+}
+
 // Hora (ms) de un dato de la central: número o texto con dígitos (en Android los datos del push llegan como texto).
 export function horaCentral(v) {
   const n = typeof v === 'string' && /^\d{10,16}$/.test(v.trim()) ? Number(v) : v;
   return typeof n === 'number' && Number.isFinite(n) && n > 0 ? n : null;
+}
+
+/* ---------------- ronda 4A: avisos de la cooperativa ---------------- */
+
+const MAX_TITULO_AVISO = 60;
+const MAX_TEXTO_AVISO = 300;
+const MAX_DE_AVISO = 80;
+const ID_AVISO = /^[A-Za-z0-9_-]{1,64}$/;
+const CONTROL = /[\u0000-\u0009\u000b-\u001f\u007f-\u009f\u200b-\u200f\u2028-\u202e\u2066-\u2069\ufeff]/g;
+
+// Una línea de texto plano: sin caracteres de control ni de dirección, sin espacios repetidos y cortada a max.
+export function lineaCentral(t, max = MAX_MOTIVO) {
+  if (typeof t !== 'string') return '';
+  const limpio = t.replace(CONTROL, ' ').replace(/\s+/g, ' ').trim();
+  return limpio.length > max ? `${limpio.slice(0, max - 1).trimEnd()}…` : limpio;
+}
+
+// Texto de varios renglones (el del aviso): como lineaCentral, pero conserva los saltos de línea (dos seguidos como
+// mucho). El diseño lo pinta con textContent (white-space: pre-line).
+function parrafosCentral(t, max) {
+  if (typeof t !== 'string') return '';
+  const limpio = t
+    .replace(/\r\n?/g, '\n')
+    .replace(CONTROL, ' ')
+    .split('\n')
+    .map((r) => r.replace(/\s+/g, ' ').trim())
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  return limpio.length > max ? `${limpio.slice(0, max - 1).trimEnd()}…` : limpio;
+}
+
+// Hora de un aviso: ms (número o texto con dígitos) o una fecha ISO.
+function horaAviso(v) {
+  const n = horaCentral(v);
+  if (n) return n;
+  const t = typeof v === 'string' && v.length <= 40 ? Date.parse(v) : NaN;
+  return Number.isFinite(t) && t > 0 ? t : null;
+}
+
+// Un aviso de la cooperativa (mensaje «aviso» del bus o una fila de GET /api/avisos) como texto plano y con lo justo:
+// { id, titulo, texto, de, en, para, leido }. null si no sirve (sin id, sin título o sin texto) o si es para el otro rol
+// (rol: 'conductor' | 'pasajero'; sin «para», vale).
+export function avisoDeCentral(d, { rol = '' } = {}) {
+  if (!d || typeof d !== 'object') return null;
+  const id = typeof d.id === 'number' && Number.isInteger(d.id) && d.id > 0 ? String(d.id) : typeof d.id === 'string' && ID_AVISO.test(d.id) ? d.id : '';
+  const titulo = lineaCentral(d.titulo, MAX_TITULO_AVISO);
+  const texto = parrafosCentral(d.texto, MAX_TEXTO_AVISO);
+  if (!id || !titulo || !texto) return null;
+  const para = d.para === 'conductores' || d.para === 'pasajeros' ? d.para : null;
+  if (rol && para && para !== (rol === 'conductor' ? 'conductores' : 'pasajeros')) return null;
+  return { id, titulo, texto, de: lineaCentral(d.de, MAX_DE_AVISO), en: horaAviso(d.en) || Date.now(), para, leido: Boolean(d.leido) };
 }
 
 // «Motivo: …» con un solo punto al final.
@@ -131,6 +208,55 @@ export const textosCentral = Object.freeze({
       titulo: `${empresa} canceló tu ${buscando ? 'solicitud' : 'servicio'}`,
       cuerpo: `${conMotivo(motivo)}Si aún necesitas un taxi, ${hayCentral ? 'llama a la central o ' : ''}pide otro.`,
       historial: motivo ? `Cancelado por la central: ${motivo}` : 'Cancelado por la central',
+    };
+  },
+  // Ronda 4A: el pedido que la central tomó por teléfono, en la app del conductor. nombre: el primer nombre de quien
+  // llamó (texto plano; el diseño lo pinta con textContent).
+  pedidoCentral({ nombre = '' } = {}) {
+    const n = lineaCentral(nombre, 40) || 'quien llamó';
+    return {
+      chip: 'Pedido de la central',
+      detalle: 'Lo pidió por teléfono a la central',
+      tituloOferta: 'Pedido de la central',
+      llamar: `Llamar a ${n}`,
+      sinCelular: 'La central no dejó un celular para este pedido.',
+      confirmar: `Confirma que es ${n}`,
+      confirmarDetalle: 'Este pedido lo tomó la central por teléfono: no tiene código de abordaje. Pregúntale su nombre antes de iniciar el viaje.',
+      iniciar: 'Iniciar viaje',
+      historial: 'Pedido de la central',
+    };
+  },
+  // Ronda 4A: «Avisar a la central» (SOS) de las dos apps. empresa: el nombre de la cooperativa.
+  sos({ empresa = 'tu cooperativa' } = {}) {
+    return {
+      boton: `Avisar a la central de ${empresa}`,
+      botonCorto: 'Avisar a la central',
+      enviando: { titulo: 'Avisando a la central…', cuerpo: `Le estamos mandando a la central de ${empresa} tu ubicación y tu viaje.` },
+      enviado: { titulo: `Le avisamos a la central de ${empresa}`, cuerpo: 'Si estás en peligro, llama al 123.' },
+      sinSenal: { titulo: 'Sin señal: seguimos intentando', cuerpo: `Seguimos tratando de avisarle a la central de ${empresa} durante 2 minutos. Si estás en peligro, llama al 123.` },
+      fallo: { titulo: 'No pudimos avisarle a la central', cuerpo: 'No hubo señal en 2 minutos. Si estás en peligro, llama al 123.' },
+      demasiados: { titulo: 'Ya le avisaste a la central', cuerpo: 'Ya le avisaste a la central hace un momento. Si estás en peligro, llama al 123.' },
+      noDisponible: { titulo: 'La central no recibe este aviso', cuerpo: `La central de ${empresa} no recibe avisos por la app. Si estás en peligro, llama al 123.` },
+      error: { titulo: 'No pudimos avisarle a la central', cuerpo: 'Intenta de nuevo. Si estás en peligro, llama al 123.' },
+    };
+  },
+  // Ronda 4A: un aviso de la cooperativa (la tarjeta y la bandeja). de: el nombre que manda la central.
+  avisoCooperativa({ de = '' } = {}) {
+    const d = lineaCentral(de, MAX_DE_AVISO);
+    return {
+      titulo: d ? `Aviso de ${d}` : 'Aviso de tu cooperativa',
+      boton: 'Entendido',
+      bandeja: 'De tu cooperativa',
+      vacia: 'Aquí verás los avisos que te mande tu cooperativa.',
+      nuevo: 'Nuevo',
+    };
+  },
+  // Ronda 4A: el interruptor del pasajero en Ajustes (la baja voluntaria). empresa: el nombre de la cooperativa.
+  bajaAvisos({ empresa = 'tu cooperativa' } = {}) {
+    return {
+      titulo: `Avisos de ${empresa}`,
+      detalle: 'Avisos del servicio de tu cooperativa, nunca publicidad',
+      error: 'No pudimos guardar el cambio. Intenta de nuevo.',
     };
   },
 });

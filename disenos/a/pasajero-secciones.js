@@ -2,7 +2,8 @@
 // Promociones, Ajustes, Ayuda, la lista de avisos y, en modo real, Mi cuenta.
 import { esc, icono, abrirPanel, modal, chipPrueba, franjaCuadros, celularTexto } from './ui.js';
 import { ilustracionVacia, sellosFidelidad } from './ilustraciones.js';
-import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio, bloqueCuenta, enlacePrivacidad, bloqueSeguridad } from './ajustes-comunes.js';
+import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio, bloqueCuenta, enlacePrivacidad, bloqueSeguridad, bloqueAvisosCooperativa } from './ajustes-comunes.js';
+import { seccionBandeja } from './central.js';
 import * as EM from './empresa.js';
 
 // «6 de octubre de 2026» (hora de Bogotá): desde cuándo rigen las tarifas publicadas en el panel.
@@ -271,6 +272,8 @@ export function abrirAjustes(c) {
       cuerpo.append(
         bloqueMunicipio(N, { alCambiar: cambiarMunicipio, unica: c.unica }),
         bloqueSonidoYAvisos(N, { rol: 'pasajero' }),
+        // Ronda 4A (modo real, con sesión): «Avisos de {coop}», la baja voluntaria de los avisos de la cooperativa.
+        bloqueAvisosCooperativa(N),
         // App nativa 1.2: Face ID / huella (en la web y en las demos no aparece).
         bloqueSeguridad(N, { correo: yo?.correo || '' }),
         bloqueConexion(N, { simulacion: true }),
@@ -439,14 +442,17 @@ export function abrirAyuda({ N, app }) {
   });
 }
 
-export function abrirAvisos({ N, app, avisos }) {
+export function abrirAvisos({ N, app, avisos, p = null }) {
   abrirPanel(app, {
     titulo: 'Avisos',
     construir(cuerpo) {
       const h = avisos.historial;
+      // Ronda 4A: arriba, los avisos de la cooperativa («De tu cooperativa»; abrirla los da por leídos).
+      const bandeja = EM.MODO_REAL ? seccionBandeja(N, p?.bandeja) : null;
       cuerpo.innerHTML = h.length
         ? `<ul class="a-lista-avisos" data-lista-avisos>${h.map((a) => `<li class="a-aviso-item a-aviso-${esc(a.tipo)}"><span class="a-aviso-punto"></span><span><strong>${esc(a.titulo)}</strong>${a.cuerpo ? `<small>${esc(a.cuerpo)}</small>` : ''}</span><time>${esc(N.horaTexto(a.hora))}</time></li>`).join('')}</ul>`
-        : ilustracionVacia('Aquí verás los avisos de tu viaje: cuando el conductor acepta, cuando está llegando y cuando termina.');
+        : bandeja ? '' : ilustracionVacia('Aquí verás los avisos de tu viaje: cuando el conductor acepta, cuando está llegando y cuando termina.');
+      if (bandeja) cuerpo.prepend(bandeja);
     },
   });
 }

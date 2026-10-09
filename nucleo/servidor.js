@@ -83,6 +83,9 @@ const TEXTOS = {
   valor_invalido: 'Ese valor no es válido para este viaje. Corrígelo e intenta de nuevo.',
   // Servidor 0.6.0 (fase 2 del panel): la recogida está muy lejos de la zona de servicio.
   fuera_de_zona: 'Ese punto está fuera de la zona de servicio de la cooperativa. Mueve el punto de recogida o llama a la central.',
+  // Servidor 0.9.0 (ronda 4A): «Avisar a la central» (SOS).
+  sos_no_disponible: 'La central de tu cooperativa no recibe avisos por la app. Si estás en peligro, llama al 123.',
+  demasiados_sos: 'Ya le avisaste a la central hace un momento.',
 };
 
 const TEXTO_DESCONOCIDO = 'Algo falló. Intenta de nuevo.';
@@ -94,11 +97,14 @@ export function textoError(e) {
 }
 
 export class ErrorServidor extends Error {
-  constructor(codigo, estado = 0) {
+  // datos: lo que el servidor manda junto al código y la app puede usar (hoy solo retryS, los segundos para reintentar).
+  constructor(codigo, estado = 0, datos = null) {
     super(textoError(codigo));
     this.name = 'ErrorServidor';
     this.codigo = codigo;
     this.estado = estado;
+    const retryS = Number(datos?.retryS);
+    if (Number.isFinite(retryS) && retryS >= 0 && retryS <= 86400) this.retryS = Math.ceil(retryS);
   }
 }
 
@@ -144,7 +150,7 @@ async function pedir(metodo, ruta, cuerpo, { avisarSesion = true, publica = fals
   if (!r.ok) {
     // Solo códigos del servidor ({ error: 'codigo_en_minusculas' }); el 404 de Fastify trae otra forma.
     const codigo = typeof datos?.error === 'string' && /^[a-z_]+$/.test(datos.error) ? datos.error : 'error_interno';
-    throw new ErrorServidor(codigo, r.status);
+    throw new ErrorServidor(codigo, r.status, datos);
   }
   return datos ?? {};
 }
@@ -199,6 +205,26 @@ export async function entrarConLlave(id, secreto) {
 export const yo = () => api('GET', 'yo'); // { usuario, conductor }
 export const actualizarYo = (datos) => api('PATCH', 'yo', datos); // { nombre?, celular? } → { usuario, conductor }
 export const registrarConductor = (d) => api('PUT', 'conductor', d); // { empresa, movil, placa, vehiculo?, color? } → { usuario, conductor }
+
+/* ---------------- Ronda 4A: SOS y avisos de la cooperativa (servidor 0.9.0) ----------------
+ * Contrato en la cabecera de nucleo/central.js. Con un servidor anterior estas rutas responden 404 (no_existe o
+ * error_interno): quien llama lo toma como «no disponible» y no le dice nada a la persona. */
+
+// «Avisar a la central»: { rol: 'pasajero'|'conductor', empresa?, viajeId?, pos?: { lat, lng, precision? }, clave }
+// → { ok, id, veces, prueba? }. Errores: sos_no_disponible (403), demasiados_sos (429, con retryS). nucleo/sos.js
+// reintenta con la misma clave si no hay señal.
+export const sos = (d) => api('POST', 'sos', d);
+// Los avisos de la cooperativa de los últimos 30 días → { avisos: [{ id, titulo, texto, de, en, leido }] }.
+export const avisos = (rol) => api('GET', `avisos?rol=${rol === 'conductor' ? 'conductor' : 'pasajero'}`);
+// Marca leídos (hasta 50 ids) → { ok }.
+export const avisosLeidos = (ids) => api('POST', 'avisos/leidos', { ids: [...ids].slice(0, 50) });
+// Pasajero: las cooperativas cuyos avisos apagó → { bajas: ['cootransrural'] }.
+export const bajasAvisos = () => api('GET', 'yo/avisos');
+// Pasajero: apaga (recibir: false) o vuelve a encender los avisos de una cooperativa → { ok }.
+export const cambiarBajaAvisos = (empresa, recibir) => api('PUT', 'yo/avisos', { empresa: String(empresa || ''), recibir: Boolean(recibir) });
+
+// ¿La ruta no existe en este servidor (anterior a la 0.9.0)? Fastify responde 404 con otra forma (error_interno).
+export const rutaNoDisponible = (e) => e?.estado === 404 || e?.estado === 405 || e?.codigo === 'no_existe';
 
 // Borra la cuenta en el servidor y, solo si lo logró, la sesión de este teléfono.
 // Si falla (sin red, error), lanza y no borra nada: la persona puede intentar otra vez.
