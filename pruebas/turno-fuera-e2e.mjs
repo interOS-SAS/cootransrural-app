@@ -586,6 +586,21 @@ async function abrirApp(ctx, nombre, url, { tel = null, recibidos = null } = {})
 // WebSocket del bus abiertos o abriéndose en la página (desde la página: readyState 0 o 1).
 const busVivo = (p) => p.evaluate(() => (window.__wsBus || []).filter((w) => w.readyState <= 1).length).catch(() => 0);
 const foto = (p, n) => p.screenshot({ path: `${DIR}${n}.png` }).catch(() => {});
+// La foto del pasajero con su mapa un nivel más lejos, para que en la captura se vea si A está o no (A queda a ~450 m, al
+// borde de la vista). La rueda va sobre la punta del pin: el punto de recogida no cambia. Después vuelve al nivel de antes.
+async function fotoPasajero(n) {
+  const caja = await pp.locator('.a-pin-svg').boundingBox().catch(() => null);
+  if (!caja) return foto(pp, n);
+  const x = caja.x + caja.width / 2;
+  const y = caja.y + caja.height - 2;
+  await pp.mouse.move(x, y);
+  await pp.mouse.wheel(0, 60);
+  await espera(900);
+  await foto(pp, n);
+  await pp.mouse.move(x, y);
+  await pp.mouse.wheel(0, -60);
+  await espera(900);
+}
 const texto = (p, sel = 'body') => p.evaluate((x) => document.querySelector(x)?.innerText.replace(/\s+/g, ' ') || '', sel);
 const vista = (p, v, timeout = 30000) => p.waitForSelector(`.a-app[data-vista="${v}"]`, { timeout });
 const avisosVistos = (p) => p.evaluate(() => window.__avisos || []);
@@ -763,7 +778,7 @@ async function pasajeroLoVe() {
   idA = await hasta(() => idPorMovil(CA.movil), 10000);
   await debe(idA, `pasajero: recibe la presencia de A (${idA})`);
   await debe(hasta(() => taxiEnMapa(pp, CA.movil), 10000), 'pasajero: ve el taxi de A (Móvil 77) en el mapa');
-  await foto(pp, 'p01-ve-a-con-la-app-abierta');
+  await fotoPasajero('p01-ve-a-con-la-app-abierta');
 }
 
 
@@ -844,7 +859,7 @@ async function f1WebPierdeElPlugin() {
   await moverSoloPlugin(POS_CERCA);
   await debe(hasta(() => telA.envios.at(-1)?.respuesta?.visible === true, 5000), 'A minimizado en turno: POST del plugin con visible:true');
   await debe(hasta(() => taxiEnMapa(pp, CA.movil), 8000), 'pasajero: ve a A (en turno, minimizado)');
-  await foto(pp, 'f1-pasajero-ve-a-minimizado');
+  await fotoPasajero('f1-pasajero-ve-a-minimizado');
   const viejo = separarPlugin(telA);
   telA.alFrente = true;
   const tAbre = Date.now();
@@ -883,7 +898,7 @@ async function f1WebPierdeElPlugin() {
   await espera(6000); // el registro de operación escribe cada 5 s
   const nuevos = turnosDesde(CA.correo, tAbre);
   ok(nuevos === 0, `central: ningún turno nuevo de A desde que abrió la app en «Fuera de turno» (${nuevos})`);
-  await foto(pp, 'f1-pasajero-sin-a');
+  await fotoPasajero('f1-pasajero-sin-a');
   await visibilidad(pa, false, telA);
   await espera(1500);
   viejo.morir();
@@ -920,7 +935,7 @@ async function f2BusMedioCaido() {
   await espera(4000);
   const loVe = await taxiEnMapa(pp, CA.movil);
   ok(!loVe, `pasajero que vuelve a abrir su app: A no está (${loVe ? 'SÍ lo ve: la central lo sigue creyendo en turno' : 'bien'})`);
-  await foto(pp, 'f2-pasajero-tras-recargar');
+  await fotoPasajero('f2-pasajero-tras-recargar');
   // A recarga su app (bus nuevo).
   await pa.reload();
   await pa.waitForSelector('[data-conectar]:not([disabled])', { timeout: 30000 });
@@ -940,7 +955,7 @@ async function f3VuelveATurno() {
   const env = await hasta(() => telA.envios.at(-1)?.estado && telA.envios.at(-1), 5000, 100);
   ok(env?.respuesta?.seguir === true && env.respuesta.visible === true, `A minimizado: el POST del plugin vale otra vez (${JSON.stringify(env?.respuesta)})`);
   await debe(hasta(() => taxiEnMapa(pp, CA.movil), 8000), 'pasajero: ve a A minimizado en turno');
-  await foto(pp, 'f3-pasajero-ve-a-en-turno');
+  await fotoPasajero('f3-pasajero-ve-a-en-turno');
   await visibilidad(pa, false, telA);
   await debe(hasta(() => enTurnoWeb(pa), 10000), 'A vuelve a la app: sigue en turno');
 }
