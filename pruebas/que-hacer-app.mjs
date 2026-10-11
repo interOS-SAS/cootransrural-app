@@ -64,7 +64,7 @@ const IGLESIA = {
 const MONASTERIO = {
   id: 'el-rosal-monasterio', municipio: ROSAL, precision: 'aproximada', nombre: 'Monasterio benedictino', categoria: 'religioso',
   resumen: 'En la vereda Cruz Verde.', descripcion: 'Monasterio en las afueras.', lat: CENTRO.lat + 0.025, lng: CENTRO.lng - 0.01,
-  horario: 'Domingos, 9:00 a. m. a 12:00 m.', entrada: 'con_costo', valorEntrada: 5000,
+  horario: 'Domingos, 9:00 a. m. a 12:00 m.', entrada: 'con_costo', valorEntrada: 5000, direccion: 'Vereda Cruz Verde, el rosal',
   fotos: [{ url: '/api/que-hacer/fotos/f-propia.jpg', tipo: 'image/jpeg', ancho: 1600, alto: 900, credito: { texto: 'Foto: interOS', autor: null, licencia: null, licenciaUrl: null, pagina: null, origen: 'interos' } }],
 };
 const MALO = {
@@ -278,6 +278,7 @@ async function conSitios() {
   const fMon = await texto(p, '.a-panel-qh-ficha');
   ok(fMon.includes('Foto: interOS') && fMon.includes('Domingos, 9:00 a. m. a 12:00 m.') && /Entrada: \$\s?5\.000/.test(fMon), 'foto de interOS («Foto: interOS»), horario y entrada con valor');
   ok(fMon.includes('Punto aproximado') && fMon.includes('Confirma la entrada con el conductor.'), 'precisión aproximada: «Confirma la entrada con el conductor.»');
+  ok(await p.$eval('.a-panel-qh-ficha [data-qh-direccion] dd', (x) => x.textContent) === 'Vereda Cruz Verde, el rosal', 'la dirección que ya trae el municipio no lo repite («…, El Rosal, El Rosal»)');
   await p.click('.a-panel-qh-ficha [data-cerrar]');
   await p.waitForTimeout(400);
   await p.click(`.a-qh-sitio[data-sitio="${IGLESIA.id}"]`);
@@ -285,6 +286,7 @@ async function conSitios() {
   await p.waitForTimeout(500);
   const fIg = await texto(p, '.a-panel-qh-ficha');
   ok(!/\bnull\b|undefined/.test(fIg), 'sin «null» ni «undefined» sueltos en la ficha');
+  ok(await p.$eval('.a-panel-qh-ficha [data-qh-direccion] dd', (x) => x.textContent) === 'Parque principal, El Rosal', 'la dirección sin municipio lo lleva al final («Parque principal, El Rosal»)');
   ok(fIg.includes('Es la iglesia principal de El Rosal') && fIg.includes('Consulta el horario antes de ir.') && fIg.includes('Entrada gratis') && fIg.includes('Respete los horarios de misa.'), 'ficha: descripción, horario (sin dato), entrada gratis y recomendaciones');
   ok(await p.$eval('.a-panel-qh-ficha .a-qh-reco p', (x) => x.innerText === 'Respete los horarios de misa.\nSe puede combinar con el parque.'), 'las recomendaciones conservan el salto de línea');
   const fuentes = await p.$$eval('.a-panel-qh-ficha [data-qh-fuentes] li', (xs) => xs.map((x) => ({ t: x.innerText, href: x.querySelector('a')?.href || '' })));

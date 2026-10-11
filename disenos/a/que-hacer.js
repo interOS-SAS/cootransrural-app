@@ -43,7 +43,16 @@ export function valorTaxi(N, desde, sitio, km = null) {
   }
 }
 
-export const destinoDe = (s) => ({ titulo: s.nombre, detalle: [s.direccion, s.municipio].filter(Boolean).join(', ') || s.municipio, lat: s.lat, lng: s.lng, queHacer: s.id });
+// «Vereda Cruz Verde, finca San Benito, El Rosal»: el municipio solo si la dirección no lo trae ya (en el piloto, 51 de
+// las 59 direcciones lo traen: sin esto saldría «…, El Rosal, El Rosal»).
+const sinTildes = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+export function lugarDe(s) {
+  if (!s.direccion) return s.municipio || '';
+  if (!s.municipio || sinTildes(s.direccion).includes(sinTildes(s.municipio))) return s.direccion;
+  return `${s.direccion}, ${s.municipio}`;
+}
+
+export const destinoDe = (s) => ({ titulo: s.nombre, detalle: lugarDe(s), lat: s.lat, lng: s.lng, queHacer: s.id });
 
 // Foto con su crédito encima (en la lista) o debajo con los enlaces (en la ficha).
 function figura(N, s, f, { ficha = false } = {}) {
@@ -206,7 +215,7 @@ export function abrirQueHacer({ N, app, cliente, ctx, desde, gps }) {
             const fila = (icono_, titulo, texto, attr) => filas.append(h('div', { clase: 'a-qh-fila', [attr]: '' }, ico(icono_, 18), h('dt', { texto: titulo }), h('dd', { texto })));
             fila('reloj', 'Horario', s.horario || 'Consulta el horario antes de ir.', 'data-qh-horario');
             fila('etiqueta', 'Entrada', N.queHacer.textoEntrada(s, N.pesos), 'data-qh-entrada');
-            if (s.direccion) fila('pin', 'Dónde queda', [s.direccion, s.municipio].filter(Boolean).join(', '), 'data-qh-direccion');
+            if (s.direccion) fila('pin', 'Dónde queda', lugarDe(s), 'data-qh-direccion');
             if (s.aproximado) fila('info', 'Punto aproximado', 'Confirma la entrada con el conductor.', 'data-qh-aproximado');
             const origen = desde();
             const valor = valorTaxi(N, origen, s);

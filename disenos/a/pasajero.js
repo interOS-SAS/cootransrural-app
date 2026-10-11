@@ -282,8 +282,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     if (!aviso) return;
     const o = ui.origen;
     const lugar = o && EM.LUGARES_SIN_RECOGIDA.find((l) => N.distanciaKm(o, l) <= 0.06);
+    const antes = aviso.hidden;
     aviso.hidden = !lugar;
     if (lugar) ponerTexto(aviso, '[data-aviso-recogida-txt]', typeof lugar.noRecoger === 'string' ? lugar.noRecoger : `En ${lugar.nombre} no se recogen pasajeros.`);
+    // El aviso cambia el alto del inicio: la hoja se vuelve a medir para que «¿A dónde vas?» y los accesos (también
+    // «¿Qué hacer?») no queden cortados debajo del borde (pasaba con el pasajero en el parque de El Rosal).
+    if (aviso.hidden !== antes) hoja.fijar(hoja.estado, false);
   }
 
   /* ---------------- zona de servicio (fase 2, §5.7) ---------------- */
