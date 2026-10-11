@@ -187,7 +187,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       return;
     }
     if (ui.queHacer === true) return pintarBotonQH();
-    ui.queHacer = await hayQueHacer({ cliente: clienteQH, gps: gpsReal });
+    ui.queHacer = await hayQueHacer({ N, cliente: clienteQH, gps: gpsReal });
     pintarBotonQH();
   }
   function abrirQH() {

@@ -59,7 +59,7 @@ function figura(N, s, f, { ficha = false } = {}) {
     const cap = h('figcaption', { clase: 'a-qh-credito', 'data-credito': '' }, h('span', { texto: N.queHacer.textoCredito(f) }));
     if (ficha) {
       if (f.pagina) cap.append(' ', h('a', { href: f.pagina, target: '_blank', rel: 'noopener noreferrer', 'data-credito-pagina': '', texto: 'Ver la foto' }));
-      if (f.licenciaUrl && f.licencia) cap.append(' ', h('a', { href: f.licenciaUrl, target: '_blank', rel: 'noopener noreferrer license', 'data-credito-licencia': '', texto: 'Licencia' }));
+      if (f.licenciaUrl) cap.append(' ', h('a', { href: f.licenciaUrl, target: '_blank', rel: 'noopener noreferrer license', 'data-credito-licencia': '', texto: f.licencia ? `Licencia ${f.licencia}` : 'Licencia' }));
     }
     fig.append(cap);
   } else {
@@ -76,6 +76,7 @@ function figura(N, s, f, { ficha = false } = {}) {
  */
 export function abrirQueHacer({ N, app, cliente, ctx, desde, gps }) {
   const municipio = EM.PUEBLO;
+  let idMunicipio = null; // el id en la API (GET /api/que-hacer/municipios), una vez
   const conGps = Boolean(gps());
   const estado = { alcance: conGps ? 'cerca' : 'municipio', pestana: 'sitios', datos: null, aviso: '' };
 
@@ -177,12 +178,14 @@ export function abrirQueHacer({ N, app, cliente, ctx, desde, gps }) {
         cargando();
         pintarCabeza();
         try {
-          const q = estado.alcance === 'cerca' ? { cerca: gps() || desde() } : { municipio };
+          if (estado.alcance === 'municipio' && !idMunicipio) idMunicipio = await cliente.municipio(municipio, N.CENTRO);
+          const q = estado.alcance === 'cerca' ? { cerca: gps() || desde() } : { municipio: idMunicipio };
           let d = await cliente.cargar(q);
           // Nada cerca: los del municipio de la cooperativa (una vez).
           if (caer && estado.alcance === 'cerca' && !d.sitios.length && !d.planes.length) {
             estado.alcance = 'municipio';
-            d = await cliente.cargar({ municipio });
+            idMunicipio ||= await cliente.municipio(municipio, N.CENTRO);
+            d = await cliente.cargar({ municipio: idMunicipio });
             estado.aviso = d.sitios.length ? `No hay sitios publicados cerca de ti. Estos son los de ${municipio}.` : '';
           }
           estado.datos = d;
@@ -204,6 +207,7 @@ export function abrirQueHacer({ N, app, cliente, ctx, desde, gps }) {
             fila('reloj', 'Horario', s.horario || 'Consulta el horario antes de ir.', 'data-qh-horario');
             fila('etiqueta', 'Entrada', N.queHacer.textoEntrada(s, N.pesos), 'data-qh-entrada');
             if (s.direccion) fila('pin', 'Dónde queda', [s.direccion, s.municipio].filter(Boolean).join(', '), 'data-qh-direccion');
+            if (s.aproximado) fila('info', 'Punto aproximado', 'Confirma la entrada con el conductor.', 'data-qh-aproximado');
             const origen = desde();
             const valor = valorTaxi(N, origen, s);
             const taxi = h('p', { clase: 'a-qh-taxi', 'data-qh-taxi': '' });
@@ -227,6 +231,8 @@ export function abrirQueHacer({ N, app, cliente, ctx, desde, gps }) {
               s.descripcion ? h('p', { clase: 'a-qh-desc', 'data-qh-desc': '', texto: s.descripcion }) : null,
               filas,
               s.recomendaciones ? h('div', { clase: 'a-qh-reco' }, h('strong', { texto: 'Recomendaciones' }), h('p', { texto: s.recomendaciones })) : null,
+              s.fuentes.length ? h('div', { clase: 'a-qh-fuentes', 'data-qh-fuentes': '' }, h('strong', { texto: 'Fuentes' }),
+                h('ul', {}, s.fuentes.map((x) => h('li', {}, x.url ? h('a', { href: x.url, target: '_blank', rel: 'noopener noreferrer', texto: x.titulo }) : h('span', { texto: x.titulo }))))) : null,
               taxi,
               llevame,
               puede ? null : h('p', { clase: 'a-ayuda-txt', texto: 'Termina o cancela tu viaje en curso para pedir otro.' }),
@@ -252,12 +258,12 @@ export function abrirQueHacer({ N, app, cliente, ctx, desde, gps }) {
 }
 
 // ¿Hay algo para mostrar? (para el botón del inicio). Con un servidor anterior o sin nada publicado, false.
-export async function hayQueHacer({ cliente, gps, municipio = EM.PUEBLO }) {
+export async function hayQueHacer({ N, cliente, gps, municipio = EM.PUEBLO }) {
   try {
     const cerca = gps();
     const d = cerca ? await cliente.cargar({ cerca }) : { sitios: [], planes: [] };
     if (d.sitios.length || d.planes.length) return true;
-    const m = await cliente.cargar({ municipio });
+    const m = await cliente.cargar({ municipio: await cliente.municipio(municipio, N.CENTRO) });
     return Boolean(m.sitios.length || m.planes.length);
   } catch {
     return false;

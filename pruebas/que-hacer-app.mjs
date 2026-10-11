@@ -1,12 +1,13 @@
 // «¿Qué hacer?» en la app TaxiCun del pasajero (diseño A, modo real ?real=1) con el servidor de TaxiCun simulado aquí
-// mismo (page.route y routeWebSocket, como lejos-app.mjs) según el contrato propuesto en nucleo/que-hacer.js:
-// GET /api/que-hacer/sitios y /planes (cerca de lat/lng con radioKm, o de un municipio) y las fotos servidas por TaxiCun.
+// mismo (page.route y routeWebSocket, como lejos-app.mjs) según el contrato del servidor 0.13.0 (docs/CONTRATO.md §16.2):
+// GET /api/que-hacer/sitios y /planes (cerca de lat/lng con 2 decimales y radioKm, o ?municipio=<id>), /municipios y
+// las fotos servidas por TaxiCun (con credito { texto, autor, licencia, licenciaUrl, pagina, origen }).
 //
 //  1) Con sitios publicados cerca (El Rosal): el botón «¿Qué hacer?» sale en el inicio; la lista pide /sitios con la
 //     posición (sin token), los ordena por distancia y cada tarjeta trae foto (del mismo origen) con su crédito a la
 //     vista, resumen, distancia y el valor aproximado del taxi (el tarifador de Cootransrural: tarifa oficial).
-//  2) Ficha: descripción, horario, entrada, el crédito con «Ver la foto» (Commons) y «Licencia»; la foto propia dice
-//     «Foto de interOS»; «Llévame» cierra todo y abre «Confirma tu viaje» con ese destino.
+//  2) Ficha: descripción, horario, entrada, el crédito con «Ver la foto» (Commons) y «Licencia»; la foto de interOS dice
+//     «Foto: interOS»; «Llévame» cierra todo y abre «Confirma tu viaje» con ese destino.
 //  3) Planes de un día: el plan con sus paradas en orden; el plan con una parada sin publicar no sale; «Empezar:
 //     llévame a …» abre «Confirma tu viaje» con la primera parada.
 //  4) XSS: nombre, resumen, descripción, horario, crédito y título del plan con HTML se pintan como texto; la foto
@@ -51,32 +52,37 @@ const intento = async (pr) => {
 };
 
 /* ---------------- Datos publicados (lo que respondería el servidor) ---------------- */
-const fotoCommons = (id) => ({ id, url: `/api/que-hacer/fotos/${id}.jpg`, ancho: 1280, alto: 720, autor: 'DnTrotaMundos ☮', licencia: 'CC BY 3.0', licenciaUrl: 'https://creativecommons.org/licenses/by/3.0', pagina: 'https://commons.wikimedia.org/wiki/File:Iglesia_de_El_Rosal_-_panoramio.jpg' });
+const fotoCommons = (id) => ({ url: `/api/que-hacer/fotos/${id}.jpg`, tipo: 'image/jpeg', ancho: 1280, alto: 720, credito: { texto: 'Foto: DnTrotaMundos ☮ · CC BY 3.0 · Wikimedia Commons', autor: 'DnTrotaMundos ☮', licencia: 'CC BY 3.0', licenciaUrl: 'https://creativecommons.org/licenses/by/3.0', pagina: 'https://commons.wikimedia.org/wiki/File:Iglesia_de_El_Rosal_-_panoramio.jpg', origen: 'commons' } });
+const ROSAL = { id: 'el-rosal', nombre: 'El Rosal' };
 const IGLESIA = {
-  id: 'el-rosal-parroquia-san-jose', municipio: 'El Rosal', municipioId: 'el-rosal', nombre: 'Parroquia San José de El Rosal', categoria: 'religioso',
+  id: 'el-rosal-parroquia-san-jose', municipio: ROSAL, precision: 'exacta', nombre: 'Parroquia San José de El Rosal', categoria: 'religioso',
   resumen: 'El templo del parque principal, símbolo del pueblo.', descripcion: 'Es la iglesia principal de El Rosal y queda frente al parque central. Fue fundada en 1902.',
   lat: CENTRO.lat + 0.0005, lng: CENTRO.lng + 0.0003, direccion: 'Parque principal', horario: null, entrada: 'gratis', valorEntrada: null,
-  recomendaciones: 'Respete los horarios de misa.', fotos: [fotoCommons('f-iglesia')],
+  recomendaciones: 'Respete los horarios de misa.\nSe puede combinar con el parque.', fotos: [fotoCommons('f-iglesia')],
+  fuentes: [{ titulo: 'Wikipedia: El Rosal (Colombia)', url: 'https://es.wikipedia.org/wiki/El_Rosal_(Colombia)' }, { titulo: 'Fuente sin https', url: 'http://ejemplo.test/' }],
 };
 const MONASTERIO = {
-  id: 'el-rosal-monasterio', municipio: 'El Rosal', municipioId: 'el-rosal', nombre: 'Monasterio benedictino', categoria: 'religioso',
+  id: 'el-rosal-monasterio', municipio: ROSAL, precision: 'aproximada', nombre: 'Monasterio benedictino', categoria: 'religioso',
   resumen: 'En la vereda Cruz Verde.', descripcion: 'Monasterio en las afueras.', lat: CENTRO.lat + 0.025, lng: CENTRO.lng - 0.01,
   horario: 'Domingos, 9:00 a. m. a 12:00 m.', entrada: 'con_costo', valorEntrada: 5000,
-  fotos: [{ id: 'f-propia', url: '/api/que-hacer/fotos/f-propia.jpg', autor: '', licencia: '', propia: true }],
+  fotos: [{ url: '/api/que-hacer/fotos/f-propia.jpg', tipo: 'image/jpeg', ancho: 1600, alto: 900, credito: { texto: 'Foto: interOS', autor: null, licencia: null, licenciaUrl: null, pagina: null, origen: 'interos' } }],
 };
 const MALO = {
-  id: 'el-rosal-mirador', municipio: 'El Rosal', municipioId: 'el-rosal', nombre: HTML, categoria: 'mirador',
+  id: 'el-rosal-mirador', municipio: ROSAL, precision: 'exacta', nombre: HTML, categoria: 'mirador',
   resumen: '<script>window.__xss=2</script>Vista', descripcion: '<b onclick="window.__xss=3">negrita</b>', lat: CENTRO.lat + 0.01, lng: CENTRO.lng + 0.01,
   horario: '<img src=y onerror="window.__xss=4">8 a 5', entrada: 'desconocido',
   fotos: [
-    { id: 'f-directa', url: 'https://upload.wikimedia.org/wikipedia/commons/a.jpg', autor: 'Alguien', licencia: 'CC BY 4.0' }, // otro dominio: no
-    { id: 'f-sin-autor', url: '/api/que-hacer/fotos/f-sin-autor.jpg', autor: '', licencia: 'CC0' }, // sin crédito: no
-    { id: 'f-xss', url: '/api/que-hacer/fotos/f-xss.jpg', autor: '<i onmouseover="window.__xss=5">Autor</i>', licencia: 'CC BY-SA 4.0', licenciaUrl: 'javascript:window.__xss=6', pagina: 'https://evil.test/x' },
+    { url: 'https://upload.wikimedia.org/wikipedia/commons/a.jpg', credito: { texto: 'Foto: Alguien · CC BY 4.0', origen: 'commons' } }, // otro dominio: no
+    { url: '/api/que-hacer/fotos/f-sin-autor.jpg', credito: { texto: '', autor: '', licencia: 'CC0', origen: 'commons' } }, // sin crédito: no
+    { url: '/api/que-hacer/fotos/f-xss.jpg', credito: { texto: 'Foto: <i onmouseover="window.__xss=5">Autor</i> · CC BY-SA 4.0', autor: '<i>Autor</i>', licencia: 'CC BY-SA 4.0', licenciaUrl: 'javascript:window.__xss=6', pagina: 'https://evil.test/x', origen: 'commons' } },
   ],
 };
 const SOLO_MUNICIPIO = { ...IGLESIA, id: 'el-rosal-parque-principal', nombre: 'Parque principal de El Rosal', categoria: 'parque', fotos: [] };
-const PLAN = { id: 'el-rosal-centro-y-monasterio', titulo: '<b>Mañana</b> en El Rosal', municipios: ['El Rosal'], resumen: 'Recorra el centro y suba al monasterio.', paradas: [IGLESIA.id, 'el-rosal-mirador', MONASTERIO.id], duracion: 'medio día', recomendaciones: 'Almuerce fritanga.' };
-const PLAN_INCOMPLETO = { id: 'el-rosal-incompleto', titulo: 'Plan con borrador', municipios: ['El Rosal'], paradas: [IGLESIA.id, 'sitio-en-borrador'], duracion: 'medio día' };
+// Paradas desordenadas a propósito: la app las pone por «orden».
+const PLAN = { id: 'el-rosal-centro-y-monasterio', titulo: '<b>Mañana</b> en El Rosal', municipios: [ROSAL], resumen: 'Recorra el centro y suba al monasterio.', paradas: [{ orden: 2, sitio: MALO }, { orden: 1, sitio: IGLESIA }, { orden: 3, sitio: MONASTERIO }], duracion: 'medio día', recomendaciones: 'Almuerce fritanga.' };
+const ORDEN_PLAN = [IGLESIA.id, MALO.id, MONASTERIO.id];
+// Una parada dañada (sin coordenadas): el plan no sale.
+const PLAN_INCOMPLETO = { id: 'el-rosal-incompleto', titulo: 'Plan con una parada dañada', municipios: [ROSAL], paradas: [{ orden: 1, sitio: IGLESIA }, { orden: 2, sitio: { id: 'sin-punto', nombre: 'Sin punto' } }], duracion: 'medio día' };
 
 /* ---------------- Servidor de TaxiCun simulado ---------------- */
 const srv = { n: 0, sesiones: new Map(), usuarios: new Map(), peticiones: [], qh: 'ok', revisionBus: false };
@@ -107,17 +113,20 @@ async function atenderApi(route) {
   if (ruta.startsWith('que-hacer/')) {
     if (srv.qh === '404') return route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ message: `Route GET:/api/${ruta} not found`, error: 'Not Found', statusCode: 404 }) });
     if (ruta.startsWith('que-hacer/fotos/')) return route.fulfill({ status: 200, contentType: 'image/png', body: PNG });
+    if (ruta === 'que-hacer/municipios') return responder(200, { version: 1, municipios: [{ id: 'el-rosal', nombre: 'El Rosal', centro: { lat: CENTRO.lat, lng: CENTRO.lng }, sitios: 2, planes: 0 }] });
     const municipio = url.searchParams.get('municipio');
     const cerca = url.searchParams.has('lat');
+    // Como el servidor: lat/lng con 2 decimales como máximo y radioKm de 1 a 40.
+    if (cerca && (!/^-?\d+(\.\d{1,2})?$/.test(url.searchParams.get('lat')) || !/^-?\d+(\.\d{1,2})?$/.test(url.searchParams.get('lng')) || !(Number(url.searchParams.get('radioKm') || 15) >= 1 && Number(url.searchParams.get('radioKm') || 15) <= 40))) return responder(400, { error: 'datos_invalidos' });
     const vacio = srv.qh === 'vacio-cerca' && cerca;
     const cab = { ETag: '"v1"', 'Cache-Control': 'public, max-age=60' };
     if (ruta === 'que-hacer/sitios') {
-      if (vacio) return responder(200, { sitios: [] }, cab);
-      return responder(200, { sitios: municipio === 'el-rosal' ? [SOLO_MUNICIPIO, IGLESIA] : [MONASTERIO, MALO, IGLESIA] }, cab);
+      if (vacio) return responder(200, { version: 1, total: 0, sitios: [] }, cab);
+      return responder(200, { version: 1, total: 3, sitios: municipio === 'el-rosal' ? [SOLO_MUNICIPIO, IGLESIA] : [MONASTERIO, MALO, IGLESIA] }, cab);
     }
     if (ruta === 'que-hacer/planes') {
-      if (vacio || municipio) return responder(200, { planes: [], sitios: [] }, cab);
-      return responder(200, { planes: [PLAN, PLAN_INCOMPLETO], sitios: [IGLESIA, MALO, MONASTERIO] }, cab);
+      if (vacio || municipio) return responder(200, { version: 1, total: 0, planes: [] }, cab);
+      return responder(200, { version: 1, total: 2, planes: [PLAN, PLAN_INCOMPLETO] }, cab);
     }
     return responder(404, { error: 'no_existe' });
   }
@@ -230,7 +239,7 @@ async function conSitios() {
   await p.waitForTimeout(800);
   await foto(p, 'Q1-inicio-boton');
   const previa = pideQH(correo, 'sitios')[0];
-  ok(previa && previa.q.get('radioKm') === '25' && Math.abs(Number(previa.q.get('lat')) - EL_ROSAL.latitude) < 0.001 && !previa.autorizacion, `antes, la app preguntó por /api/que-hacer/sitios con la posición y sin token (${previa?.q})`);
+  ok(previa && previa.q.get('radioKm') === '20' && previa.q.get('lat') === EL_ROSAL.latitude.toFixed(2) && previa.q.get('lng') === EL_ROSAL.longitude.toFixed(2) && !previa.autorizacion, `antes, la app preguntó por /api/que-hacer/sitios con la posición en 2 decimales y sin token (${previa?.q})`);
   await abrirLista(p);
   await foto(p, 'Q1-lista');
   const ids = await p.$$eval('.a-qh-sitio', (xs) => xs.map((x) => x.dataset.sitio));
@@ -241,7 +250,7 @@ async function conSitios() {
   const img = await p.$eval(`.a-qh-sitio[data-sitio="${IGLESIA.id}"] img`, (i) => ({ src: i.src, ok: i.complete && i.naturalWidth > 0, alt: i.alt }));
   ok(img.src === `${BASE}api/que-hacer/fotos/f-iglesia.jpg` && img.ok && img.alt === 'Parroquia San José de El Rosal', `la foto sale de TaxiCun (mismo origen) y carga (${img.src.replace(BASE, '/')})`);
   const credito = await p.$eval(`.a-qh-sitio[data-sitio="${IGLESIA.id}"] [data-credito]`, (c) => ({ t: c.innerText, vis: c.getBoundingClientRect().height > 8 && getComputedStyle(c).visibility !== 'hidden' }));
-  ok(credito.t === 'Foto: DnTrotaMundos ☮ · CC BY 3.0' && credito.vis, `crédito a la vista en la tarjeta («${credito.t}»)`);
+  ok(credito.t === 'Foto: DnTrotaMundos ☮ · CC BY 3.0 · Wikimedia Commons' && credito.vis, `crédito a la vista en la tarjeta («${credito.t}»)`);
   const valorLista = (t1.match(/Taxi ≈ (\$\s?[\d.]+)/) || [])[1];
   ok(valorLista === '$6.100' || /\$\s?6\.100/.test(valorLista || ''), `dentro del casco urbano: la carrera mínima oficial de Cootransrural (${valorLista})`);
 
@@ -267,7 +276,8 @@ async function conSitios() {
   await p.waitForSelector('.a-panel-qh-ficha.a-abierto', { timeout: 5000 });
   await p.waitForTimeout(400);
   const fMon = await texto(p, '.a-panel-qh-ficha');
-  ok(fMon.includes('Foto de interOS') && fMon.includes('Domingos, 9:00 a. m. a 12:00 m.') && /Entrada: \$\s?5\.000/.test(fMon), 'foto propia «Foto de interOS», horario y entrada con valor');
+  ok(fMon.includes('Foto: interOS') && fMon.includes('Domingos, 9:00 a. m. a 12:00 m.') && /Entrada: \$\s?5\.000/.test(fMon), 'foto de interOS («Foto: interOS»), horario y entrada con valor');
+  ok(fMon.includes('Punto aproximado') && fMon.includes('Confirma la entrada con el conductor.'), 'precisión aproximada: «Confirma la entrada con el conductor.»');
   await p.click('.a-panel-qh-ficha [data-cerrar]');
   await p.waitForTimeout(400);
   await p.click(`.a-qh-sitio[data-sitio="${IGLESIA.id}"]`);
@@ -276,8 +286,11 @@ async function conSitios() {
   const fIg = await texto(p, '.a-panel-qh-ficha');
   ok(!/\bnull\b|undefined/.test(fIg), 'sin «null» ni «undefined» sueltos en la ficha');
   ok(fIg.includes('Es la iglesia principal de El Rosal') && fIg.includes('Consulta el horario antes de ir.') && fIg.includes('Entrada gratis') && fIg.includes('Respete los horarios de misa.'), 'ficha: descripción, horario (sin dato), entrada gratis y recomendaciones');
+  ok(await p.$eval('.a-panel-qh-ficha .a-qh-reco p', (x) => x.innerText === 'Respete los horarios de misa.\nSe puede combinar con el parque.'), 'las recomendaciones conservan el salto de línea');
+  const fuentes = await p.$$eval('.a-panel-qh-ficha [data-qh-fuentes] li', (xs) => xs.map((x) => ({ t: x.innerText, href: x.querySelector('a')?.href || '' })));
+  ok(fuentes.length === 2 && fuentes[0].href === 'https://es.wikipedia.org/wiki/El_Rosal_(Colombia)' && fuentes[1].href === '' && fuentes[1].t === 'Fuente sin https', 'fuentes: con enlace si es https, si no solo el título');
   const enlaces = await p.$eval('.a-panel-qh-ficha [data-credito]', (c) => ({ t: c.innerText, pag: c.querySelector('[data-credito-pagina]')?.href, lic: c.querySelector('[data-credito-licencia]')?.href, target: c.querySelector('[data-credito-pagina]')?.target }));
-  ok(/Foto: DnTrotaMundos ☮ · CC BY 3\.0/.test(enlaces.t) && enlaces.pag === IGLESIA.fotos[0].pagina && enlaces.lic === 'https://creativecommons.org/licenses/by/3.0' && enlaces.target === '_blank', 'crédito de la ficha con «Ver la foto» (Commons) y «Licencia»');
+  ok(/Foto: DnTrotaMundos ☮ · CC BY 3\.0/.test(enlaces.t) && enlaces.pag === IGLESIA.fotos[0].credito.pagina && enlaces.lic === 'https://creativecommons.org/licenses/by/3.0' && enlaces.target === '_blank', 'crédito de la ficha con «Ver la foto» (Commons) y «Licencia»');
   ok(/Taxi desde tu punto: ≈ \$\s?6\.100/.test(fIg), 'valor aproximado del taxi en la ficha');
   await foto(p, 'Q2-ficha');
   ok(await sinXss(p), 'sin XSS');
@@ -300,7 +313,7 @@ async function conSitios() {
   const tPlan = await texto(p, '.a-qh-plan');
   ok(tPlan.includes('<b>Mañana</b> en El Rosal') && /MEDIO DÍA · EL ROSAL/i.test(tPlan) && tPlan.includes('Almuerce fritanga.'), 'título (texto), duración, municipio y recomendaciones');
   const paradas = await p.$$eval('.a-qh-plan [data-parada]', (xs) => xs.map((x) => x.dataset.parada));
-  ok(paradas.join() === PLAN.paradas.join(), 'las paradas en el orden del plan');
+  ok(paradas.join() === ORDEN_PLAN.join(), `las paradas en el orden del plan (${paradas.join(', ')})`);
   await foto(p, 'Q3-planes');
   await p.click(`.a-qh-plan [data-parada="${MONASTERIO.id}"]`);
   await p.waitForSelector('.a-panel-qh-ficha.a-abierto', { timeout: 5000 });

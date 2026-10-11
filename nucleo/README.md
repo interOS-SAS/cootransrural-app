@@ -428,29 +428,31 @@ exento, servidor anterior, ruta inexistente, «Ahora no» y la demo de verdad). 
 ## «¿Qué hacer?» (modo real, `nucleo/que-hacer.js` y `disenos/a/que-hacer.js`, 11-oct-2026)
 
 Solo en TaxiCun en modo real (diseño A): sitios turísticos y planes de un día que interOS publicó en el panel (servidor
-0.13.0). El contrato que propone la app está en la cabecera de `nucleo/que-hacer.js`; la integración lo ajusta con
-`docs/CONTRATO.md` del servidor.
+0.13.0, `docs/CONTRATO.md` §16.2; resumen en la cabecera de `nucleo/que-hacer.js`).
 
-- API pública, sin token ni cookies: `GET /api/que-hacer/sitios?lat=&lng=&radioKm=25` (o `?municipio=<id>`) → `{ sitios }` y
-  `GET /api/que-hacer/planes?<igual>` → `{ planes, sitios }` (las paradas). Con `cache: 'no-cache'` (revalida con el ETag) y
-  dos minutos de caché en memoria. 404/405 (servidor anterior) → `SinQueHacer('no_disponible')`.
-- `N.queHacer.crearQueHacer({ urlApi: N.URL_API })` → `cargar({ cerca } | { municipio })` con todo validado
-  (`normalizarSitio`, `normalizarPlan`): textos planos y recortados, coordenadas de Colombia, ids simples. Las fotos solo
-  del mismo origen bajo `/api/que-hacer/` (TaxiCun guarda y sirve la copia; la CSP limita `img-src`) y solo con crédito
-  (autor, o `propia: true` → «Foto de interOS»); los enlaces del crédito, solo de Commons y Creative Commons. Un plan sin
-  al menos 2 paradas publicadas no sale.
+- API pública, sin token ni cookies: `GET /api/que-hacer/sitios?lat=&lng=&radioKm=20` (lat/lng con **2 decimales**: la
+  posición no viaja exacta) o `?municipio=<id>`, y `GET /api/que-hacer/planes` con el mismo filtro. El id del municipio de
+  la cooperativa sale de `GET /api/que-hacer/municipios` (su nombre o, si no está, el más cercano a su centro). Con
+  `cache: 'no-cache'` (revalida con el ETag) y un minuto de caché en memoria. 404/405 (servidor anterior) →
+  `SinQueHacer('no_disponible')`.
+- `N.queHacer.crearQueHacer({ urlApi: N.URL_API })` → `municipio(nombre, centro)` y `cargar({ cerca } | { municipio })` con
+  todo validado: textos planos (descripción, horario y recomendaciones con sus saltos de línea), coordenadas de Colombia,
+  ids simples. Fotos solo del mismo origen bajo `/api/que-hacer/` (TaxiCun guarda y sirve la copia; la CSP limita
+  `img-src`) y solo con crédito (`credito.texto`, o se arma con el autor); los enlaces del crédito, solo de Commons y
+  Creative Commons; las fuentes, con enlace solo si son https. Un plan con una parada dañada o con menos de 2 no sale.
 - El diseño A: el acceso «¿Qué hacer?» de primero en la fila de accesos del inicio, escondido hasta que, tras la
   bienvenida (sin `revision`), haya algo publicado cerca o en el municipio de la cooperativa. La lista (cerca por GPS, o
-  del municipio; sin nada cerca cae al municipio y lo dice) trae foto con su crédito encima, resumen, distancia y el valor
-  aproximado del taxi (`calcularTarifa` con la línea recta × 1,35; en la ficha, con la ruta si OSRM responde). La ficha:
-  descripción, horario, entrada, recomendaciones, el crédito con «Ver la foto» y «Licencia», y «Llévame» (cierra los
-  paneles y llama a `pedirA`: «Confirma tu viaje» con ese destino, con la zona y las reglas de siempre). Planes: paradas
-  en orden (cada una abre su ficha) y «Empezar: llévame a …». Todo lo del servidor se pinta con `textContent`.
-- Las demos y el modo revisor no cambian: no tienen el acceso ni preguntan nada.
+  del municipio; sin nada cerca cae al municipio y lo dice) trae la portada con su crédito encima, resumen, distancia y el
+  valor aproximado del taxi (`calcularTarifa` con la línea recta × 1,35; en la ficha, con la ruta si OSRM responde). La
+  ficha: fotos con su crédito («Ver la foto» y la licencia), descripción, horario, entrada, «Punto aproximado» si aplica,
+  recomendaciones, fuentes y «Llévame» (cierra los paneles y llama a `pedirA`: «Confirma tu viaje» con ese destino, con la
+  zona y las reglas de siempre). Planes: paradas en orden (cada una abre su ficha) y «Empezar: llévame a …». Todo lo del
+  servidor se pinta con `textContent`.
+- Las demos y el modo revisor no cambian: no tienen el acceso ni llaman a la API.
 
 Pruebas: `node pruebas/que-hacer-nucleo.mjs` (sin navegador) y `node pruebas/que-hacer-app.mjs http://localhost:5621/`
-(servidor simulado con `page.route`: lista, ficha, crédito, Llévame, planes, XSS, municipio, servidor anterior, revisor,
-sin GPS y la demo; `PLAYWRIGHT_CORE` apunta a otra copia de playwright-core).
+(servidor simulado con `page.route` según el §16.2: lista, ficha, crédito, Llévame, planes, XSS, municipio, servidor
+anterior, revisor, sin GPS y la demo; `PLAYWRIGHT_CORE` apunta a otra copia de playwright-core).
 
 ## Red
 
