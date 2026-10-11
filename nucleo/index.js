@@ -32,3 +32,5 @@ export * from './central.js';
 export { POLITICA } from './politica.js';
 // «Lejos de toda cooperativa» (9-oct): distancia a las cooperativas reales, formulario de interesados y la demostración.
 export * as lejos from './lejos.js';
+// «¿Qué hacer?» (servidor 0.13.0): sitios turísticos y planes publicados por interOS (API pública, solo modo real).
+export * as queHacer from './que-hacer.js';

@@ -16,6 +16,8 @@
 // Ronda 4A (modo real, servidor 0.9.0; disenos/a/central.js): el SOS suma «Avisar a la central de {coop}» si la central
 // lo recibe (bienvenida.avisarCentral), los avisos de la cooperativa salen como tarjeta y en «Avisos» («De tu
 // cooperativa»), el toque de su notificación abre la tarjeta y Ajustes tiene «Avisos de {coop}» (la baja voluntaria).
+// «¿Qué hacer?» (modo real, servidor 0.13.0; disenos/a/que-hacer.js): botón en el inicio, solo si hay sitios o planes
+// publicados cerca o en el municipio de la cooperativa y nunca en el modo revisor (ni en las demos).
 import {
   el, esc, $, $$, icono, ICONO_CATEGORIA, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos,
   modal, elegirOpcion, abrirMenu, estrellas, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
@@ -28,6 +30,7 @@ import { avisarPolitica, politicaPendiente } from './politica.js';
 import { seguirSos, montarAvisosCentral } from './central.js';
 import { firmaMetodos, hojaPagoQR } from './pago-qr.js';
 import { avisoPasajero } from './lejos.js';
+import { abrirQueHacer, hayQueHacer } from './que-hacer.js';
 import { abrirMisViajes, abrirProgramados, abrirTarifas, abrirPromociones, abrirAjustes, abrirAyuda, abrirAvisos, abrirMiCuenta } from './pasajero-secciones.js';
 
 const REAL = EM.MODO_REAL;
@@ -164,7 +167,33 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     sinLeer: 0,
     calif: null,
     etiquetasElegidas: new Set(),
+    // «¿Qué hacer?»: null hasta saber (tras la bienvenida); true si hay algo publicado para mostrar.
+    queHacer: null,
   };
+  const clienteQH = REAL ? N.queHacer.crearQueHacer({ urlApi: N.URL_API }) : null;
+  const gpsReal = () => {
+    const pos = p?.estado?.miPosicion;
+    return pos?.real && !pos.revision ? { lat: pos.lat, lng: pos.lng } : null;
+  };
+  function pintarBotonQH() {
+    const b = hoja.contenido.querySelector('[data-que-hacer]');
+    if (b) b.hidden = !(ui.queHacer === true && p && !p.revision);
+  }
+  // Tras cada bienvenida (sin el modo revisor), una vez por sesión: ¿hay algo publicado? (servidor anterior: no).
+  async function revisarQueHacer(revision) {
+    if (!clienteQH || revision) {
+      ui.queHacer = false;
+      pintarBotonQH();
+      return;
+    }
+    if (ui.queHacer === true) return pintarBotonQH();
+    ui.queHacer = await hayQueHacer({ cliente: clienteQH, gps: gpsReal });
+    pintarBotonQH();
+  }
+  function abrirQH() {
+    if (!clienteQH || !p || p.revision || p.estado.fase !== 'inicio') return;
+    abrirQueHacer({ N, app, cliente: clienteQH, ctx, desde: () => ui.origen || p.estado.miPosicion || null, gps: gpsReal });
+  }
 
   /* ---------------- utilidades de mapa ---------------- */
   function encuadrar(puntos, { maxZoom = 17 } = {}) {
@@ -1027,6 +1056,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         const fid = EM.fidelidad(p.viajesCompletados());
         const prog = REAL ? [] : N.perfil.viajesProgramados();
         const chips = [
+          // «¿Qué hacer?» (modo real): de primero en la fila, escondido hasta saber si hay algo publicado.
+          ...(REAL ? [`<button type="button" class="a-chip a-qh-chip" data-que-hacer hidden>${icono('mapa', { tam: 16 })}<span>¿Qué hacer?</span></button>`] : []),
           g.casa ? `<button type="button" class="a-chip" data-lugar="casa">${icono('casa', { tam: 16 })}<span>Casa</span></button>` : `<button type="button" class="a-chip a-chip-vacio" data-guardar="casa">${icono('casa', { tam: 16 })}<span>Casa</span>${icono('mas', { tam: 14 })}</button>`,
           g.trabajo ? `<button type="button" class="a-chip" data-lugar="trabajo">${icono('trabajo', { tam: 16 })}<span>Trabajo</span></button>` : `<button type="button" class="a-chip a-chip-vacio" data-guardar="trabajo">${icono('trabajo', { tam: 16 })}<span>Trabajo</span>${icono('mas', { tam: 14 })}</button>`,
           ...rec.map((r, i) => `<button type="button" class="a-chip" data-reciente="${i}">${icono('reloj', { tam: 16 })}<span>${esc(r.titulo)}</span></button>`),
@@ -1075,6 +1106,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         c.addEventListener('click', (e) => {
           const t = e.target;
           if (t.closest('[data-buscar]')) return abrirBuscador();
+          if (t.closest('[data-que-hacer]')) return abrirQH();
           if (t.closest('[data-programar]')) return ctx().programarViaje();
           if (t.closest('[data-ir-paradero]') && N.PARADERO) return centrarVisible(N.PARADERO, 17, ui.pinY);
           if (t.closest('[data-zona-opciones]')) return hojaFueraDeZona(p.zonaDe(ui.origen), { soloInfo: true });
@@ -1110,6 +1142,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       actualizar(e) {
         const aviso = $(hoja.contenido, '[data-aviso-gps]');
         if (aviso) aviso.hidden = e.miPosicion?.real !== false;
+        pintarBotonQH();
         // Tiempo estimado del taxi libre más cercano al pin.
         if (ui.origen && e.taxisCercanos?.length) {
           let km = Infinity;
@@ -2315,6 +2348,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         escucharBus();
         p.on('bienvenida', (d) => {
           bienvenidaLejos = { revision: d?.revision === true };
+          revisarQueHacer(d?.revision === true);
           setTimeout(revisarLejos, 600);
         });
         p.on('cambio', () => revisarLejos());

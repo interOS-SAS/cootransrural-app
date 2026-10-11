@@ -425,6 +425,33 @@ Pruebas: `node pruebas/lejos-app.mjs http://localhost:5221/` (servidor simulado 
 exento, servidor anterior, ruta inexistente, «Ahora no» y la demo de verdad). Contra el servidor de verdad, el recorrido
 `pruebas/lejos-e2e.mjs` del servidor (apps y panel).
 
+## «¿Qué hacer?» (modo real, `nucleo/que-hacer.js` y `disenos/a/que-hacer.js`, 11-oct-2026)
+
+Solo en TaxiCun en modo real (diseño A): sitios turísticos y planes de un día que interOS publicó en el panel (servidor
+0.13.0). El contrato que propone la app está en la cabecera de `nucleo/que-hacer.js`; la integración lo ajusta con
+`docs/CONTRATO.md` del servidor.
+
+- API pública, sin token ni cookies: `GET /api/que-hacer/sitios?lat=&lng=&radioKm=25` (o `?municipio=<id>`) → `{ sitios }` y
+  `GET /api/que-hacer/planes?<igual>` → `{ planes, sitios }` (las paradas). Con `cache: 'no-cache'` (revalida con el ETag) y
+  dos minutos de caché en memoria. 404/405 (servidor anterior) → `SinQueHacer('no_disponible')`.
+- `N.queHacer.crearQueHacer({ urlApi: N.URL_API })` → `cargar({ cerca } | { municipio })` con todo validado
+  (`normalizarSitio`, `normalizarPlan`): textos planos y recortados, coordenadas de Colombia, ids simples. Las fotos solo
+  del mismo origen bajo `/api/que-hacer/` (TaxiCun guarda y sirve la copia; la CSP limita `img-src`) y solo con crédito
+  (autor, o `propia: true` → «Foto de interOS»); los enlaces del crédito, solo de Commons y Creative Commons. Un plan sin
+  al menos 2 paradas publicadas no sale.
+- El diseño A: el acceso «¿Qué hacer?» de primero en la fila de accesos del inicio, escondido hasta que, tras la
+  bienvenida (sin `revision`), haya algo publicado cerca o en el municipio de la cooperativa. La lista (cerca por GPS, o
+  del municipio; sin nada cerca cae al municipio y lo dice) trae foto con su crédito encima, resumen, distancia y el valor
+  aproximado del taxi (`calcularTarifa` con la línea recta × 1,35; en la ficha, con la ruta si OSRM responde). La ficha:
+  descripción, horario, entrada, recomendaciones, el crédito con «Ver la foto» y «Licencia», y «Llévame» (cierra los
+  paneles y llama a `pedirA`: «Confirma tu viaje» con ese destino, con la zona y las reglas de siempre). Planes: paradas
+  en orden (cada una abre su ficha) y «Empezar: llévame a …». Todo lo del servidor se pinta con `textContent`.
+- Las demos y el modo revisor no cambian: no tienen el acceso ni preguntan nada.
+
+Pruebas: `node pruebas/que-hacer-nucleo.mjs` (sin navegador) y `node pruebas/que-hacer-app.mjs http://localhost:5621/`
+(servidor simulado con `page.route`: lista, ficha, crédito, Llévame, planes, XSS, municipio, servidor anterior, revisor,
+sin GPS y la demo; `PLAYWRIGHT_CORE` apunta a otra copia de playwright-core).
+
 ## Red
 
 Sin servidor propio. Las pestañas del mismo navegador se hablan por
