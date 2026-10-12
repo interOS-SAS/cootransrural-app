@@ -895,7 +895,11 @@ class ControladorPasajero extends Emisor {
       else if (q.estado !== 'avisada') this.#ponerPregunta({ ...q, estado: 'avisada' });
       return;
     }
-    // La contestó desde otro aparato, o se retiró (llegó, volvió la señal, canceló el pasajero).
+    // La contestó desde otro aparato, o se retiró (llegó, volvió la señal, canceló el pasajero). O es el eco de la respuesta
+    // que este mismo teléfono está mandando: la central avisa por el bus a todas las conexiones del pasajero, muchas veces
+    // antes de responder el POST (servidor 0.15.0). Entonces ya la tiene: cuenta como enviada y «Sí, todo bien» deja su
+    // «Gracias» igual.
+    const propia = Boolean(this.envioSeguridad && !this.envioSeguridad.terminado && this.envioSeguridad.respuesta === c.estado);
     if (c.estado === 'bien' || c.estado === 'ayuda') this.respondidas.set(c.preguntaId, c.estado);
     if (this.envioSeguridad && !this.envioSeguridad.terminado) {
       const envio = this.envioSeguridad;
@@ -903,6 +907,10 @@ class ControladorPasajero extends Emisor {
       envio.cancelar();
     }
     this.#quitarPregunta(c.estado);
+    if (propia && c.estado === 'bien') {
+      const t = this.textosSeguridad().gracias;
+      this.#avisar({ titulo: t.titulo, cuerpo: t.cuerpo, tipo: 'exito' });
+    }
   }
 
   #ponerPregunta(pregunta) {

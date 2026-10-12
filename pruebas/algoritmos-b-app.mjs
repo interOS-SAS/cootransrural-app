@@ -99,7 +99,7 @@ const srv = {
   // La pregunta vigente que la central repite con cada bienvenida (null: ninguna).
   pendiente: null,
   reenviar: true,
-  seguridad: { modo: 'ok', abortar: 0 }, // modo: ok | 403 | 404
+  seguridad: { modo: 'ok', abortar: 0, eco: false }, // modo: ok | 403 | 404; eco: el cierre por el bus antes de la respuesta
   bloquearBus: false, // el bus del pasajero no conecta (sin señal)
 };
 const yoDe = (correo) => {
@@ -151,6 +151,11 @@ async function atenderApi(route) {
     const r = cuerpo?.respuesta;
     if (!['vista', 'bien', 'ayuda'].includes(r) || !/^sg_/.test(cuerpo?.preguntaId || '')) return responder(400, { error: 'datos_invalidos' });
     if (srv.pendiente?.preguntaId === cuerpo.preguntaId && r !== 'vista') srv.pendiente = null;
+    // Como el servidor 0.15.0: el cierre va por el bus a todas las conexiones del pasajero ANTES de responder el POST.
+    if (srv.seguridad.eco && r !== 'vista') {
+      enviarA('pasajero', 'seguridad_cierre', { viajeId: cuerpo.viajeId, preguntaId: cuerpo.preguntaId, estado: r });
+      await new Promise((ok) => setTimeout(ok, 400));
+    }
     return responder(200, { ok: true, estado: r === 'vista' ? 'preguntando' : r });
   }
   return responder(404, { error: 'no_existe' });
@@ -481,6 +486,26 @@ async function pasajeroSeguridad() {
   ok(bienes.length === 1 && JSON.stringify(bienes[0].cuerpo) === JSON.stringify({ viajeId: v, preguntaId: q.preguntaId, respuesta: 'bien' }), `b2) POST /api/viajes/seguridad { respuesta: 'bien' } (${JSON.stringify(bienes.map((x) => x.cuerpo))})`);
   ok(await conAviso(p, /Gracias.*Seguimos pendientes de tu viaje\./, 5000), 'b2) aviso «Gracias. Seguimos pendientes de tu viaje.»');
   await foto(p, 'b2-gracias');
+  // b2b) Como el servidor 0.15.0 (integración): el cierre «bien» llega por el bus ANTES de la respuesta del POST (es el eco
+  // de la propia respuesta): la tarjeta se va y el «Gracias» sale igual, una sola vez.
+  {
+    // (el «Gracias» de b2 se va primero: aquí se cuenta el nuevo)
+    const gracias = () => p.$$eval('.a-avisos .a-toast', (n) => n.filter((t) => /Gracias/.test(t.textContent)).length);
+    await hasta(async () => (await gracias()) === 0, 15000);
+    const q2 = preguntar(v, 'desvio', 'alejamiento');
+    await esperarTarjeta(p);
+    srv.seguridad.eco = true;
+    const antes = await gracias();
+    const t1 = Date.now();
+    await p.click('[data-seg-bien]');
+    ok(Boolean(await sinTarjeta(p)), 'b2b) con el eco del cierre antes de la respuesta: la tarjeta se va');
+    ok(antes === 0 && Boolean(await hasta(async () => (await gracias()) === 1, 5000)), 'b2b) y el aviso «Gracias» sale igual');
+    await p.waitForTimeout(900);
+    const despues = await gracias();
+    ok(despues === 1 && pide('POST', 'viajes/seguridad', t1).filter((x) => x.cuerpo?.preguntaId === q2.preguntaId && x.cuerpo.respuesta === 'bien').length === 1, `b2b) un solo «Gracias» y un solo POST (${despues})`);
+    srv.seguridad.eco = false;
+    srv.pendiente = null;
+  }
   // La central no la repite ya; si llegara otra vez la misma, no vuelve.
   enviarA('pasajero', 'seguridad_pregunta', preguntaDe({ ...q, vence: Date.now() + 60000 }));
   await p.waitForTimeout(800);
