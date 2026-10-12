@@ -45,6 +45,18 @@
 //  - con rutas.llegada, p.consultarLlegada(punto) (el diseño la llama con el pin quieto) pide «El taxi más cercano llega
 //    en ~X min»: estado.llegada = { min, celda, en } (como mucho una consulta cada 10 s por celda de ~110 m y nunca con
 //    la app oculta). Sin dato o con error, null (como hoy).
+// Ronda B de «algoritmos» (servidor 0.15.0, nucleo/seguridad.js; con uno anterior no llega nada de esto y todo es como
+// hoy): el hola dice capacidades: ['seguridad']; estado.seguridadViaje (bienvenida.seguridadViaje: la cooperativa revisa
+// la seguridad de los viajes) cambia la línea de abajo del viaje en curso. «¿Todo bien en tu viaje?»: con
+// seguridad_pregunta, estado.pregunta = { viajeId, preguntaId, motivo, subtipo, venceEn (reloj del teléfono), estado:
+// 'abierta' | 'avisada' | 'enviando', antes, respuesta, error, despues } y el evento 'seguridad' ({ pregunta, cierre? }).
+// p.responderSeguridad('bien' | 'ayuda') la contesta (con reintentos 2 min; «Sí, todo bien» deja el aviso «Gracias»;
+// si no sale, error: true y la tarjeta vuelve con «Intentar de nuevo»); p.vistaSeguridad() le dice a la central que la
+// tarjeta quedó a la vista (una vez por pregunta, nunca con la app oculta). seguridad_cierre la quita (bien, ayuda,
+// retirada) o la pasa a 'avisada' (la central ya sabe). La pregunta NO se quita al terminar o cancelar el conductor el
+// viaje (D-RB6): sigue como «¿Llegaste bien?». Vive aparte del viaje en el teléfono (30 min como mucho); tras una
+// recarga queda provisional hasta la próxima bienvenida (si la central no la vuelve a mandar en 4 s, ya no vale). El
+// modo revisor y la demo nunca la ven. Al conductor no le llega nada: la respuesta va por REST, nunca por el bus.
 import { crearBus } from './bus.js';
 import { TIEMPOS, CENTRO, EMPRESA, ID_EMPRESA, vigilarConfig } from './config.js';
 import { LUGARES } from './datos.js';
@@ -63,6 +75,7 @@ import { canceladaPorCentral, motivoDeCancelacion, textosCentral } from './centr
 import { enviarSos, posicionParaSos } from './sos.js';
 import { crearBandeja } from './bandeja.js';
 import { leerRutas, limpiarCotizacion, limpiarLlegada, celda, MARGEN_COTIZACION_MS, LLEGADA_MISMA_CELDA_MS, LLEGADA_REFRESCO_MS } from './reparto.js';
+import { limpiarPregunta, limpiarCierre, seguridadDeBienvenida, enviarRespuesta, textosSeguridad, VIGENCIA_PREGUNTA_MS, MOTIVOS, SUBTIPOS } from './seguridad.js';
 
 export const FASES = ['inicio', 'buscando', 'asignado', 'llego', 'en_viaje', 'pagar', 'calificar'];
 
@@ -73,6 +86,9 @@ const ESPERA_VIAJE_ACTUAL_MS = 2500; // el servidor 0.1 solo manda viaje_actual 
 // El servidor suelta la búsqueda a los minutosBusqueda de las reglas de la cooperativa (10 min sin reglas).
 const VIDA_COLA_MS = 60000; // lo que el bus guarda sin conexión (ver BusServidor)
 const VIAJE_GUARDADO_MAX_MS = 12 * 3600 * 1000;
+// Ronda B: la pregunta «¿Todo bien en tu viaje?» se guarda aparte del viaje (sigue después del final).
+const CLAVE_PREGUNTA = 'tc.real.seguridad.pasajero';
+const ESPERA_PREGUNTA_MS = 4000; // tras la bienvenida, lo que tarda la central en repetir una pregunta vigente
 // Batería (modo real). Los taxis cercanos se recalculan cuando llega una presencia (en las fases
 // que los muestran) y, para quitar los que dejaron de anunciarse, con este reloj (solo con la app
 // a la vista). Antes era cada segundo aunque no hubiera llegado nada.
@@ -153,6 +169,14 @@ class ControladorPasajero extends Emisor {
       this.ultimaCotizacion = null; // { origen, destino, ruta, tarifa } de la última cotización con ficha
       this.consultaLlegada = { celda: '', en: 0, n: 0 };
       this.precioPendiente = null;
+      // Ronda B: «¿Todo bien en tu viaje?».
+      this.estado.seguridadViaje = false;
+      this.estado.pregunta = null;
+      this.envioSeguridad = null;
+      this.vistasSeguridad = new Set();
+      this.respondidas = new Map(); // preguntaId → respuesta que la central ya tiene
+      this.relojPregunta = null;
+      this.relojProvisional = null;
     }
   }
 
@@ -836,6 +860,182 @@ class ControladorPasajero extends Emisor {
     this.bus.on(MENSAJES.reglas, (d) => {
       this.reglas = reglasDeBienvenida(d);
     });
+    // Ronda B: «¿Todo bien en tu viaje?».
+    this.bus.on('seguridad_pregunta', (d) => this.#alPregunta(d));
+    this.bus.on('seguridad_cierre', (d) => this.#alCierreSeguridad(d));
+  }
+
+  /* ---------------- Ronda B: «¿Todo bien en tu viaje?» ---------------- */
+
+  textosSeguridad() {
+    return textosSeguridad({ empresa: EMPRESA?.nombre });
+  }
+
+  #alPregunta(d) {
+    if (!this.real || this.revision) return;
+    const q = limpiarPregunta(d);
+    if (!q || this.respondidas.has(q.preguntaId)) return;
+    const actual = this.estado.pregunta;
+    // Ya se está respondiendo (la central la repite con la bienvenida mientras no le llegue la respuesta).
+    if (actual?.preguntaId === q.preguntaId && actual.estado === 'enviando') {
+      if (actual.provisional) this.#ponerPregunta({ ...actual, provisional: false });
+      return;
+    }
+    this.#ponerPregunta({ ...q, venceEn: Date.now() + q.plazoS * 1000, antes: null, respuesta: null, error: false, provisional: false, guardado: Date.now() });
+  }
+
+  #alCierreSeguridad(d) {
+    if (!this.real) return;
+    const c = limpiarCierre(d);
+    const q = this.estado.pregunta;
+    if (!c || !q || q.preguntaId !== c.preguntaId) return;
+    if (c.estado === 'avisada') {
+      // La central ya sabe (no respondió a tiempo). Si se está respondiendo, la respuesta sigue su curso.
+      if (q.estado === 'enviando') this.#ponerPregunta({ ...q, antes: 'avisada' });
+      else if (q.estado !== 'avisada') this.#ponerPregunta({ ...q, estado: 'avisada' });
+      return;
+    }
+    // La contestó desde otro aparato, o se retiró (llegó, volvió la señal, canceló el pasajero).
+    if (c.estado === 'bien' || c.estado === 'ayuda') this.respondidas.set(c.preguntaId, c.estado);
+    if (this.envioSeguridad && !this.envioSeguridad.terminado) {
+      const envio = this.envioSeguridad;
+      this.envioSeguridad = null;
+      envio.cancelar();
+    }
+    this.#quitarPregunta(c.estado);
+  }
+
+  #ponerPregunta(pregunta) {
+    clearTimeout(this.relojPregunta);
+    this.relojPregunta = null;
+    this.#cambiar({ pregunta }, { silencioso: true });
+    this.#guardarPregunta();
+    // A la hora del plazo (si nadie respondió) la central ya avisó: la tarjeta lo dice sin esperar el cierre.
+    if (pregunta.estado === 'abierta') {
+      const falta = pregunta.venceEn - Date.now();
+      this.relojPregunta = setTimeout(() => {
+        const q = this.estado.pregunta;
+        if (q?.preguntaId === pregunta.preguntaId && q.estado === 'abierta') this.#ponerPregunta({ ...q, estado: 'avisada' });
+      }, Math.max(0, Math.min(falta, 2 ** 31 - 1)) + 500);
+    }
+    this.emit('seguridad', { pregunta });
+  }
+
+  #quitarPregunta(cierre = null) {
+    clearTimeout(this.relojPregunta);
+    clearTimeout(this.relojProvisional);
+    this.relojPregunta = null;
+    if (!this.estado.pregunta) return;
+    this.#cambiar({ pregunta: null }, { silencioso: true });
+    this.#guardarPregunta();
+    this.emit('seguridad', { pregunta: null, cierre });
+  }
+
+  // «Sí, todo bien» o «Necesito ayuda». Devuelve el envío (nucleo/seguridad.js) o null si no hay pregunta.
+  responderSeguridad(respuesta) {
+    const q = this.estado.pregunta;
+    if (!this.real || !q || (respuesta !== 'bien' && respuesta !== 'ayuda')) return null;
+    const enCurso = this.envioSeguridad && !this.envioSeguridad.terminado ? this.envioSeguridad : null;
+    if (enCurso && enCurso.respuesta === respuesta) return enCurso;
+    // «Necesito ayuda» después de «Sí, todo bien» (que aún no sale) gana; al revés, la ayuda sigue.
+    if (enCurso && enCurso.respuesta === 'ayuda') return enCurso;
+    if (enCurso) {
+      this.envioSeguridad = null;
+      enCurso.cancelar();
+    }
+    const antes = q.estado === 'enviando' ? q.antes : q.estado;
+    this.#ponerPregunta({ ...q, estado: 'enviando', antes, respuesta, error: false });
+    const envio = enviarRespuesta({ viajeId: q.viajeId, preguntaId: q.preguntaId, respuesta });
+    this.envioSeguridad = envio;
+    envio.on('estado', (r) => {
+      if (this.envioSeguridad !== envio || r.estado === 'reintentando' || r.estado === 'cancelado') return;
+      this.envioSeguridad = null;
+      const ahora = this.estado.pregunta;
+      if (ahora?.preguntaId !== q.preguntaId) return;
+      if (r.estado === 'fallo' || r.estado === 'error') {
+        this.#ponerPregunta({ ...ahora, estado: ahora.antes || 'abierta', respuesta: null, error: true });
+        return;
+      }
+      // Enviada, o la central ya no la tiene (404) o se cerró la sesión: no se insiste.
+      if (r.estado === 'enviado') this.respondidas.set(q.preguntaId, respuesta);
+      this.#quitarPregunta(r.estado === 'enviado' ? respuesta : 'retirada');
+      if (r.estado === 'enviado' && respuesta === 'bien') {
+        const t = this.textosSeguridad().gracias;
+        this.#avisar({ titulo: t.titulo, cuerpo: t.cuerpo, tipo: 'exito' });
+      }
+    });
+    return envio;
+  }
+
+  // La tarjeta quedó a la vista (app visible): la central lo anota (una vez por pregunta). true si se mandó.
+  vistaSeguridad() {
+    const q = this.estado.pregunta;
+    if (!this.real || !q || q.estado !== 'abierta' || q.provisional || appOculta() || this.vistasSeguridad.has(q.preguntaId)) return false;
+    this.vistasSeguridad.add(q.preguntaId);
+    enviarRespuesta({ viajeId: q.viajeId, preguntaId: q.preguntaId, respuesta: 'vista' });
+    return true;
+  }
+
+  // La pregunta vive aparte del viaje: sigue después del final («¿Llegaste bien?»).
+  #guardarPregunta() {
+    const q = this.estado.pregunta;
+    try {
+      if (!q) localStorage.removeItem(CLAVE_PREGUNTA);
+      else localStorage.setItem(CLAVE_PREGUNTA, JSON.stringify({ guardado: q.guardado || Date.now(), cuenta: this.#cuenta(), pregunta: { ...q, provisional: undefined, guardado: q.guardado || Date.now() } }));
+    } catch {
+      /* almacenamiento lleno o bloqueado */
+    }
+  }
+
+  // Tras una recarga: la pregunta guardada se muestra (provisional) hasta la próxima bienvenida. Si se estaba
+  // respondiendo, la respuesta sale otra vez (repetirla es seguro).
+  #retomarPregunta() {
+    let g = null;
+    try {
+      g = JSON.parse(localStorage.getItem(CLAVE_PREGUNTA) || 'null');
+    } catch {
+      g = null;
+    }
+    const q = g?.pregunta;
+    const valida = q && Date.now() - (Number(g.guardado) || 0) < VIGENCIA_PREGUNTA_MS && (!g.cuenta || !this.#cuenta() || g.cuenta === this.#cuenta())
+      && limpiarPregunta({ viajeId: q.viajeId, preguntaId: q.preguntaId, motivo: q.motivo, subtipo: q.subtipo, plazoS: 0, estado: 'abierta', despues: Boolean(q.despues) })
+      && ['abierta', 'avisada', 'enviando'].includes(q.estado) && Number.isFinite(q.venceEn);
+    if (!valida) {
+      try {
+        localStorage.removeItem(CLAVE_PREGUNTA);
+      } catch {
+        /* nada */
+      }
+      return;
+    }
+    const pendiente = q.estado === 'enviando' && (q.respuesta === 'bien' || q.respuesta === 'ayuda') ? q.respuesta : null;
+    const estado = q.estado === 'enviando' ? (['abierta', 'avisada'].includes(q.antes) ? q.antes : 'abierta') : q.estado;
+    const pregunta = {
+      viajeId: q.viajeId, preguntaId: q.preguntaId, motivo: MOTIVOS.includes(q.motivo) ? q.motivo : 'parada', subtipo: SUBTIPOS.includes(q.subtipo) ? q.subtipo : null,
+      venceEn: q.venceEn, estado, antes: null, respuesta: null, error: false, despues: q.despues === true, provisional: true, guardado: Number(g.guardado),
+    };
+    this.estado.pregunta = pregunta;
+    // Con su reloj del plazo; y si se estaba respondiendo, la respuesta sale otra vez.
+    setTimeout(() => {
+      if (this.estado.pregunta !== pregunta) return;
+      this.#ponerPregunta(pregunta);
+      if (pendiente) this.responderSeguridad(pendiente);
+    }, 0);
+  }
+
+  #alBienvenidaSeguridad(d) {
+    const seguridadViaje = seguridadDeBienvenida(d);
+    if (this.estado.seguridadViaje !== seguridadViaje) this.#cambiar({ seguridadViaje }, { silencioso: true });
+    // Los revisores nunca ven la pregunta.
+    if (this.revision) return this.#quitarPregunta('retirada');
+    const q = this.estado.pregunta;
+    if (!q?.provisional) return;
+    // Si sigue vigente, la central la vuelve a mandar después de viaje_actual.
+    clearTimeout(this.relojProvisional);
+    this.relojProvisional = setTimeout(() => {
+      const ahora = this.estado.pregunta;
+      if (ahora?.preguntaId === q.preguntaId && ahora.provisional && !this.envioSeguridad) this.#quitarPregunta('retirada');
+    }, ESPERA_PREGUNTA_MS);
   }
 
   // ¿La búsqueda le llegó a alguien que la pueda tomar? (sin_conductores / con_conductores.) sin: true = a nadie
@@ -901,6 +1101,7 @@ class ControladorPasajero extends Emisor {
 
   // Lo guardado en el teléfono (localStorage) se retoma y después se confirma con el servidor.
   #retomarReal() {
+    this.#retomarPregunta();
     let g = null;
     try {
       g = JSON.parse(localStorage.getItem(CLAVE_VIAJE_REAL) || 'null');
@@ -915,6 +1116,8 @@ class ControladorPasajero extends Emisor {
     Object.assign(this.estado, g.estado);
     // Ronda 4A: lo dice la próxima bienvenida (la cooperativa pudo dejar de recibirlo).
     this.estado.avisarCentral = false;
+    // Ronda B: también si revisa la seguridad de los viajes (la pregunta se guarda aparte: #retomarPregunta).
+    this.estado.seguridadViaje = false;
     // La cola del bus vive en memoria: lo que había quedado en ella se perdió al recargar.
     // La solicitud se vuelve a mandar con la próxima bienvenida (ver #reconciliar).
     const v = this.estado.viaje;
@@ -947,6 +1150,8 @@ class ControladorPasajero extends Emisor {
     }
     // Modo revisor: con el GPS lejos de la cooperativa, la recogida pasa al parque principal.
     this.revision = Boolean(d?.revision);
+    // Ronda B: ¿la cooperativa revisa la seguridad de los viajes? (Se olvida con cada bienvenida.)
+    this.#alBienvenidaSeguridad(d);
     const antes = this.estado.miPosicion;
     const ahora = this.#paraRevision(antes);
     if (ahora !== antes) {
@@ -959,6 +1164,7 @@ class ControladorPasajero extends Emisor {
     // se retoma ni se vuelve a pedir desde esta cuenta: se olvida sin avisar a nadie.
     const deOtro = this.estado.viaje?.cuenta && this.#cuenta() && this.estado.viaje.cuenta !== this.#cuenta();
     if (deOtro) this.#cerrarViaje('otra-cuenta');
+    if (deOtro) this.#quitarPregunta('retirada');
     // Solo se revisa el viaje que había al conectar: uno pedido después ya es de esta conexión.
     const { viaje, fase } = this.estado;
     this.viajeARevisar = viaje && FASES_ACTIVAS.includes(fase) ? viaje.id : null;
@@ -1254,7 +1460,7 @@ class ControladorPasajero extends Emisor {
   }
 
   #guardarReal(persistible) {
-    const { conexion, sala, estadoBus, ultimoAviso, miPosicion, rutas, llegada, precioCambio, ...resto } = persistible;
+    const { conexion, sala, estadoBus, ultimoAviso, miPosicion, rutas, llegada, precioCambio, seguridadViaje, pregunta, ...resto } = persistible;
     try {
       if (resto.fase === 'inicio' || !resto.viaje) localStorage.removeItem(CLAVE_VIAJE_REAL);
       else localStorage.setItem(CLAVE_VIAJE_REAL, JSON.stringify({ guardado: Date.now(), fase: resto.fase, estado: resto }));
@@ -1357,6 +1563,9 @@ class ControladorPasajero extends Emisor {
     clearTimeout(this.taxisPendientes);
     clearTimeout(this.temporizadorBusqueda);
     clearTimeout(this.relojViajeActual);
+    clearTimeout(this.relojPregunta);
+    clearTimeout(this.relojProvisional);
+    this.envioSeguridad?.cancelar();
     this.ambiente?.detener();
     this.simulado?.detener();
     this.bus.cerrar();

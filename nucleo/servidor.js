@@ -262,6 +262,13 @@ export const cotizar = (empresa, origen, destino) => api('POST', 'viajes/cotizac
 // «El taxi más cercano llega en ~X min» → { min: n | null, fuente }. Espera 3 s.
 export const llegada = (empresa, origen) => api('POST', 'viajes/llegada', { empresa: String(empresa || ''), origen: puntoCotizacion(origen) }, { espera: 3000 });
 
+/* ---------------- Ronda B de «algoritmos» (servidor 0.15.0, nucleo/seguridad.js) ----------------
+ * «¿Todo bien en tu viaje?»: la respuesta del pasajero ({ viajeId, preguntaId, respuesta: 'vista' | 'bien' | 'ayuda' })
+ * → { ok, estado: 'preguntando' | 'bien' | 'ayuda' | 'sin_respuesta' | 'cerrada' }. Errores: 400 datos_invalidos, 404
+ * no_existe (no es su pregunta o ya no existe), 429 demasiados_intentos (retryS), sin_red (también si tarda más de 8 s).
+ * Solo se llama cuando la central mandó una pregunta (un servidor anterior nunca la manda). */
+export const seguridad = (d) => api('POST', 'viajes/seguridad', d, { espera: 8000 });
+
 // ¿La ruta no existe en este servidor (anterior a la 0.9.0)? Fastify responde 404 con otra forma (error_interno).
 export const rutaNoDisponible = (e) => e?.estado === 404 || e?.estado === 405 || e?.codigo === 'no_existe';
 

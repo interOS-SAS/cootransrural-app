@@ -16,6 +16,10 @@
 // Ronda 4A (modo real, servidor 0.9.0; disenos/a/central.js): el SOS suma «Avisar a la central de {coop}» si la central
 // lo recibe (bienvenida.avisarCentral), los avisos de la cooperativa salen como tarjeta y en «Avisos» («De tu
 // cooperativa»), el toque de su notificación abre la tarjeta y Ajustes tiene «Avisos de {coop}» (la baja voluntaria).
+// Ronda B de «algoritmos» (modo real, servidor 0.15.0; disenos/a/seguridad.js): la tarjeta «¿Todo bien en tu viaje?»
+// («Sí, todo bien» / «Necesito ayuda», que abre el SOS con «Ya le avisamos a la central…» y «Mandar mi ubicación a la
+// central»); con bienvenida.seguridadViaje, la línea de abajo del viaje en curso dice que la app cuida el viaje; tocar
+// la notificación { tipo: 'seguridad' } reconecta (vale 30 min). Sin esos campos (servidor anterior), todo como hoy.
 // «¿Qué hacer?» (modo real, servidor 0.13.0; disenos/a/que-hacer.js): botón en el inicio, solo si hay sitios o planes
 // publicados cerca o en el municipio de la cooperativa y nunca en el modo revisor (ni en las demos).
 // Ronda A de «algoritmos» (modo real, servidor 0.14.0 con la llave de rutas; nucleo/reparto.js): con el pin de recogida
@@ -32,6 +36,7 @@ import { mostrarBienvenida } from './registro.js';
 import { ofrecerAvisos, montarBloqueo } from './nativa.js';
 import { avisarPolitica, politicaPendiente } from './politica.js';
 import { seguirSos, montarAvisosCentral } from './central.js';
+import { montarSeguridad } from './seguridad.js';
 import { firmaMetodos, hojaPagoQR } from './pago-qr.js';
 import { avisoPasajero } from './lejos.js';
 import { abrirQueHacer, hayQueHacer } from './que-hacer.js';
@@ -1016,25 +1021,30 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     window.open(N.enlaceWhatsApp('', texto), '_blank', 'noopener');
   }
 
-  async function sos() {
+  // desdeSeguridad (ronda B): lo abrió «Necesito ayuda» de «¿Todo bien en tu viaje?»: la central ya sabe (el texto lo
+  // dice) y el botón de la central manda además la ubicación de este celular (se suma a la misma alerta).
+  async function sos({ desdeSeguridad = false } = {}) {
     const yo = N.perfil.pasajero();
     const contacto = yo?.contactoEmergencia;
     // Ronda 4A: «Avisar a la central» solo si la central lo recibe (bienvenida.avisarCentral; en la demo nunca).
     const central = REAL && p?.estado?.avisarCentral === true;
+    const ts = desdeSeguridad ? p.textosSeguridad() : null;
     const acc = [
       { texto: 'Llamar a la Línea 123', href: 'tel:123', clase: 'a-btn-peligro', icono: 'telefono' },
-      central ? { texto: N.textosCentral.sos({ empresa: EM.NOMBRE }).boton, valor: 'central', clase: 'a-btn-aviso-central', icono: 'antena' } : null,
+      central ? { texto: ts ? ts.sosBoton : N.textosCentral.sos({ empresa: EM.NOMBRE }).boton, valor: 'central', clase: 'a-btn-aviso-central', icono: 'antena' } : null,
       contacto?.celular ? { texto: `Avisar a ${contacto.nombre || 'mi contacto'}`, href: N.enlaceWhatsApp(contacto.celular, `🆘 Necesito ayuda.\n${p.textoCompartir()}`), externo: true, clase: 'a-btn-tinta', icono: 'chat' } : null,
       EM.TELEFONO ? { texto: `Llamar a la central ${EM.NOMBRE}`, href: N.enlaceTel(EM.TELEFONO), clase: 'a-btn-suave', icono: 'telefono' } : null,
       { texto: 'Cancelar', valor: null, clase: 'a-btn-texto' },
     ].filter(Boolean);
     const r = await modal(app, {
       titulo: '¿Necesitas ayuda?',
-      texto: central
-        ? `Si estás en peligro, llama a la Línea 123 de la Policía. También puedes avisarle a la central de ${EM.NOMBRE}: le llegan tu ubicación y tu viaje.`
-        : 'Si estás en peligro, llama a la Línea 123 de la Policía. También puedes compartir tu viaje.',
+      texto: ts
+        ? ts.sosTexto
+        : central
+          ? `Si estás en peligro, llama a la Línea 123 de la Policía. También puedes avisarle a la central de ${EM.NOMBRE}: le llegan tu ubicación y tu viaje.`
+          : 'Si estás en peligro, llama a la Línea 123 de la Policía. También puedes compartir tu viaje.',
       icono: `<span class="a-sos-ico">${icono('sos', { tam: 34 })}</span>`,
-      clase: 'a-modal-sos',
+      clase: `a-modal-sos${ts ? ' a-modal-sos-seguridad' : ''}`,
       acciones: acc,
     });
     // Un toque lo manda, sin otra confirmación (el núcleo toma la posición del momento y el viaje en curso).
@@ -1087,6 +1097,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     pintarAhora();
     if (origen) ui.origen = origen;
     if (destino !== undefined) irAConfirmar(destino);
+  }
+
+  // Ronda B: con la cooperativa que revisa la seguridad de los viajes (bienvenida.seguridadViaje), la línea lo dice.
+  function lineaSegura(e) {
+    const t = N.seguridad.textosSeguridad({ empresa: EM.NOMBRE });
+    return REAL && e?.seguridadViaje ? t.lineaViaje : t.lineaHoy;
   }
 
   async function cancelarViaje() {
@@ -1479,7 +1495,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         </div>
         ${acciones(c)}
         <div data-corte></div>
-        <p class="a-seguro">${icono('escudo', { tam: 18 })} Tu viaje queda registrado. Compártelo con alguien de confianza.</p>`;
+        <p class="a-seguro">${icono('escudo', { tam: 18 })} <span data-seguro>${esc(lineaSegura(e))}</span></p>`;
       },
       montar(c) {
         c.addEventListener('click', (e) => {
@@ -1499,6 +1515,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       },
       actualizar(e) {
         const c = hoja.contenido;
+        ponerTexto(c, '[data-seguro]', lineaSegura(e));
         const eta = e.etaMin;
         if (eta != null) {
           const n = Math.max(1, Math.round(eta));
@@ -2145,7 +2162,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       p.bandeja?.mostrar(a.datos?.id).catch(() => {});
       return;
     }
-    if (Date.now() - (a.cuando || Date.now()) > 2 * 60 * 1000) return; // de hace rato: ya no aplica
+    // Ronda B: «¿Todo bien en tu viaje?» vale 30 min (con la bienvenida llega la pregunta, también tras el final).
+    const vida = a.tipo === 'seguridad' ? 30 * 60 * 1000 : 2 * 60 * 1000;
+    if (Date.now() - (a.cuando || Date.now()) > vida) return; // de hace rato: ya no aplica
     app.querySelectorAll('.a-panel, .a-menu-capa, .a-buscador').forEach((n) => n.remove());
     reconectarCentral();
   }
@@ -2430,6 +2449,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           if (ui.vista === 'inicio' && ui.origen) pedirLlegada(ui.origen);
         });
         p.on('cambio', () => revisarLejos());
+        // Ronda B: «¿Todo bien en tu viaje?» (la tarjeta sigue a p.estado.pregunta).
+        const tarjetaSeguridad = montarSeguridad(app, { p, alAyuda: () => sos({ desdeSeguridad: true }) });
+        p.on('cambio', () => tarjetaSeguridad.pintar());
+        tarjetaSeguridad.pintar();
         // Ronda 4A: los avisos de la cooperativa como tarjeta (sin tapar el ingreso ni otro diálogo) y en la campana.
         montarAvisosCentral(app, {
           N,

@@ -37,3 +37,6 @@ export * as queHacer from './que-hacer.js';
 // Ronda A de «algoritmos» (servidor 0.14.0): despacho por cercanía y por turnos, llegada y precio por calles (textos y
 // validación de lo que manda la central).
 export * as reparto from './reparto.js';
+// Ronda B de «algoritmos» (servidor 0.15.0): «¿Todo bien en tu viaje?» (validación de lo que manda la central, textos y
+// la respuesta) como N.seguridad.*.
+export * as seguridad from './seguridad.js';

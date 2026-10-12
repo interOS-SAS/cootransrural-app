@@ -219,12 +219,16 @@ export const GPS_CON_INTERVALO = GPS_ANDROID;
 
 // Rumbo de la marcha: «course» (solo llega siguiendo la posición) y, si no hay, «heading».
 // El plugin 8.x prioriza la brújula en heading: el taxi giraría con el teléfono.
-const aPunto = ({ coords: c }) => ({
+// Ronda B (servidor 0.15.0): también la hora de la lectura (ts, ms) y la altitud, que la app del conductor manda con su
+// posición para que la central revise el viaje y note un GPS inventado.
+const aPunto = ({ coords: c, timestamp }) => ({
   lat: c.latitude,
   lng: c.longitude,
   precision: c.accuracy,
   rumbo: [c.course, c.heading].find((v) => Number.isFinite(v) && v >= 0) ?? null,
   velocidad: c.speed ?? null,
+  ts: Number.isFinite(timestamp) ? timestamp : null,
+  altitud: c.altitude ?? null,
 });
 
 // Errores del plugin («OS-PLUG-GLOC-00xx») a los códigos del navegador.

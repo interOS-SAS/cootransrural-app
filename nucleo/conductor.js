@@ -45,6 +45,10 @@
 // paradero, puesto, motivo, en } (null fuera de una fila, al salir de turno o sin sesión) y el evento 'fila' ({ fila,
 // antes }) para los avisos; la solicitud trae motivo ('fila' | 'cercano' | 'ola'), llegadaMin, equidad y fila (validados:
 // lo que no cumpla se descarta) y la presencia lleva pos.precision (metros) cuando la lectura la trae.
+// Ronda B (servidor 0.15.0): la presencia y la ubicación del viaje llevan en pos, además, lo crudo de la última lectura
+// del GPS de verdad (ts, velocidad, rumbo, altitud; nucleo/seguridad.js crudoLectura), para que la central revise la
+// seguridad del viaje y note un GPS inventado. La posición simulada de la demo y la vieja (posVieja) no llevan nada. Al
+// conductor no le llega nada nuevo: ni texto, ni aviso, ni pantalla (un seguridad_pregunta que llegara por error se ignora).
 import { crearBus } from './bus.js';
 import { TIEMPOS, CENTRO, vigilarConfig } from './config.js';
 import { calcularRuta, obtenerPosicion, seguirPosicion, fueraDeZona, direccionDe } from './geo.js';
@@ -62,6 +66,7 @@ import { MENSAJES_CENTRAL, canceladaPorCentral, motivoCentral, motivoDeCancelaci
 import { enviarSos, posicionParaSos } from './sos.js';
 import { crearBandeja } from './bandeja.js';
 import { limpiarFila, limpiarOferta } from './reparto.js';
+import { crudoLectura } from './seguridad.js';
 
 // Ronda A: la precisión de una lectura del GPS en metros (entero) o null.
 const precisionDe = (p) => (Number.isFinite(p?.precision) && p.precision >= 0 && p.precision < 100000 ? Math.round(p.precision) : null);
@@ -403,7 +408,7 @@ class ControladorConductor extends Emisor {
         movil: c.movil,
         disponible: conGps && this.estado.conectado && !this.estado.viaje,
         // Ronda A (0.14.0): con la precisión de la lectura (la fila del paradero no cuenta las de más de 100 m).
-        ...(conGps && !this.posVieja ? { pos: this.precisionGps !== null ? { ...this.estado.pos, precision: this.precisionGps } : this.estado.pos } : {}),
+        ...(conGps && !this.posVieja ? { pos: this.#conCrudo(this.precisionGps !== null ? { ...this.estado.pos, precision: this.precisionGps } : this.estado.pos) } : {}),
         // Servidor 0.4.0: al minimizar no lo saca del mapa (el plugin sigue enviando). Los
         // servidores anteriores ignoran el campo.
         ...(this.nativo?.activo?.() ? { segundoPlano: true } : {}),
@@ -625,6 +630,14 @@ class ControladorConductor extends Emisor {
     });
   }
 
+  // Ronda B: la posición con lo crudo de la última lectura del GPS de verdad, solo si es esa misma lectura (la demo, el
+  // recorrido simulado y el punto de recogida o destino puestos a mano no llevan nada).
+  #conCrudo(p) {
+    const g = this.crudoGps;
+    if (!this.real || !g || !p || g.lat !== p.lat || g.lng !== p.lng) return p;
+    return { ...g.crudo, ...p };
+  }
+
   #moverA(p) {
     this.estado.pos = p;
     const v = this.estado.viaje;
@@ -634,7 +647,7 @@ class ControladorConductor extends Emisor {
       this.ultimaUbicacion = ahora;
       const objetivo = v.fase === 'en_viaje' ? v.destino : v.origen;
       const etaMin = objetivo ? (distanciaKm(p, objetivo) * 1.3 / 25) * 60 : null;
-      this.bus.publicar('ubicacion', { viajeId: v.id, conductorId: this.perfil.id, pos: p, etaMin: this.recorrido ? this.estado.etaMin : etaMin });
+      this.bus.publicar('ubicacion', { viajeId: v.id, conductorId: this.perfil.id, pos: this.real && !this.posVieja ? this.#conCrudo(p) : p, etaMin: this.recorrido ? this.estado.etaMin : etaMin });
     }
     if (v && this.estado.gpsReal && !this.recorrido) {
       const objetivo = v.fase === 'en_viaje' ? v.destino : v.origen;
@@ -1189,6 +1202,7 @@ class ControladorConductor extends Emisor {
     this.gpsLeidoEn = Date.now();
     this.posVieja = false;
     this.precisionGps = precisionDe(p);
+    this.crudoGps = { lat: p.lat, lng: p.lng, crudo: crudoLectura({ precision: p.precision, ts: p.ts, velocidad: p.velocidad, rumbo: p.rumbo, altitud: p.altitud }) };
     const recuperado = !this.estado.gpsReal;
     if (recuperado) this.estado.gpsReal = true;
     const primera = this.primeraLectura;

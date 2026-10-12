@@ -627,3 +627,20 @@ html[data-modo="real"] .a-pasajero > .a-avisos { z-index: 105; }
 .a-llegada-cerca[hidden] { display: none; }
 .a-llegada-cerca svg { flex: none; }
 .a-chip-tarifa[data-cotizacion="ruta"] { background: var(--a-verde-claro); color: var(--a-verde-txt); }
+
+/* Ronda B de «algoritmos» (servidor 0.15.0): la tarjeta «¿Todo bien en tu viaje?», encima de todo (también de otro
+   diálogo); no se cierra tocando afuera. */
+html[data-modo="real"] .a-pasajero > .a-modal-capa.a-modal-seguridad, .a-modal-capa.a-modal-seguridad { z-index: 115; }
+.a-modal-seguridad .a-modal { text-align: center; }
+.a-modal-seguridad .a-modal-ico { display: grid; place-items: center; }
+.a-seg-ico { width: 72px; height: 72px; border-radius: 50%; background: var(--a-gris); color: var(--a-tinta); display: grid; place-items: center; box-shadow: 0 0 0 8px rgba(18, 18, 18, .05); }
+.a-modal-seguridad .a-modal[data-estado="avisada"] .a-seg-ico { background: var(--a-rojo-claro); color: var(--a-rojo-txt); box-shadow: 0 0 0 8px rgba(229, 57, 53, .08); }
+.a-modal-seguridad h2 { overflow-wrap: anywhere; }
+.a-seg-motivo { margin: 0 0 8px; font-weight: 700; font-size: 15.5px; line-height: 1.4; color: var(--a-texto); }
+.a-seg-cuenta { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--a-texto-2); font-variant-numeric: tabular-nums; }
+.a-seg-estado { margin: 10px 0 0; font-size: 13.5px; font-weight: 600; color: var(--a-texto-2); }
+.a-seg-estado.a-seg-error { color: var(--a-rojo-txt); }
+.a-seg-motivo[hidden], .a-seg-cuenta[hidden], .a-seg-estado[hidden], .a-modal-seguridad .a-btn[hidden] { display: none; }
+.a-modal-seguridad .a-modal-acciones { flex-direction: column; }
+.a-modal-seguridad .a-modal-acciones .a-btn { width: 100%; flex: none; }
+.a-modal-seguridad .a-btn[disabled] { opacity: .6; }

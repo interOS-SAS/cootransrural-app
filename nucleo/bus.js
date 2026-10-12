@@ -8,6 +8,7 @@ import { RELES_MQTT, PREFIJO_TEMAS, SALA_POR_DEFECTO, ID_EMPRESA, urlDelSitio } 
 import { Emisor, uid } from './util.js';
 import { MODO_REAL, URL_BUS, appOculta } from './plataforma.js';
 import * as servidor from './servidor.js';
+import { CAPACIDADES } from './seguridad.js';
 
 let cargaMqtt = null;
 function cargarMqtt() {
@@ -159,7 +160,7 @@ export class Bus extends Emisor {
 
 /* ---------------- Modo real: el servidor de TaxiCun ----------------
  * Un WebSocket del mismo origen a /api/bus. Primero { tipo:'hola', datos:{ token, rol,
- * empresa } } y nada más hasta la «bienvenida»; después, los mismos sobres que Bus
+ * empresa, capacidades } } (capacidades solo el pasajero, desde la ronda B: ['seguridad']) y nada más hasta la «bienvenida»; después, los mismos sobres que Bus
  * ({ uid, tipo, de, ts, datos }). El servidor decide a quién le llega cada mensaje:
  * nunca le reenvía a uno lo propio, reutiliza el uid de la solicitud cuando la vuelve a
  * ofrecer y pone su hora en ts. Por eso aquí NO se filtra por uid repetido, ni por
@@ -365,7 +366,11 @@ export class BusServidor extends Emisor {
     ws.onopen = () => {
       if (ws !== this.#ws) return;
       const datos = { token, rol: this.rol };
-      if (this.rol === 'pasajero') datos.empresa = this.empresa;
+      if (this.rol === 'pasajero') {
+        datos.empresa = this.empresa;
+        // Ronda B (servidor 0.15.0): esta app sabe responder «¿Todo bien en tu viaje?». Un servidor anterior lo ignora.
+        datos.capacidades = [...CAPACIDADES];
+      }
       ws.send(JSON.stringify({ tipo: 'hola', datos }));
     };
     ws.onmessage = (e) => {

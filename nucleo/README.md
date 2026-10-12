@@ -490,6 +490,55 @@ Pruebas: `node pruebas/algoritmos-a-nucleo.mjs` (sin navegador) y `node pruebas/
 (servidor simulado con `page.route`: pasajero con y sin rutas, precio cambiado, conductor con la fila y los motivos,
 servidor 0.13.0, XSS en el nombre del paradero, 390 y 1366 px, la demo).
 
+## Ronda B de «algoritmos»: «¿Todo bien en tu viaje?» y la lectura del GPS del conductor (modo real, servidor 0.15.0, `nucleo/seguridad.js`)
+
+Contrato: `docs/CONTRATO.md` §18 del servidor (y `DISENO-RONDA-B.md` §7 y §11). Todo es aditivo: con el servidor 0.14.0
+no llega nada de esto y las apps siguen exactamente como hoy (sin llamadas a `/api/viajes/seguridad`).
+
+- **Pasajero**:
+  - El `hola` lleva `capacidades: ['seguridad']` (la central solo le pregunta a una app que sabe responder).
+  - `bienvenida.seguridadViaje: true` (la cooperativa revisa la seguridad de los viajes; nunca al revisor) →
+    `estado.seguridadViaje`; la línea de abajo del viaje en curso dice «Cuidamos tu viaje: si notamos algo raro, te
+    preguntamos si todo está bien. Compártelo con alguien de confianza.». Se olvida con cada bienvenida.
+  - `seguridad_pregunta { viajeId, preguntaId: 'sg_…', motivo: 'desvio' | 'parada' | 'velocidad' | 'sin_senal', subtipo:
+    'alejamiento' | 'sin_avance' | 'muy_largo' | 'sin_ubicacion' | 'ubicacion_dudosa' | null, plazoS (0–1800), estado:
+    'abierta' | 'avisada', despues }`, validado por `limpiarPregunta` (si algo no cumple, no se muestra nada) →
+    `estado.pregunta = { viajeId, preguntaId, motivo, subtipo, venceEn, estado: 'abierta' | 'avisada' | 'enviando',
+    antes, respuesta, error, despues, provisional }` y el evento `seguridad` ({ pregunta, cierre? }). La central la repite
+    después de `viaje_actual` en cada bienvenida mientras siga vigente (también ya terminado el viaje: «¿Llegaste
+    bien?»). A la hora del plazo la tarjeta pasa sola a `avisada`.
+  - `seguridad_cierre { viajeId, preguntaId, estado: 'bien' | 'ayuda' | 'avisada' | 'retirada' }`: la quita (respondida
+    en otro aparato, o retirada: llegó, volvió la señal, canceló el pasajero) o la pasa a `avisada`.
+  - `p.responderSeguridad('bien' | 'ayuda')`: `POST viajes/seguridad` (`servidor.seguridad`, espera 8 s) con reintentos
+    como el SOS (sin red, 5xx o 429: a los 3, 5, 10 y cada 15 s hasta 2 min; 404/400: se cierra sin insistir). «Sí, todo
+    bien» deja el aviso «Gracias · Seguimos pendientes de tu viaje.»; si no sale, `error: true` (la tarjeta dice «No
+    pudimos enviar tu respuesta…» con «Intentar de nuevo»). Una pregunta ya respondida no vuelve a salir.
+  - `p.vistaSeguridad()`: `vista` a la central cuando la tarjeta queda a la vista con la app visible (una vez por
+    pregunta, un intento y un reintento; nunca con la app oculta, ni para una `avisada` o una provisional).
+  - La pregunta se guarda aparte del viaje (`tc.real.seguridad.pasajero`, 30 min como mucho). Tras una recarga se muestra
+    provisional; si en 4 s después de la bienvenida la central no la repite, ya no vale y se quita. Una respuesta que se
+    estaba enviando sale otra vez (repetirla es seguro). El conductor no la apaga terminando o cancelando el viaje.
+  - Toque de la notificación `{ tipo: 'seguridad', viajeId, preguntaId }`: reconecta ya (vale 30 min, no los 2 de los
+    demás avisos del viaje); con la bienvenida llega la pregunta.
+  - Diseño A (`disenos/a/seguridad.js`): capa propia `a-modal-seguridad` (`role="alertdialog"`, `aria-live="assertive"`),
+    encima de todo, no se cierra tocando afuera ni con Escape, foco en «Sí, todo bien», cuenta regresiva «Si no
+    respondes, en m:ss le avisamos a la central de {Cooperativa}.». «Necesito ayuda» la manda y abre el SOS de siempre
+    con «Ya le avisamos a la central de {Cooperativa}. Si estás en peligro, llama a la Línea 123 de la Policía.» y
+    «Mandar mi ubicación a la central» (el `POST /api/sos` de siempre, que la central suma a la misma alerta). Todo con
+    `textContent`: de la central solo se aceptan valores de listas cerradas.
+- **Conductor**: la `presencia` y la `ubicacion` del viaje llevan en `pos`, además, lo crudo de la última lectura del GPS
+  de verdad (`crudoLectura`: `precision`, `ts` de la lectura, `velocidad` en m/s, `rumbo`, `altitud`; solo lo que venga
+  bien). `plataforma.aPunto` suma `ts` y `altitud`. La posición simulada de la demo, la vieja (`posVieja`) y los puntos
+  puestos a mano no llevan nada. **Al conductor no le llega nada nuevo**: no escucha `seguridad_*` (si le llegaran por
+  error no muestran nada), su `hola` no lleva `capacidades` y nunca llama a `/api/viajes/seguridad`.
+- La marca de «ubicación simulada» del sistema con la app abierta no la da el navegador: queda para la app nativa (el
+  plugin de segundo plano ya la manda en su `POST /api/conductor/ubicacion`).
+- Las 76 demos y el modo revisor no cambian (el revisor nunca ve la tarjeta, aunque le llegara una pregunta).
+
+Pruebas: `node pruebas/algoritmos-b-nucleo.mjs` (sin navegador) y `node pruebas/algoritmos-b-app.mjs http://localhost:5821/`
+(servidor simulado con `page.route`: servidor 0.14.0, cada motivo, «Sí, todo bien», «Necesito ayuda», sin responder,
+error, «¿Llegaste bien?», recarga, XSS, revisor, push con el bus caído, conductor con los campos crudos, 390 y 1366 px).
+
 ## Red
 
 Sin servidor propio. Las pestañas del mismo navegador se hablan por
