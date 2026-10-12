@@ -54,16 +54,80 @@ function asegurarEstilos() {
 .a-pq-valor{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:12px 14px;border-radius:16px;background:#F3F6FC}
 .a-pq-valor strong{font-size:26px;font-variant-numeric:tabular-nums}
 .a-pq-form{display:grid;gap:12px}
-.a-pq-form label{display:grid;gap:6px;font-weight:700;font-size:14px}
+.a-pq-form>label{display:grid;gap:6px;font-weight:700;font-size:14px}
 .a-pq-form select,.a-pq-form input[type=text],.a-pq-form input[type=tel],.a-pq-form input[type=email]{min-height:48px;border-radius:14px;border:1.5px solid var(--a-borde,#d5d9e3);padding:0 12px;font:inherit;font-weight:500;background:#fff;color:inherit}
 .a-pq-form small{font-weight:500;color:var(--a-texto-2,#5b6b8c)}
 .a-pq-error{color:#B3261E;font-size:13px;font-weight:600;margin:0}
+.a-pq-campo{display:grid;gap:8px;margin:0;padding:0;border:0;min-width:0}
+.a-pq-campo>legend{padding:0;margin:0 0 8px;font-weight:700;font-size:14px}
+.a-pq-opciones{display:grid;gap:8px}
+.a-pq-bancos{grid-template-columns:repeat(3,minmax(0,1fr))}
+.a-pq-tipos{grid-template-columns:repeat(2,minmax(0,1fr))}
+.a-pq-opcion{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:86px;padding:10px 6px;border-radius:16px;border:1.5px solid var(--a-borde,#d5d9e3);background:#fff;font-weight:700;font-size:13px;line-height:1.15;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .15s,background .15s,box-shadow .15s}
+.a-pq-tipos .a-pq-opcion{flex-direction:row;justify-content:flex-start;gap:10px;min-height:50px;padding:0 12px;font-size:14px;text-align:left}
+.a-pq-opcion input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.a-pq-opcion[data-elegida]{border-color:var(--a-tinta,#111);background:#FFF8DC;box-shadow:0 0 0 1px var(--a-tinta,#111)}
+.a-pq-opcion:has(input:focus-visible){outline:3px solid #FFC107;outline-offset:2px}
+.a-pq-logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:900;font-size:19px;color:#fff;background:var(--color,#5b6b8c);flex:none}
+.a-pq-logo svg{width:22px;height:22px}
+.a-pq-tipos .a-pq-logo{width:30px;height:30px;border-radius:9px;background:#F3F6FC;color:var(--a-tinta,#111)}
+.a-pq-tipos .a-pq-logo svg{width:18px;height:18px}
+.a-pq-visto{position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;background:var(--a-tinta,#111);color:#fff;display:none;place-items:center}
+.a-pq-visto svg{width:13px;height:13px}
+.a-pq-tipos .a-pq-visto{top:50%;right:10px;transform:translateY(-50%)}
+.a-pq-opcion[data-elegida] .a-pq-visto{display:grid}
 .a-pq-subir{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border-radius:16px;border:1.5px dashed var(--a-tinta,#111);background:#fff;font:inherit;font-weight:700;cursor:pointer;color:inherit}
 .a-pq-acciones{display:grid;gap:10px}
 .a-pq-codigo{width:100%;min-height:54px;font-size:24px;letter-spacing:.3em;text-align:center;border-radius:14px;border:1.5px solid var(--a-borde,#d5d9e3);font-variant-numeric:tabular-nums}
 .a-pq-vivo{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 `;
   document.head.appendChild(s);
+}
+
+// Opciones a la vista en vez de una lista desplegable: un radio de verdad por opción (se elige con un toque y con el
+// teclado), con su ficha. data-elegida marca la elegida (el estilo no depende de :has).
+function opciones({ nombre, etiqueta, items, valor, clase, ficha }) {
+  let actual = items.some((x) => x.id === valor) ? valor : items[0].id;
+  const cambios = [];
+  const grupo = h('div', { clase: `a-pq-opciones ${clase}`, attrs: { role: 'radiogroup', 'aria-label': etiqueta } });
+  const filas = items.map((it) => {
+    const r = h('input', { attrs: { type: 'radio', name: nombre, value: it.id } });
+    const fila = h('label', { clase: 'a-pq-opcion', attrs: { [`data-opcion-${nombre}`]: it.id } }, r, ...ficha(it), h('span', { clase: 'a-pq-visto', attrs: { 'aria-hidden': 'true' } }, ico('check', 13)));
+    r.addEventListener('change', () => {
+      if (!r.checked) return;
+      poner(it.id);
+      for (const f of cambios) f(actual);
+    });
+    grupo.append(fila);
+    return { it, r, fila };
+  });
+  function poner(id) {
+    actual = id;
+    for (const f of filas) {
+      f.r.checked = f.it.id === id;
+      f.fila.toggleAttribute('data-elegida', f.it.id === id);
+    }
+  }
+  poner(actual);
+  const campo = h('fieldset', { clase: 'a-pq-campo', attrs: { [`data-${nombre}-opciones`]: '' } }, h('legend', { texto: etiqueta }), grupo);
+  return { el: campo, valor: () => actual, poner, alCambiar: (f) => cambios.push(f) };
+}
+
+// La ficha de cada banco o billetera: su color con la inicial (o un ícono) y el nombre.
+const LOGO = { nequi: 'N', daviplata: 'D', bancolombia: 'B', breb: 'rayo', otro: 'edificio' };
+const LOGO_OSCURO = new Set(['bancolombia']);
+function fichaEntidad(e) {
+  const marca = LOGO[e.id] || 'edificio';
+  const logo = h('span', { clase: 'a-pq-logo', attrs: { 'aria-hidden': 'true' } }, marca.length === 1 ? marca : ico(marca, 22));
+  logo.style.setProperty('--color', e.color);
+  if (LOGO_OSCURO.has(e.id)) logo.style.color = '#1a1a1a';
+  return [logo, h('span', { texto: e.nombre })];
+}
+const ICONO_LLAVE = { celular: 'telefono', cedula: 'usuario', correo: 'mensaje', alfanumerica: 'etiqueta' };
+const NOMBRE_CORTO_LLAVE = { alfanumerica: 'Llave @' };
+function fichaTipo(t) {
+  return [h('span', { clase: 'a-pq-logo', attrs: { 'aria-hidden': 'true' } }, ico(ICONO_LLAVE[t.id] || 'etiqueta', 18)),
+    h('span', { texto: NOMBRE_CORTO_LLAVE[t.id] || t.nombre })];
 }
 
 // Tarjeta con el QR redibujado y la llave (la usan el pasajero y la vista previa del conductor).
@@ -233,10 +297,8 @@ export function abrirComoMePagan({ app, avisos, cuenta }) {
       function formulario(previo) {
         limpiar();
         const datos = { qrTexto: previo?.qrTexto || '' };
-        const selEntidad = h('select', { attrs: { 'data-entidad-sel': '', name: 'entidad' } },
-          ...C.ENTIDADES.map((e) => h('option', { texto: e.nombre, attrs: { value: e.id, selected: previo?.entidad === e.id } })));
-        const selTipo = h('select', { attrs: { 'data-tipo-llave': '', name: 'llaveTipo' } },
-          ...C.TIPOS_LLAVE.map((t) => h('option', { texto: t.nombre, attrs: { value: t.id, selected: previo?.llaveTipo === t.id } })));
+        const entidad = opciones({ nombre: 'entidad', etiqueta: 'Banco o billetera', items: C.ENTIDADES, valor: previo?.entidad, clase: 'a-pq-bancos', ficha: fichaEntidad });
+        const tipo = opciones({ nombre: 'llaveTipo', etiqueta: 'Tipo de llave', items: C.TIPOS_LLAVE, valor: previo?.llaveTipo, clase: 'a-pq-tipos', ficha: fichaTipo });
         const inLlave = h('input', { attrs: { type: 'text', 'data-llave-input': '', name: 'llave', autocomplete: 'off', autocapitalize: 'none', spellcheck: 'false', maxlength: '80' } });
         inLlave.value = previo?.llave || '';
         const ayuda = h('small');
@@ -244,11 +306,18 @@ export function abrirComoMePagan({ app, avisos, cuenta }) {
         inTitular.value = previo?.titular || '';
         const error = h('p', { clase: 'a-pq-error', attrs: { 'data-error-cobro': '', role: 'alert', hidden: true } });
         const ponerTipo = () => {
-          const t = C.TIPOS_LLAVE.find((x) => x.id === selTipo.value) || C.TIPOS_LLAVE[0];
+          const t = C.TIPOS_LLAVE.find((x) => x.id === tipo.valor()) || C.TIPOS_LLAVE[0];
           ayuda.textContent = `${t.ayuda}. Ej.: ${t.ejemplo}`;
           inLlave.setAttribute('inputmode', t.teclado === 'tel' || t.teclado === 'numeric' ? 'numeric' : t.teclado === 'email' ? 'email' : 'text');
         };
-        selTipo.addEventListener('change', ponerTipo);
+        tipo.alCambiar(ponerTipo);
+        // Nequi y Daviplata casi siempre cobran con el celular: si aún no escribió la llave, se propone ese tipo.
+        entidad.alCambiar((id) => {
+          if (!inLlave.value.trim() && (id === 'nequi' || id === 'daviplata') && tipo.valor() !== 'celular') {
+            tipo.poner('celular');
+            ponerTipo();
+          }
+        });
         ponerTipo();
 
         // QR: la imagen solo donde es seguro (ver nucleo/cobro.js imagenQRPermitida).
@@ -299,8 +368,8 @@ export function abrirComoMePagan({ app, avisos, cuenta }) {
 
         const guardar = h('button', { clase: 'a-btn a-btn-primario a-btn-grande', texto: 'Guardar', attrs: { type: 'submit', 'data-guardar-cobro': '' } });
         const form = h('form', { clase: 'a-pq-form', attrs: { novalidate: true } },
-          h('label', {}, h('span', { texto: 'Banco o billetera' }), selEntidad),
-          h('label', {}, h('span', { texto: 'Tipo de llave' }), selTipo),
+          entidad.el,
+          tipo.el,
           h('label', {}, h('span', { texto: 'Tu llave' }), inLlave, ayuda),
           h('label', {}, h('span', { texto: 'Titular' }), inTitular),
           h('h3', { clase: 'a-subtitulo', texto: 'Tu QR de cobro (opcional)' }), zonaQR,
@@ -313,7 +382,7 @@ export function abrirComoMePagan({ app, avisos, cuenta }) {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
           error.hidden = true;
-          const llaveTipo = selTipo.value;
+          const llaveTipo = tipo.valor();
           const llave = C.normalizarLlave(llaveTipo, inLlave.value);
           const titular = C.normalizarTitular(inTitular.value);
           const fallo = C.validarLlave(llaveTipo, llave) || C.validarTitular(titular) || (datos.qrTexto && !C.validarQrTexto(datos.qrTexto).ok ? 'qr_no_valido' : null);
@@ -327,8 +396,8 @@ export function abrirComoMePagan({ app, avisos, cuenta }) {
           try {
             const codigo = await pedirCodigo(app, correo, avisos, 'guardar cómo te pagan');
             if (!codigo) return;
-            const r = await C.guardarCobro({ entidad: selEntidad.value, llaveTipo, llave, qrTexto: datos.qrTexto, titular, codigo });
-            guardado = r || { entidad: selEntidad.value, llaveTipo, llave, qrTexto: datos.qrTexto, titular, prueba: false };
+            const r = await C.guardarCobro({ entidad: entidad.valor(), llaveTipo, llave, qrTexto: datos.qrTexto, titular, codigo });
+            guardado = r || { entidad: entidad.valor(), llaveTipo, llave, qrTexto: datos.qrTexto, titular, prueba: false };
             avisos.mostrar({ titulo: 'Guardamos cómo te pagan', cuerpo: 'Te enviamos un aviso al correo. Si no fuiste tú, cámbialo enseguida.', tipo: 'exito' });
             resumen();
           } catch (e) {

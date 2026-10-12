@@ -128,8 +128,8 @@ try {
   }, EMV), 'base64');
   await pc.setInputFiles('.a-panel-cobro [data-archivo-qr]', { name: 'nequi.png', mimeType: 'image/png', buffer: png });
   await pc.waitForSelector('.a-panel-cobro [data-vista-qr] canvas', { timeout: 10000 });
-  await pc.selectOption('.a-panel-cobro [data-entidad-sel]', 'nequi');
-  await pc.selectOption('.a-panel-cobro [data-tipo-llave]', 'celular');
+  await pc.click('.a-panel-cobro [data-opcion-entidad="nequi"]');
+  await pc.click('.a-panel-cobro [data-opcion-llavetipo="celular"]');
   await pc.fill('.a-panel-cobro [data-llave-input]', '+57 310 987 6543');
   await pc.click('.a-panel-cobro [data-guardar-cobro]');
   await pc.waitForSelector('.a-modal [data-codigo-cobro]', { timeout: 10000 });

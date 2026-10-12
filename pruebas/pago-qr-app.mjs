@@ -517,7 +517,17 @@ async function conductorCobro() {
   await entrarConductor(p, `${BASE}taxicun/conductor/?real=1`);
   await abrirComoMePagan(p);
   ok(Boolean(await p.$('.a-panel-cobro [data-llave-input]')) && Boolean(await p.$('.a-panel-cobro [data-subir-qr]')), 'b1) sin datos: el formulario con «Subir la imagen del QR» (navegador)');
+  await p.waitForTimeout(600); // la hoja termina de entrar
   await foto(p, 'b1-como-me-pagan-vacio');
+  // Banco y tipo de llave a la vista (no listas desplegables): Nequi y Celular por defecto; con la llave vacía, elegir
+  // Daviplata propone Celular; nada se desborda a lo ancho.
+  const elegida = (sel) => p.$eval(sel, (x) => x.hasAttribute('data-elegida') && x.querySelector('input').checked);
+  ok(await elegida('.a-panel-cobro [data-opcion-entidad="nequi"]') && await elegida('.a-panel-cobro [data-opcion-llavetipo="celular"]'), 'b1) Nequi y Celular elegidos por defecto, a la vista');
+  await p.click('.a-panel-cobro [data-opcion-llavetipo="cedula"]');
+  ok(/De 5 a 10 dígitos/.test(await texto(p, '.a-panel-cobro [data-llave-input] + small')) && await elegida('.a-panel-cobro [data-opcion-llavetipo="cedula"]'), 'b1) al tocar «Cédula» cambia la ayuda de la llave');
+  await p.click('.a-panel-cobro [data-opcion-entidad="daviplata"]');
+  ok(await elegida('.a-panel-cobro [data-opcion-entidad="daviplata"]') && await elegida('.a-panel-cobro [data-opcion-llavetipo="celular"]') && !(await elegida('.a-panel-cobro [data-opcion-entidad="nequi"]')), 'b1) Daviplata con la llave vacía propone «Celular»');
+  ok(await p.$eval('.a-panel-cobro', (x) => [...x.querySelectorAll('*')].every((n) => n.scrollWidth <= n.clientWidth + 1 || getComputedStyle(n).overflowX === 'visible') && document.documentElement.scrollWidth <= innerWidth), 'b1) sin desbordes a lo ancho');
 
   // Imagen sin QR y con CRC malo → error.
   await p.setInputFiles('.a-panel-cobro [data-archivo-qr]', { name: 'nada.png', mimeType: 'image/png', buffer: await imagenQR(p, '') });
@@ -535,8 +545,8 @@ async function conductorCobro() {
   await p.waitForSelector('.a-panel-cobro [data-vista-qr] canvas', { timeout: 10000 });
   ok((await leerCanvas(p, '.a-panel-cobro [data-vista-qr] canvas')) === EMV, 'b3) vista previa: el QR redibujado se lee igual');
   ok((await p.inputValue('.a-panel-cobro [data-titular-input]')) === 'LUIS RODRIGUEZ', 'b3) el titular sugerido sale del campo 59 del EMVCo');
-  await p.selectOption('.a-panel-cobro [data-entidad-sel]', 'nequi');
-  await p.selectOption('.a-panel-cobro [data-tipo-llave]', 'celular');
+  await p.click('.a-panel-cobro [data-opcion-entidad="nequi"]');
+  await p.click('.a-panel-cobro [data-opcion-llavetipo="celular"]');
   // Llave mala primero.
   await p.fill('.a-panel-cobro [data-llave-input]', '210 987 6543');
   await p.click('.a-panel-cobro [data-guardar-cobro]');
