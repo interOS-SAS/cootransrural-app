@@ -173,7 +173,9 @@ export function textosOferta(s) {
     r.etiqueta = 'Turno de paradero';
     r.detalle = `Eres el primero de la fila en ${nombreParadero(o.fila.paradero)}`;
     r.nota = o.fila.alRechazar === 'conserva' ? 'Si no respondes, pasas al final de la fila.' : 'Si lo rechazas o no respondes, pasas al final de la fila.';
-  } else if (o.motivo === 'cercano') r.etiqueta = `Eres el más cercano${llega}`;
+  } else if (o.motivo === 'cercano' && !o.equidad) r.etiqueta = `Eres el más cercano${llega}`;
+  // Con equidad hay alguien un poco más cerca: «Eres el más cercano» no sería cierto (le llegó por llevar más tiempo sin
+  // servicio, que dice la línea de abajo).
   else r.etiqueta = `Estás entre los más cercanos${llega}`;
   return r;
 }

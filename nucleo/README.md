@@ -479,7 +479,8 @@ no llega nada de esto y las apps siguen exactamente como hoy (sin llamadas a `/a
 - **Conductor**: mensaje `fila` y `bienvenida.fila` → `estado.fila = { enFila, paraderoId, paradero, puesto, motivo, en }`
   (null fuera de la fila, al salir de turno o al ser sacado; un `fila` con la app fuera de turno no cuenta) y el evento
   `fila` ({ fila, antes }). La `solicitud` trae `motivo` (`fila` | `cercano` | `ola`), `llegadaMin`, `equidad` y `fila`
-  ({ paraderoId, paradero, alRechazar }), validados por `limpiarOferta` (lo que no cumpla se descarta). La `presencia`
+  ({ paraderoId, paradero, alRechazar }), validados por `limpiarOferta` (lo que no cumpla se descarta); con `equidad`
+  la tarjeta dice «Estás entre los más cercanos» (hay alguien un poco más cerca) y «Llevas más tiempo sin servicio». La `presencia`
   lleva `pos.precision` (metros) cuando la lectura del GPS la trae.
 - Textos (`reparto.textoLlegada`, `textoPin`, `chipCotizacion`, `textosPrecioCambio`, `textosOferta`, `textoChipFila`,
   `avisoFila`): el diseño A los pinta siempre con `textContent` (el nombre del paradero lo escribió el gerente).

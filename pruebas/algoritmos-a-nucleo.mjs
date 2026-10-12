@@ -77,6 +77,8 @@ ok(R.textosOferta({ motivo: 'fila', fila: {} }).detalle === 'Eres el primero de 
 ok(R.textosOferta({ motivo: 'cercano', llegadaMin: 3 }).etiqueta === 'Eres el más cercano · llegas en ~3 min' && R.textosOferta({ motivo: 'cercano' }).etiqueta === 'Eres el más cercano', 'tarjeta: «Eres el más cercano» con y sin minutos');
 const to = R.textosOferta({ motivo: 'ola', llegadaMin: 6, equidad: true });
 ok(to.etiqueta === 'Estás entre los más cercanos · llegas en ~6 min' && to.equidad === 'Llevas más tiempo sin servicio', 'tarjeta: ola con equidad');
+const tc = R.textosOferta({ motivo: 'cercano', llegadaMin: 2, equidad: true });
+ok(tc.etiqueta === 'Estás entre los más cercanos · llegas en ~2 min' && tc.equidad === 'Llevas más tiempo sin servicio', `tarjeta: el primero por equidad no dice «Eres el más cercano» (hay otro más cerca) (${tc.etiqueta})`);
 ok(R.textosOferta({ viajeId: 'v1' }) === null && R.textosOferta({ motivo: 'x' }) === null, 'tarjeta: sin motivo, la de hoy');
 
 /* ---------------- la fila ---------------- */
