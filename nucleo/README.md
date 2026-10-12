@@ -454,6 +454,41 @@ Pruebas: `node pruebas/que-hacer-nucleo.mjs` (sin navegador) y `node pruebas/que
 (servidor simulado con `page.route` según el §16.2: lista, ficha, crédito, Llévame, planes, XSS, municipio, servidor
 anterior, revisor, sin GPS y la demo; `PLAYWRIGHT_CORE` apunta a otra copia de playwright-core).
 
+## Ronda A de «algoritmos»: despacho por cercanía y por turnos, llegada y precio por calles (modo real, servidor 0.14.0, `nucleo/reparto.js`)
+
+Contrato: `docs/CONTRATO.md` §17 del servidor (y `DISENO-RONDA-A.md` §8 y §11). Todo es aditivo: con el servidor 0.13.0
+no llega nada de esto y las apps siguen exactamente como hoy (sin llamadas a `/api/viajes/*`).
+
+- `reglas.modo` (bienvenida y mensaje `reglas`, pasajero y conductor): `'todos'` | `'cercania'` | `'turno'`; sin el campo
+  o con otro valor, `'todos'`. No se guarda en el teléfono (solo las tres reglas de siempre).
+- **Pasajero**, solo si la bienvenida trae `rutas: { cotizar, llegada }` (interOS puso la llave de rutas; nunca al
+  revisor): `estado.rutas`.
+  - `cotizar()` pide `POST viajes/cotizacion` (`servidor.cotizar`, espera 4 s) junto con la ruta de OSRM (solo para
+    dibujar). Con éxito: la tarifa de siempre con el km del servidor (si su valor es otro, por los topes, manda el del
+    servidor con el detalle «Valor calculado por TaxiCun») y `tarifa.cotizacion`, `tarifa.fuenteRuta` (`ruta` |
+    `aproximada` | `tabla`), `tarifa.kmRuta`, `tarifa.venceCotizacion`. Si falla (red, tiempo, 503, 404), como hoy.
+  - Al pedir se reusa la última cotización de los mismos puntos si le queda más de 1 min; si no, se pide otra y, si el
+    valor cambió, se pregunta antes de pedir. La `solicitud` suma `cotizacion` (la ficha) y `conCotizacion: true`.
+  - `error cotizacion_vencida { viajeId, cotizacion? }`: con el mismo valor se reenvía sola; con otro,
+    `estado.precioCambio = { antes, ahora }` y el evento `precio_cambio` ({ antes, ahora, cotizacion }); el diseño
+    responde `p.responderPrecio(true | false)` (sin respuesta en 2 min se cierra como error). Sin `cotizacion` en el
+    error, se vuelve a cotizar. Mientras pregunta no sale ninguna solicitud.
+  - `p.consultarLlegada(punto)` / `p.refrescarLlegada(punto)`: `POST viajes/llegada` (espera 3 s) → `estado.llegada =
+    { min, celda, en }` (min de 1 a 30; 30 = «más de 30»; null sin taxis libres). Como mucho una consulta cada 10 s por
+    celda de ~110 m, nunca con la app oculta ni fuera del inicio; con el pin quieto se refresca al minuto.
+- **Conductor**: mensaje `fila` y `bienvenida.fila` → `estado.fila = { enFila, paraderoId, paradero, puesto, motivo, en }`
+  (null fuera de la fila, al salir de turno o al ser sacado; un `fila` con la app fuera de turno no cuenta) y el evento
+  `fila` ({ fila, antes }). La `solicitud` trae `motivo` (`fila` | `cercano` | `ola`), `llegadaMin`, `equidad` y `fila`
+  ({ paraderoId, paradero, alRechazar }), validados por `limpiarOferta` (lo que no cumpla se descarta). La `presencia`
+  lleva `pos.precision` (metros) cuando la lectura del GPS la trae.
+- Textos (`reparto.textoLlegada`, `textoPin`, `chipCotizacion`, `textosPrecioCambio`, `textosOferta`, `textoChipFila`,
+  `avisoFila`): el diseño A los pinta siempre con `textContent` (el nombre del paradero lo escribió el gerente).
+- Las 76 demos y el modo revisor no cambian.
+
+Pruebas: `node pruebas/algoritmos-a-nucleo.mjs` (sin navegador) y `node pruebas/algoritmos-a-app.mjs http://localhost:5721/`
+(servidor simulado con `page.route`: pasajero con y sin rutas, precio cambiado, conductor con la fila y los motivos,
+servidor 0.13.0, XSS en el nombre del paradero, 390 y 1366 px, la demo).
+
 ## Red
 
 Sin servidor propio. Las pestañas del mismo navegador se hablan por

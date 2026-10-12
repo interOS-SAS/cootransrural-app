@@ -12,6 +12,11 @@
 // «Llamar a {nombre}», «Confirma que es {nombre}» e «Iniciar viaje» sin código, sin calificar), el botón de ayuda
 // (en la barra y en la hoja del servicio: 123, «Avisar a la central» si la recibe y «Llamar a {coop}») y los avisos de
 // la cooperativa (tarjeta, «De tu cooperativa» en «Avisos» y el toque de su notificación).
+// Ronda A de «algoritmos» (modo real, servidor 0.14.0; nucleo/reparto.js): la tarjeta de la solicitud dice por qué le
+// llegó («Turno de paradero» con «Eres el primero de la fila en …» y su nota, «Eres el más cercano · llegas en ~X min»,
+// «Estás entre los más cercanos…», «Llevas más tiempo sin servicio») y «hasta el pasajero» usa el tiempo de la central;
+// en turno y libre, el chip con su puesto en la fila del paradero; y los avisos de la fila. Todo como texto. Con un
+// servidor anterior (o en «todos», o en las demos), nada de esto aparece.
 import {
   el, esc, $, $$, icono, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos, modal, elegirOpcion,
   abrirMenu, estrellas, casillasCodigo, deslizador, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
@@ -1428,9 +1433,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     // Lo que dura esta oferta (modo real: segundosOferta de las reglas de la cooperativa; en la demo, 25 s).
     const total = s.expira - s.recibida || N.TIEMPOS?.aceptar || 25000;
     const circ = 2 * Math.PI * 34;
-    const minHasta = Math.max(1, Math.round(((s.distanciaAMi * 1.3) / 25) * 60));
+    // Ronda A: el tiempo de llegada que calculó la central (por calles) si lo trae; si no, el de siempre.
+    const minHasta = Number.isFinite(s.llegadaMin) ? s.llegadaMin : Math.max(1, Math.round(((s.distanciaAMi * 1.3) / 25) * 60));
     // Ronda 4A: el pedido que la central tomó por teléfono (nombre de quien llamó, sin estrellas).
     const pedidoCentral = REAL && N.esPedidoCentral(s);
+    // Ronda A: por qué le llegó (turno de paradero, el más cercano, entre los más cercanos). La central tiene prioridad.
+    const porQue = REAL && !pedidoCentral && !N.ofrecidaPorCentral(s) ? N.reparto.textosOferta(s) : null;
     const capa = el(`<section class="a-solicitud" role="alertdialog" aria-modal="true" aria-labelledby="a-sol-titulo" aria-describedby="a-sol-desc">
       ${franjaCuadros()}
       <div class="a-sol-cuerpo">
@@ -1444,11 +1452,15 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     ? `<small class="a-sol-pedido-central" data-pedido-central>${icono('antena', { tam: 14 })} Pedido de la central</small>`
     : REAL && N.ofrecidaPorCentral(s)
       ? `<small class="a-sol-central" data-de-central>${icono('antena', { tam: 14 })} La central te ofrece este servicio</small>`
-      : `<small>${icono('campana', { tam: 14 })} Nueva solicitud${s.simulada ? ' · demo' : ''}</small>`}
+      : porQue
+        ? `<small class="a-sol-motivo" data-sol-motivo="${esc(porQue.motivo)}">${icono(porQue.motivo === 'fila' ? 'pin' : 'navegar', { tam: 14 })} <span data-sol-motivo-txt></span></small>`
+        : `<small>${icono('campana', { tam: 14 })} Nueva solicitud${s.simulada ? ' · demo' : ''}</small>`}
             <h2 id="a-sol-titulo">${pedidoCentral ? '' : esc(s.pasajero?.nombre || 'Pasajero')}</h2>
             ${pedidoCentral
     ? `<span data-pedido-detalle>${icono('telefono', { tam: 14 })} <span data-pedido-detalle-txt></span></span>`
     : `<span>${icono('estrella', { tam: 14 })} ${decimal(s.pasajero?.calificacion || 5)} · pasajero verificado</span>`}
+            ${porQue?.detalle ? '<span class="a-sol-fila" data-sol-fila-detalle></span>' : ''}
+            ${porQue?.equidad ? `<span class="a-sol-equidad" data-sol-equidad>${icono('reloj', { tam: 14 })} <span data-sol-equidad-txt></span></span>` : ''}
           </div>
           <span class="a-en-espera" data-en-espera></span>
         </div>
@@ -1474,11 +1486,19 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
                (VoiceOver/TalkBack), que no puede deslizar: no se ve. -->
           <button type="button" class="a-solo-lector" data-aceptar>Aceptar el servicio</button>
         </div>
+        ${porQue?.nota ? '<p class="a-sol-nota-fila" data-sol-nota-fila></p>' : ''}
       </div>
     </section>`);
     // Lo que escribió la central o el pasajero va como texto (textContent).
     const nota = $(capa, '[data-sol-nota]');
     if (nota) nota.textContent = `«${s.nota}»`;
+    // Ronda A: el nombre del paradero lo escribió el gerente: como texto.
+    if (porQue) {
+      ponerTexto(capa, '[data-sol-motivo-txt]', porQue.etiqueta);
+      ponerTexto(capa, '[data-sol-fila-detalle]', porQue.detalle);
+      ponerTexto(capa, '[data-sol-equidad-txt]', porQue.equidad);
+      ponerTexto(capa, '[data-sol-nota-fila]', porQue.nota);
+    }
     if (pedidoCentral) {
       const t = N.textosCentral.pedidoCentral({ nombre: s.pasajero?.nombre });
       $(capa, '#a-sol-titulo').textContent = N.lineaCentral(s.pasajero?.nombre || '', 40) || t.chip;
@@ -1557,6 +1577,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             <span class="a-pildora-perilla">${icono('potencia', { tam: 26, grosor: 2.6 })}</span>
             <span class="a-pildora-txt"><strong data-pildora-titulo>${p.titulo}</strong><small data-pildora-sub>${p.sub}</small></span>
           </button>
+          ${REAL ? `<p class="a-fila-chip" data-fila hidden role="status">${icono('pin', { tam: 16 })}<span data-fila-txt></span></p>` : ''}
           <div class="a-hoy">
             <div class="a-hoy-total"><small>Ganado hoy</small><strong data-ganado>${N.pesos(e.resumen.ganado)}</strong></div>
             <div class="a-kpis">
@@ -1619,6 +1640,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         if (REAL) {
           pintarPildoraReal(e);
           ponerTexto(cnt, '[data-ayuda-turno]', textoAyudaTurno());
+          pintarFila(e);
         }
         ponerTexto(cnt, '[data-ganado]', N.pesos(e.resumen.ganado));
         ponerTexto(cnt, '[data-viajes]', String(e.resumen.viajes));
@@ -2124,6 +2146,18 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     ponerTexto(cnt, '[data-pildora-titulo]', p.titulo);
     ponerTexto(cnt, '[data-pildora-sub]', p.sub);
   }
+  // Ronda A: su puesto en la fila del paradero (en turno, libre y sin solicitud en pantalla). Solo el suyo.
+  function pintarFila(e) {
+    const caja = $(hoja.contenido, '[data-fila]');
+    if (!caja) return;
+    const txt = e.conectado && !e.viaje && !e.solicitudes.length ? N.reparto.textoChipFila(e.fila) : null;
+    if (caja.hidden !== !txt) {
+      caja.hidden = !txt;
+      hoja.fijar(hoja.estado, false);
+    }
+    if (txt) ponerTexto(caja, '[data-fila-txt]', txt);
+    caja.classList.toggle('a-fila-primero', e.fila?.puesto === 1);
+  }
   // Ayuda de la vista libre (modo real). Con el plugin UbicacionTurno, el aviso aceptado y los
   // avisos del celular listos, ya no hace falta dejar la app abierta.
   function textoAyudaTurno() {
@@ -2538,6 +2572,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           pintarCampana();
           // Fase 3: la central lo sacó de turno desde su mapa (bus, bienvenida, push o el plugin detenido).
           c.on('sacado_de_turno', (d) => vigente() && alSacadoDeTurno(d || {}));
+          // Ronda A: entrar a la fila, pasar al final, salir (servicio, fuera de turno y sacado ya tienen su pantalla).
+          c.on('fila', (d) => {
+            const a = vigente() && N.reparto.avisoFila(d?.fila, EM.NOMBRE);
+            if (a) avisos.mostrar(a);
+          });
           c.on('cambio', () => vigente() && salirSiQuedoPendiente());
           c.bus.on('rechazo', (d) => vigente() && alRechazo(d || {}));
           c.bus.on('conexion', () => vigente() && pintarConexionReal());

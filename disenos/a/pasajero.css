@@ -620,3 +620,10 @@ html[data-modo="real"] .a-pasajero > .a-avisos { z-index: 105; }
 .a-qh-fuentes li { margin: 2px 0; overflow-wrap: anywhere; }
 .a-qh-fuentes a { color: var(--a-texto-2); }
 .a-panel-qh .a-btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+/* Ronda A de «algoritmos» (servidor 0.14.0): «El taxi más cercano llega en ~X min» en el inicio y el chip del valor
+   calculado por TaxiCun por la ruta en calles. */
+.a-llegada-cerca { font-size: 13px; font-weight: 700; color: var(--a-verde-txt); margin: -4px 2px 10px; display: flex; align-items: center; gap: 6px; }
+.a-llegada-cerca[hidden] { display: none; }
+.a-llegada-cerca svg { flex: none; }
+.a-chip-tarifa[data-cotizacion="ruta"] { background: var(--a-verde-claro); color: var(--a-verde-txt); }

@@ -40,6 +40,11 @@
 // manda un «pasajero automático» a ~120 m, con el código de abordaje fijo (codigoAbordaje, 1234).
 // Ese código va en la nota de la solicitud y en viaje.codigoRevision (el diseño lo muestra al
 // pedir el código), y «Llegué» se acepta hasta a 400 m. Sin esa bandera, nada cambia.
+// Ronda A de «algoritmos» (servidor 0.14.0, nucleo/reparto.js; con uno anterior no llega nada de esto): reglas.modo
+// ('todos' | 'cercania' | 'turno'); el mensaje «fila» (y bienvenida.fila) → estado.fila = { enFila, paraderoId,
+// paradero, puesto, motivo, en } (null fuera de una fila, al salir de turno o sin sesión) y el evento 'fila' ({ fila,
+// antes }) para los avisos; la solicitud trae motivo ('fila' | 'cercano' | 'ola'), llegadaMin, equidad y fila (validados:
+// lo que no cumpla se descarta) y la presencia lleva pos.precision (metros) cuando la lectura la trae.
 import { crearBus } from './bus.js';
 import { TIEMPOS, CENTRO, vigilarConfig } from './config.js';
 import { calcularRuta, obtenerPosicion, seguirPosicion, fueraDeZona, direccionDe } from './geo.js';
@@ -56,6 +61,10 @@ import { MENSAJES, reglasGuardadas, reglasDeBienvenida } from './reglas.js';
 import { MENSAJES_CENTRAL, canceladaPorCentral, motivoCentral, motivoDeCancelacion, horaCentral, ofrecidaPorCentral, esPedidoCentral, textosCentral } from './central.js';
 import { enviarSos, posicionParaSos } from './sos.js';
 import { crearBandeja } from './bandeja.js';
+import { limpiarFila, limpiarOferta } from './reparto.js';
+
+// Ronda A: la precisión de una lectura del GPS en metros (entero) o null.
+const precisionDe = (p) => (Number.isFinite(p?.precision) && p.precision >= 0 && p.precision < 100000 ? Math.round(p.precision) : null);
 
 // Distancia máxima (km) al pasajero para poder marcar «Llegué» con GPS real (en modo real, la de las
 // reglas de la cooperativa: metrosLlegue).
@@ -201,6 +210,9 @@ class ControladorConductor extends Emisor {
       this.estado.avisarCentral = false;
       this.envioSos = null;
       this.bandeja = crearBandeja({ rol: 'conductor', bus: this.bus });
+      // Ronda A: el puesto en la fila del paradero (mensaje «fila») y la precisión de la última lectura del GPS.
+      this.estado.fila = null;
+      this.precisionGps = null;
     }
   }
 
@@ -390,7 +402,8 @@ class ControladorConductor extends Emisor {
         conductorId: c.id,
         movil: c.movil,
         disponible: conGps && this.estado.conectado && !this.estado.viaje,
-        ...(conGps && !this.posVieja ? { pos: this.estado.pos } : {}),
+        // Ronda A (0.14.0): con la precisión de la lectura (la fila del paradero no cuenta las de más de 100 m).
+        ...(conGps && !this.posVieja ? { pos: this.precisionGps !== null ? { ...this.estado.pos, precision: this.precisionGps } : this.estado.pos } : {}),
         // Servidor 0.4.0: al minimizar no lo saca del mapa (el plugin sigue enviando). Los
         // servidores anteriores ignoran el campo.
         ...(this.nativo?.activo?.() ? { segundoPlano: true } : {}),
@@ -466,6 +479,11 @@ class ControladorConductor extends Emisor {
 
   async #recibirSolicitud(s) {
     if (!this.estado.conectado || this.estado.viaje) return;
+    // Ronda A: motivo, llegadaMin, equidad y fila solo si cumplen (la tarjeta los pinta como texto).
+    if (s && typeof s === 'object') {
+      const { motivo, llegadaMin, equidad, fila, ...resto } = s;
+      s = { ...resto, ...limpiarOferta(s) };
+    }
     if (this.estado.solicitudes.some((x) => x.viajeId === s.viajeId)) return;
     // Modo revisor: el código del pasajero automático se ve en la nota de la solicitud.
     const codigo = this.#codigoDePrueba(s);
@@ -1013,6 +1031,8 @@ class ControladorConductor extends Emisor {
     this.bus.on(MENSAJES.reglas, (d) => {
       this.reglas = reglasDeBienvenida(d);
     });
+    // Ronda A: su puesto en la fila del paradero (solo el suyo; nunca quién más está ni cuántos).
+    this.bus.on('fila', (d) => this.#alFila(d));
     // Fase 3: la central lo sacó de turno desde su mapa (con el bus abierto).
     this.bus.on(MENSAJES_CENTRAL.sacadoDeTurno, (d) => this.#alSacadoDeTurno(d, { origen: 'bus' }));
     // 0.11.1: la central confirma lo que cree del turno (respuesta a la presencia con confirmar).
@@ -1024,6 +1044,16 @@ class ControladorConductor extends Emisor {
       if (this.estado.conectado && !this.estado.viaje) this.#cambiar({ conectado: false, solicitudes: [] });
       this.emit('rechazo', d);
     });
+  }
+
+  // Ronda A: mensaje «fila» de la central. Fuera de turno no se pinta (la central ya lo sacó o lo sacará).
+  #alFila(d) {
+    const f = limpiarFila(d);
+    if (!f) return;
+    const antes = this.estado.fila;
+    if (f.enFila && !this.estado.conectado) return;
+    this.#cambiar({ fila: f.enFila ? f : null });
+    this.emit('fila', { fila: f, antes });
   }
 
   #retomarReal() {
@@ -1077,6 +1107,7 @@ class ControladorConductor extends Emisor {
     this.gpsNegado = !pos.real && pos.motivo === 'denegado';
     if (pos.real) {
       this.estado.pos = { lat: pos.lat, lng: pos.lng, rumbo: this.estado.pos?.rumbo ?? 0 };
+      this.precisionGps = precisionDe(pos);
       this.gpsLeidoEn = Date.now();
       this.posVieja = false;
     } else if (!this.estado.pos) this.estado.pos = { ...CENTRO, rumbo: 0 };
@@ -1157,6 +1188,7 @@ class ControladorConductor extends Emisor {
     this.esperaReintentoGps = 0;
     this.gpsLeidoEn = Date.now();
     this.posVieja = false;
+    this.precisionGps = precisionDe(p);
     const recuperado = !this.estado.gpsReal;
     if (recuperado) this.estado.gpsReal = true;
     const primera = this.primeraLectura;
@@ -1205,6 +1237,7 @@ class ControladorConductor extends Emisor {
     // Mientras tanto pudo empezar el turno o un servicio (con su propio seguimiento).
     if (this.destruido || this.dejarDeSeguir || this.leyendoGps || !pos.real) return;
     this.estado.pos = { lat: pos.lat, lng: pos.lng, rumbo: this.estado.pos?.rumbo ?? 0 };
+    this.precisionGps = precisionDe(pos);
     this.gpsLeidoEn = Date.now();
     this.posVieja = false;
     this.#cambiar({});
@@ -1306,6 +1339,9 @@ class ControladorConductor extends Emisor {
     this.revision = Boolean(d?.revision); // modo revisor (cuentas de los revisores de las tiendas)
     // Ronda 4A: «Avisar a la central» solo si la central dice que la cooperativa lo recibe (siempre en el modo revisor).
     this.estado.avisarCentral = d?.avisarCentral === true;
+    // Ronda A: si está en una fila al conectarse (reconexión), su puesto; si no, no viene.
+    const fila = d?.fila ? limpiarFila(d.fila) : null;
+    this.estado.fila = fila?.enFila && this.estado.conectado ? fila : null;
     // Un servicio de otra cuenta (entró otro conductor en este celular) no se retoma.
     const propio = this.estado.viaje?.conductorId;
     if (propio && d?.conductor?.id && propio !== d.conductor.id) {
@@ -1676,6 +1712,8 @@ class ControladorConductor extends Emisor {
   #cambiar(cambios) {
     // 0.11.1: cuándo salió de turno (va como turnoEn: la central no toma un aviso atrasado por uno más nuevo).
     if (this.real && cambios.conectado === false && this.estado.conectado) this.fueraDesde = Date.now();
+    // Ronda A: fuera de turno no hay fila.
+    if (this.real && cambios.conectado === false) cambios = { ...cambios, fila: null };
     Object.assign(this.estado, cambios);
     if (this.real && ('viaje' in cambios || 'conectado' in cambios)) this.#guardarReal();
     // Modo real: el GPS se sigue o se suelta según el turno y el servicio.

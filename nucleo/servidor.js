@@ -86,6 +86,9 @@ const TEXTOS = {
   // Servidor 0.9.0 (ronda 4A): «Avisar a la central» (SOS).
   sos_no_disponible: 'La central de tu cooperativa no recibe avisos por la app. Si estás en peligro, llama al 123.',
   demasiados_sos: 'Ya le avisaste a la central hace un momento.',
+  // Servidor 0.14.0 (ronda A de «algoritmos»): el precio del viaje lo calcula TaxiCun por la ruta en calles.
+  cotizacion_vencida: 'El precio de tu viaje cambió.',
+  sin_tarifas: 'No pudimos calcular la tarifa de ese viaje. Revisa el destino e intenta de nuevo.',
 };
 
 const TEXTO_DESCONOCIDO = 'Algo falló. Intenta de nuevo.';
@@ -112,7 +115,7 @@ export class ErrorServidor extends Error {
 
 // publica: rutas sin sesión (POST auth/llave). Ahí un 401 es «esa llave no sirve», no
 // «tu sesión se cerró»: no se borra nada ni se avisa, y se lanza el código del servidor.
-async function pedir(metodo, ruta, cuerpo, { avisarSesion = true, publica = false } = {}) {
+async function pedir(metodo, ruta, cuerpo, { avisarSesion = true, publica = false, espera = ESPERA_MS } = {}) {
   const cabeceras = { Accept: 'application/json' };
   const t = token();
   if (t) cabeceras.Authorization = `Bearer ${t}`;
@@ -122,7 +125,7 @@ async function pedir(metodo, ruta, cuerpo, { avisarSesion = true, publica = fals
     opciones.body = JSON.stringify(cuerpo);
   }
   const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), ESPERA_MS);
+  const reloj = setTimeout(() => control.abort(), espera);
   opciones.signal = control.signal;
   let r;
   try {
@@ -238,6 +241,26 @@ export const avisosLeidos = (ids) => api('POST', 'avisos/leidos', { ids: [...ids
 export const bajasAvisos = () => api('GET', 'yo/avisos');
 // Pasajero: apaga (recibir: false) o vuelve a encender los avisos de una cooperativa → { ok }.
 export const cambiarBajaAvisos = (empresa, recibir) => api('PUT', 'yo/avisos', { empresa: String(empresa || ''), recibir: Boolean(recibir) });
+
+/* ---------------- Ronda A de «algoritmos» (servidor 0.14.0, nucleo/reparto.js) ----------------
+ * Solo se llaman si la bienvenida trae rutas (la llave de rutas está puesta): con un servidor anterior o sin llave, la
+ * app no las pide. Las dos esperan poco (la app sigue como hoy si no responden a tiempo). */
+
+// Punto para el servidor: solo lat y lng (y el id de la tabla oficial del destino, si lo tiene).
+const puntoCotizacion = (p, conTarifa = false) => {
+  if (!p) return null;
+  const r = { lat: Number(p.lat), lng: Number(p.lng) };
+  if (conTarifa && typeof p.idTarifa === 'string' && p.idTarifa) r.idTarifa = p.idTarifa.slice(0, 60);
+  return r;
+};
+// El valor del viaje calculado por TaxiCun → { cotizacion, valor, tipo, km, min, fuente, vence, version } (crudo: lo
+// valida reparto.limpiarCotizacion). Errores: 400 datos_invalidos, 403 empresa_no_disponible, 422 fuera_de_zona, 429
+// demasiados_intentos, 503 sin_tarifas, sin_red (también si tarda más de 4 s).
+export const cotizar = (empresa, origen, destino) => api('POST', 'viajes/cotizacion', {
+  empresa: String(empresa || ''), origen: puntoCotizacion(origen), destino: puntoCotizacion(destino, true),
+}, { espera: 4000 });
+// «El taxi más cercano llega en ~X min» → { min: n | null, fuente }. Espera 3 s.
+export const llegada = (empresa, origen) => api('POST', 'viajes/llegada', { empresa: String(empresa || ''), origen: puntoCotizacion(origen) }, { espera: 3000 });
 
 // ¿La ruta no existe en este servidor (anterior a la 0.9.0)? Fastify responde 404 con otra forma (error_interno).
 export const rutaNoDisponible = (e) => e?.estado === 404 || e?.estado === 405 || e?.codigo === 'no_existe';

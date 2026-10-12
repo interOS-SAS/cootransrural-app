@@ -34,6 +34,17 @@
 // servicio de la cooperativa ('dentro' | 'cerca' | 'lejos', ver geo.revisarZona; null sin zona o
 // en el modo revisor); solicitar() no pide un taxi «lejos» (ErrorServidor fuera_de_zona). Con el
 // mensaje «config» de la central la app recarga la ficha nueva al quedar sin viaje (config.js).
+// Ronda A de «algoritmos» (servidor 0.14.0, nucleo/reparto.js), solo si la bienvenida trae rutas (estado.rutas; sin el
+// campo, todo como hoy y la app no llama a /api/viajes/*):
+//  - con rutas.cotizar, cotizar() pide el valor a TaxiCun (POST viajes/cotizacion, por la ruta en calles) y la
+//    solicitud lleva la ficha firmada (cotizacion) y conCotizacion. tarifa.cotizacion, tarifa.fuenteRuta ('ruta' |
+//    'aproximada' | 'tabla') y tarifa.kmRuta. Si falla (red, tiempo, 503), como hoy. Si la ficha vence en menos de 60 s
+//    al pedir, se pide otra. cotizacion_vencida: con el mismo valor se reenvía sola; con otro, estado.precioCambio =
+//    { antes, ahora } y el evento 'precio_cambio' ({ antes, ahora, cotizacion }): el diseño pregunta y responde con
+//    p.responderPrecio(true | false). Sin respuesta en 2 min se cierra como error.
+//  - con rutas.llegada, p.consultarLlegada(punto) (el diseño la llama con el pin quieto) pide «El taxi más cercano llega
+//    en ~X min»: estado.llegada = { min, celda, en } (como mucho una consulta cada 10 s por celda de ~110 m y nunca con
+//    la app oculta). Sin dato o con error, null (como hoy).
 import { crearBus } from './bus.js';
 import { TIEMPOS, CENTRO, EMPRESA, ID_EMPRESA, vigilarConfig } from './config.js';
 import { LUGARES } from './datos.js';
@@ -51,6 +62,7 @@ import { MENSAJES, reglasGuardadas, reglasDeBienvenida, textoSinConductores } fr
 import { canceladaPorCentral, motivoDeCancelacion, textosCentral } from './central.js';
 import { enviarSos, posicionParaSos } from './sos.js';
 import { crearBandeja } from './bandeja.js';
+import { leerRutas, limpiarCotizacion, limpiarLlegada, celda, MARGEN_COTIZACION_MS, LLEGADA_MISMA_CELDA_MS, LLEGADA_REFRESCO_MS } from './reparto.js';
 
 export const FASES = ['inicio', 'buscando', 'asignado', 'llego', 'en_viaje', 'pagar', 'calificar'];
 
@@ -134,6 +146,13 @@ class ControladorPasajero extends Emisor {
       this.estado.avisarCentral = false;
       this.envioSos = null;
       this.bandeja = crearBandeja({ rol: 'pasajero', bus: this.bus });
+      // Ronda A: rutas por calles (bienvenida.rutas), «llega en» antes de pedir y la pregunta del precio que cambió.
+      this.estado.rutas = null;
+      this.estado.llegada = null;
+      this.estado.precioCambio = null;
+      this.ultimaCotizacion = null; // { origen, destino, ruta, tarifa } de la última cotización con ficha
+      this.consultaLlegada = { celda: '', en: 0, n: 0 };
+      this.precioPendiente = null;
     }
   }
 
@@ -219,7 +238,18 @@ class ControladorPasajero extends Emisor {
 
   // Ruta y tarifa estimada para mostrar antes de pedir.
   async cotizar({ origen, destino, programadoPara = null }) {
-    const ruta = destino ? await calcularRuta(origen, destino) : null;
+    // Ronda A: con la llave de rutas, el valor lo calcula TaxiCun (la ruta de OSRM queda solo para dibujar).
+    const enServidor = this.real && !programadoPara && this.estado.rutas?.cotizar === true && !this.revision;
+    const [ruta, q] = await Promise.all([
+      destino ? calcularRuta(origen, destino) : null,
+      enServidor ? this.#cotizarEnServidor(origen, destino) : null,
+    ]);
+    if (q) {
+      const r = this.#conCotizacion(origen, destino, q, ruta);
+      this.ultimaCotizacion = { origen, destino, ...r };
+      return r;
+    }
+    if (enServidor) this.ultimaCotizacion = null;
     const fecha = programadoPara ? new Date(programadoPara) : new Date();
     const programado = Boolean(programadoPara) && new Date(programadoPara) - Date.now() >= 23.98 * 3600 * 1000;
     // Modo real: la tarjeta de viajes (cada 10, el siguiente al 50 %) no se aplica: la
@@ -227,6 +257,137 @@ class ControladorPasajero extends Emisor {
     const viajesPrevios = this.real ? 0 : this.viajesCompletados();
     const tarifa = calcularTarifa({ origen, destino, km: ruta?.km, fecha, programado, viajesPrevios });
     return { ruta, tarifa };
+  }
+
+  // Ronda A: la cotización del servidor (limpia) o null si no se pudo (sin red, tiempo, 503, respuesta rara).
+  async #cotizarEnServidor(origen, destino) {
+    try {
+      return limpiarCotizacion(await servidor.cotizar(ID_EMPRESA, origen, destino));
+    } catch {
+      return null;
+    }
+  }
+
+  // Ruta y tarifa con la cotización del servidor: el detalle de siempre con el km de la ruta y, si el valor del servidor
+  // es otro (topes de la cooperativa), el del servidor. rutaDibujo: la de OSRM (solo para dibujar) o null.
+  #conCotizacion(origen, destino, q, rutaDibujo) {
+    let tarifa = calcularTarifa({ origen, destino, km: q.km ?? rutaDibujo?.km, fecha: new Date(), programado: false, viajesPrevios: 0 });
+    if (tarifa.total !== q.valor) tarifa = { ...tarifa, total: q.valor, detalle: [{ concepto: 'Valor calculado por TaxiCun', valor: q.valor }] };
+    tarifa = { ...tarifa, cotizacion: q.cotizacion, fuenteRuta: q.fuente, kmRuta: q.km, venceCotizacion: q.venceLocal };
+    const ruta = destino
+      ? { km: q.km ?? rutaDibujo?.km ?? null, min: q.min ?? rutaDibujo?.min ?? null, coords: rutaDibujo?.coords || null, aproximada: q.fuente === 'aproximada' || (q.km == null && Boolean(rutaDibujo?.aproximada)) }
+      : null;
+    return { ruta, tarifa };
+  }
+
+  // Para pedir: la última cotización del servidor si es de los mismos puntos y le queda más de un minuto; si no, otra.
+  // cambio: el valor que vio la persona era otro (se pregunta antes de pedir).
+  async #cotizacionParaPedir({ origen, destino, programadoPara }) {
+    const u = this.ultimaCotizacion;
+    const mismo = (a, b) => (!a && !b) || (a && b && distanciaKm(a, b) < 0.002 && (a.idTarifa || '') === (b.idTarifa || ''));
+    const previa = u && mismo(u.origen, origen) && mismo(u.destino, destino) ? u : null;
+    if (previa && previa.tarifa.venceCotizacion - Date.now() >= MARGEN_COTIZACION_MS) return { ruta: previa.ruta, tarifa: previa.tarifa, antes: null };
+    const r = await this.cotizar({ origen, destino, programadoPara });
+    const antes = previa && r.tarifa.cotizacion && r.tarifa.total !== previa.tarifa.total ? previa.tarifa.total : null;
+    return { ...r, antes };
+  }
+
+  // «El taxi más cercano llega en ~X min» (ronda A, con rutas.llegada): el diseño la llama con el pin de recogida quieto.
+  // Como mucho una consulta cada 10 s por celda (~110 m), nunca con la app oculta ni fuera del inicio. Devuelve true si
+  // consultó.
+  async consultarLlegada(punto, { refrescoMs = LLEGADA_MISMA_CELDA_MS } = {}) {
+    if (!this.real || this.revision || this.estado.rutas?.llegada !== true || appOculta() || this.estado.fase !== 'inicio') return false;
+    const c = celda(punto);
+    if (!c) return false;
+    const ahora = Date.now();
+    const previa = this.consultaLlegada;
+    if (previa.celda === c && ahora - previa.en < Math.max(LLEGADA_MISMA_CELDA_MS, refrescoMs)) return false;
+    const n = previa.n + 1;
+    this.consultaLlegada = { celda: c, en: ahora, n };
+    let min = null;
+    try {
+      min = limpiarLlegada(await servidor.llegada(ID_EMPRESA, { lat: punto.lat, lng: punto.lng }));
+    } catch {
+      min = null;
+    }
+    if (this.consultaLlegada.n !== n) return true; // llegó otra más nueva
+    const llegada = min === null ? null : { min, celda: c, en: Date.now() };
+    const antes = this.estado.llegada;
+    if (antes?.min !== llegada?.min || antes?.celda !== llegada?.celda) this.#cambiar({ llegada }, { silencioso: true });
+    else if (llegada) this.estado.llegada = llegada;
+    return true;
+  }
+
+  // Con el pin quieto en la misma celda, el dato se refresca al minuto (sin consulta si el pin se movió: esa la pide el
+  // diseño cuando el pin queda quieto).
+  refrescarLlegada(punto) {
+    if (this.consultaLlegada.celda && this.consultaLlegada.celda === celda(punto)) return this.consultarLlegada(punto, { refrescoMs: LLEGADA_REFRESCO_MS });
+    return Promise.resolve(false);
+  }
+
+  // Ronda A: el diseño responde a 'precio_cambio' (true: pedir por el valor nuevo; false: cambiar el viaje).
+  responderPrecio(si, { vencio = false } = {}) {
+    const pend = this.precioPendiente;
+    if (!pend) return false;
+    clearTimeout(pend.reloj);
+    this.precioPendiente = null;
+    const { viaje, fase } = this.estado;
+    if (fase !== 'buscando' || viaje?.id !== pend.viajeId) {
+      this.#cambiar({ precioCambio: null }, { silencioso: true });
+      return false;
+    }
+    if (si) {
+      viaje.tarifa = pend.tarifa;
+      if (pend.ruta) viaje.ruta = { ...(viaje.ruta || {}), ...pend.ruta, coords: pend.ruta.coords || viaje.ruta?.coords || null };
+      this.estado.precioCambio = null;
+      this.#publicarSolicitud();
+      this.#cambiar({});
+      return true;
+    }
+    if (vencio) this.#avisar({ titulo: 'No pudimos pedir el taxi', cuerpo: `${servidor.textoError('cotizacion_vencida')} Revisa el valor y pide otra vez.`, tipo: 'error' });
+    this.#cerrarViaje('precio');
+    return true;
+  }
+
+  // El valor del viaje cambió (antes de pedir o con cotizacion_vencida): se pregunta y, mientras tanto, no sale nada.
+  #preguntarPrecio(antes, { ruta, tarifa }) {
+    const { viaje } = this.estado;
+    clearTimeout(this.precioPendiente?.reloj);
+    this.precioPendiente = {
+      viajeId: viaje.id, tarifa, ruta,
+      reloj: setTimeout(() => this.responderPrecio(false, { vencio: true }), 2 * 60 * 1000),
+    };
+    this.#cambiar({ precioCambio: { antes, ahora: tarifa.total } });
+    this.emit('precio_cambio', { antes, ahora: tarifa.total, cotizacion: tarifa.cotizacion });
+  }
+
+  // cotizacion_vencida (servidor 0.14.0): la ficha venció, la configuración cambió o los puntos no cuadran. Trae la
+  // cotización nueva (o se pide otra): con el mismo valor se reenvía sola; con otro, se pregunta.
+  async #alCotizacionVencida(d) {
+    const { viaje } = this.estado;
+    if (d?.viajeId && d.viajeId !== viaje.id && !(viaje.idsPrevios || []).includes(d.viajeId)) return;
+    viaje.vencidas = (viaje.vencidas || 0) + 1;
+    const fallar = () => {
+      this.#avisar({ titulo: 'No pudimos pedir el taxi', cuerpo: `${servidor.textoError('cotizacion_vencida')} Revisa el valor y pide otra vez.`, tipo: 'error' });
+      this.#cerrarViaje('error');
+    };
+    if (viaje.vencidas > 3) return fallar();
+    const id = viaje.id;
+    const crudo = d?.cotizacion && typeof d.cotizacion === 'object' ? d.cotizacion : d;
+    let q = limpiarCotizacion(crudo);
+    if (!q) q = await this.#cotizarEnServidor(viaje.origen, viaje.destino);
+    if (this.estado.fase !== 'buscando' || this.estado.viaje?.id !== id) return;
+    if (!q) return fallar();
+    const r = this.#conCotizacion(viaje.origen, viaje.destino, q, viaje.ruta);
+    this.ultimaCotizacion = { origen: viaje.origen, destino: viaje.destino, ...r };
+    if (r.tarifa.total === viaje.tarifa?.total) {
+      viaje.tarifa = r.tarifa;
+      if (r.ruta) viaje.ruta = r.ruta;
+      this.#publicarSolicitud();
+      this.#cambiar({});
+      return;
+    }
+    this.#preguntarPrecio(viaje.tarifa?.total ?? null, r);
   }
 
   // Afina la ubicación con el GPS continuo durante unos segundos: cada lectura mejor (más
@@ -303,7 +464,8 @@ class ControladorPasajero extends Emisor {
       if (this.bus.estado === 'sin_conectar') this.bus.conectar();
       metodoPago = 'efectivo'; // por ahora solo efectivo
     }
-    const { ruta, tarifa } = await this.cotizar({ origen, destino, programadoPara });
+    const usarFicha = this.real && !programadoPara && this.estado.rutas?.cotizar === true && !this.revision;
+    const { ruta, tarifa, antes = null } = usarFicha ? await this.#cotizacionParaPedir({ origen, destino, programadoPara }) : await this.cotizar({ origen, destino, programadoPara });
     if (destino) perfil.agregarReciente(destino);
 
     if (programadoPara && new Date(programadoPara) - Date.now() > 30 * 60 * 1000) {
@@ -335,6 +497,12 @@ class ControladorPasajero extends Emisor {
     }
     this.avisosDados.clear();
     this.#cambiar({ fase: 'buscando', viaje, conductor: null, posConductor: null, rutaConductor: null, etaMin: null, cobro: null, pago: null, pagoConfirmado: false, calificacionRecibida: null });
+    // Ronda A: la ficha se renovó y el valor ya no es el que vio la persona: se pregunta antes de pedir.
+    if (antes !== null) {
+      viaje.tarifa = { ...tarifa, total: antes };
+      this.#preguntarPrecio(antes, { ruta, tarifa });
+      return { viaje };
+    }
     this.#publicarSolicitud();
     this.#programarRespaldo();
     if (this.real) this.#cambiar({}); // guarda cuándo salió la solicitud (y si quedó en cola)
@@ -344,6 +512,9 @@ class ControladorPasajero extends Emisor {
   #publicarSolicitud() {
     const { viaje } = this.estado;
     if (this.real) {
+      // Ronda A: mientras se pregunta por el precio nuevo no sale nada.
+      if (this.precioPendiente?.viajeId === viaje.id) return;
+      const ficha = typeof viaje.tarifa?.cotizacion === 'string' ? viaje.tarifa.cotizacion : null;
       // El servidor arma el pasajero con lo de la cuenta: aquí ni celular ni referido.
       this.bus.publicar('solicitud', {
         viajeId: viaje.id,
@@ -355,6 +526,9 @@ class ControladorPasajero extends Emisor {
         km: viaje.ruta?.km || null,
         min: viaje.ruta?.min || null,
         codigoHash: hashCorto(viaje.id + viaje.codigo),
+        // Ronda A (servidor 0.14.0; los anteriores lo ignoran): la ficha del valor y «entiendo cotizacion_vencida».
+        ...(ficha ? { cotizacion: ficha } : {}),
+        ...(ficha || this.estado.rutas?.cotizar === true ? { conCotizacion: true } : {}),
       });
       // Sin conexión la solicitud queda en la cola del bus y sale con la próxima bienvenida.
       viaje.solicitadoEn = Date.now();
@@ -764,6 +938,13 @@ class ControladorPasajero extends Emisor {
     if (this.estado.sinConductores) this.#cambiar({ sinConductores: null });
     // Ronda 4A: «Avisar a la central» solo si la central dice que la cooperativa lo recibe (siempre en el modo revisor).
     if (this.estado.avisarCentral !== (d?.avisarCentral === true)) this.#cambiar({ avisarCentral: d?.avisarCentral === true }, { silencioso: true });
+    // Ronda A: rutas por calles (sin el campo, como hoy: ni cotización del servidor ni «llega en»).
+    const rutas = leerRutas(d);
+    if (JSON.stringify(rutas) !== JSON.stringify(this.estado.rutas)) {
+      if (!rutas?.cotizar) this.ultimaCotizacion = null;
+      this.consultaLlegada = { celda: '', en: 0, n: this.consultaLlegada.n + 1 };
+      this.#cambiar({ rutas, ...(rutas?.llegada ? {} : { llegada: null }) }, { silencioso: true });
+    }
     // Modo revisor: con el GPS lejos de la cooperativa, la recogida pasa al parque principal.
     this.revision = Boolean(d?.revision);
     const antes = this.estado.miPosicion;
@@ -980,6 +1161,8 @@ class ControladorPasajero extends Emisor {
       }
       this.#avisar({ titulo: 'No pudimos pedir el taxi', cuerpo: servidor.textoError(codigo), tipo: 'error' });
       this.#cerrarViaje('error');
+    } else if (codigo === 'cotizacion_vencida') {
+      this.#alCotizacionVencida(d);
     } else if (codigo === 'solicitud_invalida' || codigo === 'origen_invalido' || codigo === 'tarifa_invalida' || codigo === 'fuera_de_zona') {
       // tarifa_invalida (servidor 0.2.2): la tarifa no cabe en las de la cooperativa y la
       // central no guardó nada; no se vuelve a mandar igual. fuera_de_zona (0.6.0): la recogida
@@ -1071,7 +1254,7 @@ class ControladorPasajero extends Emisor {
   }
 
   #guardarReal(persistible) {
-    const { conexion, sala, estadoBus, ultimoAviso, miPosicion, ...resto } = persistible;
+    const { conexion, sala, estadoBus, ultimoAviso, miPosicion, rutas, llegada, precioCambio, ...resto } = persistible;
     try {
       if (resto.fase === 'inicio' || !resto.viaje) localStorage.removeItem(CLAVE_VIAJE_REAL);
       else localStorage.setItem(CLAVE_VIAJE_REAL, JSON.stringify({ guardado: Date.now(), fase: resto.fase, estado: resto }));
@@ -1125,6 +1308,11 @@ class ControladorPasajero extends Emisor {
 
   #cerrarViaje() {
     clearTimeout(this.temporizadorBusqueda);
+    if (this.precioPendiente) {
+      clearTimeout(this.precioPendiente.reloj);
+      this.precioPendiente = null;
+    }
+    if (this.estado.precioCambio) this.estado.precioCambio = null;
     clearTimeout(this.relojViajeActual);
     this.simulado?.detener();
     this.simulado = null;

@@ -33,7 +33,11 @@
 //     buscando: la central se la ofrece al primero que pueda. Al reconectarse, la central lo repite
 //     después de viaje_actual si sigue así (por eso la app lo olvida con cada bienvenida).
 //   con_conductores (central → pasajero) { viajeId }: el contrario, ya le llegó a alguien.
+//
+// Ronda A de «algoritmos» (servidor 0.14.0): reglas.modo = cómo reparte la central los pedidos ('todos', 'cercania' o
+// 'turno'; sin el campo, 'todos', lo de siempre). La app del conductor lo usa para sus textos; la del pasajero lo ignora.
 import { ID_EMPRESA } from './config.js';
+import { leerModo } from './reparto.js';
 
 export const MENSAJES = Object.freeze({
   reglas: 'reglas',
@@ -68,6 +72,7 @@ export function leerReglas(datos) {
   const fuente = fuenteDe(datos);
   const r = {};
   for (const nombre of Object.keys(REGLAS_POR_DEFECTO)) r[nombre] = valor(nombre, fuente[nombre]);
+  r.modo = leerModo(fuente);
   return r;
 }
 
@@ -81,13 +86,16 @@ export function reglasGuardadas() {
   try {
     return leerReglas(JSON.parse(localStorage.getItem(CLAVE) || 'null'));
   } catch {
-    return { ...REGLAS_POR_DEFECTO };
+    return { ...REGLAS_POR_DEFECTO, modo: 'todos' };
   }
 }
 
+// Se guardan solo las tres de siempre: el modo solo sirve con la central en línea (llega con cada bienvenida).
 function guardarReglas(r) {
   try {
-    localStorage.setItem(CLAVE, JSON.stringify(r));
+    const guardar = {};
+    for (const nombre of Object.keys(REGLAS_POR_DEFECTO)) guardar[nombre] = r[nombre];
+    localStorage.setItem(CLAVE, JSON.stringify(guardar));
   } catch {
     /* almacenamiento lleno o bloqueado: valen en memoria */
   }
@@ -96,7 +104,7 @@ function guardarReglas(r) {
 // Reglas con la bienvenida (o el mensaje «reglas»): las suyas si las trae, y se guardan. Si no las trae, la
 // central es una anterior, que trabaja con los valores de hoy: esos.
 export function reglasDeBienvenida(datos) {
-  const r = traeReglas(datos) ? leerReglas(datos) : { ...REGLAS_POR_DEFECTO };
+  const r = traeReglas(datos) ? leerReglas(datos) : { ...REGLAS_POR_DEFECTO, modo: 'todos' };
   guardarReglas(r);
   return r;
 }

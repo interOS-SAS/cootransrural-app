@@ -18,6 +18,10 @@
 // cooperativa»), el toque de su notificación abre la tarjeta y Ajustes tiene «Avisos de {coop}» (la baja voluntaria).
 // «¿Qué hacer?» (modo real, servidor 0.13.0; disenos/a/que-hacer.js): botón en el inicio, solo si hay sitios o planes
 // publicados cerca o en el municipio de la cooperativa y nunca en el modo revisor (ni en las demos).
+// Ronda A de «algoritmos» (modo real, servidor 0.14.0 con la llave de rutas; nucleo/reparto.js): con el pin de recogida
+// quieto, «El taxi más cercano llega en ~X min» en el inicio y «Taxi a ~X min» en el pin (del servidor, sin posiciones);
+// en «Confirma tu viaje», el chip «Valor por la ruta en calles · {km}» o «Valor aproximado» cuando el valor lo calculó
+// TaxiCun; y el diálogo «El precio de tu viaje cambió». Sin rutas en la bienvenida (o en las demos), todo como hoy.
 import {
   el, esc, $, $$, icono, ICONO_CATEGORIA, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos,
   modal, elegirOpcion, abrirMenu, estrellas, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
@@ -263,6 +267,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     if (tipo === 'origen') ui.origen = { ...punto, titulo: ui.origen?.titulo || 'Punto en el mapa', detalle: '', provisional: true };
     else ui.destinoProvisional = { ...punto, titulo: 'Buscando dirección…', detalle: '', provisional: true };
     pintarPunto(tipo, true);
+    if (tipo === 'origen') pedirLlegada(punto);
     clearTimeout(esperaPin);
     esperaPin = setTimeout(async () => {
       const n = ++reqDir;
@@ -274,6 +279,24 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       pintarPunto(tipo, false);
     }, 450);
   });
+
+  // Ronda A: «El taxi más cercano llega en…» con el pin de recogida quieto 800 ms (el núcleo no repite la misma celda en
+  // 10 s, no consulta con la app oculta y solo con rutas.llegada en la bienvenida).
+  let esperaLlegada = null;
+  function pedirLlegada(punto) {
+    clearTimeout(esperaLlegada);
+    if (!REAL || !p?.estado?.rutas?.llegada) return;
+    esperaLlegada = setTimeout(() => {
+      if (app.dataset.pin !== 'origen' || ui.vista !== 'inicio' || app.classList.contains('a-moviendo')) return;
+      p.consultarLlegada(punto).catch(() => {});
+    }, 800);
+  }
+  // El dato del servidor vale para la celda (~110 m) donde está el pin.
+  function llegadaDelPin(e) {
+    const l = e.llegada;
+    if (!l || !ui.origen || !e.rutas?.llegada) return null;
+    return l.celda === N.reparto.celda(ui.origen) ? l : null;
+  }
 
   // Aviso si el punto de recogida cae donde la ficha prohíbe recoger (noRecoger: el parque
   // principal de El Rosal, Decreto 89 de 2026), con un botón para ir al paradero de taxis.
@@ -1037,6 +1060,35 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     });
   }
 
+  // Ronda A: «El precio de tu viaje cambió». Pedir por el valor nuevo, o volver a «Confirma tu viaje» con el mismo viaje.
+  let modalPrecio = null;
+  async function preguntarPrecio(d) {
+    if (modalPrecio || !Number.isFinite(d.ahora)) return;
+    const t = N.reparto.textosPrecioCambio(Number.isFinite(d.antes) ? N.pesos(d.antes) : '—', N.pesos(d.ahora));
+    modalPrecio = modal(app, {
+      titulo: t.titulo,
+      texto: t.texto,
+      clase: 'a-modal-precio',
+      acciones: [
+        { texto: t.pedir, valor: 'pedir', clase: 'a-btn-primario' },
+        { texto: t.cambiar, valor: 'cambiar', clase: 'a-btn-suave' },
+      ],
+    });
+    const r = await modalPrecio;
+    modalPrecio = null;
+    if (r === 'pedir') {
+      p.responderPrecio(true);
+      return;
+    }
+    const v = p.estado.viaje;
+    const origen = v?.origen || null;
+    const destino = v ? v.destino ?? null : undefined;
+    if (!p.responderPrecio(false)) return;
+    pintarAhora();
+    if (origen) ui.origen = origen;
+    if (destino !== undefined) irAConfirmar(destino);
+  }
+
   async function cancelarViaje() {
     const motivo = await elegirOpcion(app, { titulo: '¿Por qué cancelas?', texto: 'Le avisamos al conductor de inmediato.', opciones: N.MOTIVOS_CANCELACION.pasajero, confirmar: 'Cancelar servicio', clasePeligro: true });
     if (motivo) p.cancelar(motivo);
@@ -1075,6 +1127,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             <span class="a-recoger-txt"><small>Te recogemos en</small><strong data-origen-titulo>${esc(ui.origen?.titulo || 'Buscando dirección…')}</strong></span>
             <span class="a-recoger-ayuda">${icono('mapa', { tam: 14 })} Mueve el mapa</span>
           </div>
+          ${REAL ? `<p class="a-llegada-cerca" data-llegada-cerca hidden role="status">${icono('reloj', { tam: 16 })}<span data-llegada-txt></span></p>` : ''}
           <div class="a-aviso-gps" data-aviso-gps hidden>${icono('info', { tam: 18 })}<span>${esc(EM.TEXTO_SIN_GPS)}</span></div>
           ${EM.LUGARES_SIN_RECOGIDA.length ? `<div class="a-aviso-gps a-aviso-recogida" data-aviso-recogida hidden role="status">${icono('alerta', { tam: 18 })}<span><span data-aviso-recogida-txt></span>${N.PARADERO ? ` <button type="button" class="a-btn-texto a-ir-paradero" data-ir-paradero>Ir al paradero</button>` : ''}</span></div>` : ''}
           ${CON_ZONA ? `<div class="a-aviso-gps a-aviso-zona" data-aviso-zona hidden role="status">${icono('alerta', { tam: 18 })}<span><span data-aviso-zona-txt></span> <button type="button" class="a-btn-texto" data-zona-opciones>Ver opciones</button></span></div>` : ''}
@@ -1147,8 +1200,21 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         const aviso = $(hoja.contenido, '[data-aviso-gps]');
         if (aviso) aviso.hidden = e.miPosicion?.real !== false;
         pintarBotonQH();
+        // Ronda A: el tiempo de llegada del servidor (por calles) para la celda del pin; si no, el cálculo de hoy.
+        const llegada = REAL ? llegadaDelPin(e) : null;
+        if (REAL) {
+          const caja = $(hoja.contenido, '[data-llegada-cerca]');
+          const txt = llegada ? N.reparto.textoLlegada(llegada.min) : null;
+          if (caja && caja.hidden !== !txt) {
+            caja.hidden = !txt;
+            hoja.fijar(hoja.estado, false);
+          }
+          if (txt) ponerTexto(hoja.contenido, '[data-llegada-txt]', txt);
+          if (ui.origen && !ui.origen.provisional) p.refrescarLlegada(ui.origen);
+        }
+        if (llegada) ponerTexto(app, '[data-pin-etiqueta]', N.reparto.textoPin(llegada.min));
         // Tiempo estimado del taxi libre más cercano al pin.
-        if (ui.origen && e.taxisCercanos?.length) {
+        else if (ui.origen && e.taxisCercanos?.length) {
           let km = Infinity;
           for (const t of e.taxisCercanos) if (!t.ocupado) km = Math.min(km, N.distanciaKm(t, ui.origen));
           const min = Number.isFinite(km) ? Math.max(1, Math.round(((km * 1.4) / 22) * 60)) : null;
@@ -1732,8 +1798,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const cerrado = !TARIFA_EJEMPLO && (tarifa.tipo === 'oficial' || tarifa.tipo === 'fijada');
     const chip = $(c, '[data-chip-tarifa]');
     if (chip) {
-      chip.innerHTML = `${icono(cerrado ? 'check' : 'info', { tam: 13, grosor: cerrado ? 3 : 2 })} ${esc(tarifa.etiqueta || N.etiquetaTarifa(tarifa))}`;
+      // Ronda A: el valor lo calculó TaxiCun por la ruta en calles (o aproximado); con tarifa de tabla, el chip de hoy.
+      const porRuta = REAL ? N.reparto.chipCotizacion(tarifa, N.kmTexto) : null;
+      chip.innerHTML = `${icono(cerrado ? 'check' : 'info', { tam: 13, grosor: cerrado ? 3 : 2 })} ${esc(porRuta || tarifa.etiqueta || N.etiquetaTarifa(tarifa))}`;
       chip.dataset.tipo = tarifa.tipo || '';
+      if (porRuta) chip.dataset.cotizacion = tarifa.fuenteRuta;
+      else delete chip.dataset.cotizacion;
       chip.hidden = false;
     }
     const tipoRuta = !tarifa.rutaFija ? ''
@@ -2333,6 +2403,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       // «… canceló tu solicitud» (la central): el diálogo ya lo dice; el aviso va solo a la campana.
       p.on('aviso', (a) => avisos.mostrar(a, { silencioso: (p.estado.fase === 'llego' && /puerta/i.test(a.titulo)) || (a.clave === 'cancelado_por_central' && Boolean(ui.modalCentral)) }));
       p.on('cancelado_por_central', (d) => canceladoPorCentral(d || {}));
+      // Ronda A: el valor del viaje cambió (la ficha venció o cambió la configuración): se pregunta.
+      p.on('precio_cambio', (d) => preguntarPrecio(d || {}));
       // Modo revisor (revisores de las tiendas, desde otro país): el núcleo cambió la posición al
       // paradero de taxis; si aún no hay un punto de recogida en la zona, el mapa y el pin van allá.
       // El GPS se afinó (al abrir, al volver o con «mi ubicación»): si el pin de recogida no se
@@ -2354,6 +2426,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           bienvenidaLejos = { revision: d?.revision === true };
           revisarQueHacer(d?.revision === true);
           setTimeout(revisarLejos, 600);
+          // Ronda A: con la llave de rutas, el «llega en» del pin que ya está quieto.
+          if (ui.vista === 'inicio' && ui.origen) pedirLlegada(ui.origen);
         });
         p.on('cambio', () => revisarLejos());
         // Ronda 4A: los avisos de la cooperativa como tarjeta (sin tapar el ingreso ni otro diálogo) y en la campana.

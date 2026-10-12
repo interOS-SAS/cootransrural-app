@@ -34,3 +34,6 @@ export { POLITICA } from './politica.js';
 export * as lejos from './lejos.js';
 // «¿Qué hacer?» (servidor 0.13.0): sitios turísticos y planes publicados por interOS (API pública, solo modo real).
 export * as queHacer from './que-hacer.js';
+// Ronda A de «algoritmos» (servidor 0.14.0): despacho por cercanía y por turnos, llegada y precio por calles (textos y
+// validación de lo que manda la central).
+export * as reparto from './reparto.js';
