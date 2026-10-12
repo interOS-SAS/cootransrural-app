@@ -92,7 +92,7 @@
         <span class="pildora"><svg class="icono" aria-hidden="true"><use href="#i-escudo"/></svg>Privacidad en TaxiCun</span>
         <h1>Política de privacidad</h1>
         <p>Cómo tratamos tus datos en las apps TaxiCun (para pasajeros) y TaxiCun Conductor, y qué puedes hacer con ellos.</p>
-        <p class="vigencia"><svg class="icono" aria-hidden="true"><use href="#i-calendario"/></svg>{{#si politica.v13}}Versión 1.3 · Vigente desde el {{politica.vigencia}} · <a href="#cambios">Qué cambió</a></p>{{/si}}{{#no politica.v13}}Vigente desde el 3 de octubre de 2026</p>{{/no}}
+        <p class="vigencia"><svg class="icono" aria-hidden="true"><use href="#i-calendario"/></svg>{{#si politica.v13}}Versión 1.3 · Vigente desde el {{politica.vigencia}} · <a href="#cambios">Qué cambió</a></p>{{/si}}{{#no politica.v13}}Vigente desde el 12 de octubre de 2026</p>{{/no}}
       </div>
     </div>
 
@@ -241,7 +241,7 @@
           <li><b>Cloudflare:</b> la conexión con taxicun.com pasa por su red, que protege y entrega el sitio. Procesa datos técnicos de la conexión, como la dirección IP.</li>
           <li><b>Brevo:</b> envía el correo con tu código de ingreso. Si Brevo falla, el código sale por el servicio de correo de <b>Google Workspace</b>. Los dos reciben tu correo y el código.</li>
           <li><b>Google (Firebase Cloud Messaging) y Apple (Apple Push Notification service):</b> entregan los avisos en tu celular. Reciben el identificador de notificaciones y el texto del aviso: en los avisos al conductor, el primer nombre del pasajero, el punto de recogida, el destino y la tarifa; en los avisos al pasajero, el nombre, el móvil y la placa del conductor. En Android, Firebase recibe también el identificador de la instalación de la app y datos técnicos del celular, como la versión de Android y la de la app.</li>
-          <li><b>Mapas, direcciones y rutas:</b> el mapa se carga de Mapbox (y, si falla, de OpenStreetMap); la búsqueda de direcciones usa Nominatim (de OpenStreetMap) y el cálculo de rutas, OSRM. Tu celular les envía directamente las coordenadas o el texto que buscas; no reciben tu nombre, tu correo ni tu celular.</li>
+          <li><b>Mapas, direcciones y rutas:</b> el mapa se carga de Mapbox (y, si falla, de OpenStreetMap); la búsqueda de direcciones usa Nominatim (de OpenStreetMap) y el cálculo de rutas, OSRM. Tu celular les envía directamente las coordenadas o el texto que buscas; no reciben tu nombre, tu correo ni tu celular. Además, el servidor de TaxiCun le pide a <b>Mapbox</b> la distancia y el tiempo por las calles entre puntos aproximados (redondeados a unos 110 m para el tiempo de llegada y a unos 11 m para el valor del viaje) de la recogida, el destino y los taxis cercanos, para calcular cuánto tarda el taxi y el valor de los destinos que no están en la tabla de tarifas. Mapbox no recibe tu nombre, tu correo, tu celular ni ningún identificador tuyo.</li>
           <li><b>WhatsApp y el teléfono:</b> solo cuando tú decides compartir tu viaje, avisarle a tu contacto de emergencia, llamar o escribirle al conductor, al pasajero o a la central. En ese momento se abren esas apps, con sus propias políticas.</li>
           <li><b>Google Maps y Waze:</b> solo si eres conductor y tocas el botón para navegar. Esa app recibe las coordenadas del punto de recogida o del destino del viaje (no el nombre ni el celular del pasajero) y se abre con sus propias políticas.</li>
           <li><b>Google Play y App Store:</b> la descarga y las actualizaciones de la app se rigen por las políticas de Google y de Apple.</li>
