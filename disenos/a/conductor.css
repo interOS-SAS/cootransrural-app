@@ -438,3 +438,8 @@ html[data-modo="real"] .a-resaltar { animation-iteration-count: 4; box-shadow: 0
 .a-promo-cobro p { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--a-texto); }
 .a-promo-cobro .a-promo-falta { color: var(--a-rojo-txt); font-weight: 700; }
 .a-promo-cobro-nota { color: var(--a-verde-txt); font-weight: 700; }
+
+/* «GPS del taxi» en Mi taxi (servidor 0.17.0): el estado y «Reportar robo». */
+.a-gps-taxi .a-gps-taxi-estado { display: flex; align-items: center; gap: 10px; margin: 4px 0 12px; font-weight: 600; }
+.a-gps-taxi .a-btn-peligro { width: 100%; min-height: 52px; }
+.a-gps-taxi .a-ayuda-txt { margin-top: 8px; }

@@ -237,6 +237,10 @@ export const fueraDeTurno = ({ motivo = 'turno_apagado', turnoEn = null } = {}) 
 // → { ok, id, veces, prueba? }. Errores: sos_no_disponible (403), demasiados_sos (429, con retryS). nucleo/sos.js
 // reintenta con la misma clave si no hay señal.
 export const sos = (d) => api('POST', 'sos', d);
+// Servidor 0.17.0: el GPS del taxi del conductor ({ disponible: false } o { disponible: true, enLinea, roboAbierto }) y
+// «Reportar robo» ({ clave, pos? } → { ok, enLinea }; 403 robo_no_disponible, 429 demasiados_reportes).
+export const gpsMiTaxi = () => api('GET', 'conductor/gps', undefined, { espera: 8000 });
+export const reportarRobo = (d) => api('POST', 'conductor/gps/robo', d, { espera: 15000 });
 // Los avisos de la cooperativa de los últimos 30 días → { avisos: [{ id, titulo, texto, de, en, leido }] }.
 export const avisos = (rol) => api('GET', `avisos?rol=${rol === 'conductor' ? 'conductor' : 'pasajero'}`);
 // Marca leídos (hasta 50 ids) → { ok }.

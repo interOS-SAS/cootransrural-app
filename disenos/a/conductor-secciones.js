@@ -7,7 +7,10 @@
 // cuenta. En la app nativa (ctx.nativa), sin «Instalar» ni «Cambiar de municipio».
 // Con el plugin UbicacionTurno, «Ubicación con la app minimizada» (activa / solo durante los
 // viajes / apagada) y, en Android, cómo evitar que el teléfono cierre la app.
-import { el, esc, icono, abrirPanel, chipPrueba, decimal, placa, franjaCuadros, celularTexto } from './ui.js';
+// Servidor 0.17.0: en «Mi taxi» (modo real), si el taxi tiene GPS de TaxiCun, «GPS del taxi» (en línea o no) y
+// «Reportar robo»: con confirmación, avisa a la central, al propietario y a interOS con la ubicación del GPS (la central
+// decide si bloquea el encendido; el conductor nunca corta el motor desde aquí).
+import { el, esc, icono, abrirPanel, chipPrueba, decimal, placa, franjaCuadros, celularTexto, modal } from './ui.js';
 import { ilustracionVacia, taxiLateral } from './ilustraciones.js';
 import { bloqueSala, bloqueSonidoYAvisos, bloqueConexion, bloqueInstalar, bloqueAcerca, bloqueMunicipio, bloqueSeguridad, interruptor } from './ajustes-comunes.js';
 import { ofrecerSegundoPlano } from './nativa.js';
@@ -213,8 +216,67 @@ export function abrirMiTaxi({ N, app, real = false, yo: yoCtx = null }) {
             <span><strong>Va en las dos puertas traseras</strong><small>${esc(`Quien lo escanea descarga la app de ${EM.NOMBRE} y queda registrado que llegó por el móvil ${yo.movil}.`)}</small></span>
           </div>
         </section>`}`;
+      if (real) bloqueGpsTaxi({ N, app, cuerpo });
     },
   });
+}
+
+const LLAMAR_123 = { texto: 'Llamar a la Línea 123', href: 'tel:123', valor: '123', clase: 'a-btn-peligro', icono: 'telefono' };
+
+// «GPS del taxi» (servidor 0.17.0): solo si el servidor dice que este taxi tiene GPS de TaxiCun (si no, o sin red, no
+// aparece nada). «Reportar robo» pide confirmación y manda la posición del celular por si el GPS no tiene.
+async function bloqueGpsTaxi({ N, app, cuerpo }) {
+  let g;
+  try {
+    g = await N.servidor.gpsMiTaxi();
+  } catch {
+    return;
+  }
+  if (!g?.disponible || !cuerpo.isConnected) return;
+  const s = el(`<section class="a-grupo a-gps-taxi" data-gps-taxi><h3>GPS del taxi</h3>
+    <p class="a-gps-taxi-estado" data-gps-estado></p>
+    <button type="button" class="a-btn a-btn-peligro" data-robo>${icono('alerta', { tam: 20 })}<span>Reportar robo</span></button>
+    <p class="a-ayuda-txt">Si te roban el taxi, avisa de inmediato a la central, al propietario y a interOS con la ubicación del GPS, para que puedan bloquear el encendido. Si estás en peligro, llama primero al 123.</p>
+  </section>`);
+  const pintar = (enLinea, abierto) => {
+    const p = s.querySelector('[data-gps-estado]');
+    p.innerHTML = `<span class="a-punto ${enLinea ? 'a-punto-verde' : 'a-punto-negro'}" aria-hidden="true"></span> ${enLinea ? 'En línea' : 'Sin conexión en este momento'}${abierto ? ' · robo reportado' : ''}`;
+  };
+  pintar(Boolean(g.enLinea), Boolean(g.roboAbierto));
+  const boton = s.querySelector('[data-robo]');
+  boton.addEventListener('click', async () => {
+    const si = await modal(app, {
+      titulo: '¿Te robaron el taxi?',
+      texto: 'Vamos a avisar ya a la central, al propietario y a interOS con la ubicación del GPS del taxi. Desde la central pueden bloquear el encendido para que no vuelva a arrancar. Úsalo solo si de verdad te robaron el taxi.',
+      icono: icono('alerta', { tam: 30 }),
+      acciones: [{ texto: 'Cancelar', valor: false, clase: 'a-btn-suave' }, { texto: 'Sí, reportar robo', valor: true, clase: 'a-btn-peligro' }],
+    });
+    if (!si) return;
+    boton.disabled = true;
+    const p = await N.obtenerPosicion({ espera: 4000 }).catch(() => null);
+    const pos = p?.real ? { lat: p.lat, lng: p.lng, ...(Number.isFinite(p.precision) ? { precision: Math.round(p.precision) } : {}) } : null;
+    try {
+      const r = await N.servidor.reportarRobo({ clave: N.uid('robo'), ...(pos ? { pos } : {}) });
+      pintar(Boolean(r?.enLinea), true);
+      await modal(app, {
+        titulo: 'Robo reportado',
+        texto: 'La central, el propietario e interOS ya están avisados. Si estás en peligro, llama al 123. Denuncia el robo ante la Policía.',
+        acciones: [LLAMAR_123, { texto: 'Entendido', valor: true, clase: 'a-btn-primario' }],
+      });
+    } catch (e) {
+      const demasiados = e?.codigo === 'demasiados_reportes';
+      await modal(app, {
+        titulo: demasiados ? 'Ya lo reportaste' : 'No se pudo enviar',
+        texto: demasiados
+          ? 'Ya enviaste varios reportes: la central está avisada. Si estás en peligro, llama al 123.'
+          : 'No pudimos avisar a la central. Llama a la central de tu cooperativa o al 123.',
+        acciones: [LLAMAR_123, { texto: 'Cerrar', valor: true, clase: 'a-btn-suave' }],
+      });
+    } finally {
+      boton.disabled = false;
+    }
+  });
+  cuerpo.append(s);
 }
 
 // «Tu cuenta» (modo real): correo, nombre y celular de la cuenta; Cerrar sesión y
