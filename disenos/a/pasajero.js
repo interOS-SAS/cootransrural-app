@@ -2394,6 +2394,55 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
    * (formulario de interesados, rol pasajero) y «Ver cómo funciona». «Ahora no» lo guarda un día y «Avísame» 30. Sin GPS,
    * sin red o con un error de la ruta (un servidor anterior): nada. La cuenta de revisión (bienvenida.revision, o el
    * servidor responde exento, igual que a las cuentas de prueba): nunca. */
+  /* Otra cooperativa (13-oct-2026, pedido de Oscar): la app abre la cooperativa guardada (no espera el GPS). Si el GPS
+   * dice que la persona está en el municipio de OTRA cooperativa que atiende en TaxiCun (fuera de la zona de la suya y más
+   * cerca del centro de la otra), se le pregunta una vez: «Estás en {pueblo}» con «Cambiar a {otra}» (abre taxicun/?e=id,
+   * que la deja guardada) y «Seguir con {la suya}» (no vuelve a preguntar por esa en 12 h). Nunca con un viaje en curso,
+   * en el modo revisor ni con otra capa encima; con una sola cooperativa real (sin «otras»), nada. */
+  let otraSesion = 'nada'; // 'nada' | 'visto'
+  const NO_SUGERIR_OTRA_MS = 12 * 3600 * 1000;
+  function revisarOtraCooperativa() {
+    if (!REAL || !EM.EN_TAXICUN || !p || otraSesion === 'visto' || !(taxicun?.otras || []).length) return;
+    if (!bienvenidaLejos || bienvenidaLejos.revision || p.revision) return;
+    const pos = p.estado.miPosicion;
+    if (!pos?.real || pos.revision || p.estado.fase !== 'inicio' || ui.modo !== 'inicio') return;
+    if (app.querySelector('.a-modal-capa, .a-registro, .a-bienvenida, .a-buscador, .a-panel, .a-menu-capa')) return;
+    otraSesion = 'visto';
+    const otra = otraQueAtiende(pos);
+    if (!otra?.centro) return;
+    const actual = taxicun?.cooperativa;
+    const dActual = actual?.centro ? N.distanciaKm(pos, actual.centro) : Infinity;
+    const dentro = CON_ZONA ? p.zonaDe(pos)?.estado === 'dentro' : dActual <= (Number(actual?.radioKm) || 9);
+    if (dentro || N.distanciaKm(pos, otra.centro) >= dActual) return;
+    const clave = `taxicun.sugerir.${EM.ID}.${otra.id}`;
+    let antes = 0;
+    try {
+      antes = Number(localStorage.getItem(clave)) || 0;
+    } catch {
+      /* sin almacenamiento */
+    }
+    if (Date.now() - antes < NO_SUGERIR_OTRA_MS) return;
+    const pueblo = String(otra.pueblo || '').slice(0, 60);
+    const nombre = String(otra.nombre || '').slice(0, 60);
+    modal(app, {
+      titulo: `Estás en ${pueblo}`,
+      texto: `Aquí te atiende ${nombre}, ${otra.tipo === 'empresa' ? 'la empresa' : 'la cooperativa'} de taxis de ${pueblo} en ${EM.APP}. ¿Quieres pedir tu taxi con ${otra.tipo === 'empresa' ? 'ella' : 'ellos'}?`,
+      icono: `<span class="a-zona-ico">${icono('pin', { tam: 30 })}</span>`,
+      clase: 'a-modal-otra-coop',
+      acciones: [
+        { texto: `Cambiar a ${nombre}`, href: N.urlDelSitio(`taxicun/?e=${otra.id}`), valor: 'otra', clase: 'a-btn-primario', icono: 'pin' },
+        { texto: `Seguir con ${EM.NOMBRE}`, valor: 'seguir', clase: 'a-btn-suave' },
+      ],
+    }).then((r) => {
+      if (r === 'otra') return;
+      try {
+        localStorage.setItem(clave, String(Date.now()));
+      } catch {
+        /* sin almacenamiento */
+      }
+    });
+  }
+
   let bienvenidaLejos = null; // { revision } de la última bienvenida de esta sesión
   // estado: 'nada' (sin preguntar) | 'preguntando' | 'listo' (respuesta en r) | 'visto' (ya se mostró o no hace falta)
   let lejosSesion = { estado: 'nada', intento: 0, r: null };
@@ -2529,6 +2578,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       // El GPS se afinó (al abrir, al volver o con «mi ubicación»): si el pin de recogida no se
       // movió a mano y quedó a más de 40 m de la lectura buena, se lleva a donde está la persona.
       p.on('posicion_afinada', (pos) => {
+        revisarOtraCooperativa();
         if (p.estado.fase !== 'inicio' || ui.modo !== 'inicio' || ui.pinAMano || !pos?.real) return;
         if (ui.origen && N.distanciaKm(ui.origen, pos) <= 0.04) return;
         Object.assign(ui, { origen: null, centrado: false });
@@ -2545,6 +2595,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           bienvenidaLejos = { revision: d?.revision === true };
           revisarQueHacer(d?.revision === true);
           setTimeout(revisarLejos, 600);
+          setTimeout(revisarOtraCooperativa, 1200);
           // Ronda A: con la llave de rutas, el «llega en» del pin que ya está quieto.
           if (ui.vista === 'inicio' && ui.origen) pedirLlegada(ui.origen);
         });
