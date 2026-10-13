@@ -66,6 +66,19 @@ export async function crearMapa(elemento, opciones = {}) {
   if (controles) L.control.zoom({ position: 'topright' }).addTo(mapa);
   mapa.attributionControl.setPrefix('<a href="https://leafletjs.com">Leaflet</a>');
 
+  // Los taxis se mueven suave entre posiciones (transition de 1 s en .ct-taxi-marcador); durante el zoom esa transición los
+  // hacía «viajar» a su nuevo lugar en pantalla y caer después (13-oct, Oscar). Mientras dura el zoom (también el de
+  // pellizco) se apaga y al terminar vuelve.
+  let finZoom = null;
+  mapa.on('zoomstart', () => {
+    clearTimeout(finZoom);
+    elemento.classList.add('ct-haciendo-zoom');
+  });
+  mapa.on('zoomend', () => {
+    clearTimeout(finZoom);
+    finZoom = setTimeout(() => elemento.classList.remove('ct-haciendo-zoom'), 80);
+  });
+
   let teselas = null;
   let logo = null;
   let errorOculta = false; // una tesela falló con la app en segundo plano (el iPhone corta la red al suspenderla)
@@ -329,6 +342,7 @@ const ESTILOS = `
 .ct-taxi{width:100%;height:100%;display:grid;place-items:center;transform:rotate(var(--rumbo));transition:transform .6s linear;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
 .ct-taxi-destacado{filter:drop-shadow(0 0 10px rgba(255,193,7,.9)) drop-shadow(0 3px 4px rgba(0,0,0,.4))}
 .ct-taxi-marcador{transition:transform 1s linear}
+.ct-haciendo-zoom .ct-taxi-marcador,.leaflet-zoom-anim .ct-taxi-marcador{transition:none!important}
 .ct-taxi-etiqueta{position:absolute;left:50%;top:-18px;transform:translateX(-50%);background:#111;color:#fff;font:700 11px/1 system-ui,sans-serif;padding:3px 6px;border-radius:8px;white-space:nowrap}
 .ct-yo{background:none;border:0}
 .ct-yo-punto{display:block;width:18px;height:18px;margin:2px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 0 0 6px rgba(37,99,235,.25),0 2px 6px rgba(0,0,0,.3)}
