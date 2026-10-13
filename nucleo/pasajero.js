@@ -57,6 +57,19 @@
 // viaje (D-RB6): sigue como «¿Llegaste bien?». Vive aparte del viaje en el teléfono (30 min como mucho); tras una
 // recarga queda provisional hasta la próxima bienvenida (si la central no la vuelve a mandar en 4 s, ya no vale). El
 // modo revisor y la demo nunca la ven. Al conductor no le llega nada: la respuesta va por REST, nunca por el bus.
+// Promoción «Viaje gratis» (servidor 0.16.0, nucleo/promo.js; con uno anterior no llega nada de esto y todo es como hoy):
+//  - estado.promo (bienvenida.promo y el mensaje «promo», validados con promo.leerPromo; null sin el campo, en el modo
+//    revisor y en la demo) y el evento 'promo' ({ promo, evento }); los avisos de sumo / no_sumo / vencido / anulado /
+//    devuelto los da el núcleo (el de «premio» lo muestra el diseño en grande).
+//  - p.solicitar({ …, premioId }): el pedido lleva premioId (solo uno usable aquí). Queda en el viaje (viaje.premioId):
+//    el re-pedido tras una reasignación lo vuelve a mandar. promo_viaje y viaje_actual.promo → viaje.promo ({ cubre,
+//    pasajeroPaga, tope }); el estado final .promo → viaje.promoFinal ({ cubierto, pasajeroPaga }) y el cobro con lo que
+//    paga el pasajero (0 si es gratis).
+//  - error premio_no_disponible { viajeId, motivo }: el pedido no salió (nada quedó guardado); el viaje se cierra y sale
+//    'premio_no_disponible' ({ viajeId, motivo, pedido: { origen, destino, nota } }) para que el diseño pregunte.
+//  - sin_conductores con motivo 'promo_app': p.pedirSinPremio() cancela ese pedido y pide el mismo viaje sin el premio.
+//  - p.continuarSinPagar(): con el viaje gratis (pasajeroPaga 0) pasa a calificar sin pagar nada (el conductor confirma
+//    con metodo 'promocion'). p.promoMia(): GET /api/promociones/mia (la hoja «Promociones»).
 import { crearBus } from './bus.js';
 import { TIEMPOS, CENTRO, EMPRESA, ID_EMPRESA, vigilarConfig } from './config.js';
 import { LUGARES } from './datos.js';
@@ -76,6 +89,7 @@ import { enviarSos, posicionParaSos } from './sos.js';
 import { crearBandeja } from './bandeja.js';
 import { leerRutas, limpiarCotizacion, limpiarLlegada, celda, MARGEN_COTIZACION_MS, LLEGADA_MISMA_CELDA_MS, LLEGADA_REFRESCO_MS } from './reparto.js';
 import { limpiarPregunta, limpiarCierre, seguridadDeBienvenida, enviarRespuesta, textosSeguridad, VIGENCIA_PREGUNTA_MS, MOTIVOS, SUBTIPOS } from './seguridad.js';
+import * as P from './promo.js';
 
 export const FASES = ['inicio', 'buscando', 'asignado', 'llego', 'en_viaje', 'pagar', 'calificar'];
 
@@ -177,6 +191,8 @@ class ControladorPasajero extends Emisor {
       this.respondidas = new Map(); // preguntaId → respuesta que la central ya tiene
       this.relojPregunta = null;
       this.relojProvisional = null;
+      // Promoción «Viaje gratis» (servidor 0.16.0).
+      this.estado.promo = null;
     }
   }
 
@@ -286,7 +302,11 @@ class ControladorPasajero extends Emisor {
   // Ronda A: la cotización del servidor (limpia) o null si no se pudo (sin red, tiempo, 503, respuesta rara).
   async #cotizarEnServidor(origen, destino) {
     try {
-      return limpiarCotizacion(await servidor.cotizar(ID_EMPRESA, origen, destino));
+      const crudo = await servidor.cotizar(ID_EMPRESA, origen, destino);
+      const q = limpiarCotizacion(crudo);
+      // Servidor 0.16.0: lo que cubriría el premio del pasajero en este viaje (el valor del viaje no cambia).
+      if (q) q.promo = P.leerCotizacionPromo(crudo?.promo);
+      return q;
     } catch {
       return null;
     }
@@ -297,7 +317,7 @@ class ControladorPasajero extends Emisor {
   #conCotizacion(origen, destino, q, rutaDibujo) {
     let tarifa = calcularTarifa({ origen, destino, km: q.km ?? rutaDibujo?.km, fecha: new Date(), programado: false, viajesPrevios: 0 });
     if (tarifa.total !== q.valor) tarifa = { ...tarifa, total: q.valor, detalle: [{ concepto: 'Valor calculado por TaxiCun', valor: q.valor }] };
-    tarifa = { ...tarifa, cotizacion: q.cotizacion, fuenteRuta: q.fuente, kmRuta: q.km, venceCotizacion: q.venceLocal };
+    tarifa = { ...tarifa, cotizacion: q.cotizacion, fuenteRuta: q.fuente, kmRuta: q.km, venceCotizacion: q.venceLocal, promo: q.promo || null };
     const ruta = destino
       ? { km: q.km ?? rutaDibujo?.km ?? null, min: q.min ?? rutaDibujo?.min ?? null, coords: rutaDibujo?.coords || null, aproximada: q.fuente === 'aproximada' || (q.km == null && Boolean(rutaDibujo?.aproximada)) }
       : null;
@@ -470,7 +490,7 @@ class ControladorPasajero extends Emisor {
   /* ---------------- acciones ---------------- */
 
   // Pide el taxi. Si programadoPara es más de 30 min en el futuro, lo guarda como programado.
-  async solicitar({ origen, destino = null, metodoPago = 'qr', programadoPara = null, nota = '' }) {
+  async solicitar({ origen, destino = null, metodoPago = 'qr', programadoPara = null, nota = '', premioId = null }) {
     if (!origen) throw new Error('Falta el punto de recogida');
     if (!this.registrado) throw new Error(this.real ? 'Primero ingresa con tu correo y completa tus datos' : 'Primero hay que registrarse');
     if (this.real) {
@@ -518,6 +538,8 @@ class ControladorPasajero extends Emisor {
     if (this.real) {
       viaje.idsPrevios = [];
       viaje.cuenta = this.#cuenta(); // de quién es (otra cuenta en este celular no lo retoma)
+      // Servidor 0.16.0: el viaje gratis (solo con un premio de formato válido, nunca en el modo revisor).
+      if (premioId && P.PATRON_PREMIO.test(premioId) && !this.revision && this.estado.promo) viaje.premioId = premioId;
     }
     this.avisosDados.clear();
     this.#cambiar({ fase: 'buscando', viaje, conductor: null, posConductor: null, rutaConductor: null, etaMin: null, cobro: null, pago: null, pagoConfirmado: false, calificacionRecibida: null });
@@ -553,6 +575,8 @@ class ControladorPasajero extends Emisor {
         // Ronda A (servidor 0.14.0; los anteriores lo ignoran): la ficha del valor y «entiendo cotizacion_vencida».
         ...(ficha ? { cotizacion: ficha } : {}),
         ...(ficha || this.estado.rutas?.cotizar === true ? { conCotizacion: true } : {}),
+        // Servidor 0.16.0 (los anteriores lo ignoran): el viaje gratis.
+        ...(viaje.premioId ? { premioId: viaje.premioId } : {}),
       });
       // Sin conexión la solicitud queda en la cola del bus y sale con la próxima bienvenida.
       viaje.solicitadoEn = Date.now();
@@ -651,6 +675,40 @@ class ControladorPasajero extends Emisor {
     const pago = { metodo: 'transferencia', billetera: entidad, entidad: metodo?.entidad || null, valor: cobro?.valor || viaje.tarifa.total, ref: null, hora: Date.now() };
     this.#confirmarPago(pago);
     return { ok: true, pago };
+  }
+
+  // Servidor 0.16.0: el viaje gratis sin nada que pagar (pasajeroPaga 0) pasa a calificar. No se manda `pago`: el
+  // conductor lo confirma con metodo 'promocion'.
+  continuarSinPagar() {
+    const { viaje, fase } = this.estado;
+    if (!this.real || !viaje || fase !== 'pagar' || viaje.promoFinal?.pasajeroPaga !== 0) return false;
+    this.#cambiar({ fase: 'calificar', pago: { metodo: 'promocion', valor: 0, ref: null, hora: Date.now(), cubierto: viaje.promoFinal.cubierto } });
+    return true;
+  }
+
+  // Servidor 0.16.0: el viaje gratis no le llega a ningún taxi con la app al día (sin_conductores promo_app). Se cancela
+  // ese pedido (el premio vuelve) y se pide el mismo viaje sin el premio, con otro id.
+  pedirSinPremio() {
+    const { viaje, fase } = this.estado;
+    if (!this.real || fase !== 'buscando' || !viaje?.premioId) return false;
+    this.bus.publicar('cancelacion', { viajeId: viaje.id, por: 'pasajero', motivo: 'Pedir sin el viaje gratis' });
+    perfil.anotarViajeCerrado('pasajero', { id: viaje.id, ids: viaje.idsPrevios || [], final: 'cancelado', motivo: 'Pedir sin el viaje gratis' });
+    delete viaje.premioId;
+    delete viaje.promo;
+    viaje.idsPrevios = [];
+    viaje.id = uid('v');
+    viaje.creado = Date.now();
+    this.avisosDados.clear();
+    this.estado.sinConductores = null;
+    this.#publicarSolicitud();
+    this.#cambiar({ viaje });
+    return true;
+  }
+
+  // La hoja «Promociones» (servidor 0.16.0) → { promo, viajes, premios } validados. Lanza ErrorServidor si falla.
+  async promoMia() {
+    const r = P.leerMia(await servidor.promoMia());
+    return r;
   }
 
   // Si el `cobro` no llegó (se recargó la app en «pagar»), se le vuelve a pedir al servidor.
@@ -782,10 +840,17 @@ class ControladorPasajero extends Emisor {
           this.#cambiar({ fase: 'en_viaje', inicioViaje: Date.now(), etaMin: viaje.ruta?.min ?? null });
           this.#avisar({ titulo: 'Viaje iniciado', cuerpo: viaje.destino ? `Rumbo a ${viaje.destino.titulo || 'tu destino'}. ¡Buen viaje!` : '¡Buen viaje!', tipo: 'info' });
         } else if (d.fase === 'finalizado' && ['en_viaje', 'llego', 'asignado'].includes(fase)) {
-          const valor = d.valor || viaje.tarifa.total;
+          // Servidor 0.16.0: en el viaje gratis, lo que cubrió TaxiCun y lo que paga el pasajero.
+          const final = this.real ? P.leerPromoFinalPasajero(d.promo) : null;
+          if (final) viaje.promoFinal = final;
+          const valor = final ? final.pasajeroPaga : d.valor || viaje.tarifa.total;
           // El `cobro` del servidor (con el QR y la llave del conductor) puede llegar antes que este fin: se conserva.
-          this.#cambiar({ fase: 'pagar', cobro: { ...(this.real ? this.estado.cobro || {} : {}), valor }, etaMin: 0, finViaje: Date.now(), kmFinal: d.km || viaje.ruta?.km || null });
-          this.#avisar({ titulo: 'Llegaste a tu destino', cuerpo: `Total: ${pesos(valor)}. ${this.real ? 'Págale al conductor.' : 'Paga con QR o en efectivo.'}`, tipo: 'exito' });
+          this.#cambiar({ fase: 'pagar', viaje, cobro: { ...(this.real ? this.estado.cobro || {} : {}), valor }, etaMin: 0, finViaje: Date.now(), kmFinal: d.km || viaje.ruta?.km || null });
+          if (final) {
+            this.#avisar(final.pasajeroPaga > 0
+              ? { titulo: 'Llegaste a tu destino', cuerpo: `TaxiCun pagó ${pesos(final.cubierto)}. Paga ${pesos(final.pasajeroPaga)} al conductor.`, tipo: 'exito' }
+              : { titulo: 'Llegaste a tu destino', cuerpo: 'Tu viaje fue gratis: no tienes que pagar nada.', tipo: 'exito' });
+          } else this.#avisar({ titulo: 'Llegaste a tu destino', cuerpo: `Total: ${pesos(valor)}. ${this.real ? 'Págale al conductor.' : 'Paga con QR o en efectivo.'}`, tipo: 'exito' });
         }
         break;
       }
@@ -796,8 +861,10 @@ class ControladorPasajero extends Emisor {
           if (!viaje || (d.viajeId !== viaje.id && !(viaje.idsPrevios || []).includes(d.viajeId))) break;
           if (!['en_viaje', 'llego', 'asignado', 'pagar'].includes(fase)) break;
           const metodos = (Array.isArray(d.metodos) ? d.metodos : []).slice(0, 4).map(limpiarMetodo).filter(Boolean);
-          const valor = Number.isFinite(d.valor) && d.valor > 0 ? d.valor : this.estado.cobro?.valor;
-          this.#cambiar({ cobro: { ...(this.estado.cobro || {}), ...(valor ? { valor } : {}), metodos } });
+          // Servidor 0.16.0: en el viaje gratis el valor es lo que paga el pasajero (puede ser 0) y promo.cubierto.
+          const cubierto = d.promo && typeof d.promo === 'object' && Number.isInteger(d.promo.cubierto) && d.promo.cubierto >= 0 ? d.promo.cubierto : null;
+          const valor = (Number.isFinite(d.valor) && d.valor > 0) || (cubierto !== null && d.valor === 0) ? d.valor : this.estado.cobro?.valor;
+          this.#cambiar({ cobro: { ...(this.estado.cobro || {}), ...(valor != null ? { valor } : {}), metodos, ...(cubierto !== null ? { cubierto } : {}) } });
           break;
         }
         this.#cambiar({ cobro: { valor: d.valor, url: d.url || null } });
@@ -807,6 +874,13 @@ class ControladorPasajero extends Emisor {
         // Si el pasajero pagó escaneando con la cámara del celular (fuera de la
         // app), el conductor lo confirma y aquí se pasa directo a calificar.
         if (fase === 'pagar') {
+          // Servidor 0.16.0: el conductor cerró el viaje gratis (el pasajero no pagaba nada).
+          if (this.real && d.metodo === 'promocion' && viaje.promoFinal) {
+            const pago = { metodo: 'promocion', valor: 0, ref: null, hora: Date.now(), externo: true, cubierto: viaje.promoFinal.cubierto };
+            this.#cambiar({ fase: 'calificar', pago, pagoConfirmado: true });
+            this.#avisar({ titulo: 'Viaje gratis', cuerpo: `TaxiCun pagó ${pesos(viaje.promoFinal.cubierto)} de tu viaje.`, tipo: 'exito' });
+            break;
+          }
           const pago = { metodo: d.metodo || 'qr', billetera: d.billetera || null, valor: d.valor || this.estado.cobro?.valor || viaje.tarifa.total, ref: d.ref || null, hora: Date.now(), externo: true };
           this.#cambiar({ fase: 'calificar', pago, pagoConfirmado: true });
           this.#avisar({ titulo: 'Pago recibido', cuerpo: `${pesos(pago.valor)} · el conductor confirmó tu pago`, tipo: 'exito' });
@@ -863,6 +937,44 @@ class ControladorPasajero extends Emisor {
     // Ronda B: «¿Todo bien en tu viaje?».
     this.bus.on('seguridad_pregunta', (d) => this.#alPregunta(d));
     this.bus.on('seguridad_cierre', (d) => this.#alCierreSeguridad(d));
+    // Servidor 0.16.0: la promoción «Viaje gratis».
+    this.bus.on('promo', (d) => this.#alPromo(d));
+    this.bus.on('promo_viaje', (d) => this.#alPromoViaje(d));
+  }
+
+  /* ---------------- Promoción «Viaje gratis» (servidor 0.16.0) ---------------- */
+
+  // bienvenida.promo (sin el campo, en el modo revisor o con basura: null y nada de la promoción en pantalla).
+  #alBienvenidaPromo(d) {
+    const promo = this.revision ? null : P.leerPromo(d?.promo);
+    if (JSON.stringify(promo) !== JSON.stringify(this.estado.promo)) {
+      this.#cambiar({ promo }, { silencioso: true });
+      this.emit('promo', { promo, evento: null });
+    }
+  }
+
+  #alPromo(d) {
+    if (!this.real || this.revision) return;
+    const promo = P.leerPromo(d);
+    if (!promo) return;
+    const evento = P.leerEvento(d?.evento);
+    this.#cambiar({ promo }, { silencioso: true });
+    this.emit('promo', { promo, evento });
+    if (!evento) return;
+    // El premio que vuelve mientras la app lo vuelve a pedir sola (reasignación): no se dice nada.
+    const { viaje, fase } = this.estado;
+    if (evento.tipo === 'premio_devuelto' && viaje?.premioId && FASES_ACTIVAS.includes(fase)) return;
+    const aviso = P.avisoEvento(evento, promo, { pesos });
+    if (aviso) this.#avisar(aviso);
+  }
+
+  #alPromoViaje(d) {
+    const { viaje } = this.estado;
+    if (!this.real || !viaje || !d?.viajeId || (d.viajeId !== viaje.id && !(viaje.idsPrevios || []).includes(d.viajeId))) return;
+    const promo = P.leerPromoViaje(d);
+    if (!promo) return;
+    viaje.promo = promo;
+    this.#cambiar({ viaje });
   }
 
   /* ---------------- Ronda B: «¿Todo bien en tu viaje?» ---------------- */
@@ -1160,6 +1272,8 @@ class ControladorPasajero extends Emisor {
     this.revision = Boolean(d?.revision);
     // Ronda B: ¿la cooperativa revisa la seguridad de los viajes? (Se olvida con cada bienvenida.)
     this.#alBienvenidaSeguridad(d);
+    // Servidor 0.16.0: la promoción «Viaje gratis» (sin el campo, nada).
+    this.#alBienvenidaPromo(d);
     const antes = this.estado.miPosicion;
     const ahora = this.#paraRevision(antes);
     if (ahora !== antes) {
@@ -1274,6 +1388,9 @@ class ControladorPasajero extends Emisor {
     if (!viaje.origen && d.origen) viaje.origen = d.origen;
     if (!viaje.destino && d.destino) viaje.destino = d.destino;
     if (!viaje.codigo) viaje.codigo = recuperarCodigo(viaje.id, d.codigoHash);
+    // Servidor 0.16.0: el viaje gratis (lo que cubre TaxiCun y lo que paga el pasajero).
+    const promoViaje = P.leerPromoViaje(d.promo);
+    if (promoViaje) viaje.promo = promoViaje;
     if (['pagar', 'calificar'].includes(fase)) {
       this.#cambiar({ viaje });
       if (fase === 'pagar' && !this.estado.cobro?.metodos) this.pedirCobro();
@@ -1325,6 +1442,7 @@ class ControladorPasajero extends Emisor {
       idsPrevios: [],
       rearmado: true,
       cuenta: this.#cuenta(),
+      ...(P.leerPromoViaje(d.promo) ? { promo: P.leerPromoViaje(d.promo) } : {}),
     };
     const conductor = d.conductor ? { ...d.conductor, id: d.conductor.id || d.conductorId } : null;
     this.avisosDados.clear();
@@ -1377,6 +1495,14 @@ class ControladorPasajero extends Emisor {
       this.#cerrarViaje('error');
     } else if (codigo === 'cotizacion_vencida') {
       this.#alCotizacionVencida(d);
+    } else if (codigo === 'premio_no_disponible') {
+      // Servidor 0.16.0: el viaje gratis no se pudo usar y el pedido NO salió (no quedó nada guardado). Nunca se pide el
+      // viaje completo sin decirle: el diseño pregunta si pide sin el premio.
+      if (d?.viajeId && d.viajeId !== viaje.id && !(viaje.idsPrevios || []).includes(d.viajeId)) return;
+      const pedido = { origen: viaje.origen, destino: viaje.destino, nota: viaje.nota || '' };
+      const motivo = P.leerMotivoNoDisponible(d?.motivo);
+      this.#cerrarViaje('premio');
+      this.emit('premio_no_disponible', { viajeId: d?.viajeId || null, motivo, pedido });
     } else if (codigo === 'solicitud_invalida' || codigo === 'origen_invalido' || codigo === 'tarifa_invalida' || codigo === 'fuera_de_zona') {
       // tarifa_invalida (servidor 0.2.2): la tarifa no cabe en las de la cooperativa y la
       // central no guardó nada; no se vuelve a mandar igual. fuera_de_zona (0.6.0): la recogida
@@ -1468,7 +1594,7 @@ class ControladorPasajero extends Emisor {
   }
 
   #guardarReal(persistible) {
-    const { conexion, sala, estadoBus, ultimoAviso, miPosicion, rutas, llegada, precioCambio, seguridadViaje, pregunta, ...resto } = persistible;
+    const { conexion, sala, estadoBus, ultimoAviso, miPosicion, rutas, llegada, precioCambio, seguridadViaje, pregunta, promo, ...resto } = persistible;
     try {
       if (resto.fase === 'inicio' || !resto.viaje) localStorage.removeItem(CLAVE_VIAJE_REAL);
       else localStorage.setItem(CLAVE_VIAJE_REAL, JSON.stringify({ guardado: Date.now(), fase: resto.fase, estado: resto }));
@@ -1511,7 +1637,9 @@ class ControladorPasajero extends Emisor {
       fecha: viaje.creado,
       origen: viaje.origen,
       destino: viaje.destino,
-      valor: pago?.valor || cobro?.valor || viaje.tarifa.total,
+      // Servidor 0.16.0: en el viaje gratis, lo que pagó el pasajero (puede ser 0) y lo que cubrió TaxiCun.
+      valor: viaje.promoFinal ? pago?.valor ?? viaje.promoFinal.pasajeroPaga : pago?.valor || cobro?.valor || viaje.tarifa.total,
+      ...(viaje.promoFinal ? { gratis: true, cubierto: viaje.promoFinal.cubierto } : {}),
       metodoPago: pago?.metodo || viaje.metodoPago,
       conductor: conductor ? { nombre: conductor.nombre, movil: conductor.movil, placa: conductor.placa } : null,
       km: this.estado.kmFinal || viaje.ruta?.km || null,

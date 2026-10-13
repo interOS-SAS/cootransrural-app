@@ -40,3 +40,6 @@ export * as reparto from './reparto.js';
 // Ronda B de «algoritmos» (servidor 0.15.0): «¿Todo bien en tu viaje?» (validación de lo que manda la central, textos y
 // la respuesta) como N.seguridad.*.
 export * as seguridad from './seguridad.js';
+// Promoción «Viaje gratis» (servidor 0.16.0): lo que manda el servidor validado, las cuentas de la vista previa y los
+// textos del pasajero y del conductor como N.promo.*.
+export * as promo from './promo.js';

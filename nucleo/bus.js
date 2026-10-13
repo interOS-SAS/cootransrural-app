@@ -9,6 +9,7 @@ import { Emisor, uid } from './util.js';
 import { MODO_REAL, URL_BUS, appOculta } from './plataforma.js';
 import * as servidor from './servidor.js';
 import { CAPACIDADES } from './seguridad.js';
+import { CAPACIDAD as CAPACIDAD_PROMO } from './promo.js';
 
 let cargaMqtt = null;
 function cargarMqtt() {
@@ -160,7 +161,8 @@ export class Bus extends Emisor {
 
 /* ---------------- Modo real: el servidor de TaxiCun ----------------
  * Un WebSocket del mismo origen a /api/bus. Primero { tipo:'hola', datos:{ token, rol,
- * empresa, capacidades } } (capacidades solo el pasajero, desde la ronda B: ['seguridad']) y nada más hasta la «bienvenida»; después, los mismos sobres que Bus
+ * empresa, capacidades } } (el pasajero, desde la ronda B: ['seguridad'] y, desde la 0.16.0, también 'promo'; el
+ * conductor, desde la 0.16.0: ['promo'], que sabe mostrar el viaje gratis) y nada más hasta la «bienvenida»; después, los mismos sobres que Bus
  * ({ uid, tipo, de, ts, datos }). El servidor decide a quién le llega cada mensaje:
  * nunca le reenvía a uno lo propio, reutiliza el uid de la solicitud cuando la vuelve a
  * ofrecer y pone su hora en ts. Por eso aquí NO se filtra por uid repetido, ni por
@@ -368,8 +370,12 @@ export class BusServidor extends Emisor {
       const datos = { token, rol: this.rol };
       if (this.rol === 'pasajero') {
         datos.empresa = this.empresa;
-        // Ronda B (servidor 0.15.0): esta app sabe responder «¿Todo bien en tu viaje?». Un servidor anterior lo ignora.
-        datos.capacidades = [...CAPACIDADES];
+        // Ronda B (servidor 0.15.0): esta app sabe responder «¿Todo bien en tu viaje?». Servidor 0.16.0: y sabe usar el
+        // viaje gratis. Un servidor anterior lo ignora.
+        datos.capacidades = [...CAPACIDADES, CAPACIDAD_PROMO];
+      } else {
+        // Servidor 0.16.0: esta app muestra «Viaje con promoción» (solo a ella le llegan los viajes gratis).
+        datos.capacidades = [CAPACIDAD_PROMO];
       }
       ws.send(JSON.stringify({ tipo: 'hola', datos }));
     };

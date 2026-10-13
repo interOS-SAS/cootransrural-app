@@ -191,13 +191,14 @@ export function ilustracionVacia(texto = '') {
   </div>`;
 }
 
-// Sellos de la tarjeta de fidelidad (10 casillas).
-export function sellosFidelidad({ completados = 0, meta = 10, siguienteConDescuento = false } = {}) {
+// Sellos de la tarjeta de fidelidad (10 casillas). premio y etiqueta: el sello final y lo que lee el lector de pantalla
+// (la promoción «Viaje gratis» del modo real dice «Gratis»; las demos, «50 %»).
+export function sellosFidelidad({ completados = 0, meta = 10, siguienteConDescuento = false, premio = '50&nbsp;%', etiqueta = null } = {}) {
   let html = '';
   for (let i = 1; i <= meta; i++) {
     const lleno = siguienteConDescuento || i <= completados;
     html += `<span class="a-sello ${lleno ? 'a-lleno' : ''}" aria-hidden="true">${lleno ? '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M5 11.5 6.8 6.8A2 2 0 0 1 8.7 5.5h6.6a2 2 0 0 1 1.9 1.3L19 11.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><rect x="3.5" y="11.5" width="17" height="6" rx="2" fill="currentColor"/></svg>' : i}</span>`;
   }
-  html += `<span class="a-sello a-sello-premio ${siguienteConDescuento ? 'a-lleno' : ''}" aria-hidden="true">50&nbsp;%</span>`;
-  return `<div class="a-sellos" role="img" aria-label="${siguienteConDescuento ? 'Tu próximo viaje tiene 50 % de descuento' : `${completados} de ${meta} viajes en tu tarjeta`}">${html}</div>`;
+  html += `<span class="a-sello a-sello-premio ${siguienteConDescuento ? 'a-lleno' : ''}" aria-hidden="true">${premio}</span>`;
+  return `<div class="a-sellos" role="img" aria-label="${etiqueta ? N.escaparHTML(etiqueta) : siguienteConDescuento ? 'Tu próximo viaje tiene 50 % de descuento' : `${completados} de ${meta} viajes en tu tarjeta`}">${html}</div>`;
 }

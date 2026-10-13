@@ -117,6 +117,9 @@ export function textoSinConductores(motivo, cooperativa = 'la cooperativa') {
       return { titulo: 'No hay taxis en turno cerca', detalle: `Ningún taxi de ${cooperativa} está en turno cerca de tu punto. Seguimos buscando: apenas uno se conecte, le llega tu solicitud.` };
     case 'ocupados':
       return { titulo: 'Los taxis cercanos están ocupados', detalle: `Los taxis de ${cooperativa} cerca de tu punto están en otros servicios. Seguimos buscando: apenas uno quede libre, le llega tu solicitud.` };
+    // Servidor 0.16.0: el viaje gratis solo se ofrece a taxis con la app al día (ninguno cerca la tiene).
+    case 'promo_app':
+      return { titulo: 'Los taxis cerca todavía no tienen la app al día', detalle: 'Los taxis cerca todavía no tienen la app al día para tu viaje gratis. Puedes seguir esperando o pedir sin el viaje gratis: lo guardas para otra vez.' };
     case 'rechazado':
       return { titulo: 'Ningún taxi tomó tu solicitud', detalle: 'Los taxis cercanos no la aceptaron. Seguimos buscando: si otro queda libre, le llega tu solicitud.' };
     default:

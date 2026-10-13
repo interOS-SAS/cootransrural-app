@@ -496,7 +496,8 @@ Contrato: `docs/CONTRATO.md` §18 del servidor (y `DISENO-RONDA-B.md` §7 y §11
 no llega nada de esto y las apps siguen exactamente como hoy (sin llamadas a `/api/viajes/seguridad`).
 
 - **Pasajero**:
-  - El `hola` lleva `capacidades: ['seguridad']` (la central solo le pregunta a una app que sabe responder).
+  - El `hola` lleva `capacidades: ['seguridad']` (la central solo le pregunta a una app que sabe responder; desde la
+    0.16.0, `['seguridad', 'promo']`).
   - `bienvenida.seguridadViaje: true` (la cooperativa revisa la seguridad de los viajes; nunca al revisor) →
     `estado.seguridadViaje`; la línea de abajo del viaje en curso dice «Cuidamos tu viaje: si notamos algo raro, te
     preguntamos si todo está bien. Compártelo con alguien de confianza.». Se olvida con cada bienvenida.
@@ -530,7 +531,8 @@ no llega nada de esto y las apps siguen exactamente como hoy (sin llamadas a `/a
   de verdad (`crudoLectura`: `precision`, `ts` de la lectura, `velocidad` en m/s, `rumbo`, `altitud`; solo lo que venga
   bien). `plataforma.aPunto` suma `ts` y `altitud`. La posición simulada de la demo, la vieja (`posVieja`) y los puntos
   puestos a mano no llevan nada. **Al conductor no le llega nada nuevo**: no escucha `seguridad_*` (si le llegaran por
-  error no muestran nada), su `hola` no lleva `capacidades` y nunca llama a `/api/viajes/seguridad`.
+  error no muestran nada), su `hola` nunca lleva `'seguridad'` (desde la 0.16.0 lleva solo `capacidades: ['promo']`) y
+  nunca llama a `/api/viajes/seguridad`.
 - La marca de «ubicación simulada» del sistema con la app abierta no la da el navegador: queda para la app nativa (el
   plugin de segundo plano ya la manda en su `POST /api/conductor/ubicacion`).
 - Las 76 demos y el modo revisor no cambian (el revisor nunca ve la tarjeta, aunque le llegara una pregunta).
@@ -538,6 +540,61 @@ no llega nada de esto y las apps siguen exactamente como hoy (sin llamadas a `/a
 Pruebas: `node pruebas/algoritmos-b-nucleo.mjs` (sin navegador) y `node pruebas/algoritmos-b-app.mjs http://localhost:5821/`
 (servidor simulado con `page.route`: servidor 0.14.0, cada motivo, «Sí, todo bien», «Necesito ayuda», sin responder,
 error, «¿Llegaste bien?», recarga, XSS, revisor, push con el bus caído, conductor con los campos crudos, 390 y 1366 px).
+
+## Promoción «Viaje gratis» (modo real, servidor 0.16.0, `nucleo/promo.js` y `disenos/a/promo.js`)
+
+Contrato: `DISENO-PROMOCIONES.md` §7 (y `docs/CONTRATO.md` §19 del servidor). Todo es aditivo: con el servidor 0.15.0
+no llega nada de esto y las apps siguen exactamente como hoy (sin llamadas a `/api/promociones/*` ni a
+`/api/conductor/promociones`, sin `premioId`). La tarifa del decreto nunca cambia (S31): la promoción solo cambia quién
+paga. Por cada `cada` viajes que suman, el siguiente es gratis hasta el tope; TaxiCun le paga al conductor lo cubierto
+más un bono (por liquidación semanal). Todo lo que pinta la app lo arma con textos fijos y números validados.
+
+- **`hola`**: el pasajero declara `capacidades: ['seguridad', 'promo']` y el conductor `['promo']` (el viaje gratis solo
+  se le ofrece a una app que lo sabe mostrar).
+- **Pasajero** (`nucleo/pasajero.js`):
+  - `bienvenida.promo` y el mensaje `promo` (con `evento`), validados con `promo.leerPromo` → `estado.promo = { vigente,
+    meta, llevas, llena, premio: { id, estado, vence (ms), tope, viajeId, aqui } | null, condiciones: { cada, tope,
+    venceDias, maxMismoConductor, minimo }, canjePausado }` (null sin el campo, en el modo revisor y en la demo) y el
+    evento `promo` ({ promo, evento }). Los campos de más (textos, enlaces) se descartan. Avisos del núcleo: `sumo`
+    («Sumaste 1 viaje»), `no_sumo` (por motivo; los de GPS y avance dicen «no pudimos verificar el recorrido»),
+    `premio_vencido`, `premio_anulado` y `premio_devuelto` («Tu viaje gratis sigue guardado», salvo mientras la app lo
+    vuelve a pedir sola). El de `premio` lo muestra el diseño en grande.
+  - `p.solicitar({ …, premioId })`: la solicitud lleva `premioId` (solo con el formato `pr_` + 22, nunca en el modo
+    revisor). Queda en `viaje.premioId`: el re-pedido tras una reasignación lo vuelve a mandar. `promo_viaje` y
+    `viaje_actual.promo` → `viaje.promo = { cubre, pasajeroPaga, tope }`. El `estado` final con `promo` →
+    `viaje.promoFinal = { cubierto, pasajeroPaga }` y el cobro con lo que paga el pasajero (0 si es gratis).
+  - `error premio_no_disponible { viajeId, motivo }`: el pedido no salió (no quedó nada guardado); el viaje se cierra y
+    sale `premio_no_disponible` ({ viajeId, motivo, pedido }). El diseño pregunta «Pedir sin el viaje gratis» / «Volver».
+  - `sin_conductores` con `motivo: 'promo_app'`: `p.pedirSinPremio()` cancela ese pedido (el premio vuelve) y pide el
+    mismo viaje sin el premio con otro id.
+  - `p.continuarSinPagar()`: con `pasajeroPaga` 0 pasa a calificar sin mandar `pago` (el conductor cierra con
+    `pago_confirmado { metodo: 'promocion' }`, que también lleva al pasajero a calificar).
+  - `POST viajes/cotizacion` (ronda A) con `promo { premioId, cubre, pasajeroPaga, tope }` → `tarifa.promo` (vista previa
+    exacta); sin cotización, `promo.vistaPrevia` con la tarifa y el tope, «aprox.».
+  - `p.promoMia()`: `GET /api/promociones/mia` (la hoja «Promociones»).
+- **Conductor** (`nucleo/conductor.js`): la `solicitud`, la `asignacion` y `viaje_actual` con `promo { cubre, bono, total,
+  pasajeroPaga }` (validado; con basura, el viaje de siempre) → `viaje.promo`; `promo_final { viajeId, valor, cubierto,
+  bono, total, pasajeroPaga, corte, falta }` → `viaje.promoFinal` y el evento `promo_final`. `c.pasajeroPagaPromo()`
+  (antes de `promo_final`: `F − min(F, cubre)`), `c.confirmarPromocion()` («Terminar» sin nada que cobrar:
+  `pago_confirmado { metodo: 'promocion', valor: 0 }`), y el efectivo o la transferencia por la diferencia.
+  `c.pagosPromo()` (`GET /api/conductor/promociones`) y `c.aceptarCondicionesPromo()` (`POST …/aceptar { version: 'c1' }`).
+- **Diseño A**: inicio «Llevas 7 de 10 · Tu viaje gratis está cerca» (y premio, llena, pausa); «Usar mi viaje gratis» en
+  «Confirma tu viaje» (apagado por defecto) con «TaxiCun paga $X · Tú pagas $Y» o «Este viaje te sale gratis» y el botón
+  «Pedir taxi gratis» / «Pedir taxi · pagas $Y»; el chip «Viaje gratis»; «TaxiCun pagó $X de tu viaje» al llegar;
+  «Promociones» en el menú (la hoja con los sellos, los viajes de la tarjeta, «Así funciona» y los términos). Conductor:
+  «Viaje con promoción · TaxiCun te paga $X + bono $Y» en la oferta (y «Registra “Cómo me pagan”…» si no lo tiene; nunca
+  bloquea aceptar), la línea de «¿Cuánto cobras?», «El pasajero no te paga» con «Terminar» o «Cobra $300 al pasajero»,
+  lo que falta para recibir el pago, y «Pagos de TaxiCun» en el menú (desde el primer viaje con promoción en el celular).
+  Los push `promo_premio` / `promo_vence` abren la hoja; `promo_liquidacion` / `promo_pago`, «Pagos de TaxiCun».
+- **Términos**: `taxicun.com/promociones/viaje-gratis/` (plantilla en `plantillas/_raiz/`, script clásico
+  `web/promociones.js`, sin código en línea): texto fijo y valores de `GET /api/promociones/viaje-gratis[?version=n]`
+  como texto; si la API no responde, «—» y la franja. Alias `taxicun.com/gratis/` y enlace en el pie de la página de inicio.
+- Las 76 demos (con su tarjeta de ejemplo del 50 %) y el modo revisor no cambian.
+
+Pruebas: `node pruebas/promo-nucleo.mjs` (sin navegador: lectura, la tabla de §5.3, textos, fechas de Bogotá, el hola),
+`node pruebas/promo-app.mjs http://localhost:5961/` (servidor simulado: servidor 0.15.0, cada estado de la tarjeta, el
+interruptor, la vista previa, premio_no_disponible, promo_app, gratis con y sin diferencia, cancelaciones, la hoja, XSS,
+revisor, demo y el conductor) y `node pruebas/promo-terminos.mjs http://localhost:5961/` (la página con la API falsa).
 
 ## Red
 

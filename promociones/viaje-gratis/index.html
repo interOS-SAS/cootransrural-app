@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Viaje gratis: términos y condiciones · TaxiCun</title>
+  <meta name="description" content="Términos y condiciones de la promoción «Viaje gratis» de TaxiCun: vigencia, dónde aplica, qué viajes suman, tope, bono para los conductores, vencimiento y tus derechos según la Ley 1480 de 2011.">
+  <meta name="theme-color" content="#0A2552">
+  <link rel="canonical" href="https://taxicun.com/promociones/viaje-gratis/">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../img/taxicun/favicon-32.png">
+  <link rel="apple-touch-icon" href="../../img/taxicun/apple-touch-icon.png">
+  <link rel="stylesheet" href="../../fuentes/fuentes.css?v=d7cb94cf69">
+  <link rel="stylesheet" href="../../web/inicio.css?v=22423e9e39">
+  <!-- Términos de la promoción «Viaje gratis» (servidor 0.16.0, DISENO-PROMOCIONES.md §15). El texto es fijo (lo revisa
+       el abogado); los VALORES salen de GET /api/promociones/viaje-gratis y los pone web/promociones.js como texto en los
+       <span data-v="…">. Si la API no responde, quedan «—» con una franja: nunca valores escritos a mano en la página.
+       Sin código en línea (CSP): el script es un archivo aparte. Barra y pie de la página de inicio (web/inicio.css). -->
+  <style>
+    .doc-cabeza {
+      color: #fff; padding: clamp(40px, 6vw, 72px) 0 clamp(40px, 6vw, 64px);
+      background:
+        radial-gradient(700px 420px at 90% 0%, rgba(255, 194, 26, .22), transparent 60%),
+        radial-gradient(800px 600px at 0% 100%, rgba(42, 99, 194, .55), transparent 60%),
+        linear-gradient(160deg, var(--azul-2), var(--azul) 70%);
+    }
+    .doc-cabeza .contenedor, .documento { width: min(100% - 32px, 820px); margin-inline: auto; }
+    .doc-cabeza h1 { margin: 18px 0 12px; font-size: clamp(2.1rem, 1.5rem + 2.8vw, 3.3rem); font-weight: 800; }
+    .doc-cabeza p { margin: 0; max-width: 40em; font-size: clamp(1.02rem, .98rem + .3vw, 1.15rem); color: rgba(255, 255, 255, .88); }
+    .doc-cabeza .vigencia { margin-top: 18px; font-weight: 700; font-size: .95rem; color: var(--amarillo); }
+    .doc-cabeza .vigencia .icono { vertical-align: -.2em; margin-right: 6px; }
+    .doc-cabeza [data-v] { color: inherit; }
+    .documento { padding: clamp(28px, 5vw, 48px) 0 72px; overflow-wrap: anywhere; }
+    .documento h2 { margin: 40px 0 12px; font-size: clamp(1.25rem, 1.12rem + .6vw, 1.55rem); font-weight: 800; color: var(--azul); }
+    .documento p { margin: 0 0 1em; }
+    .documento ul { display: grid; gap: 8px; margin: 0 0 1em; padding-left: 1.3em; }
+    .documento li::marker { color: var(--azul-2); font-weight: 800; }
+    .resumen { padding: 22px 24px; border-radius: 24px; background: var(--crema); border: 1px solid #F3E2B3; }
+    .resumen h2 { margin: 0 0 14px; font-size: 1.2rem; }
+    .franja { margin: 0 0 22px; padding: 14px 18px; border-radius: 18px; background: #FFF6D6; border: 1.5px solid #FFE082; font-weight: 700; }
+    .franja[hidden], [data-si][hidden] { display: none; }
+    .franja-error { background: #FDECEC; border-color: #F5B5B5; color: #8E1B1B; }
+    [data-v] { font-weight: 800; color: var(--azul); }
+    .pie-doc { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--borde); color: var(--suave); font-size: .95rem; }
+    .pie-doc a { margin-right: 12px; }
+    .nota-suave { color: var(--suave); font-size: .95rem; }
+  </style>
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-taxi" viewBox="0 0 24 24"><path d="M10 2h4"/><path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.65 5H8.4a2 2 0 0 0-1.9 1.26L5 10 3 8"/><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M7 14h.01M17 14h.01M5 18v2M19 18v2"/></symbol>
+    <symbol id="i-regalo" viewBox="0 0 24 24"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5v8h14v-8M12 8.5v12M12 8.5S10.5 4 8 4.5 6.5 8.5 12 8.5Zm0 0s1.5-4.5 4-4 1.5 4-4 4Z"/></symbol>
+    <symbol id="i-calendario" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></symbol>
+  </svg>
+
+  <header class="barra">
+    <div class="contenedor barra-caja">
+      <a class="marca" href="../../" aria-label="TaxiCun, inicio"><img src="../../img/taxicun/logo-blanco.svg" alt="TaxiCun" width="168" height="42"></a>
+      <nav class="menu" aria-label="Secciones de los términos">
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#conductores">Conductores</a>
+        <a href="#derechos">Tus derechos</a>
+      </nav>
+      <a class="boton boton-amarillo boton-barra" href="../../taxicun/"><svg class="icono" aria-hidden="true"><use href="#i-taxi"/></svg>Pedir taxi</a>
+    </div>
+  </header>
+
+  <main id="contenido" data-terminos-promo>
+    <div class="doc-cabeza">
+      <div class="contenedor">
+        <span class="pildora"><svg class="icono" aria-hidden="true"><use href="#i-regalo"/></svg>Promoción de TaxiCun</span>
+        <h1>Viaje gratis: términos y condiciones</h1>
+        <p>Por cada <span data-v="cada">—</span> viajes completados en la app, tu siguiente viaje es gratis hasta <span data-v="tope">—</span>.</p>
+        <p class="vigencia"><svg class="icono" aria-hidden="true"><use href="#i-calendario"/></svg>Versión <span data-v="version">—</span> · vigente desde el <span data-v="vigenteDesde">—</span></p>
+      </div>
+    </div>
+
+    <article class="documento">
+      <p class="franja franja-error" data-franja="error" role="status" hidden>No pudimos cargar los valores vigentes. Consúltalos en la app o escríbenos a <a href="mailto:info@taxicun.com">info@taxicun.com</a>.</p>
+      <p class="franja" data-franja="no_empieza" role="status" hidden>La promoción todavía no ha empezado.</p>
+      <p class="franja" data-franja="terminada" role="status" hidden>La promoción terminó el <span data-v="fin">—</span>. Los viajes gratis ganados se pueden usar hasta su vencimiento.</p>
+      <p class="franja" data-franja="pausada" role="status" hidden>El canje está en pausa temporal.</p>
+      <p class="franja" data-franja="version" role="status" hidden>Estás viendo la versión <span data-v="version">—</span> de estos términos, que no es la vigente.</p>
+
+      <div class="resumen">
+        <h2>En pocas palabras</h2>
+        <ul>
+          <li>Cada <span data-v="cada">—</span> viajes completados que sumen, el siguiente es gratis hasta <span data-v="tope">—</span>. Si vale más, pagas la diferencia.</li>
+          <li>Tú eliges usarlo al confirmar el viaje. Tienes <span data-v="venceDias">—</span> días para usarlo.</li>
+          <li>La tarifa es la oficial de tu municipio: la promoción no la cambia, solo cambia quién paga.</li>
+          <li>Al conductor le paga TaxiCun el valor cubierto más un bono del <span data-v="bonoPct">—</span>&nbsp;%.</li>
+        </ul>
+      </div>
+
+      <section id="quien">
+        <h2>1. Quién la ofrece</h2>
+        <p>interOS S.A.S. (NIT 901.213.197-5), dueña de TaxiCun. Las cooperativas participantes prestan el transporte; el valor del viaje gratis lo paga TaxiCun, no la cooperativa ni el conductor.</p>
+      </section>
+
+      <section id="vigencia">
+        <h2>2. Vigencia</h2>
+        <p data-si="inicio">Desde el <span data-v="inicio">—</span><span data-si="fin" hidden> hasta el <span data-v="fin">—</span></span>.</p>
+        <p data-si="sinFin" hidden>Hasta que TaxiCun anuncie su terminación por los mismos medios en que la dio a conocer (artículo 33 de la Ley 1480 de 2011).</p>
+      </section>
+
+      <section id="donde">
+        <h2>3. Dónde aplica</h2>
+        <p>En viajes pedidos y pagados con la app TaxiCun en las cooperativas participantes:</p>
+        <ul data-lista="cooperativas"><li>—</li></ul>
+        <p>No aplica a pedidos por teléfono a la central.</p>
+      </section>
+
+      <section id="como-funciona">
+        <h2>4. Cómo funciona</h2>
+        <p>Por cada <span data-v="cada">—</span> viajes completados que sumen, tu siguiente viaje es gratis hasta <span data-v="tope">—</span> (cada cooperativa puede tener su propio tope: lo ves en la lista de arriba). Cuentan los viajes desde el <span data-v="inicio">—</span> o desde que tu cooperativa entró a la promoción, no antes.</p>
+      </section>
+
+      <section id="que-suma">
+        <h2>5. Qué viajes suman</h2>
+        <p>Viajes terminados en la app, con un valor de al menos <span data-v="minimo">—</span>; con el recorrido verificado por la ubicación del taxi (al menos <span data-v="avanceMinKm">—</span> km y <span data-v="duracionMin">—</span> minutos en viaje); máximo <span data-v="maxMismoConductor">—</span> viajes de cada tarjeta con el mismo conductor<span data-si="maxPorDia" hidden>; máximo <span data-v="maxPorDia">—</span> por día</span>.</p>
+        <p>No suman: viajes cancelados, el propio viaje gratis, los viajes en que el GPS del taxi no es confiable, ni los de cuentas sin celular registrado.</p>
+      </section>
+
+      <section id="tu-viaje-gratis">
+        <h2>6. Tu viaje gratis</h2>
+        <p>Eliges usarlo al confirmar el viaje. TaxiCun paga el valor del viaje hasta <span data-v="tope">—</span>; si vale más, pagas la diferencia al conductor. Si no marcas destino, cubre la carrera mínima. Tienes <span data-v="venceDias">—</span> días para usarlo. Si el viaje se cancela, tu viaje gratis vuelve.</p>
+        <p>Un viaje gratis a la vez por cuenta<span data-si="unoPorCelular" hidden> y por celular</span>; mientras tengas uno sin usar, tus viajes siguen sumando y el siguiente llega cuando uses el que tienes. Es personal, no se transfiere ni se cambia por dinero. La tarifa del viaje es la oficial de tu municipio: la promoción no la cambia.</p>
+      </section>
+
+      <section id="conductores">
+        <h2>7. Para los conductores</h2>
+        <p>Por cada viaje gratis, TaxiCun le paga al conductor el valor cubierto más un bono del <span data-v="bonoPct">—</span>&nbsp;% del valor del viaje<span data-si="bonoMax" hidden> (hasta <span data-v="bonoMax">—</span>)</span>, por la llave que registre en «Cómo me pagan». Se liquida cada semana (de lunes a domingo) y se paga a más tardar <span data-v="pagoDias">—</span> días hábiles después del corte. Los pagos están sujetos a las normas tributarias vigentes.</p>
+      </section>
+
+      <section id="uso-indebido">
+        <h2>8. Uso indebido</h2>
+        <p>Viajes simulados, ubicaciones falsas, cuentas creadas para acumular, acuerdos entre pasajero y conductor y cualquier otra forma de obtener premios o pagos sin un viaje real. TaxiCun revisa con personas, nunca de forma automática, y puede anular premios o pagos obtenidos así. Si no estás de acuerdo, escríbenos y lo revisamos.</p>
+      </section>
+
+      <section id="cambios">
+        <h2>9. Cambios y terminación</h2>
+        <p>Los cambios valen hacia adelante y se anuncian aquí y en la app. Los viajes gratis ya ganados conservan sus condiciones y se pueden usar hasta su vencimiento aunque la promoción termine.</p>
+      </section>
+
+      <section id="datos">
+        <h2>10. Tus datos</h2>
+        <p>Para la promoción usamos los datos de tus viajes (fecha, valor, conductor, y si el recorrido se verificó) y, para evitar el fraude, tu celular de forma cifrada. Consulta la <a href="../../privacidad/">política de privacidad</a> (Ley 1581 de 2012).</p>
+      </section>
+
+      <section id="derechos">
+        <h2>11. Tus derechos</h2>
+        <p>Ley 1480 de 2011 (Estatuto del Consumidor). Peticiones, quejas y reclamos: <a href="mailto:info@taxicun.com">info@taxicun.com</a>; respondemos en máximo 15 días hábiles. Autoridad: Superintendencia de Industria y Comercio.</p>
+      </section>
+
+      <section id="no-sorteo">
+        <h2>12. No es un sorteo</h2>
+        <p>No hay azar: es un beneficio por viajes realizados.</p>
+      </section>
+
+      <footer class="pie-doc">
+        <p>Versión <span data-v="version">—</span>, vigente desde el <span data-v="vigenteDesde">—</span>.</p>
+        <p data-si="versiones" hidden>Versiones anteriores: <span data-lista="versiones"></span></p>
+        <p class="nota-suave">interOS S.A.S. · NIT 901.213.197-5 · <a href="mailto:info@taxicun.com">info@taxicun.com</a> · <a href="https://taxicun.com/">taxicun.com</a></p>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie-caja">
+      <img src="../../img/taxicun/logo-blanco.svg" alt="TaxiCun" width="140" height="35" loading="lazy">
+      <p>Tu taxi de confianza en Cundinamarca · TaxiCun es desarrollada por <a href="https://interos.com.co" rel="noopener">interOS</a>.</p>
+      <p class="pie-enlaces"><a href="../../">Inicio</a><a href="../../taxicun/">Pedir taxi</a><a href="../../privacidad/">Privacidad</a><a href="mailto:info@taxicun.com">info@taxicun.com</a></p>
+    </div>
+  </footer>
+  <script defer src="../../web/promociones.js?v=815146f844"></script>
+</body>
+</html>

@@ -26,6 +26,10 @@
 // quieto, «El taxi más cercano llega en ~X min» en el inicio y «Taxi a ~X min» en el pin (del servidor, sin posiciones);
 // en «Confirma tu viaje», el chip «Valor por la ruta en calles · {km}» o «Valor aproximado» cuando el valor lo calculó
 // TaxiCun; y el diálogo «El precio de tu viaje cambió». Sin rutas en la bienvenida (o en las demos), todo como hoy.
+// Promoción «Viaje gratis» (modo real, servidor 0.16.0; disenos/a/promo.js y nucleo/promo.js): la tarjeta «Llevas 7 de
+// 10» en el inicio, «Usar mi viaje gratis» al confirmar (apagado por defecto: el pasajero elige), el chip del viaje, lo
+// que pagó TaxiCun al llegar, el modal del premio, «No pudimos usar tu viaje gratis», «Pedir sin el viaje gratis» con
+// promo_app y la hoja «Promociones» del menú. Sin bienvenida.promo (servidor anterior, revisor o demos), nada nuevo.
 import {
   el, esc, $, $$, icono, ICONO_CATEGORIA, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos,
   modal, elegirOpcion, abrirMenu, estrellas, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
@@ -41,6 +45,7 @@ import { firmaMetodos, hojaPagoQR } from './pago-qr.js';
 import { avisoPasajero } from './lejos.js';
 import { abrirQueHacer, hayQueHacer } from './que-hacer.js';
 import { abrirMisViajes, abrirProgramados, abrirTarifas, abrirPromociones, abrirAjustes, abrirAyuda, abrirAvisos, abrirMiCuenta } from './pasajero-secciones.js';
+import * as PR from './promo.js';
 
 const REAL = EM.MODO_REAL;
 // Zona de servicio de la cooperativa (fase 2): solo en modo real y si la ficha la trae.
@@ -178,6 +183,10 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     etiquetasElegidas: new Set(),
     // «¿Qué hacer?»: null hasta saber (tras la bienvenida); true si hay algo publicado para mostrar.
     queHacer: null,
+    // Promoción «Viaje gratis»: el interruptor de «Confirma tu viaje» (apagado por defecto) y el viaje en que el pasajero
+    // dijo «Seguir esperando» al aviso de promo_app.
+    usarPremio: false,
+    esperaPromoApp: null,
   };
   const clienteQH = REAL ? N.queHacer.crearQueHacer({ urlApi: N.URL_API }) : null;
   const gpsReal = () => {
@@ -521,7 +530,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         // El servidor no tiene viajes programados: en modo real no se ofrecen.
         !REAL && { icono: 'calendario', texto: 'Programados', detalle: 'Con 24 h: 10 % menos', insignia: programados ? String(programados) : '', accion: () => abrirProgramados(ctx()) },
         { icono: 'ruta', texto: 'Tarifas y rutas', detalle: TARIFA_EJEMPLO ? 'Valores de ejemplo' : N.FUENTE_TARIFAS ? `Tarifas oficiales · ${N.FUENTE_TARIFAS.acto}` : `Tarifas de ${EM.NOMBRE}`, accion: () => abrirTarifas(ctx()) },
-        // Modo real: sin tarjeta de viajes ni programados, Promociones quedaría vacío.
+        // Modo real: con la promoción «Viaje gratis» (bienvenida.promo), su hoja; sin ella, Promociones quedaría vacío.
+        REAL && p?.estado.promo && { icono: 'regalo', texto: 'Promociones', detalle: N.promo.detalleMenu(p.estado.promo), accion: () => PR.abrirHojaPromo({ app, p }) },
         !REAL && { icono: 'regalo', texto: 'Promociones', detalle: !fid ? `Ofertas de la ${EM.TIPO}` : fid.siguienteConDescuento ? '¡Tu próximo viaje va al 50 %!' : `Tarjeta de viajes: ${fid.completados}/${fid.meta}`, accion: () => abrirPromociones(ctx()) },
         { icono: 'ajustes', texto: 'Ajustes', detalle: !REAL ? 'Diseño, sala, sonido, instalar' : EM.ES_NATIVA ? 'Sonido y tu cuenta' : 'Sonido, avisos y tu cuenta', accion: () => abrirAjustes(ctx()) },
         { icono: 'ayuda', texto: 'Ayuda', detalle: EM.TELEFONO ? `Central${EM.SERVICIO_24H ? ' 24 h' : ''} · ${EM.TELEFONO_VISIBLE}` : 'Preguntas frecuentes y contacto', accion: () => abrirAyuda(ctx()) },
@@ -1157,6 +1167,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             <span class="a-fid-mini-txt"><strong>${fid.siguienteConDescuento ? '¡Tu próximo viaje va al 50 %!' : 'Tarjeta de viajes'}</strong><small>${fid.siguienteConDescuento ? 'Se aplica solo al pedir tu taxi' : `Te ${fid.faltan === 1 ? 'falta 1 viaje' : `faltan ${fid.faltan} viajes`} para uno al 50 %`}</small></span>
             ${icono('adelante', { tam: 18 })}
           </button>` : ''}
+          ${REAL ? '<div class="a-promo-inicio" data-promo-inicio hidden></div>' : ''}
           <div data-corte></div>
           ${prog.length ? `<button type="button" class="a-prog-aviso" data-ver-programados>${icono('calendario', { tam: 20 })}<span><strong>${prog.length} ${prog.length === 1 ? 'viaje programado' : 'viajes programados'}</strong><small>El próximo: ${esc(N.fechaTexto(prog[0].fecha))}, ${esc(N.horaTexto(prog[0].fecha))}</small></span>${icono('adelante', { tam: 18 })}</button>` : ''}
           <section class="a-bloque">
@@ -1183,7 +1194,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           if (t.closest('[data-programar]')) return ctx().programarViaje();
           if (t.closest('[data-ir-paradero]') && N.PARADERO) return centrarVisible(N.PARADERO, 17, ui.pinY);
           if (t.closest('[data-zona-opciones]')) return hojaFueraDeZona(p.zonaDe(ui.origen), { soloInfo: true });
-          if (t.closest('[data-promos]')) return abrirPromociones(ctx());
+          if (t.closest('[data-promos]')) return REAL ? PR.abrirHojaPromo({ app, p }) : abrirPromociones(ctx());
           if (t.closest('[data-ver-programados]')) return abrirProgramados(ctx());
           const g = t.closest('[data-guardar]');
           if (g) return abrirBuscador({ guardar: g.dataset.guardar });
@@ -1216,6 +1227,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         const aviso = $(hoja.contenido, '[data-aviso-gps]');
         if (aviso) aviso.hidden = e.miPosicion?.real !== false;
         pintarBotonQH();
+        // Promoción «Viaje gratis»: la tarjeta cambia con la bienvenida y con cada mensaje «promo».
+        if (REAL && PR.pintarTarjetaInicio($(hoja.contenido, '[data-promo-inicio]'), e.promo)) hoja.fijar(hoja.estado, false);
         // Ronda A: el tiempo de llegada del servidor (por calles) para la celda del pin; si no, el cálculo de hoy.
         const llegada = REAL ? llegadaDelPin(e) : null;
         if (REAL) {
@@ -1287,7 +1300,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         <button type="button" class="a-ver-detalle" data-detalle aria-expanded="false">${icono('lista', { tam: 16 })} Ver detalle de la tarifa ${icono('abajo', { tam: 16 })}</button>
         <div class="a-detalle" data-detalle-lista hidden></div>
         ${REAL
-          ? `<div class="a-pago-fijo">${icono('efectivo', { tam: 22 })}<span>Pagas en efectivo<small>Directamente al conductor, al terminar el viaje</small></span></div>`
+          ? `<div class="a-pago-fijo">${icono('efectivo', { tam: 22 })}<span>Pagas en efectivo<small>Directamente al conductor, al terminar el viaje</small></span></div>
+          <div class="a-promo-confirmar" data-promo-confirmar hidden></div>`
           : `<div class="a-segmentado" role="radiogroup" aria-label="Método de pago">
           <button type="button" role="radio" data-metodo="qr" aria-checked="${ui.metodo === 'qr'}">${icono('qr', { tam: 20 })}<span>QR <small>prueba</small></span></button>
           <button type="button" role="radio" data-metodo="efectivo" aria-checked="${ui.metodo === 'efectivo'}">${icono('efectivo', { tam: 20 })}<span>Efectivo</span></button>
@@ -1311,7 +1325,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         ${fid ? `<div class="a-fid-linea ${fid.siguienteConDescuento ? 'a-fid-premio' : ''}">
           <span class="a-fid-barra" aria-hidden="true"><span style="width:${(fid.siguienteConDescuento ? 1 : fid.completados / fid.meta) * 100}%"></span></span>
           <small>${fid.siguienteConDescuento ? '¡Este viaje va con 50 % de descuento!' : `Viaje ${fid.completados + 1} de tu tarjeta · al completar ${fid.meta}, el siguiente va al 50 %`}</small>
-        </div>` : ''}`;
+        </div>` : ''}
+        ${REAL ? '<div class="a-fid-linea" data-promo-tarjeta hidden><span class="a-fid-barra" aria-hidden="true"><span></span></span><small></small></div>' : ''}`;
       },
       pie: () => `<button type="button" class="a-btn a-btn-primario a-btn-grande a-btn-pedir" data-pedir disabled><span data-pedir-txt>${ui.programar ? 'Programar viaje' : 'Pedir taxi'}</span><strong data-total-boton></strong></button>`,
       montar(c, pie) {
@@ -1378,7 +1393,12 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         m.ponerOrigen(ui.origen);
         if (ui.destino) m.ponerDestino(ui.destino);
         else m.quitarDestino();
+        pintarPromoConfirmar();
         cotizar();
+      },
+      // Promoción «Viaje gratis»: la promoción pudo cambiar con la vista abierta (premio nuevo, canje en pausa…).
+      actualizar() {
+        if (REAL) pintarPromoConfirmar();
       },
     },
 
@@ -1397,6 +1417,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         <div class="a-barra-progreso" aria-hidden="true"><span></span></div>
         <p class="a-taxis-cerca" data-taxis-cerca></p>
         ${bloqueSinTaxis()}
+        ${REAL ? PR.htmlPromoApp() : ''}
+        ${REAL ? '<div data-promo-viaje hidden></div>' : ''}
         <div data-corte></div>
         ${trayecto(v.origen, v.destino, { datos: false })}
         <div class="a-resumen-pago">
@@ -1408,6 +1430,15 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       pie: () => `<button type="button" class="a-btn a-btn-suave a-btn-grande" data-cancelar>${icono('cerrar', { tam: 18 })} Cancelar solicitud</button>`,
       montar(c, pie) {
         $(pie, '[data-cancelar]').addEventListener('click', cancelarViaje);
+        // Promoción «Viaje gratis»: ningún taxi cerca tiene la app al día (sin_conductores promo_app).
+        $(c, '[data-sin-premio]')?.addEventListener('click', () => {
+          if (p.pedirSinPremio()) avisos.mostrar({ titulo: 'Pedimos tu taxi sin el viaje gratis', cuerpo: 'Tu viaje gratis sigue guardado para otra vez.', tipo: 'info' });
+        });
+        $(c, '[data-seguir-esperando]')?.addEventListener('click', () => {
+          ui.esperaPromoApp = p.estado.viaje?.id || null;
+          const caja = $(c, '[data-promo-app]');
+          if (caja) caja.hidden = true;
+        });
         let i = 0;
         // Con la app oculta no rota (al volver sigue donde iba).
         const parar = N.relojVisible(() => {
@@ -1448,6 +1479,16 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           // menos a media altura para que se vea (va antes del corte).
           ponerTexto(hoja.contenido, '[data-mensaje]', textoBuscandoReal(0));
           hoja.fijar(sinTaxis && hoja.estado === 'contraida' ? 'media' : hoja.estado);
+        }
+        // Promoción «Viaje gratis»: «Pedir sin el viaje gratis» si ningún taxi cerca tiene la app al día.
+        const promoApp = REAL && $(hoja.contenido, '[data-promo-app]');
+        if (promoApp) {
+          const ver = Boolean(e.viaje?.premioId) && e.sinConductores?.motivo === 'promo_app' && ui.esperaPromoApp !== e.viaje.id;
+          if (promoApp.hidden === ver) {
+            promoApp.hidden = !ver;
+            // Que se vean los dos botones (van debajo del aviso de siempre).
+            if (ver) hoja.fijar('completa');
+          }
         }
       },
     },
@@ -1493,6 +1534,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         <div class="a-conductor-mini">
           ${avatar(c.nombre)}<span><strong>${esc(c.nombre)}</strong><small>Móvil ${esc(c.movil)} · ${esc(c.vehiculo || '')}</small></span>${placa(c.placa, undefined, 'a-placa-chica')}
         </div>
+        ${REAL ? '<div data-promo-viaje hidden></div>' : ''}
         ${acciones(c)}
         <div data-corte></div>
         <p class="a-seguro">${icono('escudo', { tam: 18 })} <span data-seguro>${esc(lineaSegura(e))}</span></p>`;
@@ -1543,8 +1585,26 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       html(e) {
         const v = e.viaje;
         const c = e.conductor;
-        const valor = e.cobro?.valor || v.tarifa?.total || 0;
+        // Promoción «Viaje gratis»: lo que paga el pasajero (0 si es gratis) y lo que pagó TaxiCun.
+        const final = REAL ? v.promoFinal || null : null;
+        const gratis = final?.pasajeroPaga === 0;
+        const valor = final ? final.pasajeroPaga : e.cobro?.valor || v.tarifa?.total || 0;
         // Modo real: solo efectivo (el QR, las billeteras y «otro celular» son de prueba).
+        if (REAL && gratis) {
+          return `
+        <div class="a-pago-cabeza">
+          <span class="a-meta-ico" aria-hidden="true">${icono('bandera', { tam: 28 })}</span>
+          <h2>${v.destino ? `Llegaste a ${esc(v.destino.titulo)}` : 'Llegaste a tu destino'}</h2>
+          <p>${esc(`Gracias por viajar con ${EM.NOMBRE}`)}</p>
+        </div>
+        ${PR.htmlPagar(final)}
+        <div class="a-total">
+          <small>Total a pagar</small>
+          <strong data-total-pagar>${N.pesos(0)}</strong>
+          <span class="a-total-detalle">${esc(EM.unir([e.kmFinal ? N.kmTexto(e.kmFinal) : '', c?.movil ? `Móvil ${c.movil}` : '', nombreCorto(c?.nombre || '')]))}</span>
+        </div>
+        <button type="button" class="a-btn a-btn-primario a-btn-grande a-btn-bloque" data-promo-calificar>${icono('estrella', { tam: 20 })}<span>Calificar el viaje</span></button>`;
+        }
         if (REAL) {
           return `
         <div class="a-pago-cabeza">
@@ -1557,6 +1617,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <strong data-total-pagar>${N.pesos(valor)}</strong>
           <span class="a-total-detalle">${esc(EM.unir([e.kmFinal ? N.kmTexto(e.kmFinal) : '', c?.movil ? `Móvil ${c.movil}` : '', nombreCorto(c?.nombre || '')]))}</span>
         </div>
+        ${final ? PR.htmlPagar(final) : ''}
         <h3 class="a-subtitulo" data-subtitulo-pago>Pagas en efectivo</h3>
         <div class="a-opciones-pago">
           <button type="button" class="a-op-pago a-op-destacada" data-efectivo>
@@ -1616,6 +1677,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       montar(c) {
         c.addEventListener('click', async (e) => {
           const t = e.target;
+          // Promoción «Viaje gratis»: nada que pagar.
+          if (t.closest('[data-promo-calificar]')) return p.continuarSinPagar();
           if (t.closest('[data-simular]')) {
             const b = t.closest('[data-simular]');
             const abierto = b.getAttribute('aria-expanded') === 'true';
@@ -1676,7 +1739,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         const sub = $(hoja.contenido, '[data-subtitulo-pago]');
         if (sub) sub.textContent = hay ? '¿Cómo pagaste?' : 'Pagas en efectivo';
         const tot = $(hoja.contenido, '[data-total-pagar]');
-        if (tot && e.cobro?.valor) tot.textContent = N.pesos(e.cobro.valor);
+        if (tot && e.cobro?.valor && !e.viaje?.promoFinal) tot.textContent = N.pesos(e.cobro.valor);
       },
     },
 
@@ -1688,8 +1751,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         return `
         ${pago ? `<div class="a-pago-ok" role="status">
           <span class="a-check-anim" aria-hidden="true">${icono('check', { tam: 26, grosor: 3 })}</span>
-          <span><strong>${pago.metodo === 'qr' ? 'Pago exitoso (prueba)' : pago.metodo === 'transferencia' ? 'Pago por transferencia' : 'Pago en efectivo'}</strong>
-          <small>${N.pesos(pago.valor)}${pago.billetera ? ` · ${esc(pago.billetera)}` : ''}${pago.ref ? ` · Ref. ${esc(pago.ref)}` : ''}</small></span>
+          <span><strong>${pago.metodo === 'qr' ? 'Pago exitoso (prueba)' : pago.metodo === 'transferencia' ? 'Pago por transferencia' : pago.metodo === 'promocion' ? 'Viaje gratis' : 'Pago en efectivo'}</strong>
+          <small>${pago.metodo === 'promocion' ? esc(`TaxiCun pagó ${N.pesos(pago.cubierto || 0)} de tu viaje`) : `${N.pesos(pago.valor)}${pago.billetera ? ` · ${esc(pago.billetera)}` : ''}${pago.ref ? ` · Ref. ${esc(pago.ref)}` : ''}`}</small></span>
           ${pago.metodo === 'qr' ? chipPrueba() : ''}
         </div>` : ''}
         <div class="a-recibida" data-recibida hidden></div>
@@ -1756,6 +1819,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       ${llego && v.codigo ? codigoAbordaje(v.codigo, true) : ''}
       ${tarjetaConductor(c)}
       ${llego || !v.codigo ? '' : codigoAbordaje(v.codigo)}
+      ${REAL ? '<div data-promo-viaje hidden></div>' : ''}
       ${acciones(c)}
       <div data-corte></div>
       ${trayecto(v.origen, v.destino, { datos: false })}
@@ -1854,10 +1918,34 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     ponerTexto(hoja.pie, '[data-total-boton]', N.pesos(tarifa.total));
     $(hoja.pie, '[data-pedir]')?.removeAttribute('disabled');
     marcarZonaConfirmar();
+    pintarPromoConfirmar();
     if (rt?.coords && ui.destino) ruta.poner(rt.coords, { color: '#121212' });
     else ruta.quitar();
     hoja.fijar(hoja.estado);
     encuadrar([ui.origen, ui.destino]);
+  }
+
+  // Promoción «Viaje gratis» en «Confirma tu viaje»: la fila «Usar mi viaje gratis» (si hay un premio usable aquí), lo
+  // que paga cada uno, la línea de la tarjeta y el texto del botón. Sin premio usable, el interruptor se apaga solo.
+  function pintarPromoConfirmar() {
+    if (!REAL || !p || ui.vista !== 'confirmar') return;
+    const promo = p.estado.promo;
+    if (!N.promo.premioUsable(promo)) ui.usarPremio = false;
+    const tarifa = ui.cotizacion?.tarifa || null;
+    const t = PR.pintarConfirmar($(hoja.contenido, '[data-promo-confirmar]'), {
+      promo, tarifa, conDestino: Boolean(ui.destino), usar: ui.usarPremio,
+      alCambiar: (si) => {
+        ui.usarPremio = si;
+        pintarPromoConfirmar();
+      },
+    });
+    PR.pintarLineaTarjeta($(hoja.contenido, '[data-promo-tarjeta]'), promo, t?.lineaTarjeta || '');
+    const b = $(hoja.pie, '[data-pedir]');
+    // «Fuera de la zona» (muy lejos) manda sobre el texto del botón.
+    if (!b || b.getAttribute('aria-disabled') === 'true' || !tarifa) return;
+    const gratis = ui.usarPremio && t && N.promo.premioUsable(promo);
+    ponerTexto(hoja.pie, '[data-pedir-txt]', gratis ? t.boton : 'Pedir taxi');
+    ponerTexto(hoja.pie, '[data-total-boton]', gratis ? '' : N.pesos(tarifa.total));
   }
 
   // «Confirma tu viaje» con la recogida fuera de la zona: el aviso y, muy lejos, «Pedir taxi» queda
@@ -1894,7 +1982,9 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       N.pedirPermisoNotificaciones();
     }
     try {
-      const r = await p.solicitar({ origen: ui.origen, destino: ui.destino || null, metodoPago: REAL ? 'efectivo' : ui.metodo, programadoPara: !REAL && ui.programar ? ui.fecha : null, nota: ui.nota.trim() });
+      // Promoción «Viaje gratis»: solo si el pasajero encendió «Usar mi viaje gratis» y el premio sigue usable aquí.
+      const premioId = REAL && ui.usarPremio && N.promo.premioUsable(p.estado.promo) ? p.estado.promo.premio.id : null;
+      const r = await p.solicitar({ origen: ui.origen, destino: ui.destino || null, metodoPago: REAL ? 'efectivo' : ui.metodo, programadoPara: !REAL && ui.programar ? ui.fecha : null, nota: ui.nota.trim(), premioId });
       ui.pinAMano = false; // el próximo viaje vuelve a seguir el GPS
       if (r?.programado) {
         reiniciarUI();
@@ -1975,6 +2065,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     ui.programar = false;
     ui.fecha = null;
     ui.nota = '';
+    ui.usarPremio = false;
   }
 
   /* ---------------- pintado ---------------- */
@@ -2025,6 +2116,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     const clave = e.fase === 'inicio' ? ui.modo : e.fase;
     if (clave !== ui.vista) renderVista(clave);
     VISTAS[ui.vista]?.actualizar?.(e);
+    // Promoción «Viaje gratis»: el chip del viaje (llega con promo_viaje, después de pintar la vista).
+    if (REAL) PR.pintarChipViaje(hoja.contenido, e.viaje);
     actualizarMapa(e);
     // Indicador de conexión.
     if (REAL) return pintarConexion();
@@ -2160,6 +2253,13 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     if (a.tipo === 'aviso') {
       app.querySelectorAll('.a-panel, .a-menu-capa, .a-buscador').forEach((n) => n.remove());
       p.bandeja?.mostrar(a.datos?.id).catch(() => {});
+      return;
+    }
+    // Promoción «Viaje gratis» (servidor 0.16.0): el premio ganado o por vencer abre la hoja «Promociones».
+    if (a.tipo === 'promo_premio' || a.tipo === 'promo_vence') {
+      app.querySelectorAll('.a-panel, .a-menu-capa, .a-buscador').forEach((n) => n.remove());
+      reconectarCentral();
+      PR.abrirHojaPromo({ app, p });
       return;
     }
     // Ronda B: «¿Todo bien en tu viaje?» vale 30 min (con la bienvenida llega la pregunta, también tras el final).
@@ -2449,6 +2549,33 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           if (ui.vista === 'inicio' && ui.origen) pedirLlegada(ui.origen);
         });
         p.on('cambio', () => revisarLejos());
+        // Promoción «Viaje gratis»: el premio ganado en grande; si el viaje gratis no se pudo pedir, se pregunta.
+        p.on('promo', (d) => {
+          pintar();
+          if (d?.evento?.tipo === 'premio') PR.modalPremio(app, d.promo);
+        });
+        p.on('premio_no_disponible', async (d) => {
+          const pedido = d?.pedido;
+          const r = await PR.modalNoDisponible(app, d?.motivo);
+          if (!pedido?.origen || p.estado.fase !== 'inicio') return;
+          if (r === 'sin') {
+            // Si el error llegó antes de pintar «Buscando», el botón quedó ocupado en «Confirma tu viaje».
+            if (ui.vista === 'confirmar') renderVista('confirmar', true);
+            try {
+              await p.solicitar({ origen: pedido.origen, destino: pedido.destino || null, metodoPago: 'efectivo', nota: pedido.nota || '' });
+            } catch (err) {
+              avisos.mostrar({ titulo: 'No pudimos pedir el taxi', cuerpo: err?.codigo ? EM.textoError(err) : err.message, tipo: 'error' });
+            }
+            return;
+          }
+          // «Volver»: a «Confirma tu viaje» con el mismo viaje. Se pinta de nuevo aunque la vista no haya cambiado (el
+          // error pudo llegar antes de pintar «Buscando», con el botón «Pedir taxi» todavía ocupado).
+          ui.origen = pedido.origen;
+          ui.destino = pedido.destino || null;
+          ui.cotizacion = null;
+          ui.modo = 'confirmar';
+          renderVista('confirmar', true);
+        });
         // Ronda B: «¿Todo bien en tu viaje?» (la tarjeta sigue a p.estado.pregunta).
         const tarjetaSeguridad = montarSeguridad(app, { p, alAyuda: () => sos({ desdeSeguridad: true }) });
         p.on('cambio', () => tarjetaSeguridad.pintar());

@@ -424,7 +424,8 @@ async function servidorAnterior() {
   const { ctx, p } = await contexto('pasajero-0.14');
   await entrarPasajero(p);
   const h = srv.hola.filter((x) => x.rol === 'pasajero').at(-1);
-  ok(JSON.stringify(h?.datos?.capacidades) === '["seguridad"]', `a) el hola del pasajero dice capacidades: ['seguridad'] (${JSON.stringify(h?.datos?.capacidades)})`);
+  // Desde la promoción «Viaje gratis» (servidor 0.16.0) también dice 'promo' (un servidor anterior lo ignora).
+  ok(JSON.stringify(h?.datos?.capacidades) === '["seguridad","promo"]', `a) el hola del pasajero dice capacidades: ['seguridad', 'promo'] (${JSON.stringify(h?.datos?.capacidades)})`);
   const t0 = Date.now();
   const v = await enViaje(p);
   ok(Boolean(v), 'a) el pasajero va en el taxi (en_viaje)');
@@ -746,7 +747,8 @@ async function conductor() {
   await p.waitForSelector('[data-conectar]:not([disabled])', { timeout: 20000 });
   await p.waitForTimeout(700);
   const hc = srv.hola.filter((x) => x.rol === 'conductor').at(-1);
-  ok(hc && !('capacidades' in hc.datos), 'd) el hola del conductor no trae capacidades');
+  // Desde la promoción «Viaje gratis» (servidor 0.16.0) el conductor dice solo 'promo' (nunca 'seguridad').
+  ok(hc && JSON.stringify(hc.datos.capacidades) === '["promo"]', `d) el hola del conductor trae solo capacidades: ['promo'] (${JSON.stringify(hc?.datos?.capacidades)})`);
   await p.click('[data-conectar]');
   await intento(p.waitForSelector('[data-conectar][aria-checked="true"]', { timeout: 15000 }));
   const pres = await hasta(() => srv.mensajes.filter((m) => m.rol === 'conductor' && m.tipo === 'presencia' && m.datos?.pos).at(-1), 8000);

@@ -49,6 +49,11 @@
 // del GPS de verdad (ts, velocidad, rumbo, altitud; nucleo/seguridad.js crudoLectura), para que la central revise la
 // seguridad del viaje y note un GPS inventado. La posición simulada de la demo y la vieja (posVieja) no llevan nada. Al
 // conductor no le llega nada nuevo: ni texto, ni aviso, ni pantalla (un seguridad_pregunta que llegara por error se ignora).
+// Promoción «Viaje gratis» (servidor 0.16.0, nucleo/promo.js; con uno anterior no llega nada de esto): el hola dice
+// capacidades: ['promo'] (solo a esta app le llegan los viajes gratis). La solicitud, la asignación y viaje_actual traen
+// promo { cubre, bono, total, pasajeroPaga } (validado: viaje.promo); al terminar llega promo_final → viaje.promoFinal y
+// el evento 'promo_final'. c.confirmarPromocion() cierra el cobro del viaje gratis sin nada que cobrar (pago_confirmado
+// con metodo 'promocion'); c.pagosPromo() y c.aceptarCondicionesPromo() son «Pagos de TaxiCun».
 import { crearBus } from './bus.js';
 import { TIEMPOS, CENTRO, vigilarConfig } from './config.js';
 import { calcularRuta, obtenerPosicion, seguirPosicion, fueraDeZona, direccionDe } from './geo.js';
@@ -67,6 +72,7 @@ import { enviarSos, posicionParaSos } from './sos.js';
 import { crearBandeja } from './bandeja.js';
 import { limpiarFila, limpiarOferta } from './reparto.js';
 import { crudoLectura } from './seguridad.js';
+import * as P from './promo.js';
 
 // Ronda A: la precisión de una lectura del GPS en metros (entero) o null.
 const precisionDe = (p) => (Number.isFinite(p?.precision) && p.precision >= 0 && p.precision < 100000 ? Math.round(p.precision) : null);
@@ -486,8 +492,11 @@ class ControladorConductor extends Emisor {
     if (!this.estado.conectado || this.estado.viaje) return;
     // Ronda A: motivo, llegadaMin, equidad y fila solo si cumplen (la tarjeta los pinta como texto).
     if (s && typeof s === 'object') {
-      const { motivo, llegadaMin, equidad, fila, ...resto } = s;
+      const { motivo, llegadaMin, equidad, fila, promo, ...resto } = s;
       s = { ...resto, ...limpiarOferta(s) };
+      // Servidor 0.16.0: el viaje gratis (validado; con basura, como un viaje de siempre).
+      const p = this.real ? P.leerPromoConductor(promo) : null;
+      if (p) s.promo = p;
     }
     if (this.estado.solicitudes.some((x) => x.viajeId === s.viajeId)) return;
     // Modo revisor: el código del pasajero automático se ve en la nota de la solicitud.
@@ -560,6 +569,8 @@ class ControladorConductor extends Emisor {
       simulado: Boolean(s.simulada),
       // Ronda 4A: el pedido que la central tomó por teléfono (sin código de abordaje y sin calificación).
       pedidoCentral: this.real && esPedidoCentral(s),
+      // Servidor 0.16.0: el viaje gratis (lo que paga TaxiCun y lo que paga el pasajero).
+      ...(s.promo ? { promo: s.promo } : {}),
       fase: s.simulada ? 'hacia_origen' : 'confirmando',
       aceptado: Date.now(),
       pago: null,
@@ -771,7 +782,8 @@ class ControladorConductor extends Emisor {
   confirmarEfectivo() {
     const v = this.estado.viaje;
     if (!v || v.fase !== 'cobrando') return;
-    this.#registrarPago({ metodo: 'efectivo', valor: v.valor });
+    // Servidor 0.16.0: en el viaje gratis, lo que paga el pasajero (la diferencia sobre lo que cubre TaxiCun).
+    this.#registrarPago({ metodo: 'efectivo', valor: this.pasajeroPagaPromo() ?? v.valor });
   }
 
   // Modo real: el conductor confirma que le llegó la transferencia (a su QR o su llave). La puede marcar aunque el
@@ -782,10 +794,34 @@ class ControladorConductor extends Emisor {
     const dicha = v.pagoAnunciado?.metodo === 'transferencia' ? v.pagoAnunciado : null;
     // entidad (la de la lista) va al servidor para metodo_pago; si no viene, el servidor pone la del conductor.
     this.#registrarPago({
-      metodo: 'transferencia', valor: v.valor,
+      metodo: 'transferencia', valor: this.pasajeroPagaPromo() ?? v.valor,
       billetera: String((entidad ? nombreEntidad(entidad) : dicha?.billetera) || '').slice(0, 40) || null,
       entidad: entidad || dicha?.entidad || null,
     });
+  }
+
+  // Servidor 0.16.0: lo que paga el pasajero en el viaje gratis (el de promo_final o, mientras llega, el de la oferta).
+  pasajeroPagaPromo() {
+    const v = this.estado.viaje;
+    if (!v?.promo) return null;
+    return v.promoFinal ? v.promoFinal.pasajeroPaga : P.pasajeroPagaLocal(v.valor, v.promo.cubre);
+  }
+
+  // Servidor 0.16.0: el viaje gratis sin nada que cobrar («Terminar»): pago_confirmado con metodo 'promocion'.
+  confirmarPromocion() {
+    const v = this.estado.viaje;
+    if (!this.real || !v || v.fase !== 'cobrando' || !v.promo || this.pasajeroPagaPromo() !== 0) return false;
+    this.#registrarPago({ metodo: 'promocion', valor: 0 });
+    return true;
+  }
+
+  // «Pagos de TaxiCun» (GET /api/conductor/promociones, validado). Lanza ErrorServidor si falla.
+  async pagosPromo() {
+    return P.leerPagosConductor(await servidor.promosConductor());
+  }
+
+  async aceptarCondicionesPromo(version = P.VERSION_CONDICIONES) {
+    return servidor.aceptarCondicionesPromo(version);
   }
 
   #registrarPago(pago) {
@@ -793,11 +829,14 @@ class ControladorConductor extends Emisor {
     if (!v || v.fase !== 'cobrando') return;
     // También en viajes simulados: la página pagar/ espera esta confirmación.
     this.bus.publicar('pago_confirmado', { viajeId: v.id, conductorId: this.perfil.id, metodo: pago.metodo, valor: pago.valor, billetera: pago.billetera || null, ref: pago.ref || null, ...(pago.entidad ? { entidad: pago.entidad } : {}) });
-    const aviso = {
-      titulo: pago.metodo === 'qr' ? 'Pago recibido por QR (prueba)' : pago.metodo === 'transferencia' ? 'Transferencia registrada' : 'Pago en efectivo registrado',
-      cuerpo: `${pesos(pago.valor)}${pago.billetera ? ` · ${pago.billetera}` : ''}${pago.ref ? ` · Ref. ${pago.ref}` : ''}`,
-      tipo: 'exito',
-    };
+    const total = v.promoFinal?.total ?? null;
+    const aviso = pago.metodo === 'promocion'
+      ? { titulo: 'Viaje gratis registrado', cuerpo: total != null ? `TaxiCun te paga ${pesos(total)} en la liquidación semanal.` : 'TaxiCun te paga este viaje en la liquidación semanal.', tipo: 'exito' }
+      : {
+        titulo: pago.metodo === 'qr' ? 'Pago recibido por QR (prueba)' : pago.metodo === 'transferencia' ? 'Transferencia registrada' : 'Pago en efectivo registrado',
+        cuerpo: `${pesos(pago.valor)}${pago.billetera ? ` · ${pago.billetera}` : ''}${pago.ref ? ` · Ref. ${pago.ref}` : ''}`,
+        tipo: 'exito',
+      };
     // Ronda 4A: el pedido de la central no se califica (quien llamó no tiene la app): se cierra ya, sin pasar por la
     // pantalla de calificar.
     if (this.real && v.pedidoCentral && !v.simulado) {
@@ -878,6 +917,7 @@ class ControladorConductor extends Emisor {
       simulado: v.simulado,
       calificacionRecibida: v.calificacionRecibida || null,
       ...(v.pedidoCentral ? { pedidoCentral: true } : {}),
+      ...(v.promo ? { promo: true } : {}),
       ...extra,
     });
   }
@@ -928,7 +968,8 @@ class ControladorConductor extends Emisor {
             // Desde el servidor 0.2.1 la huella del código de abordaje también llega solo
             // aquí (la oferta ya no la trae); con 0.1/0.2.0 se conserva la de la solicitud.
             // Ronda 4A: en el pedido de la central el celular es el de quien llamó y codigoHash llega vacío.
-            this.#faseViaje('hacia_origen', this.real ? { pasajero: { ...v.pasajero, celular: d.pasajero?.celular || '' }, codigoHash: d.codigoHash || v.codigoHash || null, esperaTexto: null, esperaHasta: null, pedidoCentral: Boolean(v.pedidoCentral) || esPedidoCentral(d) } : {});
+            const promoAsig = this.real ? P.leerPromoConductor(d.promo) : null;
+            this.#faseViaje('hacia_origen', this.real ? { pasajero: { ...v.pasajero, celular: d.pasajero?.celular || '' }, codigoHash: d.codigoHash || v.codigoHash || null, esperaTexto: null, esperaHasta: null, pedidoCentral: Boolean(v.pedidoCentral) || esPedidoCentral(d), ...(promoAsig ? { promo: promoAsig } : {}) } : {});
             this.#avisar({ titulo: 'Servicio confirmado', cuerpo: `Recoge a ${v.pasajero.nombre} en ${v.origen.titulo || 'el punto marcado'}.`, tipo: 'exito' });
             // En modo real el taxi lo mueve el GPS: solo se trae la ruta buena (al aceptar pudo ir la aproximada).
             if (this.real) this.#rutaHaciaObjetivo();
@@ -1050,6 +1091,8 @@ class ControladorConductor extends Emisor {
     this.bus.on(MENSAJES_CENTRAL.sacadoDeTurno, (d) => this.#alSacadoDeTurno(d, { origen: 'bus' }));
     // 0.11.1: la central confirma lo que cree del turno (respuesta a la presencia con confirmar).
     this.bus.on('turno', (d) => this.#alConfirmarTurno(d));
+    // Servidor 0.16.0: lo que TaxiCun le paga por el viaje gratis que acaba de terminar.
+    this.bus.on('promo_final', (d) => this.#alPromoFinal(d));
     this.bus.on('rechazo', (d) => {
       this.ultimoRechazo = d?.codigo || null;
       // Sin la central no se puede estar en línea (el viaje en curso, si hay, se conserva).
@@ -1057,6 +1100,18 @@ class ControladorConductor extends Emisor {
       if (this.estado.conectado && !this.estado.viaje) this.#cambiar({ conectado: false, solicitudes: [] });
       this.emit('rechazo', d);
     });
+  }
+
+  // Servidor 0.16.0: promo_final del viaje que se está cobrando (o ya cobrado y por calificar). Se repite con cada
+  // bienvenida mientras la central tenga el viaje en memoria: solo cambia algo si es distinto.
+  #alPromoFinal(d) {
+    const f = P.leerPromoFinal(d);
+    const v = this.estado.viaje;
+    if (!f || !v || v.id !== f.viajeId || !['cobrando', 'calificar'].includes(v.fase)) return;
+    if (JSON.stringify(v.promoFinal) === JSON.stringify(f)) return;
+    const promo = v.promo || { cubre: f.cubierto, bono: f.bono, total: f.total, pasajeroPaga: f.pasajeroPaga };
+    this.#faseViaje(v.fase, { promo, promoFinal: f });
+    this.emit('promo_final', f);
   }
 
   // Ronda A: mensaje «fila» de la central. Fuera de turno no se pinta (la central ya lo sacó o lo sacará).
@@ -1402,7 +1457,7 @@ class ControladorConductor extends Emisor {
       // asignó. Con el servidor 0.1 este viaje_actual no trae origen: se usa la oferta.
       const aceptada = this.aceptadaReciente?.s;
       if (!v && aceptada?.viajeId === d.viajeId && d.estado === 'asignado') {
-        return this.#retomarAsignado({ pasajero: d.pasajero, codigoHash: d.codigoHash, pedidoCentral: d.pedidoCentral });
+        return this.#retomarAsignado({ pasajero: d.pasajero, codigoHash: d.codigoHash, pedidoCentral: d.pedidoCentral, promo: d.promo });
       }
       // La central tiene otro servicio para este conductor: el del teléfono ya no vale.
       if (v) {
@@ -1433,6 +1488,8 @@ class ControladorConductor extends Emisor {
     if (!v.destino && d.destino) extra.destino = d.destino;
     if (!v.codigoHash && d.codigoHash) extra.codigoHash = d.codigoHash;
     if (esPedidoCentral(d) && !v.pedidoCentral) extra.pedidoCentral = true;
+    const promoServidor = P.leerPromoConductor(d.promo);
+    if (promoServidor) extra.promo = promoServidor;
     const faseServidor = FASE_DEL_SERVIDOR[d.estado];
     if (!faseServidor) return this.#faseViaje(v.fase, extra);
     if (ORDEN_FASES[v.fase] < ORDEN_FASES[faseServidor]) {
@@ -1500,6 +1557,7 @@ class ControladorConductor extends Emisor {
       codigoRevision: this.#codigoDePrueba(d),
       simulado: false,
       pedidoCentral: esPedidoCentral(d),
+      ...(P.leerPromoConductor(d.promo) ? { promo: P.leerPromoConductor(d.promo) } : {}),
       fase,
       aceptado: Date.now(),
       pago: null,
@@ -1536,6 +1594,7 @@ class ControladorConductor extends Emisor {
       codigoRevision: this.#codigoDePrueba(s),
       simulado: false,
       pedidoCentral: esPedidoCentral(s) || esPedidoCentral(d),
+      ...(s.promo || P.leerPromoConductor(d.promo) ? { promo: P.leerPromoConductor(d.promo) || s.promo } : {}),
       fase: 'hacia_origen',
       aceptado: Date.now(),
       pago: null,

@@ -89,6 +89,10 @@ const TEXTOS = {
   // Servidor 0.14.0 (ronda A de «algoritmos»): el precio del viaje lo calcula TaxiCun por la ruta en calles.
   cotizacion_vencida: 'El precio de tu viaje cambió.',
   sin_tarifas: 'No pudimos calcular la tarifa de ese viaje. Revisa el destino e intenta de nuevo.',
+  // Servidor 0.16.0 (promoción «Viaje gratis», nucleo/promo.js).
+  premio_no_disponible: 'Ese viaje gratis ya no está disponible.',
+  no_es_conductor: 'Esta opción es solo para conductores registrados.',
+  version_condiciones: 'Las condiciones cambiaron. Ábrelas de nuevo y revísalas.',
 };
 
 const TEXTO_DESCONOCIDO = 'Algo falló. Intenta de nuevo.';
@@ -268,6 +272,17 @@ export const llegada = (empresa, origen) => api('POST', 'viajes/llegada', { empr
  * no_existe (no es su pregunta o ya no existe), 429 demasiados_intentos (retryS), sin_red (también si tarda más de 8 s).
  * Solo se llama cuando la central mandó una pregunta (un servidor anterior nunca la manda). */
 export const seguridad = (d) => api('POST', 'viajes/seguridad', d, { espera: 8000 });
+
+/* ---------------- Promoción «Viaje gratis» (servidor 0.16.0, nucleo/promo.js) ----------------
+ * Solo se llaman si la bienvenida trajo la promoción (pasajero) o hubo un viaje con promoción (conductor): con un servidor
+ * anterior no se piden (y si se pidieran, 404: la app no muestra nada nuevo). Lo que vuelve lo valida nucleo/promo.js. */
+
+// Pasajero: la tarjeta, los viajes de la tarjeta y los últimos premios → { promo, viajes, premios }.
+export const promoMia = () => api('GET', 'promociones/mia', undefined, { espera: 8000 });
+// Conductor: «Pagos de TaxiCun» → { condiciones, comoMePagan, semanas, viajes }. 403 no_es_conductor.
+export const promosConductor = () => api('GET', 'conductor/promociones', undefined, { espera: 8000 });
+// Conductor: acepta las condiciones de pagos de la promoción → { ok, aceptadasEn }. 409 version_condiciones.
+export const aceptarCondicionesPromo = (version) => api('POST', 'conductor/promociones/aceptar', { version: String(version || '') });
 
 // ¿La ruta no existe en este servidor (anterior a la 0.9.0)? Fastify responde 404 con otra forma (error_interno).
 export const rutaNoDisponible = (e) => e?.estado === 404 || e?.estado === 405 || e?.codigo === 'no_existe';

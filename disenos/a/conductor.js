@@ -17,6 +17,11 @@
 // «Estás entre los más cercanos…», «Llevas más tiempo sin servicio») y «hasta el pasajero» usa el tiempo de la central;
 // en turno y libre, el chip con su puesto en la fila del paradero; y los avisos de la fila. Todo como texto. Con un
 // servidor anterior (o en «todos», o en las demos), nada de esto aparece.
+// Promoción «Viaje gratis» (modo real, servidor 0.16.0; disenos/a/promo.js): en la oferta, «Viaje con promoción» con
+// «TaxiCun te paga $X + bono $Y» y lo que paga el pasajero (y «Registra “Cómo me pagan”…» si no lo tiene; nunca bloquea
+// aceptar); el chip en el viaje; la línea de «¿Cuánto cobras?»; en el cobro, «El pasajero no te paga» con «Terminar» o
+// «Cobra $300 al pasajero» con los botones de siempre, la línea de lo que paga TaxiCun y lo que falta para recibirlo; y
+// «Pagos de TaxiCun» en el menú (desde el primer viaje con promoción en este celular). Con un servidor anterior, nada.
 import {
   el, esc, $, $$, icono, avatar, placa, chipPrueba, franjaCuadros, Hoja, crearAvisos, modal, elegirOpcion,
   abrirMenu, estrellas, casillasCodigo, deslizador, celularTexto, decimal, ponerTexto, capaRuta, puntoVisible,
@@ -29,6 +34,7 @@ import { ofrecerAvisos, ofrecerBiometria, ingresoBiometria, montarBloqueo, ofrec
 import { avisarPolitica, marcarPoliticaVista, politicaPendiente } from './politica.js';
 import { seguirSos, montarAvisosCentral } from './central.js';
 import { abrirComoMePagan } from './pago-qr.js';
+import * as PR from './promo.js';
 import { avisoConductor } from './lejos.js';
 
 // Foto de portada del ingreso (generada para la web, sin marcas: ver img/web/creditos.json).
@@ -161,6 +167,24 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     avisoTocado: null,
     relojOferta: null,
     bloqueo: null,
+    // Promoción «Viaje gratis»: si tiene «Cómo me pagan» (null: no se sabe todavía; se pregunta con la primera oferta).
+    conCobro: null,
+  };
+  // «Pagos de TaxiCun» sale en el menú desde el primer viaje con promoción en este celular.
+  const CLAVE_PROMO = 'tc.promo.conductor';
+  const tuvoPromo = () => {
+    try {
+      return localStorage.getItem(CLAVE_PROMO) === '1';
+    } catch {
+      return false;
+    }
+  };
+  const anotarPromo = () => {
+    try {
+      localStorage.setItem(CLAVE_PROMO, '1');
+    } catch {
+      /* sin almacenamiento */
+    }
   };
 
   /* ---------------- utilidades de mapa ---------------- */
@@ -279,6 +303,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         !REAL && { icono: 'documento', texto: 'Documentos', detalle: 'SOAT, técnico-mecánica, licencia', accion: () => abrirDocumentos(ctx()) },
         { icono: 'auto', texto: 'Mi taxi', detalle: REAL ? EM.unir([yo.vehiculo, yo.placa]) : `${yo.vehiculo} · ${yo.placa}`, accion: () => abrirMiTaxi(ctx()) },
         REAL && { icono: 'dinero', texto: 'Cómo me pagan', detalle: 'Tu QR o tu llave para transferencias', accion: () => abrirComoMePagan(ctx()) },
+        REAL && tuvoPromo() && { icono: 'regalo', texto: 'Pagos de TaxiCun', detalle: 'Los viajes gratis de la promoción', accion: abrirPagosPromo },
         { icono: 'ajustes', texto: 'Ajustes', detalle: REAL ? 'GPS, sonido, tu cuenta' : 'GPS, sonido, sala, diseño', accion: () => abrirAjustesConductor(ctx()) },
         { separador: true },
         EM.EN_TAXICUN && !NATIVA && !UNICA && { icono: 'pin', texto: 'Cambiar de municipio', detalle: `Ahora: ${EM.PUEBLO} · ${EM.NOMBRE}`, accion: cambiarMunicipio },
@@ -292,6 +317,36 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           ? `<div class="a-menu-pie-estado"><span><span class="a-led ${estadoCentral() === 'en_linea' ? 'a-led-vivo' : ''}"></span>${esc(textoCentral())}</span></div>`
           : `<div class="a-menu-pie-estado">${chipPrueba('MODO PRUEBA')}${avisoDemo('a-chip-demo a-chip-demo-claro')}<span><span class="a-led ${c?.estado.conexion === 'en-vivo' ? 'a-led-vivo' : ''}"></span>${c?.estado.conexion === 'en-vivo' ? 'En vivo' : 'Solo este equipo'} · sala «${esc(c?.estado.sala || N.salaActual())}»</span></div>`}`,
     });
+  }
+
+  // Promoción «Viaje gratis»: «Pagos de TaxiCun», las condiciones y «Cómo me pagan».
+  function abrirPagosPromo() {
+    if (c) PR.abrirPagosTaxiCun({ app, c, avisos, abrirComoMePagan: () => abrirComoMePagan(ctx()) });
+  }
+  const accionesPromo = {
+    comoMePagan: () => {
+      ui.conCobro = null; // al volver se pregunta otra vez
+      abrirComoMePagan(ctx());
+    },
+    condiciones: () => c && PR.aceptarCondiciones({ app, c, avisos }),
+  };
+  // ¿Tiene «Cómo me pagan»? Se pregunta una vez, con la primera oferta con promoción (sin red: no se dice nada).
+  function revisarCobroPromo() {
+    if (ui.conCobro !== null || ui.revisandoCobro) return;
+    ui.revisandoCobro = true;
+    N.cobro.miCobro()
+      .then((m) => {
+        ui.conCobro = Boolean(m);
+        const nota = $(app, '.a-solicitud [data-sol-promo-registrar]');
+        if (nota && !ui.conCobro) {
+          nota.textContent = N.promo.textosOferta({ cubre: 0, bono: 0, pasajeroPaga: 0 }, { sinComoMePagan: true }).registrar;
+          nota.hidden = false;
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        ui.revisandoCobro = false;
+      });
   }
 
   // Devuelve true si cerró la sesión.
@@ -1371,7 +1426,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       cuerpo: `<label class="a-campo a-campo-valor"><span>Valor del viaje</span>
           <span class="a-campo-tel"><span class="a-prefijo">$</span><input name="valor" inputmode="numeric" autocomplete="off" maxlength="9" placeholder="${esc(estimado ? miles(estimado) : '15.000')}" value="${sinDestino || !estimado ? '' : esc(miles(estimado))}"></span>
         </label>
-        <p class="a-ayuda-txt" data-valor-ayuda>${esc(`Entre ${N.pesos(VALOR_MIN)} y ${N.pesos(VALOR_MAX)}.`)}</p>`,
+        <p class="a-ayuda-txt" data-valor-ayuda>${esc(`Entre ${N.pesos(VALOR_MIN)} y ${N.pesos(VALOR_MAX)}.`)}</p>
+        ${REAL && v?.promo ? `<p class="a-ayuda-txt a-promo-cobro-nota" data-promo-cobro-nota>${esc(N.promo.textoCuantoCobras(v.promo, { pesos: N.pesos }))}</p>` : ''}`,
       acciones: [
         { texto: 'Seguir el viaje', valor: null },
         { texto: 'Terminar y cobrar', valor: (cuerpo) => leer(cuerpo), clase: 'a-btn-tinta' },
@@ -1468,6 +1524,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           <span><small>Tarifa estimada</small><strong>${N.pesos(s.tarifa)}</strong></span>
           <span class="a-chip-metodo">${icono(metodoIcono(s.metodoPago), { tam: 16 })} ${metodoTexto(s.metodoPago)}</span>
         </div>
+        ${REAL && s.promo ? PR.htmlOferta(s.promo, { sinComoMePagan: ui.conCobro === false }) : ''}
         <div class="a-sol-datos">
           <span><strong>${esc(N.kmTexto(s.distanciaAMi))}</strong><small>hasta el pasajero · ${minHasta} min</small></span>
           <span><strong>${s.km ? esc(N.kmTexto(s.km)) : '—'}</strong><small>de viaje${s.min ? ` · ${esc(N.minutosTexto(s.min))}` : ''}</small></span>
@@ -1505,6 +1562,11 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       $(capa, '[data-pedido-detalle-txt]').textContent = N.ofrecidaPorCentral(s) ? `${t.detalle} · Te lo ofrece a ti` : t.detalle;
     }
     app.append(capa);
+    // Promoción «Viaje gratis»: «Pagos de TaxiCun» en el menú y la pregunta de «Cómo me pagan» (nunca bloquea aceptar).
+    if (REAL && s.promo) {
+      anotarPromo();
+      revisarCobroPromo();
+    }
     const aceptar = async () => {
       if (capa.dataset.ocupado) return;
       capa.dataset.ocupado = '1';
@@ -1667,6 +1729,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       html(e) {
         const v = e.viaje;
         return `${barraPasos('hacia_origen')}
+          ${REAL ? PR.htmlChipConductor(v) : ''}
           <div class="a-estado-viaje" data-arrastre>
             <span class="a-eta"><strong data-eta-num>—</strong><small>min</small></span>
             <span class="a-estado-txt"><h2>Recoge a ${esc(nombreCorto(v.pasajero?.nombre || 'tu pasajero'))}</h2><small data-estado-sub>Calculando la ruta…</small></span>
@@ -1821,6 +1884,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       html(e) {
         const v = e.viaje;
         return `${barraPasos('en_viaje')}
+          ${REAL ? PR.htmlChipConductor(v) : ''}
           <div class="a-estado-viaje" data-arrastre>
             <span class="a-eta a-eta-tinta"><strong data-eta-num>—</strong><small>min</small></span>
             <span class="a-estado-txt"><h2>${v.destino ? `Rumbo a ${esc(v.destino.titulo || 'destino')}` : 'Viaje en curso'}</h2><small data-estado-sub>${v.destino ? 'Calculando…' : 'Destino a convenir con el pasajero'}</small></span>
@@ -1879,6 +1943,17 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       html(e) {
         const v = e.viaje;
         // Modo real: solo efectivo (valor + «Recibí efectivo»), sin QR ni chip de prueba.
+        if (REAL && v.promo) {
+          // Promoción «Viaje gratis»: lo que paga el pasajero (0 o la diferencia) y lo que paga TaxiCun.
+          const paga = c.pasajeroPagaPromo() ?? 0;
+          return `${barraPasos('cobrando')}
+          <div class="a-cobro a-cobro-real a-cobro-promo">
+            <small>Valor del viaje: ${esc(N.pesos(v.valor))}</small>
+            <strong class="a-cobro-valor" data-promo-paga>${N.pesos(paga)}</strong>
+            <div class="a-promo-cobro" data-promo-cobro hidden></div>
+            <div class="a-pago-anunciado" role="status" data-pago-anunciado${v.pagoAnunciado ? '' : ' hidden'}>${icono('efectivo', { tam: 18 })}<span data-pago-anunciado-txt></span></div>
+          </div>`;
+        }
         if (REAL) {
           return `${barraPasos('cobrando')}
           <div class="a-cobro a-cobro-real">
@@ -1899,13 +1974,15 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
             <div class="a-esperando-pago" role="status"><span class="a-girador"></span>Esperando el pago…</div>
           </div>`;
       },
-      pie: () => `<button type="button" class="a-btn a-btn-verde a-btn-grande" data-efectivo>${icono('efectivo', { tam: 22 })}<span>Recibí efectivo</span></button>${REAL ? `<button type="button" class="a-btn a-btn-suave a-btn-grande" data-transferencia>${icono('dinero', { tam: 22 })}<span>Recibí la transferencia</span></button>` : ''}`,
+      pie: (e) => `${REAL && e.viaje?.promo ? `<button type="button" class="a-btn a-btn-verde a-btn-grande" data-promo-terminar hidden>${icono('check', { tam: 22, grosor: 3 })}<span>Terminar</span></button>` : ''}<button type="button" class="a-btn a-btn-verde a-btn-grande" data-efectivo>${icono('efectivo', { tam: 22 })}<span>Recibí efectivo</span></button>${REAL ? `<button type="button" class="a-btn a-btn-suave a-btn-grande" data-transferencia>${icono('dinero', { tam: 22 })}<span>Recibí la transferencia</span></button>` : ''}`,
       montar(cont, pie) {
+        // Promoción «Viaje gratis»: el pasajero no paga nada → «Terminar» (pago_confirmado con metodo 'promocion').
+        $(pie, '[data-promo-terminar]')?.addEventListener('click', () => c.confirmarPromocion());
         // Modo real (0.10.0): la transferencia a su QR o su llave; la puede marcar aunque el pasajero no lo diga.
         $(pie, '[data-transferencia]')?.addEventListener('click', async () => {
           const ok = await modal(app, {
             titulo: '¿Te llegó la transferencia?',
-            texto: `Revisa en tu app del banco o billetera que te llegaron ${N.pesos(c.estado.viaje?.valor || 0)} antes de confirmar.`,
+            texto: `Revisa en tu app del banco o billetera que te llegaron ${N.pesos(c.pasajeroPagaPromo() ?? (c.estado.viaje?.valor || 0))} antes de confirmar.`,
             acciones: [{ texto: 'Todavía no', valor: false }, { texto: 'Sí, me llegó', valor: true, clase: 'a-btn-verde' }],
           });
           if (ok) c.confirmarTransferencia();
@@ -1913,7 +1990,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         $(pie, '[data-efectivo]').addEventListener('click', async () => {
           const ok = await modal(app, {
             titulo: '¿Recibiste el efectivo?',
-            texto: `Confirma que el pasajero te pagó ${N.pesos(c.estado.viaje?.valor || 0)}.`,
+            texto: `Confirma que el pasajero te pagó ${N.pesos(c.pasajeroPagaPromo() ?? (c.estado.viaje?.valor || 0))}.`,
             acciones: [{ texto: 'Todavía no', valor: false }, { texto: 'Sí, recibí el pago', valor: true, clase: 'a-btn-verde' }],
           });
           if (ok) c.confirmarEfectivo();
@@ -1927,6 +2004,18 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       // Modo real: el pasajero avisa que pagó en efectivo; el conductor lo confirma.
       actualizar(e) {
         if (!REAL) return;
+        // Promoción «Viaje gratis»: con promo_final (o, mientras llega, lo de la oferta).
+        if (e.viaje?.promo) {
+          const t = PR.pintarCobrando($(hoja.contenido, '[data-promo-cobro]'), e.viaje, accionesPromo);
+          const gratis = t?.pasajeroPaga === 0;
+          ponerTexto(hoja.contenido, '[data-promo-paga]', N.pesos(t?.pasajeroPaga ?? 0));
+          const bt = $(hoja.pie, '[data-promo-terminar]');
+          if (bt) bt.hidden = !gratis;
+          for (const sel of ['[data-efectivo]', '[data-transferencia]']) {
+            const b = $(hoja.pie, sel);
+            if (b) b.hidden = gratis;
+          }
+        }
         const anuncio = e.viaje?.pagoAnunciado || null;
         const dijo = Boolean(anuncio);
         const porTransferencia = anuncio?.metodo === 'transferencia';
@@ -1962,12 +2051,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         // En modo real no hay pago con QR de prueba.
         const esQR = !REAL && pago.metodo === 'qr';
         const esTransferencia = REAL && pago.metodo === 'transferencia';
+        // Promoción «Viaje gratis»: lo que TaxiCun le paga en la liquidación.
+        const esPromo = REAL && pago.metodo === 'promocion';
         return `${barraPasos('calificar')}
           <div class="a-pago-recibido" role="status">
             <span class="a-check-anim" aria-hidden="true">${icono('check', { tam: 30, grosor: 3 })}</span>
-            <small>${esQR ? 'Pago recibido por QR (prueba)' : esTransferencia ? `Transferencia registrada${pago.billetera ? ` · ${esc(pago.billetera)}` : ''}` : 'Pago en efectivo registrado'}</small>
-            <strong>${N.pesos(pago.valor || v.valor)}</strong>
-            <span>${esQR ? `${pago.billetera ? `${esc(pago.billetera)} · ` : ''}${pago.ref ? `Ref. ${esc(pago.ref)} ` : ''}${chipPrueba()}` : `Recibido a las ${esc(N.horaTexto(pago.hora || Date.now()))}`}</span>
+            <small>${esPromo ? 'Viaje gratis registrado · TaxiCun te paga' : esQR ? 'Pago recibido por QR (prueba)' : esTransferencia ? `Transferencia registrada${pago.billetera ? ` · ${esc(pago.billetera)}` : ''}` : 'Pago en efectivo registrado'}</small>
+            <strong>${esPromo ? (v.promoFinal ? N.pesos(v.promoFinal.total) : 'En la liquidación') : N.pesos(pago.valor || v.valor)}</strong>
+            <span>${esPromo ? esc(v.promoFinal?.corte ? `En la liquidación del ${N.promo.diaConNombre(v.promoFinal.corte)}` : 'En la liquidación semanal') : esQR ? `${pago.billetera ? `${esc(pago.billetera)} · ` : ''}${pago.ref ? `Ref. ${esc(pago.ref)} ` : ''}${chipPrueba()}` : `Recibido a las ${esc(N.horaTexto(pago.hora || Date.now()))}`}</span>
           </div>
           <div class="a-calificar">
             ${avatar(v.pasajero?.nombre || 'Pasajero', 'a-avatar-xl a-avatar-tinta')}
@@ -2219,6 +2310,13 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     if (a.tipo === 'aviso') {
       $$(app, '.a-panel, .a-menu-capa').forEach((x) => x.remove());
       c.bandeja?.mostrar(a.datos?.id).catch(() => {});
+      return;
+    }
+    // Promoción «Viaje gratis» (servidor 0.16.0): la liquidación o el pago de TaxiCun abren «Pagos de TaxiCun».
+    if (a.tipo === 'promo_liquidacion' || a.tipo === 'promo_pago') {
+      $$(app, '.a-panel, .a-menu-capa').forEach((x) => x.remove());
+      anotarPromo();
+      abrirPagosPromo();
       return;
     }
     // Uno que esperó mucho (por ejemplo, mientras se volvía a ingresar) ya no pone en turno.

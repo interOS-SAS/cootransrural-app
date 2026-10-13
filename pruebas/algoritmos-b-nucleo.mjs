@@ -120,13 +120,15 @@ const busP = new B.BusServidor({ rol: 'pasajero', empresa: 'cootransrural' });
 busP.conectar();
 await espera(60);
 const holaP = enviados.find((m) => m.tipo === 'hola' && m.datos?.rol === 'pasajero');
-ok(holaP && JSON.stringify(holaP.datos.capacidades) === '["seguridad"]' && holaP.datos.empresa === 'cootransrural' && holaP.datos.token === 'tok-1', `hola del pasajero: capacidades: ['seguridad'] (${JSON.stringify(holaP?.datos)})`);
+// Desde la promoción «Viaje gratis» (servidor 0.16.0) el pasajero también dice 'promo'.
+ok(holaP && JSON.stringify(holaP.datos.capacidades) === '["seguridad","promo"]' && holaP.datos.empresa === 'cootransrural' && holaP.datos.token === 'tok-1', `hola del pasajero: capacidades: ['seguridad', 'promo'] (${JSON.stringify(holaP?.datos)})`);
 busP.cerrar();
 const busC = new B.BusServidor({ rol: 'conductor' });
 busC.conectar();
 await espera(60);
 const holaC = enviados.find((m) => m.tipo === 'hola' && m.datos?.rol === 'conductor');
-ok(holaC && !('capacidades' in holaC.datos), 'hola del conductor: sin capacidades (al conductor nunca se le pregunta nada)');
+// Desde la 0.16.0 el conductor dice solo 'promo': nunca 'seguridad' (al conductor nunca se le pregunta nada).
+ok(holaC && JSON.stringify(holaC.datos.capacidades) === '["promo"]', 'hola del conductor: solo capacidades [promo], sin «seguridad» (al conductor nunca se le pregunta nada)');
 busC.cerrar();
 
 /* ---------------- la respuesta (REST) ---------------- */

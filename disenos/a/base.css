@@ -809,3 +809,29 @@ html[data-modo="real"] .a-pasajero > .a-modal-capa { z-index: 110; }
 .a-lejos-form .a-check input:checked + .a-check-caja { background: var(--a-tinta); border-color: var(--a-tinta); color: var(--a-ambar); }
 .a-lejos-form .a-check input:focus-visible + .a-check-caja { outline: 3px solid var(--a-tinta); box-shadow: 0 0 0 6px var(--a-ambar); }
 .a-lejos-form .a-check input.a-invalido + .a-check-caja { border-color: var(--a-rojo); background: var(--a-rojo-claro); }
+
+/* Promoción «Viaje gratis» (servidor 0.16.0, disenos/a/promo.js): piezas que usan las dos apps. */
+.a-chip-promo { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--a-verde-claro); color: var(--a-verde-txt); font: 800 12px/1.2 var(--a-fb); }
+.a-promo-chip-viaje { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; padding: 8px 12px; border-radius: 14px; background: var(--a-verde-claro); color: var(--a-verde-txt); font-size: 13.5px; }
+.a-promo-chip-viaje b { font: 800 13.5px/1.2 var(--a-ft); }
+.a-promo-chip-viaje span { color: var(--a-texto); font-weight: 700; }
+.a-promo-chip-viaje[hidden], [data-promo-viaje][hidden] { display: none; }
+.a-promo-terminos { display: inline-flex; align-items: center; gap: 8px; margin: 14px 0 6px; font: 700 14px var(--a-fb); color: var(--a-texto); text-decoration: underline; text-underline-offset: 3px; }
+.a-promo-lista { margin-top: 16px; }
+.a-promo-lista ul, .a-promo-asi ul, .a-promo-condiciones ul { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.a-promo-lista li { display: flex; gap: 10px; align-items: baseline; padding: 10px 12px; border-radius: 14px; background: #fff; font-size: 13.5px; overflow-wrap: anywhere; }
+.a-promo-lista li b { flex: none; min-width: 52px; font: 800 13px var(--a-ft); }
+.a-promo-sumo span { color: var(--a-verde-txt); font-weight: 700; }
+.a-promo-no-sumo span, .a-promo-vacio span { color: var(--a-texto-2); }
+.a-promo-asi { margin-top: 16px; }
+.a-promo-asi li, .a-promo-condiciones li { position: relative; padding-left: 18px; font-size: 13.5px; line-height: 1.45; color: var(--a-texto-2); }
+.a-promo-asi li::before, .a-promo-condiciones li::before { content: ''; position: absolute; left: 4px; top: .55em; width: 6px; height: 6px; border-radius: 50%; background: var(--a-verde-txt); }
+.a-promo-premio > svg, .a-promo-pendiente > svg { background: var(--a-verde-claro); color: var(--a-verde-txt); }
+.a-promo-pendiente { border: 1.5px solid var(--a-ambar-3); }
+.a-promo-regalo { display: inline-grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: var(--a-verde-claro); color: var(--a-verde-txt); }
+.a-promo-caja { display: flex; gap: 12px; align-items: center; padding: 14px; border-radius: 20px; background: #fff; margin-bottom: 8px; }
+.a-promo-caja > svg { width: 44px; height: 44px; padding: 10px; border-radius: 14px; background: var(--a-ambar-claro); flex: none; }
+.a-promo-caja > span { flex: 1; min-width: 0; }
+.a-promo-caja strong { display: block; font: 700 14.5px/1.3 var(--a-ft); }
+.a-promo-caja small { display: block; font-size: 12.5px; color: var(--a-texto-2); }
+.a-promo-caja .a-btn { flex: none; }

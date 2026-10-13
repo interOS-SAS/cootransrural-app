@@ -644,3 +644,25 @@ html[data-modo="real"] .a-pasajero > .a-modal-capa.a-modal-seguridad, .a-modal-c
 .a-modal-seguridad .a-modal-acciones { flex-direction: column; }
 .a-modal-seguridad .a-modal-acciones .a-btn { width: 100%; flex: none; }
 .a-modal-seguridad .a-btn[disabled] { opacity: .6; }
+
+/* Promoción «Viaje gratis» (servidor 0.16.0, disenos/a/promo.js). */
+.a-promo-inicio[hidden] { display: none; }
+.a-promo-mini[data-promo-tipo="premio"] .a-anillo b { font-size: 11px; }
+.a-promo-confirmar { margin-top: 10px; padding: 4px 14px 10px; border-radius: 20px; background: var(--a-verde-claro); }
+.a-promo-confirmar[hidden] { display: none; }
+.a-promo-confirmar .a-promo-ico { color: var(--a-verde-txt); }
+.a-promo-linea { margin: 0; font: 800 14px/1.35 var(--a-ft); color: var(--a-texto); }
+.a-promo-linea.a-promo-gratis { color: var(--a-verde-txt); }
+.a-promo-nota { margin: 6px 0 0; font-size: 12.5px; color: var(--a-texto-2); line-height: 1.4; }
+.a-promo-linea[hidden], .a-promo-nota[hidden], [data-promo-tarjeta][hidden] { display: none; }
+.a-promo-app { margin-top: 10px; padding: 12px 14px; border-radius: 18px; background: #fff; border: 1.5px solid var(--a-ambar-3); }
+.a-promo-app[hidden] { display: none; }
+.a-promo-app-botones { display: flex; gap: 8px; flex-wrap: wrap; }
+.a-promo-app-botones .a-btn { flex: 1 1 140px; }
+.a-promo-app small { display: block; margin-top: 8px; font-size: 12px; color: var(--a-texto-2); }
+.a-promo-pagar { display: flex; gap: 12px; align-items: center; margin: 12px 0; padding: 14px; border-radius: 20px; background: var(--a-verde-claro); }
+.a-promo-pagar .a-promo-ico { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: #fff; color: var(--a-verde-txt); flex: none; }
+.a-promo-pagar strong { display: block; font: 800 15px/1.3 var(--a-ft); color: var(--a-verde-txt); }
+.a-promo-pagar small { font-size: 13px; color: var(--a-texto); font-weight: 600; }
+.a-tarjeta-promo { background: linear-gradient(135deg, var(--a-verde-txt), var(--a-verde) 60%, var(--a-verde-txt)); }
+.a-promo-regalo-chico { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: rgba(255, 255, 255, .16); }
