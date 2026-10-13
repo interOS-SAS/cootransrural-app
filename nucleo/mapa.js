@@ -68,6 +68,7 @@ export async function crearMapa(elemento, opciones = {}) {
 
   let teselas = null;
   let logo = null;
+  let errorOculta = false; // una tesela falló con la app en segundo plano (el iPhone corta la red al suspenderla)
   const ponerCapa = (nombre) => {
     teselas?.remove();
     logo?.remove();
@@ -98,6 +99,7 @@ export async function crearMapa(elemento, opciones = {}) {
       let cargadas = 0;
       teselas.on('tileload', () => (cargadas += 1));
       teselas.on('tileerror', () => {
+        if (globalThis.document?.hidden) errorOculta = true;
         errores += 1;
         if (errores >= 4 && cargadas < 2) {
           console.warn('[mapa] Mapbox no respondió; se usa OpenStreetMap');
@@ -259,15 +261,71 @@ export async function crearMapa(elemento, opciones = {}) {
       mapa.invalidateSize();
     },
     destruir() {
+      quitarVolver();
       mapa.remove();
     },
   };
+
+  // Al volver a la app (iPhone, después de Face ID): el mapa quedaba en blanco hasta cerrarla y abrirla (13-oct, Oscar).
+  // En segundo plano el WKWebView puede quedar sin tamaño (Leaflet calcula la vista con 0 × 0 y suelta las teselas) y las
+  // teselas pedidas mientras estaba suspendida fallan sin reintento. Al volver, se acomoda el tamaño y, si no hay
+  // teselas cargadas a la vista o alguna falló estando oculta, se piden otra vez; se revisa de nuevo al segundo y medio.
+  const visibles = () => {
+    const caja = elemento.getBoundingClientRect();
+    if (!caja.width || !caja.height) return 0;
+    let n = 0;
+    for (const img of elemento.querySelectorAll('img.leaflet-tile-loaded')) {
+      const r = img.getBoundingClientRect();
+      if (r.right > caja.left && r.left < caja.right && r.bottom > caja.top && r.top < caja.bottom) n += 1;
+    }
+    return n;
+  };
+  const revisar = () => {
+    if (globalThis.document?.hidden || !elemento.isConnected) return;
+    try {
+      mapa.invalidateSize({ pan: false });
+      if (teselas && (errorOculta || visibles() === 0)) {
+        errorOculta = false;
+        teselas.redraw();
+      }
+    } catch (e) {
+      console.warn('[mapa] al volver:', e?.message || e);
+    }
+  };
+  const relojes = [];
+  const alVolver = () => {
+    if (globalThis.document?.hidden) return;
+    while (relojes.length) clearTimeout(relojes.pop());
+    relojes.push(setTimeout(revisar, 300), setTimeout(revisar, 1500));
+  };
+  globalThis.document?.addEventListener('visibilitychange', alVolver);
+  globalThis.addEventListener?.('pageshow', alVolver);
+  globalThis.addEventListener?.('ct-desbloqueo', alVolver); // se quitó el bloqueo de Face ID (disenos/a/nativa.js)
+  let quitarResume = null;
+  try {
+    const h = globalThis.Capacitor?.Plugins?.App?.addListener?.('resume', alVolver);
+    Promise.resolve(h).then((x) => { quitarResume = x; }).catch(() => {});
+  } catch {
+    /* sin el plugin App */
+  }
+  function quitarVolver() {
+    while (relojes.length) clearTimeout(relojes.pop());
+    globalThis.document?.removeEventListener('visibilitychange', alVolver);
+    globalThis.removeEventListener?.('pageshow', alVolver);
+    globalThis.removeEventListener?.('ct-desbloqueo', alVolver);
+    try {
+      quitarResume?.remove?.();
+    } catch {
+      /* nada */
+    }
+  }
   return api;
 }
 
 // Estilos mínimos de los marcadores (cada diseño puede sobreescribirlos).
 const ESTILOS = `
 .ct-marcador{background:none;border:0}
+.leaflet-tile.leaflet-tile-loaded{opacity:1!important}
 .ct-taxi{width:100%;height:100%;display:grid;place-items:center;transform:rotate(var(--rumbo));transition:transform .6s linear;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
 .ct-taxi-destacado{filter:drop-shadow(0 0 10px rgba(255,193,7,.9)) drop-shadow(0 3px 4px rgba(0,0,0,.4))}
 .ct-taxi-marcador{transition:transform 1s linear}

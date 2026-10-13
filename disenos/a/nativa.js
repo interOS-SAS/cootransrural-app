@@ -185,6 +185,8 @@ export function montarBloqueo(app, { N, alSalir = null }) {
     capa = null;
     c.classList.add('a-sale');
     setTimeout(() => c.remove(), 280);
+    // El mapa revisa su tamaño y sus teselas al quitarse el bloqueo (nucleo/mapa.js).
+    globalThis.dispatchEvent?.(new Event('ct-desbloqueo'));
   }
 
   function pintar({ error = '', confirmarSalida = false } = {}) {
