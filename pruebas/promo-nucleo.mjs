@@ -78,6 +78,13 @@ ok(igual(P.leerPromoFinalPasajero({ cubierto: 10000, pasajeroPaga: 3200 }), { cu
 ok(P.leerCotizacionPromo({ premioId: PREMIO.id, cubre: 10000, pasajeroPaga: 300, tope: 10000 })?.premioId === PREMIO.id && P.leerCotizacionPromo({ premioId: 'x', cubre: 1, pasajeroPaga: 0 }) === null, 'leerCotizacionPromo: con premioId válido');
 ok(igual(P.leerPromoConductor({ cubre: 10000, bono: 3090, total: 13090, pasajeroPaga: 300, extra: '<b>' }), { cubre: 10000, bono: 3090, total: 13090, pasajeroPaga: 300 }), 'leerPromoConductor: la oferta');
 ok(P.leerPromoConductor({ cubre: 10000, bono: 3000, pasajeroPaga: 0 }).total === 13000, 'leerPromoConductor: sin total, cubre + bono');
+// Integración con el servidor 0.16.0 real (d969d88): bonoPct en lo del conductor y la cooperativa del premio.
+ok(P.leerPromoConductor({ cubre: 10000, bono: 3960, total: 13960, pasajeroPaga: 3200, bonoPct: 30 }).bonoPct === 30, 'leerPromoConductor: con bonoPct (servidor 0.16.0)');
+ok(!('bonoPct' in P.leerPromoConductor({ cubre: 1, bono: 0, pasajeroPaga: 0, bonoPct: 130 })) && !('bonoPct' in P.leerPromoConductor({ cubre: 1, bono: 0, pasajeroPaga: 0, bonoPct: '30' })), 'leerPromoConductor: bonoPct fuera de 0–100 o como texto → sin él');
+const conCoop = P.leerPremio({ ...PREMIO, aqui: false, cooperativa: { id: 'cootransrural', nombre: 'Cootransrural', municipio: 'El Rosal' } });
+ok(igual(conCoop.cooperativa, { id: 'cootransrural', nombre: 'Cootransrural', municipio: 'El Rosal' }), 'leerPremio: con la cooperativa donde se ganó');
+ok(!('cooperativa' in P.leerPremio({ ...PREMIO, cooperativa: { id: 'cootransrural', nombre: '<b>Coop</b>' } })) && !('cooperativa' in P.leerPremio({ ...PREMIO, cooperativa: { id: '../x', nombre: 'X' } })), 'leerPremio: cooperativa con HTML o un id raro → sin ella');
+ok(P.promoSinNada({ id: 'viaje-gratis', vigente: false, premio: null, evento: { tipo: 'config' } }) && !P.promoSinNada({ id: 'viaje-gratis', vigente: false, premio: null, meta: 'x' }) && !P.promoSinNada({ vigente: false, premio: null }) && !P.promoSinNada(null), 'promoSinNada: el mensaje «promo» sin nada que mostrar (y nada más)');
 const f = P.leerPromoFinal({ viajeId: 'v_1', valor: 10300, cubierto: 10000, bono: 3090, total: 13090, pasajeroPaga: 300, corte: '2026-10-19', falta: 'como_me_pagan' });
 ok(f && f.corte === '2026-10-19' && f.falta === 'como_me_pagan' && f.total === 13090, 'leerPromoFinal: con corte y falta');
 ok(P.leerPromoFinal({ viajeId: 'v_1', valor: 1, cubierto: 1, bono: 0, pasajeroPaga: 0, corte: 'lunes', falta: 'otra' }).corte === null && P.leerPromoFinal({ viajeId: 'v_1', valor: 1, cubierto: 1, bono: 0, pasajeroPaga: 0, falta: 'otra' }).falta === null, 'leerPromoFinal: corte y falta desconocidos → null');
@@ -146,6 +153,7 @@ ok(igual([ti(PROMO).titulo, ti(PROMO).sub, ti(PROMO).anillo], ['Llevas 7 de 10',
 ok(ti({ ...PROMO, llevas: 0 }).sub === 'Cada 10 viajes, el siguiente es gratis' && ti({ ...PROMO, llevas: 9 }).sub === '¡Te falta 1 viaje para tu viaje gratis!', 'inicio: con 0 y con 9');
 ok(ti({ ...PROMO, premio: PREMIO }).titulo === '¡Tienes un viaje gratis!' && ti({ ...PROMO, premio: PREMIO }).sub === 'Úsalo antes del 12 de diciembre' && ti({ ...PROMO, premio: PREMIO }).anillo === 'Gratis', 'inicio: con premio usable aquí (vence el 12 de diciembre en Bogotá)');
 ok(ti({ ...PROMO, premio: { ...PREMIO, aqui: false } }).titulo === 'Tienes un viaje gratis', 'inicio: con premio que no es de aquí');
+ok(ti({ ...PROMO, premio: { ...PREMIO, aqui: false } }).sub === 'Se puede usar en las cooperativas de la promoción.' && ti({ ...PROMO, premio: { ...PREMIO, aqui: false, cooperativa: { id: 'cootransrural', nombre: 'Cootransrural', municipio: 'El Rosal' } } }).sub === 'Se puede usar en Cootransrural (El Rosal).', 'inicio: premio de otra cooperativa: «Se puede usar en Cootransrural (El Rosal).» (o el texto general sin ella)');
 ok(ti({ ...PROMO, premio: PREMIO, canjePausado: true }).sub === 'Tu viaje gratis está en pausa por unas horas. No pierdes días.', 'inicio: canje en pausa');
 ok(ti({ ...PROMO, llena: true }).titulo === 'Completaste otra tarjeta', 'inicio: tarjeta llena esperando');
 ok(ti({ ...PROMO, vigente: false }) === null && P.tarjetaInicio(null) === null, 'inicio: sin vigencia ni premio, o sin promo → nada');
@@ -190,6 +198,7 @@ o = P.textosOferta({ cubre: 10000, bono: 3960, total: 13960, pasajeroPaga: 3200 
 ok(o.pasajero === 'El pasajero te paga $3.200' && o.registrar === 'Registra “Cómo me pagan” para recibir este pago', 'oferta con diferencia y sin «Cómo me pagan»');
 ok(P.textoCuantoCobras({ cubre: 10000, bono: 3090, pasajeroPaga: 300 }, { pesos }) === 'Viaje con promoción: TaxiCun te paga hasta $10.000 de este valor y un bono del 30 %. Escribe el valor real del viaje.', '«¿Cuánto cobras?»: con el 30 % que cuadra');
 ok(P.textoCuantoCobras({ cubre: 10000, bono: 3150, pasajeroPaga: 2000 }, { pesos }).endsWith('y un bono. Escribe el valor real del viaje.'), '«¿Cuánto cobras?»: sin porcentaje si no cuadra con la tarifa (caso 8)');
+ok(P.textoCuantoCobras({ cubre: 10000, bono: 3150, pasajeroPaga: 2000, bonoPct: 30 }, { pesos }).includes('y un bono del 30 %'), '«¿Cuánto cobras?»: con el bonoPct del servidor, siempre el porcentaje (caso 8)');
 let cb = P.textosCobrando({ final: { cubierto: 10000, bono: 3090, total: 13090, pasajeroPaga: 0, corte: '2026-10-19', falta: null }, valor: 10000, p: null, pesos });
 ok(cb.titulo === 'El pasajero no te paga' && cb.taxicun === 'TaxiCun te paga $13.090 ($10.000 del viaje + $3.090 de bono) en la liquidación del lunes 19 de octubre.', `cobrando gratis: «${cb.taxicun}»`);
 cb = P.textosCobrando({ final: { cubierto: 10000, bono: 3090, total: 13090, pasajeroPaga: 300, corte: '2026-10-19', falta: 'como_me_pagan' }, valor: 10300, pesos });

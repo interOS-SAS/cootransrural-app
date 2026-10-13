@@ -956,7 +956,9 @@ class ControladorPasajero extends Emisor {
   #alPromo(d) {
     if (!this.real || this.revision) return;
     const promo = P.leerPromo(d);
-    if (!promo) return;
+    // Ya no hay nada que mostrar (la promoción dejó de sumar aquí y no hay premio ni tarjeta llena): se quita la tarjeta
+    // y, si el evento lo dice (venció o se anuló el premio), se avisa. Cualquier otra cosa sin meta es basura.
+    if (!promo && !P.promoSinNada(d)) return;
     const evento = P.leerEvento(d?.evento);
     this.#cambiar({ promo }, { silencioso: true });
     this.emit('promo', { promo, evento });

@@ -471,6 +471,14 @@ async function pasajeroPromo() {
   await enviarPromo(promoBase({ llevas: 2, llena: true }), { tipo: 'config' });
   t = await hasta(async () => ((await tarjetaInicio(p))?.tipo === 'llena' ? tarjetaInicio(p) : null), 4000);
   ok(t?.titulo === 'Completaste otra tarjeta', 'b1) tarjeta llena esperando su premio');
+  // Integración con el servidor 0.16.0: el premio de otra cooperativa dice dónde se usa (premio.cooperativa) y el mensaje
+  // «promo» sin nada que mostrar ({ id, vigente: false, premio: null, evento }) quita la tarjeta y da el aviso.
+  await enviarPromo(promoBase({ llevas: 0, vigente: false, premio: premio({ aqui: false, cooperativa: { id: 'cootransrural', nombre: 'Cootransrural', municipio: 'El Rosal' } }) }), { tipo: 'config' });
+  t = await hasta(async () => ((await tarjetaInicio(p))?.titulo === 'Tienes un viaje gratis' ? tarjetaInicio(p) : null), 4000);
+  ok(t?.sub === 'Se puede usar en Cootransrural (El Rosal).', `b1) premio de otra cooperativa: «${t?.sub}»`);
+  await enviarPromo({ id: 'viaje-gratis', vigente: false, premio: null }, { tipo: 'premio_anulado' });
+  ok(await conAviso(p, /Tu viaje gratis fue anulado/), 'b1) «promo» sin nada que mostrar con premio_anulado: el aviso');
+  ok(await hasta(async () => (await tarjetaInicio(p)) === null, 4000), 'b1) «promo» sin nada que mostrar: la tarjeta del inicio se quita');
   await enviarPromo(srv.promo, { tipo: 'config' });
   await hasta(async () => (await tarjetaInicio(p))?.tipo === 'premio', 4000);
 
@@ -594,6 +602,10 @@ async function pasajeroPromo() {
   ok(pg.titulo === 'TaxiCun pagó $10.000 de tu viaje' && pg.cuerpo === 'Paga $300 al conductor' && pg.total === '$300', `b5) pagar: «${pg.titulo}» · «${pg.cuerpo}» · total ${pg.total}`);
   ok(await conAviso(p, /TaxiCun pagó \$10\.000\. Paga \$300 al conductor/), 'b5) aviso al llegar: «TaxiCun pagó $10.000. Paga $300 al conductor.»');
   await foto(p, 'b5-pagar-diferencia');
+  // El premio se gana justo al terminar un viaje (llega en «pagar»): el modal espera a que pague y califique.
+  await enviarPromo(srv.promo, { tipo: 'premio' });
+  await p.waitForTimeout(900);
+  ok(!(await p.$('.a-modal-promo.a-abierto')), 'b5) un premio que llega en «pagar»: el modal no tapa el pago');
   const t3 = Date.now();
   await p.click('[data-efectivo]');
   await p.waitForSelector('.a-modal-capa.a-abierto', { timeout: 5000 });
@@ -603,8 +615,11 @@ async function pasajeroPromo() {
   const pago = await hasta(() => srv.mensajes.find((m) => m.rol === 'pasajero' && m.tipo === 'pago' && m.t >= t3), 4000);
   ok(pago?.datos?.valor === 300 && pago.datos.metodo === 'efectivo', `b5) el pago es por la diferencia (${JSON.stringify(pago?.datos)})`);
   await vista(p, 'calificar', 8000);
+  ok(!(await p.$('.a-modal-promo.a-abierto')), 'b5) … ni la calificación');
   await p.click('[data-omitir]');
   await vista(p, 'inicio', 10000).catch(() => {});
+  ok(Boolean(await p.waitForSelector('.a-modal-promo.a-abierto', { timeout: 6000 }).catch(() => null)), 'b5) … y sale al volver al inicio');
+  await tocarModal(p, 'Listo');
   srv.viajePasajero = null;
   await p.waitForTimeout(500);
 

@@ -553,9 +553,12 @@ más un bono (por liquidación semanal). Todo lo que pinta la app lo arma con te
   se le ofrece a una app que lo sabe mostrar).
 - **Pasajero** (`nucleo/pasajero.js`):
   - `bienvenida.promo` y el mensaje `promo` (con `evento`), validados con `promo.leerPromo` → `estado.promo = { vigente,
-    meta, llevas, llena, premio: { id, estado, vence (ms), tope, viajeId, aqui } | null, condiciones: { cada, tope,
-    venceDias, maxMismoConductor, minimo }, canjePausado }` (null sin el campo, en el modo revisor y en la demo) y el
-    evento `promo` ({ promo, evento }). Los campos de más (textos, enlaces) se descartan. Avisos del núcleo: `sumo`
+    meta, llevas, llena, premio: { id, estado, vence (ms), tope, viajeId, aqui, cooperativa? } | null, condiciones: { cada,
+    tope, venceDias, maxMismoConductor, minimo }, canjePausado }` (null sin el campo, en el modo revisor y en la demo) y el
+    evento `promo` ({ promo, evento }). Los campos de más (textos, enlaces) se descartan. `premio.cooperativa` ({ id,
+    nombre, municipio }, texto plano) es donde se ganó: con un premio que no es de aquí, «Se puede usar en Cootransrural
+    (El Rosal).». El mensaje `promo` sin nada que mostrar (`{ id, vigente: false, premio: null, evento }`, p. ej. al
+    apagarla) quita la tarjeta (`estado.promo = null`) y da el aviso del evento. Avisos del núcleo: `sumo`
     («Sumaste 1 viaje»), `no_sumo` (por motivo; los de GPS y avance dicen «no pudimos verificar el recorrido»),
     `premio_vencido`, `premio_anulado` y `premio_devuelto` («Tu viaje gratis sigue guardado», salvo mientras la app lo
     vuelve a pedir sola). El de `premio` lo muestra el diseño en grande.
@@ -573,7 +576,8 @@ más un bono (por liquidación semanal). Todo lo que pinta la app lo arma con te
     exacta); sin cotización, `promo.vistaPrevia` con la tarifa y el tope, «aprox.».
   - `p.promoMia()`: `GET /api/promociones/mia` (la hoja «Promociones»).
 - **Conductor** (`nucleo/conductor.js`): la `solicitud`, la `asignacion` y `viaje_actual` con `promo { cubre, bono, total,
-  pasajeroPaga }` (validado; con basura, el viaje de siempre) → `viaje.promo`; `promo_final { viajeId, valor, cubierto,
+  pasajeroPaga, bonoPct }` (validado; con basura, el viaje de siempre; `bonoPct` es el % del bono para «¿Cuánto cobras?») →
+  `viaje.promo`; `promo_final { viajeId, valor, cubierto,
   bono, total, pasajeroPaga, corte, falta }` → `viaje.promoFinal` y el evento `promo_final`. `c.pasajeroPagaPromo()`
   (antes de `promo_final`: `F − min(F, cubre)`), `c.confirmarPromocion()` («Terminar» sin nada que cobrar:
   `pago_confirmado { metodo: 'promocion', valor: 0 }`), y el efectivo o la transferencia por la diferencia.

@@ -5,7 +5,8 @@
 // Contrato (lo que usa la app):
 //   hola: el pasajero declara capacidades ['seguridad', 'promo'] y el conductor ['promo'] (un servidor anterior las ignora).
 //   bienvenida.promo (pasajero, nunca al revisor) y el mensaje «promo» (lo mismo + evento):
-//     { id, version, vigente, meta, llevas, llena, premio: { id: 'pr_…', estado, vence (ISO), tope, viajeId, aqui } | null,
+//     { id, version, vigente, meta, llevas, llena, premio: { id: 'pr_…', estado, vence (ISO), tope, viajeId, aqui,
+//       cooperativa: { id, nombre, municipio } } | null,
 //       condiciones: { tope, venceDias, maxMismoConductor, minimo, cada }, canjePausado, terminos }
 //     evento: { tipo: 'sumo'|'no_sumo'|'premio'|'premio_en_uso'|'premio_devuelto'|'premio_vencido'|'premio_anulado'|'config',
 //               viajeId?, motivo? }
@@ -17,7 +18,8 @@
 //   POST /api/viajes/cotizacion: + promo { premioId, cubre, pasajeroPaga, tope }.
 //   GET /api/promociones/mia → { promo, viajes: [{ viajeId, fin, cuenta, motivo }], premios: [{ id, estado, emitido, vence,
 //     usadoEn, viajeId }] }.
-//   Conductor: solicitud, asignacion y viaje_actual .promo { cubre, bono, total, pasajeroPaga }; promo_final { viajeId,
+//   Si ya no hay nada que mostrar, «promo» llega como { id, vigente: false, premio: null, evento } (se quita la tarjeta).
+//   Conductor: solicitud, asignacion y viaje_actual .promo { cubre, bono, total, pasajeroPaga, bonoPct }; promo_final { viajeId,
 //     valor, cubierto, bono, total, pasajeroPaga, corte: 'AAAA-MM-DD', falta: null|'como_me_pagan'|'condiciones' };
 //     pago_confirmado { metodo: 'promocion' }; GET /api/conductor/promociones; POST /api/conductor/promociones/aceptar.
 //   Pública: GET /api/promociones/viaje-gratis[?version=n] (la página de términos, web/promociones.js).
@@ -50,13 +52,33 @@ export function ms(v) {
 const fechaDia = (v) => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) && Number.isFinite(Date.parse(`${v}T12:00:00Z`)) ? v : null);
 const idViaje = (v) => (typeof v === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(v) ? v : null);
 
+// Texto corto del servidor (nombre de una cooperativa o un municipio): solo texto plano de una línea, sin <, > ni
+// controles; se pinta siempre como texto. '' si no sirve.
+const textoCorto = (v, max = 60) => (typeof v === 'string' && v.length <= max && !/[<>`\u0000-\u001f\u007f]/.test(v) ? v.trim() : '');
+
+// premio.cooperativa (servidor 0.16.0, la cooperativa donde se ganó) → { id, nombre, municipio } o null.
+export function leerCooperativaPremio(c) {
+  if (!c || typeof c !== 'object' || typeof c.id !== 'string' || !/^[a-z0-9-]{1,60}$/.test(c.id)) return null;
+  const nombre = textoCorto(c.nombre);
+  if (!nombre) return null;
+  return { id: c.id, nombre, municipio: textoCorto(c.municipio) };
+}
+
 // premio de la bienvenida o del mensaje «promo» → limpio o null.
 export function leerPremio(p) {
   if (!p || typeof p !== 'object' || !PATRON_PREMIO.test(p.id || '') || !ESTADOS_PREMIO.includes(p.estado)) return null;
   const vence = ms(p.vence);
   const tope = plata(p.tope);
   if (vence === null || tope === null || tope === 0) return null;
-  return { id: p.id, estado: p.estado, vence, tope, viajeId: idViaje(p.viajeId), aqui: p.aqui === true };
+  const cooperativa = leerCooperativaPremio(p.cooperativa);
+  return { id: p.id, estado: p.estado, vence, tope, viajeId: idViaje(p.viajeId), aqui: p.aqui === true, ...(cooperativa ? { cooperativa } : {}) };
+}
+
+// El mensaje «promo» cuando ya no hay nada que mostrar (servidor 0.16.0: la promoción ya no suma en la cooperativa y la
+// cuenta no tiene premio ni tarjeta llena): { id: 'viaje-gratis', vigente: false, premio: null, evento }. La app quita lo
+// de la promoción (y da el aviso del evento, si lo hay). Cualquier otra cosa sin meta es basura y se ignora.
+export function promoSinNada(d) {
+  return Boolean(d && typeof d === 'object' && !Array.isArray(d) && d.id === 'viaje-gratis' && d.vigente === false && d.premio === null && d.meta === undefined);
 }
 
 // bienvenida.promo o el mensaje «promo» → objeto limpio o null (sin el campo, con basura, o del modo revisor).
@@ -130,7 +152,9 @@ export function leerPromoConductor(d) {
   const pasajeroPaga = plata(d.pasajeroPaga);
   if (cubre === null || bono === null || pasajeroPaga === null) return null;
   const total = plata(d.total) ?? cubre + bono;
-  return { cubre, bono, total, pasajeroPaga };
+  // bonoPct (servidor 0.16.0, desde la integración): el % del bono que vio el conductor; sin él, se deduce (o no se dice).
+  const bonoPct = entero(d.bonoPct, 0, 100);
+  return { cubre, bono, total, pasajeroPaga, ...(bonoPct !== null ? { bonoPct } : {}) };
 }
 
 // promo_final (conductor) → objeto limpio o null.
@@ -299,7 +323,7 @@ export function tarjetaInicio(promo, { pesos, ahora = Date.now() } = {}) {
     const sub = promo.canjePausado
       ? 'Tu viaje gratis está en pausa por unas horas. No pierdes días.'
       : p.estado === 'en_uso' ? 'Lo estás usando en tu viaje.'
-        : p.aqui ? `Úsalo antes del ${fechaLarga(p.vence, { ahora })}` : 'Se puede usar en las cooperativas de la promoción.';
+        : p.aqui ? `Úsalo antes del ${fechaLarga(p.vence, { ahora })}` : dondeUsar(p);
     return { tipo: 'premio', anillo: 'Gratis', frac: 1, titulo: p.aqui || p.estado === 'en_uso' ? '¡Tienes un viaje gratis!' : 'Tienes un viaje gratis', sub, tope: $(p.tope) };
   }
   if (promo.llena) return { tipo: 'llena', anillo: `${promo.meta}/${promo.meta}`, frac: 1, titulo: 'Completaste otra tarjeta', sub: 'Tu siguiente viaje gratis llega cuando uses el que tienes' };
@@ -309,6 +333,14 @@ export function tarjetaInicio(promo, { pesos, ahora = Date.now() } = {}) {
   const sub = n === 0 ? `Cada ${meta} viajes, el siguiente es gratis`
     : n >= meta - 1 ? '¡Te falta 1 viaje para tu viaje gratis!' : 'Tu viaje gratis está cerca';
   return { tipo: 'progreso', anillo: `${n}/${meta}`, frac: n / meta, titulo: `Llevas ${n} de ${meta}`, sub };
+}
+
+// Dónde se puede usar un premio que no es de esta cooperativa: «Se puede usar en Cootransrural (El Rosal)» (con la
+// cooperativa donde se ganó, servidor 0.16.0) o, sin ella, el texto general.
+export function dondeUsar(p) {
+  const c = p?.cooperativa;
+  if (!c?.nombre) return 'Se puede usar en las cooperativas de la promoción.';
+  return `Se puede usar en ${c.nombre}${c.municipio && c.municipio !== c.nombre ? ` (${c.municipio})` : ''}.`;
 }
 
 // Detalle del menú del pasajero («Promociones»).
@@ -472,11 +504,11 @@ export function textosOferta(p, { pesos, sinComoMePagan = false } = {}) {
 export function textoCuantoCobras(p, { pesos, bonoPct = null } = {}) {
   if (!p) return '';
   const $ = pesosPor(pesos);
-  // El porcentaje no llega en la oferta: se deduce de la tarifa (cubre + lo que paga el pasajero) y solo se dice si cuadra
-  // exacto con el bono (si el servidor tomó otra base, no se adivina).
+  // El porcentaje llega en la oferta (bonoPct, servidor 0.16.0). Sin él, se deduce de la tarifa (cubre + lo que paga el
+  // pasajero) y solo se dice si cuadra exacto con el bono (si el servidor tomó otra base, no se adivina).
   const T = p.cubre + p.pasajeroPaga;
   const candidato = T > 0 ? Math.round((p.bono * 100) / T) : null;
-  const pct = bonoPct ?? (candidato && candidato <= 100 && redondearBono(T, candidato) === p.bono ? candidato : null);
+  const pct = bonoPct ?? (Number.isInteger(p.bonoPct) ? p.bonoPct : null) ?? (candidato && candidato <= 100 && redondearBono(T, candidato) === p.bono ? candidato : null);
   return `Viaje con promoción: TaxiCun te paga hasta ${$(p.cubre)} de este valor${pct ? ` y un bono del ${pct} %` : ' y un bono'}. Escribe el valor real del viaje.`;
 }
 

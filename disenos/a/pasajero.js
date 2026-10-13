@@ -2550,9 +2550,22 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         });
         p.on('cambio', () => revisarLejos());
         // Promoción «Viaje gratis»: el premio ganado en grande; si el viaje gratis no se pudo pedir, se pregunta.
+        // El premio se gana justo al terminar un viaje: el modal espera a que la pasajera pague y califique (de vuelta en
+        // el inicio) para no tapar el pago.
+        let premioPendiente = null;
+        const mostrarPremio = () => {
+          const promo = p.estado.promo || premioPendiente;
+          premioPendiente = null;
+          PR.modalPremio(app, promo);
+        };
         p.on('promo', (d) => {
           pintar();
-          if (d?.evento?.tipo === 'premio') PR.modalPremio(app, d.promo);
+          if (d?.evento?.tipo !== 'premio') return;
+          premioPendiente = d.promo;
+          if (p.estado.fase === 'inicio') mostrarPremio();
+        });
+        p.on('cambio', () => {
+          if (premioPendiente && p.estado.fase === 'inicio') mostrarPremio();
         });
         p.on('premio_no_disponible', async (d) => {
           const pedido = d?.pedido;
