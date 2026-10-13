@@ -83,7 +83,7 @@ try {
   ok(!/\{\{|\}\}/.test(h), '3) sin marcas de la plantilla sin reemplazar');
   const cuenta = (re) => (h.match(re) || []).length;
   ok(cuenta(/<li[\s>]/g) === cuenta(/<\/li>/g) && cuenta(/<ul[\s>]/g) === cuenta(/<\/ul>/g) && cuenta(/<section[\s>]/g) === cuenta(/<\/section>/g), `3) etiquetas cuadradas (li ${cuenta(/<li[\s>]/g)}/${cuenta(/<\/li>/g)}, ul ${cuenta(/<ul[\s>]/g)}/${cuenta(/<\/ul>/g)})`);
-  ok(!tiene('Vigente desde el 3 de octubre de 2026'), '3) sin la vigencia de la 1.2');
+  ok(!tiene('Vigente desde el 12 de octubre de 2026'), '3) sin la vigencia de la 1.2');
   const js = leer('nucleo/politica.js');
   ok(/"version":"1\.3"/.test(js) && /"vigenteDesde":"20 de octubre de 2026"/.test(js) && /"avisar":true/.test(js), '3) nucleo/politica.js: la 1.3, la fecha y avisar (la tarjeta de las apps)');
 
