@@ -1,11 +1,17 @@
 // El mapa al volver a la app (13-oct-2026, Oscar en el iPhone): con la app en segundo plano y Face ID al volver, el mapa
-// quedaba en blanco hasta cerrar y abrir la app. Aquí se reproduce en Chromium lo que hace el WKWebView:
+// quedaba en blanco hasta cerrar y abrir la app. Aquí se reproduce en Chromium lo que hace el WKWebView, con el mapa de
+// Mapbox (el de producción; las teselas las sirve la prueba):
 //  a) el mapa se queda sin tamaño mientras la app está oculta y vuelve sin un «resize» (en Chromium las teselas siguen ahí;
 //     se comprueba que al volver se acomoda y se ve);
 //  b) las teselas que se piden con la app oculta fallan (el iPhone corta la red al suspenderla) y no se reintentan;
 //  c) se quita el bloqueo de Face ID (evento ct-desbloqueo).
-// En los tres casos, al volver (visibilitychange, pageshow, «resume» de Capacitor o ct-desbloqueo) nucleo/mapa.js acomoda
-// el tamaño y vuelve a pedir lo que falte, y una tesela cargada siempre se ve (opacidad 1).
+// 15-oct (seguía en blanco «cuando está vario tiempo en reposo o segundo plano»):
+//  d) oculta más de 30 s: el mapa se pide completo otra vez (el iPhone suelta las imágenes); un momento oculta, no;
+//  e) la red tarda en volver: las teselas fallan con la app YA a la vista y se reintentan solas hasta verse;
+//  f) al volver la conexión (online) se piden enseguida, sin esperar el siguiente reintento;
+//  g) si Mapbox no responde nunca (token vencido), pasa a OpenStreetMap después de dos reintentos.
+// Al volver (visibilitychange, pageshow, «resume» de Capacitor, ct-desbloqueo u online) nucleo/mapa.js acomoda el tamaño y
+// vuelve a pedir lo que falte, y una tesela cargada siempre se ve (opacidad 1).
 // Uso: node pruebas/mapa-volver.mjs [url_base]   (servidor estático del repositorio, p. ej.
 //      node pruebas/servidor-local.mjs --puerto=5695). Capturas en $CAPTURAS.
 import { chromium } from '/tmp/cootrans/npm/node_modules/playwright-core/index.mjs';
@@ -61,49 +67,64 @@ const navegador = await chromium.launch({ executablePath: EXE });
 const errores = [];
 try {
   const ctx = await navegador.newContext({ viewport: { width: 390, height: 844 } });
-  const p = await ctx.newPage();
-  p.on('pageerror', (e) => errores.push(e.message));
   let red = 'bien'; // 'bien' | 'caida'
+  let mapbox = 'bien'; // 'bien' | 'mal' (403, como con el token vencido)
   const pedidas = [];
   await ctx.route(/tile|tiles/, (r) => {
-    pedidas.push(r.request().url());
-    return red === 'bien' ? r.fulfill({ status: 200, contentType: 'image/png', body: TESELA }) : r.abort('internetdisconnected');
+    const url = r.request().url();
+    pedidas.push(url);
+    if (red !== 'bien') return r.abort('internetdisconnected');
+    if (mapbox === 'mal' && url.includes('api.mapbox.com')) return r.fulfill({ status: 403, body: 'Forbidden' });
+    return r.fulfill({ status: 200, contentType: 'image/png', body: TESELA });
   });
-  await p.goto(`${BASE}privacidad/`, { waitUntil: 'domcontentloaded' });
-  // El mapa en un contenedor propio, con nucleo/mapa.js tal cual (sin token de Mapbox fuera de taxicun.com: OpenStreetMap).
-  await p.evaluate(async () => {
-    document.body.replaceChildren();
-    const d = document.createElement('div');
-    d.id = 'mapa';
-    d.style.cssText = 'width:390px;height:700px';
-    document.body.append(d);
-    // Lo que el iPhone hace: document.hidden se puede «poner» desde la prueba.
-    let oculta = false;
-    Object.defineProperty(document, 'hidden', { configurable: true, get: () => oculta });
-    globalThis.ponerOculta = (v) => {
-      oculta = v;
-      document.dispatchEvent(new Event('visibilitychange'));
+  // Una página con el mapa en un contenedor propio, con nucleo/mapa.js tal cual y Mapbox como en taxicun.com.
+  const abrir = async () => {
+    const p = await ctx.newPage();
+    p.on('pageerror', (e) => errores.push(e.message));
+    await p.goto(`${BASE}privacidad/`, { waitUntil: 'domcontentloaded' });
+    await p.evaluate(async () => {
+      localStorage.setItem('taxicun.mapbox', '1');
+      document.body.replaceChildren();
+      const d = document.createElement('div');
+      d.id = 'mapa';
+      d.style.cssText = 'width:390px;height:700px';
+      document.body.append(d);
+      // Lo que el iPhone hace: document.hidden se puede «poner» desde la prueba, y el reloj adelantar.
+      let oculta = false;
+      Object.defineProperty(document, 'hidden', { configurable: true, get: () => oculta });
+      globalThis.ponerOculta = (v) => {
+        oculta = v;
+        document.dispatchEvent(new Event('visibilitychange'));
+      };
+      const ahora = Date.now.bind(Date);
+      let desfase = 0;
+      Date.now = () => ahora() + desfase;
+      globalThis.adelantar = (ms) => (desfase += ms);
+      const { crearMapa } = await import('/nucleo/mapa.js');
+      globalThis.elMapa = await crearMapa(d, { controles: false });
+    });
+    const cargadas = (servidor = '') => p.evaluate((servidor) => {
+      const d = document.getElementById('mapa');
+      const caja = d.getBoundingClientRect();
+      return [...d.querySelectorAll('img.leaflet-tile-loaded')].filter((i) => {
+        const r = i.getBoundingClientRect();
+        return i.src.includes(servidor) && r.right > caja.left && r.left < caja.right && r.bottom > caja.top && r.top < caja.bottom && getComputedStyle(i).opacity === '1';
+      }).length;
+    }, servidor);
+    const esperarCargadas = async (ms = 4000, servidor = '') => {
+      const fin = Date.now() + ms;
+      while (Date.now() < fin) {
+        if ((await cargadas(servidor)) > 0) return true;
+        await p.waitForTimeout(100);
+      }
+      return false;
     };
-    const { crearMapa } = await import('/nucleo/mapa.js');
-    globalThis.elMapa = await crearMapa(d, { controles: false });
-  });
-  const cargadas = () => p.evaluate(() => {
-    const d = document.getElementById('mapa');
-    const caja = d.getBoundingClientRect();
-    return [...d.querySelectorAll('img.leaflet-tile-loaded')].filter((i) => {
-      const r = i.getBoundingClientRect();
-      return r.right > caja.left && r.left < caja.right && r.bottom > caja.top && r.top < caja.bottom && getComputedStyle(i).opacity === '1';
-    }).length;
-  });
-  const esperarCargadas = async (ms = 4000) => {
-    const fin = Date.now() + ms;
-    while (Date.now() < fin) {
-      if ((await cargadas()) > 0) return true;
-      await p.waitForTimeout(100);
-    }
-    return false;
+    return { p, cargadas, esperarCargadas };
   };
+
+  const { p, cargadas, esperarCargadas } = await abrir();
   ok(await esperarCargadas(), 'al abrir: el mapa tiene teselas a la vista');
+  ok(pedidas.some((u) => u.includes('api.mapbox.com')), 'el mapa es el de Mapbox (como en producción)');
   await p.screenshot({ path: `${DIR}1-al-abrir.png` });
 
   // a) Segundo plano: el contenedor queda sin tamaño y Leaflet se entera (resize); vuelve con su tamaño SIN otro resize.
@@ -123,7 +144,7 @@ try {
   // b) Las teselas pedidas con la app oculta fallan (sin red) y no se reintentan solas.
   await p.evaluate(() => globalThis.ponerOculta(true));
   red = 'caida';
-  const antes = pedidas.length;
+  let antes = pedidas.length;
   await p.evaluate(() => globalThis.elMapa.centrar({ lat: 4.8700, lng: -74.2900 }, 15, { animar: false }));
   await p.waitForTimeout(800);
   ok(pedidas.length > antes, `b) con la app oculta se pidieron teselas nuevas (${pedidas.length - antes}) y fallaron`);
@@ -144,6 +165,51 @@ try {
     window.dispatchEvent(new Event('ct-desbloqueo'));
   });
   ok(await esperarCargadas(), 'c) al quitarse el bloqueo de Face ID, el mapa se acomoda y tiene teselas');
+  await p.waitForTimeout(1700);
+
+  // d) Un momento oculta: no se pide nada otra vez. Más de 30 s oculta: el mapa se pide completo (en el iPhone las
+  //    imágenes ya cargadas pueden quedar en blanco y Leaflet las cree dibujadas).
+  antes = pedidas.length;
+  // (Chromium las saca de su memoria sin pedirlas otra vez: se marcan las imágenes y se mira que sean otras.)
+  const marcar = () => p.evaluate(() => document.querySelectorAll('#mapa img.leaflet-tile').forEach((i) => (i.dataset.vieja = '1')));
+  const viejas = () => p.evaluate(() => document.querySelectorAll('#mapa img.leaflet-tile[data-vieja]').length);
+  await marcar();
+  await p.evaluate(() => globalThis.ponerOculta(true));
+  await p.waitForTimeout(200);
+  await p.evaluate(() => globalThis.ponerOculta(false));
+  await p.waitForTimeout(1800);
+  const quedan = await viejas();
+  ok(pedidas.length === antes && quedan > 0, `d) oculta un momento: al volver no se vuelve a pedir nada (${pedidas.length - antes} pedidas, ${quedan} imágenes siguen)`);
+  await p.evaluate(() => {
+    globalThis.ponerOculta(true);
+    globalThis.adelantar(45_000);
+  });
+  await p.waitForTimeout(200);
+  await p.evaluate(() => globalThis.ponerOculta(false));
+  await p.waitForTimeout(1000);
+  ok((await viejas()) === 0, `d) oculta 45 s: al volver el mapa se pide completo otra vez (quedan ${await viejas()} imágenes viejas)`);
+  ok(await esperarCargadas(), 'd) y se ve');
+
+  // e) La red del iPhone tarda en volver: las teselas fallan con la app YA a la vista. Antes quedaba en blanco para siempre.
+  red = 'caida';
+  await p.evaluate(() => globalThis.elMapa.centrar({ lat: 4.9500, lng: -74.1000 }, 15, { animar: false }));
+  await p.waitForTimeout(700);
+  ok((await cargadas()) === 0, 'e) reproducido: con la app a la vista las teselas fallan y el mapa queda en blanco');
+  await p.screenshot({ path: `${DIR}4-e-sin-red.png` });
+  red = 'bien';
+  ok(await esperarCargadas(5000), 'e) sin tocar nada, el mapa reintenta solo y se ve');
+  await p.screenshot({ path: `${DIR}5-e-reintento.png` });
+
+  // f) Sin conexión un rato: fallan el pedido y dos reintentos (1,5 s y 4 s; el siguiente sería a los 10 s). Al volver la
+  //    conexión (online) se piden enseguida.
+  red = 'caida';
+  await p.evaluate(() => globalThis.elMapa.centrar({ lat: 4.9900, lng: -74.0500 }, 15, { animar: false }));
+  await ctx.setOffline(true);
+  await p.waitForTimeout(6500);
+  ok((await cargadas()) === 0, 'f) sin conexión: el mapa sigue en blanco');
+  red = 'bien';
+  await ctx.setOffline(false);
+  ok(await esperarCargadas(2500), 'f) al volver la conexión (online), las teselas se piden enseguida y se ven');
 
   // Una tesela cargada siempre se ve, aunque el desvanecido de Leaflet no haya terminado (requestAnimationFrame se
   // detiene en segundo plano).
@@ -160,8 +226,17 @@ try {
     globalThis.ponerOculta(true);
     globalThis.ponerOculta(false);
     window.dispatchEvent(new Event('ct-desbloqueo'));
+    window.dispatchEvent(new Event('online'));
   });
   await p.waitForTimeout(1700);
+
+  // g) Mapbox no responde nunca (403): primero se reintenta (puede ser la red) y después pasa a OpenStreetMap.
+  mapbox = 'mal';
+  const g = await abrir();
+  await g.p.waitForTimeout(1000);
+  ok((await g.cargadas()) === 0 && !pedidas.slice(-30).some((u) => u.includes('openstreetmap')), 'g) Mapbox falla: no pasa a OpenStreetMap en el primer intento');
+  ok(await g.esperarCargadas(9000, 'openstreetmap'), 'g) después de dos reintentos sin nada, el mapa sale de OpenStreetMap');
+  await g.p.screenshot({ path: `${DIR}6-g-respaldo.png` });
   ok(errores.length === 0, `sin errores de JavaScript (${errores.join(' | ')})`);
 } finally {
   await navegador.close();

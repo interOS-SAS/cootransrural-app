@@ -82,10 +82,76 @@ export async function crearMapa(elemento, opciones = {}) {
   let teselas = null;
   let logo = null;
   let errorOculta = false; // una tesela falló con la app en segundo plano (el iPhone corta la red al suspenderla)
+
+  // Las teselas a la vista: cargadas, fallidas (Leaflet nunca las vuelve a pedir) y en camino.
+  const enVista = () => {
+    const n = { conTamano: false, cargadas: 0, fallidas: 0, pendientes: 0 };
+    const caja = elemento.getBoundingClientRect();
+    if (!caja.width || !caja.height) return n;
+    n.conTamano = true;
+    for (const img of elemento.querySelectorAll('img.leaflet-tile')) {
+      const r = img.getBoundingClientRect();
+      if (!(r.right > caja.left && r.left < caja.right && r.bottom > caja.top && r.top < caja.bottom)) continue;
+      if (img.classList.contains('leaflet-tile-loaded')) n.cargadas += 1;
+      else if (img.complete && !img.naturalWidth) n.fallidas += 1;
+      else n.pendientes += 1;
+    }
+    return n;
+  };
+
+  // Reintentos (15-oct, Oscar: el mapa seguía en blanco «cuando está vario tiempo en reposo o segundo plano»). Después de
+  // un rato largo el iPhone tarda unos segundos en devolver la red: las teselas que se piden en ese momento fallan con la
+  // app YA a la vista y Leaflet no las vuelve a pedir nunca. Mientras haya teselas fallidas a la vista se piden otra vez,
+  // cada vez más espaciado (1,5 s, 4 s, 10 s, 25 s y luego cada minuto, hasta 10 veces); al volver a la app o la conexión
+  // (alVolver) se empieza de nuevo.
+  const ESPERAS = [1500, 4000, 10000, 25000, 60000];
+  const MAX_REINTENTOS = 10;
+  let intento = 0;
+  let relojReintento = null;
+  let activo = true; // false al destruir el mapa
+  const reiniciarReintentos = () => {
+    clearTimeout(relojReintento);
+    relojReintento = null;
+    intento = 0;
+    errorOculta = false;
+  };
+  const reintentar = () => {
+    relojReintento = null;
+    if (!teselas || globalThis.document?.hidden || !elemento.isConnected) return; // al volver sigue alVolver
+    try {
+      const v = enVista();
+      if (!v.conTamano) return;
+      if (v.fallidas || (!v.cargadas && !v.pendientes)) {
+        intento += 1;
+        teselas.redraw(); // si vuelven a fallar, tileerror programa el siguiente
+      } else if (v.pendientes) {
+        intento += 1;
+        reintentarLuego();
+      }
+    } catch (e) {
+      console.warn('[mapa] al reintentar:', e?.message || e);
+    }
+  };
+  const reintentarLuego = () => {
+    if (!activo || relojReintento || intento >= MAX_REINTENTOS || globalThis.document?.hidden) return;
+    relojReintento = setTimeout(reintentar, ESPERAS[Math.min(intento, ESPERAS.length - 1)]);
+  };
+  const vigilar = (capa) => {
+    capa.on('tileerror', () => {
+      if (capa !== teselas) return;
+      if (globalThis.document?.hidden) errorOculta = true; // se piden otra vez al volver (alVolver)
+      else reintentarLuego();
+    });
+    capa.on('load', () => {
+      if (capa === teselas && !enVista().fallidas) intento = 0;
+    });
+  };
+
   const ponerCapa = (nombre) => {
     teselas?.remove();
     logo?.remove();
     logo = null;
+    reiniciarReintentos();
     elemento.dataset.capa = nombre;
     elemento.classList.remove('ct-mapa-respaldo');
     const estilo = MAPBOX.token && MAPBOX.estilos[nombre];
@@ -107,14 +173,17 @@ export async function crearMapa(elemento, opciones = {}) {
         return a;
       };
       logo.addTo(mapa);
-      // Si Mapbox no responde (sin red, token vencido o restringido), se pasa a OpenStreetMap.
+      // Si Mapbox no responde (token vencido o restringido) ni después de dos reintentos y nunca cargó nada, se pasa a
+      // OpenStreetMap. Lo que falla en segundo plano o sin conexión no cuenta: ahí OpenStreetMap tampoco cargaría.
+      const capa = teselas;
+      vigilar(capa);
       let errores = 0;
       let cargadas = 0;
-      teselas.on('tileload', () => (cargadas += 1));
-      teselas.on('tileerror', () => {
-        if (globalThis.document?.hidden) errorOculta = true;
+      capa.on('tileload', () => (cargadas += 1));
+      capa.on('tileerror', () => {
+        if (capa !== teselas || globalThis.document?.hidden || globalThis.navigator?.onLine === false) return;
         errores += 1;
-        if (errores >= 4 && cargadas < 2) {
+        if (errores >= 4 && cargadas < 2 && intento >= 2) {
           console.warn('[mapa] Mapbox no respondió; se usa OpenStreetMap');
           ponerRespaldo(nombre);
         }
@@ -127,8 +196,10 @@ export async function crearMapa(elemento, opciones = {}) {
     teselas?.remove();
     logo?.remove();
     logo = null;
+    reiniciarReintentos();
     const d = CAPAS_MAPA.osm;
     teselas = L.tileLayer(d.url, { attribution: d.atribucion, maxZoom: 19 }).addTo(mapa);
+    vigilar(teselas);
     elemento.dataset.capa = nombre;
     // Con un estilo oscuro, el respaldo se oscurece con CSS (ver ESTILOS).
     if (nombre !== 'osm') elemento.classList.add('ct-mapa-respaldo');
@@ -281,23 +352,23 @@ export async function crearMapa(elemento, opciones = {}) {
 
   // Al volver a la app (iPhone, después de Face ID): el mapa quedaba en blanco hasta cerrarla y abrirla (13-oct, Oscar).
   // En segundo plano el WKWebView puede quedar sin tamaño (Leaflet calcula la vista con 0 × 0 y suelta las teselas) y las
-  // teselas pedidas mientras estaba suspendida fallan sin reintento. Al volver, se acomoda el tamaño y, si no hay
-  // teselas cargadas a la vista o alguna falló estando oculta, se piden otra vez; se revisa de nuevo al segundo y medio.
-  const visibles = () => {
-    const caja = elemento.getBoundingClientRect();
-    if (!caja.width || !caja.height) return 0;
-    let n = 0;
-    for (const img of elemento.querySelectorAll('img.leaflet-tile-loaded')) {
-      const r = img.getBoundingClientRect();
-      if (r.right > caja.left && r.left < caja.right && r.bottom > caja.top && r.top < caja.bottom) n += 1;
-    }
-    return n;
-  };
+  // teselas pedidas mientras estaba suspendida fallan sin reintento. Al volver, se acomoda el tamaño y, si a la vista no
+  // hay teselas cargadas (ni en camino) o alguna falló, se piden otra vez; se revisa de nuevo al segundo y medio, y lo que
+  // falle después lo siguen los reintentos. Si la app estuvo oculta más de 30 s (15-oct: seguía en blanco tras un rato
+  // largo en reposo), el mapa se pide completo de una vez: el iPhone suelta de la memoria las imágenes ya dibujadas y
+  // Leaflet las sigue creyendo cargadas. Lo mismo al volver la conexión (online).
+  const OCULTA_LARGO_MS = 30_000;
+  let ocultaDesde = 0;
+  let forzar = false;
   const revisar = () => {
     if (globalThis.document?.hidden || !elemento.isConnected) return;
     try {
       mapa.invalidateSize({ pan: false });
-      if (teselas && (errorOculta || visibles() === 0)) {
+      if (!teselas) return;
+      const v = enVista();
+      if (!v.conTamano) return;
+      if (forzar || errorOculta || v.fallidas || (!v.cargadas && !v.pendientes)) {
+        forzar = false;
         errorOculta = false;
         teselas.redraw();
       }
@@ -306,30 +377,45 @@ export async function crearMapa(elemento, opciones = {}) {
     }
   };
   const relojes = [];
+  const marcarOculta = () => {
+    ocultaDesde ||= Date.now();
+  };
   const alVolver = () => {
-    if (globalThis.document?.hidden) return;
+    if (globalThis.document?.hidden) return marcarOculta();
+    if (ocultaDesde && Date.now() - ocultaDesde > OCULTA_LARGO_MS) forzar = true;
+    ocultaDesde = 0;
+    intento = 0;
     while (relojes.length) clearTimeout(relojes.pop());
     relojes.push(setTimeout(revisar, 300), setTimeout(revisar, 1500));
   };
   globalThis.document?.addEventListener('visibilitychange', alVolver);
   globalThis.addEventListener?.('pageshow', alVolver);
+  globalThis.addEventListener?.('online', alVolver);
   globalThis.addEventListener?.('ct-desbloqueo', alVolver); // se quitó el bloqueo de Face ID (disenos/a/nativa.js)
-  let quitarResume = null;
-  try {
-    const h = globalThis.Capacitor?.Plugins?.App?.addListener?.('resume', alVolver);
-    Promise.resolve(h).then((x) => { quitarResume = x; }).catch(() => {});
-  } catch {
-    /* sin el plugin App */
+  const nativos = [];
+  for (const [evento, fn] of [['resume', alVolver], ['pause', marcarOculta]]) {
+    try {
+      const h = globalThis.Capacitor?.Plugins?.App?.addListener?.(evento, fn);
+      Promise.resolve(h).then((x) => (activo ? x && nativos.push(x) : x?.remove?.())).catch(() => {});
+    } catch {
+      /* sin el plugin App */
+    }
   }
   function quitarVolver() {
+    activo = false;
     while (relojes.length) clearTimeout(relojes.pop());
+    clearTimeout(relojReintento);
+    relojReintento = null;
     globalThis.document?.removeEventListener('visibilitychange', alVolver);
     globalThis.removeEventListener?.('pageshow', alVolver);
+    globalThis.removeEventListener?.('online', alVolver);
     globalThis.removeEventListener?.('ct-desbloqueo', alVolver);
-    try {
-      quitarResume?.remove?.();
-    } catch {
-      /* nada */
+    for (const h of nativos.splice(0)) {
+      try {
+        h?.remove?.();
+      } catch {
+        /* nada */
+      }
     }
   }
   return api;
