@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Términos y condiciones · TaxiCun</title>
+  <meta name="description" content="Términos y condiciones de uso de las apps TaxiCun y TaxiCun Conductor: quiénes somos, cómo funciona el servicio, obligaciones, pagos, propiedad intelectual y tus derechos.">
+  <meta name="theme-color" content="#0A2552">
+  <link rel="canonical" href="{{url_sitio}}terminos/">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{RAIZ}}img/taxicun/favicon-32.png">
+  <link rel="apple-touch-icon" href="{{RAIZ}}img/taxicun/apple-touch-icon.png">
+  <link rel="stylesheet" href="{{RAIZ}}fuentes/fuentes.css">
+  <link rel="stylesheet" href="{{RAIZ}}web/inicio.css">
+  <!-- Política de privacidad REAL de las apps TaxiCun y TaxiCun Conductor (cuentas con
+       correo y servidor de interOS). Las de cada cooperativa (plantillas/privacidad/)
+       siguen siendo las de la demostración. Usa la barra y el pie de la página de inicio
+       (web/inicio.css); lo propio del documento va aquí. -->
+  <style>
+    .doc-cabeza {
+      color: #fff; padding: clamp(40px, 6vw, 72px) 0 clamp(40px, 6vw, 64px);
+      background:
+        radial-gradient(700px 420px at 90% 0%, rgba(255, 194, 26, .22), transparent 60%),
+        radial-gradient(800px 600px at 0% 100%, rgba(42, 99, 194, .55), transparent 60%),
+        linear-gradient(160deg, var(--azul-2), var(--azul) 70%);
+    }
+    .doc-cabeza .contenedor, .documento { width: min(100% - 40px, 820px); margin-inline: auto; }
+    .doc-cabeza h1 { margin: 18px 0 12px; font-size: clamp(2.1rem, 1.5rem + 2.8vw, 3.3rem); font-weight: 800; }
+    .doc-cabeza p { margin: 0; max-width: 40em; font-size: clamp(1.02rem, .98rem + .3vw, 1.15rem); color: rgba(255, 255, 255, .88); }
+    .doc-cabeza .vigencia { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-weight: 700; font-size: .95rem; color: var(--amarillo); }
+    .documento { padding: clamp(28px, 5vw, 48px) 0 72px; }
+    .documento h2 { margin: 44px 0 12px; font-size: clamp(1.3rem, 1.15rem + .6vw, 1.6rem); font-weight: 800; color: var(--azul); }
+    .documento h3 { margin: 22px 0 8px; font-size: 1.08rem; }
+    .documento p { margin: 0 0 1em; }
+    .documento ul, .documento ol { display: grid; gap: 8px; margin: 0 0 1em; padding-left: 1.3em; }
+    .documento li::marker { color: var(--azul-2); font-weight: 800; }
+    .documento section { scroll-margin-top: 84px; }
+    .resumen { padding: 22px 24px; border-radius: 24px; background: var(--crema); border: 1px solid #F3E2B3; }
+    .resumen h2 { margin: 0 0 14px; font-size: 1.2rem; }
+    .resumen ul { list-style: none; padding: 0; margin: 0; gap: 10px; }
+    .resumen li { display: flex; align-items: flex-start; gap: 12px; }
+    .resumen .icono { margin-top: .2em; color: var(--azul-2); }
+    .indice { margin: 24px 0 0; padding: 20px 24px; border-radius: 22px; background: var(--azul-tinte); }
+    .indice b { display: block; margin-bottom: 10px; font-family: var(--titulo); color: var(--azul); }
+    .documento .indice ol { display: block; columns: 2 230px; column-gap: 32px; margin: 0; }
+    .indice li { margin-bottom: 6px; break-inside: avoid; }
+    .caja { margin: 18px 0; padding: 20px 22px; border-radius: 22px; background: #fff; border: 1px solid var(--borde); box-shadow: 0 10px 30px -24px rgba(10, 37, 82, .5); }
+    .caja-eliminar { border: 2px solid var(--azul-2); }
+    .caja h3 { margin-top: 0; display: flex; align-items: center; gap: 10px; }
+    .caja h3 .icono { color: var(--azul-2); }
+    .caja > :last-child { margin-bottom: 0; }
+    .ruta-app { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+    .ruta-app b { display: inline-block; padding: 1px 10px; border-radius: 999px; background: var(--amarillo); color: var(--azul); font-weight: 800; white-space: nowrap; }
+    .nota-suave { color: var(--suave); font-size: .95rem; }
+    .ficha { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 0 0 1em; }
+    .ficha dt { font-weight: 800; color: var(--azul); }
+    .ficha dd { margin: 0; overflow-wrap: anywhere; }
+    @media (max-width: 520px) { .ficha { grid-template-columns: 1fr; gap: 2px; } .ficha dd { margin-bottom: 8px; } }
+  </style>
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-taxi" viewBox="0 0 24 24"><path d="M10 2h4"/><path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.65 5H8.4a2 2 0 0 0-1.9 1.26L5 10 3 8"/><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M7 14h.01M17 14h.01M5 18v2M19 18v2"/></symbol>
+    <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-usuario" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+    <symbol id="i-personas" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></symbol>
+    <symbol id="i-cerrar" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-basura" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6"/><path d="m5 7 1 12.5A1.6 1.6 0 0 0 7.6 21h8.8a1.6 1.6 0 0 0 1.6-1.5L19 7"/><path d="M9 7V4h6v3"/></symbol>
+    <symbol id="i-celular" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+    <symbol id="i-volante" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 14v7M10 12H3.5M14 12h6.5"/></symbol>
+    <symbol id="i-correo" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+    <symbol id="i-calendario" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></symbol>
+  </svg>
+
+  <header class="barra">
+    <div class="contenedor barra-caja">
+      <a class="marca" href="{{RAIZ}}" aria-label="TaxiCun, inicio"><img src="{{RAIZ}}img/taxicun/logo-blanco.svg" alt="TaxiCun" width="168" height="42"></a>
+      <nav class="menu" aria-label="Secciones de los términos">
+        <a href="#servicio">El servicio</a>
+        <a href="#pasajeros">Pasajeros</a>
+        <a href="#conductores">Conductores</a>
+        <a href="#propiedad">Propiedad intelectual</a>
+      </nav>
+      <a class="boton boton-amarillo boton-barra" href="{{RAIZ}}taxicun/"><svg class="icono" aria-hidden="true"><use href="#i-taxi"/></svg>Pedir taxi</a>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <div class="doc-cabeza">
+      <div class="contenedor">
+        <span class="pildora"><svg class="icono" aria-hidden="true"><use href="#i-escudo"/></svg>Términos de TaxiCun</span>
+        <h1>Términos y condiciones</h1>
+        <p>Las reglas para usar las apps TaxiCun (para pasajeros) y TaxiCun Conductor, disponibles en App Store, Google Play y en taxicun.com.</p>
+        <p class="vigencia"><svg class="icono" aria-hidden="true"><use href="#i-calendario"/></svg>Versión 1.0 · Vigente desde el 15 de octubre de 2026</p>
+      </div>
+    </div>
+
+    <article class="documento">
+      <div class="resumen">
+        <h2>En pocas palabras</h2>
+        <ul>
+          <li><span>TaxiCun es una <b>plataforma tecnológica</b> que conecta pasajeros con taxis de cooperativas y empresas de transporte habilitadas. El transporte lo prestan ellas y sus conductores.</span></li>
+          <li><span>La app es <b>gratis para los pasajeros</b>. El valor del viaje se le paga directamente al conductor.</span></li>
+          <li><span>Usa datos verdaderos, respeta a los conductores y a los pasajeros, y no uses la app para nada ilegal.</span></li>
+          <li><span>La marca TaxiCun, el logo, los diseños y el contenido son de interOS y están protegidos.</span></li>
+        </ul>
+      </div>
+
+      <section id="quienes">
+        <h2>1. Quiénes somos</h2>
+        <p>TaxiCun es desarrollada y operada por <b>INTEROS - INTERNET SERVICE S.A.S.</b> («interOS»), sociedad legalmente constituida en Colombia, identificada con NIT 901.213.197-5 y matrícula mercantil 123760 de la Cámara de Comercio de Facatativá. Contacto: <a href="mailto:info@taxicun.com">info@taxicun.com</a>.</p>
+        <p>Al registrarte o usar las apps aceptas estos términos y la <a href="{{RAIZ}}privacidad/">política de privacidad</a>. Si no estás de acuerdo, no uses las apps.</p>
+      </section>
+
+      <section id="servicio">
+        <h2>2. Qué es TaxiCun</h2>
+        <p>TaxiCun permite que un pasajero pida un taxi con su ubicación, vea el valor estimado o la tarifa del municipio, siga la llegada del vehículo y comparta su viaje; y que el conductor reciba, acepte y atienda servicios.</p>
+        <p>interOS <b>no presta el servicio de transporte</b>. El servicio lo prestan las cooperativas y empresas de transporte habilitadas por la autoridad competente y sus conductores vinculados, que responden por él conforme a la ley. interOS pone la tecnología que los conecta.</p>
+      </section>
+
+      <section id="cuenta">
+        <h2>3. Tu cuenta</h2>
+        <ul>
+          <li>Para usar la app te registras con tu correo y un código de verificación. Debes ser mayor de edad o contar con autorización de tu representante legal.</li>
+          <li>Los datos que registres deben ser verdaderos y estar al día. Tu cuenta es personal: cuida el acceso a tu correo y a tu celular.</li>
+          <li>Puedes eliminar tu cuenta cuando quieras desde la app o escribiendo a <a href="mailto:info@taxicun.com">info@taxicun.com</a>.</li>
+        </ul>
+      </section>
+
+      <section id="pasajeros">
+        <h2>4. Si eres pasajero</h2>
+        <ul>
+          <li>Pide el servicio con tu ubicación real y verifica la placa, el número del móvil y el código de abordaje antes de subir.</li>
+          <li>El valor que muestra la app es la tarifa oficial del municipio cuando existe, o un valor estimado según la ruta. El valor final lo fijan las tarifas vigentes y el recorrido real.</li>
+          <li>El pago se hace directamente al conductor, en los medios que él acepte. interOS no recibe ese dinero.</li>
+          <li>Cancela con tiempo si ya no necesitas el taxi. Las cancelaciones repetidas o los pedidos falsos pueden llevar a suspender la cuenta.</li>
+          <li>Trata con respeto al conductor y cuida el vehículo.</li>
+        </ul>
+      </section>
+
+      <section id="conductores">
+        <h2>5. Si eres conductor</h2>
+        <ul>
+          <li>Debes estar vinculado a una cooperativa o empresa habilitada que use TaxiCun, que es la que aprueba tu cuenta.</li>
+          <li>Debes tener al día tu licencia de conducción, el SOAT, la revisión técnico-mecánica, la tarjeta de operación o de control y los demás documentos que exija la ley.</li>
+          <li>Cumple las normas de tránsito, cobra las tarifas vigentes y atiende con respeto. Marca «Llegué» solo cuando estés en el punto de recogida.</li>
+          <li>La cooperativa o empresa puede fijar reglas del despacho y suspender tu acceso según sus reglamentos.</li>
+        </ul>
+      </section>
+
+      <section id="cooperativas">
+        <h2>6. Cooperativas y empresas</h2>
+        <p>Las cooperativas y empresas que usan TaxiCun lo hacen con un contrato aparte con interOS, donde se fijan el plan, las condiciones y el tratamiento de los datos. Ellas administran a sus conductores, tarifas y reglas desde el panel.</p>
+      </section>
+
+      <section id="seguridad">
+        <h2>7. Seguridad</h2>
+        <p>Las funciones de seguridad (compartir el viaje, botón SOS, código de abordaje) son una ayuda y <b>no reemplazan a las autoridades</b>. En una emergencia llama a la línea <b>123</b>.</p>
+      </section>
+
+      <section id="uso">
+        <h2>8. Usos que no están permitidos</h2>
+        <ul>
+          <li>Suplantar a otra persona, registrar datos falsos o hacer pedidos falsos.</li>
+          <li>Usar la app para actividades ilegales o para acosar, amenazar o discriminar.</li>
+          <li>Intentar acceder sin permiso a los sistemas, copiar el software o alterar su funcionamiento.</li>
+        </ul>
+        <p>interOS puede suspender o cerrar cuentas que incumplan estos términos.</p>
+      </section>
+
+      <section id="propiedad">
+        <h2>9. Propiedad intelectual</h2>
+        <p>La marca <b>TaxiCun</b>, su nombre, su logo, los diseños, las pantallas, el software, los textos, las imágenes y demás contenido de las apps y de taxicun.com son de interOS o de sus licenciantes y están protegidos por las normas de propiedad intelectual de Colombia (Decisión 486 y Decisión 351 de la Comunidad Andina, Ley 23 de 1982).</p>
+        <p>Está <b>prohibido copiar, reproducir, distribuir, modificar o usar comercialmente</b> ese contenido, total o parcialmente, sin autorización escrita de interOS. Las imágenes del sitio llevan marca de agua.</p>
+      </section>
+
+      <section id="datos">
+        <h2>10. Tus datos personales</h2>
+        <p>Tratamos tus datos según la Ley 1581 de 2012 y nuestra <a href="{{RAIZ}}privacidad/">política de privacidad</a>, donde están tus derechos y cómo ejercerlos.</p>
+      </section>
+
+      <section id="responsabilidad">
+        <h2>11. Disponibilidad y responsabilidad</h2>
+        <ul>
+          <li>Trabajamos para que la app esté disponible, pero puede tener interrupciones por mantenimiento, fallas de internet, del GPS o de servicios de terceros (tiendas de apps, mapas, Google Maps o Waze).</li>
+          <li>La ubicación y los tiempos de llegada son aproximados.</li>
+          <li>interOS responde por el funcionamiento de la plataforma. Las cooperativas, empresas y conductores responden por la prestación del transporte.</li>
+        </ul>
+      </section>
+
+      <section id="reclamos">
+        <h2>12. Peticiones, quejas y reclamos</h2>
+        <p>Escríbenos a <a href="mailto:info@taxicun.com">info@taxicun.com</a>. Te respondemos dentro de los plazos de ley. Como consumidor tienes los derechos de la Ley 1480 de 2011 (Estatuto del Consumidor). Las quejas sobre la prestación del transporte también puedes presentarlas ante la cooperativa o empresa y ante la Superintendencia de Transporte.</p>
+      </section>
+
+      <section id="cambios">
+        <h2>13. Cambios, ley aplicable y vigencia</h2>
+        <p>Podemos actualizar estos términos. Si el cambio es importante te avisaremos en la app o por correo antes de que empiece a regir. Estos términos se rigen por las leyes de la República de Colombia.</p>
+        <p>Versión 1.0, vigente desde el 15 de octubre de 2026.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie-caja">
+      <img src="{{RAIZ}}img/taxicun/logo-blanco.svg" alt="TaxiCun" width="140" height="35" loading="lazy">
+      <p>Tu taxi de confianza en Cundinamarca · TaxiCun es desarrollada por <a href="{{proveedor.web}}" rel="noopener">{{proveedor.nombre}}</a>.</p>
+      <p class="pie-enlaces"><a href="{{RAIZ}}">Inicio</a><a href="{{RAIZ}}taxicun/">Pedir taxi</a><a href="{{RAIZ}}taxicun/conductor/">Conductores</a><a href="{{RAIZ}}terminos/">Términos y condiciones</a><a href="mailto:info@taxicun.com">info@taxicun.com</a></p>
+      <p class="pie-legal">© 2026 INTEROS - INTERNET SERVICE S.A.S. · NIT 901.213.197-5 · Sociedad legalmente constituida, matrícula mercantil 123760 de la Cámara de Comercio de Facatativá. TaxiCun, su nombre y su logo son marcas de interOS. Todos los derechos reservados: prohibida la copia o reproducción del contenido sin autorización.</p>
+    </div>
+  </footer>
+  <script src="{{RAIZ}}web/proteccion.js" defer></script>
+</body>
+</html>

@@ -70,10 +70,10 @@
       </section>
 
       <section class="tarjeta tiendas" aria-labelledby="titulo-tiendas">
-        <h2 id="titulo-tiendas">Muy pronto TaxiCun en Google Play y App&nbsp;Store</h2>
-        <div class="insignias">
-          <span class="insignia"><svg class="icono"><use href="#i-play"/></svg><span><small>Próximamente</small><b>Google Play</b></span></span>
-          <span class="insignia"><svg class="icono"><use href="#i-celular"/></svg><span><small>Próximamente</small><b>App Store</b></span></span>
+        <h2 id="titulo-tiendas">Descarga TaxiCun gratis</h2>
+        <div class="insignias" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center">
+          <a class="tienda" href="https://apps.apple.com/co/app/taxicun/id6818391242" target="_blank" rel="noopener"><img src="{{RAIZ}}img/tiendas/app-store.svg" alt="Descárgalo en el App Store" style="height:48px;width:auto;display:block"></a>
+          <a class="tienda" href="https://play.google.com/store/apps/details?id=com.taxicun.app" target="_blank" rel="noopener"><img src="{{RAIZ}}img/tiendas/google-play.png" alt="Disponible en Google Play" style="height:70px;width:auto;display:block;margin:-11px -9px"></a>
         </div>
       </section>
 
@@ -89,7 +89,7 @@
     <footer class="pie-simple">
 {{#si tiene_telefono}}      <p>{{#si EMPRESA.servicio24h}}Central 24 horas{{/si}}{{#no EMPRESA.servicio24h}}Central{{/no}} de {{EMPRESA.nombre}}: <a href="tel:{{tel}}">{{tel_visible}}</a></p>
 {{/si}}{{#si pendiente.telefono}}      <p>Teléfono de la central: <i class="pronto">pronto</i></p>
-{{/si}}      <p><a href="../">Página de la {{tipo}}</a> · <a href="../privacidad/">Privacidad</a></p>
+{{/si}}      <p><a href="../">Página de la {{tipo}}</a> · <a href="../privacidad/">Privacidad</a> · <a href="{{RAIZ}}terminos/">Términos de TaxiCun</a></p>
       <p class="interos">App TaxiCun · desarrollada por <a href="{{proveedor.web}}" target="_blank" rel="noopener">{{proveedor.nombre}}</a></p>
     </footer>
   </main>
@@ -142,5 +142,6 @@
 
     registrarServiceWorker();
   </script>
+  <script src="{{RAIZ}}web/proteccion.js" defer></script>
 </body>
 </html>

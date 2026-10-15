@@ -175,3 +175,10 @@ a { color: var(--azul-2); }
 .pie a { color: #fff; }
 .pie p { margin: 0; }
 .pie-enlaces { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+
+/* Tiendas y pie legal (15-oct-2026) */
+.tiendas-portada { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 22px 0 0; }
+.tiendas-portada a { display: inline-flex; }
+.tiendas-portada img.as { height: 48px; width: auto; }
+.tiendas-portada img.gp { height: 70px; width: auto; margin: -11px -9px; }
+.pie-legal { font-size: .8rem; line-height: 1.55; color: rgba(255, 255, 255, .6); max-width: 60em; }
