@@ -189,6 +189,8 @@ try {
   await p.waitForTimeout(1000);
   ok((await viejas()) === 0, `d) oculta 45 s: al volver el mapa se pide completo otra vez (quedan ${await viejas()} imágenes viejas)`);
   ok(await esperarCargadas(), 'd) y se ve');
+  const diagD = await p.evaluate(() => globalThis.elMapa.diagnostico());
+  ok(/vuelve \(visibilitychange\) tras \d+ s oculta/.test(diagD) && /se piden otra vez las teselas \(al volver: estuvo oculta un rato largo\)/.test(diagD), 'diagnóstico: anota cuándo se ocultó, cuándo volvió y que se pidió el mapa completo');
 
   // e) La red del iPhone tarda en volver: las teselas fallan con la app YA a la vista. Antes quedaba en blanco para siempre.
   red = 'caida';
@@ -210,6 +212,25 @@ try {
   red = 'bien';
   await ctx.setOffline(false);
   ok(await esperarCargadas(2500), 'f) al volver la conexión (online), las teselas se piden enseguida y se ven');
+
+  // Diagnóstico en pantalla (16-oct): lo que hay a la vista y los últimos sucesos.
+  const diag = await p.evaluate(() => {
+    globalThis.elMapa.mostrarDiagnostico();
+    return document.querySelector('.ct-diag-mapa pre')?.textContent || '';
+  });
+  ok(/encima: el mapa en 9 de 9 puntos\n/.test(diag) && /a la vista 6 cargadas, 0 fallidas/.test(diag), 'diagnóstico: dice qué hay encima del mapa y cuántas teselas se ven');
+  ok(/vuelve \(online\)/.test(diag) && /reintento 2/.test(diag) && /Sucesos \(el último primero\):\n.*cargaron: 6 a la vista/.test(diag), 'diagnóstico: los reintentos y la vuelta de la conexión, el último suceso primero');
+  console.log(diag.split('\n').map((l) => `    │ ${l}`).join('\n'));
+  await p.screenshot({ path: `${DIR}7-diagnostico.png` });
+  const rehecho = await p.evaluate(async () => {
+    document.querySelector('.ct-diag-mapa [data-rehacer]').click();
+    await new Promise((r) => setTimeout(r, 1500));
+    const t = document.querySelector('.ct-diag-mapa pre').textContent;
+    document.querySelector('.ct-diag-mapa [data-cerrar]').click();
+    return { t, queda: Boolean(document.querySelector('.ct-diag-mapa')) };
+  });
+  ok(/Rehacer el mapa/.test(rehecho.t) && !rehecho.queda, '«Rehacer el mapa» vuelve a poner la capa y «Cerrar» quita el recuadro');
+  ok(await esperarCargadas(), 'después de rehacer, el mapa se ve');
 
   // Una tesela cargada siempre se ve, aunque el desvanecido de Leaflet no haya terminado (requestAnimationFrame se
   // detiene en segundo plano).

@@ -42,6 +42,9 @@ function svgPin(color, letra) {
 </svg>`;
 }
 
+// Para saber en el diagnóstico qué versión de este archivo corre en el teléfono.
+const VERSION_MAPA = '2026-10-16';
+
 export async function crearMapa(elemento, opciones = {}) {
   const L = await cargarLeaflet();
   const {
@@ -83,6 +86,25 @@ export async function crearMapa(elemento, opciones = {}) {
   let logo = null;
   let errorOculta = false; // una tesela falló con la app en segundo plano (el iPhone corta la red al suspenderla)
 
+  // Diagnóstico (16-oct): el mapa seguía saliendo en blanco en el iPhone de Oscar tras un rato en reposo y en el
+  // simulador no pasa. Se guardan los últimos sucesos del mapa; con una pulsación larga en el botón de ubicación
+  // (vigilarDiagnostico) se ven en pantalla con lo que hay a la vista, para mandar la captura.
+  const t0 = Date.now();
+  const sucesos = [];
+  let fallasTotal = 0;
+  let redibujos = 0;
+  let esperandoCarga = '';
+  const anotar = (texto) => {
+    sucesos.push(`${Math.round((Date.now() - t0) / 1000)} s · ${texto}`);
+    if (sucesos.length > 30) sucesos.shift();
+  };
+  const redibujar = (motivo) => {
+    redibujos += 1;
+    esperandoCarga = motivo;
+    anotar(`se piden otra vez las teselas (${motivo})`);
+    teselas.redraw();
+  };
+
   // Las teselas a la vista: cargadas, fallidas (Leaflet nunca las vuelve a pedir) y en camino.
   const enVista = () => {
     const n = { conTamano: false, cargadas: 0, fallidas: 0, pendientes: 0 };
@@ -123,7 +145,7 @@ export async function crearMapa(elemento, opciones = {}) {
       if (!v.conTamano) return;
       if (v.fallidas || (!v.cargadas && !v.pendientes)) {
         intento += 1;
-        teselas.redraw(); // si vuelven a fallar, tileerror programa el siguiente
+        redibujar(`reintento ${intento}: ${v.fallidas} fallidas, ${v.cargadas} cargadas`); // si vuelven a fallar, tileerror programa el siguiente
       } else if (v.pendientes) {
         intento += 1;
         reintentarLuego();
@@ -139,11 +161,21 @@ export async function crearMapa(elemento, opciones = {}) {
   const vigilar = (capa) => {
     capa.on('tileerror', () => {
       if (capa !== teselas) return;
-      if (globalThis.document?.hidden) errorOculta = true; // se piden otra vez al volver (alVolver)
-      else reintentarLuego();
+      fallasTotal += 1;
+      if (globalThis.document?.hidden) {
+        if (!errorOculta) anotar('falló una tesela con la app oculta');
+        errorOculta = true; // se piden otra vez al volver (alVolver)
+      } else {
+        if (!relojReintento) anotar(`falló una tesela a la vista${globalThis.navigator?.onLine === false ? ' (sin conexión)' : ''}`);
+        reintentarLuego();
+      }
     });
     capa.on('load', () => {
-      if (capa === teselas && !enVista().fallidas) intento = 0;
+      if (capa !== teselas) return;
+      const v = enVista();
+      if (!v.fallidas) intento = 0;
+      if (esperandoCarga) anotar(`cargaron: ${v.cargadas} a la vista, ${v.fallidas} fallidas`);
+      esperandoCarga = '';
     });
   };
 
@@ -185,6 +217,7 @@ export async function crearMapa(elemento, opciones = {}) {
         errores += 1;
         if (errores >= 4 && cargadas < 2 && intento >= 2) {
           console.warn('[mapa] Mapbox no respondió; se usa OpenStreetMap');
+          anotar('Mapbox no respondió: OpenStreetMap');
           ponerRespaldo(nombre);
         }
       });
@@ -205,6 +238,7 @@ export async function crearMapa(elemento, opciones = {}) {
     if (nombre !== 'osm') elemento.classList.add('ct-mapa-respaldo');
   };
   ponerCapa(capa);
+  anotar(`mapa creado (${elemento.getBoundingClientRect().width | 0}×${elemento.getBoundingClientRect().height | 0})`);
 
   const icono = (html, tam, ancla, clase = '') => L.divIcon({ html, className: `ct-marcador ${clase}`, iconSize: tam, iconAnchor: ancla });
   const iconoOrigen = icono(svgPin(colorOrigen, 'A'), [36, 48], [18, 46], 'ct-origen');
@@ -217,6 +251,52 @@ export async function crearMapa(elemento, opciones = {}) {
   let yo = null;
   let yoPrecision = null;
   const taxis = new Map();
+
+  function diagnostico() {
+    const nombreDe = (n) => (n ? `${n.tagName.toLowerCase()}${[...n.classList].slice(0, 2).map((c) => `.${c}`).join('')}` : 'nada');
+    try {
+      const caja = elemento.getBoundingClientRect();
+      const v = enVista();
+      // Qué hay encima en 9 puntos del mapa (la hoja de abajo y la barra de arriba lo tapan a propósito).
+      const otros = new Map();
+      let delMapa = 0;
+      for (const fx of [0.2, 0.5, 0.8]) {
+        for (const fy of [0.25, 0.45, 0.65]) {
+          const n = document.elementFromPoint(caja.left + caja.width * fx, caja.top + caja.height * fy);
+          if (n && elemento.contains(n)) delMapa += 1;
+          else otros.set(nombreDe(n), (otros.get(nombreDe(n)) || 0) + 1);
+        }
+      }
+      const raros = [];
+      for (let n = elemento, i = 0; n && i < 6; n = n.parentElement, i += 1) {
+        const cs = getComputedStyle(n);
+        const r = [cs.display === 'none' && 'display:none', cs.visibility !== 'visible' && `visibility:${cs.visibility}`,
+          cs.opacity !== '1' && `opacity:${cs.opacity}`, cs.filter !== 'none' && `filter:${cs.filter}`].filter(Boolean);
+        if (r.length) raros.push(`${nombreDe(n)} ${r.join(' ')}`);
+      }
+      const cont = elemento.querySelector('.leaflet-container') || elemento;
+      const c = mapa.getCenter();
+      const t = mapa.getSize();
+      const img = elemento.querySelector('img.leaflet-tile-loaded');
+      const nav = globalThis.performance?.getEntriesByType?.('navigation')?.[0]?.type || '?';
+      const nativa = (globalThis.navigator?.userAgent || '').match(/TaxiCun-Nativo\/[\d.]+/)?.[0] || 'web';
+      return [
+        `mapa ${VERSION_MAPA} · ${nativa} · página: ${nav} hace ${Math.round((Date.now() - t0) / 1000)} s`,
+        `${globalThis.navigator?.onLine === false ? 'SIN conexión' : 'con conexión'} · ${document.visibilityState}`,
+        `caja ${Math.round(caja.width)}×${Math.round(caja.height)} · Leaflet ${t.x}×${t.y} · pantalla ${innerWidth}×${innerHeight}`,
+        `teselas: ${elemento.querySelectorAll('img.leaflet-tile').length} en total; a la vista ${v.cargadas} cargadas, ${v.fallidas} fallidas, ${v.pendientes} en camino`,
+        `capa ${elemento.dataset.capa || '?'}${elemento.classList.contains('ct-mapa-respaldo') ? ' (respaldo)' : ''} · ${img ? new URL(img.src).host : 'sin imagen'} ${img ? `${img.naturalWidth}px` : ''} · zoom ${mapa.getZoom()} · ${c.lat.toFixed(3)}, ${c.lng.toFixed(3)}`,
+        `encima: el mapa en ${delMapa} de 9 puntos${otros.size ? ` · tapan: ${[...otros].map(([k, n]) => `${k} (${n})`).join(', ')}` : ''}`,
+        `fondo ${getComputedStyle(cont).backgroundColor} · capas ${elemento.querySelector('.leaflet-map-pane')?.style.transform || '-'}`,
+        ...(raros.length ? raros : ['sin estilos que lo oculten']),
+        `reintentos ${intento} · fallas ${fallasTotal} · redibujos ${redibujos}`,
+        'Sucesos (el último primero):',
+        ...sucesos.slice().reverse(),
+      ].join('\n');
+    } catch (e) {
+      return `error en el diagnóstico: ${e?.message || e}\n${sucesos.join('\n')}`;
+    }
+  }
 
   const api = {
     L,
@@ -348,6 +428,54 @@ export async function crearMapa(elemento, opciones = {}) {
       quitarVolver();
       mapa.remove();
     },
+    // Diagnóstico en pantalla con una pulsación larga (1,5 s, sin mover el dedo) sobre `boton`.
+    vigilarDiagnostico(boton) {
+      if (!boton) return;
+      let reloj = null;
+      let x = 0;
+      let y = 0;
+      const parar = () => {
+        clearTimeout(reloj);
+        reloj = null;
+      };
+      boton.addEventListener('pointerdown', (e) => {
+        parar();
+        x = e.clientX;
+        y = e.clientY;
+        reloj = setTimeout(() => {
+          reloj = null;
+          api.mostrarDiagnostico();
+        }, 1500);
+      });
+      boton.addEventListener('pointermove', (e) => {
+        if (Math.hypot(e.clientX - x, e.clientY - y) > 12) parar();
+      });
+      for (const t of ['pointerup', 'pointercancel', 'pointerleave']) boton.addEventListener(t, parar);
+      boton.addEventListener('contextmenu', (e) => e.preventDefault());
+    },
+    diagnostico,
+    mostrarDiagnostico() {
+      globalThis.document?.querySelector('.ct-diag-mapa')?.remove();
+      const d = document.createElement('div');
+      d.className = 'ct-diag-mapa';
+      d.setAttribute('role', 'dialog');
+      d.innerHTML = '<pre></pre><div><button type="button" data-rehacer>Rehacer el mapa</button><button type="button" data-cerrar>Cerrar</button></div>';
+      const pre = d.querySelector('pre');
+      pre.textContent = diagnostico();
+      d.querySelector('[data-cerrar]').addEventListener('click', () => d.remove());
+      d.querySelector('[data-rehacer]').addEventListener('click', () => {
+        anotar('«Rehacer el mapa» (a mano)');
+        try {
+          mapa.invalidateSize({ pan: false });
+          ponerCapa(elemento.dataset.capa || capa);
+        } catch (e) {
+          anotar(`error al rehacer: ${e?.message || e}`);
+        }
+        pre.textContent = diagnostico();
+        setTimeout(() => d.isConnected && (pre.textContent = diagnostico()), 3000);
+      });
+      document.body.append(d);
+    },
   };
 
   // Al volver a la app (iPhone, después de Face ID): el mapa quedaba en blanco hasta cerrarla y abrirla (13-oct, Oscar).
@@ -368,20 +496,34 @@ export async function crearMapa(elemento, opciones = {}) {
       const v = enVista();
       if (!v.conTamano) return;
       if (forzar || errorOculta || v.fallidas || (!v.cargadas && !v.pendientes)) {
+        const motivo = forzar ? 'estuvo oculta un rato largo' : errorOculta ? 'fallaron estando oculta' : v.fallidas ? `${v.fallidas} fallidas` : 'ninguna a la vista';
+        if (forzar) {
+          // Además, que el iPhone vuelva a armar las capas del mapa (no solo las imágenes): sin esto, si soltó el dibujo
+          // del contenedor, las teselas nuevas tampoco se verían.
+          const antes = elemento.style.display;
+          elemento.style.display = 'none';
+          void elemento.offsetHeight;
+          elemento.style.display = antes;
+        }
         forzar = false;
         errorOculta = false;
-        teselas.redraw();
+        redibujar(`al volver: ${motivo}`);
+      } else if (!v.cargadas) {
+        anotar(`al volver: ${v.pendientes} en camino`);
       }
     } catch (e) {
       console.warn('[mapa] al volver:', e?.message || e);
     }
   };
   const relojes = [];
-  const marcarOculta = () => {
+  const marcarOculta = (ev) => {
+    if (!ocultaDesde) anotar(`se oculta (${ev?.type || 'pause'})`);
     ocultaDesde ||= Date.now();
   };
-  const alVolver = () => {
-    if (globalThis.document?.hidden) return marcarOculta();
+  const alVolver = (ev) => {
+    if (globalThis.document?.hidden) return marcarOculta(ev);
+    const fuera = ocultaDesde ? Math.round((Date.now() - ocultaDesde) / 1000) : 0;
+    if (ocultaDesde || !['pageshow', 'resume'].includes(ev?.type || 'resume')) anotar(`vuelve (${ev?.type || 'resume'})${fuera ? ` tras ${fuera} s oculta` : ''}`);
     if (ocultaDesde && Date.now() - ocultaDesde > OCULTA_LARGO_MS) forzar = true;
     ocultaDesde = 0;
     intento = 0;
@@ -425,6 +567,10 @@ export async function crearMapa(elemento, opciones = {}) {
 const ESTILOS = `
 .ct-marcador{background:none;border:0}
 .leaflet-tile.leaflet-tile-loaded{opacity:1!important}
+.ct-diag-mapa{position:fixed;left:8px;right:8px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:2147483000;background:rgba(10,10,10,.93);color:#fff;border-radius:12px;padding:10px 12px;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.ct-diag-mapa pre{margin:0;white-space:pre-wrap;word-break:break-word;max-height:62vh;overflow:auto;font:11px/1.4 ui-monospace,Menlo,monospace}
+.ct-diag-mapa button{margin:10px 8px 0 0;padding:9px 14px;border:0;border-radius:9px;background:#FFC107;color:#111;font:700 13px system-ui,sans-serif}
+.ct-diag-mapa button[data-cerrar]{background:#3a3a3a;color:#fff}
 .ct-taxi{width:100%;height:100%;display:grid;place-items:center;transform:rotate(var(--rumbo));transition:transform .6s linear;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
 .ct-taxi-destacado{filter:drop-shadow(0 0 10px rgba(255,193,7,.9)) drop-shadow(0 3px 4px rgba(0,0,0,.4))}
 .ct-taxi-marcador{transition:transform 1s linear}

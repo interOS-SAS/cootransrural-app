@@ -480,6 +480,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     }
   }
 
+  // Pulsación larga: diagnóstico del mapa en pantalla (nucleo/mapa.js; el mapa en blanco tras un rato en reposo).
+  m.vigilarDiagnostico($(app, '[data-mi-ubicacion]'));
   $(app, '[data-mi-ubicacion]').addEventListener('click', async () => {
     const b = $(app, '[data-mi-ubicacion]');
     b.classList.add('a-girando');

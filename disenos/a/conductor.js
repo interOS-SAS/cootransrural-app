@@ -237,6 +237,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   app.addEventListener('click', (ev) => {
     if (ev.target.closest?.('[data-ayuda]')) abrirAyuda();
   });
+  // Pulsación larga: diagnóstico del mapa en pantalla (nucleo/mapa.js; el mapa en blanco tras un rato en reposo).
+  m.vigilarDiagnostico($(app, '[data-centrar]'));
   $(app, '[data-centrar]').addEventListener('click', () => {
     const e = c?.estado;
     if (!e?.pos) return;
