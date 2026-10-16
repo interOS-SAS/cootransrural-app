@@ -260,7 +260,8 @@ class ControladorConductor extends Emisor {
       this.leyendoGps = true;
       let pos;
       try {
-        pos = await obtenerPosicion({ espera: 7000 });
+        // En iPhone, rápida: «Ponerte en turno» esperaba hasta 7 s (y a veces otro toque) por una lectura exacta.
+        pos = await obtenerPosicion({ espera: 7000, rapida: true });
       } finally {
         this.leyendoGps = false;
       }
@@ -1302,7 +1303,7 @@ class ControladorConductor extends Emisor {
   }
 
   async #releerFueraDeTurno() {
-    const pos = await obtenerPosicion({ espera: 8000 });
+    const pos = await obtenerPosicion({ espera: 8000, rapida: true });
     // Mientras tanto pudo empezar el turno o un servicio (con su propio seguimiento).
     if (this.destruido || this.dejarDeSeguir || this.leyendoGps || !pos.real) return;
     this.estado.pos = { lat: pos.lat, lng: pos.lng, rumbo: this.estado.pos?.rumbo ?? 0 };

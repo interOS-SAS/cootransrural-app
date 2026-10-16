@@ -35,9 +35,10 @@ async function pedirJSON(url, ms = 6000) {
 // (El Rosal: el Decreto 89 de 2026 prohíbe recoger en el parque principal) o, si no hay,
 // el centro del pueblo, con real: false para que la interfaz lo diga. El GPS lo da plataforma.js: en la web,
 // el del navegador con las opciones de siempre; en la app nativa, el del plugin.
-export async function obtenerPosicion({ espera = 8000, precisa = true } = {}) {
+// rapida: en iPhone, la lectura de un seguimiento corto (ver plataforma.posicion).
+export async function obtenerPosicion({ espera = 8000, precisa = true, rapida = false } = {}) {
   try {
-    const p = await posicion({ precisa, espera, edad: 15000 });
+    const p = await posicion({ precisa, espera, edad: 15000, rapida });
     return { lat: p.lat, lng: p.lng, precision: p.precision, real: true };
   } catch (e) {
     // motivo: 'sin-gps' (el aparato no tiene), 'denegado' (permiso), 'tiempo' (la lectura tardó),

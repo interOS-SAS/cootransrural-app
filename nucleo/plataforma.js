@@ -216,6 +216,7 @@ const GEO = NATIVA_DE_VERDAD ? cap?.Plugins?.Geolocation || null : null;
 // y en el que un error antes de la primera lectura deja el seguimiento sin arrancar.
 const GPS_ANDROID = Boolean(GEO) && cap?.getPlatform?.() === 'android';
 export const GPS_CON_INTERVALO = GPS_ANDROID;
+const GPS_IOS = Boolean(GEO) && cap?.getPlatform?.() === 'ios';
 
 // Rumbo de la marcha: «course» (solo llega siguiendo la posición) y, si no hay, «heading».
 // El plugin 8.x prioriza la brújula en heading: el taxi giraría con el teléfono.
@@ -247,7 +248,11 @@ async function permisoNativo() {
   }
 }
 
-export async function posicion({ precisa = true, espera = 8000, edad = 15000 } = {}) {
+// rapida (16-oct, Oscar: «Ponerte en turno» se quedaba ~20 s en «Buscando tu ubicación…»): en iPhone, getCurrentPosition
+// del plugin usa requestLocation() con la máxima precisión, que espera una lectura muy exacta y dentro de un carro o bajo
+// techo agota el plazo. Con rapida, en iPhone la lectura sale de un seguimiento corto (las lecturas llegan en 1–2 s):
+// ver lecturaRapida. En Android y en el navegador no cambia nada.
+export async function posicion({ precisa = true, espera = 8000, edad = 15000, rapida = false } = {}) {
   if (!GEO) {
     return new Promise((ok, no) => {
       if (!('geolocation' in (globalThis.navigator || {}))) return no({ code: 2, sinGps: true });
@@ -260,6 +265,13 @@ export async function posicion({ precisa = true, espera = 8000, edad = 15000 } =
   }
   const negado = await permisoNativo();
   if (negado) throw { code: negado };
+  if (rapida && GPS_IOS) {
+    try {
+      return await lecturaRapida({ precisa, espera, edad });
+    } catch (e) {
+      throw typeof e?.code === 'number' ? { code: e.code } : { code: codigoPlugin(e), sinSenal: /GLOC-0002/.test(e?.code || '') };
+    }
+  }
   let reloj;
   try {
     // iOS ignora «timeout» en el plugin: el reloj va aquí.
@@ -277,6 +289,46 @@ export async function posicion({ precisa = true, espera = 8000, edad = 15000 } =
   } finally {
     clearTimeout(reloj);
   }
+}
+
+// Lectura rápida en iPhone: un seguimiento que se suelta con la primera lectura reciente (de hace `edad` o menos: la
+// primera que entrega el sistema suele ser la guardada, vieja) con precisión de PRECISION_RAPIDA_M[0] o mejor; desde
+// los 3 s vale una de PRECISION_RAPIDA_M[1] o mejor, y al cumplirse `espera`, la mejor reciente que haya llegado. Sin
+// ninguna, se acabó el tiempo (código 3). El seguimiento del turno, que arranca justo después, sigue afinando.
+const PRECISION_RAPIDA_M = [65, 150];
+const PLAZO_RAPIDA_FLEXIBLE_MS = 3000;
+function lecturaRapida({ precisa, espera, edad }) {
+  return new Promise((ok, no) => {
+    const inicio = Date.now();
+    let mejor = null;
+    let fin = false;
+    let soltar = null;
+    const relojes = [];
+    const terminar = (p, err) => {
+      if (fin) return;
+      fin = true;
+      relojes.forEach(clearTimeout);
+      soltar?.();
+      if (p) ok(p);
+      else no(err);
+    };
+    const revisar = () => {
+      const tope = Date.now() - inicio >= PLAZO_RAPIDA_FLEXIBLE_MS ? PRECISION_RAPIDA_M[1] : PRECISION_RAPIDA_M[0];
+      if (mejor && (mejor.precision ?? Infinity) <= tope) terminar(mejor);
+    };
+    relojes.push(setTimeout(revisar, PLAZO_RAPIDA_FLEXIBLE_MS), setTimeout(() => terminar(mejor, { code: 3 }), espera));
+    soltar = seguir((p) => {
+      if (fin || (Number.isFinite(p.ts) && Date.now() - p.ts > edad)) return;
+      if (!mejor || (p.precision ?? Infinity) < (mejor.precision ?? Infinity)) mejor = p;
+      revisar();
+    }, {
+      precisa,
+      alFallar: (e) => {
+        if (e?.code === 1 || e?.muerto) terminar(mejor, { code: e?.code || 2 });
+      },
+    });
+    if (fin) soltar();
+  });
 }
 
 // El plugin (Android e iOS) borra el seguimiento si la primera lectura no llega dentro de su
