@@ -291,16 +291,22 @@ export async function posicion({ precisa = true, espera = 8000, edad = 15000, ra
   }
 }
 
-// Lectura rápida en iPhone: un seguimiento que se suelta con la primera lectura reciente (de hace `edad` o menos: la
-// primera que entrega el sistema suele ser la guardada, vieja) con precisión de PRECISION_RAPIDA_M[0] o mejor; desde
-// los 3 s vale una de PRECISION_RAPIDA_M[1] o mejor, y al cumplirse `espera`, la mejor reciente que haya llegado. Sin
-// ninguna, se acabó el tiempo (código 3). El seguimiento del turno, que arranca justo después, sigue afinando.
+// Lectura rápida en iPhone: getCurrentPosition (requestLocation; si ya hay otro seguimiento, el plugin da enseguida la
+// posición que tiene) y, a la vez, un seguimiento corto (un seguimiento NUEVO no recibe la posición actual si otro ya
+// corre: solo las que lleguen después; por eso van los dos). Sale la primera lectura reciente (de hace `edad` o menos:
+// la primera que entrega el sistema suele ser la guardada, vieja) con precisión de PRECISION_RAPIDA_M[0] o mejor; desde
+// los 3 s vale una de PRECISION_RAPIDA_M[1] o mejor; al cumplirse `espera`, la mejor reciente. Si getCurrentPosition da
+// una vieja (otro seguimiento quieto), el seguimiento tiene ESPERA_VIEJA_MS para traer una nueva y si no, sale esa (antes
+// salía enseguida). Sin nada, se acabó el tiempo (código 3). El seguimiento se suelta siempre; el del turno, que arranca
+// justo después, sigue afinando.
 const PRECISION_RAPIDA_M = [65, 150];
 const PLAZO_RAPIDA_FLEXIBLE_MS = 3000;
+const ESPERA_VIEJA_MS = 1500;
 function lecturaRapida({ precisa, espera, edad }) {
   return new Promise((ok, no) => {
     const inicio = Date.now();
-    let mejor = null;
+    let mejor = null; // la mejor reciente
+    let vieja = null; // la de getCurrentPosition, aunque sea vieja
     let fin = false;
     let soltar = null;
     const relojes = [];
@@ -316,15 +322,25 @@ function lecturaRapida({ precisa, espera, edad }) {
       const tope = Date.now() - inicio >= PLAZO_RAPIDA_FLEXIBLE_MS ? PRECISION_RAPIDA_M[1] : PRECISION_RAPIDA_M[0];
       if (mejor && (mejor.precision ?? Infinity) <= tope) terminar(mejor);
     };
-    relojes.push(setTimeout(revisar, PLAZO_RAPIDA_FLEXIBLE_MS), setTimeout(() => terminar(mejor, { code: 3 }), espera));
-    soltar = seguir((p) => {
-      if (fin || (Number.isFinite(p.ts) && Date.now() - p.ts > edad)) return;
+    const anotar = (p) => {
+      if (fin) return;
+      if (Number.isFinite(p.ts) && Date.now() - p.ts > edad) return;
       if (!mejor || (p.precision ?? Infinity) < (mejor.precision ?? Infinity)) mejor = p;
       revisar();
-    }, {
+    };
+    relojes.push(setTimeout(revisar, PLAZO_RAPIDA_FLEXIBLE_MS), setTimeout(() => terminar(mejor || vieja, { code: 3 }), espera));
+    GEO.getCurrentPosition({ enableHighAccuracy: precisa, timeout: espera, maximumAge: edad })
+      .then((l) => {
+        const p = aPunto(l);
+        vieja = p;
+        anotar(p);
+        if (!fin) relojes.push(setTimeout(() => terminar(mejor || vieja), ESPERA_VIEJA_MS));
+      })
+      .catch(() => {}); // su error no decide: puede llegar la del seguimiento
+    soltar = seguir(anotar, {
       precisa,
       alFallar: (e) => {
-        if (e?.code === 1 || e?.muerto) terminar(mejor, { code: e?.code || 2 });
+        if (e?.code === 1) terminar(null, { code: 1 });
       },
     });
     if (fin) soltar();

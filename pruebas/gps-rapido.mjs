@@ -1,8 +1,10 @@
 // La lectura rápida del GPS en iPhone (16-oct-2026, Oscar: «Ponerte en turno» se quedaba ~20 s en «Buscando tu
 // ubicación…»). En iPhone, getCurrentPosition del plugin usa requestLocation() con la máxima precisión: dentro de un carro
 // tarda o agota el plazo. Aquí el plugin Geolocation se simula como en el iPhone: getCurrentPosition tarda 9 s y
-// watchPosition entrega primero la ubicación guardada (vieja) y luego lecturas nuevas.
+// watchPosition entrega primero la ubicación guardada (vieja) y luego lecturas nuevas; con un seguimiento activo,
+// getCurrentPosition da enseguida la posición que tiene (como el plugin real: visto en el simulador del Mac).
 //  1) rapida: sale la primera lectura nueva de 65 m o mejor (no la guardada) en menos de 1 s, y se suelta el seguimiento;
+//     con otro seguimiento activo, la posición del plugin enseguida; si es vieja, a los 1,5 s esa o antes una nueva;
 //  2) solo lecturas de 120 m: a los 3 s vale la de 120 m;
 //  3) solo de 400 m: al cumplirse el plazo, la mejor que llegó;
 //  4) sin lecturas: «se acabó el tiempo» (código 3) y el seguimiento suelto;
@@ -24,7 +26,7 @@ const t0 = Date.now();
 
 // El plugin Geolocation del iPhone, simulado. window.__gps: { permiso, lecturas: [{ ms, precision, viejaS }], unaVezMs }
 function capacitorFalso(plataforma) {
-  const gps = (window.__gps = { permiso: 'granted', lecturas: [], unaVezMs: 9000, llamadas: [], activos: new Map() });
+  const gps = (window.__gps = { permiso: 'granted', lecturas: [], unaVezMs: 9000, actual: null, llamadas: [], activos: new Map() });
   let ultimo = 0;
   const lectura = (precision, viejaS = 0) => ({
     timestamp: Date.now() - viejaS * 1000,
@@ -37,9 +39,11 @@ function capacitorFalso(plataforma) {
     async requestPermissions() {
       return { location: gps.permiso, coarseLocation: gps.permiso };
     },
+    // requestLocation tarda (unaVezMs); con un seguimiento activo, el plugin da enseguida la última posición (gps.actual).
     getCurrentPosition() {
       gps.llamadas.push('getCurrentPosition');
-      return new Promise((ok) => setTimeout(() => ok(lectura(8)), gps.unaVezMs));
+      if (gps.actual) return Promise.resolve(lectura(gps.actual.precision, gps.actual.viejaS || 0));
+      return new Promise((ok, no) => setTimeout(() => (gps.unaVezMs > 8000 ? no({ code: 'OS-PLUG-GLOC-0010' }) : ok(lectura(8))), gps.unaVezMs));
     },
     async watchPosition(op, cb) {
       gps.llamadas.push('watchPosition');
@@ -88,9 +92,20 @@ try {
   const conViejaYBuenas = [{ ms: 50, precision: 10, viejaS: 120 }, { ms: 600, precision: 48 }, { ms: 1500, precision: 8 }];
   let r = await leer(ios, { lecturas: conViejaYBuenas }, { espera: 7000, rapida: true });
   ok(r.p && r.p.precision === 48 && r.ms < 1000, `1) iPhone, rápida: la primera lectura nueva de 48 m en ${r.ms} ms (no la guardada de hace 2 min)`);
-  ok(!r.llamadas.includes('getCurrentPosition') && r.activos === 0, `1) sin requestLocation y el seguimiento suelto (${r.llamadas.join(', ')}; activos ${r.activos})`);
+  ok(r.activos === 0, `1) el seguimiento queda suelto (${r.llamadas.join(', ')}; activos ${r.activos})`);
 
-  r = await leer(ios, { lecturas: [{ ms: 400, precision: 120 }, { ms: 900, precision: 130 }] }, { espera: 7000, rapida: true });
+  // 1b) Ya hay otro seguimiento y la posición no cambia (así en el simulador): el seguimiento nuevo no recibe nada, pero
+  //     getCurrentPosition da enseguida la posición que tiene el plugin.
+  r = await leer(ios, { lecturas: [], actual: { precision: 5, viejaS: 4 } }, { espera: 7000, rapida: true });
+  ok(r.p && r.p.precision === 5 && r.ms < 300 && r.activos === 0, `1b) con otro seguimiento activo: la posición del plugin en ${r.ms} ms`);
+  // 1c) La que tiene el plugin es vieja y no llega nada nuevo: a los 1,5 s, esa (antes salía enseguida).
+  r = await leer(ios, { lecturas: [], actual: { precision: 5, viejaS: 60 } }, { espera: 7000, rapida: true });
+  ok(r.p && r.p.precision === 5 && r.ms >= 1400 && r.ms < 2000 && r.activos === 0, `1c) solo una vieja: a los 1,5 s sale esa (${r.ms} ms)`);
+  // 1d) Vieja en el plugin, pero el seguimiento trae una nueva antes: la nueva.
+  r = await leer(ios, { lecturas: [{ ms: 700, precision: 30 }], actual: { precision: 5, viejaS: 60 } }, { espera: 7000, rapida: true });
+  ok(r.p && r.p.precision === 30 && r.ms < 1200, `1d) vieja en el plugin y una nueva a los 0,7 s: la nueva (${r.p?.precision} m en ${r.ms} ms)`);
+
+  r = await leer(ios, { actual: null, lecturas: [{ ms: 400, precision: 120 }, { ms: 900, precision: 130 }] }, { espera: 7000, rapida: true });
   ok(r.p && r.p.precision === 120 && r.ms >= 2900 && r.ms < 3600 && r.activos === 0, `2) solo de 120 m: a los 3 s vale la mejor (${r.p?.precision} m en ${r.ms} ms)`);
 
   r = await leer(ios, { lecturas: [{ ms: 300, precision: 400 }, { ms: 800, precision: 380 }] }, { espera: 4000, rapida: true });
