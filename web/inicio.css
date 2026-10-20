@@ -182,3 +182,4 @@ a { color: var(--azul-2); }
 .tiendas-portada img.as { height: 48px; width: auto; }
 .tiendas-portada img.gp { height: 70px; width: auto; margin: -11px -9px; }
 .pie-legal { font-size: .8rem; line-height: 1.55; color: rgba(255, 255, 255, .6); max-width: 60em; }
+a.foto { display: block; }

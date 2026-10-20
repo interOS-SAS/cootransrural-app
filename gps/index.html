@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>GPS y monitoreo de flotas · TaxiCun</title>
+  <meta name="description" content="GPS para buses, busetas, taxis y vehículos de carga: ubicación en tiempo real, apagado del motor a distancia, botón de pánico, alertas y cámaras a bordo. Lo vendemos, lo instalamos y lo monitoreamos en Cundinamarca y Colombia.">
+  <meta name="theme-color" content="#0A2552">
+  <link rel="canonical" href="https://taxicun.com/gps/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="TaxiCun">
+  <meta property="og:title" content="GPS y monitoreo de flotas · TaxiCun">
+  <meta property="og:description" content="Tus vehículos en el mapa, el motor bajo tu control y cámaras a bordo. Venta, instalación y monitoreo.">
+  <meta property="og:image" content="https://taxicun.com/img/gps/og.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../img/taxicun/favicon-32.png">
+  <link rel="apple-touch-icon" href="../img/taxicun/apple-touch-icon.png">
+  <link rel="stylesheet" href="../fuentes/fuentes.css?v=d7cb94cf69">
+  <link rel="stylesheet" href="../web/inicio.css?v=e20c2d4994">
+  <link rel="stylesheet" href="../web/gps.css?v=c5d0a37f7a">
+  <!-- GPS y monitoreo de flotas (20-oct-2026, pedido de Oscar: «como Satrack»: vendemos e instalamos GPS, con apagado a
+       distancia y cámaras Hikvision). Usa la barra, las secciones y el pie de la página de inicio (web/inicio.css); lo
+       propio va en web/gps.css. La demo (web/gps.js) es una simulación con vehículos de prueba: no habla con ningún
+       servidor. «Cotiza» arma un correo con lo que la persona escogió (sin formulario en el servidor). -->
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+    <symbol id="i-motor" viewBox="0 0 24 24"><path d="M12 2.5v8"/><path d="M6.3 6.2a8 8 0 1 0 11.4 0"/></symbol>
+    <symbol id="i-camara" viewBox="0 0 24 24"><rect x="2.5" y="6" width="13" height="12" rx="2.5"/><path d="m15.5 10.5 6-3.5v10l-6-3.5z"/></symbol>
+    <symbol id="i-sos" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-campana" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-geocerca" viewBox="0 0 24 24"><path d="M4 7.5 9 4l6 2.5L20 4v12.5L15 20l-6-2.5L4 20z" stroke-dasharray="2.6 2.4"/><circle cx="12" cy="11.5" r="2.4"/></symbol>
+    <symbol id="i-ruta" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H17a3.5 3.5 0 0 0 0-7H7a3.5 3.5 0 0 1 0-7h8.5"/></symbol>
+    <symbol id="i-grafica" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-6"/></symbol>
+    <symbol id="i-celular" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+    <symbol id="i-bus" viewBox="0 0 24 24"><rect x="3.5" y="3" width="17" height="15" rx="3"/><path d="M3.5 11h17M8 18v2.5M16 18v2.5M7.5 14.5h.01M16.5 14.5h.01M7 6.5h10"/></symbol>
+    <symbol id="i-escolar" viewBox="0 0 24 24"><path d="M2 9.5 12 4l10 5.5-10 5.5z"/><path d="M6 11.7V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.3M22 9.5V15"/></symbol>
+    <symbol id="i-taxi" viewBox="0 0 24 24"><path d="M10 2h4"/><path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.65 5H8.4a2 2 0 0 0-1.9 1.26L5 10 3 8"/><rect x="3" y="10" width="18" height="8" rx="2"/><path d="M7 14h.01M17 14h.01M5 18v2M19 18v2"/></symbol>
+    <symbol id="i-camion" viewBox="0 0 24 24"><path d="M2.5 5.5h11v10h-11zM13.5 9h4l3.5 3.5v3h-7.5"/><circle cx="6.5" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/></symbol>
+    <symbol id="i-buseta" viewBox="0 0 24 24"><path d="M3 16V8.5A3.5 3.5 0 0 1 6.5 5H16l5 5v6z"/><path d="M3 11h18M10 5v6"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></symbol>
+    <symbol id="i-llave" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20.5l1.6-5.2A8.5 8.5 0 1 1 21 11.5z"/><path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01"/></symbol>
+    <symbol id="i-correo" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-candado" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="i-historial" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-bateria" viewBox="0 0 24 24"><rect x="2.5" y="7" width="17" height="10" rx="2"/><path d="M22 10.5v3M6 10v4M9.5 10v4"/></symbol>
+    <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-flecha" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 8.5 5.5 3.5-5.5 3.5z"/></symbol>
+  </svg>
+
+  <header class="barra">
+    <div class="contenedor barra-caja">
+      <a class="marca" href="../" aria-label="TaxiCun, inicio"><img src="../img/taxicun/logo-blanco.svg" alt="TaxiCun" width="168" height="42"></a>
+      <nav class="menu" aria-label="Secciones">
+        <a href="#demo">Demo</a>
+        <a href="#incluye">Qué incluye</a>
+        <a href="#camaras">Cámaras</a>
+        <a href="#flotas">Para quién</a>
+        <a href="#preguntas">Preguntas</a>
+      </nav>
+      <a class="boton boton-amarillo boton-barra" href="#cotiza"><svg class="icono" aria-hidden="true"><use href="#i-correo"/></svg>Cotiza</a>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <!-- ============ PORTADA ============ -->
+    <section class="portada gps-portada" aria-labelledby="titulo-portada">
+      <div class="contenedor portada-rejilla">
+        <div class="portada-texto">
+          <span class="pildora"><span class="punto" aria-hidden="true"></span>GPS y monitoreo de flotas</span>
+          <h1 id="titulo-portada">Tus vehículos en el mapa y <span class="resaltado">el motor bajo tu control</span></h1>
+          <p class="portada-lead">Vendemos, instalamos y monitoreamos GPS para buses, busetas, taxis y vehículos de carga. Ves cada vehículo en tiempo real, te llegan las alertas y puedes apagar el motor a distancia. Con cámaras a bordo, ves lo que pasa dentro y fuera del vehículo.</p>
+          <div class="botones">
+            <a class="boton boton-amarillo boton-grande" href="#cotiza"><svg class="icono" aria-hidden="true"><use href="#i-correo"/></svg>Cotiza tu GPS</a>
+            <a class="boton boton-vidrio boton-grande" href="#demo"><svg class="icono" aria-hidden="true"><use href="#i-play"/></svg>Ver la demo</a>
+          </div>
+          <ul class="garantias">
+            <li><svg class="icono" aria-hidden="true"><use href="#i-motor"/></svg>Apagado a distancia</li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-camara"/></svg>Cámaras en vivo</li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-llave"/></svg>Instalación incluida</li>
+          </ul>
+        </div>
+
+        <!-- Ilustración: un mapa con el recorrido de un bus y tarjetas de la plataforma (todo dibujado aquí). -->
+        <div class="gps-portada-visual" aria-hidden="true">
+          <div class="gps-mini-mapa">
+            <svg viewBox="0 0 420 340" preserveAspectRatio="xMidYMid slice">
+              <rect width="420" height="340" fill="#E9EEF5"/>
+              <path d="M-10 250 C 80 230 120 280 210 250 S 340 170 440 190" fill="none" stroke="#BFDBFE" stroke-width="14"/>
+              <g stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none">
+                <path d="M30 -10 L 60 350"/><path d="M150 -10 L 170 350"/><path d="M280 -10 L 300 350"/>
+                <path d="M-10 80 L 430 60"/><path d="M-10 170 L 430 150"/>
+              </g>
+              <rect x="190" y="88" width="62" height="48" rx="6" fill="#D9F2DF"/>
+              <path d="M-10 300 C 90 280 140 200 220 190 S 360 110 430 90" fill="none" stroke="#FCD34D" stroke-width="11" stroke-linecap="round"/>
+              <path class="gps-mini-ruta" d="M20 292 C 90 280 140 200 220 190 S 330 120 380 104" fill="none" stroke="#1A4FA0" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 12"/>
+              <circle cx="380" cy="104" r="9" fill="#fff" stroke="#1A4FA0" stroke-width="4"/>
+              <g class="gps-mini-bus" transform="translate(220 190)">
+                <circle r="24" fill="rgba(26,79,160,.18)"/>
+                <circle r="15" fill="#0A2552" stroke="#fff" stroke-width="3"/>
+                <path d="M-6 -5h12v9h-12z M-6 0h12" stroke="#FFC21A" stroke-width="2" fill="none"/>
+              </g>
+            </svg>
+          </div>
+          <div class="gps-flotante gps-flotante-1">
+            <span class="gps-flotante-ic gps-verde"><svg class="icono"><use href="#i-bus"/></svg></span>
+            <span><b>BUS 101</b><small>Villeta → Bogotá · 62 km/h</small></span>
+          </div>
+          <div class="gps-flotante gps-flotante-2">
+            <span class="gps-flotante-ic gps-rojo"><svg class="icono"><use href="#i-candado"/></svg></span>
+            <span><b>Motor apagado</b><small>TAXI 045 · hace 1 min</small></span>
+          </div>
+          <div class="gps-flotante gps-flotante-3 gps-mini-camara">
+            <span class="gps-rec">● REC</span>
+            <svg viewBox="0 0 160 90"><rect width="160" height="90" fill="#1d2633"/><path d="M0 90 L 70 40 L 90 40 L 160 90 Z" fill="#2c3646"/><path d="M80 44 V 52 M80 60 V 72 M80 80 V 90" stroke="#FFC21A" stroke-width="3"/><path d="M0 40 H160" stroke="#3b4a60"/></svg>
+            <small>CAM 1 · Frontal</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FRASE ============ -->
+    <section class="seccion seccion-amarilla" aria-labelledby="titulo-frase">
+      <div class="contenedor gps-frase">
+        <h2 id="titulo-frase">Sabes dónde está cada vehículo, a qué velocidad va y si el motor está encendido. Y si algo pasa, lo apagas desde el celular.</h2>
+      </div>
+    </section>
+
+    <!-- ============ DEMO ============ -->
+    <section class="seccion" id="demo" aria-labelledby="titulo-demo">
+      <div class="contenedor">
+        <div class="encabezado">
+          <span class="antetitulo">Demo</span>
+          <h2 id="titulo-demo">Así se ve tu flota en la plataforma</h2>
+          <p class="lead">Una muestra con vehículos de prueba. Toca uno para ver su información y sus cámaras, y prueba el apagado del motor a distancia.</p>
+        </div>
+
+        <div class="gps-demo" data-demo>
+          <div class="gps-demo-barra">
+            <span class="gps-demo-titulo"><svg class="icono" aria-hidden="true"><use href="#i-pin"/></svg>Monitoreo</span>
+            <span class="gps-demo-resumen" data-resumen>4 vehículos · 3 en movimiento</span>
+            <span class="gps-demo-reloj" data-reloj aria-hidden="true">--:--:--</span>
+          </div>
+          <div class="gps-demo-cuerpo">
+            <ul class="gps-demo-lista" data-lista aria-label="Vehículos"></ul>
+            <div class="gps-demo-mapa">
+              <svg data-mapa viewBox="0 0 800 520" role="img" aria-label="Mapa de prueba con los recorridos de los vehículos"></svg>
+              <span class="gps-demo-leyenda" aria-hidden="true"><i class="gps-l-verde"></i>En movimiento <i class="gps-l-gris"></i>Detenido <i class="gps-l-rojo"></i>Motor apagado</span>
+            </div>
+            <div class="gps-demo-detalle" data-detalle aria-live="polite"></div>
+          </div>
+          <div class="gps-demo-pie">
+            <div class="gps-demo-camaras" data-camaras aria-label="Cámaras del vehículo"></div>
+            <div class="gps-demo-alertas">
+              <h3><svg class="icono" aria-hidden="true"><use href="#i-campana"/></svg>Alertas</h3>
+              <ol data-alertas></ol>
+            </div>
+          </div>
+        </div>
+        <p class="gps-nota-demo">Simulación con datos de prueba: los vehículos, las cámaras y las alertas no son reales.</p>
+      </div>
+    </section>
+
+    <!-- ============ QUÉ INCLUYE ============ -->
+    <section class="seccion seccion-azul" id="incluye" aria-labelledby="titulo-incluye">
+      <div class="contenedor">
+        <div class="encabezado">
+          <span class="antetitulo">Qué incluye</span>
+          <h2 id="titulo-incluye">Control total de tus vehículos</h2>
+          <p class="lead">El equipo GPS va oculto en el vehículo y reporta por la red celular 4G. Tú lo ves todo en la plataforma, desde el celular o el computador.</p>
+        </div>
+        <ul class="tarjetas gps-tarjetas">
+          <li><svg class="icono"><use href="#i-pin"/></svg><h3>Ubicación en tiempo real</h3><p>Cada vehículo en el mapa, con su velocidad, su dirección y el estado del motor.</p></li>
+          <li><svg class="icono"><use href="#i-motor"/></svg><h3>Apagado a distancia</h3><p>Con el relé instalado, apagas el motor desde el celular. Se aplica con el vehículo detenido o despacio, para no poner a nadie en riesgo.</p></li>
+          <li><svg class="icono"><use href="#i-sos"/></svg><h3>Botón de pánico</h3><p>El conductor pide ayuda con un botón escondido y te llega la alerta con la ubicación exacta.</p></li>
+          <li><svg class="icono"><use href="#i-campana"/></svg><h3>Alertas al instante</h3><p>Exceso de velocidad, encendido y apagado, desconexión de la batería, remolque y entrada o salida de una zona.</p></li>
+          <li><svg class="icono"><use href="#i-geocerca"/></svg><h3>Zonas y rutas</h3><p>Marca terminales, parqueaderos, colegios y rutas: te avisamos cuando un vehículo entra, sale o se desvía.</p></li>
+          <li><svg class="icono"><use href="#i-historial"/></svg><h3>Historial de recorridos</h3><p>Repite el recorrido de cualquier día: por dónde fue, dónde paró y cuánto tiempo.</p></li>
+          <li><svg class="icono"><use href="#i-grafica"/></svg><h3>Reportes</h3><p>Kilómetros, paradas, horas de motor y excesos de velocidad por vehículo.</p></li>
+          <li><svg class="icono"><use href="#i-bateria"/></svg><h3>Batería de respaldo</h3><p>Si desconectan la batería del vehículo, el equipo sigue reportando un tiempo y te avisa.</p></li>
+          <li><svg class="icono"><use href="#i-chat"/></svg><h3>Soporte 24/7</h3><p>Te acompañamos por WhatsApp a cualquier hora, también para apagar un vehículo robado.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ CÁMARAS ============ -->
+    <section class="seccion" id="camaras" aria-labelledby="titulo-camaras">
+      <div class="contenedor gps-camaras-rejilla">
+        <div>
+          <div class="encabezado">
+            <span class="antetitulo">Video a bordo</span>
+            <h2 id="titulo-camaras">Cámaras: ves lo que pasa en el vehículo</h2>
+            <p class="lead">Trabajamos con equipos de video para vehículos de Hikvision: un grabador móvil (DVR) con GPS y 4G y varias cámaras dentro y fuera del vehículo.</p>
+          </div>
+          <ul class="lista gps-lista">
+            <li><svg class="icono"><use href="#i-play"/></svg>Video en vivo desde el celular o el computador</li>
+            <li><svg class="icono"><use href="#i-historial"/></svg>Grabación continua en el vehículo: revisas lo que pasó a cualquier hora</li>
+            <li><svg class="icono"><use href="#i-camara"/></svg>Cámara frontal, de cabina, de pasillo y de puertas</li>
+            <li><svg class="icono"><use href="#i-campana"/></svg>Video de los eventos: botón de pánico, frenadas bruscas, exceso de velocidad</li>
+            <li><svg class="icono"><use href="#i-escudo"/></svg>Opcional: cámaras que detectan cansancio o distracción del conductor</li>
+          </ul>
+          <a class="boton boton-azul boton-grande" href="#cotiza"><svg class="icono" aria-hidden="true"><use href="#i-correo"/></svg>Cotiza con cámaras</a>
+        </div>
+
+        <figure class="gps-bus" aria-labelledby="titulo-bus">
+          <svg viewBox="0 0 640 300" role="img" aria-labelledby="titulo-bus">
+            <title id="titulo-bus">Bus con el equipo instalado: GPS y relé, cámaras frontal, de cabina, de pasillo y de puerta, grabador DVR y botón de pánico</title>
+            <ellipse cx="320" cy="262" rx="290" ry="12" fill="rgba(10,37,82,.12)"/>
+            <rect x="40" y="60" width="560" height="170" rx="26" fill="#fff" stroke="#0A2552" stroke-width="4"/>
+            <rect x="40" y="168" width="560" height="22" fill="#FFC21A"/>
+            <path d="M40 190 h560 v14 a26 26 0 0 1 -26 26 H66 a26 26 0 0 1 -26 -26z" fill="#0A2552"/>
+            <g fill="#BFD3EE" stroke="#0A2552" stroke-width="3">
+              <rect x="60" y="80" width="70" height="70" rx="10"/>
+              <rect x="150" y="80" width="80" height="62" rx="8"/><rect x="246" y="80" width="80" height="62" rx="8"/>
+              <rect x="342" y="80" width="80" height="62" rx="8"/><rect x="438" y="80" width="80" height="62" rx="8"/>
+              <rect x="534" y="80" width="50" height="62" rx="8"/>
+            </g>
+            <rect x="150" y="150" width="48" height="74" rx="6" fill="#DCE6F4" stroke="#0A2552" stroke-width="3"/>
+            <path d="M174 150v74" stroke="#0A2552" stroke-width="3"/>
+            <g fill="#0E1726"><circle cx="130" cy="236" r="30"/><circle cx="500" cy="236" r="30"/></g>
+            <g fill="#C7CFDB"><circle cx="130" cy="236" r="12"/><circle cx="500" cy="236" r="12"/></g>
+            <g class="gps-punto"><circle cx="88" cy="124" r="15"/><text x="88" y="129">1</text></g>
+            <g class="gps-punto"><circle cx="54" cy="96" r="15"/><text x="54" y="101">2</text></g>
+            <g class="gps-punto"><circle cx="122" cy="70" r="15"/><text x="122" y="75">3</text></g>
+            <g class="gps-punto"><circle cx="380" cy="70" r="15"/><text x="380" y="75">4</text></g>
+            <g class="gps-punto"><circle cx="210" cy="160" r="15"/><text x="210" y="165">5</text></g>
+            <g class="gps-punto"><circle cx="560" cy="160" r="15"/><text x="560" y="165">6</text></g>
+            <g class="gps-punto gps-punto-rojo"><circle cx="104" cy="160" r="15"/><text x="104" y="165">7</text></g>
+          </svg>
+          <figcaption>
+            <ol class="gps-bus-lista">
+              <li><b>1</b>GPS y relé de apagado, ocultos en el tablero</li>
+              <li><b>2</b>Cámara frontal: la vía</li>
+              <li><b>3</b>Cámara de cabina: el conductor</li>
+              <li><b>4</b>Cámara de pasillo: los pasajeros</li>
+              <li><b>5</b>Cámara de puerta: quién sube y quién baja</li>
+              <li><b>6</b>Grabador DVR con disco, GPS y 4G</li>
+              <li class="gps-bus-rojo"><b>7</b>Botón de pánico del conductor</li>
+            </ol>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============ PARA QUIÉN ============ -->
+    <section class="seccion seccion-crema" id="flotas" aria-labelledby="titulo-flotas">
+      <div class="contenedor">
+        <div class="encabezado">
+          <span class="antetitulo">Para quién</span>
+          <h2 id="titulo-flotas">Para empresas de transporte y para dueños de vehículos</h2>
+          <p class="lead">Desde un solo taxi hasta flotas de cientos de buses. Cada empresa ve solo sus vehículos y da acceso a quien decida.</p>
+        </div>
+        <ul class="gps-flotas">
+          <li><span class="gps-flotas-ic"><svg class="icono"><use href="#i-bus"/></svg></span><h3>Buses intermunicipales</h3><p>Controla horarios, rutas y velocidad en carretera, y mira las cámaras desde la oficina.</p></li>
+          <li><span class="gps-flotas-ic"><svg class="icono"><use href="#i-escolar"/></svg></span><h3>Transporte especial</h3><p>Escolar, empresarial y turismo: sabes dónde va cada ruta, a qué hora pasó por cada parada y qué pasó dentro del bus.</p></li>
+          <li><span class="gps-flotas-ic"><svg class="icono"><use href="#i-buseta"/></svg></span><h3>Urbanos y busetas</h3><p>Recorridos y vueltas por vehículo, y un aviso si alguno se sale de la ruta.</p></li>
+          <li><span class="gps-flotas-ic"><svg class="icono"><use href="#i-taxi"/></svg></span><h3>Taxis</h3><p>Apagado a distancia en caso de robo y botón de pánico. Con la app TaxiCun, el conductor también reporta un robo desde su celular.</p></li>
+          <li><span class="gps-flotas-ic"><svg class="icono"><use href="#i-camion"/></svg></span><h3>Carga y particulares</h3><p>Camiones, camionetas, carros y motos: ubicación, historial y apagado a distancia.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ CÓMO FUNCIONA ============ -->
+    <section class="seccion" aria-labelledby="titulo-pasos">
+      <div class="contenedor">
+        <div class="encabezado">
+          <span class="antetitulo">Cómo funciona</span>
+          <h2 id="titulo-pasos">Del pedido al monitoreo, sin enredos</h2>
+        </div>
+        <ol class="pasos">
+          <li class="paso"><span class="paso-ic"><svg class="icono"><use href="#i-correo"/></svg></span><h3>Cotiza</h3><p>Cuéntanos cuántos vehículos tienes y qué necesitas: solo GPS, apagado a distancia o también cámaras.</p></li>
+          <li class="paso"><span class="paso-ic"><svg class="icono"><use href="#i-llave"/></svg></span><h3>Instalamos</h3><p>Nuestros técnicos instalan en tu sede o parqueadero, con el equipo oculto, y probamos todo contigo.</p></li>
+          <li class="paso"><span class="paso-ic"><svg class="icono"><use href="#i-celular"/></svg></span><h3>Monitoreas</h3><p>Te damos el acceso a la plataforma, te enseñamos a usarla y quedamos atentos por WhatsApp.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ COTIZA ============ -->
+    <section class="seccion seccion-azul" id="cotiza" aria-labelledby="titulo-cotiza">
+      <div class="contenedor gps-cotiza">
+        <div class="encabezado">
+          <span class="antetitulo">Cotiza</span>
+          <h2 id="titulo-cotiza">Arma tu cotización en un minuto</h2>
+          <p class="lead">El precio depende de cuántos vehículos son y de los equipos que escojas. Escoge lo que necesitas y te respondemos con la cotización.</p>
+        </div>
+        <form class="gps-formulario" data-cotiza novalidate>
+          <fieldset>
+            <legend>¿Qué vehículos?</legend>
+            <div class="gps-chips">
+              <label><input type="checkbox" name="tipo" value="Buses intermunicipales"><span>Buses intermunicipales</span></label>
+              <label><input type="checkbox" name="tipo" value="Transporte especial (escolar, empresarial o turismo)"><span>Transporte especial</span></label>
+              <label><input type="checkbox" name="tipo" value="Urbanos y busetas"><span>Urbanos y busetas</span></label>
+              <label><input type="checkbox" name="tipo" value="Taxis"><span>Taxis</span></label>
+              <label><input type="checkbox" name="tipo" value="Carga"><span>Carga</span></label>
+              <label><input type="checkbox" name="tipo" value="Particulares o motos"><span>Particulares o motos</span></label>
+            </div>
+          </fieldset>
+          <div class="gps-campos">
+            <label class="gps-campo"><span>¿Cuántos vehículos?</span><input name="cantidad" type="number" min="1" max="5000" inputmode="numeric" placeholder="Ej.: 12" required></label>
+            <label class="gps-campo"><span>Municipio o ciudad</span><input name="ciudad" autocomplete="address-level2" placeholder="Ej.: Villeta" required></label>
+          </div>
+          <fieldset>
+            <legend>¿Qué necesitas?</legend>
+            <div class="gps-chips">
+              <label><input type="checkbox" name="extra" value="GPS con ubicación en tiempo real" checked><span>GPS en tiempo real</span></label>
+              <label><input type="checkbox" name="extra" value="Apagado del motor a distancia" checked><span>Apagado a distancia</span></label>
+              <label><input type="checkbox" name="extra" value="Botón de pánico"><span>Botón de pánico</span></label>
+              <label><input type="checkbox" name="extra" value="Cámaras a bordo (DVR)"><span>Cámaras a bordo</span></label>
+            </div>
+          </fieldset>
+          <div class="gps-campos">
+            <label class="gps-campo"><span>Tu nombre</span><input name="nombre" autocomplete="name" placeholder="Ej.: Ana María Gómez" required></label>
+            <label class="gps-campo"><span>Empresa (si aplica)</span><input name="empresa" autocomplete="organization" placeholder="Ej.: Transportes del Gualivá"></label>
+            <label class="gps-campo"><span>Celular</span><input name="celular" type="tel" inputmode="tel" autocomplete="tel" placeholder="300 123 4567" required></label>
+          </div>
+          <p class="gps-error" data-error role="alert"></p>
+          <div class="gps-enviar">
+            <button class="boton boton-amarillo boton-grande" type="submit"><svg class="icono" aria-hidden="true"><use href="#i-correo"/></svg>Pedir la cotización</button>
+            <p>Se abre tu correo con todo listo para enviar a <a href="mailto:info@taxicun.com">info@taxicun.com</a>. Te respondemos en horario hábil.</p>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============ PREGUNTAS ============ -->
+    <section class="seccion" id="preguntas" aria-labelledby="titulo-preguntas">
+      <div class="contenedor gps-preguntas">
+        <div class="encabezado">
+          <span class="antetitulo">Preguntas frecuentes</span>
+          <h2 id="titulo-preguntas">Lo que más nos preguntan</h2>
+        </div>
+        <details>
+          <summary>¿Cómo funciona el apagado a distancia?</summary>
+          <p>Instalamos un relé en el circuito de encendido. Desde la plataforma das la orden y el equipo apaga el motor con el vehículo detenido o despacio. Para volver a encender, das la orden de habilitar. Tú decides quién de tu empresa puede hacerlo.</p>
+        </details>
+        <details>
+          <summary>¿Funciona en todo el país?</summary>
+          <p>Sí. El equipo reporta por la red celular 4G. En una zona sin señal, vuelve a reportar apenas la recupera. Instalamos en Bogotá y Cundinamarca; para otras ciudades, escríbenos y lo coordinamos.</p>
+        </details>
+        <details>
+          <summary>¿Qué pasa si desconectan el GPS o la batería?</summary>
+          <p>Te llega la alerta. El equipo tiene una batería de respaldo para seguir reportando un tiempo y va instalado oculto para que no sea fácil encontrarlo.</p>
+        </details>
+        <details>
+          <summary>¿Las cámaras graban todo el tiempo?</summary>
+          <p>Sí: el grabador del vehículo guarda el video en su memoria y puedes revisarlo cuando lo necesites. El video en vivo lo ves por 4G cuando quieras; el consumo de datos depende de cuánto video veas.</p>
+        </details>
+        <details>
+          <summary>¿Puedo ver mis vehículos desde el celular?</summary>
+          <p>Sí, desde el celular o el computador. Puedes dar acceso a otras personas de tu empresa, cada una con lo que le corresponde ver.</p>
+        </details>
+        <details>
+          <summary>¿Cuánto cuesta?</summary>
+          <p>Depende de cuántos vehículos son y de los equipos (solo GPS, apagado a distancia, cámaras). Hay compra del equipo con mensualidad de monitoreo. Pide tu cotización y te respondemos con el valor exacto.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie-caja">
+      <img src="../img/taxicun/logo-blanco.svg" alt="TaxiCun" width="140" height="35" loading="lazy">
+      <p>GPS y monitoreo de flotas · TaxiCun es desarrollada por <a href="https://interos.com.co" rel="noopener">interOS</a>.</p>
+      <p class="pie-enlaces"><a href="../">TaxiCun</a><a href="../taxicun/">Pedir taxi</a><a href="./">GPS para flotas</a><a href="../terminos/">Términos y condiciones</a><a href="../privacidad/">Privacidad</a><a href="mailto:info@taxicun.com">info@taxicun.com</a></p>
+      <p class="pie-legal">© 2026 INTEROS - INTERNET SERVICE S.A.S. · NIT 901.213.197-5 · Sociedad legalmente constituida, matrícula mercantil 123760 de la Cámara de Comercio de Facatativá. TaxiCun, su nombre y su logo son marcas de interOS. Todos los derechos reservados: prohibida la copia o reproducción del contenido sin autorización. Hikvision es una marca de su respectivo dueño; la nombramos solo para indicar los equipos que instalamos.</p>
+    </div>
+  </footer>
+  <script src="../web/gps.js?v=401a23aea8" defer></script>
+</body>
+</html>
