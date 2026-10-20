@@ -308,7 +308,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
         REAL && tuvoPromo() && { icono: 'regalo', texto: 'Pagos de TaxiCun', detalle: 'Los viajes gratis de la promoción', accion: abrirPagosPromo },
         { icono: 'ajustes', texto: 'Ajustes', detalle: REAL ? 'GPS, sonido, tu cuenta' : 'GPS, sonido, sala, diseño', accion: () => abrirAjustesConductor(ctx()) },
         { separador: true },
-        EM.EN_TAXICUN && !NATIVA && !UNICA && { icono: 'pin', texto: 'Cambiar de municipio', detalle: `Ahora: ${EM.PUEBLO} · ${EM.NOMBRE}`, accion: cambiarMunicipio },
+        EM.EN_TAXICUN && !UNICA && { icono: 'pin', texto: 'Cambiar de municipio', detalle: `Ahora: ${EM.PUEBLO} · ${EM.NOMBRE}`, accion: cambiarMunicipio },
         !NATIVA && { icono: 'usuario', texto: 'App del pasajero', detalle: 'Abrir la app para pedir taxi', href: EM.urlOtraApp('pasajero', diseno), clase: 'a-menu-marca' },
         { icono: 'salir', texto: 'Cerrar sesión', accion: cerrarSesion, clase: 'a-menu-peligro' },
         REAL && { icono: 'basura', texto: 'Eliminar mi cuenta', detalle: 'Borra tu cuenta y tu registro', accion: eliminarCuenta, clase: 'a-menu-peligro' },
@@ -540,11 +540,14 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
     boton.disabled = si;
   }
 
-  // Enlaces de abajo del ingreso: la app del pasajero y el municipio (no en la app nativa).
+  // Enlaces de abajo del ingreso: la app del pasajero (no en la app nativa) y el municipio. 20-oct: «Cambiar de municipio»
+  // también en la app nativa con más de una cooperativa en servicio (Oscar en Villeta veía Subachoque, la que había
+  // escogido antes, y no tenía cómo cambiarla).
   function enlacesIngreso() {
-    if (NATIVA) return '';
+    const municipio = EM.EN_TAXICUN && !UNICA ? `<button type="button" class="a-btn-texto a-tc-cambiar" data-cambiar-municipio>${icono('pin', { tam: 16 })}<span>Cambiar de municipio</span></button>` : '';
+    if (NATIVA) return municipio;
     return `<a class="a-btn-texto" href="${esc(EM.urlOtraApp('pasajero', diseno))}" data-ir-pasajero>¿Eres pasajero? Abre la app para pedir taxi</a>
-      ${EM.EN_TAXICUN && !UNICA ? `<button type="button" class="a-btn-texto a-tc-cambiar" data-cambiar-municipio>${icono('pin', { tam: 16 })}<span>Cambiar de municipio</span></button>` : ''}`;
+      ${municipio}`;
   }
 
   // Paso 1: correo.

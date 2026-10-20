@@ -323,7 +323,7 @@ export function abrirAjustesConductor({ N, app, c, avisos, diseno, cambiarMunici
         acerca.querySelector?.('.a-chip-prueba')?.remove();
         cuerpo.append(
           ...[
-            nativa ? '' : bloqueMunicipio(N, { alCambiar: cambiarMunicipio, unica }),
+            bloqueMunicipio(N, { alCambiar: cambiarMunicipio, unica }),
             gps,
             // Con el plugin UbicacionTurno (en la web y sin el plugin no aparece).
             nativa ? bloqueSegundoPlano({ N, app }) : '',
