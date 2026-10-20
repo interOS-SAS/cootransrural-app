@@ -1367,7 +1367,7 @@
    "color": "#8A4513",
    "icono": "empresas/villeta/icono-192.png",
    "ruta": "villeta/",
-   "real": true
+   "real": false
   },
   {
    "id": "villeta-cootransye",
@@ -1386,7 +1386,7 @@
    "color": "#9F1239",
    "icono": "empresas/villeta-cootransye/icono-192.png",
    "ruta": "villeta-cootransye/",
-   "real": false
+   "real": true
   },
   {
    "id": "villeta-villetana",

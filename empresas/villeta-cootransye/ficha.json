@@ -1,6 +1,7 @@
 {
   "id": "villeta-cootransye",
   "estado": "propuesta",
+  "real": true,
   "EMPRESA": {
     "nombre": "Cootransye",
     "nombreCorto": "Cootransye",
