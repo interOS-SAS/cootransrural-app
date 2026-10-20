@@ -2,6 +2,7 @@
   "id": "villeta",
   "estado": "propuesta",
   "diseno": "a",
+  "real": true,
   "EMPRESA": {
     "nombre": "Cootransvi",
     "nombreCorto": "Cootransvi",
