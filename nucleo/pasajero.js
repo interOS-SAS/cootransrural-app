@@ -233,10 +233,15 @@ class ControladorPasajero extends Emisor {
       // Pide a los conductores en línea que se anuncien ya (sin esperar su turno).
       this.bus.publicar('consulta_presencia', {});
     }
-    const pos = this.#paraRevision(await obtenerPosicion({ espera: 6000 }));
+    // rapida: en el iPhone, la lectura sale de un seguimiento corto (getCurrentPosition del plugin tarda; ver
+    // plataforma.posicion).
+    const pos = this.#paraRevision(await obtenerPosicion({ espera: 6000, rapida: true }));
     this.estado.miPosicion = pos;
-    // La primera lectura del teléfono suele ser aproximada o vieja: se afina unos segundos.
-    if (pos.real) this.afinarPosicion();
+    // La primera lectura del teléfono suele ser aproximada o vieja: se afina unos segundos. 31-oct-2026 (Oscar: «me manda
+    // casi siempre al paradero»): también si NO llegó a tiempo. Antes, sin lectura en 6 s se usaba el paradero y el GPS no
+    // se volvía a pedir hasta tocar «mi ubicación»; ahora sigue buscando hasta un minuto y, cuando llega, 'posicion_afinada'
+    // lleva el pin a donde está la persona (si no lo movió a mano).
+    this.afinarPosicion(pos.real ? {} : { duracion: 60000 });
     if (this.usarAmbiente) {
       const centroSim = pos.real && !fueraDeZona(pos) ? pos : pos.real ? pos : CENTRO;
       this.ambiente = new TaxisAmbiente(centroSim, { cantidad: 5 });
@@ -436,7 +441,7 @@ class ControladorPasajero extends Emisor {
 
   // Afina la ubicación con el GPS continuo durante unos segundos: cada lectura mejor (más
   // precisa, o que se movió) actualiza miPosicion y emite 'posicion_afinada'. Se detiene con una
-  // lectura buena (≤ 25 m) o a los 25 s, para no gastar batería.
+  // lectura buena (≤ 25 m) o a los 25 s (al abrir sin lectura, al minuto), para no gastar batería.
   afinarPosicion({ duracion = 25000, buena = 25 } = {}) {
     this.detenerAfinado?.();
     let mejor = this.estado.miPosicion?.real ? this.estado.miPosicion : null;
@@ -449,21 +454,26 @@ class ControladorPasajero extends Emisor {
     };
     this.detenerAfinado = fin;
     reloj = setTimeout(fin, duracion);
-    detenerGps = seguirPosicion((p) => {
-      const pos = this.#paraRevision({ lat: p.lat, lng: p.lng, precision: p.precision, real: true });
-      const precision = pos.precision ?? 999;
-      const mejora = !mejor || !mejor.real || precision <= (mejor.precision ?? 999) || distanciaKm(pos, mejor) > 0.05;
-      if (!mejora) return;
-      mejor = pos;
-      this.#cambiar({ miPosicion: pos });
-      this.emit('posicion_afinada', pos);
-      if (precision <= buena) fin();
-    });
+    try {
+      detenerGps = seguirPosicion((p) => {
+        const pos = this.#paraRevision({ lat: p.lat, lng: p.lng, precision: p.precision, real: true });
+        const precision = pos.precision ?? 999;
+        const mejora = !mejor || !mejor.real || precision <= (mejor.precision ?? 999) || distanciaKm(pos, mejor) > 0.05;
+        if (!mejora) return;
+        mejor = pos;
+        this.#cambiar({ miPosicion: pos });
+        this.emit('posicion_afinada', pos);
+        if (precision <= buena) fin();
+      });
+    } catch {
+      // sin GPS en el aparato: nada que afinar
+      fin();
+    }
     return fin;
   }
 
   async actualizarMiPosicion() {
-    const pos = this.#paraRevision(await obtenerPosicion({ espera: 8000 }));
+    const pos = this.#paraRevision(await obtenerPosicion({ espera: 8000, rapida: true }));
     this.#cambiar({ miPosicion: pos });
     return pos;
   }

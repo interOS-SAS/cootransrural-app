@@ -493,7 +493,7 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       p.afinarPosicion();
       setTimeout(() => b.classList.remove('a-girando'), 1500);
     } else b.classList.remove('a-girando');
-    m.ponerYo(pos);
+    if (pos.real !== false) m.ponerYo(pos);
     if (pos.real === false) avisos.mostrar({ titulo: 'No tenemos tu GPS', cuerpo: EM.TEXTO_SIN_GPS, tipo: 'info' });
     if (app.dataset.pin) centrarVisible(pos, 17, ui.pinY);
     else centrarVisible(pos, 17);
@@ -2135,7 +2135,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
   }
 
   function actualizarMapa(e) {
-    if (e.miPosicion && e.miPosicion !== ui.yoRef) {
+    // El punto azul es el GPS de la persona: el paradero de respaldo (sin GPS) no se pinta como si fuera ella.
+    if (e.miPosicion?.real && e.miPosicion !== ui.yoRef) {
       ui.yoRef = e.miPosicion;
       m.ponerYo(e.miPosicion);
     }
