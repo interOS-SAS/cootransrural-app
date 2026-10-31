@@ -14,7 +14,7 @@
 // vuelve a pedir lo que falte, y una tesela cargada siempre se ve (opacidad 1).
 // Uso: node pruebas/mapa-volver.mjs [url_base]   (servidor estático del repositorio, p. ej.
 //      node pruebas/servidor-local.mjs --puerto=5695). Capturas en $CAPTURAS.
-import { chromium } from '/tmp/cootrans/npm/node_modules/playwright-core/index.mjs';
+const { chromium } = await import(process.env.PLAYWRIGHT_CORE || '/root/proyectos/_trabajo-taxicun/contrato-firma/npm/node_modules/playwright-core/index.mjs');
 import { mkdirSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
 
@@ -231,6 +231,40 @@ try {
   });
   ok(/Rehacer el mapa/.test(rehecho.t) && !rehecho.queda, '«Rehacer el mapa» vuelve a poner la capa y «Cerrar» quita el recuadro');
   ok(await esperarCargadas(), 'después de rehacer, el mapa se ve');
+
+  // h) 31-oct (Oscar, al abrir la app): la caja del mapa cambia de alto SIN que la ventana cambie (en el iPhone, 100dvh
+  //    mal medido: el mapa se creó con 563 px en una pantalla de 956 y después quedó en 0). Sin vigilar la caja, Leaflet
+  //    se queda con el tamaño viejo y lo de abajo queda en blanco. Se comprueba que se acomoda solo, que conserva el
+  //    centro (el «Recoger aquí») y que después de quedar en 0 vuelve a verse.
+  const vigilado = async (alto) => {
+    await p.evaluate((alto) => { document.getElementById('mapa').style.height = `${alto}px`; }, alto);
+    await p.waitForTimeout(500);
+    return p.evaluate(() => {
+      const m = globalThis.elMapa.mapa;
+      const c = m.getCenter();
+      const d = document.getElementById('mapa').getBoundingClientRect();
+      const abajo = [...document.querySelectorAll('#mapa img.leaflet-tile-loaded')].filter((i) => {
+        const r = i.getBoundingClientRect();
+        return r.bottom > d.bottom - 60 && r.top < d.bottom && getComputedStyle(i).opacity === '1';
+      }).length;
+      return { alto: m.getSize().y, lat: c.lat, lng: c.lng, abajo };
+    });
+  };
+  const h0 = await p.evaluate(() => { const c = globalThis.elMapa.mapa.getCenter(); return { lat: c.lat, lng: c.lng }; });
+  const h1 = await vigilado(420);
+  const h2 = await vigilado(700);
+  ok(h1.alto === 420 && h2.alto === 700, `h) la caja cambia de alto sin «resize» de la ventana: Leaflet se entera (${h1.alto} y ${h2.alto})`);
+  ok(Math.abs(h2.lat - h0.lat) < 1e-6 && Math.abs(h2.lng - h0.lng) < 1e-6, 'h) y conserva el centro');
+  let hAbajo = h2.abajo;
+  for (let i = 0; i < 20 && !hAbajo; i++) { await p.waitForTimeout(150); hAbajo = (await vigilado(700)).abajo; }
+  ok(hAbajo > 0, 'h) la parte de abajo del mapa tiene teselas (no queda en blanco)');
+  const h3 = await vigilado(0);
+  const h4 = await vigilado(700);
+  ok(h3.alto === 0 || h3.alto === 700, 'h) la caja queda en 0 de alto');
+  ok(h4.alto === 700 && Math.abs(h4.lat - h0.lat) < 1e-6 && Math.abs(h4.lng - h0.lng) < 1e-6, 'h) y al volver a su alto, el mapa tiene su tamaño y el mismo centro');
+  ok(await esperarCargadas(3000), 'h) y se ve');
+  ok(await p.evaluate(() => /caja \d+×0 → \d+×700/.test(globalThis.elMapa.diagnostico())), 'h) el diagnóstico lo cuenta en los sucesos');
+  await p.screenshot({ path: `${DIR}5b-h-caja.png` });
 
   // Una tesela cargada siempre se ve, aunque el desvanecido de Leaflet no haya terminado (requestAnimationFrame se
   // detiene en segundo plano).

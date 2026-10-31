@@ -43,7 +43,7 @@ function svgPin(color, letra) {
 }
 
 // Para saber en el diagnóstico qué versión de este archivo corre en el teléfono.
-const VERSION_MAPA = '2026-10-16';
+const VERSION_MAPA = '2026-10-31';
 
 export async function crearMapa(elemento, opciones = {}) {
   const L = await cargarLeaflet();
@@ -252,6 +252,20 @@ export async function crearMapa(elemento, opciones = {}) {
   let yoPrecision = null;
   const taxis = new Map();
 
+  // Cuánto mide 100dvh ahora mismo (para el diagnóstico: en el iPhone llegó a medir mal).
+  function altoDvh() {
+    try {
+      const d = document.createElement('div');
+      d.style.cssText = 'position:fixed;left:-10px;top:0;width:1px;height:100dvh;visibility:hidden;pointer-events:none';
+      document.body.append(d);
+      const h = Math.round(d.getBoundingClientRect().height);
+      d.remove();
+      return h;
+    } catch {
+      return -1;
+    }
+  }
+
   function diagnostico() {
     const nombreDe = (n) => (n ? `${n.tagName.toLowerCase()}${[...n.classList].slice(0, 2).map((c) => `.${c}`).join('')}` : 'nada');
     try {
@@ -284,6 +298,7 @@ export async function crearMapa(elemento, opciones = {}) {
         `mapa ${VERSION_MAPA} · ${nativa} · página: ${nav} hace ${Math.round((Date.now() - t0) / 1000)} s`,
         `${globalThis.navigator?.onLine === false ? 'SIN conexión' : 'con conexión'} · ${document.visibilityState}`,
         `caja ${Math.round(caja.width)}×${Math.round(caja.height)} · Leaflet ${t.x}×${t.y} · pantalla ${innerWidth}×${innerHeight}`,
+        `alto: --a-alto-app ${getComputedStyle(document.documentElement).getPropertyValue('--a-alto-app').trim() || '-'} · el de afuera ${Math.round(elemento.offsetParent?.getBoundingClientRect().height ?? -1)} · 100dvh ${altoDvh()}`,
         `teselas: ${elemento.querySelectorAll('img.leaflet-tile').length} en total; a la vista ${v.cargadas} cargadas, ${v.fallidas} fallidas, ${v.pendientes} en camino`,
         `capa ${elemento.dataset.capa || '?'}${elemento.classList.contains('ct-mapa-respaldo') ? ' (respaldo)' : ''} · ${img ? new URL(img.src).host : 'sin imagen'} ${img ? `${img.naturalWidth}px` : ''} · zoom ${mapa.getZoom()} · ${c.lat.toFixed(3)}, ${c.lng.toFixed(3)}`,
         `encima: el mapa en ${delMapa} de 9 puntos${otros.size ? ` · tapan: ${[...otros].map(([k, n]) => `${k} (${n})`).join(', ')}` : ''}`,
@@ -534,6 +549,37 @@ export async function crearMapa(elemento, opciones = {}) {
   globalThis.addEventListener?.('pageshow', alVolver);
   globalThis.addEventListener?.('online', alVolver);
   globalThis.addEventListener?.('ct-desbloqueo', alVolver); // se quitó el bloqueo de Face ID (disenos/a/nativa.js)
+  // 31-oct-2026: en el iPhone la caja del mapa llegó a quedar en 0 de alto (100dvh mal medido al abrir o al volver del
+  // fondo; ver «Alto de la app» en nucleo/plataforma.js) y Leaflet no se entera solo de un cambio de tamaño que no viene
+  // de la ventana. Se vigila la caja: si cambia, se le avisa al mapa sin mover el centro (el «Recoger aquí» es el centro)
+  // y, si venía de 0, se revisan las teselas.
+  let tamPrevio = null;
+  let centroBueno = null;
+  mapa.on('moveend', () => {
+    const t = mapa.getSize();
+    if (t.x > 0 && t.y > 0) centroBueno = { c: mapa.getCenter(), z: mapa.getZoom() };
+  });
+  const vigiaTam = globalThis.ResizeObserver ? new globalThis.ResizeObserver((entradas) => {
+    const r = entradas[entradas.length - 1]?.contentRect;
+    if (!activo || !r) return;
+    const w = Math.round(r.width);
+    const h = Math.round(r.height);
+    const antes = tamPrevio;
+    tamPrevio = { w, h };
+    if (!antes || (antes.w === w && antes.h === h)) return;
+    anotar(`caja ${antes.w}×${antes.h} → ${w}×${h}`);
+    if (!w || !h) return;
+    const veniaDeCero = !antes.w || !antes.h;
+    const volverA = veniaDeCero ? centroBueno : { c: mapa.getCenter(), z: mapa.getZoom() };
+    mapa.invalidateSize({ pan: false });
+    if (volverA) mapa.setView(volverA.c, volverA.z, { animate: false });
+    if (veniaDeCero) {
+      forzar = true;
+      while (relojes.length) clearTimeout(relojes.pop());
+      relojes.push(setTimeout(revisar, 60), setTimeout(revisar, 1200));
+    }
+  }) : null;
+  vigiaTam?.observe(elemento);
   const nativos = [];
   for (const [evento, fn] of [['resume', alVolver], ['pause', marcarOculta]]) {
     try {
@@ -545,6 +591,7 @@ export async function crearMapa(elemento, opciones = {}) {
   }
   function quitarVolver() {
     activo = false;
+    vigiaTam?.disconnect();
     while (relojes.length) clearTimeout(relojes.pop());
     clearTimeout(relojReintento);
     relojReintento = null;

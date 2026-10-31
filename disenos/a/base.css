@@ -64,7 +64,8 @@ html[data-diseno="a"] body {
 .a-app {
   position: relative;
   width: 100%;
-  height: 100dvh;
+  /* --a-alto-app: innerHeight medido por nucleo/plataforma.js (en el iPhone, 100dvh a veces queda mal y el mapa en blanco) */
+  height: var(--a-alto-app, 100dvh);
   overflow: hidden;
   isolation: isolate;
   background: #EDEAE3;
@@ -89,7 +90,7 @@ html[data-diseno="a"] body {
 }
 html[data-vitrina="1"] .a-raiz { display: block; background: none; min-height: 0; }
 html[data-vitrina="1"] .a-raiz::before { display: none; }
-html[data-vitrina="1"] .a-app { width: 100%; height: 100dvh; border-radius: 0; box-shadow: none; }
+html[data-vitrina="1"] .a-app { width: 100%; height: var(--a-alto-app, 100dvh); border-radius: 0; box-shadow: none; }
 html[data-vitrina="1"] .a-escritorio { display: none !important; }
 
 /* Panel de escritorio (solo pantallas anchas, fuera de la vitrina) */

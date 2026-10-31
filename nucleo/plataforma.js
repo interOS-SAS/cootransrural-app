@@ -41,6 +41,33 @@ if (raiz) {
   if (ES_NATIVA) raiz.dataset.nativa = '1';
 }
 
+/* ---------------- Alto de la app ----------------
+ * En el WebView del iPhone «100dvh» a veces queda mal al abrir la app o al volver del segundo plano (31-oct-2026: el mapa
+ * del pasajero se creó con 563 px de alto en una pantalla de 956 y después quedó en 0, con innerHeight todavía en 956: el
+ * mapa en blanco). El alto se toma de innerHeight y se publica en --a-alto-app (disenos/a/base.css lo usa antes que
+ * 100dvh); se vuelve a medir al cambiar el tamaño, al volver a la vista, al desbloquear y con el «resume» de Capacitor. */
+export function medirAltoApp() {
+  const alto = Math.round(globalThis.innerHeight || 0);
+  if (raiz && alto > 200) raiz.style.setProperty('--a-alto-app', `${alto}px`);
+  return alto;
+}
+if (raiz && globalThis.addEventListener) {
+  const medirYa = () => {
+    medirAltoApp();
+    // y otra vez cuando el sistema termina de acomodar la vista (al volver del fondo puede llegar tarde)
+    globalThis.requestAnimationFrame?.(() => medirAltoApp());
+    setTimeout(medirAltoApp, 400);
+  };
+  medirAltoApp();
+  for (const ev of ['resize', 'orientationchange', 'pageshow', 'ct-desbloqueo']) globalThis.addEventListener(ev, medirYa);
+  globalThis.document?.addEventListener('visibilitychange', () => { if (!globalThis.document.hidden) medirYa(); });
+  try {
+    cap?.Plugins?.App?.addListener?.('resume', medirYa)?.catch?.(() => {});
+  } catch {
+    /* sin el plugin App */
+  }
+}
+
 /* ---------------- App oculta (batería) ----------------
  * Con la app en segundo plano o la pestaña oculta no hace falta pintar nada: html.app-oculta
  * pausa las animaciones (disenos/a/base.css) y relojVisible() detiene los relojes de pantalla
