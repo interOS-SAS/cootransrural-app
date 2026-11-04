@@ -23,12 +23,20 @@
 //      true) → nada, sin preguntar, y sigue el aviso del modo revisor de siempre («Estás lejos de El Rosal»).
 //  11b) cuenta de prueba (exento sin revision en la bienvenida) → nada. 11c) servidor anterior (404) → nada.
 //  12) «Ver cómo funciona» abre la demo de verdad (sin el modo real).
-//  Otra cooperativa (13-oct-2026, con Subachoque y El Rosal reales): la app abre la cooperativa guardada; si el GPS dice
-//  que la persona está en el municipio de otra que atiende, pregunta una vez «Estás en Subachoque».
-//   13) guardada Cootransrural, en Subachoque → «Estás en Subachoque» → «Cambiar a Coopmultrasub» → abre Subachoque y
-//       queda guardada. 14) «Seguir con Cootransrural» → al volver a abrir, no pregunta (12 h). 15) en El Rosal → nada.
-//   16) una sola cooperativa real (Subachoque no atiende) → nada. 17) sin nada guardado, en Subachoque → abre Subachoque
-//       por el GPS, sin preguntar.
+//  Otra cooperativa (13-oct-2026; 4-nov-2026 cambia sola, con Subachoque y El Rosal reales): la app abre la cooperativa
+//  guardada; si el GPS dice que la persona está en el municipio de otra que atiende, cambia sola a esa.
+//   13) guardada Cootransrural, en Subachoque → cambia sola a Coopmultrasub (queda guardada, sin preguntar ni pedir el
+//       ingreso otra vez) y avisa «Estás en Subachoque» con «Volver a Cootransrural»; «Volver…» la vuelve a abrir, la
+//       anota como escogida a mano (con el lugar) y no se cambia sola otra vez mientras siga ahí (tampoco al recargar).
+//   14) abierta en El Rosal (se queda) y llega a Subachoque: con «mi ubicación» cambia sola (antes se revisaba una sola vez
+//       por apertura). 14b) lo mismo al volver a la app después de un rato en segundo plano.
+//   15) en El Rosal → nada. 16) una sola cooperativa real (Subachoque no atiende) → nada. 17) sin nada guardado, en
+//       Subachoque → abre Subachoque por el GPS, sin aviso de cambio.
+//   18) en Subachoque escoge Cootransrural a mano en la lista → no se cambia sola (anota dónde la escogió).
+//   19) en Subachoque con una lectura de 5 km de precisión → no cambia. 20) en Villeta, donde atienden dos (Cootransye y
+//       Villetana) → no escoge por la persona: pregunta con cuál (enlaces con desde y escogida) o «Seguir con
+//       Cootransrural» (queda anotada como escogida a mano). 20b) escoge Villetana → la abre, avisa y no cambia sola a la
+//       otra de Villeta (queda escogida a mano).
 //
 // Uso: node pruebas/lejos-app.mjs [url_base]   (estático del repositorio, p. ej.
 //      node pruebas/servidor-local.mjs --puerto=5221 --api=http://127.0.0.1:5229). Capturas en $CAPTURAS.
@@ -89,6 +97,9 @@ const intento = async (pr) => {
 };
 
 /* ---------------- Servidor de TaxiCun simulado ---------------- */
+// Desde el 20-oct-2026 el archivo de la web marca también Villeta como real: estas pruebas suponen una sola cooperativa
+// real (El Rosal) salvo donde digan otra cosa.
+const SOLO_ROSAL = { cooperativas: [{ id: 'cootransrural', real: true }] };
 const srv = {
   n: 0,
   sesiones: new Map(),
@@ -96,7 +107,7 @@ const srv = {
   peticiones: [],
   exentos: new Set(), // correos de la cuenta de revisión y de las de prueba: /api/cercania responde exento
   cercania: 'ok', // ok | 404 (servidor anterior)
-  indice: null, // GET /api/empresas/indice: null = 404 (el «real» del archivo de la web)
+  indice: SOLO_ROSAL, // GET /api/empresas/indice (null = 404: el «real» del archivo de la web)
   revisionBus: false,
   interesados: 'ok', // ok | 404
 };
@@ -192,7 +203,7 @@ function atenderBus(ws) {
     if (m.datos.rol === 'conductor') {
       enviar(ws, 'bienvenida', { rol: 'conductor', empresa: 'cootransrural', nombre: u.nombre, conductor: { id: 'c1', ...u.conductor, nombre: u.nombre, tel: u.celular }, ...extra });
     } else {
-      enviar(ws, 'bienvenida', { rol: 'pasajero', empresa: 'cootransrural', nombre: u.nombre, pasajeroId: `p_${correo}`, ...extra });
+      enviar(ws, 'bienvenida', { rol: 'pasajero', empresa: m.datos.empresa || 'cootransrural', nombre: u.nombre, pasajeroId: `p_${correo}`, ...extra });
     }
     enviar(ws, 'viaje_actual', null);
   });
@@ -474,11 +485,17 @@ async function pasajeroSinAviso(nombre, { geo, permiso = true, revisionBus = fal
   srv.cercania = 'ok';
 }
 
-/* ---------------- Otra cooperativa ---------------- */
+/* ---------------- Otra cooperativa (cambia sola) ---------------- */
 const SUBACHOQUE = { latitude: 4.927969 + 0.002, longitude: -74.173964, accuracy: 12 };
+const VILLETA = { latitude: 5.011258 + 0.002, longitude: -74.47023, accuracy: 12 };
 const DOS_REALES = { cooperativas: [{ id: 'cootransrural', real: true }, { id: 'subachoque', real: true }] };
 const UNA_REAL = { cooperativas: [{ id: 'cootransrural', real: true }, { id: 'subachoque', real: false, pronto: true }] };
+const VILLETA_DOS = { cooperativas: [{ id: 'cootransrural', real: true }, { id: 'villeta-cootransye', real: true }, { id: 'villeta-villetana', real: true }] };
 const preguntaOtra = (p, timeout = 9000) => intento(p.waitForSelector('.a-modal-otra-coop.a-abierto', { timeout }));
+const avisoCambio = (p, timeout = 15000) => intento(p.waitForSelector('.a-toast .a-toast-accion', { timeout }));
+const enEmpresa = (p, id, ms = 25000) => hasta(() => p.evaluate((x) => window.CT_EMPRESA === x && document.querySelector('.a-app[data-vista="inicio"]') !== null, id), ms);
+const empresaDe = (p) => p.evaluate(() => window.CT_EMPRESA).catch(() => null);
+const escogida = (p) => p.evaluate(() => JSON.parse(localStorage.getItem('taxicun.real.escogida') || 'null')).catch(() => null);
 async function otraCooperativa(nombre, { geo, guardada = 'cootransrural', indice = DOS_REALES, etiqueta }) {
   console.log(`\n— ${etiqueta}`);
   srv.indice = indice;
@@ -488,40 +505,117 @@ async function otraCooperativa(nombre, { geo, guardada = 'cootransrural', indice
   await entrarPasajero(p, correo);
   return { ctx, p };
 }
-async function otraCambiar() {
-  const { ctx, p } = await otraCooperativa('ana-otra', { geo: SUBACHOQUE, etiqueta: '13) Guardada Cootransrural, en Subachoque: «Estás en Subachoque» → «Cambiar a Coopmultrasub»' });
-  ok(await p.evaluate(() => window.CT_EMPRESA === 'cootransrural'), 'abre la cooperativa guardada (Cootransrural)');
-  ok(await preguntaOtra(p), 'pregunta «Estás en Subachoque»');
-  const txt = await p.innerText('.a-modal-otra-coop .a-modal');
-  ok(/Estás en Subachoque/.test(txt) && /Aquí te atiende Coopmultrasub/.test(txt), `título y texto con el municipio y la cooperativa (${txt.replace(/\s+/g, ' ').slice(0, 140)})`);
-  ok(/Cambiar a Coopmultrasub/.test(txt) && /Seguir con Cootransrural/.test(txt), '«Cambiar a Coopmultrasub» y «Seguir con Cootransrural»');
-  ok(!(await avisoPasajero(p, 500)), 'no sale «Todavía no llegamos a tu zona» (Subachoque sí tiene TaxiCun)');
-  await foto(p, 'P13-otra-cooperativa');
-  await Promise.all([p.waitForURL(/e=subachoque/, { timeout: 15000 }), p.click('.a-modal-otra-coop a.a-btn-primario')]);
-  await p.waitForFunction(() => window.CT_EMPRESA === 'subachoque', null, { timeout: 20000 }).catch(() => {});
-  ok(await p.evaluate(() => window.CT_EMPRESA === 'subachoque' && localStorage.getItem('taxicun.real.empresa') === 'subachoque'), 'abre Coopmultrasub y queda guardada');
-  ok(await p.evaluate(() => document.documentElement.dataset.modo === 'real'), 'sigue en el modo real');
-  await foto(p, 'P13b-ya-en-subachoque');
-  await ctx.close();
-}
-async function otraSeguir() {
-  const { ctx, p } = await otraCooperativa('ana-seguir', { geo: SUBACHOQUE, etiqueta: '14) «Seguir con Cootransrural»: no vuelve a preguntar' });
-  ok(await preguntaOtra(p), 'pregunta');
-  await p.click('.a-modal-otra-coop .a-btn-suave');
-  await p.waitForTimeout(500);
-  ok(await p.evaluate(() => window.CT_EMPRESA === 'cootransrural' && Number(localStorage.getItem('taxicun.sugerir.cootransrural.subachoque')) > 0), 'sigue en Cootransrural y recuerda la respuesta');
+async function otraCambiaSola() {
+  const { ctx, p } = await otraCooperativa('ana-otra', { geo: SUBACHOQUE, etiqueta: '13) Guardada Cootransrural, en Subachoque: cambia sola a Coopmultrasub; «Volver a Cootransrural»' });
+  ok(await enEmpresa(p, 'subachoque'), 'cambia sola a Coopmultrasub (Subachoque)');
+  ok(await p.evaluate(() => localStorage.getItem('taxicun.real.empresa') === 'subachoque'), 'y queda guardada');
+  ok(/e=subachoque/.test(p.url()) && !/desde=|escogida=/.test(p.url()), `la dirección queda con la nueva, sin «desde» (${p.url().replace(BASE, '/')})`);
+  ok(await avisoCambio(p), 'avisa el cambio, con un botón');
+  const txt = await texto(p, '.a-toast:has(.a-toast-accion)');
+  ok(/Estás en Subachoque/.test(txt) && /Ahora te atiende Coopmultrasub/.test(txt) && /Volver a Cootransrural/.test(txt), `«Estás en Subachoque», quién la atiende y «Volver a Cootransrural» (${txt.slice(0, 150)})`);
+  ok(!(await preguntaOtra(p, 300)), 'no pregunta nada');
+  ok(await p.evaluate(() => document.documentElement.dataset.modo === 'real' && !document.querySelector('.a-bienvenida')), 'sigue en el modo real y no pide el ingreso otra vez');
+  await foto(p, 'P13-cambio-solo');
+  await Promise.all([p.waitForURL(/e=cootransrural/, { timeout: 15000 }), p.click('.a-toast .a-toast-accion')]);
+  ok(await enEmpresa(p, 'cootransrural'), '«Volver a Cootransrural» la vuelve a abrir');
+  ok(await p.evaluate(() => localStorage.getItem('taxicun.real.empresa') === 'cootransrural'), 'y queda guardada');
+  const g = await escogida(p);
+  ok(g?.id === 'cootransrural' && Math.abs(g.lat - SUBACHOQUE.latitude) < 0.001, `queda anotada como escogida a mano, con el lugar (${JSON.stringify(g)})`);
+  await p.waitForTimeout(7000);
+  ok((await empresaDe(p)) === 'cootransrural' && !(await avisoCambio(p, 200)), 'no se vuelve a cambiar sola mientras siga ahí');
   await p.reload();
   await p.waitForSelector('.a-app[data-vista="inicio"]', { timeout: 30000 });
-  ok(!(await preguntaOtra(p, 6000)), 'al volver a abrir no pregunta (12 h)');
+  await p.waitForTimeout(7000);
+  ok((await empresaDe(p)) === 'cootransrural', 'ni al recargar');
   await ctx.close();
 }
-async function otraSinPregunta(nombre, opciones, mensaje) {
+async function otraConMiUbicacion() {
+  const { ctx, p } = await otraCooperativa('ana-ubicacion', { geo: EL_ROSAL, etiqueta: '14) Abierta en El Rosal; llega a Subachoque y toca «mi ubicación»' });
+  await p.waitForTimeout(5000);
+  ok((await empresaDe(p)) === 'cootransrural', 'en El Rosal se queda con Cootransrural');
+  await ctx.setGeolocation(SUBACHOQUE);
+  await p.click('[data-mi-ubicacion]');
+  ok(await enEmpresa(p, 'subachoque'), 'con la lectura nueva en Subachoque cambia sola (ya no se revisa una sola vez por apertura)');
+  ok(await avisoCambio(p), 'y avisa el cambio');
+  await ctx.close();
+}
+async function otraAlVolverALaApp() {
+  const { ctx, p } = await otraCooperativa('ana-vuelta', { geo: EL_ROSAL, etiqueta: '14b) Abierta en El Rosal; vuelve a la app en Subachoque después de un rato' });
+  await p.waitForTimeout(5000);
+  ok((await empresaDe(p)) === 'cootransrural', 'en El Rosal se queda con Cootransrural');
+  await ctx.setGeolocation(SUBACHOQUE);
+  // La app queda en segundo plano 25 s (se adelanta el reloj de la página) y vuelve.
+  await p.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => window.__oculta === true });
+    window.__oculta = true;
+    document.dispatchEvent(new Event('visibilitychange'));
+    const real = Date.now.bind(Date);
+    Date.now = () => real() + 25000;
+    window.__oculta = false;
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  ok(await enEmpresa(p, 'subachoque'), 'al volver a la app en Subachoque cambia sola');
+  await ctx.close();
+}
+async function otraSinCambio(nombre, opciones, mensaje) {
   const { ctx, p } = await otraCooperativa(nombre, opciones);
-  ok(!(await preguntaOtra(p, 7000)), mensaje);
+  await p.waitForTimeout(7000);
+  ok(!(await preguntaOtra(p, 300)) && !(await avisoCambio(p, 300)), mensaje);
   await foto(p, `P-${nombre}`);
-  const empresa = await p.evaluate(() => window.CT_EMPRESA);
+  const empresa = await empresaDe(p);
   await ctx.close();
   return empresa;
+}
+async function otraEscogidaEnLaLista() {
+  console.log('\n— 18) En Subachoque escoge Cootransrural a mano en la lista');
+  srv.indice = DOS_REALES;
+  const correo = usuario('ana-lista@correo.test', { nombre: 'Ana María Gómez', celular: '3001234567' });
+  const { ctx, p } = await contexto('ana-lista', { geo: SUBACHOQUE });
+  await p.goto(`${BASE}taxicun/?real=1&elegir=1`);
+  await p.waitForSelector('#elegir [data-id="cootransrural"]', { timeout: 30000 });
+  await p.click('#elegir [data-id="cootransrural"]');
+  await p.waitForSelector('.a-bienvenida [data-saltar]', { timeout: 30000 });
+  await p.click('.a-bienvenida [data-saltar]');
+  await p.waitForSelector('.a-bienvenida input[name=correo]', { timeout: 8000 });
+  await p.fill('.a-bienvenida input[name=correo]', correo);
+  await p.click('.a-bienvenida .a-check');
+  await p.click('.a-bienvenida [data-enviar]');
+  await escribirCodigo(p, '.a-bienvenida .a-casillas-6');
+  await p.waitForSelector('.a-bienvenida [data-empezar]', { timeout: 15000 });
+  await p.click('.a-bienvenida [data-empezar]');
+  await p.waitForSelector('.a-app[data-vista="inicio"]', { timeout: 20000 });
+  await p.waitForTimeout(8000);
+  ok((await empresaDe(p)) === 'cootransrural' && !(await avisoCambio(p, 200)), 'se queda con la que escogió (Cootransrural)');
+  const g = await escogida(p);
+  ok(g?.id === 'cootransrural' && Math.abs(g.lat - SUBACHOQUE.latitude) < 0.001, `anota dónde la escogió (la primera lectura buena: ${JSON.stringify(g)})`);
+  await ctx.close();
+}
+async function otraVarias() {
+  const { ctx, p } = await otraCooperativa('ana-villeta', { geo: VILLETA, indice: VILLETA_DOS, etiqueta: '20) Guardada Cootransrural, en Villeta (atienden Cootransye y Villetana)' });
+  ok(await preguntaOtra(p, 15000), 'pregunta con cuál (no escoge por la persona)');
+  const txt = await texto(p, '.a-modal-otra-coop .a-modal');
+  ok(/Estás en Villeta/.test(txt) && /Cootransye/.test(txt) && /Villetana/.test(txt) && /Seguir con Cootransrural/.test(txt), `«Estás en Villeta» con las dos y «Seguir con Cootransrural» (${txt.slice(0, 160)})`);
+  const enlaces = await p.$$eval('.a-modal-otra-coop a[href]', (as) => as.map((a) => a.getAttribute('href')));
+  ok(enlaces.length === 2 && enlaces.every((h) => /desde=cootransrural/.test(h) && /escogida=1/.test(h)), `los enlaces llevan desde y escogida (${enlaces.map((h) => h.replace(/^.*\?/, '?')).join(' · ')})`);
+  ok((await empresaDe(p)) === 'cootransrural', 'mientras tanto sigue en Cootransrural');
+  await foto(p, 'P20-varias');
+  await p.click('.a-modal-otra-coop .a-btn-suave');
+  await p.waitForTimeout(500);
+  const g = await escogida(p);
+  ok((await empresaDe(p)) === 'cootransrural' && g?.id === 'cootransrural' && typeof g.lat === 'number', '«Seguir con Cootransrural» se queda y la anota como escogida a mano');
+  await ctx.close();
+}
+async function otraVariasEscoge() {
+  const { ctx, p } = await otraCooperativa('ana-villeta-2', { geo: VILLETA, indice: VILLETA_DOS, etiqueta: '20b) En Villeta escoge Villetana en la pregunta' });
+  ok(await preguntaOtra(p, 15000), 'pregunta con cuál');
+  await Promise.all([p.waitForURL(/e=villeta-villetana/, { timeout: 15000 }), p.click('.a-modal-otra-coop a:has-text("Villetana")')]);
+  ok(await enEmpresa(p, 'villeta-villetana'), 'abre Villetana de Taxis');
+  ok(!/desde=|escogida=/.test(p.url()), `sin «desde» ni «escogida» en la dirección (${p.url().replace(BASE, '/')})`);
+  ok(await avisoCambio(p), 'avisa «Estás en Villeta» con «Volver a Cootransrural»');
+  await p.waitForTimeout(6000);
+  const g = await escogida(p);
+  ok((await empresaDe(p)) === 'villeta-villetana' && g?.id === 'villeta-villetana' && typeof g.lat === 'number', `queda escogida a mano (con el lugar de la primera lectura) y no cambia sola a Cootransye (${JSON.stringify(g)})`);
+  await ctx.close();
 }
 
 async function demoDeVerdad() {
@@ -557,13 +651,21 @@ try {
   await pasajeroSinAviso('ana-prueba', { geo: MEDELLIN, exento: true, preguntaCercania: true, etiqueta: '11b) Pasajero de una cuenta de prueba en Medellín (exento)' });
   await pasajeroSinAviso('ana-anterior', { geo: MEDELLIN, cercania: '404', preguntaCercania: true, etiqueta: '11c) Pasajero con un servidor anterior (/api/cercania 404)' });
   await demoDeVerdad();
-  await otraCambiar();
-  await otraSeguir();
-  await otraSinPregunta('ana-rosal', { geo: EL_ROSAL, etiqueta: '15) Guardada Cootransrural, en El Rosal' }, 'en El Rosal no pregunta nada');
-  await otraSinPregunta('ana-una', { geo: SUBACHOQUE, indice: UNA_REAL, etiqueta: '16) Una sola cooperativa real (Subachoque todavía no atiende)' }, 'con una sola cooperativa real no pregunta');
-  const nueva = await otraSinPregunta('ana-nueva', { geo: SUBACHOQUE, guardada: null, etiqueta: '17) Sin nada guardado, en Subachoque' }, 'sin nada guardado no pregunta');
+  await otraCambiaSola();
+  await otraConMiUbicacion();
+  await otraAlVolverALaApp();
+  const rosal = await otraSinCambio('ana-rosal', { geo: EL_ROSAL, etiqueta: '15) Guardada Cootransrural, en El Rosal' }, 'en El Rosal no cambia ni avisa nada');
+  ok(rosal === 'cootransrural', `se queda en Cootransrural (${rosal})`);
+  const una = await otraSinCambio('ana-una', { geo: SUBACHOQUE, indice: UNA_REAL, etiqueta: '16) Una sola cooperativa real (Subachoque todavía no atiende)' }, 'con una sola cooperativa real no cambia ni avisa nada');
+  ok(una === 'cootransrural', `se queda en Cootransrural (${una})`);
+  const nueva = await otraSinCambio('ana-nueva', { geo: SUBACHOQUE, guardada: null, etiqueta: '17) Sin nada guardado, en Subachoque' }, 'sin nada guardado no hay aviso de cambio');
   ok(nueva === 'subachoque', `sin nada guardado, el GPS abre Subachoque (${nueva})`);
-  srv.indice = null;
+  await otraEscogidaEnLaLista();
+  const borrosa = await otraSinCambio('ana-borrosa', { geo: { ...SUBACHOQUE, accuracy: 5000 }, etiqueta: '19) En Subachoque con una lectura de 5 km de precisión' }, 'con una lectura de 5 km no cambia');
+  ok(borrosa === 'cootransrural', `se queda en Cootransrural (${borrosa})`);
+  await otraVarias();
+  await otraVariasEscoge();
+  srv.indice = SOLO_ROSAL;
 } catch (e) {
   ok(false, `la prueba se detuvo: ${e.message.split('\n')[0]}`);
 } finally {

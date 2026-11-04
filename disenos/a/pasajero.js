@@ -384,7 +384,8 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
       return r === 'pedir';
     }
     const otra = otraQueAtiende(ui.origen || z);
-    const urlOtra = otra ? N.urlDelSitio(`taxicun/?e=${otra.id}`) : '';
+    // La escoge la persona (movió el punto a ese municipio): allá no se devuelve sola por el GPS.
+    const urlOtra = otra ? urlCooperativa(otra.id, { escogida: true }) : '';
     const r = await modal(app, {
       titulo: `Este punto está muy lejos de la zona de ${EM.NOMBRE}`,
       texto: `Desde aquí no puedes pedir un taxi de ${EM.NOMBRE}. Mueve el punto de recogida dentro de la zona o llama a la central.`,
@@ -2397,52 +2398,111 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
    * (formulario de interesados, rol pasajero) y «Ver cómo funciona». «Ahora no» lo guarda un día y «Avísame» 30. Sin GPS,
    * sin red o con un error de la ruta (un servidor anterior): nada. La cuenta de revisión (bienvenida.revision, o el
    * servidor responde exento, igual que a las cuentas de prueba): nunca. */
-  /* Otra cooperativa (13-oct-2026, pedido de Oscar): la app abre la cooperativa guardada (no espera el GPS). Si el GPS
-   * dice que la persona está en el municipio de OTRA cooperativa que atiende en TaxiCun (fuera de la zona de la suya y más
-   * cerca del centro de la otra), se le pregunta una vez: «Estás en {pueblo}» con «Cambiar a {otra}» (abre taxicun/?e=id,
-   * que la deja guardada) y «Seguir con {la suya}» (no vuelve a preguntar por esa en 12 h). Nunca con un viaje en curso,
-   * en el modo revisor ni con otra capa encima; con una sola cooperativa real (sin «otras»), nada. */
-  let otraSesion = 'nada'; // 'nada' | 'visto'
-  const NO_SUGERIR_OTRA_MS = 12 * 3600 * 1000;
+  /* Otra cooperativa. 13-oct-2026 (pedido de Oscar): la app abre la cooperativa guardada (no espera el GPS) y, si el GPS
+   * decía que la persona estaba en el municipio de OTRA cooperativa que atiende en TaxiCun, le preguntaba una sola vez por
+   * apertura. 4-nov-2026 (Oscar: «no cambia de municipio automáticamente, toca como manual»): ahora CAMBIA SOLA, y se
+   * revisa con cada lectura del GPS (al abrir, al volver a la app y con «mi ubicación»); antes, con la app abierta en
+   * segundo plano, al llegar a otro municipio ya no se enteraba.
+   * Cambia con una lectura de 3 km de precisión o mejor que quede fuera de la zona de la suya (sin zona: más allá de su
+   * radio), contando la precisión; dentro del radio de otra de OTRO municipio y claramente más cerca del centro de esa (2 km
+   * de margen, o el doble de la precisión: así el GPS no la hace ir y venir en el límite). Abre taxicun/?e=<otra>&desde=
+   * <la suya> (queda guardada) y allá avisa «Estás en {pueblo}» con «Volver a {la suya}». Si en ese municipio atiende más
+   * de una empresa, no escoge por la persona: pregunta con cuál, o «Seguir con {la suya}». Nunca con un viaje en curso
+   * (espera a que termine), en el modo revisor ni con otra capa encima (espera a que se cierre); con una sola cooperativa
+   * real (sin «otras»), nada. La escogida a mano (lista, «Volver a…» o «Seguir con…») se respeta mientras la persona siga
+   * a menos de 5 km de donde la escogió (nucleo/lejos.js). */
+  const PRECISION_CAMBIO_M = 3000;
+  const CAPAS_ENCIMA = '.a-modal-capa, .a-registro, .a-bienvenida, .a-buscador, .a-panel, .a-menu-capa';
+  let otraHecha = false; // ya se fue a la otra (o ya se preguntó con cuál) en esta apertura
+  let otraPendiente = false; // hay que cambiar, pero había un viaje o una capa encima
+  let posOtraRevisada = null; // la última lectura revisada (p.on('cambio') revisa cuando llega otra)
+  let reintentoOtra = null;
   function revisarOtraCooperativa() {
-    if (!REAL || !EM.EN_TAXICUN || !p || otraSesion === 'visto' || !(taxicun?.otras || []).length) return;
+    if (!REAL || !EM.EN_TAXICUN || !p || otraHecha || !(taxicun?.otras || []).length) return;
     if (!bienvenidaLejos || bienvenidaLejos.revision || p.revision) return;
     const pos = p.estado.miPosicion;
-    if (!pos?.real || pos.revision || p.estado.fase !== 'inicio' || ui.modo !== 'inicio') return;
-    if (app.querySelector('.a-modal-capa, .a-registro, .a-bienvenida, .a-buscador, .a-panel, .a-menu-capa')) return;
-    otraSesion = 'visto';
-    const otra = otraQueAtiende(pos);
-    if (!otra?.centro) return;
-    const actual = taxicun?.cooperativa;
-    const dActual = actual?.centro ? N.distanciaKm(pos, actual.centro) : Infinity;
-    const dentro = CON_ZONA ? p.zonaDe(pos)?.estado === 'dentro' : dActual <= (Number(actual?.radioKm) || 9);
-    if (dentro || N.distanciaKm(pos, otra.centro) >= dActual) return;
-    const clave = `taxicun.sugerir.${EM.ID}.${otra.id}`;
-    let antes = 0;
-    try {
-      antes = Number(localStorage.getItem(clave)) || 0;
-    } catch {
-      /* sin almacenamiento */
+    const precision = Number(pos?.precision);
+    if (!pos?.real || pos.revision || pos.precision == null || !(precision >= 0 && precision <= PRECISION_CAMBIO_M)) return;
+    posOtraRevisada = pos;
+    otraPendiente = false;
+    if (N.lejos.respetarEscogida(EM.ID, pos)) return;
+    const destino = otraDelMunicipio(pos, precision / 1000);
+    if (!destino) return;
+    if (p.estado.fase !== 'inicio' || ui.modo !== 'inicio' || app.querySelector(CAPAS_ENCIMA)) {
+      otraPendiente = true;
+      // Con un viaje en curso, al volver al inicio (p.on('cambio')); con una capa encima, en un momento.
+      if (p.estado.fase === 'inicio' && !reintentoOtra) {
+        reintentoOtra = setTimeout(() => {
+          reintentoOtra = null;
+          revisarOtraCooperativa();
+        }, 2500);
+      }
+      return;
     }
-    if (Date.now() - antes < NO_SUGERIR_OTRA_MS) return;
-    const pueblo = String(otra.pueblo || '').slice(0, 60);
-    const nombre = String(otra.nombre || '').slice(0, 60);
+    otraHecha = true;
+    if (destino.una) irAOtraCooperativa(destino.una);
+    else preguntarCualCooperativa(destino);
+  }
+
+  // La cooperativa del municipio donde está la persona, si no es la suya: { una } o, si ahí atiende más de una, { varias,
+  // pueblo }. null si se queda con la suya.
+  function otraDelMunicipio(pos, precisionKm = 0) {
+    const actual = taxicun?.cooperativa;
+    const otra = otraQueAtiende(pos);
+    if (!otra?.centro || (actual?.pueblo && otra.pueblo === actual.pueblo)) return null;
+    const dActual = actual?.centro ? N.distanciaKm(pos, actual.centro) : Infinity;
+    const zona = CON_ZONA ? p.zonaDe(pos) : null;
+    const fuera = zona ? zona.estado !== 'dentro' && (Number(zona.km) || 0) >= precisionKm : dActual > (Number(actual?.radioKm) || 9) + precisionKm;
+    if (!fuera || N.distanciaKm(pos, otra.centro) + Math.max(2, 2 * precisionKm) >= dActual) return null;
+    const delPueblo = (taxicun?.otras || []).filter((c) => c?.centro && c.pueblo === otra.pueblo && /^[a-z0-9-]{1,40}$/.test(String(c.id || '')));
+    return delPueblo.length > 1 ? { varias: delPueblo, pueblo: otra.pueblo } : { una: otra };
+  }
+
+  // desde: la de antes (allá avisa «Estás en…» con «Volver a…»). escogida: la escoge la persona (allá se respeta mientras
+  // siga donde la escogió; nucleo/lejos.js).
+  function urlCooperativa(id, { desde = '', escogida = false } = {}) {
+    return N.urlDelSitio(`taxicun/?e=${encodeURIComponent(id)}${desde ? `&desde=${encodeURIComponent(desde)}` : ''}${escogida ? '&escogida=1' : ''}`);
+  }
+
+  // Sin entrada en el historial: «atrás» no devuelve a la de antes (que volvería a cambiar sola).
+  function irAOtraCooperativa(otra) {
+    location.replace(urlCooperativa(otra.id, { desde: EM.ID }));
+  }
+
+  function preguntarCualCooperativa({ varias, pueblo }) {
+    const lugar = String(pueblo || '').slice(0, 60);
     modal(app, {
-      titulo: `Estás en ${pueblo}`,
-      texto: `Aquí te atiende ${nombre}, ${otra.tipo === 'empresa' ? 'la empresa' : 'la cooperativa'} de taxis de ${pueblo} en ${EM.APP}. ¿Quieres pedir tu taxi con ${otra.tipo === 'empresa' ? 'ella' : 'ellos'}?`,
+      titulo: `Estás en ${lugar}`,
+      texto: `Aquí atienden ${varias.length} empresas de taxis en ${EM.APP}. ¿Con cuál quieres pedir tu taxi?`,
       icono: `<span class="a-zona-ico">${icono('pin', { tam: 30 })}</span>`,
       clase: 'a-modal-otra-coop',
       acciones: [
-        { texto: `Cambiar a ${nombre}`, href: N.urlDelSitio(`taxicun/?e=${otra.id}`), valor: 'otra', clase: 'a-btn-primario', icono: 'pin' },
+        ...varias.map((c) => ({ texto: String(c.nombre || c.id).slice(0, 60), href: urlCooperativa(c.id, { desde: EM.ID, escogida: true }), valor: `e:${c.id}`, clase: 'a-btn-primario', icono: 'pin' })),
         { texto: `Seguir con ${EM.NOMBRE}`, valor: 'seguir', clase: 'a-btn-suave' },
       ],
     }).then((r) => {
-      if (r === 'otra') return;
-      try {
-        localStorage.setItem(clave, String(Date.now()));
-      } catch {
-        /* sin almacenamiento */
-      }
+      // «Seguir con…» (o cerrar): se respeta la suya mientras siga aquí.
+      if (!String(r || '').startsWith('e:')) N.lejos.anotarEscogida(EM.ID, p?.estado.miPosicion);
+    });
+  }
+
+  // Llegó por el cambio solo de municipio (?desde=…): dónde está, quién la atiende y cómo volver a la de antes.
+  function avisarCambioDeMunicipio() {
+    const desde = taxicun?.desde;
+    if (!REAL || !EM.EN_TAXICUN || !desde?.id) return;
+    taxicun.desde = null;
+    const nombre = String(desde.nombre || desde.id).slice(0, 40);
+    avisos.mostrar({
+      titulo: `Estás en ${EM.PUEBLO}`,
+      cuerpo: `Ahora te atiende ${EM.NOMBRE}, ${EM.TIPO === 'empresa' ? 'la empresa' : 'la cooperativa'} de taxis de aquí.`,
+      tipo: 'info',
+      accion: {
+        texto: `Volver a ${nombre}`,
+        alTocar: () => {
+          N.lejos.anotarEscogida(desde.id, p?.estado.miPosicion);
+          location.replace(urlCooperativa(desde.id));
+        },
+      },
     });
   }
 
@@ -2599,10 +2659,15 @@ export async function montar(raiz, { N, diseno = 'a', vitrina = false, taxicun =
           revisarQueHacer(d?.revision === true);
           setTimeout(revisarLejos, 600);
           setTimeout(revisarOtraCooperativa, 1200);
+          avisarCambioDeMunicipio();
           // Ronda A: con la llave de rutas, el «llega en» del pin que ya está quieto.
           if (ui.vista === 'inicio' && ui.origen) pedirLlegada(ui.origen);
         });
-        p.on('cambio', () => revisarLejos());
+        p.on('cambio', () => {
+          revisarLejos();
+          const pos = p.estado.miPosicion;
+          if (otraPendiente || (pos?.real && pos !== posOtraRevisada)) revisarOtraCooperativa();
+        });
         // Promoción «Viaje gratis»: el premio ganado en grande; si el viaje gratis no se pudo pedir, se pregunta.
         // El premio se gana justo al terminar un viaje: el modal espera a que la pasajera pague y califique (de vuelta en
         // el inicio) para no tapar el pago.

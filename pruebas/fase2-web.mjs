@@ -439,9 +439,13 @@ async function pasajero() {
   ok(!(await p.$('.a-modal-zona button:has-text("Pedir de todas formas")')), 'b2) «Ver opciones» abre la hoja sin «Pedir de todas formas»');
   await cerrarModal(p);
 
-  // b3) Muy lejos (Subachoque, ~5 km) con Subachoque real en TaxiCun: no deja pedir y ofrece cambiar.
+  // b3) Muy lejos (Subachoque, ~5 km) con Subachoque real en TaxiCun: no deja pedir y ofrece cambiar. (4-nov-2026: con el
+  // GPS en Subachoque la app cambiaría sola a Coopmultrasub, salvo si Cootransrural se escogió a mano ahí: así se prueba.)
   srv.indice = { estado: 200, cuerpo: indiceDe(['cootransrural', 'subachoque']) };
+  await p.evaluate((g) => localStorage.setItem('taxicun.real.escogida', JSON.stringify({ id: 'cootransrural', t: Date.now(), lat: g.latitude, lng: g.longitude })), GPS.subachoque);
   await abrirCon(ctx, p, GPS.subachoque);
+  await p.waitForTimeout(3500);
+  ok((await p.evaluate(() => window.CT_EMPRESA)) === 'cootransrural', 'b3) escogida a mano en Subachoque: no cambia sola a Coopmultrasub');
   const avisoLejos = await p.$eval('[data-aviso-zona]', (n) => ({ hidden: n.hidden, estado: n.dataset.estado, texto: n.innerText.replace(/\s+/g, ' ') })).catch(() => null);
   ok(avisoLejos && !avisoLejos.hidden && avisoLejos.estado === 'lejos' && /muy lejos de la zona de servicio de Cootransrural/.test(avisoLejos.texto), `b3) aviso en rojo en el inicio: «${avisoLejos?.texto}»`);
   await irAConfirmar(p);
@@ -455,7 +459,7 @@ async function pasajero() {
   const accLejos = await p.$$eval('.a-modal-zona .a-modal-acciones > *', (ns) => ns.map((n) => `${n.tagName}:${n.innerText.trim()}:${n.getAttribute('href') || ''}`));
   ok(accLejos[0] === 'BUTTON:Mover el punto:' && accLejos[1] === 'A:Llamar 320 904 2977:tel:3209042977', `b3) «Mover el punto» y «Llamar 320 904 2977» (${accLejos.slice(0, 2).join(' | ')})`);
   const otraNombre = JSON.parse(readFileSync(new URL('../empresas/indice.json', import.meta.url), 'utf8')).cooperativas.find((c) => c.id === 'subachoque').nombre;
-  ok((await texto(p, '.a-modal-zona [data-zona-otra]')) === `Aquí te atiende ${otraNombre} (Subachoque).` && new RegExp(`^A:Cambiar a ${otraNombre}:.*/taxicun/\\?e=subachoque$`).test(accLejos[2] || ''), `b3) «Aquí te atiende ${otraNombre} (Subachoque).» con «Cambiar» (${accLejos[2]})`);
+  ok((await texto(p, '.a-modal-zona [data-zona-otra]')) === `Aquí te atiende ${otraNombre} (Subachoque).` && new RegExp(`^A:Cambiar a ${otraNombre}:.*/taxicun/\\?e=subachoque&escogida=1$`).test(accLejos[2] || ''), `b3) «Aquí te atiende ${otraNombre} (Subachoque).» con «Cambiar» (${accLejos[2]})`);
   ok(!(await p.$('.a-modal-zona button:has-text("Pedir de todas formas")')), 'b3) muy lejos no hay «Pedir de todas formas»');
   await foto(p, 'b3-hoja-lejos');
   await cerrarModal(p);

@@ -312,6 +312,9 @@ html[data-vitrina="1"] .a-escritorio { display: none !important; }
 .a-toast-txt strong { display: block; font: 700 14.5px/1.3 var(--a-ft); }
 .a-toast-txt p { margin: 2px 0 0; font-size: 13px; line-height: 1.35; color: var(--a-texto-2); }
 .a-toast-alerta .a-toast-txt p, .a-toast-solicitud .a-toast-txt p { color: rgba(255, 255, 255, .78); }
+/* Botón dentro del aviso (p. ej. «Volver a…» al cambiar solo de municipio). */
+.a-toast-accion { margin-top: 9px; min-height: 40px; padding: 8px 14px; border: 0; border-radius: 12px; background: var(--a-tinta); color: #fff; font: 700 13.5px/1.2 var(--a-ft); cursor: pointer; max-width: 100%; text-align: left; }
+.a-toast-alerta .a-toast-accion, .a-toast-solicitud .a-toast-accion { background: var(--a-ambar); color: var(--a-tinta); }
 .a-toast-cerrar { width: 44px; height: 44px; border: 0; background: none; color: inherit; opacity: .55; cursor: pointer; display: grid; place-items: center; border-radius: 12px; flex: none; margin-top: -4px; }
 
 /* ---------------- diálogo modal ---------------- */

@@ -344,7 +344,9 @@ export function crearAvisos(app, { alAgregar = () => {} } = {}) {
     ordenar();
   };
   // silencioso: solo va al historial (cuando la pantalla ya lo muestra en grande).
-  function mostrar({ titulo, cuerpo = '', tipo = 'info' }, { silencioso = false } = {}) {
+  // accion: { texto, alTocar } pone un botón en el aviso (p. ej. «Volver a…»); con él, el aviso dura más. Al historial
+  // va solo el texto.
+  function mostrar({ titulo, cuerpo = '', tipo = 'info', accion = null }, { silencioso = false } = {}) {
     historial.unshift({ titulo, cuerpo, tipo, hora: Date.now() });
     if (historial.length > 40) historial.pop();
     alAgregar(historial);
@@ -352,14 +354,18 @@ export function crearAvisos(app, { alAgregar = () => {} } = {}) {
     const urgente = tipo === 'alerta' || tipo === 'error' || tipo === 'solicitud';
     const t = el(`<div class="a-toast a-toast-${esc(tipo)}" role="${urgente ? 'alert' : 'status'}" data-tipo="${esc(tipo)}">
       <span class="a-toast-ico">${icono(ICONO_AVISO[tipo] || 'info', { tam: 20 })}</span>
-      <div class="a-toast-txt"><strong>${esc(titulo)}</strong>${cuerpo ? `<p>${esc(cuerpo)}</p>` : ''}</div>
+      <div class="a-toast-txt"><strong>${esc(titulo)}</strong>${cuerpo ? `<p>${esc(cuerpo)}</p>` : ''}${accion?.texto ? `<button class="a-toast-accion" type="button">${esc(accion.texto)}</button>` : ''}</div>
       <button class="a-toast-cerrar" type="button" aria-label="Cerrar aviso">${icono('cerrar', { tam: 16 })}</button>
     </div>`);
-    t.querySelector('button').addEventListener('click', () => quitar(t));
+    t.querySelector('.a-toast-cerrar').addEventListener('click', () => quitar(t));
+    t.querySelector('.a-toast-accion')?.addEventListener('click', () => {
+      quitar(t);
+      accion.alTocar?.();
+    });
     zona.prepend(t);
     vivos().slice(3).forEach(quitar);
     ordenar();
-    setTimeout(() => quitar(t), urgente ? 7000 : 4800);
+    setTimeout(() => quitar(t), accion?.texto ? 10000 : urgente ? 7000 : 4800);
     return t;
   }
   // Quita los avisos de ciertos tipos (por ejemplo, un error que ya no aplica).

@@ -154,3 +154,75 @@ export function posponerAvisoPasajero({ enviado = false } = {}, ahora = Date.now
     /* sin almacenamiento: vuelve a salir la próxima vez */
   }
 }
+
+/* ---------------- La cooperativa escogida a mano (4-nov-2026) ----------------
+ * La app del pasajero cambia sola a la cooperativa del municipio donde está la persona (disenos/a/pasajero.js, «Otra
+ * cooperativa»), salvo si la que tiene abierta la escogió a mano (de la lista de municipios, «Volver a…» o «Seguir
+ * con…»): esa se respeta mientras la persona siga a menos de ESCOGIDA_RADIO_KM de donde la escogió y por
+ * ESCOGIDA_VIGENCIA_MS como mucho. Si se escogió sin saber dónde estaba (la lista no siempre tiene el GPS), lo dice la
+ * primera lectura buena de los ESCOGIDA_SIN_LUGAR_MS siguientes. En cuanto la persona se aleja, se olvida: manda el GPS.
+ * Se guarda { id, t, lat?, lng? } (redondeado a ~10 m) y no sale del teléfono. */
+const CLAVE_ESCOGIDA = 'taxicun.real.escogida';
+export const ESCOGIDA_RADIO_KM = 5;
+export const ESCOGIDA_VIGENCIA_MS = 12 * 3600 * 1000;
+const ESCOGIDA_SIN_LUGAR_MS = 10 * 60 * 1000;
+
+// Kilómetros entre dos puntos (este módulo no depende de la ficha: lo usa también web/taxicun.js antes de escoger).
+function kmEntre(a, b) {
+  const r = Math.PI / 180;
+  const s = Math.sin(((b.lat - a.lat) * r) / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(((b.lng - a.lng) * r) / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.min(1, Math.sqrt(s)));
+}
+
+function leerEscogida() {
+  try {
+    const g = JSON.parse(localStorage.getItem(CLAVE_ESCOGIDA) || 'null');
+    return g && typeof g.id === 'string' && Number.isFinite(Number(g.t)) ? g : null;
+  } catch {
+    return null;
+  }
+}
+
+export function olvidarEscogida() {
+  try {
+    localStorage.removeItem(CLAVE_ESCOGIDA);
+  } catch {
+    /* sin almacenamiento */
+  }
+}
+
+// pos: dónde está la persona al escogerla (o null si no se sabe).
+export function anotarEscogida(id, pos = null, ahora = Date.now()) {
+  if (!/^[a-z0-9-]{1,40}$/.test(String(id || ''))) return;
+  const g = { id: String(id), t: ahora };
+  const u = ubicacionParaServidor(pos);
+  if (u) Object.assign(g, { lat: u.lat, lng: u.lng });
+  try {
+    localStorage.setItem(CLAVE_ESCOGIDA, JSON.stringify(g));
+  } catch {
+    /* sin almacenamiento: la app la puede cambiar sola */
+  }
+}
+
+// ¿Hay que respetar la cooperativa `id` porque se escogió a mano y la persona sigue cerca de donde la escogió? pos: la
+// lectura buena de ahora. Vencida, o con la persona ya lejos de donde la escogió, se olvida (devuelve false).
+export function respetarEscogida(id, pos, ahora = Date.now()) {
+  const g = leerEscogida();
+  if (!g || g.id !== id || !valido(pos)) return false;
+  const edad = ahora - Number(g.t);
+  if (!(edad >= 0 && edad < ESCOGIDA_VIGENCIA_MS)) {
+    olvidarEscogida();
+    return false;
+  }
+  if (valido(g)) {
+    if (kmEntre(pos, g) < ESCOGIDA_RADIO_KM) return true;
+    olvidarEscogida();
+    return false;
+  }
+  if (edad >= ESCOGIDA_SIN_LUGAR_MS) {
+    olvidarEscogida();
+    return false;
+  }
+  anotarEscogida(id, pos, Number(g.t));
+  return true;
+}

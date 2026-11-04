@@ -19,6 +19,9 @@
 import { MODO_REAL, URL_API, posicion } from '../nucleo/plataforma.js';
 // Enlaces seguros (S30): no depende de la ficha, se puede cargar antes de escoger.
 import { urlInterna } from '../nucleo/enlaces.js';
+// La cooperativa escogida a mano (4-nov-2026): tampoco depende de la ficha. La app del pasajero la respeta mientras la
+// persona siga donde la escogió; si no, cambia sola a la del municipio donde está (disenos/a/pasajero.js).
+import { anotarEscogida, olvidarEscogida } from '../nucleo/lejos.js';
 
 const RAIZ = new URL('../', import.meta.url);
 // El modo real guarda su elección aparte: no cambia lo que abre la demo en este navegador.
@@ -151,9 +154,15 @@ export async function iniciarTaxiCun({ rol = 'pasajero', version = '' } = {}) {
 
   if (p.get('elegir')) return mostrarLista(lista, { rol, version, motivo: 'elegir' });
 
-  // 1) Enlace con la cooperativa (sticker QR, «Pedir taxi» de su web).
+  // 1) Enlace con la cooperativa (sticker QR, «Pedir taxi» de su web). Con ?desde=<id> (modo real): la app del pasajero
+  //    cambió sola de municipio y viene de esa; allá se avisa «Estás en…» con «Volver a…». Con ?escogida=1: la escogió la
+  //    persona (p. ej. movió el punto a ese municipio): no se devuelve sola mientras siga donde la escogió.
   const pedida = valida((p.get('e') || '').toLowerCase());
-  if (pedida) return abrir(pedida, { rol, version });
+  if (pedida) {
+    const desde = MODO_REAL ? valida((p.get('desde') || '').toLowerCase()) : null;
+    if (MODO_REAL && rol === 'pasajero' && p.get('escogida') === '1') anotarEscogida(pedida.id);
+    return abrir(pedida, { rol, version, desde: desde && desde.id !== pedida.id ? desde : null });
+  }
   // 2) La que la persona escogió a mano.
   const guardada = valida(localStorage.getItem(CLAVE) || '');
   if (guardada) return abrir(guardada, { rol, version });
@@ -167,7 +176,7 @@ export async function iniciarTaxiCun({ rol = 'pasajero', version = '' } = {}) {
   return mostrarLista(lista, { rol, version, motivo: 'fuera', pos });
 }
 
-async function abrir(coop, { rol, version, porGps = false, unica = false }) {
+async function abrir(coop, { rol, version, porGps = false, unica = false, desde = null }) {
   // En modo real se guarda siempre la elección (también la del GPS o la del enlace):
   // así cada arranque de la app no vuelve a esperar el GPS.
   if (MODO_REAL) localStorage.setItem(CLAVE, coop.id);
@@ -179,6 +188,9 @@ async function abrir(coop, { rol, version, porGps = false, unica = false }) {
   const u = new URL(location.href);
   u.searchParams.set('e', coop.id);
   u.searchParams.delete('elegir');
+  // «Estás en…» sale una vez: al recargar o compartir el enlace ya no.
+  u.searchParams.delete('desde');
+  u.searchParams.delete('escogida');
   history.replaceState(null, '', u);
 
   window.CT_EMPRESA = coop.id;
@@ -196,10 +208,11 @@ async function abrir(coop, { rol, version, porGps = false, unica = false }) {
   try {
     const { montar } = await import(new URL(`disenos/${d}/${archivo}.js?v=${version}`, RAIZ).href);
     // unica: modo real con una sola cooperativa (no hay «Cambiar de municipio»). otras: las demás que
-    // atienden de verdad (para «Aquí te atiende…» cuando el punto queda en su municipio).
+    // atienden de verdad (para cambiar sola a la del municipio donde está la persona y para «Aquí te atiende…» cuando
+    // el punto queda en su municipio). desde: la de antes, si la app cambió sola de municipio.
     await montar($('app'), {
       N, diseno: d, vitrina: false,
-      taxicun: MODO_REAL ? { porGps, cooperativa: coop, unica, otras: REALES.filter((c) => c.id !== coop.id) } : { porGps, cooperativa: coop },
+      taxicun: MODO_REAL ? { porGps, cooperativa: coop, unica, otras: REALES.filter((c) => c.id !== coop.id), desde } : { porGps, cooperativa: coop },
     });
   } catch (e) {
     console.error(e);
@@ -259,12 +272,14 @@ function mostrarLista(lista, { rol, version, motivo, pos = null, pueblo = '', to
   caja.querySelectorAll('[data-id]').forEach((b) => b.addEventListener('click', () => {
     const coop = lista.find((c) => c.id === b.dataset.id);
     localStorage.setItem(CLAVE, coop.id);
+    if (MODO_REAL && rol === 'pasajero') anotarEscogida(coop.id, pos);
     abrir(coop, { rol, version });
   }));
   caja.querySelector('[data-ubicacion]').addEventListener('click', async (e) => {
     e.currentTarget.disabled = true;
     e.currentTarget.lastChild.textContent = 'Buscando…';
     localStorage.removeItem(CLAVE);
+    if (MODO_REAL && rol === 'pasajero') olvidarEscogida();
     const nueva = await ubicacion(10000);
     if (!nueva) return mostrarLista(lista, { rol, version, motivo: 'sin-gps' });
     const r = porUbicacion(todas, nueva);
